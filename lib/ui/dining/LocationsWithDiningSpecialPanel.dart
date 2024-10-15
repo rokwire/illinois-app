@@ -169,10 +169,9 @@ class _LocationsWithDiningSpecialPanelState extends State<LocationsWithDiningSpe
         }
         list.add(ExploreCard(
             explore: dining,
-            onTap: () => _onDiningTap(dining!),
             locationData: widget.locationData,
-            hideInterests: true,
-            showTopBorder: true)
+            onTap: () => _onDiningTap(dining!),
+          )
         );
       }
     }

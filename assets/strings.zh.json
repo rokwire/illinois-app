@@ -3301,9 +3301,12 @@
 	"widget.safewalks_request.message.service_disabled.title": "Location Services not enabled.",
  	"widget.safewalks_request.message.service_denied.title": "Location Services access denied.",
 	"widget.safewalks_request.message.missing.origin.title": "Please select your current location.",
- "widget.safewalks_request.message.missing.destination.title": "Please select your destination.",
+	"widget.safewalks_request.message.missing.destination.title": "Please select your destination.",
+	"widget.safewalks_request.message.missing.recipient.title": "Unable to send text message, recipient number is not available.",
+	"widget.safewalks_request.message.internal.error.title": "Unable to send text message, internal error occured.",
+	"widget.safewalks_request.message.sms.service.not_available.title": "Unable to send text message, messaging service not available.",
 	"widget.safewalks_request.message.sms.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n\nMy Destination:\n{{safewalk_destination}}",
-	"widget.safewalks_request.unknown.user.text": "Anonymous User",
+	"widget.safewalks_request.unknown.user.text": "Unauthenticated User",
 	"widget.safewalks_request.unknown.location.text": "Unknwon",
 
 	"panel.home_canvas_course.header.title": "課程",
@@ -4170,6 +4173,9 @@
 	"model.public_survey.label.detail.completed": "Completed",
 	"model.public_survey.label.detail.ends.1": "Ends {{end_date}}",
 	"model.public_survey.label.detail.ends.2": "Ends on {{end_date}}",
+
+	"model.safety.safewalks.title": "SafeWalks",
+	"model.safety.safewalks.request.action.text": "Request a SafeWalk",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

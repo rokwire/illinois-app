@@ -88,6 +88,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
+import 'package:quick_actions/quick_actions.dart';
+
 enum RootTab { Home, Favorites, Browse, Maps, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
@@ -108,6 +110,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   TabController?  _tabBarController;
   int            _currentTabIndex = 0;
+
+  late QuickActions quickActions;
 
   _RootPanelState();
 
@@ -223,6 +227,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
     _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
     _updatePanels(_tabs);
+
+    quickActions = const QuickActions();
+    quickActions.initialize(_onQuickAction);
+    quickActions.setShortcutItems(<ShortcutItem>[
+      ShortcutItem(
+        type: Safety.safeWalkRequestAction,
+        localizedTitle: Localization().getStringEx('model.safety.safewalks.request.action.text', 'Request a SafeWalk'),
+        icon: Platform.isAndroid ? 'paper_plane' : 'paper-plane',
+      ),
+  ]);
 
     Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
 
@@ -726,6 +740,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ),
       ),
     );
+  }
+
+  void _onQuickAction(String action) {
+    if (action == Safety.safeWalkRequestAction) {
+      _onSafetySafeWalkDetail(null);
+    }
   }
 
   void _showPanel(Map<String, dynamic> content) {

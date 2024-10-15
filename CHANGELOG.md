@@ -67,11 +67,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+### Changed
+- Cleaned up shared explore UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Fixed
+- Fixed Poll UI issues [#4414](https://github.com/rokwire/illinois-app/issues/4414).
+
+## [6.1.11] - 2024-10-09
+### Added
+- Extended error handling for SafeWalks SMS sending [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Changed
+- Use "Unauthenticated User" instead of "Anonymous User" [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+
+## [6.1.10] - 2024-10-08
+### Added
+- Added SafeWalks Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Fixed
+- Preserve SafeWalk location selection when the app is awaken from background [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+
 ## [6.1.9] - 2024-10-07
 ### Changed
 - Acknowledged GoogleMaps plugin upgrade [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 ### Added
-- Add SafeWalks feature and navigation, TBD Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Added SafeWalks feature and navigation, TBD Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 - Added guide detail url builder.
 - Created ExploreMessagePopup.
 
@@ -119,6 +136,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.51] - 2024-10-15
+### Fixed
+- Fixed Poll UI issues [#4414](https://github.com/rokwire/illinois-app/issues/4414).
 
 ## [6.0.50] - 2024-10-03
 ### Fixed

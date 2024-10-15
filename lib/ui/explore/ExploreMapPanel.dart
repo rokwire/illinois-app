@@ -40,7 +40,7 @@ import 'package:neom/ui/events2/Event2SearchPanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:neom/ui/explore/ExploreListPanel.dart';
-import 'package:neom/ui/explore/ExplorePanel.dart';
+import 'package:neom/ui/dining/DiningHomePanel.dart';
 import 'package:neom/ui/widgets/FavoriteButton.dart';
 import 'package:neom/ui/widgets/Filters.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -67,6 +67,9 @@ import 'package:timezone/timezone.dart';
 import 'package:universal_io/io.dart';
 
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding }
+
+enum EventsDisplayType { single, multiple, all }
+enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time, student_course_terms }
 
 class ExploreMapPanel extends StatefulWidget {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
@@ -2410,3 +2413,23 @@ class ExploreMessagePopup extends StatelessWidget {
     Navigator.of(context).pop();
   }
 }
+
+////////////////////
+// ExploreFilter
+
+class ExploreFilter {
+  ExploreFilterType type;
+  Set<int> selectedIndexes;
+  bool active;
+
+  ExploreFilter(
+      {required this.type, this.selectedIndexes = const {0}, this.active = false});
+
+  int get firstSelectedIndex {
+    if (selectedIndexes.isEmpty) {
+      return -1;
+    }
+    return selectedIndexes.first;
+  }
+}
+

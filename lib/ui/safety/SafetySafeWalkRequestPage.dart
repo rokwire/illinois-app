@@ -33,13 +33,27 @@ import 'package:url_launcher/url_launcher.dart';
 
 enum _SafeWalkLocationType { current, map, saved }
 
-class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPage {
+class SafetySafeWalkRequestPage extends StatefulWidget with SafetyHomeContentPage {
 
   final Map<String, dynamic>? origin;
   final Map<String, dynamic>? destination;
-  final GlobalKey<_SafetySafeWalkRequestCardState> _safeWalksCardKey = GlobalKey();
 
   SafetySafeWalkRequestPage({super.key, this.origin, this.destination});
+
+  // StatefulWidget
+
+  @override
+  State<StatefulWidget> createState() => _SafetySafeWalkRequestPageState();
+
+  // SafetyHomeContentPage
+
+  @override
+  Color get safetyPageBackgroundColor => Styles().colors.fillColorPrimaryVariant;
+}
+
+class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
+
+  final GlobalKey<_SafetySafeWalkRequestCardState> _safeWalksCardKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) => Column(children: [
@@ -47,10 +61,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
     _detailsLayer(context),
   ],);
 
-  @override
-  Color get safetyPageBackgroundColor => Styles().colors.fillColorPrimaryVariant;
-  
-  Widget _mainLayer(BuildContext context) => Container(color: safetyPageBackgroundColor, child:
+  Widget _mainLayer(BuildContext context) => Container(color: widget.safetyPageBackgroundColor, child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -89,7 +100,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
           ],)
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: origin, destination: destination,),
+          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
         ),
       ],),
     ],)
@@ -264,7 +275,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   static const String _safeWalkDestinationMacro = '{{safewalk_destination}}';
 
   dynamic _originLocation, _destinationLocation;
-  bool _originProgress = false, _destinationProgress = false;
+  bool _originProgress = false, _destinationProgress = false, _sendProgress = false;
 
   @override
   void initState() {
@@ -345,8 +356,8 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
                   leftIconPadding: EdgeInsets.only(left: 12, right: 8),
                   rightIconPadding: EdgeInsets.only(left: 16),
                   contentWeight: -1,
+                  progress: _sendProgress,
                   onTap: _onTapSend,
-
                 )
               )
             ),
@@ -599,23 +610,50 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 
   //bool get _sendEnabled => (_originLocation != null) && (_destinationLocation != null);
 
-  void _onTapSend() {
+  void _onTapSend() async {
     Analytics().logSelect(target: 'Start with a Text');
-    if (_originLocation == null) {
-      ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.origin.title', 'Please select your current location.'));
-    }
-    else if (_destinationLocation == null) {
-      ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.destination.title', 'Please select your destination.'));
-    }
-    else  {
-      String message = Localization().getStringEx('panel.safewalks_request.message.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n\nMy Destination:\n$_safeWalkDestinationMacro')
-        .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Anonymous User'))
-        .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
-        .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'));
-      String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
-      Uri? uri = Uri.tryParse(url);
-      if (uri != null) {
-        launchUrl(uri);
+    if (_sendProgress != true) {
+      if (_originLocation == null) {
+        ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.origin.title', 'Please select your current location.'));
+      }
+      else if (_destinationLocation == null) {
+        ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.destination.title', 'Please select your destination.'));
+      }
+      else if (Config().safeWalkTextNumber == null) {
+        ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.recipient.title', 'Unable to send text message, recipient number is not available.'));
+      }
+      else {
+        String message = Localization().getStringEx('panel.safewalks_request.message.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n\nMy Destination:\n$_safeWalkDestinationMacro')
+          .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Unauthenticated User'))
+          .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
+          .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'));
+
+        String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
+        Uri? uri = Uri.tryParse(url);
+        if (uri == null) {
+          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.internal.error.title', 'Unable to send text message, internal error occured.'));
+        }
+        else {
+          setState(() {
+            _sendProgress = true;
+          });
+
+          canLaunchUrl(uri).then((bool result){
+            if (mounted) {
+              setState(() {
+                _sendProgress = false;
+              });
+
+              if (result != true) {
+                ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.sms.service.not_available.title', 'Unable to send text message, messaging service not available.'));
+              }
+              else {
+                launchUrl(uri);
+              }
+            }
+          });
+
+        }
       }
     }
   }

@@ -20,18 +20,15 @@ import 'package:neom/model/Laundry.dart';
 import 'package:neom/model/MTD.dart';
 import 'package:neom/model/News.dart';
 import 'package:neom/model/Dining.dart';
-import 'package:neom/ext/Event.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Game.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:neom/model/sport/Game.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum RecentItemType {
-  event,
   event2,
   dining,
   game,
@@ -73,16 +70,7 @@ class RecentItem {
   };
 
   static RecentItem? fromSource(dynamic item){
-    if(item is Event) {
-      return RecentItem(
-          type: RecentItemType.event,
-          id: item.id,
-          title: item.title,
-          descripton: item.description,
-          time: item.isRecurring ? item.displayRecurringDates : item.displayDateTime,
-          sourceJson: item.toJson()
-      );
-    } else if(item is Event2) {
+    if(item is Event2) {
       return RecentItem(
           type: RecentItemType.event2,
           id: item.id,
@@ -155,7 +143,6 @@ class RecentItem {
 
   dynamic get source {
     switch (type) {
-      case RecentItemType.event: return Event.fromJson(sourceJson);
       case RecentItemType.event2: return Event2.fromJson(sourceJson);
       case RecentItemType.dining: return Dining.fromJson(sourceJson);
       case RecentItemType.game: return Game.fromJson(sourceJson);
@@ -170,7 +157,6 @@ class RecentItem {
   Favorite? get favorite {
     if (id != null) {
       switch (type) {
-        case RecentItemType.event:   return FavoriteItem(key: Event.favoriteKeyName, id: id);
         case RecentItemType.event2:  return FavoriteItem(key: Event2.favoriteKeyName, id: id);
         case RecentItemType.dining:  return FavoriteItem(key: Dining.favoriteKeyName, id: id);
         case RecentItemType.game:    return FavoriteItem(key: Game.favoriteKeyName, id: id);
@@ -244,10 +230,7 @@ class RecentItem {
 // RecentItemType
 
 RecentItemType? recentTypeFromString(String? value){
-  if ("event" == value) {
-    return RecentItemType.event;
-  }
-  else if ("event2" == value) {
+  if ("event2" == value) {
     return RecentItemType.event2;
   }
   else if ("dining" == value) {
@@ -273,7 +256,6 @@ RecentItemType? recentTypeFromString(String? value){
 
 String? recentTypeToString(RecentItemType? value){
   switch(value){
-    case RecentItemType.event: return "event";
     case RecentItemType.event2: return "event2";
     case RecentItemType.dining: return "dining";
     case RecentItemType.game: return "game";

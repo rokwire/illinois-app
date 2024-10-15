@@ -160,7 +160,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
     List<Widget> cardsList = <Widget>[];
     for (Building building in _buildings!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: 8), child:
-          ExploreCard(explore: building, onTap: () => _onTapBuilding(building), showTopBorder: true),
+          ExploreCard(explore: building, onTap: () => _onTapBuilding(building)),
       ),);
     }
     return Padding(padding: EdgeInsets.all(8), child:

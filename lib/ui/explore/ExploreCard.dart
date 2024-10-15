@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Explore.dart';
-import 'package:neom/ext/Event.dart';
 import 'package:neom/ext/Game.dart';
 import 'package:neom/ext/StudentCourse.dart';
 import 'package:neom/model/StudentCourse.dart';
@@ -35,30 +34,20 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Sports.dart';
-import 'package:neom/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:neom/model/Dining.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ExploreCard extends StatefulWidget {
-  final GestureTapCallback? onTap;
   final Explore? explore;
   final Core.Position? locationData;
-  final bool showTopBorder;
-  final bool hideInterests;
-  final bool? showSmallImage;
-  final String? source;
-  final double horizontalPadding;
-  final BoxBorder? border;
+  final GestureTapCallback? onTap;
 
-  ExploreCard(
-      {Key? key, this.onTap, this.explore, this.locationData, this.showTopBorder = false, this.showSmallImage = true, this.hideInterests = false, this.source, this.horizontalPadding=16, this.border})
-      : super(key: key);
+  ExploreCard({super.key, this.explore, this.locationData, this.onTap,});
 
   @override
   _ExploreCardState createState() => _ExploreCardState();
@@ -96,13 +85,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String? time = _getExploreTimeDisplayString();
     String locationText = widget.explore?.getShortDisplayLocation(widget.locationData) ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
-    int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
-    String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
-    String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
-    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
-    String eventType = explore?.typeDisplayString??"";
 
-    return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
+    return "$category, $title, $time, $locationText, $workTime";
   }
 
   @override
@@ -110,18 +94,17 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isEvent2 = (widget.explore is Event2);
     bool isGame = (widget.explore is Game);
     String imageUrl = StringUtils.ensureNotEmpty(widget.explore?.exploreImageUrl);
-    String interestsLabelValue = _getInterestsLabelValue();
 
     return Semantics(label: semanticLabel, button: true, child:
       GestureDetector(behavior: HitTestBehavior.opaque, onTap: widget.onTap, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
+                //border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: widget.border,
                 boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -137,8 +120,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                           _exploreDetails(),
                         ],)
                       ),
-                      Visibility(visible: ((widget.showSmallImage ?? false) && StringUtils.isNotEmpty(imageUrl)), child:
-                        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
+                      Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
+                        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: _hasPaymentTypes ? 12 : 16), child:
                           SizedBox(width: _smallImageSize, height: _smallImageSize, child:
                             InkWell(onTap: () => _onTapCardImage(imageUrl), 
                               child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),
@@ -147,29 +130,6 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       ),
                     ],),
                     _explorePaymentTypes(),
-                    _buildConvergeButton(),
-                    Visibility(visible: _showInterests(), child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Container(height: 1, color: Styles().colors.surfaceAccent,),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                          Row(children: <Widget>[
-                            Flexible(flex: 8, child:
-                              Container(width: double.infinity, child:
-                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
-                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().textStyles.getTextStyle("widget.explore.card.detail.small"))
-                                ],),
-                              ),
-                            ),
-                            Flexible(flex: 2, child:
-                              Container(width: double.infinity, alignment: Alignment.centerRight, child:
-                                ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-                              ),
-                            )
-                          ],),
-                        )
-                      ],),
-                    ),
                   ]),
                 )
               ],),),
@@ -179,49 +139,6 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         ],),
       ),
     );
-  }
-
-  bool _showInterests() {
-    String interestsLabelValue = _getInterestsLabelValue();
-    return (widget.explore is Event) && StringUtils.isNotEmpty(interestsLabelValue);
-  }
-
-  bool _hasConvergeUrl() {
-    return StringUtils.isNotEmpty(_getConvergeUrl());
-  }
-
-  bool _hasConvergeScore() {
-    return (_getConvergeScore() != null) && (_getConvergeScore()! > 0);
-  }
-
-  bool _hasConvergeContent() {
-    return _hasConvergeScore() || _hasConvergeUrl();
-  }
-
-  Widget _buildConvergeButton() {
-    if(_showInterests() || !_hasConvergeContent())
-      return Container();
-
-    return Container( width: double.infinity, child:Column(
-      children:<Widget>[
-         _divider(),
-        Padding (padding: EdgeInsets.only(left: 16, top: 10), child:
-          ExploreConvergeDetailButton(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-        )
-      ]
-    ));
-  }
-
-  int? _getConvergeScore() {
-    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    int? eventConvergeScore = (event != null) ? event.convergeScore : null;
-    return eventConvergeScore;
-  }
-
-  String? _getConvergeUrl() {
-    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    String? eventConvergeUrl = (event != null) ? event.convergeUrl : null;
-    return eventConvergeUrl;
   }
 
   Widget _exploreTop() {
@@ -351,14 +268,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     void Function()? onLocationTap;
 
     Explore? explore = widget.explore;
-    if (explore is Event ) {//For Events we show Two Locati
-      if (explore.displayAsInPerson) {
-        locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-      } else if (!explore.displayAsVirtual) { // displayAsInPerson == false && displayAsVirtual == false
-        locationText = explore.getShortDisplayLocation(widget.locationData);
-      }
-    }
-    else if (explore is Event2 ) {//For Events we show Two Locati
+    if (explore is Event2 ) {//For Events we show Two Locati
       if (explore.isInPerson) {
         locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       }
@@ -397,8 +307,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget? _exploreOnlineDetail() {
-    if (((widget.explore is Event) && ((widget.explore as Event).displayAsVirtual)) ||
-        (widget.explore is Event2) && ((widget.explore as Event2).isOnline)) {
+    if ((widget.explore is Event2) && ((widget.explore as Event2).isOnline)) {
         return Semantics(label: Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event"), child:Padding(
           padding: _detailPadding,
           child: Row(
@@ -442,6 +351,12 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return null;
   }
 
+  bool get _hasPaymentTypes {
+    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
+    List<PaymentType>? paymentTypes = dining?.paymentTypes;
+    return ((paymentTypes != null) && (0 < paymentTypes.length));
+  }
+
   Widget _explorePaymentTypes() {
     List<Widget>? details;
     Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
@@ -474,9 +389,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   String? _getExploreTimeDisplayString() {
     Explore? explore = widget.explore;
-    if (explore is Event) {
-      return explore.timeDisplayString;
-    } else if (explore is Event2) {
+    if (explore is Event2) {
       return explore.shortDisplayDateAndTime;
     } else if (explore is Game) {
       return explore.displayTime;
@@ -498,13 +411,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _topBorder() {
-    return widget.showTopBorder? Container(height: 7,color: widget.explore?.uiColor) : Container();
+    return Container(height: 7, color: widget.explore?.uiColor);
   }
-
-  String _getInterestsLabelValue() {
-    return (!widget.hideInterests && (widget.explore is Event)) ? (widget.explore as Event).displayInterests : "";
-  }
-
 
   void _onTapExploreCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
@@ -529,9 +437,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   String? get _exploreCategory {
-    if (widget.explore is Event) {
-      return (widget.explore as Event).category;
-    } else if (widget.explore is Event2) {
+    if (widget.explore is Event2) {
       return Events2().displaySelectedContentAttributeLabelsFromSelection((widget.explore as Event2).attributes, usage: ContentAttributeUsage.category)?.join(', ');
     } else if (widget.explore is Game) {
       return Events2.sportEventCategory;

@@ -318,7 +318,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     _progressKeys = [];
     int totalVotes = _poll?.results?.totalVotes ?? 0;
     for (int optionIndex = 0; optionIndex < _poll!.options!.length; optionIndex++) {
-      String checkboxImageKey = (0 < _optionVotes(optionIndex)) ? 'check-circle-filled' : 'check-cricle-outline';
+      String checkboxImageKey = (0 < _optionVotes(optionIndex)) ? 'check-circle-outline-gray-white-2' : 'check-circle-outline-gray-white';
 
       String optionString = _poll!.options![optionIndex];
       String votesString;

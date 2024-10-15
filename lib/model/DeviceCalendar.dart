@@ -7,10 +7,8 @@ import 'package:neom/service/Canvas.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:neom/service/Sports.dart';
 import 'package:rokwire_plugin/model/device_calendar.dart' as rokwire;
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 
 class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
@@ -18,9 +16,6 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   DeviceCalendarEvent({super.internalEventId, super.title, super.deepLinkUrl, super.startDate, super.endDate});
 
   static DeviceCalendarEvent? from(dynamic data){
-    if (data is Event) {
-      return DeviceCalendarEvent.fromEvent(data);
-    }
     if (data is Event2) {
       return DeviceCalendarEvent.fromEvent2(data);
     }
@@ -36,17 +31,10 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     else if (data is CanvasCalendarEvent) {
       return DeviceCalendarEvent.fromCanvasCalendarEvent(data);
     }
-
-    return null;
+    else {
+      return null;
+    }
   }
-
-  factory DeviceCalendarEvent.fromEvent(Event event) => DeviceCalendarEvent(
-    title: event.title,
-    internalEventId: event.id,
-    startDate: event.startDateLocal,
-    endDate: event.endDateLocal,
-    deepLinkUrl: "${Events().eventDetailUrl}?event_id=${event.id}"
-  );
 
   factory DeviceCalendarEvent.fromEvent2(Event2 event) => DeviceCalendarEvent(
     title: event.exploreTitle,

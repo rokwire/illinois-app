@@ -18,7 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/explore/ExplorePanel.dart';
+import 'package:neom/ui/dining/DiningHomePanel.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -73,11 +73,11 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
   
   void _onTapDiningsAll() {
     Analytics().logSelect(target: "Residence Hall Dining", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel() ));
   }
 
   void _onTapDiningsOpen() {
     Analytics().logSelect(target: "Residence Hall Dining Open Now", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}))));
   }
 }

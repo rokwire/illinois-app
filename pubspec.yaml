@@ -69,6 +69,7 @@ dependencies:
   record: ^5.1.2
   csv: ^6.0.0
   flutter_file_dialog: ^3.0.1
+  quick_actions: ^1.0.8
 
   # Below are the plugins imported alongside web integration
   universal_io: ^2.2.2

@@ -7,6 +7,7 @@ import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/athletics/AthleticsContentPanel.dart';
+import 'package:neom/ui/events2/Event2HomePanel.dart';
 import 'package:neom/ui/wallet/WalletICardHomePanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -16,7 +17,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/SavedPanel.dart';
-import 'package:neom/ui/explore/ExplorePanel.dart';
 import 'package:neom/ui/groups/GroupsHomePanel.dart';
 import 'package:neom/ui/guide/GuideEntryCard.dart';
 import 'package:neom/ui/laundry/LaundryHomePanel.dart';
@@ -343,12 +343,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining)));
+    Event2HomePanel.present(context);
   }
 
   void _navigateEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events)));
+    Event2HomePanel.present(context);
   }
 
   void _navigateGroups() {
