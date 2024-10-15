@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
 ### Changed
 - Cleaned up shared explore UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Updated SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 ### Fixed
-- Fixed Poll UI issues [#4414](https://github.com/rokwire/illinois-app/issues/4414).
+- Fixed map location selection for group markers [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Added
+- Added building search capability in location selection [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 
 ## [6.1.11] - 2024-10-09
 ### Added
