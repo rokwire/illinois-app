@@ -184,6 +184,7 @@
     "widget.title.extra_large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.semi_fat": { "font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "fillColorPrimary"},
+    "widget.title.medium_large.fat": {"font_family": "bold", "size": 22.0, "color": "fillColorPrimary"},
     "widget.title.medium_large": {"font_family": "regular", "size": 22.0, "color": "fillColorPrimary"},
     "widget.title.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large.semi_fat": { "font_family": "semi_bold", "size": 20.0, "color": "fillColorPrimary"},
