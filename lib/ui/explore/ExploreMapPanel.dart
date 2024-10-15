@@ -47,7 +47,7 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/StoriedSightsBottomSheet.dart';
+import 'package:illinois/ui/explore/StoriedSightsBottomSheet.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
