@@ -15,28 +15,28 @@
  */
 
 import 'package:flutter/semantics.dart';
-import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/MTD.dart';
-import 'package:illinois/ui/dining/DiningCard.dart';
-import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/model/Analytics.dart';
+import 'package:neom/service/Appointments.dart';
+import 'package:neom/service/MTD.dart';
+import 'package:neom/ui/dining/DiningCard.dart';
+import 'package:neom/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/Dinings.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Dinings.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/widgets/Filters.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/Dining.dart';
+import 'package:neom/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -92,7 +92,7 @@ class _DiningHomePanelState extends State<DiningHomePanel> implements Notificati
       Auth2UserPrefs.notifyFavoritesChanged,
       MTD.notifyStopsChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
 
@@ -560,7 +560,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
     String dontShow = Localization().getStringEx("panel.explore.instructions.mtd.dont_show.msg", "Don't show me this again.");
 
     return AlertDialog(contentPadding: EdgeInsets.zero, content:
-      Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
         Stack(alignment: Alignment.center, children: [
           Padding(padding: EdgeInsets.only(top: 36, bottom: 9), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
