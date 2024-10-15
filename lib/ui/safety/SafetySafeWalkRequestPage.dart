@@ -649,7 +649,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.recipient.title', 'Unable to send text message, recipient number is not available.'));
       }
       else {
-        String message = Localization().getStringEx('widget.safewalks_request.message.sms.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro\n\nMy Route:\n$_safeWalkDirectionsUrlMacro')
+        String messageSource = Auth2().isOidcLoggedIn ?
+          Localization().getStringEx('widget.safewalks_request.message.sms.logged_in.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro\n\nMy Route:\n$_safeWalkDirectionsUrlMacro') :
+          Localization().getStringEx('widget.safewalks_request.message.sms.logged_out.text', 'Hi, I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro\n\nMy Route:\n$_safeWalkDirectionsUrlMacro');
+        String message = messageSource
           .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Unauthenticated User'))
           .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
           .replaceAll(_safeWalkOriginUrlMacro, await _locationUrl(_originLocation) ?? '')
