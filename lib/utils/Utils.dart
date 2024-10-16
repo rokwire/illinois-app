@@ -81,14 +81,13 @@ class GeoMapUtils {
 
   static Future<bool> launchDirections({ dynamic origin, dynamic destination, String? travelMode }) async {
 
-    Uri? googleMapsUri = Uri.tryParse(_googleMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
-
+    Uri? googleMapsUri = Uri.tryParse(_googleMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
       debugPrint("Map directions: $googleMapsUri");
       return true;
     }
 
-    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
+    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
       debugPrint("Map directions: $wazeMapsUri");
       return true;
@@ -97,8 +96,25 @@ class GeoMapUtils {
     return false;
   }
 
-  static String _googleMapsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
-    // https://developers.google.com/maps/documentation/urls/get-started#directions-action
+  static Future<String?> directionsUrl({ dynamic origin, dynamic destination, String? travelMode }) async {
+
+    String? googleMapsUrl = _googleMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode);
+    Uri? googleMapsUri = Uri.tryParse(googleMapsUrl);
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri)) {
+      return googleMapsUrl;
+    }
+
+    String? wazeMapsUrl = _wazeMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode);
+    Uri? wazeMapsUri = Uri.tryParse(wazeMapsUrl);
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri)) {
+      return wazeMapsUrl;
+    }
+
+    return null;
+  }
+
+  // https://developers.google.com/maps/documentation/urls/get-started#directions-action
+  static String _googleMapsDirectionsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
 
     String url = "https://www.google.com/maps/dir/?api=1"; //TBD: app config
     if (origin is LatLng) {
@@ -121,8 +137,8 @@ class GeoMapUtils {
     return url;
   }
 
-  static String _wazeMapsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
-    // https://developers.google.com/waze/deeplinks
+  // https://developers.google.com/waze/deeplinks
+  static String _wazeMapsDirectionsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
     String url = "https://waze.com/ul?navigate=yes"; //TBD: app config
     if (destination is LatLng) {
       url += "&ll=${destination.latitude.toStringAsFixed(6)},${destination.longitude.toStringAsFixed(6)}";
@@ -131,6 +147,70 @@ class GeoMapUtils {
       url += "&q=${Uri.encodeComponent(destination.toString())}";
     }
     return url;
+  }
+
+  static Future<bool> launchLocation(dynamic position) async {
+
+    String? googleMapsUrl = _googleMapsLocationUrl(position);
+    Uri? googleMapsUri = (googleMapsUrl != null) ? Uri.tryParse(googleMapsUrl) : null;
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
+      debugPrint("Map directions: $googleMapsUrl");
+      return true;
+    }
+
+    String? wazeMapsUrl = _wazeMapsLocationUrl(position);
+    Uri? wazeMapsUri = (wazeMapsUrl != null) ? Uri.tryParse(wazeMapsUrl) : null;
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+      debugPrint("Map directions: $wazeMapsUrl");
+      return true;
+    }
+
+    return false;
+  }
+
+  static Future<String?> locationUrl(dynamic position) async {
+
+    String? googleMapsUrl = _googleMapsLocationUrl(position);
+    Uri? googleMapsUri = (googleMapsUrl != null) ? Uri.tryParse(googleMapsUrl) : null;
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri)) {
+      return googleMapsUrl;
+    }
+
+    String? wazeMapsUrl = _wazeMapsLocationUrl(position);
+    Uri? wazeMapsUri = (wazeMapsUrl != null) ? Uri.tryParse(wazeMapsUrl) : null;
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+      return wazeMapsUrl;
+    }
+
+    return null;
+  }
+
+  // https://developers.google.com/maps/documentation/urls/get-started#search-action
+  static String? _googleMapsLocationUrl(dynamic position) {
+    final String baseUrl = "https://www.google.com/maps/search/?api=1"; //TBD: app config
+    if (position is LatLng) {
+      return "$baseUrl&query=${position.latitude.toStringAsFixed(6)},${position.longitude.toStringAsFixed(6)}";
+    }
+    else if (position != null) {
+      return "$baseUrl&query=${Uri.encodeComponent(position.toString())}";
+    }
+    else {
+      return null;
+    }
+  }
+
+  // https://developers.google.com/waze/deeplinks
+  static String? _wazeMapsLocationUrl(dynamic position) {
+    final String baseUrl = "https://waze.com/ul"; //TBD: app config
+    if (position is LatLng) {
+      return "$baseUrl?ll=${position.latitude.toStringAsFixed(6)},${position.longitude.toStringAsFixed(6)}";
+    }
+    else if (position != null) {
+      return "baseUrl?q=${Uri.encodeComponent(position.toString())}";
+    }
+    else {
+      return null;
+    }
   }
 }
 

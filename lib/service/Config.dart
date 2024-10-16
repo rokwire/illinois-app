@@ -58,6 +58,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get safeRides => JsonUtils.mapValue(safety['safeRides']) ?? {};
   Map<String, dynamic> get safeWalk  => JsonUtils.mapValue(safety['safeWalk']) ?? {};
   String? get safeRidesGuideId       => JsonUtils.stringValue(safeRides['guide_id']);
+  String? get safeRidesAboutUrl      => JsonUtils.stringValue(safeRides['about_url']);
   String? get safeWalkPhoneNumber    => JsonUtils.stringValue(safeWalk['phone_number']);
   String? get safeWalkTextNumber     => JsonUtils.stringValue(safeWalk['text_number']);
   String? get safeWalkStartTime      => JsonUtils.stringValue(safeWalk['start_time']);

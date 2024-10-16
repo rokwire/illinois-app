@@ -24,6 +24,8 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -52,6 +54,17 @@ class ExploreMapSelectLocationPanel extends StatefulWidget {
   
   @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();
+
+  static final String routeName = "ExploreMapSelectLocationPanel";
+
+  static Future<Explore?> push(BuildContext context, { ExploreMapType? mapType, Explore? selectedExplore}) =>
+    Navigator.push<Explore>(context, CupertinoPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => ExploreMapSelectLocationPanel(
+        mapType: mapType,
+        selectedExplore: selectedExplore,
+      ),
+    ));
 }
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
@@ -61,6 +74,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
 
   List<Explore>? _explores;
   bool _exploreProgress = false;
+  Future<List<Explore>?>? _exploreTask;
 
   final GlobalKey _mapContainerKey = GlobalKey();
   final GlobalKey _mapExploreBarKey = GlobalKey();
@@ -132,13 +146,18 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.map.select.header.title", "Select Location")),
-      body: _buildScaffoldBody(),
+      body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody()),
       backgroundColor: Styles().colors.background,
     );
   }
 
   Widget _buildScaffoldBody() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Visibility(visible: (_mapType == ExploreMapType.Buildings), child:
+        Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
+          _buildBuildingsHeaderBar(),
+        ),
+      ),
       Expanded(child:
         Container(key: _mapContainerKey, color: Styles().colors.background, child:
           _buildContent(),
@@ -373,12 +392,49 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      (_selectedMapExplore as Explore).exploreLaunchDetail(context, selectLocationBuilder: _buildSelectExplore);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _mapType,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(
+        explores: _selectedMapExplore, exploreMapType: _mapType, selectLocationBuilder: _buildSelectExplore,
+      ),));
     }
     _selectMapExplore(null);
+  }
+
+  Widget? _buildSelectExplore(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore }) {
+    switch (selectContext) {
+      case ExploreSelectLocationContext.card: return _buildSelectCardExplore(context, explore: explore);
+      case ExploreSelectLocationContext.detail: return _buildSelectDetailExplore(context, explore: explore);
+    }
+  }
+
+  Widget? _buildSelectDetailExplore(BuildContext context, { Explore? explore }) =>
+    RoundedButton(
+      label: Localization().getStringEx('panel.map.select.button.select.location.title', 'Select this Location'),
+      hint: Localization().getStringEx('panel.map.select.button.select.location.hint', ''),
+      //textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentWeight: 0.67,
+      onTap: () => _onTapSelectExploreLocation(context, explore: explore),
+    );
+
+  Widget? _buildSelectCardExplore(BuildContext context, { Explore? explore }) =>
+    RoundedButton(
+      label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
+      hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      contentWeight: -1,
+      onTap: () => _onTapSelectExploreLocation(context, explore: explore),
+    );
+
+  void _onTapSelectExploreLocation(BuildContext context, { Explore? explore }) {
+    Analytics().logSelect(target: 'Select');
+    Navigator.of(context).popUntil((Route route) => (route.settings.name == ExploreMapSelectLocationPanel.routeName));
+    if (explore != null) {
+      Navigator.pop(context, explore);
+    }
   }
 
   void _onTapMapClear() {
@@ -452,6 +508,24 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     );
   }
 
+  // Buildings Header Bar
+
+  Widget _buildBuildingsHeaderBar() => Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+        label: Localization().getStringEx('panel.explore.button.search.buildings.title', 'Search'),
+        hint: Localization().getStringEx('panel.explore.button.search.buildings.hint', 'Tap to search buildings'),
+        contentPadding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
+        onTap: _onBuildingsSearch
+    ),
+  ],);
+
+  void _onBuildingsSearch() {
+    Analytics().logSelect(target: 'Search');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingsSearchPanel(
+      selectLocationBuilder: _buildSelectExplore,
+    )));
+  }
+
   // Locaction Services
 
   bool get _userLocationEnabled {
@@ -473,12 +547,14 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     applyStateIfMounted(() {
       _exploreProgress = true;
     });
-    List<Explore>? explores = await _loadExplores();
-    if (mounted) {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    List<Explore>? explores = await (_exploreTask = exploreTask);
+    if (mounted && (exploreTask == _exploreTask)) {
       await _buildMapContentData(explores, pinnedExplore: widget.selectedExplore, updateCamera: true);
-      if (mounted) {
+      if (mounted && (exploreTask == _exploreTask)) {
         setState(() {
           _explores = explores;
+          _exploreTask = null;
           _exploreProgress = false;
           _mapKey = UniqueKey(); // force map rebuild
         });
@@ -487,10 +563,36 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     }
   }
 
+  Future<void> _refreshExplores() async {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    List<Explore>? explores = await (_exploreTask = exploreTask);
+    if (mounted && (exploreTask == _exploreTask)) {
+      if (!DeepCollectionEquality().equals(_explores, explores)) {
+        await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
+        if (mounted && (exploreTask == _exploreTask)) {
+          setState(() {
+            _explores = explores;
+            _exploreProgress = false;
+            _exploreTask = null;
+          });
+        }
+      }
+      else {
+        setState(() {
+          _exploreTask = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    await _refreshExplores() ;
+  }
+
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
       switch (_mapType) {
-        case ExploreMapType.Events2: return Events2().loadEventsList(Events2Query());
+        case ExploreMapType.Events2: return _loadEvents2();
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
         case ExploreMapType.Buildings: return Gateway().loadBuildings();
@@ -505,6 +607,9 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     }
     return null;
   }
+
+  Future<List<Explore>?> _loadEvents2() async =>
+    await Events2().loadEventsList(Events2Query());
 
   Future<List<Explore>?> _loadDinings() async {
     return Dinings().loadBackendDinings(false, null, null);
