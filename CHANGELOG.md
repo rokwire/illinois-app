@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed WalletHomePanel current analytics feature [#4418](https://github.com/rokwire/illinois-app/issues/4418).
+- Updated soundbyte icons [#4412](https://github.com/rokwire/illinois-app/issues/4412).
 
 ## [6.0.51] - 2024-10-15
 ### Fixed
