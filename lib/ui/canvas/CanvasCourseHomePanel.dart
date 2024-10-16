@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
@@ -39,6 +40,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class CanvasCourseHomePanel extends StatefulWidget with AnalyticsInfo {
   final int? courseId;
@@ -177,10 +179,19 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
 
   void _onTapLaunch() async {
     Analytics().logSelect(target: 'Canvas Course -> Launch Canvas');
-    String? courseDeepLinkFormat = Config().canvasCourseDeepLinkFormat;
-    String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_course!.id]) : null;
-    if (StringUtils.isNotEmpty(courseDeepLink)) {
-      await Canvas().openCanvasAppDeepLink(courseDeepLink!);
+    if (kIsWeb) {
+      // Open the web dashboard
+      String? canvasUrl = Config().canvasUrl;
+      Uri? uri = StringUtils.isNotEmpty(canvasUrl) ? Uri.tryParse(canvasUrl!) : null;
+      if ((uri != null) && await url_launcher.canLaunchUrl(uri)) {
+        await url_launcher.launchUrl(uri);
+      }
+    } else {
+      String? courseDeepLinkFormat = Config().canvasCourseDeepLinkFormat;
+      String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_course!.id]) : null;
+      if (StringUtils.isNotEmpty(courseDeepLink)) {
+        await Canvas().openCanvasAppDeepLink(courseDeepLink!);
+      }
     }
   }
 
