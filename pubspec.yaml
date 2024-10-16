@@ -104,11 +104,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# comment the override below if published plugin is used
 dependency_overrides:
+  # comment the override below if published plugin is used
   font_awesome_flutter:
     path: plugin/plugins/font_awesome_flutter
-  chewie: ^1.8.1 # Resolving transitive dependency issues (web). This is in conflict with package_info_plus and flutter_widget_from_html.
+  # Resolving transitive dependency issues (web). This is in conflict with package_info_plus and flutter_widget_from_html.
+  chewie: ^1.8.1
+  # Resolving transitive dependency issues (web). This is in conflict with share_plus and permission_handler_html. Source: https://github.com/Baseflow/flutter-permission-handler/issues/1363
+  web: ^1.0.0
+  permission_handler_html:
+    git:
+      url: https://github.com/hpoul/flutter-permission-handler.git
+      path: permission_handler_html
+      ref: permissiondescriptor
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

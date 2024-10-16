@@ -1210,13 +1210,14 @@ packages:
     source: hosted
     version: "9.4.5"
   permission_handler_html:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: permission_handler_html
-      sha256: d220eb8476b466d58b161e10b3001d93999010a26228a3fb89c4280db1249546
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.3+1"
+      path: permission_handler_html
+      ref: permissiondescriptor
+      resolved-ref: "871e0b5d2e2ea808f3264f388efdecc4fb64bf19"
+      url: "https://github.com/hpoul/flutter-permission-handler.git"
+    source: git
+    version: "0.1.3+2"
   permission_handler_platform_interface:
     dependency: transitive
     description:
@@ -1577,10 +1578,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_common
-      sha256: "3da423ce7baf868be70e2c0976c28a1bb2f73644268b7ffa7d2e08eab71f16a4"
+      sha256: "4468b24876d673418a7b7147e5a08a715b4998a7ae69227acafaab762e0e5490"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.4"
+    version: "2.5.4+5"
   sqflite_common_ffi:
     dependency: transitive
     description:
@@ -1593,10 +1594,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_common_ffi_web
-      sha256: cfc9d1c61a3e06e5b2e96994a44b11125b4f451fee95b9fad8bd473b4613d592
+      sha256: f540ad769e5fd31aabe77bfa6e774fdd36145a83e33cdc39239f310c5f8559c3
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.3+1"
+    version: "0.4.5+3"
   sqlite3:
     dependency: transitive
     description:
@@ -1902,7 +1903,7 @@ packages:
     source: hosted
     version: "1.2.1"
   web:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: web
       sha256: cd3543bd5798f6ad290ea73d210f423502e71900302dde696f8bff84bf89a1cb
