@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
