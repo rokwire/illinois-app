@@ -47,7 +47,7 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/explore/StoriedSightsBottomSheet.dart';
+import 'package:illinois/ui/explore/ExploreStoriedSightsBottomSheet.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -132,7 +132,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   final GlobalKey _mapContainerKey = GlobalKey();
   final GlobalKey _mapExploreBarKey = GlobalKey();
-  final GlobalKey<StoriedSightsBottomSheetState> _storiedSightsKey = GlobalKey<StoriedSightsBottomSheetState>();
+  final GlobalKey<ExploreStoriedSightsBottomSheetState> _storiedSightsKey = GlobalKey<ExploreStoriedSightsBottomSheetState>();
   final String _mapStylesAssetName = 'assets/map.styles.json';
   final String _mapStylesExplorePoiKey = 'explore-poi';
   final String _mapStylesMtdStopKey = 'mtd-stop';
@@ -396,14 +396,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             ),
           ]),
           _buildExploreTypesDropDownContainer(),
-          if (_selectedMapType == ExploreMapType.StoriedSites && _explores != null)
-            StoriedSightsBottomSheet(
+          if (_selectedMapType == ExploreMapType.StoriedSites && _exploreTask == null && _explores != null)
+            ExploreStoriedSightsBottomSheet(
               key: _storiedSightsKey,
               places: _explores?.whereType<Place>().toList() ?? [],
               onPlaceSelected: (places_model.Place place) {
-                // Wrap the Place in a PlaceExploreAdapter and call _centerMapOnExplore
                 _centerMapOnExplore(place);
-                // Optionally, you might also want to select the place on the map
                 _selectMapExplore(place);
               },
             ),
