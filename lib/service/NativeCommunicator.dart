@@ -63,7 +63,7 @@ class NativeCommunicator with Service {
 
   Future<void> _nativeInit() async {
     if (kIsWeb) {
-      debugPrint('WEB: init - not implemented.');
+      debugPrint('WEB: native init - not implemented.');
       return;
     }
     try {
