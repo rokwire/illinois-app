@@ -80,6 +80,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
+## [6.0.53] - 2024-10-18
+### Added
+- Added sub-features for Map, Events, Groups, ResearchProjects and Dining features [#4425](https://github.com/rokwire/illinois-app/issues/4425).
+
 ## [6.0.52] - 2024-10-16
 ### Fixed
 - Fixed WalletHomePanel current analytics feature [#4418](https://github.com/rokwire/illinois-app/issues/4418).

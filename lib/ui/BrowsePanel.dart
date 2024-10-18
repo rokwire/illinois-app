@@ -859,12 +859,17 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDiningsAll(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel() ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
+      analyticsFeature: AnalyticsFeature.DiningAll
+    )));
   }
 
   void _onTapDiningsOpen(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
+      initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}),
+      analyticsFeature: AnalyticsFeature.DiningOpen,
+    )));
   }
 
   void _onTapLaundry(BuildContext context) {
@@ -890,12 +895,17 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Events Feed");
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context,
+      analyticsFeature: AnalyticsFeature.EventsAll,
+    );
   }
 
   void _onTapMyEvents(BuildContext context) {
     Analytics().logSelect(target: "My Events");
-    Event2HomePanel.present(context, types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]));
+    Event2HomePanel.present(context,
+      types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
+      analyticsFeature: AnalyticsFeature.EventsMy,
+    );
   }
 
   void _onTapTwitter(BuildContext context) {

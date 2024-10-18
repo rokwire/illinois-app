@@ -44,16 +44,17 @@ class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
   final List<Explore>? explores;
   final ExploreMapType? exploreMapType;
   final Position? initialLocationData;
+  final AnalyticsFeature? _analyticsFeature;
   final ExploreSelectLocationBuilder? selectLocationBuilder;
 
-  ExploreListPanel({ this.explores, this.exploreMapType, this.initialLocationData, this.selectLocationBuilder });
+  ExploreListPanel({this.explores, this.exploreMapType, this.initialLocationData, AnalyticsFeature? analyticsFeature, this.selectLocationBuilder}) :
+    _analyticsFeature = analyticsFeature;
 
   @override
-  _ExploreListPanelState createState() =>
-      _ExploreListPanelState();
+  _ExploreListPanelState createState() => _ExploreListPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Map;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? AnalyticsFeature.Map;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => ((explores != null) && (explores?.isNotEmpty == true)) ?
@@ -133,12 +134,12 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
     }
     else if (explore is StudentCourse) {
       return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: isLast ? 16 : 0), child:
-        StudentCourseCard(course: explore,),
+        StudentCourseCard(course: explore, analyticsFeature: widget._analyticsFeature,),
       );
     }
     else if (explore is Appointment) {
       return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: isLast ? 16 : 0), child:
-        AppointmentCard(appointment: explore)
+        AppointmentCard(appointment: explore, analyticsFeature: widget._analyticsFeature,)
       );
     }
     else {
@@ -154,13 +155,13 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
 
   void _onTapExplore(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
-    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData, selectLocationBuilder: widget.selectLocationBuilder);
+    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData, analyticsFeature: widget._analyticsFeature, selectLocationBuilder: widget.selectLocationBuilder);
   }
 
   void _onTapMTDStop(MTDStop? stop) {
     Analytics().logSelect(target: "Bus Stop: ${stop?.name}" );
     if (stop != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop, analyticsFeature: widget._analyticsFeature,)));
     }
   }
 

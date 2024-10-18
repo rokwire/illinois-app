@@ -39,31 +39,33 @@ import 'package:rokwire_plugin/model/group.dart';
 class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
   final Explore? explore;
   final Position? initialLocationData;
+  final AnalyticsFeature? _analyticsFeature;
   final Group? browseGroup;
 
-  ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroup});
+  ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroup, AnalyticsFeature? analyticsFeature}) :
+    _analyticsFeature = analyticsFeature;
 
-  static Widget? contentPanel({Explore? explore, Position? initialLocationData, Group? browseGroup}) {
+  static Widget? contentPanel({Explore? explore, Position? initialLocationData, AnalyticsFeature? analyticsFeature, Group? browseGroup}) {
     if (explore is Dining) {
-      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData);
+      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature);
     }
     else if (explore is LaundryRoom) {
-      return LaundryRoomDetailPanel(room: explore);
+      return LaundryRoomDetailPanel(room: explore, analyticsFeature: analyticsFeature);
     }
     else if (explore is Game) {
-      return AthleticsGameDetailPanel(game: explore);
+      return AthleticsGameDetailPanel(game: explore, analyticsFeature: analyticsFeature);
     }
     else if (explore is Building) {
-      return ExploreBuildingDetailPanel(building: explore);
+      return ExploreBuildingDetailPanel(building: explore, analyticsFeature: analyticsFeature);
     }
     else if (explore is MTDStop) {
-      return MTDStopDeparturesPanel(stop: explore,);
+      return MTDStopDeparturesPanel(stop: explore, analyticsFeature: analyticsFeature);
     }
     else if (explore is StudentCourse) {
-      return StudentCourseDetailPanel(course: explore,);
+      return StudentCourseDetailPanel(course: explore, analyticsFeature: analyticsFeature);
     }
     else if (explore is Appointment) {
-      return AppointmentDetailPanel(appointment: explore);
+      return AppointmentDetailPanel(appointment: explore, analyticsFeature: analyticsFeature);
     }
     else { // Default for unexpected type
       return null;
@@ -71,14 +73,14 @@ class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
   }
 
   @override
-  AnalyticsFeature? get analyticsFeature => explore?.analyticsFeature;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? explore?.analyticsFeature;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => explore?.analyticsAttributes;
 
   @override
   Widget build(BuildContext context) {
-    return contentPanel(explore: explore, initialLocationData: initialLocationData, browseGroup: browseGroup) ?? Scaffold(
+    return contentPanel(explore: explore, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature, browseGroup: browseGroup) ?? Scaffold(
       appBar: HeaderBar(),
     );
   }
