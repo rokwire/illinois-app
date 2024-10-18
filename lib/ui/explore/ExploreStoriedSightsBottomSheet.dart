@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
@@ -578,6 +579,13 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         padding: const EdgeInsets.all(16.0),
         child: MarkdownBody(
           data: _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
+          onTapLink: (text, href, title) {
+            if (href?.startsWith('https://') == true) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)));
+              return;
+            }
+            UrlUtils.launchExternal(href);
+          },
           styleSheet: MarkdownStyleSheet(
             p: Styles().textStyles.getTextStyle("widget.description.regular"),
             h1: Styles().textStyles.getTextStyle("widget.title.huge.extra_fat"),
