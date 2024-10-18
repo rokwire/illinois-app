@@ -544,17 +544,33 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
+  // void _onTapMarker(dynamic origin) {
+  //   if (_selectedMapType == ExploreMapType.StoriedSites && (origin is List<Explore> || origin is Place)) {
+  //     if(origin is Place){
+  //       _storiedSightsKey.currentState?.selectPlace(origin);
+  //       //_centerMapOnExplore(origin);
+  //     }
+  //
+  //   } else {
+  //     _selectMapExplore(origin);
+  //   }
+  // }
+
   void _onTapMarker(dynamic origin) {
     if (_selectedMapType == ExploreMapType.StoriedSites && (origin is List<Explore> || origin is Place)) {
-      if(origin is Place){
+      if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
-        //_centerMapOnExplore(origin);
+        _centerMapOnExplore(origin);
+      } else if (origin is List<Explore>) {
+        List<places_model.Place> places = origin.cast<places_model.Place>();
+        _storiedSightsKey.currentState?.selectPlaces(places);
+        _centerMapOnExplore(places);
       }
-
     } else {
       _selectMapExplore(origin);
     }
   }
+
 
   void _centerMapOnExplore(dynamic explore) {
     LatLng? targetPosition;

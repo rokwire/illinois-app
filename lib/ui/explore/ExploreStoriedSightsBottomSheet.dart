@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
@@ -702,7 +704,9 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Widget _buildShareLocationRow() {
     return GestureDetector(
       onTap: () {
-        // TODO: impment
+        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+            QrCodePanel.fromPlace(_selectedDestination)
+        ));
       },
       child: Row(
         children: [
@@ -1038,6 +1042,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
   void selectPlace(places_model.Place place) {
     setState(() {
+      _storiedSights = _allPlaces;
       _selectedDestination = place;
     });
     _controller.animateTo(
@@ -1045,11 +1050,24 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
-    if (_scrollController != null) {
-      _scrollController?.jumpTo(0.0);
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController != null) {
+        _scrollController!.jumpTo(0.0);
+      }
+    });
+
     widget.onPlaceSelected(place);
   }
+
+  void selectPlaces(List<places_model.Place> places) {
+    setState(() {
+      _storiedSights = places;
+      _selectedDestination = null;
+    });
+    // Adjust controller or scroll position if needed
+  }
+
 
 //For testing
 // static List<places_model.Place> _getDefaultCampusDestinations() {
