@@ -54,6 +54,14 @@ class AnalyticsFeature {
   static const AnalyticsFeature   EventsAll                      = AnalyticsFeature("Events: All", priority: -1);
   static const AnalyticsFeature   EventsMy                       = AnalyticsFeature("Events: My", priority: -1);
 
+  static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
+  static const AnalyticsFeature   GroupsAll                      = AnalyticsFeature("Groups: All", priority: -1);
+  static const AnalyticsFeature   GroupsMy                       = AnalyticsFeature("Groups: My", priority: -1);
+
+  static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
+  static const AnalyticsFeature   ResearchProjectOpen            = AnalyticsFeature("Research at Illinois: Open", priority: -1);
+  static const AnalyticsFeature   ResearchProjectMy              = AnalyticsFeature("Research at Illinois: My", priority: -1);
+
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
@@ -74,7 +82,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
   static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
   static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
 

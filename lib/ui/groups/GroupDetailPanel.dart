@@ -75,21 +75,25 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final String? groupIdentifier;
   final String? groupPostId;
+  final AnalyticsFeature? _analyticsFeature;
 
-  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId});
+  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature}) :
+    _analyticsFeature = analyticsFeature;
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? _defaultAnalyticsFeature;
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return group?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes =>
+    group?.analyticsAttributes;
 
   String? get groupId => group?.id ?? groupIdentifier;
+
+  AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
