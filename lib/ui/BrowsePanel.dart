@@ -882,7 +882,7 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Events Feed");
     Event2HomePanel.present(context,
-      analyticsFeature: AnalyticsFeature.EventsMy
+      analyticsFeature: AnalyticsFeature.EventsAll,
     );
   }
 
@@ -890,7 +890,7 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "My Events");
     Event2HomePanel.present(context,
       types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
-      analyticsFeature: AnalyticsFeature.EventsMy
+      analyticsFeature: AnalyticsFeature.EventsMy,
     );
   }
 
