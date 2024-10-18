@@ -70,9 +70,11 @@ class ExplorePanel extends StatefulWidget with AnalyticsInfo{
 
   final ExploreType exploreType;
   final ExploreFilter? initialFilter;
+  final AnalyticsFeature? _analyticsFeature;
   final Group? browseGroup;
 
-  ExplorePanel({required this.exploreType, this.initialFilter, this.browseGroup });
+  ExplorePanel({required this.exploreType, this.initialFilter, AnalyticsFeature? analyticsFeature, this.browseGroup }) :
+    _analyticsFeature = analyticsFeature;
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -98,7 +100,7 @@ class ExplorePanel extends StatefulWidget with AnalyticsInfo{
   ExplorePanelState createState() => ExplorePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.fromName(exploreType.toString());
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? AnalyticsFeature.fromName(exploreType.toString());
 }
 
 class ExplorePanelState extends State<ExplorePanel>
@@ -1011,7 +1013,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore, browseGroup: widget.browseGroup,)
+          ExploreDetailPanel(explore: explore, analyticsFeature: widget._analyticsFeature, browseGroup: widget.browseGroup,)
       )).then(
           (value){
             if(value!=null && value == true){

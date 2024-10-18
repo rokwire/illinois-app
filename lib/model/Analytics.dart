@@ -62,6 +62,10 @@ class AnalyticsFeature {
   static const AnalyticsFeature   ResearchProjectOpen            = AnalyticsFeature("Research at Illinois: Open", priority: -1);
   static const AnalyticsFeature   ResearchProjectMy              = AnalyticsFeature("Research at Illinois: My", priority: -1);
 
+  static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
+  static const AnalyticsFeature   DiningAll                      = AnalyticsFeature("Dining: All", priority: -1);
+  static const AnalyticsFeature   DiningOpen                     = AnalyticsFeature("Dining: Open", priority: -1);
+
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
@@ -70,7 +74,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Buildings                      = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
   static const AnalyticsFeature   Guide                          = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
   static const AnalyticsFeature   Debug                          = AnalyticsFeature("Debug", priority: 1);
-  static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
   static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");

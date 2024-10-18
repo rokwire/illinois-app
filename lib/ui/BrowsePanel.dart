@@ -850,12 +850,19 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDiningsAll(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(
+      exploreType: ExploreType.Dining,
+      analyticsFeature: AnalyticsFeature.DiningAll,
+    ) ));
   }
 
   void _onTapDiningsOpen(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(
+      exploreType: ExploreType.Dining,
+      initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}),
+      analyticsFeature: AnalyticsFeature.DiningOpen,
+    )));
   }
 
   void _onTapLaundry(BuildContext context) {
