@@ -142,27 +142,46 @@ class AnalyticsFeature {
     MapMentalHealth,
     MapStateFarm,
 
-    Athletics,
     Events,
+    EventsAll,
+    EventsMy,
+
     Groups,
+    GroupsAll,
+    GroupsMy,
+
+    ResearchProject,
+    ResearchProjectOpen,
+    ResearchProjectMy,
+
+    Athletics,
     Guide,
     Settings,
     Profile,
     Notifications,
 
-    AppHelp,
     Dining,
+    DiningAll,
+    DiningOpen,
+
+    AppHelp,
     Buildings,
     MTD,
     News,
     Polls,
     Laundry,
-    Recent,
-    Debug,
-    ResearchProject,
     Radio,
+    Recent,
+    Safety,
+    Debug,
     StateFarmCenter,
     Onboarding,
+
+    Wallet,
+    WalletBusPass,
+    WalletIlliniCash,
+    WalletIlliniID,
+    WalletMealPlan,
 
     Wellness,
     WellnessDailyTips,
@@ -176,11 +195,6 @@ class AnalyticsFeature {
     WellnessPodcast,
     WellnessStruggling,
 
-    Wallet,
-    WalletBusPass,
-    WalletIlliniCash,
-    WalletIlliniID,
-    WalletMealPlan,
   ];
 
   final String name;
