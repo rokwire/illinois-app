@@ -8,6 +8,7 @@ import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_header_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ExploreStoriedSightsBottomSheet extends StatefulWidget {
   final List<places_model.Place> places;
@@ -84,57 +85,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           snapSizes: [0.25, 0.5, 0.95],
           controller: _controller,
           builder: (BuildContext context, ScrollController scrollController) {
-            List<Widget> slivers = [];
             _scrollController = scrollController;
-
-            slivers.add(SliverToBoxAdapter(
-              child: Center(child: _buildDragHandle()),
-            ));
-
-            if (_selectedDestination == null) {
-              slivers.add(
-                SliverAppBar(
-                  pinned: true,
-                  surfaceTintColor: Colors.transparent,
-                  backgroundColor: Colors.white,
-                  automaticallyImplyLeading: false,
-                  title: _buildTitle(),
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(_calculateFilterButtonsHeight()),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: _buildFilterButtons(),
-                        ),
-                        SizedBox(height: 8),
-                        Divider(color: Styles().colors.surfaceAccent, thickness: 2),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
-
-            slivers.add(
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    List<Widget> contentWidgets = _selectedDestination == null
-                        ? _buildPlaceListView()
-                        : _buildSelectedDestinationView();
-                    if (index < contentWidgets.length) {
-                      return contentWidgets[index];
-                    }
-                    return null;
-                  },
-                  childCount: _selectedDestination == null
-                      ? _buildPlaceListView().length
-                      : _buildSelectedDestinationView().length,
-                ),
-              ),
-            );
 
             return Container(
               decoration: BoxDecoration(
@@ -149,12 +100,55 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
               ),
               child: Column(
                 children: [
-                  //Center(child: _buildDragHandle()),
+                  // **Fixed Drag Handle**
+                  _buildDragHandle(),
+
+                  // **Scrollable Content**
                   Expanded(
                     child: CustomScrollView(
                       controller: scrollController,
                       physics: AlwaysScrollableScrollPhysics(),
-                      slivers: slivers,
+                      slivers: [
+                        if (_selectedDestination == null)
+                          SliverAppBar(
+                            pinned: true,
+                            surfaceTintColor: Colors.transparent,
+                            backgroundColor: Colors.white,
+                            automaticallyImplyLeading: false,
+                            title: _buildTitle(),
+                            bottom: PreferredSize(
+                              preferredSize: Size.fromHeight(_calculateFilterButtonsHeight()),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: _buildFilterButtons(),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Divider(color: Styles().colors.surfaceAccent, thickness: 2),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                              List<Widget> contentWidgets = _selectedDestination == null
+                                  ? _buildPlaceListView()
+                                  : _buildSelectedDestinationView();
+                              if (index < contentWidgets.length) {
+                                return contentWidgets[index];
+                              }
+                              return null;
+                            },
+                            childCount: _selectedDestination == null
+                                ? _buildPlaceListView().length
+                                : _buildSelectedDestinationView().length,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -162,10 +156,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             );
           },
         ),
-        if (_isLightboxVisible) _buildLightbox(),
-      ]
+      ],
     );
   }
+
 
   double _calculateFilterButtonsHeight() {
     return _expandedMainTags.isNotEmpty ? 120.0 : 60.0;
@@ -192,7 +186,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
               color: Colors.black54,
             ),
           ),
-          // Centered image and caption
           LayoutBuilder(
             builder: (context, constraints) {
               return Column(
@@ -228,11 +221,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
                       ),
                     ],
                   ),
-                  // Caption below the image with width matching the image
                   if (_selectedImage!.caption != null)
                     Container(
                       color: Colors.white,
-                      width: constraints.maxWidth * 0.9, // Match image width
+                      width: constraints.maxWidth * 0.9,
                       padding: EdgeInsets.all(8.0),
                       child: Text(
                         _selectedImage!.caption!,
@@ -251,7 +243,66 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-
+  void _showLightbox(places_model.Image image) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black54,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.all(16.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Image
+                      Image.network(
+                        image.imageUrl,
+                        fit: BoxFit.contain,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                      ),
+                      if (image.caption != null)
+                        Container(
+                          color: Colors.white,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            image.caption!,
+                            style: Styles()
+                                .textStyles
+                                .getTextStyle("widget.description.regular"),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 0.0,
+                  right: 0.0,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   // Method to handle check-in action
   void _handleCheckIn() async {
@@ -379,14 +430,67 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           lastCheckInDate.day == now.day;
     }
 
-    return SmallRoundedButton(
-      label: isCheckedInToday ? Localization().getStringEx('', 'Checked in') : Localization().getStringEx('', 'Check In'),
-      textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-      rightIcon: const SizedBox(),
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
-      onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
+    return Row(
+      children: [
+        SmallRoundedButton(
+          label: isCheckedInToday ? Localization().getStringEx('', 'Checked in') : Localization().getStringEx('', 'Check In'),
+          textStyle: isCheckedInToday ?  Styles().textStyles.getTextStyle("widget.button.title.disabled") : Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+          borderColor: isCheckedInToday ? Styles().colors.surfaceAccent : Styles().colors.fillColorSecondary,
+          rightIcon: const SizedBox(),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
+          onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
+        ),
+        const SizedBox(width: 12),
+        InkWell(
+          onTap: () {
+            showDialog(context: context, builder: (BuildContext context) {
+                return _buildInfoDialog(context);
+                },
+            );
+          },
+          child: Styles().images.getImage('info', size: 16.0) ?? const SizedBox(),
+        ),
+      ],
     );
   }
+
+  Widget _buildInfoDialog(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      backgroundColor: Colors.white,
+      contentPadding: const EdgeInsets.all(16.0),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Styles().images.getImage("close-circle", size: 28.0) ?? const SizedBox(),
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0, bottom: 16),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Your check-in history is not shared with other users.",
+                style: Styles().textStyles.getTextStyle("widget.message.regular"),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildCheckInHistory() {
     if (_selectedDestination == null) return Container();
@@ -457,10 +561,24 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _buildSelectedDestinationHeader(),
       Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(
-          _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
-          style: Styles().textStyles.getTextStyle("widget.description.regular"),
+        child: MarkdownBody(
+          data: _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
+          styleSheet: MarkdownStyleSheet(
+            p: Styles().textStyles.getTextStyle("widget.description.regular"),
+            h1: Styles().textStyles.getTextStyle("widget.title.huge.extra_fat"),
+            h2: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+            h3: Styles().textStyles.getTextStyle("widget.label.small.fat"),
+            h4: Styles().textStyles.getTextStyle("widget.message.light.variant.small"),
+            a: TextStyle(decoration: TextDecoration.underline, color: Styles().colors.fillColorSecondary),
+            listBulletPadding: const EdgeInsets.only(right: 4.0, bottom: 16.0),
+            strong: const TextStyle(fontWeight: FontWeight.bold),
+            em: const TextStyle(fontStyle: FontStyle.italic),
+          )
         ),
+        // child: Text(
+        //   _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
+        //   style: Styles().textStyles.getTextStyle("widget.description.regular"),
+        // ),
       ),
     ];
   }
@@ -561,10 +679,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 2.0), // Adjust this value as needed
+            padding: EdgeInsets.only(top: 2.0),
             child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
           ),
-          SizedBox(width: 4),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               place?.address ?? Localization().getStringEx('', 'No address available'),
@@ -589,7 +707,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       child: Row(
         children: [
           Styles().images.getImage('share', excludeFromSemantics: true) ?? const SizedBox(),
-          SizedBox(width: 4.0),
+          SizedBox(width: 8.0),
           Expanded(
             child: Text(
               Localization().getStringEx('', 'Share this location'),
@@ -619,13 +737,18 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
   Widget _buildImageGallery() {
     if ((_selectedDestination?.images?.length ?? 0) == 1) {
-      return TriangleHeaderImage(
-        flexBackColor: Styles().colors.background,
-        flexImageUrl: _selectedDestination!.images!.first.imageUrl,
-        flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
-        flexLeftToRightTriangleHeight: 53,
-        flexRightToLeftTriangleColor: Styles().colors.background,
-        flexRightToLeftTriangleHeight: 30,
+      return GestureDetector(
+        onTap: () {
+          _showLightbox(_selectedDestination!.images![0]);
+        },
+        child: TriangleHeaderImage(
+          flexBackColor: Styles().colors.background,
+          flexImageUrl: _selectedDestination!.images!.first.imageUrl,
+          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+          flexLeftToRightTriangleHeight: 53,
+          flexRightToLeftTriangleColor: Styles().colors.background,
+          flexRightToLeftTriangleHeight: 30,
+        ),
       );
     }
     return SizedBox(
@@ -638,10 +761,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             margin: EdgeInsets.only(right: 12.0),
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                  _selectedImage = _selectedDestination!.images![index];
-                  _isLightboxVisible = true;
-                });
+                _showLightbox(_selectedDestination!.images![index]);
               },
               child: Image.network(
                 _selectedDestination!.images![index].imageUrl,
