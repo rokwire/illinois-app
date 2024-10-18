@@ -507,6 +507,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
     bool isExpanded = _isHistoryExpanded[placeId] ?? false;
 
+    String headerText = isExpanded
+        ? Localization().getStringEx('', 'You checked in on...')
+        : Localization().getStringEx('', 'You last checked in on $formattedLastDate');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -517,11 +521,15 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             });
           },
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                Localization().getStringEx('', 'You last checked in on $formattedLastDate'),
-                style: Styles().textStyles.getTextStyle("widget.label.small.fat"),
+              Styles().images.getImage('location', excludeFromSemantics: true, size: 16.0) ?? const SizedBox(),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  headerText,
+                  style: isExpanded ? Styles().textStyles.getTextStyle("widget.label.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
+                ),
               ),
               Icon(
                 isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -531,32 +539,37 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           ),
         ),
         if (isExpanded)
-          Column(
-            children: visitedDates.map((date) {
-              String formattedDate = DateFormat('MMMM d, yyyy').format(date);
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    formattedDate,
-                    style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium"),
-                  ),
-                  TextButton(
-                    onPressed: () => _clearCheckInDate(date),
-                    child: Text(
-                      'Clear',
-                      style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")?.apply(
-                          decoration: TextDecoration.underline,
-                          decorationColor: Styles().colors.fillColorSecondary),
+          Padding(
+            padding: EdgeInsets.only(left: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: visitedDates.map((date) {
+                String formattedDate = DateFormat('MMMM d, yyyy').format(date);
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      formattedDate,
+                      style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium"),
                     ),
-                  ),
-                ],
-              );
-            }).toList(),
+                    TextButton(
+                      onPressed: () => _clearCheckInDate(date),
+                      child: Text(
+                        'Clear',
+                        style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")?.apply(
+                            decoration: TextDecoration.underline,
+                            decorationColor: Styles().colors.fillColorSecondary),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
       ],
     );
   }
+
 
   List<Widget> _buildSelectedDestinationView() {
     return [
