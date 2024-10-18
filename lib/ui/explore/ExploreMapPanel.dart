@@ -74,7 +74,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
 
   static const ExploreMapType _defaultMapType = ExploreMapType.Buildings;
 
-  static Map<ExploreMapType, AnalyticsFeature> _contentAnalyticsFeatures = {
+  static Map<ExploreMapType, AnalyticsFeature> contentAnalyticsFeatures = {
     ExploreMapType.Events2:             AnalyticsFeature.MapEvents,
     ExploreMapType.Dining:              AnalyticsFeature.MapDining,
     ExploreMapType.Laundry:             AnalyticsFeature.MapLaundry,
@@ -95,7 +95,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _ExploreMapPanelState();
 
   AnalyticsFeature? get analyticsFeature =>
-    _contentAnalyticsFeatures[_state?._selectedMapType ?? _selectedExploreType()];
+    contentAnalyticsFeatures[_state?._selectedMapType ?? _selectedExploreType()];
 
   ExploreMapType? _selectedExploreType({List<ExploreMapType>? exploreTypes}) {
     exploreTypes ??= _exploreTypes;
