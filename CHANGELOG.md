@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ## [6.1.12] - 2024-10-15
 ### Changed
 - Cleaned up shared explore UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
@@ -78,6 +79,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.52] - 2024-10-16
+### Fixed
+- Fixed WalletHomePanel current analytics feature [#4418](https://github.com/rokwire/illinois-app/issues/4418).
+- Updated soundbyte icons [#4412](https://github.com/rokwire/illinois-app/issues/4412).
+### Added
+- Added user_auth_type standard analytics property [#4419](https://github.com/rokwire/illinois-app/issues/4419).
 
 ## [6.0.51] - 2024-10-15
 ### Fixed
