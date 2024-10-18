@@ -1140,7 +1140,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2ListView() {
     Analytics().logSelect(target: 'List View');
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context, analyticsFeature: widget.analyticsFeature);
   }
 
   // Dropdown Widgets

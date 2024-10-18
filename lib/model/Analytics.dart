@@ -50,6 +50,10 @@ class AnalyticsFeature {
   static const AnalyticsFeature   MapMentalHealth                = AnalyticsFeature("Map: Therapist", priority: -1);
   static const AnalyticsFeature   MapStateFarm                   = AnalyticsFeature("Map: State Farm", priority: -1);
 
+  static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
+  static const AnalyticsFeature   EventsAll                      = AnalyticsFeature("Events: All", priority: -1);
+  static const AnalyticsFeature   EventsMy                       = AnalyticsFeature("Events: My", priority: -1);
+
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
@@ -59,9 +63,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Guide                          = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
   static const AnalyticsFeature   Debug                          = AnalyticsFeature("Debug", priority: 1);
   static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
-  static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
-  static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
@@ -115,6 +117,18 @@ class AnalyticsFeature {
     AcademicsDueDateCatalog,
     AcademicsMyIllini,
     AcademicsAppointments,
+
+    Map,
+    MapEvents,
+    MapDining,
+    MapLaundry,
+    MapBuildings,
+    MapStudentCourse,
+    MapAppointments,
+    MapMTDStops,
+    MapMyLocations,
+    MapMentalHealth,
+    MapStateFarm,
 
     Athletics,
     Events,

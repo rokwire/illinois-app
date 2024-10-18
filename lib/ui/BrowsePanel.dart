@@ -881,12 +881,17 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Events Feed");
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context,
+      analyticsFeature: AnalyticsFeature.EventsMy
+    );
   }
 
   void _onTapMyEvents(BuildContext context) {
     Analytics().logSelect(target: "My Events");
-    Event2HomePanel.present(context, types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]));
+    Event2HomePanel.present(context,
+      types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
+      analyticsFeature: AnalyticsFeature.EventsMy
+    );
   }
 
   /*void _onTapSuggestedEvents(BuildContext context) {

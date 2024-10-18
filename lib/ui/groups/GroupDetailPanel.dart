@@ -2174,7 +2174,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
     if (_group != null) {
-      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!));
+      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!), analyticsFeature: widget.analyticsFeature);
     }
   }
 
