@@ -729,10 +729,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
     );
     if (_selectedMapExplore is Explore) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+        (_selectedMapExplore as Explore).exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType, analyticsFeature: widget.analyticsFeature,),));
     }
     _selectMapExplore(null);
   }
