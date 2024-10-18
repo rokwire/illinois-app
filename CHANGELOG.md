@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added sub-features for Map, Events, Groups, ResearchProjects and Dining features [#4425](https://github.com/rokwire/illinois-app/issues/4425).
 
 ## [6.0.52] - 2024-10-16
 ### Fixed
