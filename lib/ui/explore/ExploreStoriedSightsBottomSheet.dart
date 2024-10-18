@@ -1079,4 +1079,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _selectedDestination = null;
     });
   }
+
+  void resetSelection() {
+    setState(() {
+      _storiedSights = _allPlaces;
+      _selectedDestination = null;
+    });
+  }
 }
