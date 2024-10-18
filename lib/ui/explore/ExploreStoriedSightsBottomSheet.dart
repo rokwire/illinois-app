@@ -1078,37 +1078,5 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _storiedSights = places;
       _selectedDestination = null;
     });
-    // Adjust controller or scroll position if needed
   }
-
-
-//For testing
-// static List<places_model.Place> _getDefaultCampusDestinations() {
-//   return [
-//     places_model.Place(
-//       id: '123',
-//       name: 'Doris Kelley Christopher Illinois Extension Center',
-//       address: '904 W. Nevada St, Urbana, IL 61801',
-//       images: [
-//         places_model.Image(imageUrl: 'https://picsum.photos/100'),
-//         places_model.Image(imageUrl: 'https://picsum.photos/200'),
-//         places_model.Image(imageUrl: 'https://picsum.photos/300'),
-//       ],
-//       latitude: 1.0,
-//       longitude: 1.0,
-//     ),
-//     places_model.Place(
-//       id: '1234',
-//       name: 'Krannert Center for the Performing Arts',
-//       address: '500 S Goodwin Ave, Urbana, IL',
-//       images: [
-//         places_model.Image(imageUrl: 'https://picsum.photos/101'),
-//         places_model.Image(imageUrl: 'https://picsum.photos/201'),
-//         places_model.Image(imageUrl: 'https://picsum.photos/301'),
-//       ],
-//       latitude: 1.0,
-//       longitude: 1.0,
-//     ),
-//   ];
-// }
 }
