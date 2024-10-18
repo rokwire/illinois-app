@@ -758,13 +758,16 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         onTap: () {
           _showLightbox(_selectedDestination!.images![0]);
         },
-        child: TriangleHeaderImage(
-          flexBackColor: Styles().colors.background,
-          flexImageUrl: _selectedDestination!.images!.first.imageUrl,
-          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
-          flexLeftToRightTriangleHeight: 53,
-          flexRightToLeftTriangleColor: Styles().colors.background,
-          flexRightToLeftTriangleHeight: 30,
+        child: SizedBox(
+          height: 200,
+          child: TriangleHeaderImage(
+            flexBackColor: Styles().colors.background,
+            flexImageUrl: _selectedDestination!.images!.first.imageUrl,
+            flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+            flexLeftToRightTriangleHeight: 53,
+            flexRightToLeftTriangleColor: Styles().colors.background,
+            flexRightToLeftTriangleHeight: 30,
+          ),
         ),
       );
     }
