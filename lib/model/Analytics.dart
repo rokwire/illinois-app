@@ -38,6 +38,18 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
   static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
 
+  static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
+  static const AnalyticsFeature   MapEvents                      = AnalyticsFeature("Map: Events", priority: -1);
+  static const AnalyticsFeature   MapDining                      = AnalyticsFeature("Map: Dining", priority: -1);
+  static const AnalyticsFeature   MapLaundry                     = AnalyticsFeature("Map: Laundry", priority: -1);
+  static const AnalyticsFeature   MapBuildings                   = AnalyticsFeature("Map: Buildings", priority: -1);
+  static const AnalyticsFeature   MapStudentCourse               = AnalyticsFeature("Map: Student Courses", priority: -1);
+  static const AnalyticsFeature   MapAppointments                = AnalyticsFeature("Map: Appointments", priority: -1);
+  static const AnalyticsFeature   MapMTDStops                    = AnalyticsFeature("Map: MTD Stops", priority: -1);
+  static const AnalyticsFeature   MapMyLocations                 = AnalyticsFeature("Map: My Locations", priority: -1);
+  static const AnalyticsFeature   MapMentalHealth                = AnalyticsFeature("Map: Therapist", priority: -1);
+  static const AnalyticsFeature   MapStateFarm                   = AnalyticsFeature("Map: State Farm", priority: -1);
+
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
@@ -52,7 +64,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
-  static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
   static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
   static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});
   static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
