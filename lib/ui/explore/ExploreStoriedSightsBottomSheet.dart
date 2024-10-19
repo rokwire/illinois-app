@@ -174,78 +174,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     ];
   }
 
-  Widget _buildLightbox() {
-    return Positioned.fill(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _isLightboxVisible = false;
-              });
-            },
-            child: Container(
-              color: Colors.black54,
-            ),
-          ),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // Image
-                      GestureDetector(
-                        onTap: () {
-                          // Prevent closing when tapping on the image
-                        },
-                        child: Image.network(
-                          _selectedImage!.imageUrl,
-                          fit: BoxFit.contain,
-                          // Limit the image width to 90% of the screen width
-                          width: constraints.maxWidth * 0.9,
-                        ),
-                      ),
-                      // Close icon positioned above the top-right corner
-                      Positioned(
-                        top: -28.0, // Adjusted for 4 pixels padding above
-                        right: 0.0,
-                        child: IconButton(
-                          icon: Icon(Icons.close, color: Colors.white),
-                          onPressed: () {
-                            setState(() {
-                              _isLightboxVisible = false;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (_selectedImage!.caption != null)
-                    Container(
-                      color: Colors.white,
-                      width: constraints.maxWidth * 0.9,
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        _selectedImage!.caption!,
-                        style: Styles()
-                            .textStyles
-                            .getTextStyle("widget.description.regular"),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showLightbox(places_model.Image image) {
     showDialog(
       context: context,
@@ -273,7 +201,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
                         fit: BoxFit.contain,
                         width: MediaQuery.of(context).size.width * 0.9,
                       ),
-                      if (image.caption != null)
+                      if (image.caption != null && image.caption != "")
                         Container(
                           color: Colors.white,
                           width: MediaQuery.of(context).size.width * 0.9,
