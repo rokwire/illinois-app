@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -45,13 +46,18 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class ExploreMapSelectLocationPanel extends StatefulWidget {
+class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
 
   final ExploreMapType? mapType;
   final Explore? selectedExplore;
+  final AnalyticsFeature? _analyticsFeature;
 
-  ExploreMapSelectLocationPanel({ Key? key, this.mapType, this.selectedExplore });
+  ExploreMapSelectLocationPanel({ Key? key, this.mapType, this.selectedExplore, AnalyticsFeature? analyticsFeature }) :
+    _analyticsFeature = analyticsFeature;
   
+  @override
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? ExploreMapPanel.contentAnalyticsFeatures[mapType] ?? AnalyticsFeature.Map;
+
   @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();
 
@@ -69,8 +75,6 @@ class ExploreMapSelectLocationPanel extends StatefulWidget {
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
   with SingleTickerProviderStateMixin implements NotificationsListener {
-
-  late ExploreMapType? _mapType;
 
   List<Explore>? _explores;
   bool _exploreProgress = false;
@@ -112,8 +116,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
-    _mapType = widget.mapType;
-
     _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: 0, upperBound: 1, vsync: this)
       ..addListener(() {
         setStateIfMounted(() {
@@ -153,7 +155,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
 
   Widget _buildScaffoldBody() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Visibility(visible: (_mapType == ExploreMapType.Buildings), child:
+      Visibility(visible: (widget.mapType == ExploreMapType.Buildings), child:
         Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
           _buildBuildingsHeaderBar(),
         ),
@@ -392,11 +394,11 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-      (_selectedMapExplore as Explore).exploreLaunchDetail(context, selectLocationBuilder: _buildSelectExplore);
+      (_selectedMapExplore as Explore).exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature, selectLocationBuilder: _buildSelectExplore);
     }
     else if (_selectedMapExplore is List<Explore>) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(
-        explores: _selectedMapExplore, exploreMapType: _mapType, selectLocationBuilder: _buildSelectExplore,
+        explores: _selectedMapExplore, exploreMapType: widget.mapType, analyticsFeature: widget.analyticsFeature, selectLocationBuilder: _buildSelectExplore,
       ),));
     }
     _selectMapExplore(null);
@@ -591,7 +593,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
-      switch (_mapType) {
+      switch (widget.mapType) {
         case ExploreMapType.Events2: return _loadEvents2();
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
@@ -655,7 +657,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   // Favorites
 
   void _onFavoritesChanged() {
-    if (_mapType == ExploreMapType.MyLocations) {
+    if (widget.mapType == ExploreMapType.MyLocations) {
       _refreshMyLocations();
     }
     else {
