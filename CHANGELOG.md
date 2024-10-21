@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Improved HomePanel accessibility- tab buttons and heading [#4411](https://github.com/rokwire/illinois-app/issues/4411). 
+### Changed
+- Implemented [adjustments](https://github.com/rokwire/illinois-app/issues/4363#issuecomment-2423308876) to SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 
 ## [6.1.12] - 2024-10-15
 ### Changed
