@@ -55,7 +55,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
     Column(children: <Widget>[
       Container(
         color: _bodyColor,
-        padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+        padding: EdgeInsets.only(left: 24, top: 16, right: 24),
         child: Semantics(
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
           container: true,
@@ -126,7 +126,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
       }
     }
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
       SingleChildScrollView(child:
         Column(children: contentList)
       )

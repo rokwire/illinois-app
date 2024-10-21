@@ -67,7 +67,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
   Widget _mainLayer(BuildContext context) =>
     Container(decoration: _mainLayerDecoration, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
+        Padding(padding: EdgeInsets.only(left: 24, top: 32), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -75,13 +75,13 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
               ),
             ),
             InkWell(onTap: () => _onTapOptions(context), child:
-              Padding(padding: EdgeInsets.all(16), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
                 Styles().images.getImage('more-white', excludeFromSemantics: true)
               )
             )
           ],),
         ),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        Padding(padding: EdgeInsets.only(left: 24, right: 16, bottom: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(_subTitle1Text, style: _subTitleTextStyle,),
             Text(_subTitle2Text, style: _subTitleTextStyle,),
@@ -103,7 +103,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
               ),
             ],)
           ),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+          Padding(padding: EdgeInsets.only(left: 24, right: 24), child:
             SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
           ),
         ],),
@@ -111,7 +111,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     );
 
   Widget _detailsLayer(BuildContext context) =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16,), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24,), child:
       Column( children: [
         HtmlWidget(_phoneDetailHtml,
           onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
@@ -211,7 +211,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (context) => Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: [
           RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.about.text', 'About SafeWalks'), rightIconKey: 'external-link', onTap: () => _onTapAboutSafeWalks(context)),
           RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.share.text', 'Share SafeWalks'), onTap: () => _onTapShareSafeWalks(context)),
