@@ -805,16 +805,20 @@ class _HomeContentTab extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
-      child: Center(child:
-        Row(mainAxisSize: MainAxisSize.min, children: [
-          _iconWidget,
-          _textWidget,
-        ],)
-      ), 
-    ),
+    Semantics(label: "$_text tab", button: true,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
+        child: Center(child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            _iconWidget,
+            Semantics(excludeSemantics: true, child:
+              _textWidget,
+            )
+          ],)
+        ),
+      ),
+    )
   );
 
   Widget get _iconWidget {
