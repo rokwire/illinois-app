@@ -174,6 +174,7 @@
     "widget.message.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "mediumGray"},
+    "widget.message.tiny": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
     "widget.message.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textBackground"},
@@ -373,6 +374,8 @@
     "widget.button.title.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.semi_fat.underline": { "extends": "widget.button.title.small.semi_fat", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.small.semi_fat.underline.highlight": { "extends": "widget.button.title.small.semi_fat.underline", "color": "white", "decoration_color":  "white"},
+    "widget.button.title.tiny": { "font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.button.title.tiny.underline": { "extends": "widget.button.title.tiny", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.button.description.medium": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
@@ -717,7 +720,7 @@
     "panel.essential_skills_coach.results.table.header": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
 
     "panel.safewalks_request.title" : { "font_family": "extra_bold", "size": 28.0, "color": "white"},
-    "panel.safewalks_request.sub_title" : { "font_family": "bold", "size": 18.0, "color": "deepOrange", "height": 1.20 },
+    "panel.safewalks_request.sub_title" : { "font_family": "bold", "size": 16.0, "color": "deepOrange", "height": 1.20 },
     "panel.safewalks_request.info" : {"font_family": "regular", "size": 16.0, "color": "white", "height": 1.20 },
 
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
