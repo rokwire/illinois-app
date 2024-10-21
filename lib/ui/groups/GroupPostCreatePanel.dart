@@ -19,8 +19,9 @@ import 'GroupWidgets.dart';
 
 class GroupPostCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group group;
+  final String? inReplyTo;
 
-  GroupPostCreatePanel({required this.group});
+  GroupPostCreatePanel({required this.group, this.inReplyTo});
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
@@ -64,9 +65,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           leading: HeaderBackButton(),
           title: Text(
             Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-            style: Styles().textStyles.getTextStyle("panel.group_post_create.heading.regular")
+            style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light")
           ),
-          centerTitle: false),
+          centerTitle: false,
+          titleSpacing: 0,),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: Stack(alignment: Alignment.topCenter, children: [
@@ -92,25 +94,25 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   _buildScheduleWidget(),
                   _buildNudgesWidget(),
                   Container(height: 12,),
-                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
-                    style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                    child: TextField(
-                      controller: TextEditingController(text: _postData.subject),
-                      onChanged: (msg)=> _postData.subject = msg,
-                      maxLines: 1,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                        hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
-                        hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
-                        fillColor: Styles().colors.surface,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray,
-                              width: 0.0))),
-                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
+                  // Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
+                  //   style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+                  // Padding(
+                  //   padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
+                  //   child: TextField(
+                  //     controller: TextEditingController(text: _postData.subject),
+                  //     onChanged: (msg)=> _postData.subject = msg,
+                  //     maxLines: 1,
+                  //     textCapitalization: TextCapitalization.sentences,
+                  //     decoration: InputDecoration(
+                  //       hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
+                  //       hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
+                  //       fillColor: Styles().colors.surface,
+                  //       filled: true,
+                  //       border: OutlineInputBorder(
+                  //         borderSide: BorderSide(
+                  //             color: Styles().colors.mediumGray,
+                  //             width: 0.0))),
+                  //     style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
                   PostInputField(
                     text: _postData.body,
                     onBodyChanged: (text) => _postData.body = text,
@@ -217,7 +219,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
     _selectedMembers = selectedMembers;
     _clearScheduleDate(); //Members Selection disables scheduling
-    _updateState();
+    setStateIfMounted();
   }
 
   List<DropdownMenuItem<GroupPostNudge?>> get _nudgesDropDownItems {
@@ -243,7 +245,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
     _postData.subject = subject;
     _postData.body = body;
-    _updateState();
+    setStateIfMounted();
   }
 
   void _showPollConfirmationDialogIfNeeded() {
@@ -263,7 +265,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
             Localization().getStringEx('panel.group.detail.post.create.nudges.poll.body.msg', 'Please participate in the course Poll, #%s'),
             [StringUtils.ensureNotEmpty(poll.pinCode?.toString())]);
         _postData.body = StringUtils.ensureNotEmpty(_postData.body) + '\n\n $pollNudgeBodyMsg';
-        _updateState();
+        setStateIfMounted();
       }
     });
   }
@@ -282,10 +284,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
     DateTime? scheduleDate = _postData.dateScheduled;
-    if (StringUtils.isEmpty(subject)) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
-      return;
-    }
+    // if (StringUtils.isEmpty(subject)) {
+    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
+    //   return;
+    // }
 
     if (StringUtils.isEmpty(body)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required"));
@@ -300,7 +302,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
 
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers, dateScheduledUtc: scheduleDate); // if no parentId then this is a new post for the group.
+    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers,
+      dateScheduledUtc: scheduleDate, parentId: widget.inReplyTo); // if no parentId then this is a new post for the group.
 
     Groups().createPost(widget.group.id, post).then((success) {
       if(success){
@@ -394,18 +397,12 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _increaseProgress() {
     _progressLoading++;
-    _updateState();
+    setStateIfMounted();
   }
 
   void _decreaseProgress() {
     _progressLoading--;
-    _updateState();
-  }
-
-  void _updateState() {
-    if (mounted) {
-      setState(() {});
-    }
+    setStateIfMounted();
   }
 
   bool get _isLoading {

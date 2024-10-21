@@ -233,18 +233,18 @@ extension GroupPostExt on GroupPost {
           return "now";
         }
         else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes} ${Localization().getStringEx("generic.time.minutes", "minutes")}";
+          return "${difference.inMinutes} ${difference.inMinutes > 1 ? Localization().getStringEx("generic.time.minutes", "minutes") : Localization().getStringEx("generic.time.minute", "minute")}";
         }
         else if (difference.inHours < 24) {
-          return "${difference.inHours} ${Localization().getStringEx("generic.time.hours", "hours")}";
+          return "${difference.inHours} ${difference.inHours > 1 ? Localization().getStringEx("generic.time.hours", "hours") : Localization().getStringEx("generic.time.hour", "hour")}";
         }
         else if (difference.inDays < 30) {
-          return "${difference.inDays} ${Localization().getStringEx("generic.time.days", "days")}";
+          return "${difference.inDays} ${difference.inDays > 1 ? Localization().getStringEx("generic.time.days", "days") : Localization().getStringEx("generic.time.day", "day")}";
         }
         else {
           int differenceInMonths = difference.inDays ~/ 30;
           if (differenceInMonths < 12) {
-            return "$differenceInMonths ${Localization().getStringEx("generic.time.months", "months")}";
+            return "$differenceInMonths ${differenceInMonths > 1 ? Localization().getStringEx("generic.time.months", "months") : Localization().getStringEx("generic.time.month", "month")}";
           }
         }
       }

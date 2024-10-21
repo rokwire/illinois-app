@@ -124,10 +124,15 @@
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 
     "generic.time.minutes": "minutes",
+    "generic.time.minute": "minute",
     "generic.time.hours": "hours",
+    "generic.time.hour": "hour",
     "generic.time.days": "days",
+    "generic.time.day": "day",
     "generic.time.months": "months",
+    "generic.time.month": "month",
     "generic.time.years": "years",
+    "generic.time.year": "year",
 
     "panel.menu.button.events.title":"Events",
     "panel.menu.button.events.hint":"",
@@ -3956,8 +3961,8 @@
 
     "widget.group_card.pending.label": "Pending: %s",
 
-    "widget.group.card.reply.single.reply.label": "Reply",
-    "widget.group.card.reply.multiple.replies.label": "Replies",
+    "widget.group.card.reply.single.reply.label": "reply",
+    "widget.group.card.reply.multiple.replies.label": "replies",
     "widget.group.card.reply.edited.reply.label": "edited",
 
     "widget.group_card.status.private": "Private",

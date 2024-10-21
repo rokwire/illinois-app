@@ -115,6 +115,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   int                _allEventsCount = 0;
 
   List<GroupPost>    _posts = <GroupPost>[];
+  List<Member>?      _allMembersAllowedToPost;
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
@@ -434,6 +435,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
             _loadingPostsPage = false;
           });
         }
+        _loadMembersAllowedToPost();
       });
     }
   }
@@ -454,6 +456,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           if (_scrollToLastPostAfterRefresh == true) {
             _scheduleLastPostScroll();
           }
+          _loadMembersAllowedToPost();
         }
         _scrollToLastPostAfterRefresh = null;
       });
@@ -483,6 +486,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         _hasMorePosts = false;
       }
     }
+  }
+
+  void _loadMembersAllowedToPost() {
+    setState(() {
+      _progress++;
+      _loadingPostsPage = true;
+    });
+    Groups().loadMembersAllowedToPost(groupId: widget.group!.id).then((members) {
+      _allMembersAllowedToPost = members;
+      setState(() {
+        _progress--;
+        _loadingPostsPage = false;
+      });
+    });
   }
 
   // Scheduled Posts
@@ -1215,7 +1232,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group, allMembersAllowedToPost: _allMembersAllowedToPost,));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
@@ -1258,7 +1275,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (i > 0) {
         scheduledPostsContent.add(Container(height: 16));
       }
-      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group));
+      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group, allMembersAllowedToPost: _allMembersAllowedToPost,));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {

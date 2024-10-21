@@ -124,10 +124,15 @@
 	"generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 
 	"generic.time.minutes": "分",
+	"generic.time.minute": "分",
 	"generic.time.hours": "时",
+	"generic.time.hour": "时",
 	"generic.time.days": "日",
+	"generic.time.day": "日",
 	"generic.time.months": "月",
+	"generic.time.month": "月",
 	"generic.time.years": "年",
+	"generic.time.year": "年",
 
 	"panel.menu.button.events.title":"活动",
 	"panel.menu.button.events.hint":"",
