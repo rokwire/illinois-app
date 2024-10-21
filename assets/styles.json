@@ -717,7 +717,7 @@
     "panel.essential_skills_coach.results.table.header": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
 
     "panel.safewalks_request.title" : { "font_family": "extra_bold", "size": 28.0, "color": "white"},
-    "panel.safewalks_request.sub_title" : { "font_family": "bold", "size": 18.0, "color": "deepOrange", "height": 1.20 },
+    "panel.safewalks_request.sub_title" : { "font_family": "bold", "size": 16.0, "color": "deepOrange", "height": 1.20 },
     "panel.safewalks_request.info" : {"font_family": "regular", "size": 16.0, "color": "white", "height": 1.20 },
 
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
