@@ -392,7 +392,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           DropdownButton<_SafeWalkLocationType>(
             icon: Styles().images.getImage('chevron-down'),
             isExpanded: true,
-            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+            style: _dropDownItemTextStyle,
             dropdownColor: Styles().colors.surface,
             hint: _dropdownButtonHint(text: text, progress: progress),
             items: items,
@@ -459,7 +459,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     );
 
   TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.small.fat');
-  TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.semi_fat');
+  TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.small.semi_fat');
 
   double get _detailIconSize => 18;
   Widget get _detailIconSpacer => SizedBox(width: _detailIconSize, height: _detailIconSize,);
