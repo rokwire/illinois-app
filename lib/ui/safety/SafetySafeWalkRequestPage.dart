@@ -115,7 +115,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
       Column( children: [
         HtmlWidget(_phoneDetailHtml,
           onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
-          textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
+          textStyle:  _htmlDetailTextStyle,
           customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
         ),
         Container(height: 24,),
@@ -124,10 +124,12 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
             Styles().images.getImage('info') ?? _detailIconSpacer,
           ),
           Expanded(child:
+            Align(alignment: Alignment.topLeft, child:
             HtmlWidget(_safeRidesDetailHtml,
               onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: 'SafeRides'); return true;},
-              textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
+              textStyle:  _htmlDetailTextStyle,
               customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+            ),
             ),
           )
         ],),
@@ -139,7 +141,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
             InkWell(onTap: () => _onTapLocationSettings(context), child:
               Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                 Text(Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings'),
-                  style:  Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
+                  style:  Styles().textStyles.getTextStyle("widget.button.title.tiny.underline"),
                 ),
               )
             )
@@ -189,6 +191,8 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     Localization().getStringEx('panel.safewalks_request.info3.text', 'Available $_safeWalkStartTimeMacro to $_safeWalkEndTimeMacro')
       .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '9:00 p.m.')
       .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '2:30 a.m.');
+
+  TextStyle? get _htmlDetailTextStyle => Styles().textStyles.getTextStyle('widget.message.tiny');
 
   String get _phoneDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.phone.html', 'You can also schedule a walk by calling <a href=\'tel:$_safeWalkPhoneNumberMacro\'>$_safeWalkPhoneNumberMacro</a>.')
