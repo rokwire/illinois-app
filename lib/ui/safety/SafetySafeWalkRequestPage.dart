@@ -292,7 +292,6 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   static const String _safeWalkOriginUrlMacro = '{{safewalk_origin_url}}';
   static const String _safeWalkDestinationMacro = '{{safewalk_destination}}';
   static const String _safeWalkDestinationUrlMacro = '{{safewalk_destination_url}}';
-  static const String _safeWalkDirectionsUrlMacro = '{{safewalk_directions_url}}';
 
   dynamic _originLocation, _destinationLocation;
   bool _originProgress = false, _destinationProgress = false, _sendProgress = false;
@@ -583,9 +582,6 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   Future<String?> _locationUrl(dynamic location) =>
     GeoMapUtils.locationUrl(_locationUrlSource(location));
 
-  Future<String?> _directionsUrl({dynamic origin, dynamic destination}) =>
-    GeoMapUtils.directionsUrl(origin: _locationUrlSource(origin), destination: _locationUrlSource(destination), travelMode: 'walking');
-
   dynamic _locationUrlSource(dynamic location) {
     if (location is Position) {
       return LatLng(location.latitude, location.longitude);
@@ -664,15 +660,14 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       }
       else {
         String messageSource = Auth2().isOidcLoggedIn ?
-          Localization().getStringEx('widget.safewalks_request.message.sms.logged_in.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro\n\nMy Route:\n$_safeWalkDirectionsUrlMacro') :
-          Localization().getStringEx('widget.safewalks_request.message.sms.logged_out.text', 'Hi, I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro\n\nMy Route:\n$_safeWalkDirectionsUrlMacro');
+          Localization().getStringEx('widget.safewalks_request.message.sms.logged_in.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro') :
+          Localization().getStringEx('widget.safewalks_request.message.sms.logged_out.text', 'Hi, I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro');
         String message = messageSource
           .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Unauthenticated User'))
           .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
           .replaceAll(_safeWalkOriginUrlMacro, await _locationUrl(_originLocation) ?? '')
           .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
-          .replaceAll(_safeWalkDestinationUrlMacro, await _locationUrl(_destinationLocation) ?? '')
-          .replaceAll(_safeWalkDirectionsUrlMacro, await _directionsUrl(origin: _originLocation, destination: _destinationLocation) ?? '');
+          .replaceAll(_safeWalkDestinationUrlMacro, await _locationUrl(_destinationLocation) ?? '');
 
         String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
         Uri? uri = Uri.tryParse(url);
