@@ -3301,7 +3301,7 @@
     "panel.safewalks_request.sub_title2.text": "You never have to walk alone.",
     "panel.safewalks_request.info1.text": "Request a student patrol officer to walk with you.",
     "panel.safewalks_request.info2.text": "Please give at least {{safewalk_order_interval}} minutes' notice.",
-    "panel.safewalks_request.info3.text": "Available {{safewalk_start_time}} to {{safewalk_end_time}}.",
+    "panel.safewalks_request.info3.text": "Available {{safewalk_start_time}} to {{safewalk_end_time}}",
     "panel.safewalks_request.detail.phone.html": "You can also schedule a walk by calling <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
     "panel.safewalks_request.detail.saferides.html": "Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href='{{saferides_url}}'>SafeRides</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> at night.",
     "panel.safewalks_request.detail.settings.text": "My Location Settings",
