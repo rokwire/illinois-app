@@ -64,86 +64,99 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     _detailsLayer(context),
   ],);
 
-  Widget _mainLayer(BuildContext context) => Container(color: widget.safetyPageBackgroundColor, child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-              Text(Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'), style: _titleTextStyle,)
+  Widget _mainLayer(BuildContext context) =>
+    Container(decoration: _mainLayerDecoration, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                Text(Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'), style: _titleTextStyle,)
+              ),
             ),
+            InkWell(onTap: () => _onTapOptions(context), child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Styles().images.getImage('more-white', excludeFromSemantics: true)
+              )
+            )
+          ],),
+        ),
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(_subTitle1Text, style: _subTitleTextStyle,),
+            Text(_subTitle2Text, style: _subTitleTextStyle,),
+            Container(height: 12,),
+            Text(_info1Text, style: _infoTextStyle,),
+            Text(_info2Text, style: _infoTextStyle,),
+            Container(height: 6,),
+            Text(_info3Text, style: _infoTextStyle,),
+          ])
+        ),
+        Stack(children: [
+          Positioned.fill(child:
+            Column(children: [
+              Expanded(child:
+                Container()
+              ),
+              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+                Container(height: 42,),
+              ),
+            ],)
           ),
-          InkWell(onTap: () => _onTapOptions(context), child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Styles().images.getImage('more-white', excludeFromSemantics: true)
+          Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+            SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
+          ),
+        ],),
+      ],)
+    );
+
+  Widget _detailsLayer(BuildContext context) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16,), child:
+      Column( children: [
+        HtmlWidget(_phoneDetailHtml,
+          onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
+          textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+        ),
+        Container(height: 24,),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+            Styles().images.getImage('info') ?? _detailIconSpacer,
+          ),
+          Expanded(child:
+            HtmlWidget(_safeRidesDetailHtml,
+              onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: 'SafeRides'); return true;},
+              textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+            ),
+          )
+        ],),
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+            Styles().images.getImage('settings') ?? _detailIconSpacer,
+          ),
+          Expanded(child:
+            InkWell(onTap: () => _onTapLocationSettings(context), child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                Text(Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings'),
+                  style:  Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
+                ),
+              )
             )
           )
         ],),
-      ),
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(_subTitle1Text, style: _subTitleTextStyle,),
-          Text(_subTitle2Text, style: _subTitleTextStyle,),
-          Container(height: 12,),
-          Text(_info1Text, style: _infoTextStyle,),
-          Text(_info2Text, style: _infoTextStyle,),
-          Container(height: 6,),
-          Text(_info3Text, style: _infoTextStyle,),
-        ])
-      ),
-      Stack(children: [
-        Positioned.fill(child:
-          Column(children: [
-            Expanded(child:
-              Container()
-            ),
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-              Container(height: 42,),
-            ),
-          ],)
-        ),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
-        ),
-      ],),
-    ],)
-  );
+      ],)
+    );
 
-  Widget _detailsLayer(BuildContext context) => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16,), child:
-    Column( children: [
-      HtmlWidget(_phoneDetailHtml,
-        onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
-        textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
-        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-      ),
-      Container(height: 24,),
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.only(right: 6), child:
-          Styles().images.getImage('info') ?? _detailIconSpacer,
-        ),
-        Expanded(child:
-          HtmlWidget(_safeRidesDetailHtml,
-            onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: 'SafeRides'); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-          ),
-        )
-      ],),
-      Row(children: [
-        Padding(padding: EdgeInsets.only(right: 6), child:
-          Styles().images.getImage('settings') ?? _detailIconSpacer,
-        ),
-        Expanded(child:
-          InkWell(onTap: () => _onTapLocationSettings(context), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-              Text(Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings'),
-                style:  Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
-              ),
-            )
-          )
-        )
-      ],),
-    ],)
+  BoxDecoration get _mainLayerDecoration => BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Styles().colors.fillColorPrimaryVariant,
+        Styles().colors.gradientColorPrimary,
+      ]
+    )
   );
 
   Widget get _detailIconSpacer => SizedBox(width: 18, height: 18,);
