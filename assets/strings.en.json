@@ -3619,7 +3619,7 @@
     "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
-    "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information bellow.",
+    "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
     "widget.home.safety.saferides.title": "SafeRides",
 

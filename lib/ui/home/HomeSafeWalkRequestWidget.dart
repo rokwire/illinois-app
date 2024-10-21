@@ -61,7 +61,7 @@ class HomeSafeWalkRequestWidget extends StatelessWidget {
   static const String _safeWalkEndTimeMacro = '{{safewalk_end_time}}';
 
   String get _infoHtml =>
-    Localization().getStringEx('widget.home.safety.safewalk_request.info', 'To request a student patrol officer to walk with you between $_safeWalkStartTimeMacro and $_safeWalkStartTimeMacro, call <a href=\'tel:$_safeWalkEndTimeMacro\'>$_safeWalkEndTimeMacro</a> or enter your information bellow.')
+    Localization().getStringEx('widget.home.safety.safewalk_request.info', 'To request a student patrol officer to walk with you between $_safeWalkStartTimeMacro and $_safeWalkStartTimeMacro, call <a href=\'tel:$_safeWalkEndTimeMacro\'>$_safeWalkEndTimeMacro</a> or enter your information below.')
       .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '9:00 p.m.')
       .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '2:30 a.m.')
       .replaceAll(_safeWalkPhoneNumberMacro, Config().safeWalkPhoneNumber ?? '');
