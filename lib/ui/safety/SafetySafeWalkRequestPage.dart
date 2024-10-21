@@ -371,7 +371,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
                   //borderColor: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
                   padding: EdgeInsets.symmetric(vertical: 8),
-                  leftIcon: Styles().images.getImage('paper-plane'), //, color: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent),
+                  leftIcon: Styles().images.getImage('paper-plane', size: _sendIconSize),
                   leftIconPadding: EdgeInsets.symmetric(horizontal: 12),
                   rightIconPadding: EdgeInsets.only(left: 24),
                   contentWeight: -1,
@@ -461,6 +461,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.small.fat');
   TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.small.semi_fat');
 
+  double get _sendIconSize => 14;
   double get _detailIconSize => 18;
   Widget get _detailIconSpacer => SizedBox(width: _detailIconSize, height: _detailIconSize,);
 
