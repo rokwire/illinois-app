@@ -3109,6 +3109,8 @@
     "panel.guide_list.label.highlights.empty": "There are no active Campus Guide Highlights.",
     "panel.guide_list.label.campus_safety_resources.section": "Safety Resources",
     "panel.guide_list.label.campus_safety_resources.empty": "There are no active Campus Safety Resources.",
+    "panel.guide_list.label.safety_resources.section": "Safety Resources",
+    "panel.guide_list.label.safety_resources.empty": "There are no active Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
     "panel.guide_list.label.campus_reminders.empty": "There are no active Campus Reminders.",
     "panel.guide_list.label.content.empty": "Empty guide content",
@@ -3556,6 +3558,9 @@
     "widget.home.campus_safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Safety Resources</b></a> for quick access here.",
     "widget.home.campus_safety_resources.button.all.title": "View All",
     "widget.home.campus_safety_resources.button.all.hint": "Tap to view all safety resources",
+
+    "widget.home.safety_resources.label.campus_safety_resources": "Safety Resources",
+    "widget.home.safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Safety Resources</b></a> for quick access here.",
 
     "widget.home.suggested_events.label.events_for_you":"Suggested Events",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",

@@ -236,6 +236,7 @@
 				"explore.map.laundry"                     : false,
 				"wellness.podcast"                        : false,
 				"wellness_podcast"                        : false,
+				"campus_safety_resources"                 : false,
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}"
 			}
 		}

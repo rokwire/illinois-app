@@ -141,7 +141,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
             InkWell(onTap: () => _onTapLocationSettings(context), child:
               Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                 Text(Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings'),
-                  style:  Styles().textStyles.getTextStyle("widget.button.title.tiny.underline"),
+                  style:  Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
                 ),
               )
             )
@@ -192,7 +192,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
       .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '9:00 p.m.')
       .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '2:30 a.m.');
 
-  TextStyle? get _htmlDetailTextStyle => Styles().textStyles.getTextStyle('widget.message.tiny');
+  TextStyle? get _htmlDetailTextStyle => Styles().textStyles.getTextStyle('widget.message.small');
 
   String get _phoneDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.phone.html', 'You can also schedule a walk by calling <a href=\'tel:$_safeWalkPhoneNumberMacro\'>$_safeWalkPhoneNumberMacro</a>.')
