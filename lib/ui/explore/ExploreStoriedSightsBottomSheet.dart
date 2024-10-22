@@ -572,6 +572,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             alignment: Alignment.centerLeft,
           ),
         ),
+        if (_selectedDestination?.types != null && _selectedDestination!.types!.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: _buildTypeChips(_selectedDestination!.types!),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: _buildSelectedDestinationContent(),
@@ -579,6 +584,27 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       ],
     );
   }
+
+  Widget _buildTypeChips(List<String> types) {
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 4.0,
+      children: types.map((type) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          decoration: BoxDecoration(
+            color: Styles().colors.fillColorPrimary,
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          child: Text(
+            type,
+            style: Styles().textStyles.getTextStyle("widget.button.title.small")?.copyWith(color: Colors.white),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
 
   Widget _buildSelectedDestinationContent() {
     return Column(
@@ -749,7 +775,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (place.types != null && place.types!.isNotEmpty)
+              _buildTypeChips(place.types!),
+            SizedBox(height: 8.0),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
