@@ -2264,28 +2264,43 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+
+      Color? markerColor;
+      Color? markerBorderColor;
+      Color? markerTextColor;
+
+      if (_selectedMapType == ExploreMapType.StoriedSites) {
+        markerColor = Styles().colors.fillColorPrimary;
+        markerBorderColor = Styles().colors.fillColorSecondary;
+        markerTextColor = Styles().colors.white;
+      }
+      else {
+        markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+        markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor;
+        markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor;
+      }
+
       String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
-        (_markerIconCache[markerKey] = await _groupMarkerIcon(
-          context: context,
-          imageSize: _mapGroupMarkerSize,
-          backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
-          count: exploreGroup.length,
-        ));
+          (_markerIconCache[markerKey] = await _groupMarkerIcon(
+            context: context,
+            imageSize: _mapGroupMarkerSize,
+            backColor: markerColor,
+            borderColor: markerBorderColor,
+            textColor: markerTextColor,
+            count: exploreGroup.length,
+          ));
       Offset markerAnchor = Offset(0.5, 0.5);
       return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
-        position: markerPosition,
-        icon: markerIcon,
-        anchor: markerAnchor,
-        consumeTapEvents: true,
-        onTap: () => _onTapMarker(exploreGroup),
-        infoWindow: InfoWindow(
-          title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
-          anchor: markerAnchor)
+          markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+          position: markerPosition,
+          icon: markerIcon,
+          anchor: markerAnchor,
+          consumeTapEvents: true,
+          onTap: () => _onTapMarker(exploreGroup),
+          infoWindow: InfoWindow(
+              title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+              anchor: markerAnchor)
       );
     }
     return null;
@@ -2314,6 +2329,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
+
   Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
@@ -2326,7 +2342,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markerAnchor = Offset(0.5, 0.5);
       }
       else {
-        Color? exploreColor = explore?.mapMarkerColor;
+        Color? exploreColor;
+        if (_selectedMapType == ExploreMapType.StoriedSites) {
+          exploreColor = Styles().colors.fillColorPrimary;
+        }
+        else {
+          exploreColor = explore?.mapMarkerColor;
+        }
+
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
         markerAnchor = Offset(0.5, 1);
       }
