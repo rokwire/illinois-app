@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Implemented other [adjustments](https://github.com/rokwire/illinois-app/issues/4363#issuecomment-2428154698) to SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+
 ## [6.1.13] - 2024-10-21
 ### Fixed
 - Improved HomePanel accessibility- tab buttons and heading [#4411](https://github.com/rokwire/illinois-app/issues/4411). 

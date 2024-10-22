@@ -540,11 +540,11 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
     }
     else if (code == 'safety_resources') {
       if (title) {
-        return HomeCampusSafetyResourcesWidget.title;
+        return HomeSafetyResourcesWidget.title;
       } else if (handle) {
-        return HomeCampusSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeCampusSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 
