@@ -33,6 +33,7 @@ class GuideDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Map<String, dynamic>? guideEntry;
   final AnalyticsFeature? _analyticsFeature;
   final bool showTabBar;
+
   GuideDetailPanel({ this.guideEntryId, this.guideEntry, AnalyticsFeature? analyticsFeature, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true }) :
     _analyticsFeature = analyticsFeature;
 

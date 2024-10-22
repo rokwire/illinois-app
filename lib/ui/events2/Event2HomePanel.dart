@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -40,7 +41,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Event2HomePanel extends StatefulWidget {
+class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   static const String routeName = 'Event2HomePanel';
 
@@ -54,11 +55,12 @@ class Event2HomePanel extends StatefulWidget {
   final Event2SortType? sortType;
 
   final Event2Selector2? eventSelector;
+  final AnalyticsFeature? analyticsFeature;  //This overrides AnalyticsInfo.analyticsFeature getter
 
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
     this.types, this.attributes, this.sortType,
-    this.eventSelector
+    this.eventSelector, this.analyticsFeature,
   }) : super(key: key);
 
   factory Event2HomePanel.withFilter(Event2FilterParam filterParam, {Key? key}) => Event2HomePanel(
@@ -78,7 +80,7 @@ class Event2HomePanel extends StatefulWidget {
   static void present(BuildContext context, {
     Event2TimeFilter? timeFilter, TZDateTime? customStartTime, TZDateTime? customEndTime,
     LinkedHashSet<Event2TypeFilter>? types, Map<String, dynamic>? attributes, Event2SortType? sortType,
-    Event2Selector2? eventSelector
+    Event2Selector2? eventSelector, AnalyticsFeature? analyticsFeature,
   }) {
     if ((timeFilter != null) || (attributes != null) || (types != null)) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
@@ -86,11 +88,13 @@ class Event2HomePanel extends StatefulWidget {
         types: types ?? LinkedHashSet<Event2TypeFilter>(),
         attributes: attributes ?? <String, dynamic>{},
         sortType: sortType ?? Event2SortType.dateTime,
-        eventSelector: eventSelector,
+        eventSelector: eventSelector, analyticsFeature: analyticsFeature,
       )));
     }
     else if (Storage().events2Attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
+        eventSelector: eventSelector, analyticsFeature: analyticsFeature,
+      )));
     }
     else {
       getLocationServicesStatus().then((LocationServicesStatus? status) {
@@ -122,7 +126,7 @@ class Event2HomePanel extends StatefulWidget {
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
               types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
               attributes: attributes,
-              eventSelector: eventSelector,
+              eventSelector: eventSelector, analyticsFeature: analyticsFeature,
             )));
           }
         });

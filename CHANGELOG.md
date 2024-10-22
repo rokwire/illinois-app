@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 -  Create a new map formatting and pins [#4405](https://github.com/rokwire/illinois-app/issues/4405)
+## [6.0.53] - 2024-10-18
+### Added
+- Added sub-features for Map, Events, Groups, ResearchProjects and Dining features [#4425](https://github.com/rokwire/illinois-app/issues/4425).
+
+## [6.0.52] - 2024-10-16
+### Fixed
+- Fixed WalletHomePanel current analytics feature [#4418](https://github.com/rokwire/illinois-app/issues/4418).
+- Updated soundbyte icons [#4412](https://github.com/rokwire/illinois-app/issues/4412).
+### Added
+- Added user_auth_type standard analytics property [#4419](https://github.com/rokwire/illinois-app/issues/4419).
+
+
+## [6.0.51] - 2024-10-15
+### Fixed
+- Fixed Poll UI issues [#4414](https://github.com/rokwire/illinois-app/issues/4414).
+
 ## [6.0.50] - 2024-10-03
 ### Fixed
 - Add existing event to group [#4379](https://github.com/rokwire/illinois-app/issues/4379).

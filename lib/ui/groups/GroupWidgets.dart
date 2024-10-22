@@ -639,18 +639,27 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
 enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
-class GroupCard extends StatefulWidget {
+class GroupCard extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final GroupCardDisplayType displayType;
-  final Function? onImageTap;
   final EdgeInsets margin;
+  final Function? onImageTap;
 
-  GroupCard({required this.group,
+  GroupCard({super.key,
+    required this.group,
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
-    Key? key,
-  }) : super(key: key);
+  });
+
+  @override
+  AnalyticsFeature? get analyticsFeature {
+    switch (displayType) {
+      case GroupCardDisplayType.myGroup:    return (group?.isResearchProject != true) ? AnalyticsFeature.GroupsMy : AnalyticsFeature.ResearchProjectMy;
+      case GroupCardDisplayType.allGroups:  return (group?.isResearchProject != true) ? AnalyticsFeature.GroupsAll : AnalyticsFeature.ResearchProjectOpen;
+      case GroupCardDisplayType.homeGroups: return (group?.isResearchProject != true) ? AnalyticsFeature.Groups : AnalyticsFeature.ResearchProject;
+    }
+  }
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -974,7 +983,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
     if (FlexUI().isAuthenticationAvailable) {
       if (Auth2().isOidcLoggedIn) {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
+        Navigator.push(context, CupertinoPageRoute(
+          settings: RouteSettings(name: GroupDetailPanel.routeName),
+          builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature,)
+        ));
       }
       else {
         setState(() { _bussy = true; });
@@ -983,7 +995,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
           if (mounted) {
             setState(() { _bussy = null; });
             if (result == Auth2OidcAuthenticateResult.succeeded) {
-              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
+              Navigator.push(context, CupertinoPageRoute(
+                settings: RouteSettings(name: GroupDetailPanel.routeName),
+                  builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature)
+              ));
             }
           }
         });
@@ -2275,9 +2290,10 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 Expanded( child:
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)),
-                Visibility( visible: didVote,
+                //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
+               /* Visibility( visible: didVote,
                     child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray'))
-                ),
+                ),*/
               ],),)
               ),
             ],)

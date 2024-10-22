@@ -50,8 +50,9 @@ class AthleticsGameDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   final Event2Selector2? eventSelector;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  AthleticsGameDetailPanel({this.game, this.gameId, this.sportName, this.event, this.group, this.eventSelector});
+  AthleticsGameDetailPanel({this.game, this.gameId, this.sportName, this.event, this.group, this.eventSelector, this.analyticsFeature});
 
   @override
   _AthleticsGameDetailPanelState createState() => _AthleticsGameDetailPanelState(game);

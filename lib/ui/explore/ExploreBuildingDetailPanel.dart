@@ -13,11 +13,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ExploreBuildingDetailPanel extends StatefulWidget {
+class ExploreBuildingDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Building? building;
   final String? buildingNumber;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  ExploreBuildingDetailPanel({Key? key, this.building, this.buildingNumber}) : super(key: key);
+  ExploreBuildingDetailPanel({super.key, this.building, this.buildingNumber, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _ExploreBuildingDetailPanelState();

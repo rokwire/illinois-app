@@ -72,28 +72,97 @@ import 'package:rokwire_plugin/model/places.dart' as places_model;
 
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, StoriedSites }
 
-class ExploreMapPanel extends StatefulWidget {
+class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
   static const String selectParamKey = "select-param";
 
+  static const ExploreMapType _defaultMapType = ExploreMapType.Buildings;
+
+  static Map<ExploreMapType, AnalyticsFeature> contentAnalyticsFeatures = {
+    ExploreMapType.Events2:             AnalyticsFeature.MapEvents,
+    ExploreMapType.Dining:              AnalyticsFeature.MapDining,
+    ExploreMapType.Laundry:             AnalyticsFeature.MapLaundry,
+    ExploreMapType.Buildings:           AnalyticsFeature.MapBuildings,
+    ExploreMapType.StudentCourse:       AnalyticsFeature.MapStudentCourse,
+    ExploreMapType.Appointments:        AnalyticsFeature.MapAppointments,
+    ExploreMapType.MTDStops:            AnalyticsFeature.MapMTDStops,
+    ExploreMapType.MyLocations:         AnalyticsFeature.MapMyLocations,
+    ExploreMapType.MentalHealth:        AnalyticsFeature.MapMentalHealth,
+    ExploreMapType.StateFarmWayfinding: AnalyticsFeature.MapStateFarm,
+  };
+
   final Map<String, dynamic> params = <String, dynamic>{};
 
-  ExploreMapPanel();
+  ExploreMapPanel({super.key});
   
   @override
   State<StatefulWidget> createState() => _ExploreMapPanelState();
 
-  static bool get hasState {
+  AnalyticsFeature? get analyticsFeature =>
+    contentAnalyticsFeatures[_state?._selectedMapType ?? _selectedExploreType()];
+
+  ExploreMapType? _selectedExploreType({List<ExploreMapType>? exploreTypes}) {
+    exploreTypes ??= _exploreTypes;
+    return _ensureExploreType(_targetExploreType, exploreTypes: exploreTypes) ??
+      _ensureExploreType(_lastSelectedExploreType, exploreTypes: exploreTypes) ??
+      _ensureExploreType(_defaultMapType, exploreTypes: exploreTypes);
+  }
+
+  ExploreMapType? get _targetExploreType => _exploreTypeFromParam(params[selectParamKey]);
+
+  ExploreMapType? get _lastSelectedExploreType => _exploreMapTypeFromString(Storage().selectedMapExploreType);
+  set _lastSelectedExploreType(ExploreMapType? value) => Storage().selectedMapExploreType = _exploreMapTypeToString(value);
+
+
+  // Explore Types
+
+  List<ExploreMapType> get _exploreTypes {
+    List<ExploreMapType> exploreTypes = [];
+    List<dynamic>? codes = FlexUI()['explore.map'];
+    if (codes != null) {
+      for (dynamic code in codes) {
+        ExploreMapType? codeType = _exploreMapTypeFromCode(code);
+        if (codeType != null) {
+          exploreTypes.add(codeType);
+        }
+      }
+    }
+    return exploreTypes;
+  }
+
+  ExploreMapType? _ensureExploreType(ExploreMapType? exploreType, { required List<ExploreMapType> exploreTypes }) =>
+    ((exploreType != null) && exploreTypes.contains(exploreType)) ? exploreType : null;
+
+  // _ExploreMapPanelState access
+
+  static bool get hasState => _state != null;
+
+  static _ExploreMapPanelState? get _state {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
         if ((subscriber is _ExploreMapPanelState) && subscriber.mounted) {
-          return true;
+          return subscriber;
         }
       }
     }
-    return false;
+    return null;
   }
+
+  // static _ExploreMapPanel param
+
+  static ExploreMapType? _exploreTypeFromParam(dynamic param) {
+    if (param is ExploreMapType) {
+      return param;
+    }
+    else if (param is ExploreMapSearchEventsParam) {
+      return ExploreMapType.Events2;
+    }
+    else {
+      return null;
+    }
+  }
+
 }
 
 class _ExploreMapPanelState extends State<ExploreMapPanel>
@@ -101,10 +170,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   implements NotificationsListener {
 
   static const double _filterLayoutSortKey = 1.0;
-  static const ExploreMapType _defaultMapType = ExploreMapType.Buildings;
 
-  List<ExploreMapType> _exploreTypes = [];
-  ExploreMapType _selectedMapType = _defaultMapType;
+  late List<ExploreMapType> _exploreTypes;
+  ExploreMapType? _selectedMapType;
   EventsDisplayType? _selectedEventsDisplayType;
 
   late Event2TimeFilter _event2TimeFilter;
@@ -190,8 +258,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Event2FilterParam.notifyChanged,
     ]);
     
-    _exploreTypes = _buildExploreTypes();
-    _selectedMapType = _ensureExploreType(_initialExploreType) ?? _ensureExploreType(_lastExploreType) ?? _defaultMapType;
+    _exploreTypes = widget._exploreTypes;
+    _selectedMapType = widget._selectedExploreType(exploreTypes: _exploreTypes);
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _event2TimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
@@ -283,14 +351,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (mounted) {
         if ((param is ExploreMapType) && (_selectedMapType != param)) {
           setState(() {
-            _selectedMapType = param;
+            _selectedMapType = widget._lastSelectedExploreType = param;
           });
           _initExplores();
         }
         else if (param is ExploreMapSearchEventsParam) {
           if ((_selectedMapType != ExploreMapType.Events2) || (_event2SearchText != param.searchText)) {
             setState(() {
-              _selectedMapType = ExploreMapType.Events2;
+              _selectedMapType = widget._lastSelectedExploreType = ExploreMapType.Events2;
               _event2SearchText = param.searchText;
             });
             _initExplores();
@@ -547,18 +615,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  // void _onTapMarker(dynamic origin) {
-  //   if (_selectedMapType == ExploreMapType.StoriedSites && (origin is List<Explore> || origin is Place)) {
-  //     if(origin is Place){
-  //       _storiedSightsKey.currentState?.selectPlace(origin);
-  //       //_centerMapOnExplore(origin);
-  //     }
-  //
-  //   } else {
-  //     _selectMapExplore(origin);
-  //   }
-  // }
-
   void _onTapMarker(dynamic origin) {
     if (_selectedMapType == ExploreMapType.StoriedSites && (origin is List<Explore> || origin is Place)) {
       if (origin is Place) {
@@ -722,10 +778,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
     );
     if (_selectedMapExplore is Explore) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+        (_selectedMapExplore as Explore).exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType, analyticsFeature: widget.analyticsFeature,),));
     }
     _selectMapExplore(null);
   }
@@ -1133,7 +1189,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2ListView() {
     Analytics().logSelect(target: 'List View');
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context, analyticsFeature: widget.analyticsFeature);
   }
 
   // Dropdown Widgets
@@ -1283,10 +1339,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapExploreType(ExploreMapType item) {
     Analytics().logSelect(target: _exploreItemName(item));
     ExploreMapType? lastExploreType = _selectedMapType;
-    Storage().selectedMapExploreType = exploreMapTypeToString(item);
     setStateIfMounted(() {
       _clearActiveFilter();
-      _selectedMapType = _lastExploreType = item;
+      _selectedMapType = widget._lastSelectedExploreType = item;
       _itemsDropDownValuesVisible = false;
     });
     if (lastExploreType != item) {
@@ -1447,51 +1502,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   // Explore Items
 
-  List<ExploreMapType> _buildExploreTypes() {
-    List<ExploreMapType> exploreTypes = [];
-    List<dynamic>? codes = FlexUI()['explore.map'];
-    if (codes != null) {
-      for (dynamic code in codes) {
-        if (code == 'events2') {
-          exploreTypes.add(ExploreMapType.Events2);
-        }
-        else if (code == 'dining') {
-          exploreTypes.add(ExploreMapType.Dining);
-        }
-        else if (code == 'laundry') {
-          exploreTypes.add(ExploreMapType.Laundry);
-        }
-        else if (code == 'buildings') {
-          exploreTypes.add(ExploreMapType.Buildings);
-        }
-        else if (code == 'student_courses') {
-          exploreTypes.add(ExploreMapType.StudentCourse);
-        }
-        else if (code == 'appointments') {
-          exploreTypes.add(ExploreMapType.Appointments);
-        }
-        else if (code == 'mtd_stops') {
-          exploreTypes.add(ExploreMapType.MTDStops);
-        }
-        else if (code == 'my_locations') {
-          exploreTypes.add(ExploreMapType.MyLocations);
-        }
-        else if (code == 'mental_health') {
-          exploreTypes.add(ExploreMapType.MentalHealth);
-        }
-        else if (code == 'storied_sites') {
-          exploreTypes.add(ExploreMapType.StoriedSites);
-        }
-        else if (code == 'state_farm_wayfinding') {
-          exploreTypes.add(ExploreMapType.StateFarmWayfinding);
-        }
-      }
-    }
-    return exploreTypes;
-  }
-
   void _updateExploreTypes() {
-    List<ExploreMapType> exploreTypes = _buildExploreTypes();
+    List<ExploreMapType> exploreTypes = widget._exploreTypes;
     if (!DeepCollectionEquality().equals(_exploreTypes, exploreTypes)) {
       if (exploreTypes.contains(_selectedMapType)) {
         setStateIfMounted(() {
@@ -1499,42 +1511,18 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         });
       }
       else {
-        ExploreMapType selectedMapType = _defaultMapType;
         setStateIfMounted(() {
           _exploreTypes = exploreTypes;
-          _selectedMapType = selectedMapType;
+          _selectedMapType = widget._lastSelectedExploreType = widget._ensureExploreType(ExploreMapPanel._defaultMapType, exploreTypes: exploreTypes);
         });
         _initExplores();
       }
-    }
-  }
-  ExploreMapType? _ensureExploreType(ExploreMapType? exploreItem, { List<ExploreMapType>? exploreTypes}) {
-    exploreTypes ??= _exploreTypes;
-    return ((exploreItem != null) && exploreTypes.contains(exploreItem)) ? exploreItem : null;
-
-  }
-
-  ExploreMapType? get _initialExploreType => _paramExploreType(widget.params[ExploreMapPanel.selectParamKey]);
-
-  static ExploreMapType? _paramExploreType(dynamic param) {
-    if (param is ExploreMapType) {
-      return param;
-    }
-    else if (param is ExploreMapSearchEventsParam) {
-      return ExploreMapType.Events2;
-    }
-    else {
-      return null;
     }
   }
 
   ExploreMapSearchEventsParam? get _intialEvent2SearchParam => _paramSearchEvents2(widget.params[ExploreMapPanel.selectParamKey]);
 
   static ExploreMapSearchEventsParam? _paramSearchEvents2(dynamic param) => (param is ExploreMapSearchEventsParam) ? param : null;
-
-  ExploreMapType? get _lastExploreType => exploreMapItemFromString(Storage().selectedMapExploreType);
-  
-  set _lastExploreType(ExploreMapType? value) => Storage().selectedMapExploreType = exploreMapTypeToString(value);
 
   static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
@@ -2416,8 +2404,46 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 ////////////////////
 // ExploreMapType
 
+ExploreMapType? _exploreMapTypeFromCode(String? code) {
+  if (code == 'events2') {
+    return ExploreMapType.Events2;
+  }
+  else if (code == 'dining') {
+    return ExploreMapType.Dining;
+  }
+  else if (code == 'laundry') {
+    return ExploreMapType.Laundry;
+  }
+  else if (code == 'buildings') {
+    return ExploreMapType.Buildings;
+  }
+  else if (code == 'student_courses') {
+    return ExploreMapType.StudentCourse;
+  }
+  else if (code == 'appointments') {
+    return ExploreMapType.Appointments;
+  }
+  else if (code == 'mtd_stops') {
+    return ExploreMapType.MTDStops;
+  }
+  else if (code == 'my_locations') {
+    return ExploreMapType.MyLocations;
+  }
+  else if (code == 'mental_health') {
+    return ExploreMapType.MentalHealth;
+  }
+  else if (code == 'storied_sites') {
+    return ExploreMapType.StoriedSites;
+  }
+  else if (code == 'state_farm_wayfinding') {
+    return ExploreMapType.StateFarmWayfinding;
+  }
+  else {
+    return null;
+  }
+}
 
-ExploreMapType? exploreMapItemFromString(String? value) {
+ExploreMapType? _exploreMapTypeFromString(String? value) {
   if (value == 'events2') {
     return ExploreMapType.Events2;
   }
@@ -2456,7 +2482,7 @@ ExploreMapType? exploreMapItemFromString(String? value) {
   }
 }
 
-String? exploreMapTypeToString(ExploreMapType? value) {
+String? _exploreMapTypeToString(ExploreMapType? value) {
   switch(value) {
     case ExploreMapType.Events2:             return 'events2';
     case ExploreMapType.Dining:              return 'dining';
