@@ -9,6 +9,7 @@ import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_header_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -87,7 +88,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           minChildSize: 0.25,
           maxChildSize: 0.95,
           snap: true,
-          snapSizes: [0.25, 0.6, 0.95],
+          snapSizes: [0.25, 0.65, 0.95],
           controller: _controller,
           builder: (BuildContext context, ScrollController scrollController) {
             _scrollController = scrollController;
@@ -174,67 +175,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     return [
       ..._storiedSights.map((place) => _buildDestinationCard(place)).toList(),
     ];
-  }
-
-  void _showLightbox(places_model.Image image) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierColor: Colors.black54,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: EdgeInsets.all(16.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Image
-                      Image.network(
-                        image.imageUrl,
-                        fit: BoxFit.contain,
-                        width: MediaQuery.of(context).size.width * 0.9,
-                      ),
-                      if (image.caption != null && image.caption != "")
-                        Container(
-                          color: Colors.white,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            image.caption!,
-                            style: Styles()
-                                .textStyles
-                                .getTextStyle("widget.description.regular"),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 0.0,
-                  right: 0.0,
-                  child: IconButton(
-                    icon: Icon(Icons.close, color: Colors.white),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   // Method to handle check-in action
@@ -462,10 +402,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
                   style: isExpanded ? Styles().textStyles.getTextStyle("widget.label.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
                 ),
               ),
-              Icon(
-                isExpanded ? Icons.expand_less : Icons.expand_more,
-                color: Styles().colors.fillColorSecondary,
-              ),
+              (isExpanded ? Styles().images.getImage("chevron-down", size: 25) : Styles().images.getImage("chevron-up", size: 25)) ?? const SizedBox(),
             ],
           ),
         ),
@@ -563,13 +500,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: IconButton(
-            icon: Icon(Icons.chevron_left, color: Styles().colors.iconColor),
-            onPressed: () => setState(() => _selectedDestination = null),
-            padding: EdgeInsets.zero,
-            alignment: Alignment.centerLeft,
+        GestureDetector(
+          onTap: () => setState(() => _selectedDestination = null),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8),
+            child: Styles().images.getImage('chevron-left-bold', size: 24.0) ?? const SizedBox(),
           ),
         ),
         if (_selectedDestination?.types != null && _selectedDestination!.types!.isNotEmpty)
@@ -727,10 +662,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
   Widget _buildImageGallery() {
     if ((_selectedDestination?.images?.length ?? 0) == 1) {
-      return GestureDetector(
-        onTap: () {
-          _showLightbox(_selectedDestination!.images![0]);
-        },
+      return ModalImageHolder(
         child: SizedBox(
           height: 200,
           child: TriangleHeaderImage(
@@ -752,10 +684,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         itemBuilder: (context, index) {
           return Container(
             margin: EdgeInsets.only(right: 12.0),
-            child: GestureDetector(
-              onTap: () {
-                _showLightbox(_selectedDestination!.images![index]);
-              },
+            child: ModalImageHolder(
               child: Image.network(
                 _selectedDestination!.images![index].imageUrl,
                 width: 140,
@@ -926,10 +855,8 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
                 color: Styles().colors.fillColorPrimary,
               ),
             ),
-            Icon(
-              isExpanded ? Icons.expand_less : Icons.expand_more,
-              color: Styles().colors.fillColorPrimary,
-            ),
+            SizedBox(width: 4,),
+            (isExpanded ? Styles().images.getImage("chevron-down-dark-blue") : Styles().images.getImage("chevron-up-dark-blue")) ?? const SizedBox(),
           ],
         ),
       ),
@@ -1077,7 +1004,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _selectedDestination = place;
     });
     _controller.animateTo(
-      0.6,
+      0.65,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
