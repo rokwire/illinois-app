@@ -689,12 +689,15 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     return Container(
       width: 75,
       height: 75,
-      child: _selectedDestination?.images?.isNotEmpty ?? false ? Image.network(
+      child: _selectedDestination?.images?.isNotEmpty ?? false
+          ? Image.network(
         _selectedDestination!.images!.first.imageUrl,
         fit: BoxFit.cover,
-      ) : Icon(Icons.image, color: Colors.grey, size: 75),
+      ) : Styles().images.getImage('missing-building-photo') ??
+          SizedBox(width: 75, height: 75),
     );
   }
+
 
   Widget _buildImageGallery() {
     if ((_selectedDestination?.images?.length ?? 0) == 1) {
@@ -768,9 +771,22 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          place.name ?? Localization().getStringEx('', 'Unknown Name'),
-          style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+        RichText(
+          text: TextSpan(
+            style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+            children: [
+              TextSpan(
+                text: place.name ?? Localization().getStringEx('', 'Unknown Name'),
+              ),
+              WidgetSpan(
+                child: SizedBox(width: 0),
+              ),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: Styles().images.getImage('chevron-right-bold', size: 24.0) ?? const SizedBox(),
+              ),
+            ],
+          ),
         ),
         SizedBox(height: 4),
         _buildAddressRow(place),
@@ -783,10 +799,15 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       width: 75,
       height: 75,
       child: place.images?.isNotEmpty ?? false
-          ? Image.network(place.images!.first.imageUrl, fit: BoxFit.cover)
-          : Icon(Icons.image, color: Colors.grey, size: 75),
+          ? Image.network(
+        place.images!.first.imageUrl,
+        fit: BoxFit.cover,
+      )
+          : Styles().images.getImage('missing-building-photo') ??
+          SizedBox(width: 75, height: 75),
     );
   }
+
 
   Widget _buildFilterButtons() {
     List<Widget> filterButtons = [];
