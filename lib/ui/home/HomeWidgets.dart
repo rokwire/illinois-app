@@ -99,7 +99,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         feedback: HomeDragFeedback(title: widget.title),
         // We need to set hitTestBehavior: HitTestBehavior.opaque here in order to resolve [#4120](https://github.com/rokwire/illinois-app/issues/4120).
         // There is a fix of [this](https://github.com/flutter/flutter/issues/78443) issue that is not available in the latest stable Flutter version.
-        // As a workaround we use the Container bellow with a background color until the Flutter fix gets available.
+        // As a workaround we use the Container below with a background color until the Flutter fix gets available.
         child: Container(color: Styles().colors.background, child:
           Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 

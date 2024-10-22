@@ -216,8 +216,8 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
     if (sectionsList.isNotEmpty) {
       contentList.add(
         HomeSlantWidget(
-          title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          titleIconKey: 'browse',
+          // title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
+          // titleIconKey: 'browse',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )

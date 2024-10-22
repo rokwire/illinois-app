@@ -3286,7 +3286,7 @@
 	"panel.safewalks_request.sub_title2.text": "You never have to walk alone.",
 	"panel.safewalks_request.info1.text": "Request a student patrol officer to walk with you.",
 	"panel.safewalks_request.info2.text": "Please give at least {{safewalk_order_interval}} minutes' notice.",
-	"panel.safewalks_request.info3.text": "Available {{safewalk_start_time}} to {{safewalk_end_time}}.",
+	"panel.safewalks_request.info3.text": "Available {{safewalk_start_time}} to {{safewalk_end_time}}",
 	"panel.safewalks_request.detail.phone.html": "You can also schedule a walk by calling <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
 	"panel.safewalks_request.detail.saferides.html": "Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href='{{saferides_url}}'>SafeRides</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> at night.",
 	"panel.safewalks_request.detail.settings.text": "My Location Settings",
@@ -3307,8 +3307,8 @@
 	"widget.safewalks_request.message.missing.recipient.title": "Unable to send text message, recipient number is not available.",
 	"widget.safewalks_request.message.internal.error.title": "Unable to send text message, internal error occured.",
 	"widget.safewalks_request.message.sms.service.not_available.title": "Unable to send text message, messaging service not available.",
-	"widget.safewalks_request.message.sms.logged_in.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n{{safewalk_origin_url}}\n\nMy Destination:\n{{safewalk_destination}}\n{{safewalk_destination_url}}\n\nMy Route:\n{{safewalk_directions_url}}",
-	"widget.safewalks_request.message.sms.logged_out.text": "Hi, I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n{{safewalk_origin_url}}\n\nMy Destination:\n{{safewalk_destination}}\n{{safewalk_destination_url}}\n\nMy Route:\n{{safewalk_directions_url}}",
+	"widget.safewalks_request.message.sms.logged_in.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n{{safewalk_origin_url}}\n\nMy Destination:\n{{safewalk_destination}}\n{{safewalk_destination_url}}",
+	"widget.safewalks_request.message.sms.logged_out.text": "Hi, I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n{{safewalk_origin_url}}\n\nMy Destination:\n{{safewalk_destination}}\n{{safewalk_destination_url}}",
 	"widget.safewalks_request.unknown.user.text": "Unauthenticated User",
 	"widget.safewalks_request.unknown.location.text": "Unknwon",
 
@@ -3594,7 +3594,7 @@
 	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
 
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
-	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information bellow.",
+	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
 	"widget.home.safety.saferides.title": "SafeRides",
 
