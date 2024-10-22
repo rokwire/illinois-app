@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Implemented other [adjustments](https://github.com/rokwire/illinois-app/issues/4363#issuecomment-2428154698) to SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Updated app sections descriptions [#4431](https://github.com/rokwire/illinois-app/issues/4431). 
 
 ## [6.1.13] - 2024-10-21
 ### Fixed
