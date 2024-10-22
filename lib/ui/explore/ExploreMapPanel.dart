@@ -645,7 +645,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _mapController!.moveCamera(cameraUpdate);
 
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-      double offset = 300 / devicePixelRatio;
+      double offset = 350 / devicePixelRatio;
 
       _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
     }

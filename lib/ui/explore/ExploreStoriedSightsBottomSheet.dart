@@ -72,7 +72,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         }
       }
     }
+    // Add the "Visited" tag to the regular filters
+    _regularFilters.add('Visited');
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           minChildSize: 0.25,
           maxChildSize: 0.95,
           snap: true,
-          snapSizes: [0.25, 0.5, 0.95],
+          snapSizes: [0.25, 0.6, 0.95],
           controller: _controller,
           builder: (BuildContext context, ScrollController scrollController) {
             _scrollController = scrollController;
@@ -611,9 +615,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           _selectedDestination?.name ?? '',
           style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
         ),
-        SizedBox(height: 8),
-        _buildAddressRow(_selectedDestination),
-        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: _buildAddressRow(_selectedDestination),
+        ),
         _buildShareLocationRow(),
         SizedBox(height: 16),
         _buildCheckInButton(),
@@ -622,8 +627,12 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   }
 
   Widget _buildAddressRow(places_model.Place? place) {
+    if (place?.address == null || place!.address!.trim().isEmpty) {
+      return SizedBox.shrink();
+    }
+
     return GestureDetector(
-      onTap: () => place?.launchDirections(),
+      onTap: () => place.launchDirections(),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -634,7 +643,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           SizedBox(width: 8),
           Expanded(
             child: Text(
-              place?.address ?? Localization().getStringEx('', 'No address available'),
+              place.address!,
               style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
                 decoration: TextDecoration.underline,
                 decorationColor: Styles().colors.fillColorSecondary,
@@ -647,6 +656,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       ),
     );
   }
+
 
   Widget _buildShareLocationRow() {
     return GestureDetector(
@@ -956,15 +966,36 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     } else {
       setState(() {
         _storiedSights = _allPlaces.where((place) {
-          if (place.tags == null || place.tags!.isEmpty) {
-            return false;
+          // Handle the "Visited" filter
+          if (_selectedFilters.contains('Visited')) {
+            // Check if the place has been visited by the user at any time
+            if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
+              // If other filters are also selected, check if the place matches those filters
+              if (_selectedFilters.length > 1) {
+                return _matchesOtherFilters(place);
+              }
+              return true; // Only "Visited" is selected, and the place has been visited
+            } else {
+              return false; // Place has not been visited
+            }
+          } else {
+            // Check if any of the place's tags match any of the selected filters
+            return place.tags != null && place.tags!.any((tag) => _selectedFilters.contains(tag));
           }
-          // Check if any of the place's tags match any of the selected filters
-          return place.tags!.any((tag) => _selectedFilters.contains(tag));
         }).toList();
       });
     }
   }
+
+  bool _matchesOtherFilters(places_model.Place place) {
+    // Exclude the "Visited" filter and check other filters
+    Set<String> otherFilters = Set.from(_selectedFilters)..remove('Visited');
+    if (place.tags == null || place.tags!.isEmpty) {
+      return false;
+    }
+    return place.tags!.any((tag) => otherFilters.contains(tag));
+  }
+
 
   Widget _buildDragHandle() {
     return Container(
@@ -992,11 +1023,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
   void selectPlace(places_model.Place place) {
     setState(() {
-      _storiedSights = _allPlaces;
       _selectedDestination = place;
     });
     _controller.animateTo(
-      0.5,
+      0.6,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
