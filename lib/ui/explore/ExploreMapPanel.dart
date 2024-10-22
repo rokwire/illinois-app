@@ -395,7 +395,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               ]),
             ),
           ]),
-          _buildExploreTypesDropDownContainer(),
           if (_selectedMapType == ExploreMapType.StoriedSites && _exploreTask == null && _explores != null)
             ExploreStoriedSightsBottomSheet(
               key: _storiedSightsKey,
@@ -405,6 +404,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                 _selectMapExplore(place);
               },
             ),
+          _buildExploreTypesDropDownContainer(),
         ]),
       )
     ]);

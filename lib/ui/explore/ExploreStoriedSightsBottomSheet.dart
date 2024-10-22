@@ -38,8 +38,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Map<String, Set<String>> _mainFilters = {};
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
-  bool _isLightboxVisible = false;
-  places_model.Image? _selectedImage;
 
 
 
