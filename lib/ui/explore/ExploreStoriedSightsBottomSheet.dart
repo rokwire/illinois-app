@@ -313,15 +313,20 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
           onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
         ),
-        const SizedBox(width: 12),
-        InkWell(
+        GestureDetector(
           onTap: () {
             showDialog(context: context, builder: (BuildContext context) {
-                return _buildInfoDialog(context);
-                },
+              return _buildInfoDialog(context);
+            },
             );
           },
-          child: Styles().images.getImage('info', size: 16.0) ?? const SizedBox(),
+          behavior: HitTestBehavior.translucent,
+          child: Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            child: Styles().images.getImage('info', size: 16.0) ?? const SizedBox(),
+          ),
         ),
       ],
     );
@@ -594,30 +599,35 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
     return GestureDetector(
       onTap: () => place.launchDirections(),
-      child: Row(
+      behavior: HitTestBehavior.translucent,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 2.0),
-            child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              place.address!,
-              style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                decoration: TextDecoration.underline,
-                decorationColor: Styles().colors.fillColorSecondary,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  place.address!,
+                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                    decoration: TextDecoration.underline,
+                    decorationColor: Styles().colors.fillColorSecondary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-
 
   Widget _buildShareLocationRow() {
     return GestureDetector(
@@ -626,19 +636,25 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             QrCodePanel.fromPlace(_selectedDestination)
         ));
       },
-      child: Row(
+      behavior: HitTestBehavior.translucent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Styles().images.getImage('share', excludeFromSemantics: true) ?? const SizedBox(),
-          SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              Localization().getStringEx('', 'Share this location'),
-              style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                  decoration: TextDecoration.underline,
-                  decorationColor: Styles().colors.fillColorSecondary),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Row(
+            children: [
+              Styles().images.getImage('share', excludeFromSemantics: true) ?? const SizedBox(),
+              SizedBox(width: 8.0),
+              Expanded(
+                child: Text(
+                  Localization().getStringEx('', 'Share this location'),
+                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                      decoration: TextDecoration.underline,
+                      decorationColor: Styles().colors.fillColorSecondary),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ],
       ),
