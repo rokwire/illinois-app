@@ -47,26 +47,30 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/explore/ExploreStoriedSightsBottomSheet.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
+import 'package:rokwire_plugin/model/places.dart' as places_model;
 
-enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding }
+enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, StoriedSites }
 
 class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
@@ -196,6 +200,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   final GlobalKey _mapContainerKey = GlobalKey();
   final GlobalKey _mapExploreBarKey = GlobalKey();
+  final GlobalKey<ExploreStoriedSightsBottomSheetState> _storiedSightsKey = GlobalKey<ExploreStoriedSightsBottomSheetState>();
   final String _mapStylesAssetName = 'assets/map.styles.json';
   final String _mapStylesExplorePoiKey = 'explore-poi';
   final String _mapStylesMtdStopKey = 'mtd-stop';
@@ -458,7 +463,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               ]),
             ),
           ]),
-          _buildExploreTypesDropDownContainer()
+          if (_selectedMapType == ExploreMapType.StoriedSites && _exploreTask == null && _explores != null)
+            ExploreStoriedSightsBottomSheet(
+              key: _storiedSightsKey,
+              places: _explores?.whereType<Place>().toList() ?? [],
+              onPlaceSelected: (places_model.Place place) {
+                _centerMapOnExplore(place);
+                _selectMapExplore(place);
+              },
+            ),
+          _buildExploreTypesDropDownContainer(),
         ]),
       )
     ]);
@@ -572,8 +586,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onMapTap(LatLng coordinate) {
     debugPrint('ExploreMap tap' );
-    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/);
-    if (mtdStop != null) {
+    MTDStop? mtdStop;
+    if (_selectedMapType == ExploreMapType.StoriedSites) {
+      _storiedSightsKey.currentState?.resetSelection();
+    }
+    else if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
       _selectMapExplore(mtdStop);
     }
     else if (_selectedMapExplore != null) {
@@ -599,7 +616,39 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMarker(dynamic origin) {
-    _selectMapExplore(origin);
+    if (_selectedMapType == ExploreMapType.StoriedSites) {
+      if (origin is Place) {
+        _storiedSightsKey.currentState?.selectPlace(origin);
+        _centerMapOnExplore(origin);
+      } else if (origin is List<Explore>) {
+        List<places_model.Place> places = origin.cast<places_model.Place>();
+        _storiedSightsKey.currentState?.selectPlaces(places);
+        _centerMapOnExplore(places);
+      }
+    } else {
+      _selectMapExplore(origin);
+    }
+  }
+
+
+  void _centerMapOnExplore(dynamic explore) {
+    LatLng? targetPosition;
+
+    if (explore is Explore) {
+      targetPosition = explore.exploreLocation?.exploreLocationMapCoordinate;
+    } else if (explore is List<Explore> && explore.isNotEmpty) {
+      targetPosition = ExploreMap.centerOfList(explore);
+    }
+
+    if (targetPosition != null && _mapController != null) {
+      CameraUpdate cameraUpdate = CameraUpdate.newLatLng(targetPosition);
+      _mapController!.moveCamera(cameraUpdate);
+
+      double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+      double offset = 400 / devicePixelRatio;
+
+      _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
+    }
   }
 
   // Map Explore Bar
@@ -1486,6 +1535,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist');
+      case ExploreMapType.StoriedSites:        return Localization().getStringEx('panel.explore.button.stored_sites.title', 'Storied Sites');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1502,6 +1552,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.hint', '');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
+      case ExploreMapType.StoriedSites:        return Localization().getStringEx('panel.explore.button.stored_sites.hint', '');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
@@ -1767,6 +1818,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No therapist locations are available.');
+      case ExploreMapType.StoriedSites: return Localization().getStringEx('panel.explore.state.online.empty.stored_sites', 'No storied sites are available.');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
@@ -1783,6 +1835,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
+      case ExploreMapType.StoriedSites: return Localization().getStringEx('panel.explore.state.failed.stored_sites', 'Failed to load storied sites.');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
@@ -1866,6 +1919,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return _loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSites: return _loadPlaces();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
@@ -1894,6 +1948,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Future<List<Explore>?> _loadMentalHealthBuildings() async {
     return await Wellness().loadMentalHealthBuildings();
+  }
+
+  Future<List<Explore>?> _loadPlaces() async {
+    return await Places().getAllPlaces();
   }
 
   Future<List<Explore>?> _loadMTDStops() async {
@@ -2033,7 +2091,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   String? get _currentMapStyle {
     if (_mapStyles != null) {
-      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth)) {
+      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth) || (_selectedMapType == ExploreMapType.StoriedSites)) {
         return JsonUtils.encode(_mapStyles![_mapStylesExplorePoiKey]);
       }
       else if (_selectedMapType == ExploreMapType.MTDStops) {
@@ -2207,27 +2265,29 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
       Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
+      Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
       String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
-        (_markerIconCache[markerKey] = await _groupMarkerIcon(
-          context: context,
-          imageSize: _mapGroupMarkerSize,
-          backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
-          count: exploreGroup.length,
-        ));
+          (_markerIconCache[markerKey] = await _groupMarkerIcon(
+            context: context,
+            imageSize: _mapGroupMarkerSize,
+            backColor: markerColor,
+            borderColor: markerBorderColor,
+            textColor: markerTextColor,
+            count: exploreGroup.length,
+          ));
       Offset markerAnchor = Offset(0.5, 0.5);
       return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
-        position: markerPosition,
-        icon: markerIcon,
-        anchor: markerAnchor,
-        consumeTapEvents: true,
-        onTap: () => _onTapMarker(exploreGroup),
-        infoWindow: InfoWindow(
-          title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
-          anchor: markerAnchor)
+          markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+          position: markerPosition,
+          icon: markerIcon,
+          anchor: markerAnchor,
+          consumeTapEvents: true,
+          onTap: () => _onTapMarker(exploreGroup),
+          infoWindow: InfoWindow(
+              title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+              anchor: markerAnchor)
       );
     }
     return null;
@@ -2255,6 +2315,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       return BitmapDescriptor.defaultMarker;
     }
   }
+
 
   Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
@@ -2374,6 +2435,9 @@ ExploreMapType? _exploreMapTypeFromCode(String? code) {
   else if (code == 'mental_health') {
     return ExploreMapType.MentalHealth;
   }
+  else if (code == 'storied_sites') {
+    return ExploreMapType.StoriedSites;
+  }
   else if (code == 'state_farm_wayfinding') {
     return ExploreMapType.StateFarmWayfinding;
   }
@@ -2410,6 +2474,9 @@ ExploreMapType? _exploreMapTypeFromString(String? value) {
   else if (value == 'mentalHealth') {
     return ExploreMapType.MentalHealth;
   }
+  else if (value == 'storiedSights') {
+    return ExploreMapType.StoriedSites;
+  }
   else if (value == 'stateFarmWayfinding') {
     return ExploreMapType.StateFarmWayfinding;
   }
@@ -2429,6 +2496,7 @@ String? _exploreMapTypeToString(ExploreMapType? value) {
     case ExploreMapType.MTDStops:            return 'mtdStops';
     case ExploreMapType.MyLocations:         return 'myLocations';
     case ExploreMapType.MentalHealth:        return 'mentalHealth';
+    case ExploreMapType.StoriedSites:        return 'storiedSights';
     case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }

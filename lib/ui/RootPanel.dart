@@ -383,6 +383,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
     }
+    else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
+      _onFirebaseMapNotification(ExploreMapType.StoriedSites);
+    }
     else if (name == FirebaseMessaging.notifyMapStateFarmWayfindingNotification) {
       _onFirebaseMapNotification(ExploreMapType.StateFarmWayfinding);
     }
