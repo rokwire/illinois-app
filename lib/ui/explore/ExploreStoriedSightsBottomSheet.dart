@@ -646,7 +646,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
               SizedBox(width: 8.0),
               Expanded(
                 child: Text(
-                  Localization().getStringEx('', 'Share this location'),
+                  Localization().getStringEx('', 'Share this location'), //Localization().getStringEx("panel.explore.storied_sites.") manavmodi
                   style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
                       decoration: TextDecoration.underline,
                       decorationColor: Styles().colors.fillColorSecondary),
@@ -670,7 +670,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           ? Image.network(
         _selectedDestination!.images!.first.imageUrl,
         fit: BoxFit.cover,
-      ) : Styles().images.getImage('missing-building-photo') ??
+      ) : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
           SizedBox(width: 75, height: 75),
     );
   }
