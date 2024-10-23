@@ -2264,22 +2264,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-
-      Color? markerColor;
-      Color? markerBorderColor;
-      Color? markerTextColor;
-
-      if (_selectedMapType == ExploreMapType.StoriedSites) {
-        markerColor = Styles().colors.fillColorPrimary;
-        markerBorderColor = Styles().colors.fillColorSecondary;
-        markerTextColor = Styles().colors.white;
-      }
-      else {
-        markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
-        markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor;
-        markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor;
-      }
-
+      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
+      Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
       String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
           (_markerIconCache[markerKey] = await _groupMarkerIcon(
@@ -2342,14 +2329,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markerAnchor = Offset(0.5, 0.5);
       }
       else {
-        Color? exploreColor;
-        if (_selectedMapType == ExploreMapType.StoriedSites) {
-          exploreColor = Styles().colors.fillColorPrimary;
-        }
-        else {
-          exploreColor = explore?.mapMarkerColor;
-        }
-
+        Color? exploreColor = explore?.mapMarkerColor;
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
         markerAnchor = Offset(0.5, 1);
       }
