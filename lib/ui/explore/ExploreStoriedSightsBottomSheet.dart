@@ -77,8 +77,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     _regularFilters.add('Visited');
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -177,7 +175,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     ];
   }
 
-  // Method to handle check-in action
   void _handleCheckIn() async {
     if (_selectedDestination != null) {
       String placeId = _selectedDestination!.id;
@@ -369,7 +366,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-
   Widget _buildCheckInHistory() {
     if (_selectedDestination == null) return Container();
 
@@ -443,7 +439,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-
   List<Widget> _buildSelectedDestinationView() {
     return [
       _buildSelectedDestinationHeader(),
@@ -470,36 +465,9 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             em: const TextStyle(fontStyle: FontStyle.italic),
           )
         ),
-        // child: Text(
-        //   _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
-        //   style: Styles().textStyles.getTextStyle("widget.description.regular"),
-        // ),
       ),
     ];
   }
-
-  // Widget _buildBottomSheetHeader() {
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         _buildDragHandle(),
-  //         Align(
-  //           alignment: Alignment.centerLeft,
-  //           child: _buildTitle(),
-  //         ),
-  //         SizedBox(height: 8),
-  //         Align(
-  //           alignment: Alignment.centerLeft,
-  //           child: _buildFilterButtons(),
-  //         ),
-  //         SizedBox(height: 8),
-  //         Divider(color: Styles().colors.surfaceAccent, thickness: 2),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildSelectedDestinationHeader() {
     return Column(
@@ -544,7 +512,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       }).toList(),
     );
   }
-
 
   Widget _buildSelectedDestinationContent() {
     return Column(
@@ -661,7 +628,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-
   Widget _buildDestinationImage() {
     return Container(
       width: 75,
@@ -674,7 +640,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           SizedBox(width: 75, height: 75),
     );
   }
-
 
   Widget _buildImageGallery() {
     if ((_selectedDestination?.images?.length ?? 0) == 1) {
@@ -783,25 +748,19 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-
   Widget _buildFilterButtons() {
     List<Widget> filterButtons = [];
 
-    // Build regular filter buttons
     filterButtons.addAll(_regularFilters.map((tag) => _buildRegularFilterButton(tag)));
 
-    // Build main filter buttons
     for (String mainTag in _mainFilters.keys) {
       bool isExpanded = _expandedMainTags.contains(mainTag);
       Widget mainTagButton = _buildMainFilterButton(mainTag, isExpanded);
       filterButtons.add(mainTagButton);
     }
 
-    // Now, filterButtons contains both regular and main filter buttons.
-
     List<Widget> filterWidgets = [];
 
-    // Add the combined filter buttons in a single row
     filterWidgets.add(
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -953,27 +912,22 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
   void _applyFilters() {
     if (_selectedFilters.isEmpty) {
-      // No filters selected; show all places
       setState(() {
         _storiedSights = List.from(_allPlaces);
       });
     } else {
       setState(() {
         _storiedSights = _allPlaces.where((place) {
-          // Handle the "Visited" filter
           if (_selectedFilters.contains('Visited')) {
-            // Check if the place has been visited by the user at any time
             if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
-              // If other filters are also selected, check if the place matches those filters
               if (_selectedFilters.length > 1) {
                 return _matchesOtherFilters(place);
               }
-              return true; // Only "Visited" is selected, and the place has been visited
+              return true;
             } else {
-              return false; // Place has not been visited
+              return false;
             }
           } else {
-            // Check if any of the place's tags match any of the selected filters
             return place.tags != null && place.tags!.any((tag) => _selectedFilters.contains(tag));
           }
         }).toList();
@@ -982,14 +936,13 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   }
 
   bool _matchesOtherFilters(places_model.Place place) {
-    // Exclude the "Visited" filter and check other filters
+
     Set<String> otherFilters = Set.from(_selectedFilters)..remove('Visited');
     if (place.tags == null || place.tags!.isEmpty) {
       return false;
     }
     return place.tags!.any((tag) => otherFilters.contains(tag));
   }
-
 
   Widget _buildDragHandle() {
     return Container(
