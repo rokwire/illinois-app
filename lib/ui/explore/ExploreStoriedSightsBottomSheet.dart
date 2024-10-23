@@ -534,7 +534,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
           decoration: BoxDecoration(
             color: Styles().colors.fillColorPrimary,
-            borderRadius: BorderRadius.circular(4.0),
+            borderRadius: BorderRadius.circular(2.0),
           ),
           child: Text(
             type,
