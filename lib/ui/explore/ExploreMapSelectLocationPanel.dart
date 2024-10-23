@@ -741,8 +741,8 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
           context: context,
           imageSize: _mapGroupMarkerSize,
           backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
+          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor,
+          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor,
           count: exploreGroup.length,
         ));
       Offset markerAnchor = Offset(0.5, 0.5);
