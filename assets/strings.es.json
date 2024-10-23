@@ -1029,6 +1029,8 @@
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.appointments.title":"Citas en persona de MyMcKinley",
     "panel.explore.button.appointments.hint":"",
+    "panel.explore.button.stored_sites.title": "Storied Sites",
+    "panel.explore.button.stored_sites.hint":"",
     "panel.explore.button.directions.title":"Indicaciones",
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Detalles",
@@ -1083,6 +1085,7 @@
     "panel.explore.state.online.empty.mental_health":"No hay ubicaciones de terapeutas disponibles.",
     "panel.explore.state.online.empty.student_course":"No hay cursos de estudiantes registrados.",
     "panel.explore.state.online.empty.appointments":"No hay citas disponibles.",
+    "panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
     "panel.explore.state.online.empty.state_farm":"No hay State Farm Wayfinding disponibles.",
 
     "panel.explore.state.offline.empty.events":"No hay próximos eventos disponibles sin conexión",
@@ -1095,6 +1098,7 @@
     "panel.explore.state.offline.empty.mental_health":"No hay ubicaciones de terapeutas disponibles mientras está desconectado.",
     "panel.explore.state.offline.empty.student_course":"No hay cursos para estudiantes disponibles sin conexión.",
     "panel.explore.state.offline.empty.appointments":"No hay citas disponibles sin conexión.",
+    "panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
     "panel.explore.state.offline.empty.state_farm":"No hay State Farm Wayfinding sin conexión.",
 
     "panel.explore.state.failed.events":"No se pudieron cargar los próximos eventos.",
@@ -1107,6 +1111,7 @@
     "panel.explore.state.failed.mental_health":"No hay ubicaciones de terapeutas disponibles.",
     "panel.explore.state.failed.student_course":"No se pudieron cargar los cursos de los estudiantes.",
     "panel.explore.state.failed.appointments":"Error al cargar las citas.",
+    "panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
     "panel.explore.state.failed.state_farm":"Error al cargar State Farm Wayfinding.",
 
     "panel.explore.item.events.name":"Eventos",

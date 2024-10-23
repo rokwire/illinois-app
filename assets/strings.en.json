@@ -1030,6 +1030,8 @@
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.appointments.title":"MyMcKinley In-Person Appointments",
     "panel.explore.button.appointments.hint":"",
+    "panel.explore.button.stored_sites.title": "Storied Sites",
+    "panel.explore.button.stored_sites.hint":"",
     "panel.explore.button.directions.title":"Directions",
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Details",
@@ -1084,6 +1086,7 @@
     "panel.explore.state.online.empty.mental_health":"No therapist locations are available.",
     "panel.explore.state.online.empty.student_course":"No student courses registered.",
     "panel.explore.state.online.empty.appointments":"No appointments are available.",
+    "panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
     "panel.explore.state.online.empty.state_farm":"No State Farm Wayfinding available.",
 
     "panel.explore.state.offline.empty.events":"No upcoming events are available while offline.",
@@ -1096,6 +1099,7 @@
     "panel.explore.state.offline.empty.mental_health":"No therapist locations are available while offline.",
     "panel.explore.state.offline.empty.student_course":"No student courses are available while offline.",
     "panel.explore.state.offline.empty.appointments":"No appointments are available while offline.",
+    "panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
     "panel.explore.state.offline.empty.state_farm":"State Farm Wayfinding is not available while offline.",
 
     "panel.explore.state.failed.events":"Failed to load upcoming events.",
@@ -1108,6 +1112,7 @@
     "panel.explore.state.failed.mental_health":"Failed to load therapist locations.",
     "panel.explore.state.failed.student_course":"Failed to load student courses.",
     "panel.explore.state.failed.appointments":"Failed to load appointments.",
+    "panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
     "panel.explore.state.failed.state_farm":"Failed to load State Farm Wayfinding.",
 
     "panel.explore.item.events.name":"Events",
