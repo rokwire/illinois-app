@@ -1030,7 +1030,7 @@
 	"panel.explore.button.appointments.title":"MyMcKinley 预约",
 	"panel.explore.button.appointments.hint":"",
 	"panel.explore.button.stored_sites.title": "Storied Sites",
- "panel.explore.button.stored_sites.hint":"",
+ 	"panel.explore.button.stored_sites.hint":"",
 	"panel.explore.button.directions.title":"路线",
 	"panel.explore.button.directions.hint":"",
 	"panel.explore.button.details.title":"详细信息",
@@ -1149,6 +1149,19 @@
 	"panel.explore.directions.na.msg":"您需要啟用定位服務才能獲得導航方向。",
 	"panel.explore.directions.failed.msg":"未能啟動導航方向。",
 	"panel.explore.details.na.msg":"自定義興趣點的詳細信息不可用。",
+
+	"panel.explore.storied_sites.title": "Storied Sites",
+	"panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+	"panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
+	"panel.explore.storied_sites.one.day": "You can only check in once per day.",
+	"panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",
+	"panel.explore.storied_sites.clear.error": "An error occurred while clearing the check-in date.",
+	"panel.explore.storied_sites.checked.in": "Checked in",
+	"panel.explore.storied_sites.check.in": "Check In",
+	"panel.explore.storied_sites.check.in.title": "You checked in on...",
+	"panel.explore.storied_sites.default.description": "No description available",
+	"panel.explore.storied_sites.share.location": "Share this location",
+	"panel.explore.storied_sites.default.name": "Unknown Name",
 
 	"panel.explore_list.header.title":"探索",
 

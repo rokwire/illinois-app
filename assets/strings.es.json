@@ -1150,6 +1150,19 @@
     "panel.explore.directions.failed.msg":"Error al iniciar las indicaciones de navegación.",
     "panel.explore.details.na.msg":"Los detalles no están disponibles para los puntos de interés personalizados.",
 
+    "panel.explore.storied_sites.title": "Storied Sites",
+    "panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+    "panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
+    "panel.explore.storied_sites.one.day": "You can only check in once per day.",
+    "panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",
+    "panel.explore.storied_sites.clear.error": "An error occurred while clearing the check-in date.",
+    "panel.explore.storied_sites.checked.in": "Checked in",
+    "panel.explore.storied_sites.check.in": "Check In",
+    "panel.explore.storied_sites.check.in.title": "You checked in on...",
+    "panel.explore.storied_sites.default.description": "No description available",
+    "panel.explore.storied_sites.share.location": "Share this location",
+    "panel.explore.storied_sites.default.name": "Unknown Name",
+
     "panel.explore_list.header.title":"Explorar",
 
     "panel.explore_detail.button.get_tickets.title":"Registrarse",
