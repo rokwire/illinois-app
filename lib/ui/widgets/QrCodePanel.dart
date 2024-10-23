@@ -110,7 +110,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   factory QrCodePanel.fromPlace(places.Place? place, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
-    deepLinkUrl: '${Places.placesDetailUrl}?place_id=${place?.id}',
+    deepLinkUrl: Places.placeDetailUrl(place),
     saveFileName: 'Location - ${place?.name}',
     saveWatermarkText: place?.name,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
