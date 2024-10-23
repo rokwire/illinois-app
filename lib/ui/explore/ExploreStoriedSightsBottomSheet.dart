@@ -29,7 +29,7 @@ class ExploreStoriedSightsBottomSheet extends StatefulWidget {
 class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBottomSheet> {
   List<places_model.Place> _storiedSights = [];
   final DraggableScrollableController _controller = DraggableScrollableController();
-  final Set<String> _selectedFilters = {};
+  Set<String> _selectedFilters = {};
   places_model.Place? _selectedDestination;
   List<places_model.Place> _allPlaces = [];
   ScrollController? _scrollController;
@@ -219,7 +219,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
   void _onTapDestinationCard(places_model.Place place) {
     Analytics().logSelect(target: 'Place Card: ${place.name}');
-    selectPlace(place);
+    _selectPlace(place);
   }
 
   Widget _buildAddressRow(places_model.Place? place) =>
@@ -524,8 +524,18 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   }
 
   void selectPlace(places_model.Place place) {
+    _selectPlace(place, places: _allPlaces, filters: {});
+  }
+
+  void _selectPlace(places_model.Place place, { List<places_model.Place>? places, Set<String>? filters }) {
     setState(() {
       _selectedDestination = place;
+      if (places != null) {
+        _storiedSights = List.from(places);
+      }
+      if (filters != null) {
+        _selectedFilters = Set.from(filters);
+      }
     });
     _controller.animateTo(
       0.65,
@@ -546,6 +556,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     setState(() {
       _storiedSights = places;
       _selectedDestination = null;
+      _selectedFilters.clear();
     });
   }
 
@@ -553,6 +564,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     setState(() {
       _storiedSights = _allPlaces;
       _selectedDestination = null;
+      _selectedFilters.clear();
     });
   }
 }
