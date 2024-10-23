@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:intl/intl.dart';
@@ -189,49 +190,9 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-
-
-
-  Widget _buildAddressRow(places_model.Place? place) {
-    if (place?.address == null || place!.address!.trim().isEmpty) {
-      return SizedBox.shrink();
-    }
-
-    return GestureDetector(
-      onTap: () => place.launchDirections(),
-      behavior: HitTestBehavior.translucent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 2.0),
-                child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  place.address!,
-                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                    decoration: TextDecoration.underline,
-                    decorationColor: Styles().colors.fillColorSecondary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDestinationCard(places_model.Place place) {
     return InkWell(
-      onTap: () => selectPlace(place),
+      onTap: () => _onTapDestinationCard(place),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
@@ -256,6 +217,51 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
+  void _onTapDestinationCard(places_model.Place place) {
+    Analytics().logSelect(target: 'Place Card: ${place.name}');
+    selectPlace(place);
+  }
+
+  Widget _buildAddressRow(places_model.Place? place) =>
+    (place?.address == null || place!.address!.trim().isEmpty) ?
+      SizedBox.shrink() :
+      InkWell(
+        onTap: () => _onTapAddress(place),
+        child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 2.0),
+                    child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      place.address!,
+                      style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+  void _onTapAddress(places_model.Place place) {
+    Analytics().logSelect(target: "Directions: ${place.name}");
+    place.launchDirections();
+  }
+
   Widget _buildDestinationDetailsCard(places_model.Place place) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +284,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             ],
           ),
         ),
-        SizedBox(height: 4),
         _buildAddressRow(place),
       ],
     );
@@ -607,7 +612,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.onTapBack != null)
-          GestureDetector(
+          InkWell(
             onTap: widget.onTapBack,
             child: Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8),
@@ -676,66 +681,58 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.place.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: _buildAddressRow(),
-          ),
+          Text(widget.place.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),),
+          _buildAddressRow(),
           _buildShareLocationRow(),
-          SizedBox(height: 16),
+          SizedBox(height: 8),
           _buildCheckInButton(),
         ],
       ),
     );
   }
 
-  Widget _buildAddressRow() {
-    if (widget.place.address?.trim().isNotEmpty != true) {
-      return SizedBox.shrink();
-    }
-
-    return GestureDetector(
-      onTap: () => widget.place.launchDirections(),
-      behavior: HitTestBehavior.translucent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+  Widget _buildAddressRow() =>
+    (widget.place.address?.trim().isNotEmpty != true) ?
+      SizedBox.shrink() :
+      InkWell(
+        onTap: _onTapAddress,
+        child: Padding(padding: EdgeInsets.only(top: 8, bottom: 2),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: 2.0),
-                child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  widget.place.address ?? '',
-                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                    decoration: TextDecoration.underline,
-                    decorationColor: Styles().colors.fillColorSecondary,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 2.0),
+                    child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      widget.place.address ?? '',
+                      style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular.underline"),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+
+  void _onTapAddress() {
+    Analytics().logSelect(target: "Directions: ${widget.place.name}");
+    widget.place.launchDirections();
   }
 
-  Widget _buildShareLocationRow() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            QrCodePanel.fromPlace(widget.place)
-        ));
-      },
-      behavior: HitTestBehavior.translucent,
-      child: Column(
+  Widget _buildShareLocationRow() =>
+    InkWell(
+      onTap: _onTapShareLocation,
+      child: Padding(padding: EdgeInsets.only(top: 2, bottom: 8),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -745,9 +742,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
               Expanded(
                 child: Text(
                   Localization().getStringEx('panel.explore.storied_sites.share.location', 'Share this location'), //Localization().getStringEx("panel.explore.storied_sites.") manavmodi
-                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors.fillColorSecondary),
+                  style: Styles().textStyles.getTextStyle('widget.card.detail.small.regular.underline'),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -756,7 +751,14 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           ),
         ],
       ),
-    );
+    ),
+  );
+
+  void _onTapShareLocation() {
+    Analytics().logSelect(target: "Share Location");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      QrCodePanel.fromPlace(widget.place)
+    ));
   }
 
   Widget _buildDestinationImage() {
@@ -834,14 +836,8 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
           onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
         ),
-        GestureDetector(
-          onTap: () {
-            showDialog(context: context, builder: (BuildContext context) {
-              return _buildInfoDialog(context);
-            },
-            );
-          },
-          behavior: HitTestBehavior.translucent,
+        InkWell(
+          onTap: _onTapInfo,
           child: Container(
             width: 44,
             height: 44,
@@ -850,6 +846,13 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  void _onTapInfo() {
+    Analytics().logSelect(target: 'Info');
+    showDialog(context: context, builder: (BuildContext context) =>
+      _buildInfoDialog(context)
     );
   }
 
@@ -912,10 +915,8 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
+          InkWell(
+            onTap: _onTapInfoClose,
             child: Align(
               alignment: Alignment.topRight,
               child: Styles().images.getImage("close-circle", size: 28.0) ?? const SizedBox(),
@@ -938,6 +939,11 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
     );
   }
 
+  void _onTapInfoClose() {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
+  }
+
   Widget _buildCheckInHistory() {
 
     List<DateTime>? visitedDates = widget.place.userData?.visited?.whereType<DateTime>().toList();
@@ -956,12 +962,8 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _isHistoryExpanded = !isExpanded;
-            });
-          },
+        InkWell(
+          onTap: _onTapExpandHistory,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -1007,6 +1009,13 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           ),
       ],
     );
+  }
+
+  void _onTapExpandHistory() {
+    Analytics().logSelect(target: (_isHistoryExpanded == true) ? 'Colapse History' : 'Expand History');
+    setState(() {
+      _isHistoryExpanded = (_isHistoryExpanded != true);
+    });
   }
 
   void _clearCheckInDate(DateTime date) async {
