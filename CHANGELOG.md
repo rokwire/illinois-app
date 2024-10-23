@@ -5,6 +5,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.54] - 2024-10-23
+### Added
+- Created a new map formatting and pins [#4337](https://github.com/rokwire/illinois-app/issues/4337)
+- Handled stored sites deep link processing [#4435](https://github.com/rokwire/illinois-app/issues/4435)
+
+## [6.0.53] - 2024-10-18
+### Added
+- Added sub-features for Map, Events, Groups, ResearchProjects and Dining features [#4425](https://github.com/rokwire/illinois-app/issues/4425).
+
+## [6.0.52] - 2024-10-16
+### Fixed
+- Fixed WalletHomePanel current analytics feature [#4418](https://github.com/rokwire/illinois-app/issues/4418).
+- Updated soundbyte icons [#4412](https://github.com/rokwire/illinois-app/issues/4412).
+### Added
+- Added user_auth_type standard analytics property [#4419](https://github.com/rokwire/illinois-app/issues/4419).
+
+
+## [6.0.51] - 2024-10-15
+### Fixed
+- Fixed Poll UI issues [#4414](https://github.com/rokwire/illinois-app/issues/4414).
+
+## [6.0.50] - 2024-10-03
+### Fixed
+- Add existing event to group [#4379](https://github.com/rokwire/illinois-app/issues/4379).
+
+## [6.0.49] - 2024-10-02
+### Changed
+- Upgraded url_launcher plugin to resolve build issue on Xcode 16.
+- Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
+- Skills Self-Evaluation Pop-Up Text Update [#4391](https://github.com/rokwire/illinois-app/issues/4391).
+- Share this event button title Updated [#4397](https://github.com/rokwire/illinois-app/issues/4397).
+### Added
+- Added share functionality for campus buildings [#4396](https://github.com/rokwire/illinois-app/issues/4396).
 
 ## [6.0.48] - 2024-09-20
 ### Changed

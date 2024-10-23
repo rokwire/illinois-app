@@ -1029,6 +1029,8 @@
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.appointments.title":"Citas en persona de MyMcKinley",
     "panel.explore.button.appointments.hint":"",
+    "panel.explore.button.stored_sites.title": "Storied Sites",
+    "panel.explore.button.stored_sites.hint":"",
     "panel.explore.button.directions.title":"Indicaciones",
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Detalles",
@@ -1083,6 +1085,7 @@
     "panel.explore.state.online.empty.mental_health":"No hay ubicaciones de terapeutas disponibles.",
     "panel.explore.state.online.empty.student_course":"No hay cursos de estudiantes registrados.",
     "panel.explore.state.online.empty.appointments":"No hay citas disponibles.",
+    "panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
     "panel.explore.state.online.empty.state_farm":"No hay State Farm Wayfinding disponibles.",
 
     "panel.explore.state.offline.empty.events":"No hay próximos eventos disponibles sin conexión",
@@ -1095,6 +1098,7 @@
     "panel.explore.state.offline.empty.mental_health":"No hay ubicaciones de terapeutas disponibles mientras está desconectado.",
     "panel.explore.state.offline.empty.student_course":"No hay cursos para estudiantes disponibles sin conexión.",
     "panel.explore.state.offline.empty.appointments":"No hay citas disponibles sin conexión.",
+    "panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
     "panel.explore.state.offline.empty.state_farm":"No hay State Farm Wayfinding sin conexión.",
 
     "panel.explore.state.failed.events":"No se pudieron cargar los próximos eventos.",
@@ -1107,6 +1111,7 @@
     "panel.explore.state.failed.mental_health":"No hay ubicaciones de terapeutas disponibles.",
     "panel.explore.state.failed.student_course":"No se pudieron cargar los cursos de los estudiantes.",
     "panel.explore.state.failed.appointments":"Error al cargar las citas.",
+    "panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
     "panel.explore.state.failed.state_farm":"Error al cargar State Farm Wayfinding.",
 
     "panel.explore.item.events.name":"Eventos",
@@ -1144,6 +1149,20 @@
     "panel.explore.directions.na.msg":"Debe habilitar los servicios de ubicación para obtener indicaciones de navegación.",
     "panel.explore.directions.failed.msg":"Error al iniciar las indicaciones de navegación.",
     "panel.explore.details.na.msg":"Los detalles no están disponibles para los puntos de interés personalizados.",
+
+    "panel.explore.storied_sites.title": "Storied Sites",
+    "panel.explore.storied_sites.load.error": "Failed to load stored site details",
+    "panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+    "panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
+    "panel.explore.storied_sites.one.day": "You can only check in once per day.",
+    "panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",
+    "panel.explore.storied_sites.clear.error": "An error occurred while clearing the check-in date.",
+    "panel.explore.storied_sites.checked.in": "Checked in",
+    "panel.explore.storied_sites.check.in": "Check In",
+    "panel.explore.storied_sites.check.in.title": "You checked in on...",
+    "panel.explore.storied_sites.default.description": "No description available",
+    "panel.explore.storied_sites.share.location": "Share this location",
+    "panel.explore.storied_sites.default.name": "Unknown Name",
 
     "panel.explore_list.header.title":"Explorar",
 
@@ -1187,7 +1206,9 @@
     "panel.explore_detail.label.ask_dietician": "Consulta con un Dietista",
     "panel.explore_detail.label.ask_dietician_descr": "Escribe tu pregunta para nuestros dietistas:",
 
+    "panel.explore_building_detail.message.failed": "Failed to load location details",
     "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+    "panel.explore_building_detail.detail.share": "Share This Location",
 
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
@@ -1449,7 +1470,7 @@
     "panel.event2.detail.general.add_to_calendar.title": "Agregar al Calendario",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
     "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
-    "panel.event2.detail.general.promote.title": "Share this event",
+    "panel.event2.detail.general.promote.title": "Share This Event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Múltiple",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Se repite",
     "panel.event2.detail.general.super_event.list.title": "Eventos múltiples",
@@ -3128,7 +3149,7 @@
     "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 autogestión\n\t\t\u2022 innovación\n\t\t\u2022 cooperación\n\t\t\u2022 compromiso social\n\t\t\u2022 resiliencia emocional",
     "panel.skills_self_evaluation.get_started.body.save.description": "Sus resultados se guardarán para que pueda revisarlos con resultados futuros.",
     "panel.skills_self_evaluation.get_started.body.dont_save.description": "Sus resultados no se guardarán para que los compare con resultados futuros.",
-    "panel.skills_self_evaluation.get_started.body.save.dialog": "Sus resultados se guardarán para que los compare con resultados futuros.\n\nNingún dato de esta evaluación se compartirá con otras personas o sistemas ni se almacenará fuera de su cuenta de la aplicación de Illinois.",
+    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
     "panel.skills_self_evaluation.get_started.body.dont_save.label": "No guardar mis resultados",
     "panel.skills_self_evaluation.get_started.body.save.label": "Guardar mis resultados",
     "panel.skills_self_evaluation.get_started.body.share.label": "Comparte esta característica",

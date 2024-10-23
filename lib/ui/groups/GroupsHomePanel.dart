@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -41,13 +42,22 @@ import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupsHomePanel extends StatefulWidget {
+class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'groups_home_panel';
   final rokwire.GroupsContentType? contentType;
-  
+
   GroupsHomePanel({Key? key, this.contentType}) : super(key: key);
   
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature {
+    switch (contentType) {
+      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
+      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
+      case null:                          return AnalyticsFeature.Groups;
+    }
+  }
 }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
@@ -488,7 +498,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
-              onImageTap: (){ onTapImage(group);},
+              onImageTap: () { onTapImage(group); },
               key: _getGroupKey(group),
             ),
           ));
@@ -547,6 +557,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             GroupCard(
               group: group,
               key: _getGroupKey(group),
+              displayType: GroupCardDisplayType.allGroups,
             ),
           ));
         }

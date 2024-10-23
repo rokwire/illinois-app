@@ -184,6 +184,7 @@
     "widget.title.extra_large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.semi_fat": { "font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "fillColorPrimary"},
+    "widget.title.medium_large.fat": {"font_family": "bold", "size": 22.0, "color": "fillColorPrimary"},
     "widget.title.medium_large": {"font_family": "regular", "size": 22.0, "color": "fillColorPrimary"},
     "widget.title.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large.semi_fat": { "font_family": "semi_bold", "size": 20.0, "color": "fillColorPrimary"},
@@ -449,6 +450,7 @@
     "widget.card.detail.small.fat": { "font_family": "bold", "size": 14.0, "color": "textSurface"},
     "widget.card.detail.small.medium": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.small.regular": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
+    "widget.card.detail.small.regular.underline": { "extends": "widget.card.detail.small.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.card.detail.small": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.tiny": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
@@ -973,6 +975,7 @@
 
     "photo-online": {"src": "images/appointment-detail-online-tout.jpg", "type": "flutter.asset", "todo": "color, size"},
     "photo-building": {"src": "images/appointment-detail-inperson-tout.png", "type": "flutter.asset", "todo": "size"},
+    "missing-building-photo": {"src": "images/missing-building-photo.png", "type": "flutter.asset"},
 
     "photo-grainger-1": {"src": "images/appointment-unit-grainger-tout-1.jpg", "type": "flutter.asset", "todo": "color, size"},
     "photo-grainger-2": {"src": "images/appointment-unit-grainger-tout-2.jpg", "type": "flutter.asset", "todo": "size"},
@@ -1058,7 +1061,8 @@
     "icon-recording": {"src": "images/icon-recording.png", "type": "flutter.asset"},
     "icon-play": {"src": "images/icon-play.png", "type": "flutter.asset"},
     "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
-    "icon-soundbyte": {"src": "images/icon-soundbyte.png", "type": "flutter.asset", "size": 18},
+    "icon-soundbyte": {"src": "0xf6a8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "icon-soundbyte-play": {"src": "0xf028", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
     "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
 

@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -37,27 +38,31 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class ExploreMapSelectLocationPanel extends StatefulWidget {
+class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
 
   final ExploreMapType? mapType;
   final Explore? selectedExplore;
+  final AnalyticsFeature? _analyticsFeature;
 
-  ExploreMapSelectLocationPanel({ Key? key, this.mapType, this.selectedExplore });
+  ExploreMapSelectLocationPanel({ Key? key, this.mapType, this.selectedExplore, AnalyticsFeature? analyticsFeature }) :
+    _analyticsFeature = analyticsFeature;
   
+  @override
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? ExploreMapPanel.contentAnalyticsFeatures[mapType] ?? AnalyticsFeature.Map;
+
   @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();
 }
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
   with SingleTickerProviderStateMixin implements NotificationsListener {
-
-  late ExploreMapType? _mapType;
 
   List<Explore>? _explores;
   bool _exploreProgress = false;
@@ -98,8 +103,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
-
-    _mapType = widget.mapType;
 
     _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: 0, upperBound: 1, vsync: this)
       ..addListener(() {
@@ -380,10 +383,10 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+        (_selectedMapExplore as Explore).exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _mapType,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: widget.mapType, analyticsFeature: widget.analyticsFeature,)));
     }
     _selectMapExplore(null);
   }
@@ -496,7 +499,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
-      switch (_mapType) {
+      switch (widget.mapType) {
         case ExploreMapType.Events2: return Events2().loadEventsList(Events2Query());
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
@@ -506,6 +509,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return Wellness().loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSites: return Places().getAllPlaces();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
@@ -557,7 +561,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   // Favorites
 
   void _onFavoritesChanged() {
-    if (_mapType == ExploreMapType.MyLocations) {
+    if (widget.mapType == ExploreMapType.MyLocations) {
       _refreshMyLocations();
     }
     else {
@@ -737,8 +741,8 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
           context: context,
           imageSize: _mapGroupMarkerSize,
           backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
+          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor,
+          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor,
           count: exploreGroup.length,
         ));
       Offset markerAnchor = Offset(0.5, 0.5);

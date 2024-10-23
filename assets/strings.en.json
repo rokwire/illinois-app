@@ -1030,6 +1030,8 @@
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.appointments.title":"MyMcKinley In-Person Appointments",
     "panel.explore.button.appointments.hint":"",
+    "panel.explore.button.stored_sites.title": "Storied Sites",
+    "panel.explore.button.stored_sites.hint":"",
     "panel.explore.button.directions.title":"Directions",
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Details",
@@ -1084,6 +1086,7 @@
     "panel.explore.state.online.empty.mental_health":"No therapist locations are available.",
     "panel.explore.state.online.empty.student_course":"No student courses registered.",
     "panel.explore.state.online.empty.appointments":"No appointments are available.",
+    "panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
     "panel.explore.state.online.empty.state_farm":"No State Farm Wayfinding available.",
 
     "panel.explore.state.offline.empty.events":"No upcoming events are available while offline.",
@@ -1096,6 +1099,7 @@
     "panel.explore.state.offline.empty.mental_health":"No therapist locations are available while offline.",
     "panel.explore.state.offline.empty.student_course":"No student courses are available while offline.",
     "panel.explore.state.offline.empty.appointments":"No appointments are available while offline.",
+    "panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
     "panel.explore.state.offline.empty.state_farm":"State Farm Wayfinding is not available while offline.",
 
     "panel.explore.state.failed.events":"Failed to load upcoming events.",
@@ -1108,6 +1112,7 @@
     "panel.explore.state.failed.mental_health":"Failed to load therapist locations.",
     "panel.explore.state.failed.student_course":"Failed to load student courses.",
     "panel.explore.state.failed.appointments":"Failed to load appointments.",
+    "panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
     "panel.explore.state.failed.state_farm":"Failed to load State Farm Wayfinding.",
 
     "panel.explore.item.events.name":"Events",
@@ -1145,6 +1150,20 @@
     "panel.explore.directions.na.msg":"You need to enable location services to get navigation directions.",
     "panel.explore.directions.failed.msg":"Failed to launch navigation directions.",
     "panel.explore.details.na.msg":"Details are not available for custom points of interest.",
+
+    "panel.explore.storied_sites.title": "Storied Sites",
+    "panel.explore.storied_sites.load.error": "Failed to load stored site details",
+    "panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+    "panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
+    "panel.explore.storied_sites.one.day": "You can only check in once per day.",
+    "panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",
+    "panel.explore.storied_sites.clear.error": "An error occurred while clearing the check-in date.",
+    "panel.explore.storied_sites.checked.in": "Checked in",
+    "panel.explore.storied_sites.check.in": "Check In",
+    "panel.explore.storied_sites.check.in.title": "You checked in on...",
+    "panel.explore.storied_sites.default.description": "No description available",
+    "panel.explore.storied_sites.share.location": "Share this location",
+    "panel.explore.storied_sites.default.name": "Unknown Name",
 
     "panel.explore_list.header.title":"Explore",
 
@@ -1188,7 +1207,9 @@
     "panel.explore_detail.label.ask_dietician": "Ask a Dietitian",
     "panel.explore_detail.label.ask_dietician_descr": "Type your question to our dietitians:",
 
+    "panel.explore_building_detail.message.failed": "Failed to load location details",
     "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+    "panel.explore_building_detail.detail.share": "Share This Location",
 
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
@@ -1450,7 +1471,7 @@
     "panel.event2.detail.general.add_to_calendar.title": "Add to Calendar",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
     "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to calendar.",
-    "panel.event2.detail.general.promote.title": "Share this event",
+    "panel.event2.detail.general.promote.title": "Share This Event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Multi",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Repeats",
     "panel.event2.detail.general.super_event.list.title": "Multiple events",
@@ -2670,6 +2691,8 @@
     "panel.qr_code.event_query.description": "Want to invite other Illinois app users to view this set of filtered events? Use one of the sharing options below.",
     "panel.qr_code.group.title": "Share this group",
     "panel.qr_code.group.description.label": "Want to invite other Illinois app users to view this group? Use one of the sharing options below.",
+    "panel.qr_code.building.title": "Share this location",
+    "panel.qr_code.building.description.label": "Want to invite other Illinois app users to view this location? Use one of the sharing options below.",
     "panel.qr_code.feature.title": "Share this feature",
     "panel.qr_code.feature.description.label": "Want to invite other Illinois app users to view this feature? Use one of the sharing options below.",
 
@@ -3133,7 +3156,7 @@
     "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience",
     "panel.skills_self_evaluation.get_started.body.save.description": "Your results will be saved for you to compare with future results.",
     "panel.skills_self_evaluation.get_started.body.dont_save.description": "Your results will not be saved for you to compare with future results.",
-    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
+    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
     "panel.skills_self_evaluation.get_started.body.dont_save.label": "Don't Save My Results",
     "panel.skills_self_evaluation.get_started.body.save.label": "Save My Results",
     "panel.skills_self_evaluation.get_started.body.share.label": "Share this feature",

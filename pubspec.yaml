@@ -11,7 +11,7 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 6.0.48+2148
+version: 6.0.54+2154
 
 publish_to: none
 
@@ -31,7 +31,7 @@ dependencies:
   http: ^0.13.3
   flutter_widget_from_html: ^0.9.1
   geolocator: ^8.0.0
-  url_launcher: ^6.0.10
+  url_launcher: ^6.3.0
   xml: ^6.3.0
   sprintf: ^7.0.0
   path: ^1.8.0
@@ -66,6 +66,7 @@ dependencies:
   fl_chart: ^0.68.0
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
   record: ^4.4.4
+  flutter_markdown: ^0.7.4
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:

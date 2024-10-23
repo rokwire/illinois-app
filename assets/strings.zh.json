@@ -1029,6 +1029,8 @@
 	"panel.explore.button.state_farm.hint":"",
 	"panel.explore.button.appointments.title":"MyMcKinley 预约",
 	"panel.explore.button.appointments.hint":"",
+	"panel.explore.button.stored_sites.title": "Storied Sites",
+ 	"panel.explore.button.stored_sites.hint":"",
 	"panel.explore.button.directions.title":"路线",
 	"panel.explore.button.directions.hint":"",
 	"panel.explore.button.details.title":"详细信息",
@@ -1083,6 +1085,7 @@
 	"panel.explore.state.online.empty.mental_health":"沒有可用的治療師位置。",
 	"panel.explore.state.online.empty.student_course":"沒有註冊學生課程。",
 	"panel.explore.state.online.empty.appointments":"沒有可用的約會。",
+	"panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
 	"panel.explore.state.online.empty.state_farm":"離線時無法使用 State Farm Wayfinding。",
 
 	"panel.explore.state.offline.empty.events":"离线时无即将发生的活动。",
@@ -1095,6 +1098,7 @@
 	"panel.explore.state.offline.empty.mental_health":"離線時沒有可用的治療師位置。",
 	"panel.explore.state.offline.empty.student_course":"離線時沒有可用的學生課程。",
 	"panel.explore.state.offline.empty.appointments":"離線時沒有可用的約會。",
+	"panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
 	"panel.explore.state.offline.empty.state_farm":"離線時無法使用 State Farm Wayfinding.",
 
 	"panel.explore.state.failed.events":"無法加載即將發生的事件。",
@@ -1107,6 +1111,7 @@
 	"panel.explore.state.failed.mental_health":"沒有可用的治療師位置。",
 	"panel.explore.state.failed.student_course":"無法加載學生課程。",
 	"panel.explore.state.failed.appointments":"無法加載約會。",
+	"panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
 	"panel.explore.state.failed.state_farm":"無法加載 State Farm Wayfinding。",
 
 	"panel.explore.item.events.name":"活动",
@@ -1144,6 +1149,20 @@
 	"panel.explore.directions.na.msg":"您需要啟用定位服務才能獲得導航方向。",
 	"panel.explore.directions.failed.msg":"未能啟動導航方向。",
 	"panel.explore.details.na.msg":"自定義興趣點的詳細信息不可用。",
+
+	"panel.explore.storied_sites.title": "Storied Sites",
+	"panel.explore.storied_sites.load.error": "Failed to load stored site details",
+	"panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+	"panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
+	"panel.explore.storied_sites.one.day": "You can only check in once per day.",
+	"panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",
+	"panel.explore.storied_sites.clear.error": "An error occurred while clearing the check-in date.",
+	"panel.explore.storied_sites.checked.in": "Checked in",
+	"panel.explore.storied_sites.check.in": "Check In",
+	"panel.explore.storied_sites.check.in.title": "You checked in on...",
+	"panel.explore.storied_sites.default.description": "No description available",
+	"panel.explore.storied_sites.share.location": "Share this location",
+	"panel.explore.storied_sites.default.name": "Unknown Name",
 
 	"panel.explore_list.header.title":"探索",
 
@@ -1187,7 +1206,9 @@
 	"panel.explore_detail.label.ask_dietician": "向营养师提问",
 	"panel.explore_detail.label.ask_dietician_descr": "键入您的问题:",
 
+	"panel.explore_building_detail.message.failed": "Failed to load location details",
 	"panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+	"panel.explore_building_detail.detail.share": "Share This Location",
 
 	"panel.search_building.header.title": "Search",
 	"panel.search_building.result.error.label": "Failed to search buildings",
@@ -1436,7 +1457,7 @@
 	"panel.event2.detail.general.add_to_calendar.title": "加入日历",
 	"panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
 	"panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
-	"panel.event2.detail.general.promote.title": "Share this event",
+	"panel.event2.detail.general.promote.title": "Share This Event",
 	"panel.event2.detail.general.super_event.abbreviation.title": "Multi",
 	"panel.event2.detail.general.recurrence.abbreviation.title": "重复",
 	"panel.event2.detail.general.super_event.list.title": "多个活动",
@@ -3113,7 +3134,7 @@
 	"panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 自我管理\n\t\t\u2022 創新\n\t\t\u2022 合作\n\t\t\u2022 社會參與\n\t\t\u2022 情緒恢復力",
 	"panel.skills_self_evaluation.get_started.body.save.description": "您的结果将被保存，以便您未来可以比较结果。",
 	"panel.skills_self_evaluation.get_started.body.dont_save.description": "您的结果将不会被保存，即未来无法比较结果。",
-	"panel.skills_self_evaluation.get_started.body.save.dialog": "您的结果将被保存，以便您未来可以比较结果。\n\n此评估的任何数据皆不会与其他人或系统共享，也不会存储在您的Illinois应用程序帐户之外。",
+	"panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
 	"panel.skills_self_evaluation.get_started.body.dont_save.label": "不要保存我的结果",
 	"panel.skills_self_evaluation.get_started.body.save.label": "保存我的結果",
 	"panel.skills_self_evaluation.get_started.body.share.label": "分享此功能",

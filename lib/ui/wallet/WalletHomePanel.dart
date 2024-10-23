@@ -61,7 +61,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   _WalletHomePanelState createState() => _WalletHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[contentType];
+  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[getTargetContentType(contentType: contentType, contentTypes: contentTypes)];
 
   static void present(BuildContext context, { WalletContentType? contentType }) {
     List<WalletContentType> contentTypes = buildContentTypes();

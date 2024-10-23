@@ -33,9 +33,11 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/MTD.dart';
+import 'package:illinois/ext/Places.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -291,6 +293,9 @@ extension ExploreExt on Explore {
     else if (this is ExplorePOI) {
       return (this as ExplorePOI).uiColor;
     }
+    else if (this is Place) {
+      return (this as Place).uiColor;
+    }
     //else if (this is Building) {}
     //else if (this is WellnessBuilding) {}
     //else if (this is Appointment) {}
@@ -312,7 +317,7 @@ extension ExploreExt on Explore {
 
   }
 
-  void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
+  void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData, AnalyticsFeature? analyticsFeature }) {
     Route? route;
     if (this is Event) {
       if ((this as Event).isGameEvent) {
@@ -328,40 +333,40 @@ extension ExploreExt on Explore {
     else if (this is Event2) {
         Event2 event2 = (this as Event2);
         if (event2.hasGame) {
-          route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game));
+          route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, analyticsFeature: analyticsFeature,));
         } else {
-          route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, userLocation: initialLocationData,));
+          route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, userLocation: initialLocationData, analyticsFeature: analyticsFeature));
         }
     }
     else if (this is Dining) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData),);
+      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,),);
     }
     else if (this is LaundryRoom) {
-      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom),);
+      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,),);
     }
     else if (this is Game) {
-      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game),);
+      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game, analyticsFeature: analyticsFeature,),);
     }
     else if (this is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
+      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building, analyticsFeature: analyticsFeature,),);
     }
     else if (this is WellnessBuilding) {
-      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: AnalyticsFeature.Wellness,),);
+      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: analyticsFeature ?? AnalyticsFeature.Wellness,),);
     }
     else if (this is MTDStop) {
-      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,),);
+      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature,),);
     }
     else if (this is StudentCourse) {
-      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: this as StudentCourse,),);
+      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: this as StudentCourse, analyticsFeature: analyticsFeature,),);
     }
     else if (this is Appointment) {
-      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: this as Appointment),);
+      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: this as Appointment, analyticsFeature: analyticsFeature,),);
     }
     else if (this is ExplorePOI) {
       // Not supported
     }
     else {
-      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData,),);
+      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,),);
     }
 
     if (route != null) {
@@ -375,11 +380,11 @@ extension ExploreMap on Explore {
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
   static Color? get unknownMarkerColor => Styles().colors.accentColor2;
 
-  Color? get mapMarkerBorderColor => unknownMarkerBorderColor;
-  static Color? get unknownMarkerBorderColor => Styles().colors.fillColorPrimary;
+  Color? get mapMarkerBorderColor => (this is Place) ? (this as Place).mapMarkerBorderColor : defaultMarkerBorderColor;
+  static Color? get defaultMarkerBorderColor => Styles().colors.fillColorPrimary;
 
-  Color? get mapMarkerTextColor => unknownMarkerTextColor;
-  static Color? get unknownMarkerTextColor => Styles().colors.background;
+  Color? get mapMarkerTextColor => (this is Place) ? (this as Place).mapMarkerTextColor : defaultMarkerTextColor;
+  static Color? get defaultMarkerTextColor => Styles().colors.background;
 
   String? get mapMarkerTitle {
     return exploreTitle;

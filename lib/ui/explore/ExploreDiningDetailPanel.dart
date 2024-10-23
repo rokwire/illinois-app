@@ -52,8 +52,9 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Dining? dining;
   final Core.Position? initialLocationData;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  ExploreDiningDetailPanel({this.dining, this.initialLocationData});
+  ExploreDiningDetailPanel({this.dining, this.initialLocationData, this.analyticsFeature});
 
   @override
   _DiningDetailPanelState createState() => _DiningDetailPanelState(dining);
