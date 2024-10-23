@@ -18,6 +18,7 @@ import 'package:rokwire_plugin/model/places.dart' as places;
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
@@ -109,7 +110,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   factory QrCodePanel.fromPlace(places.Place? place, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
-    deepLinkUrl: '${Gateway.buildingDetailUrl}?place_id=${place?.id}', //TODO: update for the places
+    deepLinkUrl: Places.placeDetailUrl(place),
     saveFileName: 'Location - ${place?.name}',
     saveWatermarkText: place?.name,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),

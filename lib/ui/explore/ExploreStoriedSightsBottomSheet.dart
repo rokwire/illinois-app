@@ -33,9 +33,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   List<places_model.Place> _allPlaces = [];
   ScrollController? _scrollController;
 
-  Map<String, List<DateTime>> _placeCheckInDates = {};
-  Map<String, bool> _isHistoryExpanded = {};
-  Map<String, DateTime?> _lastCheckInDate = {};
   Map<String, Set<String>> _mainFilters = {};
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
@@ -137,20 +134,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
                           ),
 
                         SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                              List<Widget> contentWidgets = _selectedDestination == null
-                                  ? _buildPlaceListView()
-                                  : _buildSelectedDestinationView();
-                              if (index < contentWidgets.length) {
-                                return contentWidgets[index];
-                              }
-                              return null;
-                            },
-                            childCount: _selectedDestination == null
-                                ? _buildPlaceListView().length
-                                : _buildSelectedDestinationView().length,
-                          ),
+                          delegate: SliverChildListDelegate(_buildSheetListContent()),
                         ),
                       ],
                     ),
@@ -164,6 +148,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
+  List<Widget> _buildSheetListContent() => _selectedDestination == null ?
+    _buildPlaceListView() :
+    [ExploreStoriedSightWidget(place: _selectedDestination!, onTapBack: () => setState(() {
+        _selectedDestination = null;
+    }))];
 
   double _calculateFilterButtonsHeight() {
     return _expandedMainTags.isNotEmpty ? 120.0 : 60.0;
@@ -175,323 +164,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     ];
   }
 
-  void _handleCheckIn() async {
-    if (_selectedDestination != null) {
-      String placeId = _selectedDestination!.id;
-      DateTime now = DateTime.now();
-
-      setState(() {
-        if (_selectedDestination!.userData == null) {
-          _selectedDestination!.userData = places_model.UserPlace(
-            id: placeId,
-            visited: [now],
-          );
-        } else {
-          _selectedDestination!.userData!.visited ??= [];
-          _selectedDestination!.userData!.visited!.add(now);
-        }
 
 
-        _placeCheckInDates[placeId] ??= [];
-        _placeCheckInDates[placeId]!.add(now);
-        _placeCheckInDates[placeId]!.sort((a, b) => b.compareTo(a));
-        _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
-      });
-
-      Places placesService = Places();
-      try {
-        places_model.UserPlace? updatedPlace = await placesService.updatePlaceVisited(placeId, true);
-        if (mounted && (updatedPlace == null)) {
-
-          setState(() {
-            _selectedDestination!.userData!.visited!.remove(now);
-            _placeCheckInDates[placeId]!.remove(now);
-            if (_placeCheckInDates[placeId]!.isEmpty) {
-              _lastCheckInDate[placeId] = null;
-            } else {
-              _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
-            }
-          });
-
-          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please try again.'));
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _selectedDestination!.userData!.visited!.remove(now);
-            _placeCheckInDates[placeId]!.remove(now);
-            if (_placeCheckInDates[placeId]!.isEmpty) {
-              _lastCheckInDate[placeId] = null;
-            } else {
-              _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
-            }
-          });
-
-          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.failed', 'Check-in failed due to an error.'));
-        }
-      }
-    }
-  }
-
-  void _handleCheckedIn() async {
-    AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.one.day', 'You can only check in once per day.'));
-  }
-
-  void _clearCheckInDate(DateTime date) async {
-    if (_selectedDestination != null) {
-      String placeId = _selectedDestination!.id;
 
 
-      setState(() {
-        _placeCheckInDates[placeId]?.remove(date);
-        _selectedDestination!.userData?.visited?.remove(date);
-
-        if (_placeCheckInDates[placeId]?.isEmpty ?? true) {
-          _lastCheckInDate[placeId] = null;
-          _isHistoryExpanded[placeId] = false;
-        } else {
-          _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
-          _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
-        }
-      });
-
-      Places placesService = Places();
-      try {
-        bool success = await placesService.deleteVisitedPlace(placeId, date.toUtc());
-        if (mounted && !success) {
-          setState(() {
-            _placeCheckInDates[placeId]?.add(date);
-            _selectedDestination!.userData?.visited?.add(date);
-            _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
-            _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
-          });
-
-          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.failed.clear', 'Failed to clear check-in date. Please try again.'));
-        }
-      } catch (e) {
-
-        if (mounted) {
-          setState(() {
-            _placeCheckInDates[placeId]?.add(date);
-            _selectedDestination!.userData?.visited?.add(date);
-            _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
-            _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
-          });
-
-          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.clear.error', 'An error occurred while clearing the check-in date.'));
-        }
-      }
-    }
-  }
-
-  Widget _buildCheckInButton() {
-    if (_selectedDestination == null) return Container();
-
-    List<DateTime>? visitedDates = _selectedDestination!.userData?.visited?.whereType<DateTime>().toList();
-    bool isCheckedInToday = false;
-
-    if (visitedDates != null && visitedDates.isNotEmpty) {
-      visitedDates.sort((a, b) => b.compareTo(a));
-      DateTime lastCheckInDate = visitedDates.first;
-
-      DateTime now = DateTime.now();
-      isCheckedInToday = lastCheckInDate.year == now.year &&
-          lastCheckInDate.month == now.month &&
-          lastCheckInDate.day == now.day;
-    }
-
-    return Row(
-      children: [
-        SmallRoundedButton(
-          label: isCheckedInToday ? Localization().getStringEx('panel.explore.storied_sites.checked.in', 'Checked in') : Localization().getStringEx('panel.explore.storied_sites.check.in', 'Check In'),
-          textStyle: isCheckedInToday ?  Styles().textStyles.getTextStyle("widget.button.title.disabled") : Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-          borderColor: isCheckedInToday ? Styles().colors.surfaceAccent : Styles().colors.fillColorSecondary,
-          rightIcon: const SizedBox(),
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
-          onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
-        ),
-        GestureDetector(
-          onTap: () {
-            showDialog(context: context, builder: (BuildContext context) {
-              return _buildInfoDialog(context);
-            },
-            );
-          },
-          behavior: HitTestBehavior.translucent,
-          child: Container(
-            width: 44,
-            height: 44,
-            alignment: Alignment.center,
-            child: Styles().images.getImage('info', size: 16.0) ?? const SizedBox(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoDialog(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      backgroundColor: Colors.white,
-      contentPadding: const EdgeInsets.all(16.0),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Styles().images.getImage("close-circle", size: 28.0) ?? const SizedBox(),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0, bottom: 16),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Your check-in history is not shared with other users.",
-                style: Styles().textStyles.getTextStyle("widget.message.regular"),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckInHistory() {
-    if (_selectedDestination == null) return Container();
-
-    String placeId = _selectedDestination!.id;
-    List<DateTime>? visitedDates = _selectedDestination!.userData?.visited?.whereType<DateTime>().toList();
-    if (visitedDates == null || visitedDates.isEmpty) return Container();
-
-    visitedDates.sort((a, b) => b.compareTo(a));
-    DateTime lastCheckInDate = visitedDates.first;
-    String formattedLastDate = DateFormat('MMMM d, yyyy').format(lastCheckInDate);
-
-    bool isExpanded = _isHistoryExpanded[placeId] ?? false;
-
-    String headerText = isExpanded
-        ? Localization().getStringEx('panel.explore.storied_sites.check.in.title', 'You checked in on...')
-        : Localization().getStringEx('panel.explore.storied_sites.last.check.in.title', 'You last checked in on $formattedLastDate');
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _isHistoryExpanded[placeId] = !isExpanded;
-            });
-          },
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Styles().images.getImage('location', excludeFromSemantics: true, size: 16.0) ?? const SizedBox(),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  headerText,
-                  style: isExpanded ? Styles().textStyles.getTextStyle("widget.label.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
-                ),
-              ),
-              (isExpanded ? Styles().images.getImage("chevron-down", size: 25) : Styles().images.getImage("chevron-up", size: 25)) ?? const SizedBox(),
-            ],
-          ),
-        ),
-        if (isExpanded)
-          Padding(
-            padding: EdgeInsets.only(left: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: visitedDates.map((date) {
-                String formattedDate = DateFormat('MMMM d, yyyy').format(date);
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      formattedDate,
-                      style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium"),
-                    ),
-                    TextButton(
-                      onPressed: () => _clearCheckInDate(date),
-                      child: Text(
-                        'Clear',
-                        style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")?.apply(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Styles().colors.fillColorSecondary),
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-      ],
-    );
-  }
-
-  List<Widget> _buildSelectedDestinationView() {
-    return [
-      _buildSelectedDestinationHeader(),
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: MarkdownBody(
-          data: _selectedDestination?.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
-          onTapLink: (text, href, title) {
-            if (href?.startsWith('https://') == true) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)));
-              return;
-            }
-            UrlUtils.launchExternal(href);
-          },
-          styleSheet: MarkdownStyleSheet(
-            p: Styles().textStyles.getTextStyle("widget.description.regular"),
-            h1: Styles().textStyles.getTextStyle("widget.title.huge.extra_fat"),
-            h2: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
-            h3: Styles().textStyles.getTextStyle("widget.label.small.fat"),
-            h4: Styles().textStyles.getTextStyle("widget.message.light.variant.small"),
-            a: TextStyle(decoration: TextDecoration.underline, color: Styles().colors.fillColorSecondary),
-            listBulletPadding: const EdgeInsets.only(right: 4.0, bottom: 16.0),
-            strong: const TextStyle(fontWeight: FontWeight.bold),
-            em: const TextStyle(fontStyle: FontStyle.italic),
-          )
-        ),
-      ),
-    ];
-  }
-
-  Widget _buildSelectedDestinationHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _selectedDestination = null),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8),
-            child: Styles().images.getImage('chevron-left-bold', size: 24.0) ?? const SizedBox(),
-          ),
-        ),
-        if (_selectedDestination?.types != null && _selectedDestination!.types!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: _buildTypeChips(_selectedDestination!.types!),
-          ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: _buildSelectedDestinationContent(),
-        ),
-      ],
-    );
-  }
 
   Widget _buildTypeChips(List<String> types) {
     return Wrap(
@@ -513,51 +189,8 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     );
   }
 
-  Widget _buildSelectedDestinationContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDestinationHeader(),
-        SizedBox(height: 16),
-        _buildCheckInHistory(),
-        SizedBox(height: 16),
-        Divider(color: Styles().colors.mediumGray2, thickness: 2),
-        SizedBox(height: 16),
-        if (_selectedDestination?.images?.isNotEmpty ?? false)
-          _buildImageGallery(),
-      ],
-    );
-  }
 
-  Widget _buildDestinationHeader() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: _buildDestinationDetails()),
-        SizedBox(width: 8),
-        _buildDestinationImage(),
-      ],
-    );
-  }
 
-  Widget _buildDestinationDetails() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          _selectedDestination?.name ?? '',
-          style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: _buildAddressRow(_selectedDestination),
-        ),
-        _buildShareLocationRow(),
-        SizedBox(height: 16),
-        _buildCheckInButton(),
-      ],
-    );
-  }
 
   Widget _buildAddressRow(places_model.Place? place) {
     if (place?.address == null || place!.address!.trim().isEmpty) {
@@ -592,89 +225,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildShareLocationRow() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            QrCodePanel.fromPlace(_selectedDestination)
-        ));
-      },
-      behavior: HitTestBehavior.translucent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Styles().images.getImage('share', excludeFromSemantics: true) ?? const SizedBox(),
-              SizedBox(width: 8.0),
-              Expanded(
-                child: Text(
-                  Localization().getStringEx('panel.explore.storied_sites.share.location', 'Share this location'), //Localization().getStringEx("panel.explore.storied_sites.") manavmodi
-                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors.fillColorSecondary),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDestinationImage() {
-    return Container(
-      width: 75,
-      height: 75,
-      child: _selectedDestination?.images?.isNotEmpty ?? false
-          ? Image.network(
-        _selectedDestination!.images!.first.imageUrl,
-        fit: BoxFit.cover,
-      ) : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
-          SizedBox(width: 75, height: 75),
-    );
-  }
-
-  Widget _buildImageGallery() {
-    if ((_selectedDestination?.images?.length ?? 0) == 1) {
-      return ModalImageHolder(
-        child: SizedBox(
-          height: 200,
-          child: TriangleHeaderImage(
-            flexBackColor: Styles().colors.background,
-            flexImageUrl: _selectedDestination!.images!.first.imageUrl,
-            flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
-            flexLeftToRightTriangleHeight: 53,
-            flexRightToLeftTriangleColor: Styles().colors.background,
-            flexRightToLeftTriangleHeight: 30,
-          ),
-        ),
-      );
-    }
-    return SizedBox(
-      height: 140,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _selectedDestination!.images!.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.only(right: 12.0),
-            child: ModalImageHolder(
-              child: Image.network(
-                _selectedDestination!.images![index].imageUrl,
-                width: 140,
-                height: 140,
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -999,5 +549,504 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _storiedSights = _allPlaces;
       _selectedDestination = null;
     });
+  }
+}
+
+class ExploreStoriedSightWidget extends StatefulWidget {
+  final places_model.Place place;
+  final void Function()? onTapBack;
+  final bool showDetailImage;
+
+  ExploreStoriedSightWidget({super.key, required this.place, this.onTapBack, this.showDetailImage = true});
+
+  @override
+  State<StatefulWidget> createState() => _ExploreStoriedSightWidgetState();
+}
+
+class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
+
+  List<DateTime> _placeCheckInDates = [];
+  bool? _isHistoryExpanded;
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisAlignment: MainAxisAlignment.start, children: _buildSelectedDestinationView(),);
+
+  List<Widget> _buildSelectedDestinationView() {
+    return [
+      _buildSelectedDestinationHeader(),
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: MarkdownBody(
+          data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
+          onTapLink: (text, href, title) {
+            if (href?.startsWith('https://') == true) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)));
+              return;
+            }
+            UrlUtils.launchExternal(href);
+          },
+          styleSheet: MarkdownStyleSheet(
+            p: Styles().textStyles.getTextStyle("widget.description.regular"),
+            h1: Styles().textStyles.getTextStyle("widget.title.huge.extra_fat"),
+            h2: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+            h3: Styles().textStyles.getTextStyle("widget.label.small.fat"),
+            h4: Styles().textStyles.getTextStyle("widget.message.light.variant.small"),
+            a: TextStyle(decoration: TextDecoration.underline, color: Styles().colors.fillColorSecondary),
+            listBulletPadding: const EdgeInsets.only(right: 4.0, bottom: 16.0),
+            strong: const TextStyle(fontWeight: FontWeight.bold),
+            em: const TextStyle(fontStyle: FontStyle.italic),
+          )
+        ),
+      ),
+    ];
+  }
+
+  Widget _buildSelectedDestinationHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.onTapBack != null)
+          GestureDetector(
+            onTap: widget.onTapBack,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8),
+              child: Styles().images.getImage('chevron-left-bold', size: 24.0) ?? const SizedBox(),
+            ),
+          ),
+        if (widget.place.types != null && widget.place.types!.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: _buildTypeChips(widget.place.types!),
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _buildSelectedDestinationContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTypeChips(List<String> types) {
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 4.0,
+      children: types.map((type) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          decoration: BoxDecoration(
+            color: Styles().colors.fillColorPrimary,
+            borderRadius: BorderRadius.circular(2.0),
+          ),
+          child: Text(
+            type,
+            style: Styles().textStyles.getTextStyle("widget.button.title.small")?.copyWith(color: Colors.white),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildSelectedDestinationContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildDestinationHeader(),
+        SizedBox(height: 16),
+        _buildCheckInHistory(),
+        SizedBox(height: 16),
+        Divider(color: Styles().colors.mediumGray2, thickness: 2),
+        SizedBox(height: 16),
+        if (widget.place.images?.isNotEmpty ?? false)
+          _buildImageGallery(),
+      ],
+    );
+  }
+
+  Widget _buildDestinationHeader() {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Expanded(child: _buildDestinationDetails()),
+      if (widget.showDetailImage)
+        _buildDestinationImage(),
+    ],);
+  }
+
+  Widget _buildDestinationDetails() {
+    return Padding(padding: EdgeInsets.only(left: 8), child:
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.place.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: _buildAddressRow(),
+          ),
+          _buildShareLocationRow(),
+          SizedBox(height: 16),
+          _buildCheckInButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddressRow() {
+    if (widget.place.address?.trim().isNotEmpty != true) {
+      return SizedBox.shrink();
+    }
+
+    return GestureDetector(
+      onTap: () => widget.place.launchDirections(),
+      behavior: HitTestBehavior.translucent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  widget.place.address ?? '',
+                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                    decoration: TextDecoration.underline,
+                    decorationColor: Styles().colors.fillColorSecondary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShareLocationRow() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+            QrCodePanel.fromPlace(widget.place)
+        ));
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Styles().images.getImage('share', excludeFromSemantics: true) ?? const SizedBox(),
+              SizedBox(width: 8.0),
+              Expanded(
+                child: Text(
+                  Localization().getStringEx('panel.explore.storied_sites.share.location', 'Share this location'), //Localization().getStringEx("panel.explore.storied_sites.") manavmodi
+                  style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                      decoration: TextDecoration.underline,
+                      decorationColor: Styles().colors.fillColorSecondary),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDestinationImage() {
+    return Container(
+      width: 75,
+      height: 75,
+      child: widget.place.images?.isNotEmpty ?? false
+          ? Image.network(
+        widget.place.images!.first.imageUrl,
+        fit: BoxFit.cover,
+      ) : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
+          SizedBox(width: 75, height: 75),
+    );
+  }
+
+  Widget _buildImageGallery() {
+    if ((widget.place.images?.length ?? 0) == 1) {
+      return ModalImageHolder(
+        child: SizedBox(
+          height: 200,
+          child: TriangleHeaderImage(
+            flexBackColor: Styles().colors.background,
+            flexImageUrl: widget.place.images!.first.imageUrl,
+            flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+            flexLeftToRightTriangleHeight: 53,
+            flexRightToLeftTriangleColor: Styles().colors.background,
+            flexRightToLeftTriangleHeight: 30,
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 140,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.place.images?.length ?? 0,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.only(right: 12.0),
+            child: ModalImageHolder(
+              child: Image.network(
+                widget.place.images![index].imageUrl,
+                width: 140,
+                height: 140,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCheckInButton() {
+    List<DateTime>? visitedDates = widget.place.userData?.visited?.whereType<DateTime>().toList();
+    bool isCheckedInToday = false;
+
+    if (visitedDates != null && visitedDates.isNotEmpty) {
+      visitedDates.sort((a, b) => b.compareTo(a));
+      DateTime lastCheckInDate = visitedDates.first;
+
+      DateTime now = DateTime.now();
+      isCheckedInToday = lastCheckInDate.year == now.year &&
+          lastCheckInDate.month == now.month &&
+          lastCheckInDate.day == now.day;
+    }
+
+    return Row(
+      children: [
+        SmallRoundedButton(
+          label: isCheckedInToday ? Localization().getStringEx('panel.explore.storied_sites.checked.in', 'Checked in') : Localization().getStringEx('panel.explore.storied_sites.check.in', 'Check In'),
+          textStyle: isCheckedInToday ?  Styles().textStyles.getTextStyle("widget.button.title.disabled") : Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+          borderColor: isCheckedInToday ? Styles().colors.surfaceAccent : Styles().colors.fillColorSecondary,
+          rightIcon: const SizedBox(),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
+          onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
+        ),
+        GestureDetector(
+          onTap: () {
+            showDialog(context: context, builder: (BuildContext context) {
+              return _buildInfoDialog(context);
+            },
+            );
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            child: Styles().images.getImage('info', size: 16.0) ?? const SizedBox(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _handleCheckIn() async {
+    String placeId = widget.place.id;
+    DateTime now = DateTime.now();
+
+    setState(() {
+      if (widget.place.userData == null) {
+        widget.place.userData = places_model.UserPlace(
+          id: placeId,
+          visited: [now],
+        );
+      } else {
+        widget.place.userData!.visited ??= [];
+        widget.place.userData!.visited!.add(now);
+      }
+
+
+      _placeCheckInDates.add(now);
+      _placeCheckInDates.sort((a, b) => b.compareTo(a));
+    });
+
+    Places placesService = Places();
+    try {
+      places_model.UserPlace? updatedPlace = await placesService.updatePlaceVisited(placeId, true);
+      if (mounted && (updatedPlace == null)) {
+
+        setState(() {
+          widget.place.userData!.visited!.remove(now);
+          _placeCheckInDates.remove(now);
+        });
+
+        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please try again.'));
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          widget.place.userData!.visited!.remove(now);
+          _placeCheckInDates.remove(now);
+        });
+
+        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.failed', 'Check-in failed due to an error.'));
+      }
+    }
+  }
+
+  void _handleCheckedIn() async {
+    AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.one.day', 'You can only check in once per day.'));
+  }
+
+  Widget _buildInfoDialog(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      backgroundColor: Colors.white,
+      contentPadding: const EdgeInsets.all(16.0),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Styles().images.getImage("close-circle", size: 28.0) ?? const SizedBox(),
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0, bottom: 16),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Your check-in history is not shared with other users.",
+                style: Styles().textStyles.getTextStyle("widget.message.regular"),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCheckInHistory() {
+
+    List<DateTime>? visitedDates = widget.place.userData?.visited?.whereType<DateTime>().toList();
+    if (visitedDates == null || visitedDates.isEmpty) return Container();
+
+    visitedDates.sort((a, b) => b.compareTo(a));
+    DateTime lastCheckInDate = visitedDates.first;
+    String formattedLastDate = DateFormat('MMMM d, yyyy').format(lastCheckInDate);
+
+    bool isExpanded = _isHistoryExpanded ?? false;
+
+    String headerText = isExpanded
+        ? Localization().getStringEx('panel.explore.storied_sites.check.in.title', 'You checked in on...')
+        : Localization().getStringEx('panel.explore.storied_sites.last.check.in.title', 'You last checked in on $formattedLastDate');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _isHistoryExpanded = !isExpanded;
+            });
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Styles().images.getImage('location', excludeFromSemantics: true, size: 16.0) ?? const SizedBox(),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  headerText,
+                  style: isExpanded ? Styles().textStyles.getTextStyle("widget.label.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
+                ),
+              ),
+              (isExpanded ? Styles().images.getImage("chevron-down", size: 25) : Styles().images.getImage("chevron-up", size: 25)) ?? const SizedBox(),
+            ],
+          ),
+        ),
+        if (isExpanded)
+          Padding(
+            padding: EdgeInsets.only(left: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: visitedDates.map((date) {
+                String formattedDate = DateFormat('MMMM d, yyyy').format(date);
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      formattedDate,
+                      style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium"),
+                    ),
+                    TextButton(
+                      onPressed: () => _clearCheckInDate(date),
+                      child: Text(
+                        'Clear',
+                        style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")?.apply(
+                            decoration: TextDecoration.underline,
+                            decorationColor: Styles().colors.fillColorSecondary),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _clearCheckInDate(DateTime date) async {
+    String placeId = widget.place.id;
+
+
+    setState(() {
+      _placeCheckInDates.remove(date);
+      widget.place.userData?.visited?.remove(date);
+
+      if (_placeCheckInDates.isEmpty) {
+        _isHistoryExpanded = false;
+      } else {
+        _placeCheckInDates.sort((a, b) => b.compareTo(a));
+      }
+    });
+
+    Places placesService = Places();
+    try {
+      bool success = await placesService.deleteVisitedPlace(placeId, date.toUtc());
+      if (mounted && !success) {
+        setState(() {
+          _placeCheckInDates.add(date);
+          widget.place.userData?.visited?.add(date);
+          _placeCheckInDates.sort((a, b) => b.compareTo(a));
+        });
+
+        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.failed.clear', 'Failed to clear check-in date. Please try again.'));
+      }
+    } catch (e) {
+
+      if (mounted) {
+        setState(() {
+          _placeCheckInDates.add(date);
+          widget.place.userData?.visited?.add(date);
+          _placeCheckInDates.sort((a, b) => b.compareTo(a));
+        });
+
+        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.clear.error', 'An error occurred while clearing the check-in date.'));
+      }
+    }
   }
 }

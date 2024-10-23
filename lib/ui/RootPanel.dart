@@ -37,6 +37,7 @@ import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
+import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -60,6 +61,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -202,6 +204,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
+      Places.notifyPlacesDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
@@ -306,6 +309,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Gateway.notifyBuildingDetail) {
       _onGatewayBuildingDetail(param);
+    }
+    else if (name == Places.notifyPlacesDetail) {
+      _onPlaceDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -889,6 +895,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (StringUtils.isNotEmpty(buildingNumber)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
         ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
+      ));
+    }
+  }
+
+  Future<void> _onPlaceDetail(Map<String, dynamic>? content) async {
+    String? placeId = (content != null) ? JsonUtils.stringValue(content['place_id']) : null;
+    if (StringUtils.isNotEmpty(placeId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        ExplorePlaceDetailPanel(placeId: placeId)
       ));
     }
   }
