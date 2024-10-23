@@ -216,7 +216,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             }
           });
 
-          AppToast.showMessage(Localization().getStringEx('', 'Check-in failed. Please try again.'));
+          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please try again.'));
         }
       } catch (e) {
         if (mounted) {
@@ -230,14 +230,14 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             }
           });
 
-          AppToast.showMessage(Localization().getStringEx('', 'Check-in failed due to an error.'));
+          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.failed', 'Check-in failed due to an error.'));
         }
       }
     }
   }
 
   void _handleCheckedIn() async {
-    AppToast.showMessage(Localization().getStringEx('', 'You can only check in once per day.'));
+    AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.one.day', 'You can only check in once per day.'));
   }
 
   void _clearCheckInDate(DateTime date) async {
@@ -269,7 +269,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
           });
 
-          AppToast.showMessage(Localization().getStringEx('', 'Failed to clear check-in date. Please try again.'));
+          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.failed.clear', 'Failed to clear check-in date. Please try again.'));
         }
       } catch (e) {
 
@@ -281,7 +281,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
           });
 
-          AppToast.showMessage(Localization().getStringEx('', 'An error occurred while clearing the check-in date.'));
+          AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.clear.error', 'An error occurred while clearing the check-in date.'));
         }
       }
     }
@@ -306,7 +306,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     return Row(
       children: [
         SmallRoundedButton(
-          label: isCheckedInToday ? Localization().getStringEx('', 'Checked in') : Localization().getStringEx('', 'Check In'),
+          label: isCheckedInToday ? Localization().getStringEx('panel.explore.storied_sites.checked.in', 'Checked in') : Localization().getStringEx('panel.explore.storied_sites.check.in', 'Check In'),
           textStyle: isCheckedInToday ?  Styles().textStyles.getTextStyle("widget.button.title.disabled") : Styles().textStyles.getTextStyle("widget.button.title.enabled"),
           borderColor: isCheckedInToday ? Styles().colors.surfaceAccent : Styles().colors.fillColorSecondary,
           rightIcon: const SizedBox(),
@@ -384,8 +384,8 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     bool isExpanded = _isHistoryExpanded[placeId] ?? false;
 
     String headerText = isExpanded
-        ? Localization().getStringEx('', 'You checked in on...')
-        : Localization().getStringEx('', 'You last checked in on $formattedLastDate');
+        ? Localization().getStringEx('panel.explore.storied_sites.check.in.title', 'You checked in on...')
+        : Localization().getStringEx('panel.explore.storied_sites.last.check.in.title', 'You last checked in on $formattedLastDate');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,7 +450,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       Padding(
         padding: const EdgeInsets.all(16.0),
         child: MarkdownBody(
-          data: _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
+          data: _selectedDestination?.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
             if (href?.startsWith('https://') == true) {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)));
@@ -646,7 +646,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
               SizedBox(width: 8.0),
               Expanded(
                 child: Text(
-                  Localization().getStringEx('', 'Share this location'), //Localization().getStringEx("panel.explore.storied_sites.") manavmodi
+                  Localization().getStringEx('panel.explore.storied_sites.share.location', 'Share this location'), //Localization().getStringEx("panel.explore.storied_sites.") manavmodi
                   style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
                       decoration: TextDecoration.underline,
                       decorationColor: Styles().colors.fillColorSecondary),
@@ -751,7 +751,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
             children: [
               TextSpan(
-                text: place.name ?? Localization().getStringEx('', 'Unknown Name'),
+                text: place.name ?? Localization().getStringEx('panel.explore.storied_sites.default.name', 'Unknown Name'),
               ),
               WidgetSpan(
                 child: SizedBox(width: 0),
@@ -1008,7 +1008,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          Localization().getStringEx('', 'Storied Sites'),
+          Localization().getStringEx('panel.explore.storied_sites.title', 'Storied Sites'),
           style: Styles().textStyles.getTextStyle("widget.title.medium_large.fat"),
         ),
       ],
