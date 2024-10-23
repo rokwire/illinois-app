@@ -60,6 +60,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -305,6 +306,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
     }
     else if (name == Gateway.notifyBuildingDetail) {
+      _onGatewayBuildingDetail(param);
+    }
+    else if (name == Places.notifyPlacesDetail) {
       _onGatewayBuildingDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
