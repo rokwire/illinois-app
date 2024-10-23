@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
--  Create a new map formatting and pins [#4337](https://github.com/rokwire/illinois-app/issues/4337)
+- Created a new map formatting and pins [#4337](https://github.com/rokwire/illinois-app/issues/4337)
+- Handled stored sites deep link processing [#4435](https://github.com/rokwire/illinois-app/issues/4435)
 
 ## [6.0.53] - 2024-10-18
 ### Added
