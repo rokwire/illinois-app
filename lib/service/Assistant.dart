@@ -175,7 +175,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   // Implementation
   
-  Future<Message?> sendQuery(String? query, {Map<String, String>? context}) async {
+  Future<Message?> sendQuery(String? query, {String? provider, Map<String, String>? context}) async {
     if (!_isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
       return null;
@@ -190,6 +190,9 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     };
     if (context != null) {
       body['context'] = context;
+    }
+    if (provider != null) {
+      body['provider'] = provider;
     }
 
     try {
