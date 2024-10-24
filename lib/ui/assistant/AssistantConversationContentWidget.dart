@@ -35,7 +35,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
-  AssistantConversationContentWidget({required this.shouldClearAllMessages});
+  final String provider;
+
+  AssistantConversationContentWidget({required this.shouldClearAllMessages, required String this.provider});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
@@ -218,7 +220,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                 onTap: message.example
                                     ? () {
                                         Assistant().removeMessage(message);
-                                        _submitMessage(message.content);
+                                        _submitMessage(message.content, provider: widget.provider);
                                       }
                                     : null,
                                 child: Container(
@@ -569,7 +571,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     textCapitalization: TextCapitalization.sentences,
                                     textInputAction: TextInputAction.send,
                                     focusNode: _inputFieldFocus,
-                                    onSubmitted: _submitMessage,
+                                    onSubmitted: (value) {
+                                      _submitMessage(value, provider: widget.provider);
+                                    },
                                     onChanged: (_) => setStateIfMounted((){}),
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
@@ -596,7 +600,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
             onPressed: enabled
                 ? () {
-              _submitMessage(_inputController.text);
+              _submitMessage(_inputController.text, provider: widget.provider);
             }
                 : null)));
     } else {
@@ -813,7 +817,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     );
   }
 
-  Future<void> _submitMessage(String message) async {
+  Future<void> _submitMessage(String message, {String? provider}) async {
     FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;
@@ -845,7 +849,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
-    Message? response = await Assistant().sendQuery(message, context: userContext);
+    Message? response = await Assistant().sendQuery(message, provider: provider, context: userContext);
     if (mounted) {
       setState(() {
         if (response != null) {

@@ -28,7 +28,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 
-enum AssistantContent { conversation, faqs }
+enum AssistantContent { uiuc_conversation, google_conversation, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -131,7 +131,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            Visibility(visible: (_selectedContent == AssistantContent.conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
+            Visibility(visible: (_selectedContent == AssistantContent.uiuc_conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -257,8 +257,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   Widget? get _contentWidget {
     switch (_selectedContent) {
-      case AssistantContent.conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream);
+      case AssistantContent.uiuc_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _assistantEngineType,);
+      case AssistantContent.google_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _assistantEngineType);
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
       default:
@@ -268,8 +270,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   String? _getContentItemName(AssistantContent? contentItem) {
     switch (contentItem) {
-      case AssistantContent.conversation:
+      case AssistantContent.uiuc_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.label', 'Ask the Illinois Assistant');
+      case AssistantContent.google_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant',);
       case AssistantContent.faqs:
         return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
@@ -277,7 +281,18 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     }
   }
 
-  AssistantContent? get _initialSelectedContent => AssistantContent.conversation;
+  String get _assistantEngineType {
+    switch (_selectedContent) {
+      case AssistantContent.google_conversation:
+        return "google";
+      case AssistantContent.uiuc_conversation:
+        return "uiuc";
+      default:
+        return "uiuc";
+    }
+  }
+
+  AssistantContent? get _initialSelectedContent => AssistantContent.uiuc_conversation;
 
   void _updateContentItemIfNeeded() {
     if (_selectedContent == null) {
