@@ -132,11 +132,20 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
   - images/
-  - assets/
+# - assets/ # native apps - do not include all files explicitly
   - media/
   - app/images/
   - app/assets/
   - app/media/
+# Web app - define strict file names in order to exclude the other ones
+  - assets/flexUI.json
+  - assets/map.styles.json
+  - assets/privacy.notice.json
+  - assets/strings.en.json
+  - assets/strings.es.json
+  - assets/strings.zh.json
+  - assets/styles.json
+  - assets/timezone.tzf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
