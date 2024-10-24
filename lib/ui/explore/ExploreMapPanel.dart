@@ -619,7 +619,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapType == ExploreMapType.StoriedSites) {
       if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
-        _centerMapOnExplore(origin);
       } else if (origin is List<Explore>) {
         List<places_model.Place> places = origin.cast<places_model.Place>();
         _storiedSightsKey.currentState?.selectPlaces(places);
@@ -645,7 +644,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _mapController!.moveCamera(cameraUpdate);
 
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-      double offset = 400 / devicePixelRatio;
+      double offset = 450 / devicePixelRatio;
 
       _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
     }
