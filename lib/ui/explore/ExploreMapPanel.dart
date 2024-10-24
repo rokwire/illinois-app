@@ -628,10 +628,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onTapMarker(dynamic origin) {
     if (_selectedMapType == ExploreMapType.StoriedSites && (origin is List<Explore> || origin is Place)) {
-      _selectionChanged = true;
+      setState(() {
+        _selectedMapExplore = origin is Place ? origin : null;
+        _selectionChanged = true;
+      });
+      //_buildMapContentData(_explores, pinnedExplore: _selectedMapExplore);
       if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
-        //_selectMapExplore(origin);
       } else if (origin is List<Explore>) {
         List<places_model.Place> places = origin.cast<places_model.Place>();
         _storiedSightsKey.currentState?.selectPlaces(places);
@@ -649,7 +652,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     });
     _buildMapContentData(_explores, pinnedExplore: _selectedMapExplore);
   }
-
 
   void _centerMapOnExplore(dynamic explore) {
     LatLng? targetPosition;
@@ -2355,25 +2357,40 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
-      bool isSelected = _selectedMapExplore == explore;
+      BitmapDescriptor? markerIcon;
+      Offset? markerAnchor;
+      if (explore is MTDStop) {
+        String markerAsset = 'images/map-marker-mtd-stop.png';
+        markerIcon = _markerIconCache[markerAsset] ??
+            (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+        markerAnchor = Offset(0.5, 0.5);
+      } else {
+        // Determine if this explore is selected
+        bool isSelected = (_selectedMapType == ExploreMapType.StoriedSites) && (_selectedMapExplore == explore);
 
-      // Choose the marker color based on selection
-      Color? exploreColor = isSelected ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary;
+        // Choose the marker color based on selection
+        Color? exploreColor = explore?.mapMarkerColor;
+        if (_selectedMapType == ExploreMapType.StoriedSites) {
+          exploreColor = isSelected ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary;
+        }
 
-      BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble());
-      Offset markerAnchor = Offset(0.5, 1);
-
+        markerIcon = (exploreColor != null)
+            ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble())
+            : BitmapDescriptor.defaultMarker;
+        markerAnchor = Offset(0.5, 1);
+      }
       return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+        markerId: MarkerId("${markerPosition.latitude}:${markerPosition.longitude}"),
         position: markerPosition,
         icon: markerIcon,
         anchor: markerAnchor,
         consumeTapEvents: true,
         onTap: () => _onTapMarker(explore),
         infoWindow: InfoWindow(
-          title:  explore?.mapMarkerTitle,
+          title: explore?.mapMarkerTitle,
           snippet: explore?.mapMarkerSnippet,
-          anchor: markerAnchor)
+          anchor: markerAnchor,
+        ),
       );
     }
     return null;
