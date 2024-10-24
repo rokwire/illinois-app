@@ -17,8 +17,9 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class ExploreStoriedSightsBottomSheet extends StatefulWidget {
   final List<places_model.Place> places;
   final Function(places_model.Place) onPlaceSelected;
+  final VoidCallback onResetSelection;
 
-  ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected}) : super(key: key);
+  ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected, required this.onResetSelection,}) : super(key: key);
 
   @override
   ExploreStoriedSightsBottomSheetState createState() => ExploreStoriedSightsBottomSheetState();
@@ -474,7 +475,12 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () => setState(() => _selectedDestination = null),
+          onTap: () {
+            setState(() {
+              _selectedDestination = null;
+            });
+            widget.onResetSelection();
+          },
           child: Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8),
             child: Styles().images.getImage('chevron-left-bold', size: 24.0) ?? const SizedBox(),
@@ -992,6 +998,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _storiedSights = places;
       _selectedDestination = null;
     });
+    _controller.animateTo(
+      0.65,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void resetSelection() {
@@ -999,5 +1010,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _storiedSights = _allPlaces;
       _selectedDestination = null;
     });
+    widget.onResetSelection();
   }
 }
