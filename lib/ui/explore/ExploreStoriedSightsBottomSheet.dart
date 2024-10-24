@@ -558,6 +558,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _selectedDestination = null;
       _selectedFilters.clear();
     });
+    _controller.animateTo(
+      0.65,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void resetSelection() {
