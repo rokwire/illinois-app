@@ -48,7 +48,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     implements NotificationsListener {
   static final String resourceName = 'assistant';
 
-  List<String>? _contentCodes;
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
@@ -78,7 +77,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
@@ -89,8 +87,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _streamSubscription = widget.shouldClearAllMessages.listen((event) {
       _clearAllMessages();
     });
-
-    _contentCodes = buildContentCodes();
 
     _onPullToRefresh();
 
@@ -134,10 +130,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateContentCodes();
-      setStateIfMounted((){});
-    } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+    if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {
       setStateIfMounted((){});
@@ -954,19 +947,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
   }
 
-  void _updateContentCodes() {
-    List<String>? contentCodes = buildContentCodes();
-    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
-      if (mounted) {
-        setState(() {
-          _contentCodes = contentCodes;
-        });
-      } else {
-        _contentCodes = contentCodes;
-      }
-    }
-  }
-
   Future<void> _onPullToRefresh() async {
     if (mounted && (_evaluatingQueryLimit == false)) {
       setState((){
@@ -1066,15 +1046,5 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     } else {
       return _checkKeyboardVisible; //Check again
     }
-  }
-
-  static List<String>? buildContentCodes() {
-    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    // codes?.sort((String code1, String code2) {
-    //   String title1 = _BrowseSection.title(sectionId: code1);
-    //   String title2 = _BrowseSection.title(sectionId: code2);
-    //   return title1.toLowerCase().compareTo(title2.toLowerCase());
-    // });
-    return codes;
   }
 }

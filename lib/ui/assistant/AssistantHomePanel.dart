@@ -14,6 +14,7 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,12 +24,12 @@ import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AssistantContent { uiuc_conversation, google_conversation, faqs }
 
@@ -72,6 +73,7 @@ class AssistantHomePanel extends StatefulWidget {
 }
 
 class _AssistantHomePanelState extends State<AssistantHomePanel> implements NotificationsListener {
+  late List<AssistantContent> _contentTypes;
   AssistantContent? _selectedContent;
   static AssistantContent? _lastSelectedContent;
   bool _contentValuesVisible = false;
@@ -80,6 +82,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   final GlobalKey _pageHeadingKey = GlobalKey();
   final _clearMessagesNotifier = new StreamController.broadcast();
 
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +90,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
     ]);
+
+    _contentTypes = _buildAssistantContentTypes();
 
     if (widget.content != null) {
       _selectedContent = _lastSelectedContent = widget.content;
@@ -112,8 +117,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if ((name == Auth2.notifyLoginChanged) || (name == FlexUI.notifyChanged)) {
-      _updateContentItemIfNeeded();
+    if (name == Auth2.notifyLoginChanged) {
+      _updateContentTypes();
+    } else if (name == FlexUI.notifyChanged) {
+      _updateContentTypes();
     }
   }
 
@@ -190,18 +197,12 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (AssistantContent contentItem in AssistantContent.values) {
-      if (_isContentValueVisible(contentItem)) {
+    for (AssistantContent contentItem in _contentTypes) {
+      if (_selectedContent != contentItem) {
         contentList.add(_buildContentItem(contentItem));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: contentList)));
-  }
-
-  bool _isContentValueVisible(AssistantContent content) {
-    //TBD: DD - implement with FlexUI
-    return (_selectedContent != content) &&
-        ((content != AssistantContent.google_conversation) || (ConfigEnvironment.dev == Config().configEnvironment));
   }
 
   Widget _buildContentItem(AssistantContent contentItem) {
@@ -249,6 +250,48 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     setState(() {
       _contentValuesVisible = false;
     });
+  }
+
+  // Content Codes
+
+  void _updateContentTypes() {
+    List<AssistantContent> contentTypes = _buildAssistantContentTypes();
+    if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
+      setState(() {
+        _contentTypes = contentTypes;
+        _contentValuesVisible = false;
+        if (!_contentTypes.contains(_selectedContent)) {
+          _selectedContent = _contentTypes.isNotEmpty ? _contentTypes.first : null;
+        }
+      });
+    }
+  }
+
+  List<AssistantContent> _buildAssistantContentTypes() {
+    List<AssistantContent> contentTypes = <AssistantContent>[];
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
+    if (contentCodes != null) {
+      for (String code in contentCodes) {
+        AssistantContent? value = _assistantContentFromString(code);
+        if (value != null) {
+          contentTypes.add(value);
+        }
+      }
+    }
+    return contentTypes;
+  }
+
+  AssistantContent? _assistantContentFromString(String? value) {
+    switch (value) {
+      case 'uiuc_assistant':
+        return AssistantContent.uiuc_conversation;
+      case 'google_assistant':
+        return AssistantContent.google_conversation;
+      case 'uiuc_faqs':
+        return AssistantContent.faqs;
+      default:
+        return null;
+    }
   }
 
   // Utilities
@@ -301,15 +344,4 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   }
 
   AssistantContent? get _initialSelectedContent => AssistantContent.uiuc_conversation;
-
-  void _updateContentItemIfNeeded() {
-    if (_selectedContent == null) {
-      AssistantContent? selectedContent = _lastSelectedContent ?? _initialSelectedContent;
-      if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
-        setState(() {
-          _selectedContent = selectedContent;
-        });
-      }
-    }
-  }
 }
