@@ -96,7 +96,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     _userContext = _getUserContext();
 
-    if (CollectionUtils.isNotEmpty(Assistant().messages)) {
+    if (CollectionUtils.isNotEmpty(_messages)) {
       _shouldScrollToBottom = true;
     }
 
@@ -179,7 +179,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    for (Message message in Assistant().messages) {
+    for (Message message in _messages) {
       contentList.add(Padding(padding: EdgeInsets.only(bottom: 16),
           child: _buildChatBubble(message)));
     }
@@ -206,7 +206,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
                 Flexible(
-                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == Assistant().messages.lastOrNull),
+                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == _messages.lastOrNull),
                       child:Opacity(
                         opacity: message.example ? 0.5 : 1.0,
                         child: Material(
@@ -219,8 +219,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             child: InkWell(
                                 onTap: message.example
                                     ? () {
-                                        Assistant().removeMessage(message);
-                                        _submitMessage(message.content, provider: widget.provider);
+                                        Assistant().removeMessage(provider: _provider, message: message);
+                                        _submitMessage(message: message.content, provider: _provider);
                                       }
                                     : null,
                                 child: Container(
@@ -278,7 +278,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
     bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
-    bool additionalControlsVisible = !message.user && (Assistant().messages.indexOf(message) != 0);
+    bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
     bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
@@ -358,8 +358,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _onTapSourcesAndLinksLabel(Message message) {
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
-      int msgsLength = Assistant().messages.length;
-      int msgIndex = (msgsLength > 0) ? Assistant().messages.indexOf(message) : -1;
+      int msgsLength = _messages.length;
+      int msgIndex = (msgsLength > 0) ? _messages.indexOf(message) : -1;
       if ((msgIndex >= 0) && (msgIndex == (msgsLength - 1))) {
         // Automatically scroll only if the last message "Sources and Links" label is tapped
         _shouldScrollToBottom = true;
@@ -420,11 +420,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.good;
-          Assistant().addMessage(Message(
-              content: Localization().getStringEx(
-                  'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thanks for your feedback!'),
-              user: false, feedbackResponseType: FeedbackResponseType.positive));
+          Assistant().addMessage(
+              provider: _provider,
+              message: Message(
+                  content:
+                      Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
+                  user: false,
+                  feedbackResponseType: FeedbackResponseType.positive));
           _shouldScrollToBottom = true;
           _shouldSemanticFocusToLastBubble = true;
         }
@@ -433,11 +435,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.bad;
-          Assistant().addMessage(Message(
-              content: Localization().getStringEx(
-                  'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thanks for your feedback!'),
-              user: false, feedbackResponseType: FeedbackResponseType.negative));
+          Assistant().addMessage(
+              provider: _provider,
+              message: Message(
+                  content:
+                      Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
+                  user: false,
+                  feedbackResponseType: FeedbackResponseType.negative));
           _feedbackMessage = message;
           bad = true;
           _shouldScrollToBottom = true;
@@ -447,7 +451,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
 
     if (!bad && _feedbackMessage != null) {
-      Assistant().removeLastMessage();
+      Assistant().removeLastMessage(provider: _provider);
       _feedbackMessage = null;
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -572,7 +576,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     textInputAction: TextInputAction.send,
                                     focusNode: _inputFieldFocus,
                                     onSubmitted: (value) {
-                                      _submitMessage(value, provider: widget.provider);
+                                      _submitMessage(message: value, provider: _provider);
                                     },
                                     onChanged: (_) => setStateIfMounted((){}),
                                     decoration: InputDecoration(
@@ -600,7 +604,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
             onPressed: enabled
                 ? () {
-              _submitMessage(_inputController.text, provider: widget.provider);
+              _submitMessage(message: _inputController.text, provider: _provider);
             }
                 : null)));
     } else {
@@ -817,7 +821,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     );
   }
 
-  Future<void> _submitMessage(String message, {AssistantProvider? provider}) async {
+  Future<void> _submitMessage({required String message, required AssistantProvider provider}) async {
     FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;
@@ -825,7 +829,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     setState(() {
       if (message.isNotEmpty) {
-        Assistant().addMessage(Message(content: message, user: true));
+        Assistant().addMessage(provider: provider, message: Message(content: message, user: true));
       }
       _inputController.text = '';
       _loadingResponse = true;
@@ -836,12 +840,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     int? queryLimit = _queryLimit;
     if ((queryLimit != null) && (queryLimit <= 0)) {
       setState(() {
-        Assistant().addMessage(Message(
-            content: Localization().getStringEx(
-                'panel.assistant.label.queries.limit.title',
-                'Sorry you are out of questions for today. '
-                    'Please check back tomorrow to ask more questions!'),
-            user: false));
+        Assistant().addMessage(
+            provider: _provider,
+            message: Message(
+                content: Localization().getStringEx(
+                    'panel.assistant.label.queries.limit.title',
+                    'Sorry you are out of questions for today. '
+                        'Please check back tomorrow to ask more questions!'),
+                user: false));
         _shouldScrollToBottom = true;
       });
       return;
@@ -853,17 +859,19 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (mounted) {
       setState(() {
         if (response != null) {
-          Assistant().addMessage(response);
+          Assistant().addMessage(provider: _provider, message: response);
           if (response.queryLimit != null) {
             _queryLimit = response.queryLimit;
           } else if (_queryLimit != null) {
             _queryLimit = _queryLimit! - 1;
           }
         } else {
-          Assistant().addMessage(Message(
-              content: Localization()
-                  .getStringEx('panel.assistant.label.error.title', 'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
-              user: false));
+          Assistant().addMessage(
+              provider: _provider,
+              message: Message(
+                  content: Localization().getStringEx('panel.assistant.label.error.title',
+                      'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
+                  user: false));
           _inputController.text = message;
         }
         _loadingResponse = false;
@@ -878,7 +886,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
     FocusScope.of(context).requestFocus(FocusNode());
     setStateIfMounted(() {
-      Assistant().addMessage(Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
+      Assistant().addMessage(
+          provider: _provider, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
       _negativeFeedbackController.text = '';
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -915,7 +924,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapCloseNegativeFeedbackForm(Message message) {
-    Assistant().removeMessage(message);
+    Assistant().removeMessage(provider: _provider, message: message);
     setStateIfMounted(() {
       _negativeFeedbackController.text = '';
       _feedbackMessage = null;
@@ -1025,6 +1034,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _scrollListener() {
     _scrollPosition = _scrollController.position.pixels;
   }
+
+  AssistantProvider get _provider => widget.provider;
+
+  List<Message> get _messages => Assistant().getMessages(provider: _provider);
 
   double get _chatBarPaddingBottom {
     return _hideChatBar ? 0 : _keyboardHeight;
