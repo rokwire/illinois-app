@@ -29,9 +29,11 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/MTD.dart';
+import 'package:illinois/ext/Places.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -257,6 +259,9 @@ extension ExploreExt on Explore {
     else if (this is ExplorePOI) {
       return (this as ExplorePOI).uiColor;
     }
+    else if (this is Place) {
+      return (this as Place).uiColor;
+    }
     //else if (this is Building) {}
     //else if (this is WellnessBuilding) {}
     //else if (this is Appointment) {}
@@ -330,11 +335,11 @@ extension ExploreMap on Explore {
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
   static Color? get unknownMarkerColor => Styles().colors.accentColor2;
 
-  Color? get mapMarkerBorderColor => unknownMarkerBorderColor;
-  static Color? get unknownMarkerBorderColor => Styles().colors.fillColorPrimary;
+  Color? get mapMarkerBorderColor => (this is Place) ? (this as Place).mapMarkerBorderColor : defaultMarkerBorderColor;
+  static Color? get defaultMarkerBorderColor => Styles().colors.fillColorPrimary;
 
-  Color? get mapMarkerTextColor => unknownMarkerTextColor;
-  static Color? get unknownMarkerTextColor => Styles().colors.background;
+  Color? get mapMarkerTextColor => (this is Place) ? (this as Place).mapMarkerTextColor : defaultMarkerTextColor;
+  static Color? get defaultMarkerTextColor => Styles().colors.background;
 
   String? get mapMarkerTitle {
     return exploreTitle;

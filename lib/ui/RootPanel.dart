@@ -38,6 +38,7 @@ import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
+import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -62,6 +63,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -208,6 +210,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
       Safety.notifySafeWalkDetail,
+      Places.notifyPlacesDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
@@ -326,6 +329,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Safety.notifySafeWalkDetail) {
       _onSafetySafeWalkDetail(param);
     }
+    else if (name == Places.notifyPlacesDetail) {
+      _onPlaceDetail(param);
+    }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
         setState(() { });
@@ -401,6 +407,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
+    }
+    else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
+      _onFirebaseMapNotification(ExploreMapType.StoriedSites);
     }
     else if (name == FirebaseMessaging.notifyMapStateFarmWayfindingNotification) {
       _onFirebaseMapNotification(ExploreMapType.StateFarmWayfinding);
@@ -914,12 +923,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   Future<void> _onSafetySafeWalkDetail(Map<String, dynamic>? content) async {
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-      SafetyHomePanel(
-        contentType: SafetyContentType.safeWalkRequest,
-        safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
-        safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
-      )
+        SafetyHomePanel(
+          contentType: SafetyContentType.safeWalkRequest,
+          safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
+          safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
+        )
     ));
+  }
+
+  Future<void> _onPlaceDetail(Map<String, dynamic>? content) async {
+    String? placeId = (content != null) ? JsonUtils.stringValue(content['place_id']) : null;
+    if (StringUtils.isNotEmpty(placeId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        ExplorePlaceDetailPanel(placeId: placeId)
+      ));
+    }
   }
 
   void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
