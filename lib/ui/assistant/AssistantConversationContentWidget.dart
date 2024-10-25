@@ -35,7 +35,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
-  AssistantConversationContentWidget({required this.shouldClearAllMessages});
+  final AssistantProvider provider;
+
+  AssistantConversationContentWidget({required this.shouldClearAllMessages, required AssistantProvider this.provider});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
@@ -46,7 +48,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     implements NotificationsListener {
   static final String resourceName = 'assistant';
 
-  List<String>? _contentCodes;
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
@@ -76,7 +77,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
@@ -88,13 +88,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       _clearAllMessages();
     });
 
-    _contentCodes = buildContentCodes();
-
     _onPullToRefresh();
 
     _userContext = _getUserContext();
 
-    if (CollectionUtils.isNotEmpty(Assistant().messages)) {
+    if (CollectionUtils.isNotEmpty(_messages)) {
       _shouldScrollToBottom = true;
     }
 
@@ -132,10 +130,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateContentCodes();
-      setStateIfMounted((){});
-    } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+    if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {
       setStateIfMounted((){});
@@ -177,7 +172,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    for (Message message in Assistant().messages) {
+    for (Message message in _messages) {
       contentList.add(Padding(padding: EdgeInsets.only(bottom: 16),
           child: _buildChatBubble(message)));
     }
@@ -204,7 +199,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
                 Flexible(
-                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == Assistant().messages.lastOrNull),
+                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == _messages.lastOrNull),
                       child:Opacity(
                         opacity: message.example ? 0.5 : 1.0,
                         child: Material(
@@ -217,8 +212,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             child: InkWell(
                                 onTap: message.example
                                     ? () {
-                                        Assistant().removeMessage(message);
-                                        _submitMessage(message.content);
+                                        Assistant().removeMessage(provider: _provider, message: message);
+                                        _submitMessage(message: message.content, provider: _provider);
                                       }
                                     : null,
                                 child: Container(
@@ -276,7 +271,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
     bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
-    bool additionalControlsVisible = !message.user && (Assistant().messages.indexOf(message) != 0);
+    bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
     bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
@@ -356,8 +351,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _onTapSourcesAndLinksLabel(Message message) {
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
-      int msgsLength = Assistant().messages.length;
-      int msgIndex = (msgsLength > 0) ? Assistant().messages.indexOf(message) : -1;
+      int msgsLength = _messages.length;
+      int msgIndex = (msgsLength > 0) ? _messages.indexOf(message) : -1;
       if ((msgIndex >= 0) && (msgIndex == (msgsLength - 1))) {
         // Automatically scroll only if the last message "Sources and Links" label is tapped
         _shouldScrollToBottom = true;
@@ -418,11 +413,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.good;
-          Assistant().addMessage(Message(
-              content: Localization().getStringEx(
-                  'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thanks for your feedback!'),
-              user: false, feedbackResponseType: FeedbackResponseType.positive));
+          Assistant().addMessage(
+              provider: _provider,
+              message: Message(
+                  content:
+                      Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
+                  user: false,
+                  feedbackResponseType: FeedbackResponseType.positive));
           _shouldScrollToBottom = true;
           _shouldSemanticFocusToLastBubble = true;
         }
@@ -431,11 +428,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.bad;
-          Assistant().addMessage(Message(
-              content: Localization().getStringEx(
-                  'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thanks for your feedback!'),
-              user: false, feedbackResponseType: FeedbackResponseType.negative));
+          Assistant().addMessage(
+              provider: _provider,
+              message: Message(
+                  content:
+                      Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
+                  user: false,
+                  feedbackResponseType: FeedbackResponseType.negative));
           _feedbackMessage = message;
           bad = true;
           _shouldScrollToBottom = true;
@@ -445,7 +444,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
 
     if (!bad && _feedbackMessage != null) {
-      Assistant().removeLastMessage();
+      Assistant().removeLastMessage(provider: _provider);
       _feedbackMessage = null;
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -569,7 +568,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     textCapitalization: TextCapitalization.sentences,
                                     textInputAction: TextInputAction.send,
                                     focusNode: _inputFieldFocus,
-                                    onSubmitted: _submitMessage,
+                                    onSubmitted: (value) {
+                                      _submitMessage(message: value, provider: _provider);
+                                    },
                                     onChanged: (_) => setStateIfMounted((){}),
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
@@ -596,7 +597,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
             onPressed: enabled
                 ? () {
-              _submitMessage(_inputController.text);
+              _submitMessage(message: _inputController.text, provider: _provider);
             }
                 : null)));
     } else {
@@ -813,7 +814,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     );
   }
 
-  Future<void> _submitMessage(String message) async {
+  Future<void> _submitMessage({required String message, required AssistantProvider provider}) async {
     FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;
@@ -821,7 +822,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     setState(() {
       if (message.isNotEmpty) {
-        Assistant().addMessage(Message(content: message, user: true));
+        Assistant().addMessage(provider: provider, message: Message(content: message, user: true));
       }
       _inputController.text = '';
       _loadingResponse = true;
@@ -832,12 +833,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     int? queryLimit = _queryLimit;
     if ((queryLimit != null) && (queryLimit <= 0)) {
       setState(() {
-        Assistant().addMessage(Message(
-            content: Localization().getStringEx(
-                'panel.assistant.label.queries.limit.title',
-                'Sorry you are out of questions for today. '
-                    'Please check back tomorrow to ask more questions!'),
-            user: false));
+        Assistant().addMessage(
+            provider: _provider,
+            message: Message(
+                content: Localization().getStringEx(
+                    'panel.assistant.label.queries.limit.title',
+                    'Sorry you are out of questions for today. '
+                        'Please check back tomorrow to ask more questions!'),
+                user: false));
         _shouldScrollToBottom = true;
       });
       return;
@@ -845,21 +848,23 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
-    Message? response = await Assistant().sendQuery(message, context: userContext);
+    Message? response = await Assistant().sendQuery(message, provider: provider, context: userContext);
     if (mounted) {
       setState(() {
         if (response != null) {
-          Assistant().addMessage(response);
+          Assistant().addMessage(provider: _provider, message: response);
           if (response.queryLimit != null) {
             _queryLimit = response.queryLimit;
           } else if (_queryLimit != null) {
             _queryLimit = _queryLimit! - 1;
           }
         } else {
-          Assistant().addMessage(Message(
-              content: Localization()
-                  .getStringEx('panel.assistant.label.error.title', 'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
-              user: false));
+          Assistant().addMessage(
+              provider: _provider,
+              message: Message(
+                  content: Localization().getStringEx('panel.assistant.label.error.title',
+                      'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
+                  user: false));
           _inputController.text = message;
         }
         _loadingResponse = false;
@@ -874,7 +879,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
     FocusScope.of(context).requestFocus(FocusNode());
     setStateIfMounted(() {
-      Assistant().addMessage(Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
+      Assistant().addMessage(
+          provider: _provider, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
       _negativeFeedbackController.text = '';
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -911,7 +917,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapCloseNegativeFeedbackForm(Message message) {
-    Assistant().removeMessage(message);
+    Assistant().removeMessage(provider: _provider, message: message);
     setStateIfMounted(() {
       _negativeFeedbackController.text = '';
       _feedbackMessage = null;
@@ -939,19 +945,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _listening = false;
       }
     });
-  }
-
-  void _updateContentCodes() {
-    List<String>? contentCodes = buildContentCodes();
-    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
-      if (mounted) {
-        setState(() {
-          _contentCodes = contentCodes;
-        });
-      } else {
-        _contentCodes = contentCodes;
-      }
-    }
   }
 
   Future<void> _onPullToRefresh() async {
@@ -1022,6 +1015,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _scrollPosition = _scrollController.position.pixels;
   }
 
+  AssistantProvider get _provider => widget.provider;
+
+  List<Message> get _messages => Assistant().getMessages(provider: _provider);
+
   double get _chatBarPaddingBottom {
     return _hideChatBar ? 0 : _keyboardHeight;
   }
@@ -1049,15 +1046,5 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     } else {
       return _checkKeyboardVisible; //Check again
     }
-  }
-
-  static List<String>? buildContentCodes() {
-    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    // codes?.sort((String code1, String code2) {
-    //   String title1 = _BrowseSection.title(sectionId: code1);
-    //   String title2 = _BrowseSection.title(sectionId: code2);
-    //   return title1.toLowerCase().compareTo(title2.toLowerCase());
-    // });
-    return codes;
   }
 }

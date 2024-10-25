@@ -14,7 +14,9 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -27,8 +29,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { conversation, faqs }
+enum AssistantContent { uiuc_conversation, google_conversation, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -70,6 +73,7 @@ class AssistantHomePanel extends StatefulWidget {
 }
 
 class _AssistantHomePanelState extends State<AssistantHomePanel> implements NotificationsListener {
+  late List<AssistantContent> _contentTypes;
   AssistantContent? _selectedContent;
   static AssistantContent? _lastSelectedContent;
   bool _contentValuesVisible = false;
@@ -78,6 +82,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   final GlobalKey _pageHeadingKey = GlobalKey();
   final _clearMessagesNotifier = new StreamController.broadcast();
 
+
   @override
   void initState() {
     super.initState();
@@ -85,6 +90,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
     ]);
+
+    _contentTypes = _buildAssistantContentTypes();
 
     if (widget.content != null) {
       _selectedContent = _lastSelectedContent = widget.content;
@@ -110,8 +117,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if ((name == Auth2.notifyLoginChanged) || (name == FlexUI.notifyChanged)) {
-      _updateContentItemIfNeeded();
+    if (name == Auth2.notifyLoginChanged) {
+      _updateContentTypes();
+    } else if (name == FlexUI.notifyChanged) {
+      _updateContentTypes();
     }
   }
 
@@ -131,7 +140,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            Visibility(visible: (_selectedContent == AssistantContent.conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
+            Visibility(visible: (_selectedContent == AssistantContent.uiuc_conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -188,7 +197,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (AssistantContent contentItem in AssistantContent.values) {
+    for (AssistantContent contentItem in _contentTypes) {
       if (_selectedContent != contentItem) {
         contentList.add(_buildContentItem(contentItem));
       }
@@ -243,6 +252,48 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     });
   }
 
+  // Content Codes
+
+  void _updateContentTypes() {
+    List<AssistantContent> contentTypes = _buildAssistantContentTypes();
+    if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
+      setState(() {
+        _contentTypes = contentTypes;
+        _contentValuesVisible = false;
+        if (!_contentTypes.contains(_selectedContent)) {
+          _selectedContent = _contentTypes.isNotEmpty ? _contentTypes.first : null;
+        }
+      });
+    }
+  }
+
+  List<AssistantContent> _buildAssistantContentTypes() {
+    List<AssistantContent> contentTypes = <AssistantContent>[];
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
+    if (contentCodes != null) {
+      for (String code in contentCodes) {
+        AssistantContent? value = _assistantContentFromString(code);
+        if (value != null) {
+          contentTypes.add(value);
+        }
+      }
+    }
+    return contentTypes;
+  }
+
+  AssistantContent? _assistantContentFromString(String? value) {
+    switch (value) {
+      case 'uiuc_assistant':
+        return AssistantContent.uiuc_conversation;
+      case 'google_assistant':
+        return AssistantContent.google_conversation;
+      case 'uiuc_faqs':
+        return AssistantContent.faqs;
+      default:
+        return null;
+    }
+  }
+
   // Utilities
 
   double? get _contentHeight {
@@ -257,8 +308,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   Widget? get _contentWidget {
     switch (_selectedContent) {
-      case AssistantContent.conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream);
+      case AssistantContent.uiuc_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider,);
+      case AssistantContent.google_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
       default:
@@ -268,8 +321,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   String? _getContentItemName(AssistantContent? contentItem) {
     switch (contentItem) {
-      case AssistantContent.conversation:
+      case AssistantContent.uiuc_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.label', 'Ask the Illinois Assistant');
+      case AssistantContent.google_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant',);
       case AssistantContent.faqs:
         return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
@@ -277,16 +332,16 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     }
   }
 
-  AssistantContent? get _initialSelectedContent => AssistantContent.conversation;
-
-  void _updateContentItemIfNeeded() {
-    if (_selectedContent == null) {
-      AssistantContent? selectedContent = _lastSelectedContent ?? _initialSelectedContent;
-      if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
-        setState(() {
-          _selectedContent = selectedContent;
-        });
-      }
+  AssistantProvider get _selectedProvider {
+    switch (_selectedContent) {
+      case AssistantContent.google_conversation:
+        return AssistantProvider.google;
+      case AssistantContent.uiuc_conversation:
+        return AssistantProvider.uiuc;
+      default:
+        return AssistantProvider.uiuc;
     }
   }
+
+  AssistantContent? get _initialSelectedContent => AssistantContent.uiuc_conversation;
 }
