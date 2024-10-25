@@ -23,6 +23,7 @@ import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -190,11 +191,17 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (AssistantContent contentItem in AssistantContent.values) {
-      if (_selectedContent != contentItem) {
+      if (_isContentValueVisible(contentItem)) {
         contentList.add(_buildContentItem(contentItem));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: contentList)));
+  }
+
+  bool _isContentValueVisible(AssistantContent content) {
+    //TBD: DD - implement with FlexUI
+    return (_selectedContent != content) &&
+        ((content != AssistantContent.google_conversation) || (ConfigEnvironment.dev == Config().configEnvironment));
   }
 
   Widget _buildContentItem(AssistantContent contentItem) {
