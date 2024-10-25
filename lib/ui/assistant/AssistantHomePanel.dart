@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -258,9 +259,9 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   Widget? get _contentWidget {
     switch (_selectedContent) {
       case AssistantContent.uiuc_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _assistantEngineType,);
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider,);
       case AssistantContent.google_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _assistantEngineType);
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
       default:
@@ -281,14 +282,14 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     }
   }
 
-  String get _assistantEngineType {
+  AssistantProvider get _selectedProvider {
     switch (_selectedContent) {
       case AssistantContent.google_conversation:
-        return "google";
+        return AssistantProvider.google;
       case AssistantContent.uiuc_conversation:
-        return "uiuc";
+        return AssistantProvider.uiuc;
       default:
-        return "uiuc";
+        return AssistantProvider.uiuc;
     }
   }
 

@@ -1,5 +1,8 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
+///
+/// Deep link name map
+///
 Map<String, String> deeplinkNameMap = {
   'home': 'Home',
   'browse': 'Browse',
@@ -59,6 +62,9 @@ Map<String, String> deeplinkNameMap = {
   'poll': 'Poll Detail',
 };
 
+///
+/// Message
+///
 class Message {
   static final String _unknownAnswerValue = "I don't know";
 
@@ -144,8 +150,14 @@ class Message {
   bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
 }
 
+///
+/// FeedbackResponseType
+///
 enum FeedbackResponseType { positive, negative }
 
+///
+/// Link
+///
 class Link {
   final String name;
   final String link;
@@ -175,4 +187,23 @@ class Link {
   }
 }
 
+///
+/// MessageFeedback
+///
 enum MessageFeedback { good, bad }
+
+///
+/// AssistantProvider
+///
+enum AssistantProvider { uiuc, google }
+
+String? assistantProviderToKeyString(AssistantProvider? provider) {
+  switch (provider) {
+    case AssistantProvider.uiuc:
+      return 'uiuc';
+    case AssistantProvider.google:
+      return 'google';
+    default:
+      return null;
+  }
+}

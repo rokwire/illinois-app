@@ -35,9 +35,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
-  final String provider;
+  final AssistantProvider provider;
 
-  AssistantConversationContentWidget({required this.shouldClearAllMessages, required String this.provider});
+  AssistantConversationContentWidget({required this.shouldClearAllMessages, required AssistantProvider this.provider});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
@@ -817,7 +817,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     );
   }
 
-  Future<void> _submitMessage(String message, {String? provider}) async {
+  Future<void> _submitMessage(String message, {AssistantProvider? provider}) async {
     FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;
