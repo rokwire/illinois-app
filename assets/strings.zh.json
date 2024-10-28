@@ -4198,6 +4198,10 @@
 	"model.safety.safewalks.title": "SafeWalks",
 	"model.safety.safewalks.request.action.text": "Request a SafeWalk",
 
+	"model.assistant.provider.uiuc.label": "Illinois",
+	"model.assistant.provider.google.label": "Google",
+	"model.assistant.provider.unknown.label": "Unknown",
+
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",

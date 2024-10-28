@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///
-/// TBD: This panel is for debug purposes and should be removed at some point. [#4445]
+/// TBD: DD - This panel is for debug purposes and should be removed at some point. [#4445]
 ///
 class AssistantProvidersConversationContentWidget extends StatefulWidget {
 
@@ -215,7 +216,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
                                                   TextSpan(
-                                                      text: message.content,
+                                                      text: (message.user ? message.content : '[${assistantProviderToDisplayString(message.provider)}] ${message.content}'),
                                                       style: message.user
                                                           ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
                                                           : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
@@ -683,14 +684,20 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
     List<Future<dynamic>> assistantFutures = [];
-    for (AssistantProvider provider in AssistantProvider.values) {
+    Map<int, AssistantProvider> providerPositions = {};
+    for (int i = 0; i < AssistantProvider.values.length; i++) {
+      AssistantProvider provider = AssistantProvider.values[i];
+      providerPositions.addAll({i: provider});
       assistantFutures.add(Assistant().sendQuery(message, provider: provider, context: userContext));
     }
 
     List<dynamic> queryResults = await Future.wait(assistantFutures);
 
-    for (dynamic result in queryResults) {
+    for (int j = 0; j<queryResults.length;j++) {
+      dynamic result = queryResults[j];
+      AssistantProvider provider = AssistantProvider.values[j];
       if (result is Message) {
+        result.provider = provider;
         _addMessage(result);
         if (result.queryLimit != null) {
           _queryLimit = result.queryLimit;
@@ -701,7 +708,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         _addMessage(Message(
             content: Localization().getStringEx('panel.assistant.label.error.title',
                 'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
-            user: false));
+            user: false, provider: provider));
         _inputController.text = message;
       }
     }

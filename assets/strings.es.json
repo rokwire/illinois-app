@@ -4220,6 +4220,10 @@
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
 
+    "model.assistant.provider.uiuc.label": "Illinois",
+    "model.assistant.provider.google.label": "Google",
+    "model.assistant.provider.unknown.label": "Unknown",
+
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",
