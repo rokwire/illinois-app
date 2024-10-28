@@ -439,6 +439,7 @@
     "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.label": "Pregunta al asistente de Illinois",
     "panel.assistant.content.conversation.google.label": "Pregunta al asistente de Google",
+    "panel.assistant.content.conversation.all.label": "Usar todos los asistentes",
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.sources_links.label": "Fuentes y enlaces",
     "panel.assistant.related.label": "Relacionado:",
