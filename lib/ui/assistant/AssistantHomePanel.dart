@@ -22,6 +22,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
+import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -31,7 +32,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { uiuc_conversation, google_conversation, faqs }
+enum AssistantContent { uiuc_conversation, google_conversation, all_assistants, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -287,6 +288,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantContent.uiuc_conversation;
       case 'google_assistant':
         return AssistantContent.google_conversation;
+      case 'all_assistants':
+        return AssistantContent.all_assistants;
       case 'uiuc_faqs':
         return AssistantContent.faqs;
       default:
@@ -312,6 +315,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider,);
       case AssistantContent.google_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContent.all_assistants:
+        return AssistantProvidersConversationContentWidget();
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
       default:
@@ -324,7 +329,9 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
       case AssistantContent.uiuc_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.label', 'Ask the Illinois Assistant');
       case AssistantContent.google_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant',);
+        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
+      case AssistantContent.all_assistants:
+        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
       case AssistantContent.faqs:
         return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:

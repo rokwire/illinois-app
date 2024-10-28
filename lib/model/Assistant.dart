@@ -1,3 +1,4 @@
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///
@@ -79,12 +80,14 @@ class Message {
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
+  AssistantProvider? provider;
+
   bool? sourcesExpanded;
   FeedbackResponseType? feedbackResponseType;
   bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation,
+    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
     this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
@@ -205,5 +208,16 @@ String? assistantProviderToKeyString(AssistantProvider? provider) {
       return 'google';
     default:
       return null;
+  }
+}
+
+String assistantProviderToDisplayString(AssistantProvider? provider) {
+  switch (provider) {
+    case AssistantProvider.uiuc:
+      return Localization().getStringEx('model.assistant.provider.uiuc.label', 'Illinois');
+    case AssistantProvider.google:
+      return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
+    default:
+      return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
   }
 }

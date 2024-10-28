@@ -440,6 +440,7 @@
     "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.label": "Ask the Illinois Assistant",
     "panel.assistant.content.conversation.google.label": "Ask the Google Assistant",
+    "panel.assistant.content.conversation.all.label": "Use All Assistants",
     "panel.assistant.content.faqs.label": "Illinois Assistant FAQs",
     "panel.assistant.sources_links.label": "Sources and Links",
     "panel.assistant.related.label": "Related:",
@@ -4225,6 +4226,10 @@
 
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
+
+    "model.assistant.provider.uiuc.label": "Illinois",
+    "model.assistant.provider.google.label": "Google",
+    "model.assistant.provider.unknown.label": "Unknown",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
