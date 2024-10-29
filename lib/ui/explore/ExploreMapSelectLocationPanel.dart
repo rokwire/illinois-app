@@ -40,6 +40,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
@@ -603,6 +604,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return Wellness().loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSites: return Places().getAllPlaces();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
@@ -837,8 +839,8 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
           context: context,
           imageSize: _mapGroupMarkerSize,
           backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
+          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor,
+          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor,
           count: exploreGroup.length,
         ));
       Offset markerAnchor = Offset(0.5, 0.5);

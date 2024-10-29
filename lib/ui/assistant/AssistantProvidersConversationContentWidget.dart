@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/SpeechToText.dart';
-import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -33,20 +33,20 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AssistantConversationContentWidget extends StatefulWidget {
-  final Stream shouldClearAllMessages;
-  final AssistantProvider provider;
+///
+/// TBD: DD - This panel is for debug purposes and should be removed at some point. [#4445]
+///
+class AssistantProvidersConversationContentWidget extends StatefulWidget {
 
-  AssistantConversationContentWidget({required this.shouldClearAllMessages, required AssistantProvider this.provider});
+  AssistantProvidersConversationContentWidget();
 
   @override
-  State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
+  State<AssistantProvidersConversationContentWidget> createState() => _AssistantProvidersConversationContentWidgetState();
 }
 
-class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
-    with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>, WidgetsBindingObserver
+class _AssistantProvidersConversationContentWidgetState extends State<AssistantProvidersConversationContentWidget>
+    with AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget>, WidgetsBindingObserver
     implements NotificationsListener {
-  static final String resourceName = 'assistant';
 
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
@@ -61,17 +61,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool _listening = false;
 
   bool _loadingResponse = false;
-  Message? _feedbackMessage;
 
+  List<Message> _messages = <Message>[];
   int? _queryLimit;
   bool _evaluatingQueryLimit = false;
 
   Map<String, String>? _userContext;
 
-  late StreamSubscription _streamSubscription;
   bool _loading = false;
-  TextEditingController _negativeFeedbackController = TextEditingController();
-  FocusNode _negativeFeedbackFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -84,9 +81,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
-    _streamSubscription = widget.shouldClearAllMessages.listen((event) {
-      _clearAllMessages();
-    });
 
     _onPullToRefresh();
 
@@ -105,22 +99,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _inputController.dispose();
-    _negativeFeedbackController.dispose();
-    _streamSubscription.cancel();
     _inputFieldFocus.dispose();
-    _negativeFeedbackFocusNode.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(AssistantConversationContentWidget old) {
-    super.didUpdateWidget(old);
-    // in case the stream instance changed, subscribe to the new one
-    if (widget.shouldClearAllMessages != old.shouldClearAllMessages) {
-      _streamSubscription.cancel();
-      _streamSubscription = widget.shouldClearAllMessages.listen((_) => _clearAllMessages);
-    }
   }
 
   // AutomaticKeepAliveClientMixin
@@ -145,28 +126,32 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget build(BuildContext context) {
     super.build(context);
 
-    Widget? accessWidget = AccessCard.builder(resource: resourceName);
     _scrollToBottomIfNeeded();
 
-    return accessWidget != null
-        ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
-        :  Positioned.fill(
-                child: Stack(children: [
-                Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: RefreshIndicator(
-                    onRefresh: _onPullToRefresh,
-                    child: Stack(alignment: Alignment.center, children: [
-                      SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: Padding(padding: EdgeInsets.all(16), child:
-                          Container(
-                              child: Semantics(/*liveRegion: true, */child:
-                              Column(children:
-                              _buildContentList()))))),
-                      Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
-                    ]))),
-                Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
-          ]));
+    return Positioned.fill(
+        child: Stack(children: [
+          Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: RefreshIndicator(
+              onRefresh: _onPullToRefresh,
+              child: Stack(alignment: Alignment.center, children: [
+                SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Padding(padding: EdgeInsets.all(16), child:
+                    Container(
+                        child: Semantics(/*liveRegion: true, */child:
+                        Column(children:
+                        _buildContentList()))))),
+                Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+              ]))),
+          Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
+        ]));
+  }
+
+  @override
+  void didChangeMetrics() {
+    _checkKeyboardVisible.then((visible){
+      _onKeyboardVisibilityChanged(visible);
+    });
   }
 
   List<Widget> _buildContentList() {
@@ -180,17 +165,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (_loadingResponse) {
       contentList.add(_buildTypingChatBubble());
     }
-    contentList.add(Container(key: _lastContentItemKey, height: 0));
+    contentList.add(Container(key: _lastContentItemKey, height: (_hideChatBar ? _chatBarHeight : 0)));
     return contentList;
   }
 
   Widget _buildChatBubble(Message message) {
-    bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
-    String answer = message.isAnswerUnknown
-        ? Localization()
-            .getStringEx('panel.assistant.unknown.answer.value', "I wasn’t able to find an answer from an official university source.")
-        : message.content;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: bubblePadding,
@@ -200,27 +180,20 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               children: [
                 Flexible(
                     child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == _messages.lastOrNull),
-                      child:Opacity(
-                        opacity: message.example ? 0.5 : 1.0,
-                        child: Material(
-                            color: message.user
-                                ? message.example
+                        child:Opacity(
+                            opacity: message.example ? 0.5 : 1.0,
+                            child: Material(
+                                color: message.user
+                                    ? message.example
                                     ? Styles().colors.background
                                     : Styles().colors.blueAccent
-                                : Styles().colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            child: InkWell(
-                                onTap: message.example
-                                    ? () {
-                                        Assistant().removeMessage(provider: _provider, message: message);
-                                        _submitMessage(message: message.content, provider: _provider);
-                                      }
-                                    : null,
+                                    : Styles().colors.white,
+                                borderRadius: BorderRadius.circular(16.0),
                                 child: Container(
                                     decoration: message.example
                                         ? BoxDecoration(
-                                            borderRadius: BorderRadius.circular(16.0),
-                                            border: Border.all(color: Styles().colors.fillColorPrimary))
+                                        borderRadius: BorderRadius.circular(16.0),
+                                        border: Border.all(color: Styles().colors.fillColorPrimary))
                                         : null,
                                     child: Stack(children: [
                                       Padding(
@@ -243,34 +216,19 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
                                                   TextSpan(
-                                                      text: answer,
+                                                      text: (message.user ? message.content : '[${assistantProviderToDisplayString(message.provider)}] ${message.content}'),
                                                       style: message.user
                                                           ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
                                                           : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
                                                 ])),
-                                            Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
-                                            Visibility(
-                                                visible: (message.feedbackResponseType == FeedbackResponseType.positive),
-                                                child: _buildFeedbackResponseDisclaimer())
                                           ])),
-                                          Visibility(visible: isNegativeFeedbackFormVisible, child:
-                                            Align(alignment: Alignment.centerRight, child:
-                                              GestureDetector(onTap: () => _onTapCloseNegativeFeedbackForm(message), child:
-                                                Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
-                                                  Styles().images.getImage('close-circle', excludeFromSemantics: true)
-                                                )
-                                              )
-                                            )
-                                          )
-                                    ])))))))
+                                    ]))))))
               ])),
-      _buildFeedbackAndSourcesExpandedWidget(message)
+      _buildSourcesExpandedWidget(message)
     ]);
   }
 
-  Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
-    final double feedbackIconSize = 24;
-    bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
+  Widget _buildSourcesExpandedWidget(Message message) {
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
     bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
@@ -282,48 +240,20 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Visibility(
-                visible: feedbackControlsVisible,
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Like"), selected: message.feedback == MessageFeedback.good,
-                    child: IconButton(
-                        onPressed: message.feedbackExplanation == null
-                            ? () {
-                                _sendFeedback(message, true);
-                              }
-                            : null,
-                        icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                            size: feedbackIconSize,
-                            color:
-                                message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
-                        iconSize: feedbackIconSize,
-                        splashRadius: feedbackIconSize))),
-                    MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Dislike"), selected: message.feedback == MessageFeedback.bad,
-                      child: IconButton(
-                        onPressed: message.feedbackExplanation == null
-                            ? () {
-                                _sendFeedback(message, false);
-                              }
-                            : null,
-                        icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
-                            size: feedbackIconSize, color: Styles().colors.fillColorPrimary),
-                        iconSize: feedbackIconSize,
-                        splashRadius: feedbackIconSize)))
-                ])),
-            Visibility(
                 visible: areSourcesLabelsVisible,
                 child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)),
                     child: Semantics(
-                      child: InkWell(
-                        onTap: () => _onTapSourcesAndLinksLabel(message),
-                        splashColor: Colors.transparent,
-                        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
-                              style: Styles().textStyles.getTextStyle('widget.message.small')),
-                          Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Styles().images.getImage(areSourcesValuesVisible ? 'chevron-up-dark-blue' : 'chevron-down-dark-blue') ??
-                                  Container())
-                    ])))))
+                        child: InkWell(
+                            onTap: () => _onTapSourcesAndLinksLabel(message),
+                            splashColor: Colors.transparent,
+                            child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                              Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
+                                  style: Styles().textStyles.getTextStyle('widget.message.small')),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Styles().images.getImage(areSourcesValuesVisible ? 'chevron-up-dark-blue' : 'chevron-down-dark-blue') ??
+                                      Container())
+                            ])))))
           ]),
           Visibility(
               visible: areSourcesValuesVisible,
@@ -358,99 +288,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _shouldScrollToBottom = true;
       }
     });
-  }
-
-  Widget _buildNegativeFeedbackFormWidget(Message message) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-          Localization().getStringEx(
-              'panel.assistant.label.feedback.negative.prompt.title', 'Please provide additional information on the issue(s).'),
-          style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.negative.description.regular.fat')),
-      Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: Container(
-              decoration:
-              BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
-              child: Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: TextField(
-                      controller: _negativeFeedbackController,
-                      focusNode: _negativeFeedbackFocusNode,
-                      maxLines: 2,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(border: InputBorder.none),
-                      style: Styles().textStyles.getTextStyle('widget.title.regular'))))),
-      Padding(
-          padding: EdgeInsets.only(top: 15),
-          child: RoundedButton(
-              label: Localization().getStringEx('panel.assistant.button.submit.title', 'Submit'),
-              contentWeight: 0.4,
-              padding: EdgeInsets.symmetric(vertical: 8),
-              fontSize: 16,
-              onTap: () => _submitNegativeFeedbackMessage(
-                  systemMessage: message, negativeFeedbackExplanation: _negativeFeedbackController.text))),
-      _buildFeedbackResponseDisclaimer()
-    ]);
-  }
-
-  Widget _buildFeedbackResponseDisclaimer() {
-    return Padding(padding: EdgeInsets.only(top: 10), child: Text(
-        Localization().getStringEx('panel.assistant.feedback.disclaimer.description',
-            'Your input on this response is anonymous and will be reviewed to improve the quality of the Illinois Assistant.'),
-        style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.description.thin')));
-  }
-
-  void _sendFeedback(Message message, bool good) {
-    if (message.feedbackExplanation != null) {
-      return;
-    }
-
-    bool bad = false;
-
-    setState(() {
-      if (good) {
-        if (message.feedback == MessageFeedback.good) {
-          message.feedback = null;
-        } else {
-          message.feedback = MessageFeedback.good;
-          Assistant().addMessage(
-              provider: _provider,
-              message: Message(
-                  content:
-                      Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
-                  user: false,
-                  feedbackResponseType: FeedbackResponseType.positive));
-          _shouldScrollToBottom = true;
-          _shouldSemanticFocusToLastBubble = true;
-        }
-      } else {
-        if (message.feedback == MessageFeedback.bad) {
-          message.feedback = null;
-        } else {
-          message.feedback = MessageFeedback.bad;
-          Assistant().addMessage(
-              provider: _provider,
-              message: Message(
-                  content:
-                      Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
-                  user: false,
-                  feedbackResponseType: FeedbackResponseType.negative));
-          _feedbackMessage = message;
-          bad = true;
-          _shouldScrollToBottom = true;
-          _shouldSemanticFocusToLastBubble = true;
-        }
-      }
-    });
-
-    if (!bad && _feedbackMessage != null) {
-      Assistant().removeLastMessage(provider: _provider);
-      _feedbackMessage = null;
-      _shouldScrollToBottom = true;
-      _shouldSemanticFocusToLastBubble = true;
-    }
-
-    Assistant().sendFeedback(message);
   }
 
   Widget _buildTypingChatBubble() {
@@ -546,76 +383,76 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     bool enabled = (queryLimit == null) || (queryLimit > 0);
     return Semantics(container: true,
         child: Material(
-          color: Styles().colors.surface,
-          child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
-                  Expanded(
-                      child:
+            color: Styles().colors.surface,
+            child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
+                    Expanded(
+                        child:
                         Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
-                          child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Stack(children: [
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Stack(children: [
                                   Semantics(container: true, child:  Padding(padding: EdgeInsets.only(right: 28), child: TextField(
-                                    key: _inputFieldKey,
-                                    enabled: enabled,
-                                    controller: _inputController,
-                                    minLines: 1,
-                                    maxLines: 3,
-                                    textCapitalization: TextCapitalization.sentences,
-                                    textInputAction: TextInputAction.send,
-                                    focusNode: _inputFieldFocus,
-                                    onSubmitted: (value) {
-                                      _submitMessage(message: value, provider: _provider);
-                                    },
-                                    onChanged: (_) => setStateIfMounted((){}),
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: enabled
-                                            ? null
-                                            : Localization().getStringEx('panel.assistant.label.queries.limit.title',
-                                            'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')),
-                                    style: Styles().textStyles.getTextStyle('widget.title.regular')))),
-                                Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
-                              ]))))
-                ])),
-                _buildQueryLimit(),
-                Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton())
-              ]))));
+                                      key: _inputFieldKey,
+                                      enabled: enabled,
+                                      controller: _inputController,
+                                      minLines: 1,
+                                      maxLines: 3,
+                                      textCapitalization: TextCapitalization.sentences,
+                                      textInputAction: TextInputAction.send,
+                                      focusNode: _inputFieldFocus,
+                                      onSubmitted: (value) {
+                                        _submitMessage(message: value);
+                                      },
+                                      onChanged: (_) => setStateIfMounted((){}),
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: enabled
+                                              ? null
+                                              : Localization().getStringEx('panel.assistant.label.queries.limit.title',
+                                              'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')),
+                                      style: Styles().textStyles.getTextStyle('widget.title.regular')))),
+                                  Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
+                                ]))))
+                  ])),
+                  _buildQueryLimit(),
+                  Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton())
+                ]))));
   }
 
   Widget _buildSendImage(bool enabled) {
     if (StringUtils.isNotEmpty(_inputController.text)) {
       return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
           child: IconButton(
-            splashRadius: 24,
-            icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
-            onPressed: enabled
-                ? () {
-              _submitMessage(message: _inputController.text, provider: _provider);
-            }
-                : null)));
+              splashRadius: 24,
+              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
+              onPressed: enabled
+                  ? () {
+                _submitMessage(message: _inputController.text);
+              }
+                  : null)));
     } else {
       return Visibility(
           visible: enabled && SpeechToText().isEnabled,
           child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
-            child:IconButton(
-              splashRadius: 24,
-              icon: _listening ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop",) : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone",),
-              onPressed: enabled
-                  ? () {
-                if (_listening) {
-                  _stopListening();
-                } else {
-                  _startListening();
-                }
-              }
-                  : null))));
+              child:IconButton(
+                  splashRadius: 24,
+                  icon: _listening ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop",) : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone",),
+                  onPressed: enabled
+                      ? () {
+                    if (_listening) {
+                      _stopListening();
+                    } else {
+                      _startListening();
+                    }
+                  }
+                      : null))));
     }
   }
 
@@ -625,53 +462,53 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return Container();
     }
     return Semantics(container: true,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [
-            Container(
-                height: _evaluatingQueryLimit ? 12 : 10,
-                width: _evaluatingQueryLimit ? 12 : 10,
-                decoration: _evaluatingQueryLimit ? null : BoxDecoration(
-                  color: ((queryLimit ?? 0) > 0)
-                      ? Styles().colors.saferLocationWaitTimeColorGreen
-                      : Styles().colors.saferLocationWaitTimeColorRed,
-                  shape: BoxShape.circle),
-                child: _evaluatingQueryLimit ? CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Styles().colors.fillColorSecondary,
-                ) : null,
-            ),
-            SizedBox(width: 8),
-            Text(_evaluatingQueryLimit ?
+        child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                Container(
+                  height: _evaluatingQueryLimit ? 12 : 10,
+                  width: _evaluatingQueryLimit ? 12 : 10,
+                  decoration: _evaluatingQueryLimit ? null : BoxDecoration(
+                      color: ((queryLimit ?? 0) > 0)
+                          ? Styles().colors.saferLocationWaitTimeColorGreen
+                          : Styles().colors.saferLocationWaitTimeColorRed,
+                      shape: BoxShape.circle),
+                  child: _evaluatingQueryLimit ? CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Styles().colors.fillColorSecondary,
+                  ) : null,
+                ),
+                SizedBox(width: 8),
+                Text(_evaluatingQueryLimit ?
                 Localization()
                     .getStringEx('panel.assistant.label.queries.evaluating.title', "Evaluating remaining questions today") :
                 Localization()
                     .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
                     .replaceAll('{{query_limit}}', queryLimit.toString()),
-                style: Styles().textStyles.getTextStyle('widget.title.small'))
-          ]),
-          Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Text(
-                  Localization().getStringEx('panel.assistant.inaccurate.description.disclaimer',
-                      'The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.'),
-                  style: Styles().textStyles.getTextStyle('widget.info.tiny'),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 5))
-        ])));
+                    style: Styles().textStyles.getTextStyle('widget.title.small'))
+              ]),
+              Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text(
+                      Localization().getStringEx('panel.assistant.inaccurate.description.disclaimer',
+                          'The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.'),
+                      style: Styles().textStyles.getTextStyle('widget.info.tiny'),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 5))
+            ])));
   }
 
   Widget _buildContextButton() {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Semantics(container: true,
-        child: RoundedButton(
-          label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
-          onTap: _showContext,
-        ),
-    ));
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Semantics(container: true,
+          child: RoundedButton(
+            label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
+            onTap: _showContext,
+          ),
+        ));
   }
 
   Future<void> _showContext() {
@@ -814,16 +651,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     );
   }
 
-  Future<void> _submitMessage({required String message, required AssistantProvider provider}) async {
+  Future<void> _submitMessage({required String message}) async {
     FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;
     }
 
-    setState(() {
-      if (message.isNotEmpty) {
-        Assistant().addMessage(provider: provider, message: Message(content: message, user: true));
-      }
+    if (message.isNotEmpty) {
+      _addMessage(Message(content: message, user: true));
+    }
+    setStateIfMounted(() {
       _inputController.text = '';
       _loadingResponse = true;
       _shouldScrollToBottom = true;
@@ -833,14 +670,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     int? queryLimit = _queryLimit;
     if ((queryLimit != null) && (queryLimit <= 0)) {
       setState(() {
-        Assistant().addMessage(
-            provider: _provider,
-            message: Message(
-                content: Localization().getStringEx(
-                    'panel.assistant.label.queries.limit.title',
-                    'Sorry you are out of questions for today. '
-                        'Please check back tomorrow to ask more questions!'),
-                user: false));
+        _addMessage(Message(
+            content: Localization().getStringEx(
+                'panel.assistant.label.queries.limit.title',
+                'Sorry you are out of questions for today. '
+                    'Please check back tomorrow to ask more questions!'),
+            user: false));
         _shouldScrollToBottom = true;
       });
       return;
@@ -848,50 +683,43 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
-    Message? response = await Assistant().sendQuery(message, provider: provider, context: userContext);
-    if (mounted) {
-      setState(() {
-        if (response != null) {
-          Assistant().addMessage(provider: _provider, message: response);
-          if (response.queryLimit != null) {
-            _queryLimit = response.queryLimit;
-          } else if (_queryLimit != null) {
-            _queryLimit = _queryLimit! - 1;
-          }
-        } else {
-          Assistant().addMessage(
-              provider: _provider,
-              message: Message(
-                  content: Localization().getStringEx('panel.assistant.label.error.title',
-                      'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
-                  user: false));
-          _inputController.text = message;
-        }
-        _loadingResponse = false;
-        _shouldScrollToBottom = true;
-      });
+    List<Future<dynamic>> assistantFutures = [];
+    Map<int, AssistantProvider> providerPositions = {};
+    for (int i = 0; i < AssistantProvider.values.length; i++) {
+      AssistantProvider provider = AssistantProvider.values[i];
+      providerPositions.addAll({i: provider});
+      assistantFutures.add(Assistant().sendQuery(message, provider: provider, context: userContext));
     }
+
+    List<dynamic> queryResults = await Future.wait(assistantFutures);
+
+    for (int j = 0; j<queryResults.length;j++) {
+      dynamic result = queryResults[j];
+      AssistantProvider provider = AssistantProvider.values[j];
+      if (result is Message) {
+        result.provider = provider;
+        _addMessage(result);
+        if (result.queryLimit != null) {
+          _queryLimit = result.queryLimit;
+        } else if (_queryLimit != null) {
+          _queryLimit = _queryLimit! - 1;
+        }
+      } else {
+        _addMessage(Message(
+            content: Localization().getStringEx('panel.assistant.label.error.title',
+                'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
+            user: false, provider: provider));
+        _inputController.text = message;
+      }
+    }
+    setStateIfMounted(() {
+      _loadingResponse = false;
+      _shouldScrollToBottom = true;
+    });
   }
 
-  Future<void> _submitNegativeFeedbackMessage({required Message systemMessage, required String negativeFeedbackExplanation}) async {
-    if ((_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
-      return;
-    }
-    FocusScope.of(context).requestFocus(FocusNode());
-    setStateIfMounted(() {
-      Assistant().addMessage(
-          provider: _provider, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
-      _negativeFeedbackController.text = '';
-      _shouldScrollToBottom = true;
-      _shouldSemanticFocusToLastBubble = true;
-    });
-    _feedbackMessage?.feedbackExplanation = negativeFeedbackExplanation;
-    systemMessage.feedbackResponseType = FeedbackResponseType.positive;
-    Message? responseMessage = await Assistant().sendFeedback(_feedbackMessage!);
-    debugPrint((responseMessage != null ? 'Succeeded' : 'Failed') + ' to submit negative feedback message.');
-    setStateIfMounted(() {
-      _feedbackMessage = null;
-    });
+  void _addMessage(Message message) {
+    _messages.add(message);
   }
 
   Map<String, String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
@@ -914,14 +742,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _onTapSourceLink(String source) {
     UrlUtils.launchExternal(source);
-  }
-
-  void _onTapCloseNegativeFeedbackForm(Message message) {
-    Assistant().removeMessage(provider: _provider, message: message);
-    setStateIfMounted(() {
-      _negativeFeedbackController.text = '';
-      _feedbackMessage = null;
-    });
   }
 
   void _startListening() {
@@ -962,43 +782,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
   }
 
-  @override
-  void didChangeMetrics() {
-    _checkKeyboardVisible.then((visible){
-          _onKeyboardVisibilityChanged(visible);
-      });
-  }
-
-  void _onKeyboardVisibilityChanged(bool visible) {
-      setStateIfMounted(() {
-        _shouldScrollToBottom = true;
-        if(visible) {
-          _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
-        }
-      });
-  }
-
-  void _clearAllMessages() {
-    if (_loading) {
-      return;
-    }
-    setStateIfMounted(() {
-      _loading = true;
-    });
-    Assistant().removeAllMessages().then((succeeded) {
-      setStateIfMounted(() {
-        _loading = false;
-      });
-      late String msg;
-      if (succeeded) {
-        msg = Localization().getStringEx('panel.assistant.messages.delete.succeeded.msg', 'Successfully removed all messages.');
-      } else {
-        msg = Localization().getStringEx('panel.assistant.messages.delete.failed.msg', 'Failed to clear all messages.');
-      }
-      AppAlert.showMessage(context, msg);
-    });
-  }
-
   void _scrollToBottomIfNeeded() {
     BuildContext? handleContext = _lastContentItemKey.currentContext;
     if (handleContext != null) {
@@ -1015,9 +798,27 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _scrollPosition = _scrollController.position.pixels;
   }
 
-  AssistantProvider get _provider => widget.provider;
+  void _onKeyboardVisibilityChanged(bool visible) {
+    setStateIfMounted(() {
+      _shouldScrollToBottom = true;
+      if(visible) {
+        _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
+      }
+    });
+  }
 
-  List<Message> get _messages => Assistant().getMessages(provider: _provider);
+  Future<bool> get _checkKeyboardVisible async {
+    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    //Check if the position of the keyboard is still changing
+    final double position = checkPosition();
+    final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
+
+    if(position == secondPosition){ //Animation is finished
+      return position > 0;
+    } else {
+      return _checkKeyboardVisible; //Check again
+    }
+  }
 
   double get _chatBarPaddingBottom {
     return _hideChatBar ? 0 : _keyboardHeight;
@@ -1033,18 +834,5 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   double get _scrollContentPaddingBottom => _keyboardHeight + (_hideChatBar ? 0 : _chatBarHeight);
 
-  bool get _hideChatBar => _negativeFeedbackFocusNode.hasFocus && _keyboardHeight > 0;
-
-  Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
-    //Check if the position of the keyboard is still changing
-    final double position = checkPosition();
-    final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
-
-    if(position == secondPosition){ //Animation is finished
-      return position > 0;
-    } else {
-      return _checkKeyboardVisible; //Check again
-    }
-  }
+  bool get _hideChatBar => (_keyboardHeight <= 0);
 }

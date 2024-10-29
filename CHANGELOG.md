@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.1.16] - 2024-10-28
+### Added
+- Common assistants panel [#4445](https://github.com/rokwire/illinois-app/issues/4445).
+
+## [6.1.15] - 2024-10-25
+### Added
+- Google as assistant provider on dev environment [#4441](https://github.com/rokwire/illinois-app/issues/4441).
+
 ## [6.1.14] - 2024-10-22
 ### Changed
 - Implemented other [adjustments](https://github.com/rokwire/illinois-app/issues/4363#issuecomment-2428154698) to SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
@@ -90,6 +98,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.55] - 2024-10-24
+### Fixed
+- Bug fixes on the places bottomsheet [#4439](https://github.com/rokwire/illinois-app/issues/4439)
+
+## [6.0.54] - 2024-10-23
+### Added
+- Created a new map formatting and pins [#4337](https://github.com/rokwire/illinois-app/issues/4337)
+- Handled stored sites deep link processing [#4435](https://github.com/rokwire/illinois-app/issues/4435)
 
 ## [6.0.53] - 2024-10-18
 ### Added

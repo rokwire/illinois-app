@@ -439,6 +439,8 @@
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
     "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.label": "Ask the Illinois Assistant",
+    "panel.assistant.content.conversation.google.label": "Ask the Google Assistant",
+    "panel.assistant.content.conversation.all.label": "Use All Assistants",
     "panel.assistant.content.faqs.label": "Illinois Assistant FAQs",
     "panel.assistant.sources_links.label": "Sources and Links",
     "panel.assistant.related.label": "Related:",
@@ -1042,6 +1044,8 @@
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.appointments.title":"MyMcKinley In-Person Appointments",
     "panel.explore.button.appointments.hint":"",
+    "panel.explore.button.stored_sites.title": "Storied Sites",
+    "panel.explore.button.stored_sites.hint":"",
     "panel.explore.button.directions.title":"Directions",
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Details",
@@ -1096,6 +1100,7 @@
     "panel.explore.state.online.empty.mental_health":"No therapist locations are available.",
     "panel.explore.state.online.empty.student_course":"No student courses registered.",
     "panel.explore.state.online.empty.appointments":"No appointments are available.",
+    "panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
     "panel.explore.state.online.empty.state_farm":"No State Farm Wayfinding available.",
 
     "panel.explore.state.offline.empty.events":"No upcoming events are available while offline.",
@@ -1108,6 +1113,7 @@
     "panel.explore.state.offline.empty.mental_health":"No therapist locations are available while offline.",
     "panel.explore.state.offline.empty.student_course":"No student courses are available while offline.",
     "panel.explore.state.offline.empty.appointments":"No appointments are available while offline.",
+    "panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
     "panel.explore.state.offline.empty.state_farm":"State Farm Wayfinding is not available while offline.",
 
     "panel.explore.state.failed.events":"Failed to load upcoming events.",
@@ -1120,6 +1126,7 @@
     "panel.explore.state.failed.mental_health":"Failed to load therapist locations.",
     "panel.explore.state.failed.student_course":"Failed to load student courses.",
     "panel.explore.state.failed.appointments":"Failed to load appointments.",
+    "panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
     "panel.explore.state.failed.state_farm":"Failed to load State Farm Wayfinding.",
 
     "panel.explore.item.events.name":"Events",
@@ -1157,6 +1164,20 @@
     "panel.explore.directions.na.msg":"You need to enable location services to get navigation directions.",
     "panel.explore.directions.failed.msg":"Failed to launch navigation directions.",
     "panel.explore.details.na.msg":"Details are not available for custom points of interest.",
+
+    "panel.explore.storied_sites.title": "Storied Sites",
+    "panel.explore.storied_sites.load.error": "Failed to load stored site details",
+    "panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+    "panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
+    "panel.explore.storied_sites.one.day": "You can only check in once per day.",
+    "panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",
+    "panel.explore.storied_sites.clear.error": "An error occurred while clearing the check-in date.",
+    "panel.explore.storied_sites.checked.in": "Checked in",
+    "panel.explore.storied_sites.check.in": "Check In",
+    "panel.explore.storied_sites.check.in.title": "You checked in on...",
+    "panel.explore.storied_sites.default.description": "No description available",
+    "panel.explore.storied_sites.share.location": "Share this location",
+    "panel.explore.storied_sites.default.name": "Unknown Name",
 
     "panel.explore_list.header.title":"Explore",
 
@@ -4205,6 +4226,10 @@
 
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
+
+    "model.assistant.provider.uiuc.label": "Illinois",
+    "model.assistant.provider.google.label": "Google",
+    "model.assistant.provider.unknown.label": "Unknown",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",

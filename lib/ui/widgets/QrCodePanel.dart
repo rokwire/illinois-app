@@ -16,9 +16,11 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/places.dart' as places;
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
@@ -108,6 +110,17 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     analyticsFeature: analyticsFeature,
   );
 
+  factory QrCodePanel.fromPlace(places.Place? place, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: Places.placeDetailUrl(place),
+    saveFileName: 'Location - ${place?.name}',
+    saveWatermarkText: place?.name,
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.building.title', 'Share this location'),
+    description: Localization().getStringEx('panel.qr_code.building.description.label', 'Want to invite other Illinois app users to view this location? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
   factory QrCodePanel.fromSafeWalk({ Key? key, Map<String, dynamic>? origin, Map<String, dynamic>? destination, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: Safety.safeWalkDetailUrl({
@@ -119,7 +132,6 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
-    analyticsFeature: analyticsFeature,
   );
 
   @override

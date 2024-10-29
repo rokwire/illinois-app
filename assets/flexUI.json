@@ -52,7 +52,9 @@
 			"browse.wellness": ["wellness_resources", "wellness_mental_health", "wellness_success_team","wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_podcast", "wellness_struggling"],
 
 			"wallet": ["illini_id", "illini_id_faq", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
-	
+
+			"assistant": ["uiuc_assistant", "google_assistant", "all_assistants", "uiuc_faqs"],
+
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
 			"authenticate.connected": ["netid", "phone", "email"],
@@ -80,7 +82,7 @@
 			"polls.features": ["authentication", "netid_login"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "state_farm_wayfinding"],
+			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "state_farm_wayfinding", "storied_sites"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
@@ -211,6 +213,8 @@
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
+				"assistant.google_assistant"              : { "environment":  "dev"},
+				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
