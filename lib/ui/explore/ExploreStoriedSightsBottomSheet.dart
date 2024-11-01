@@ -39,6 +39,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
   TrackingAuthorizationStatus? status;
+  List<places_model.Place>? _customPlaces;
 
 
 
@@ -313,6 +314,13 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Widget _buildFilterButtons() {
     List<Widget> filterButtons = [];
 
+    // Add Custom Selection Filter Button
+    if (_customPlaces != null) {
+      String label = '${_customPlaces!.length} Places';
+      bool isSelected = _selectedFilters.contains('CustomSelection');
+      filterButtons.add(_buildCustomFilterButton(label, isSelected));
+    }
+
     filterButtons.addAll(_regularFilters.map((tag) => _buildRegularFilterButton(tag)));
 
     for (String mainTag in _mainFilters.keys) {
@@ -359,6 +367,46 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       children: filterWidgets,
     );
   }
+
+  Widget _buildCustomFilterButton(String label, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            if (isSelected) {
+              // Deselect custom filter
+              _selectedFilters.remove('CustomSelection');
+              _customPlaces = null;
+            } else {
+              // Select custom filter
+              _selectedFilters.clear();
+              _selectedFilters.add('CustomSelection');
+            }
+            _applyFilters();
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: isSelected ? Colors.white : Styles().colors.fillColorPrimary,
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Colors.white,
+          side: BorderSide(
+            color: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0),
+          ),
+        ),
+        child: Text(
+          label,
+          style: Styles()
+              .textStyles
+              .getTextStyle("widget.button.title.small")
+              ?.apply(color: isSelected ? Colors.white : Styles().colors.fillColorPrimary),
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildMainFilterButton(String mainTag, bool isExpanded) {
     return Padding(
@@ -477,6 +525,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       setState(() {
         _storiedSights = List.from(_allPlaces);
       });
+    } else if (_selectedFilters.contains('CustomSelection')) {
+      setState(() {
+        _storiedSights = List.from(_customPlaces!);
+      });
     } else {
       setState(() {
         _storiedSights = _allPlaces.where((place) {
@@ -562,8 +614,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   void selectPlaces(List<places_model.Place> places) {
     setState(() {
       _storiedSights = places;
+      _customPlaces = places;
       _selectedDestination = null;
       _selectedFilters.clear();
+      _selectedFilters.add('CustomSelection');
     });
     _controller.animateTo(
       0.65,
