@@ -199,6 +199,12 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   }
 
   Widget _buildDestinationCard(places_model.Place place) {
+
+    List<String> typesToShow = List<String>.from(place.types ?? []);
+    if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
+      typesToShow.add('Visited');
+    }
+
     return InkWell(
       onTap: () => _onTapDestinationCard(place),
       child: Container(
@@ -206,8 +212,8 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (place.types != null && place.types!.isNotEmpty)
-              _buildTypeChips(place.types!),
+            if (typesToShow.isNotEmpty)
+              _buildTypeChips(typesToShow),
             SizedBox(height: 8.0),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -468,7 +468,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               key: _storiedSightsKey,
               places: _explores?.whereType<Place>().toList() ?? [],
               onPlaceSelected: (places_model.Place place) {
-                _centerMapOnExplore(place);
+                _centerMapOnExplore(place, zoom: false);
                 _selectMapExplore(place);
               },
             ),
@@ -631,7 +631,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
 
-  void _centerMapOnExplore(dynamic explore) async {
+  void _centerMapOnExplore(dynamic explore, {bool zoom = true}) async {
     LatLng? targetPosition;
 
     if (explore is Explore) {
@@ -642,11 +642,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
     if (targetPosition != null && _mapController != null) {
       double currentZoom = await _mapController!.getZoomLevel();
-      double targetZoom = currentZoom + 1;
-      if (targetZoom > 20) {
-        targetZoom = 20;
+      double targetZoom = currentZoom;
+
+      if (zoom) {
+        targetZoom += 1;
+        if (targetZoom > 20) {
+          targetZoom = 20;
+        }
       }
-      CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(targetPosition, targetZoom);
+
+      CameraUpdate cameraUpdate = zoom
+          ? CameraUpdate.newLatLngZoom(targetPosition, targetZoom)
+          : CameraUpdate.newLatLng(targetPosition); // Center without zoom
+
       await _mapController!.moveCamera(cameraUpdate);
 
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
