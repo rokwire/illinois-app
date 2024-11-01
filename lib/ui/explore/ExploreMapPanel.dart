@@ -619,6 +619,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapType == ExploreMapType.StoriedSites) {
       if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
+       // _centerMapOnExplore(origin);
       } else if (origin is List<Explore>) {
         List<places_model.Place> places = origin.cast<places_model.Place>();
         _storiedSightsKey.currentState?.selectPlaces(places);
@@ -630,7 +631,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
 
-  void _centerMapOnExplore(dynamic explore) {
+  void _centerMapOnExplore(dynamic explore) async {
     LatLng? targetPosition;
 
     if (explore is Explore) {
@@ -640,13 +641,18 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if (targetPosition != null && _mapController != null) {
-      CameraUpdate cameraUpdate = CameraUpdate.newLatLng(targetPosition);
-      _mapController!.moveCamera(cameraUpdate);
+      double currentZoom = await _mapController!.getZoomLevel();
+      double targetZoom = currentZoom + 1;
+      if (targetZoom > 20) {
+        targetZoom = 20;
+      }
+      CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(targetPosition, targetZoom);
+      await _mapController!.moveCamera(cameraUpdate);
 
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
       double offset = 450 / devicePixelRatio;
 
-      _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
+      await _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
     }
   }
 
