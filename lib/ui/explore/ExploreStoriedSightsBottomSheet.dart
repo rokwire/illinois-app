@@ -10,6 +10,7 @@ import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_header_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -37,6 +38,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Map<String, Set<String>> _mainFilters = {};
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
+  TrackingAuthorizationStatus? status;
 
 
 
@@ -153,6 +155,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     _buildPlaceListView() :
     [ExploreStoriedSightWidget(place: _selectedDestination!, onTapBack: () => setState(() {
         _selectedDestination = null;
+        _controller.animateTo(
+          0.65,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
     }))];
 
   double _calculateFilterButtonsHeight() {
@@ -589,6 +596,23 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
 
   List<DateTime> _placeCheckInDates = [];
   bool? _isHistoryExpanded;
+  TrackingAuthorizationStatus? status;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTrackingStatus();
+  }
+
+  void _loadTrackingStatus() async {
+    TrackingAuthorizationStatus? trackingStatus = await TrackingServices.queryAuthorizationStatus();
+    if (mounted) {
+      setState(() {
+        status = trackingStatus;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) =>
@@ -603,7 +627,14 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
             if (href?.startsWith('https://') == true) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)));
+              if (status == TrackingAuthorizationStatus.allowed) {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(builder: (context) => WebPanel(url: href)),
+                );
+              } else {
+                UrlUtils.launchExternal(href);
+              }
               return;
             }
             UrlUtils.launchExternal(href);
