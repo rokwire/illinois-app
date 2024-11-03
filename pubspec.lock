@@ -966,6 +966,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  intrinsic_size_builder:
+    dependency: "direct main"
+    description:
+      name: intrinsic_size_builder
+      sha256: fe922745d2d880cc4e0564254c7d7fe5de87ae8f7278453a2b482829d47acea4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   js:
     dependency: transitive
     description:

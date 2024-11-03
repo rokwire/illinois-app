@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -27,6 +28,7 @@ import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:neom/ui/groups/GroupPostDetailPanel.dart';
 import 'package:neom/ui/groups/GroupPostReportAbuse.dart';
+import 'package:neom/ui/widgets/CustomFlexibleSpaceBar.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/InfoPopup.dart';
 import 'package:neom/ui/widgets/QrCodePanel.dart';
@@ -101,8 +103,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   GroupStats?        _groupStats;
   List<Member>?      _groupAdmins;
 
-  final GlobalKey _headerKey = GlobalKey();
-  double? _headerHeight;
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   _DetailTab         _currentTab = _DetailTab.Events;
@@ -742,7 +742,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
     else if (_group != null) {
       content = _buildGroupContent(barActions);
-      _scheduleEvalHeaderHeight();
     }
     else {
       content = _buildErrorContent();
@@ -869,7 +868,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         physics: const NeverScrollableScrollPhysics(),
         children: [
           SingleChildScrollView(scrollDirection: Axis.vertical, child: _buildEvents()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPosts(), _buildScheduledPosts()],)),
+          SingleChildScrollView(scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildPosts(),
+            if (_isAdmin)
+              _buildScheduledPosts()
+          ],)),
           SingleChildScrollView(scrollDirection: Axis.vertical, child: _buildMessages()),
           SingleChildScrollView(scrollDirection: Axis.vertical, child: _buildPolls()),
           SingleChildScrollView(scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildAbout(), _buildPrivacyDescription(), _buildAdmins()],)),
@@ -889,49 +892,77 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       );
     }
 
-    return NestedScrollView(
-      controller: _scrollController,
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return [
-          SliverHeaderBar(
-            pinned: true,
-            floating: true,
-            actions: actions,
-            title: _group?.title ?? '',
-            leadingIconKey: 'caret-left',
-            expandedHeight: (_headerHeight ?? 0) + (_isMemberOrAdmin ? kToolbarHeight : 0) + kToolbarHeight,
-            flexibleSpace: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.only(top: kToolbarHeight),
-                child: Stack(key: _headerKey, children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 200.0),
-                    child: _buildImageHeader(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0, top: 152.0),
-                    child: _buildGroupInfo(),
-                  )
-                ]),
-              ),
-            ),
-            bottom: _isMemberOrAdmin ? TextTabBar(tabs: _buildTabs(), labelStyle: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,), controller: _tabController,
-                backgroundColor: Styles().colors.fillColorPrimary, isScrollable: false, onTap: _onTabChanged) : null,
+    Size size = MediaQuery.of(context).size;
+    return IntrinsicSizeBuilder(
+      subject: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: size.height * 0.75),
+        child: Stack(children: [
+          Visibility(
+            visible: _hasGroupImage,
+            child: _buildImageHeader(),
           ),
-        ];
+          Padding(
+            padding: EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0, top: _hasGroupImage ? 152.0 : 24.0),
+            child: _buildGroupDetailsHeader(),
+          )
+        ]),
+      ),
+      builder: (context, itemSize, item) {
+        return NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverSafeArea(
+                sliver: SliverHeaderBar(
+                  pinned: true,
+                  floating: false,
+                  actions: actions,
+                  title: _group?.title ?? '',
+                  leadingIconKey: 'caret-left',
+                  expandedHeight: itemSize.height,
+                  flexibleSpace: CustomFlexibleSpaceBar(
+                    expandedTitleScale: 1,
+                    collapseMode: CollapseMode.pin,
+                    background: Padding(
+                      padding: const EdgeInsets.only(top: kToolbarHeight),
+                      child: item,
+                    ),
+                  ),
+                  bottom: _isMemberOrAdmin ? TextTabBar(tabs: _buildTabs(), labelStyle: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,), controller: _tabController,
+                      backgroundColor: Styles().colors.fillColorPrimary, isScrollable: false, onTap: _onTabChanged) : null,
+                ),
+              ),
+            ];
+          },
+          body: content,
+        );
       },
-      body: content,
     );
   }
 
+  bool get _hasGroupImage => StringUtils.isNotEmpty(_group?.imageURL);
+
   Widget _buildImageHeader(){
-    return StringUtils.isNotEmpty(_group?.imageURL) ? Semantics(label: "group image", hint: "Double tap to zoom", child:
+    return _hasGroupImage ? Semantics(label: "group image", hint: "Double tap to zoom", child:
       Container(height: 200.0, width: MediaQuery.of(context).size.width, color: Styles().colors.background, child:
         ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)),
       )
     ): Container();
+  }
+
+  Widget _buildGroupDetailsHeader() {
+    return Container(
+      color: Styles().colors.surface,
+      child: Column(
+        children: [
+          _buildGroupInfo(),
+          _buildMembershipRequest(),
+          _buildCancelMembershipRequest(),
+          _buildLeaveGroupWidget(),
+        ],
+      ),
+    );
   }
 
   Widget _buildGroupInfo() {
@@ -1114,9 +1145,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Column(children: commands,),
     ));
 
-    return Container(color: Styles().colors.surface, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
-      );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
   List<Widget> _buildTabs() {
@@ -1530,7 +1559,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Widget _buildBadgeWidget() {
     Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
       Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.dark.extra_small'),)
+        Text(_group!.currentUserStatusText!.toUpperCase(), style: _group?.currentUserStatusTextStyle,)
       ),
     );
     return _showPolicyButton ? Row(children: <Widget>[
@@ -1603,7 +1632,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Widget _buildMembershipRequest() {
     if (Auth2().isLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      return Container(color: Styles().colors.surface, child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
@@ -1669,24 +1698,37 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Widget _buildCancelMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
-        Padding(padding: EdgeInsets.all(16), child:
-          RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.surface,
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            borderColor: Styles().colors.fillColorSecondary,
-            borderWidth: 2,
-            progress: _confirmationLoading,
-            onTap:() { _onCancelMembershipRequest();  }
-          ),
-        )
+      return Padding(padding: EdgeInsets.all(16), child:
+        RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
+          backgroundColor: Styles().colors.surface,
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+          borderColor: Styles().colors.fillColorSecondary,
+          borderWidth: 2,
+          progress: _confirmationLoading,
+          onTap:() { _onCancelMembershipRequest();  }
+        ),
       );
     }
     else {
       return Container();
     }
-      
+  }
+
+  Widget _buildLeaveGroupWidget() {
+    return Visibility(
+      visible: _canLeaveGroup,
+      child: Padding(padding: EdgeInsets.all(16), child:
+        RoundedButton(label: Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
+            backgroundColor: Styles().colors.surface,
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            borderColor: Styles().colors.fillColorSecondary,
+            borderWidth: 2,
+            onTap: _onTapLeave
+        ),
+      ),
+    );
   }
 
   Widget _buildConfirmationDialog({String? confirmationTextMsg,
@@ -2330,22 +2372,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (currentContext != null) {
         Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
       }
-    }
-  }
-
-  void _scheduleEvalHeaderHeight() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalHeaderHeight();
-    });
-  }
-
-  void _evalHeaderHeight() {
-    RenderObject? renderBox = _headerKey.currentContext?.findRenderObject();
-    Size? size = (renderBox is RenderBox) ? renderBox.size : null;
-    if ((size?.height != _headerHeight) && mounted) {
-      setStateIfMounted(() {
-        _headerHeight = size?.height;
-      });
     }
   }
 

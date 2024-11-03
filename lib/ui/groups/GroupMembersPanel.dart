@@ -171,14 +171,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         }
 
         if (resultsCount > 0) {
-          if (_visibleMembers == null) {
-            _visibleMembers = <Member>[];
-          }
+          _visibleMembers ??= <Member>[];
           _visibleMembers!.addAll(members!);
           _membersOffset = (_membersOffset ?? 0) + resultsCount;
-          _membersLimit = 10;
+          _membersLimit = _defaultMembersLimit;
         }
-        else {
+        if (resultsCount < _defaultMembersLimit) {
           _membersOffset = null;
           _membersLimit = null;
         }

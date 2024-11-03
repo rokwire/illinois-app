@@ -765,6 +765,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       rowContent.add(Padding(padding: EdgeInsets.only(right: wrapContent.isNotEmpty ? 8 : 0), child:
         _buildHeadingLabel(userStatus!.toUpperCase(),
           color: widget.group?.currentUserStatusColor,
+          textStyle: widget.group?.currentUserStatusTextStyle,
           semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [userStatus.toLowerCase()])
         )      
       ));
@@ -796,13 +797,13 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     return StringUtils.isNotEmpty(privacyStatus) ? _buildHeadingWrapLabel(privacyStatus) : Container();
   }*/
 
-  Widget _buildHeadingLabel(String text, {Color? color, String? semanticsLabel}) {
+  Widget _buildHeadingLabel(String text, {Color? color, TextStyle? textStyle, String? semanticsLabel}) {
     return Semantics(label: semanticsLabel, excludeSemantics: true,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().textStyles.getTextStyle("widget.heading.dark.extra_small"))));
+          style: textStyle ?? Styles().textStyles.getTextStyle("widget.heading.dark.extra_small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -1176,10 +1177,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   Widget get _buildDisplayDateWidget {
     String displayDateTime = StringUtils.ensureNotEmpty(widget.post?.displayDateTime);
+    bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
     return Visibility(visible: widget.post?.isScheduled != true, child:
     Semantics(child: Container(
         padding: EdgeInsets.only(left: 6),
-        child: Text(displayDateTime.toLowerCase().contains("now") ? displayDateTime : "$displayDateTime ago",
+        child: Text(noSuffix ? displayDateTime : "$displayDateTime ago",
             semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
             textAlign: TextAlign.right,
             style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')))));

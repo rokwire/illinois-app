@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
+import 'package:flutter/painting.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -41,6 +40,14 @@ extension GroupExt on Group {
       return groupMemberStatusToColor(member!.status);
     }
     return Styles().colors.surface;
+  }
+
+  TextStyle? get currentUserStatusTextStyle {
+    Member? member = currentMember;
+    if(member?.status != null){
+      return groupMemberStatusToTextStyle(member!.status);
+    }
+    return Styles().textStyles.getTextStyle("widget.heading.dark.extra_small");
   }
 
   String? get displayUpdateTime {
@@ -209,12 +216,23 @@ Color? groupMemberStatusToColor(GroupMemberStatus? value) {
       case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
       case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
       case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
+      case GroupMemberStatus.rejected :  return Styles().colors.alert;
     }
   }
   return null;
 }
 
+TextStyle? groupMemberStatusToTextStyle(GroupMemberStatus? value) {
+  if (value != null) {
+    switch(value){
+      case GroupMemberStatus.admin    :  return Styles().textStyles.getTextStyle("widget.heading.dark.extra_small");
+      case GroupMemberStatus.member   :  return Styles().textStyles.getTextStyle("widget.heading.extra_small");
+      case GroupMemberStatus.pending  :  return Styles().textStyles.getTextStyle("widget.heading.extra_small");
+      case GroupMemberStatus.rejected :  return Styles().textStyles.getTextStyle("widget.heading.dark.extra_small");
+    }
+  }
+  return null;
+}
 
 extension GroupPostExt on GroupPost {
 
