@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:neom/ui/polls/PollProgressPainter.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class PollBubbleResultPanel extends StatefulWidget {
@@ -94,7 +95,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   }
 
   List<Widget> _buildResultsContent(Poll poll) {
-    String? creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    String? creator = StringUtils.isNotEmpty(poll.creatorUserName) ? poll.creatorUserName : Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
 
     String votesNum;

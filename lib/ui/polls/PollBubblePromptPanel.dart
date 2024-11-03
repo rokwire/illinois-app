@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:neom/ui/polls/PollProgressPainter.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:neom/service/Polls.dart' as illinois;
 
@@ -154,7 +155,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
 
   List<Widget> _buildStandardContent() {
 
-    String? creator = _poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    String? creator = StringUtils.isNotEmpty(_poll?.creatorUserName) ? _poll?.creatorUserName : Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
 
     String? votesNum;

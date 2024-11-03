@@ -144,7 +144,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildNameLabel() {
-    String name = Auth2().fullName ?? "Someone";
+    String name = StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName! : "Someone";
     String wantToKnowText = Localization().getStringEx("panel.create_poll.text.wants_to_know", "wants to know…");
     return
       Semantics(label: name +","+wantToKnowText , excludeSemantics: true,child:

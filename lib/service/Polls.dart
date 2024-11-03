@@ -20,6 +20,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart' as rokwire;
 import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class Polls extends rokwire.Polls implements NotificationsListener {
@@ -66,7 +67,7 @@ class Polls extends rokwire.Polls implements NotificationsListener {
   @protected
   String getPollNotificationMessage(Poll poll) {
     // Localize prompt
-    String creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    String creator = StringUtils.isNotEmpty(poll.creatorUserName) ? poll.creatorUserName! : Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     return sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
   }
 

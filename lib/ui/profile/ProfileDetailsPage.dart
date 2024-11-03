@@ -683,7 +683,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       RoundedButton(
         label: Localization().getStringEx("panel.settings.privacy_center.button.stored_data.title", "My Stored Data"),
         hint: Localization().getStringEx("panel.settings.privacy_center.button.stored_data.hint", "See everything we know about you."),
-        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
         backgroundColor: Styles().colors.background,
         borderColor: Styles().colors.fillColorSecondary,
         borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],

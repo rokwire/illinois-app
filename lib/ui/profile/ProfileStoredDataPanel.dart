@@ -600,7 +600,7 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
               focusedBorder: _textBorder,
               contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)
             ),
-            style: (_providedData != null) ? Styles().textStyles.getTextStyle('widget.input_field.text.regular') : Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),
+            style: (_providedData != null) ? Styles().textStyles.getTextStyle('widget.input_field.light.text.regular') : Styles().textStyles.getTextStyle('widget.item.small.light.thin.italic'),
           ),
 
           Visibility(visible: _providingData, child:

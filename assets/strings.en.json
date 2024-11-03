@@ -2348,7 +2348,7 @@
     "panel.poll_prompt.button.close.title":"Close",
     "panel.poll_prompt.hint.select_option":"Double tap to select this option.",
     "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
-    "panel.polls_prompt.card.text.pin":"Four-Digit Poll #: %s",
+    "panel.polls_prompt.card.text.pin":"Poll #: %s",
 
     "panel.poll_pin_bouble.label_description": "Enter the four-digit poll number to see the poll.",
     "panel.poll_pin_bouble.validation_description": "Please enter the correct four-digit poll number.",

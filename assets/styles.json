@@ -363,7 +363,7 @@
     "widget.item.small.thin.highlight": { "extends": "widget.item.small.thin", "color": "textLight" },
     "widget.item.small.thin.spaced": { "font_family": "regular", "size": 14.0, "color": "textDark", "letter_spacing": 1.0},
     "widget.item.small.thin.italic": { "font_family": "regular_italic", "size": 14.0, "color": "textDark", "letter_spacing": 1.0},
-    "widget.item.small.light.thin.italic": { "font_family": "regular_italic", "size": 14.0, "color": "textPrimary", "letter_spacing": 1.0},
+    "widget.item.small.light.thin.italic": { "font_family": "regular_italic", "size": 14.0, "color": "textLight", "letter_spacing": 1.0},
     "widget.item.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "textDark"},
     "widget.item.tiny.extra_fat": { "font_family": "extra_bold", "size": 12.0, "color": "textDark"},
     "widget.item.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textDark"},
@@ -524,7 +524,7 @@
     "widget.dialog.message.dark.regular": { "font_family": "medium", "size": 16.0, "color": "black"},
     "widget.dialog.message.dark.regular.fat": { "font_family": "bold", "size": 16.0, "color": "black"},
 
-    "widget.card.title.large": { "font_family": "extra_bold", "size": 24.0, "color": "textDark"},
+    "widget.card.title.large": { "font_family": "bold", "size": 24.0, "color": "textDark"},
     "widget.card.title.large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "textDark"},
     "widget.card.title.medium": { "font_family": "regular", "size": 20.0, "color": "textDark"},
     "widget.card.title.medium.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textDark"},
@@ -570,10 +570,10 @@
 
     "widget.event.card.title.medium.fat": {"extends":  "widget.card.title.medium.fat", "height": 1.20, "letter_spacing": 1.0},
 
-    "widget.group.card.poll.title": { "font_family": "extra_bold", "size": 20.0, "color": "textDark", "height":  1.2},
-    "widget.group.card.poll.option": {"extends": "widget.card.detail.regular", "height":  1.25,  "weight" :  "w500"},
+    "widget.group.card.poll.title": { "font_family": "extra_bold", "size": 24.0, "color": "textDark", "height":  1.2},
+    "widget.group.card.poll.option": {"extends": "widget.card.title.medium", "height":  1.25,  "weight" :  "w500"},
     "widget.group.card.poll.option_variant": { "font_family": "regular", "size": 16.0, "color": "white", "height":  1.25,  "weight" :  "w500"},
-    "widget.group.card.poll.votes": {"extends":  "widget.card.detail.small", "height":  1.29,  "weight" :  "w500"},
+    "widget.group.card.poll.votes": {"extends":  "widget.card.detail.regular", "height":  1.29,  "weight" :  "w500"},
 
     "widget.group.card.title.medium.fat": {"extends":  "widget.card.title.medium.fat", "height": 1.20, "letter_spacing": 1.0},
 
@@ -972,14 +972,14 @@
     "check-circle-filled": {"src": "0xf058", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 24},
 
     "circle-outline": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
-    "check-circle-outline": {"src": "0xf111", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 20},
+    "check-circle-outline": {"src": "0xf111", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "check-circle-outline-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "location-outline": {"src": "images/icon-map-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size issue"},
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 
     "star-outline-gray": {"src": "0xf005", "type": "fa.icon", "weight": "solid", "color": "mediumGray", "size": 18},
     "thumbs-up-gray": {"src": "0xf164", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 18},
-    "check-circle-outline-gray": {"src": "0xf111", "type": "fa.icon", "weight": "solid", "color": "mediumGray", "size": 20},
+    "check-circle-outline-gray": {"src": "0xf111", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 20},
     "check-circle-outline-gray-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},

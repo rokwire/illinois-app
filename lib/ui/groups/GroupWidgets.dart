@@ -2230,10 +2230,10 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
 
     String? pollStatus;
 
-    String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
+    String? creator = StringUtils.isNotEmpty(widget.poll?.creatorUserName) ? widget.poll?.creatorUserName : Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
     String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
-    String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Pin: %s'), [
+    String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Poll #: %s'), [
       sprintf('%04i', [poll.pinCode ?? 0])
     ]);
 
@@ -2257,47 +2257,58 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
       Container(
         decoration: BoxDecoration(
           color: Styles().colors.surface,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderRadius: BorderRadius.all(Radius.circular(24.0)),
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
         child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Row(children: <Widget>[
-              Expanded(child:
-                Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
-                  Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'))),
-              ),
-              Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
-              Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
-                Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                  GestureDetector(onTap: _onPollOptionsTap, child:
-                    Padding(padding: EdgeInsets.all(10), child:
-                    Styles().images.getImage('more'),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Row(children: <Widget>[
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.regular.fat')),
+                ),
+                Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
+                  Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                    GestureDetector(onTap: _onPollOptionsTap, child:
+                      Padding(padding: EdgeInsets.only(right: 16.0), child:
+                        Styles().images.getImage('ellipsis-alert'),
+                      ),
                     ),
                   ),
-                ),
-              )
-            ]),
+                )
+              ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
+                Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.regular'))
+              ),
+            ),
             Padding(padding: EdgeInsets.only(right: 16), child:
               Column(children: [
-                Container(height: 12,),
-                Text(poll.title!, style: Styles().textStyles.getTextStyle('widget.group.card.poll.title')),
+                Container(height: 8,),
+                Text(poll.title!, style: Styles().textStyles.getTextStyle('widget.group.card.poll.title')), // widget.card.title.large
                 Container(height:12),
                 cardBody,
-                Container(height:25),
+                Container(height:24),
                 Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
-                  Padding(padding: EdgeInsets.only(bottom: 12), child:
-                    Row(children: <Widget>[
-                      Expanded(child:
-                        Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
-                      ),
-                      Expanded(child:
-                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
-                    ],),
-                  ),
+                  Row(children: <Widget>[
+                    Expanded(child:
+                      Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.regular'),),
+                    ),
+                    Expanded(child:
+                      Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.regular.fat'),))
+                  ],),
                 ),
-            
-                Column(children: footerWidgets,),
+
+                if (footerWidgets.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: Column(children: footerWidgets,),
+                  ),
               ],),
             ),
           ],),
@@ -2348,36 +2359,27 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
       String semanticsText = option + "," +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
-      GestureDetector(
+        GestureDetector(
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
-          Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImage)),
-            Expanded(
-                flex: 5,
-                key: progressKey, child:
-            Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ? Styles().colors.fillColorPrimary : Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
-              Padding(padding: EdgeInsets.only(left: 5), child:
-              Row(children: <Widget>[
-                Expanded( child:
-                Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)),
-                //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
-               /* Visibility( visible: didVote,
-                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray'))
-                ),*/
-              ],),)
+            Row(children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 5), child: Styles().images.getImage(checkboxImage, size: 24.0)),
+              Expanded(
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                  Stack(key: progressKey, alignment: Alignment.centerLeft, children: <Widget>[
+                    CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ? Styles().colors.fillColorPrimary : Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+                    Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
+                    Padding(padding: EdgeInsets.only(left: 10, right: 5), child:
+                      Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)
+                    ),
+                  ],),
+                  Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle('widget.group.card.poll.votes'),),)
+                ],),
               ),
             ],)
-            ),
-            Expanded(
-              flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle('widget.group.card.poll.votes'),),),
-            )
-          ],)
-          ))));
+          )
+        )
+      ));
     }
     return result;
   }
@@ -2386,23 +2388,20 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote"), _onVoteTapped);
   }
 
-  Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
-    return Container( padding: EdgeInsets.symmetric(horizontal: 54,),
+  Widget _createButton(String title, void Function()? onTap, {bool loading = false}){
+    return Container( padding: EdgeInsets.symmetric(horizontal: 88,),
         child: Semantics(label: title, button: true, excludeSemantics: true,
           child: InkWell(
               onTap: onTap,
               child: Stack(children: <Widget>[
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
+                  padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Styles().colors.surface,
-                    border: Border.all(
-                        color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
-                        width: 2.0),
-                    borderRadius: BorderRadius.circular(24.0),
+                    color: Styles().colors.fillColorSecondaryVariant,
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Center(
-                    child: Text(title, style: Styles().textStyles.getTextStyle("widget.description.small"),),
+                    child: Text(title, style: Styles().textStyles.getTextStyle("widget.description.regular"),),
                   ),
                 ),
                 Visibility(visible: loading,

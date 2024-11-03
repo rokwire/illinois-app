@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased - NEOM U
 ### Fixed
 - Fix Groups UI and functionality issues [#21](https://github.com/rokmetro/neom-app/issues/21)
+### Changed
+- Update Polls UI [#22](https://github.com/rokmetro/neom-app/issues/22)
 
 ## [0.4.9] = 2024-10-21
 ### Changed

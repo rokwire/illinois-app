@@ -1403,7 +1403,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
             padding: EdgeInsets.only(top: 16),
             child: RoundedButton(
                 label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
                 backgroundColor: Styles().colors.surface,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors.fillColorSecondary,
