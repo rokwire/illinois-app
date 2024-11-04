@@ -41,7 +41,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   List<places_model.Place>? _customPlaces;
   TextEditingController _searchController = TextEditingController();
   bool _isSearchExpanded = false;
-
+  static final String _customSelectionFilterKey = 'CustomSelection';
 
 
   @override
@@ -342,7 +342,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     // Add Custom Selection Filter Button
     if (_customPlaces != null) {
       String label = '${_customPlaces!.length} Places';
-      bool isSelected = _selectedFilters.contains('CustomSelection');
+      bool isSelected = _selectedFilters.contains(_customSelectionFilterKey);
       filterButtons.add(_buildCustomFilterButton(label, isSelected));
     }
 
@@ -462,12 +462,12 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           setState(() {
             if (isSelected) {
               // Deselect custom filter
-              _selectedFilters.remove('CustomSelection');
+              _selectedFilters.remove(_customSelectionFilterKey);
               _customPlaces = null;
             } else {
               // Select custom filter
               _selectedFilters.clear();
-              _selectedFilters.add('CustomSelection');
+              _selectedFilters.add(_customSelectionFilterKey);
             }
             _applyFilters();
           });
@@ -619,7 +619,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
 
     // Apply selected filters
     if (_selectedFilters.isNotEmpty) {
-      if (_selectedFilters.contains('CustomSelection')) {
+      if (_selectedFilters.contains(_customSelectionFilterKey)) {
         filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
       } else {
         filteredPlaces = filteredPlaces.where((place) {
@@ -715,7 +715,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _customPlaces = places;
       _selectedDestination = null;
       _selectedFilters.clear();
-      _selectedFilters.add('CustomSelection');
+      _selectedFilters.add(_customSelectionFilterKey);
     });
     _controller.animateTo(
       0.65,
@@ -778,18 +778,11 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         child: MarkdownBody(
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
-            if (href?.startsWith('https://') == true) {
-              if (_status == TrackingAuthorizationStatus.allowed) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (context) => WebPanel(url: href)),
-                );
-              } else {
-                UrlUtils.launchExternal(href);
-              }
-              return;
+            if (UrlUtils.isWebScheme(href) && (_status == TrackingAuthorizationStatus.allowed)) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)),);
+            } else {
+              UrlUtils.launchExternal(href);
             }
-            UrlUtils.launchExternal(href);
           },
           styleSheet: MarkdownStyleSheet(
             p: Styles().textStyles.getTextStyle("widget.description.regular"),
