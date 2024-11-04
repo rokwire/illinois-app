@@ -34,6 +34,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   places_model.Place? _selectedDestination;
   List<places_model.Place> _allPlaces = [];
   ScrollController? _scrollController;
+  final FocusNode _searchFocusNode = FocusNode();
 
   Map<String, Set<String>> _mainFilters = {};
   Set<String> _regularFilters = {};
@@ -50,11 +51,22 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     _allPlaces = widget.places;
     _collectAvailableTags();
     _storiedSights = List.from(_allPlaces);
+
     _searchController.addListener(_onSearchTextChanged);
+    _searchFocusNode.addListener(() {
+      if (_searchFocusNode.hasFocus) {
+        _controller.animateTo(
+          0.95,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
+    _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -394,6 +406,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: TextField(
             controller: _searchController,
+            focusNode: _searchFocusNode,
             decoration: InputDecoration(
               hintText: 'Search places',
               prefixIcon: Styles().images.getImage("search") ?? const SizedBox(),
