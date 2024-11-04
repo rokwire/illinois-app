@@ -40,6 +40,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Set<String> _expandedMainTags = {};
   List<places_model.Place>? _customPlaces;
 
+  static final String _customSelectionFilterKey = 'CustomSelection';
 
 
   @override
@@ -322,7 +323,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     // Add Custom Selection Filter Button
     if (_customPlaces != null) {
       String label = '${_customPlaces!.length} Places';
-      bool isSelected = _selectedFilters.contains('CustomSelection');
+      bool isSelected = _selectedFilters.contains(_customSelectionFilterKey);
       filterButtons.add(_buildCustomFilterButton(label, isSelected));
     }
 
@@ -381,12 +382,12 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           setState(() {
             if (isSelected) {
               // Deselect custom filter
-              _selectedFilters.remove('CustomSelection');
+              _selectedFilters.remove(_customSelectionFilterKey);
               _customPlaces = null;
             } else {
               // Select custom filter
               _selectedFilters.clear();
-              _selectedFilters.add('CustomSelection');
+              _selectedFilters.add(_customSelectionFilterKey);
             }
             _applyFilters();
           });
@@ -530,7 +531,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       setState(() {
         _storiedSights = List.from(_allPlaces);
       });
-    } else if (_selectedFilters.contains('CustomSelection')) {
+    } else if (_selectedFilters.contains(_customSelectionFilterKey)) {
       setState(() {
         _storiedSights = List.from(_customPlaces!);
       });
@@ -622,7 +623,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _customPlaces = places;
       _selectedDestination = null;
       _selectedFilters.clear();
-      _selectedFilters.add('CustomSelection');
+      _selectedFilters.add(_customSelectionFilterKey);
     });
     _controller.animateTo(
       0.65,
