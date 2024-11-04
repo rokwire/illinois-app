@@ -587,10 +587,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onMapTap(LatLng coordinate) {
     debugPrint('ExploreMap tap' );
     MTDStop? mtdStop;
-    if (_selectedMapType == ExploreMapType.StoriedSites) {
-      _storiedSightsKey.currentState?.resetSelection();
-    }
-    else if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
+    if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
       _selectMapExplore(mtdStop);
     }
     else if (_selectedMapExplore != null) {
