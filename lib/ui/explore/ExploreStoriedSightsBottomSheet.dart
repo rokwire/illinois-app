@@ -685,18 +685,11 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         child: MarkdownBody(
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
-            if (href?.startsWith('https://') == true) {
-              if (_status == TrackingAuthorizationStatus.allowed) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (context) => WebPanel(url: href)),
-                );
-              } else {
-                UrlUtils.launchExternal(href);
-              }
-              return;
+            if (UrlUtils.isWebScheme(href) && (_status == TrackingAuthorizationStatus.allowed)) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)),);
+            } else {
+              UrlUtils.launchExternal(href);
             }
-            UrlUtils.launchExternal(href);
           },
           styleSheet: MarkdownStyleSheet(
             p: Styles().textStyles.getTextStyle("widget.description.regular"),
