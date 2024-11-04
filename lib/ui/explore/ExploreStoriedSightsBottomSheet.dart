@@ -331,7 +331,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         place.images!.first.imageUrl,
         fit: BoxFit.cover,
       )
-          : Styles().images.getImage('missing-building-photo') ??
+          : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
           SizedBox(width: 75, height: 75),
     );
   }
@@ -339,6 +339,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Widget _buildFilterButtons() {
     List<Widget> filterButtons = [];
 
+    filterButtons.add(_buildSearchButton());
     // Add Custom Selection Filter Button
     if (_customPlaces != null) {
       String label = '${_customPlaces!.length} Places';
@@ -386,7 +387,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         filterWidgets.add(subFilterRow);
       }
     }
-    filterButtons.add(_buildSearchButton());
 
     if (_isSearchExpanded) {
       filterWidgets.add(
@@ -396,11 +396,43 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search places',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Styles().images.getImage("search") ?? const SizedBox(),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _searchController.clear();
+                    _applyFilters();
+                  });
+                },
+                child: Styles().images.getImage("close") ?? const SizedBox(),
+              )
+                  : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(24.0),
+                borderSide: BorderSide(
+                  color: Styles().colors.fillColorSecondary,
+                ),
               ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24.0),
+                borderSide: BorderSide(
+                  color: Styles().colors.fillColorPrimary,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24.0),
+                borderSide: BorderSide(
+                  color: Styles().colors.fillColorPrimary,
+                ),
+              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16.0),
             ),
+            onChanged: (text) {
+              setState(() {
+                _applyFilters();
+              });
+            },
           ),
         ),
       );
@@ -438,6 +470,9 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Styles().images.getImage('search', color: Styles().colors.fillColorPrimary, excludeFromSemantics: true, size: 16.0) ??
+                Icon(Icons.search, color: Styles().colors.fillColorPrimary),
+            SizedBox(width: 4),
             Text(
               'Search',
               style: Styles().textStyles.getTextStyle("widget.button.title.small")?.apply(
