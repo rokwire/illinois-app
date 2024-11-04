@@ -38,7 +38,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Map<String, Set<String>> _mainFilters = {};
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
-  TrackingAuthorizationStatus? status;
   List<places_model.Place>? _customPlaces;
 
 
@@ -656,7 +655,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
 
   List<DateTime> _placeCheckInDates = [];
   bool? _isHistoryExpanded;
-  TrackingAuthorizationStatus? status;
+  TrackingAuthorizationStatus? _status;
 
   @override
   void initState() {
@@ -668,7 +667,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
     TrackingAuthorizationStatus? trackingStatus = await TrackingServices.queryAuthorizationStatus();
     if (mounted) {
       setState(() {
-        status = trackingStatus;
+        _status = trackingStatus;
       });
     }
   }
@@ -687,7 +686,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
             if (href?.startsWith('https://') == true) {
-              if (status == TrackingAuthorizationStatus.allowed) {
+              if (_status == TrackingAuthorizationStatus.allowed) {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(builder: (context) => WebPanel(url: href)),
