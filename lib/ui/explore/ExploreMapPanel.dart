@@ -195,6 +195,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   bool _filtersDropdownVisible = false;
   
   List<Explore>? _explores;
+  List<Explore>? _filteredExplores;
   bool _exploreProgress = false;
   Future<List<Explore>?>? _exploreTask;
 
@@ -471,11 +472,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                 _centerMapOnExplore(place, zoom: false);
                 _selectMapExplore(place);
               },
+              onFilteredPlacesChanged: (List<places_model.Place> filteredPlaces) {
+                _updateMapMarkers(filteredPlaces);
+              },
             ),
           _buildExploreTypesDropDownContainer(),
         ]),
       )
     ]);
+  }
+
+  void _updateMapMarkers(List<Explore> filteredExplores) {
+    _filteredExplores = filteredExplores;
+    _buildMapContentData(_filteredExplores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: true);
   }
 
   // Map Widget
@@ -1880,15 +1889,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (mounted && (exploreTask == _exploreTask)) {
         setState(() {
           _explores = explores;
+          _filteredExplores = explores;
           _exploreTask = null;
           _exploreProgress = false;
           _mapKey = UniqueKey(); // force map rebuild
         });
         _selectMapExplore(null);
         _displayContentPopups();
-     }
+      }
     }
   }
+
 
   Future<void> _refreshExplores() async {
     Future<List<Explore>?> exploreTask = _loadExplores();
