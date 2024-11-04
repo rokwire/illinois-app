@@ -10,6 +10,7 @@ import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_header_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -37,7 +38,9 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Map<String, Set<String>> _mainFilters = {};
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
+  List<places_model.Place>? _customPlaces;
 
+  static final String _customSelectionFilterKey = 'CustomSelection';
 
 
   @override
@@ -153,6 +156,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     _buildPlaceListView() :
     [ExploreStoriedSightWidget(place: _selectedDestination!, onTapBack: () => setState(() {
         _selectedDestination = null;
+        _controller.animateTo(
+          0.65,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
     }))];
 
   double _calculateFilterButtonsHeight() {
@@ -191,6 +199,12 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   }
 
   Widget _buildDestinationCard(places_model.Place place) {
+
+    List<String> typesToShow = List<String>.from(place.types ?? []);
+    if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
+      typesToShow.add('Visited');
+    }
+
     return InkWell(
       onTap: () => _onTapDestinationCard(place),
       child: Container(
@@ -198,8 +212,8 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (place.types != null && place.types!.isNotEmpty)
-              _buildTypeChips(place.types!),
+            if (typesToShow.isNotEmpty)
+              _buildTypeChips(typesToShow),
             SizedBox(height: 8.0),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,6 +320,13 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Widget _buildFilterButtons() {
     List<Widget> filterButtons = [];
 
+    // Add Custom Selection Filter Button
+    if (_customPlaces != null) {
+      String label = '${_customPlaces!.length} Places';
+      bool isSelected = _selectedFilters.contains(_customSelectionFilterKey);
+      filterButtons.add(_buildCustomFilterButton(label, isSelected));
+    }
+
     filterButtons.addAll(_regularFilters.map((tag) => _buildRegularFilterButton(tag)));
 
     for (String mainTag in _mainFilters.keys) {
@@ -352,6 +373,46 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       children: filterWidgets,
     );
   }
+
+  Widget _buildCustomFilterButton(String label, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            if (isSelected) {
+              // Deselect custom filter
+              _selectedFilters.remove(_customSelectionFilterKey);
+              _customPlaces = null;
+            } else {
+              // Select custom filter
+              _selectedFilters.clear();
+              _selectedFilters.add(_customSelectionFilterKey);
+            }
+            _applyFilters();
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: isSelected ? Colors.white : Styles().colors.fillColorPrimary,
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Colors.white,
+          side: BorderSide(
+            color: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0),
+          ),
+        ),
+        child: Text(
+          label,
+          style: Styles()
+              .textStyles
+              .getTextStyle("widget.button.title.small")
+              ?.apply(color: isSelected ? Colors.white : Styles().colors.fillColorPrimary),
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildMainFilterButton(String mainTag, bool isExpanded) {
     return Padding(
@@ -470,6 +531,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       setState(() {
         _storiedSights = List.from(_allPlaces);
       });
+    } else if (_selectedFilters.contains(_customSelectionFilterKey)) {
+      setState(() {
+        _storiedSights = List.from(_customPlaces!);
+      });
     } else {
       setState(() {
         _storiedSights = _allPlaces.where((place) {
@@ -555,8 +620,10 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   void selectPlaces(List<places_model.Place> places) {
     setState(() {
       _storiedSights = places;
+      _customPlaces = places;
       _selectedDestination = null;
       _selectedFilters.clear();
+      _selectedFilters.add(_customSelectionFilterKey);
     });
     _controller.animateTo(
       0.65,
@@ -589,6 +656,23 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
 
   List<DateTime> _placeCheckInDates = [];
   bool? _isHistoryExpanded;
+  TrackingAuthorizationStatus? _status;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTrackingStatus();
+  }
+
+  void _loadTrackingStatus() async {
+    TrackingAuthorizationStatus? trackingStatus = await TrackingServices.queryAuthorizationStatus();
+    if (mounted) {
+      setState(() {
+        _status = trackingStatus;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) =>
@@ -602,11 +686,11 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         child: MarkdownBody(
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
-            if (href?.startsWith('https://') == true) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)));
-              return;
+            if (UrlUtils.isWebScheme(href) && (_status == TrackingAuthorizationStatus.allowed)) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)),);
+            } else {
+              UrlUtils.launchExternal(href);
             }
-            UrlUtils.launchExternal(href);
           },
           styleSheet: MarkdownStyleSheet(
             p: Styles().textStyles.getTextStyle("widget.description.regular"),

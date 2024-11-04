@@ -468,7 +468,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               key: _storiedSightsKey,
               places: _explores?.whereType<Place>().toList() ?? [],
               onPlaceSelected: (places_model.Place place) {
-                _centerMapOnExplore(place);
+                _centerMapOnExplore(place, zoom: false);
                 _selectMapExplore(place);
               },
             ),
@@ -587,10 +587,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onMapTap(LatLng coordinate) {
     debugPrint('ExploreMap tap' );
     MTDStop? mtdStop;
-    if (_selectedMapType == ExploreMapType.StoriedSites) {
-      _storiedSightsKey.currentState?.resetSelection();
-    }
-    else if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
+    if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
       _selectMapExplore(mtdStop);
     }
     else if (_selectedMapExplore != null) {
@@ -619,6 +616,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapType == ExploreMapType.StoriedSites) {
       if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
+       // _centerMapOnExplore(origin);
       } else if (origin is List<Explore>) {
         List<places_model.Place> places = origin.cast<places_model.Place>();
         _storiedSightsKey.currentState?.selectPlaces(places);
@@ -630,7 +628,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
 
-  void _centerMapOnExplore(dynamic explore) {
+  void _centerMapOnExplore(dynamic explore, {bool zoom = true}) async {
     LatLng? targetPosition;
 
     if (explore is Explore) {
@@ -640,13 +638,26 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if (targetPosition != null && _mapController != null) {
-      CameraUpdate cameraUpdate = CameraUpdate.newLatLng(targetPosition);
-      _mapController!.moveCamera(cameraUpdate);
+      double currentZoom = await _mapController!.getZoomLevel();
+      double targetZoom = currentZoom;
+
+      if (zoom) {
+        targetZoom += 1;
+        if (targetZoom > 20) {
+          targetZoom = 20;
+        }
+      }
+
+      CameraUpdate cameraUpdate = zoom
+          ? CameraUpdate.newLatLngZoom(targetPosition, targetZoom)
+          : CameraUpdate.newLatLng(targetPosition); // Center without zoom
+
+      await _mapController!.moveCamera(cameraUpdate);
 
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
       double offset = 450 / devicePixelRatio;
 
-      _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
+      await _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
     }
   }
 
