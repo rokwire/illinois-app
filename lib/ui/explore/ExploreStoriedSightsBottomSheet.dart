@@ -39,6 +39,8 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   Set<String> _regularFilters = {};
   Set<String> _expandedMainTags = {};
   List<places_model.Place>? _customPlaces;
+  TextEditingController _searchController = TextEditingController();
+  bool _isSearchExpanded = false;
 
 
 
@@ -48,6 +50,17 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     _allPlaces = widget.places;
     _collectAvailableTags();
     _storiedSights = List.from(_allPlaces);
+    _searchController.addListener(_onSearchTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchTextChanged() {
+    _applyFilters();
   }
 
   void _collectAvailableTags() {
@@ -163,7 +176,14 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     }))];
 
   double _calculateFilterButtonsHeight() {
-    return _expandedMainTags.isNotEmpty ? 120.0 : 60.0;
+    double height = 60.0; // Base height
+    if (_expandedMainTags.isNotEmpty) {
+      height += 60.0; // Additional height for subfilters
+    }
+    if (_isSearchExpanded) {
+      height += 70.0; // Additional height for the search field
+    }
+    return height;
   }
 
   List<Widget> _buildPlaceListView() {
@@ -366,10 +386,71 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
         filterWidgets.add(subFilterRow);
       }
     }
+    filterButtons.add(_buildSearchButton());
+
+    if (_isSearchExpanded) {
+      filterWidgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search places',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24.0),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: filterWidgets,
+    );
+  }
+
+  Widget _buildSearchButton() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            _isSearchExpanded = !_isSearchExpanded;
+            if (!_isSearchExpanded) {
+              // Clear the search text when collapsing the search field
+              _searchController.clear();
+            }
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Styles().colors.fillColorPrimary,
+          backgroundColor: Colors.white,
+          side: BorderSide(
+            color: Styles().colors.surfaceAccent,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Search',
+              style: Styles().textStyles.getTextStyle("widget.button.title.small")?.apply(
+                color: Styles().colors.fillColorPrimary,
+              ),
+            ),
+            SizedBox(width: 4,),
+            (_isSearchExpanded
+                ? Styles().images.getImage("chevron-down-dark-blue")
+                : Styles().images.getImage("chevron-up-dark-blue")) ?? const SizedBox(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -526,32 +607,44 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
   }
 
   void _applyFilters() {
-    if (_selectedFilters.isEmpty) {
-      setState(() {
-        _storiedSights = List.from(_allPlaces);
-      });
-    } else if (_selectedFilters.contains('CustomSelection')) {
-      setState(() {
-        _storiedSights = List.from(_customPlaces!);
-      });
-    } else {
-      setState(() {
-        _storiedSights = _allPlaces.where((place) {
+    List<places_model.Place> filteredPlaces = List.from(_allPlaces);
+
+    // Apply search text filter first
+    String searchText = _searchController.text.toLowerCase();
+    if (searchText.isNotEmpty) {
+      filteredPlaces = filteredPlaces.where((place) {
+        return place.name?.toLowerCase().contains(searchText) ?? false;
+      }).toList();
+    }
+
+    // Apply selected filters
+    if (_selectedFilters.isNotEmpty) {
+      if (_selectedFilters.contains('CustomSelection')) {
+        filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
+      } else {
+        filteredPlaces = filteredPlaces.where((place) {
+          bool matchesFilter = false;
           if (_selectedFilters.contains('Visited')) {
             if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
               if (_selectedFilters.length > 1) {
-                return _matchesOtherFilters(place);
+                matchesFilter = _matchesOtherFilters(place);
+              } else {
+                matchesFilter = true;
               }
-              return true;
             } else {
-              return false;
+              matchesFilter = false;
             }
           } else {
-            return place.tags != null && place.tags!.any((tag) => _selectedFilters.contains(tag));
+            matchesFilter = place.tags != null && place.tags!.any((tag) => _selectedFilters.contains(tag));
           }
+          return matchesFilter;
         }).toList();
-      });
+      }
     }
+
+    setState(() {
+      _storiedSights = filteredPlaces;
+    });
   }
 
   bool _matchesOtherFilters(places_model.Place place) {
