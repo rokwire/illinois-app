@@ -483,8 +483,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _updateMapMarkers(List<Explore> filteredExplores) {
-    _filteredExplores = filteredExplores;
-    _buildMapContentData(_filteredExplores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: true);
+    _mapController?.getZoomLevel().then((double value) {
+      _filteredExplores = filteredExplores;
+      _buildMapContentData(_filteredExplores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: true, zoom: value);
+    });
+
   }
 
   // Map Widget
