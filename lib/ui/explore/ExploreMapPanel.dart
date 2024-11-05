@@ -500,7 +500,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildMapContent() {
     return Stack(children: [
       _buildMapView(),
-      _buildMapExploreBar(),
+      Visibility(
+        visible: _selectedMapType != ExploreMapType.StoriedSites,
+        child: _buildMapExploreBar()
+      ),
       Visibility(visible: _markersProgress, child:
         Positioned.fill(child:
           Center(child:
