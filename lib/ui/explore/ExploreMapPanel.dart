@@ -376,7 +376,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.debugMapThresholdDistanceKey) {
-        _buildMapContentData(_explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: _lastMarkersUpdateZoom, showProgress: true);
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: _lastMarkersUpdateZoom, showProgress: true);
       }
       else if (param == Storage.debugMapShowLevelsKey) {
         setStateIfMounted(() { });
@@ -468,26 +468,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             ExploreStoriedSightsBottomSheet(
               key: _storiedSightsKey,
               places: _explores?.whereType<Place>().toList() ?? [],
-              onPlaceSelected: (places_model.Place place) {
-                _centerMapOnExplore(place, zoom: false);
-                _selectMapExplore(place);
-              },
-              onFilteredPlacesChanged: (List<places_model.Place> filteredPlaces) {
-                _updateMapMarkers(filteredPlaces);
-              },
+              onPlaceSelected: _onStoriedSitesPlaceSelected,
+              onFilteredPlacesChanged: _onStoriedSitesFilteredPlacesChanged,
             ),
           _buildExploreTypesDropDownContainer(),
         ]),
       )
     ]);
-  }
-
-  void _updateMapMarkers(List<Explore> filteredExplores) {
-    _mapController?.getZoomLevel().then((double value) {
-      _filteredExplores = filteredExplores;
-      _buildMapContentData(_filteredExplores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: true, zoom: value);
-    });
-
   }
 
   // Map Widget
@@ -591,7 +578,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _lastMarkersUpdateZoom = value;
       }
       else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: value, showProgress: true);
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: value, showProgress: true);
       }
     });
   }
@@ -639,6 +626,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
+  void _onStoriedSitesPlaceSelected(places_model.Place place) {
+    _centerMapOnExplore(place, zoom: false);
+    _selectMapExplore(place);
+  }
+
+  void _onStoriedSitesFilteredPlacesChanged(List<places_model.Place>? filteredExplores) {
+    if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+      _mapController?.getZoomLevel().then((double value) {
+        _filteredExplores = (filteredExplores != null) ? List.from(filteredExplores) : null;
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: true, zoom: value);
+      });
+    }
+  }
 
   void _centerMapOnExplore(dynamic explore, {bool zoom = true}) async {
     LatLng? targetPosition;
@@ -1892,7 +1892,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (mounted && (exploreTask == _exploreTask)) {
         setState(() {
           _explores = explores;
-          _filteredExplores = explores;
+          _filteredExplores = null;
           _exploreTask = null;
           _exploreProgress = false;
           _mapKey = UniqueKey(); // force map rebuild
@@ -1913,6 +1913,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         if (mounted && (exploreTask == _exploreTask)) {
           setState(() {
             _explores = explores;
+            _filteredExplores = null;
             _exploreProgress = false;
             _exploreTask = null;
           });
@@ -2097,6 +2098,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         if (mounted) {
           setState(() {
             _explores = explores;
+            _filteredExplores = null;
           });
         }
       });

@@ -19,7 +19,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class ExploreStoriedSightsBottomSheet extends StatefulWidget {
   final List<places_model.Place> places;
   final Function(places_model.Place) onPlaceSelected;
-  final void Function(List<places_model.Place> filteredPlaces)? onFilteredPlacesChanged;
+  final void Function(List<places_model.Place>? filteredPlaces)? onFilteredPlacesChanged;
 
   ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected, this.onFilteredPlacesChanged}) : super(key: key);
 
@@ -695,7 +695,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       _storiedSights = filteredPlaces;
     });
 
-    widget.onFilteredPlacesChanged?.call(_storiedSights);
+    widget.onFilteredPlacesChanged?.call((_storiedSights.length < _allPlaces.length) ? _storiedSights : null);
   }
 
   bool _matchesOtherFilters(places_model.Place place) {
