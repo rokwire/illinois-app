@@ -20,8 +20,9 @@ class ExploreStoriedSightsBottomSheet extends StatefulWidget {
   final List<places_model.Place> places;
   final Function(places_model.Place) onPlaceSelected;
   final void Function(List<places_model.Place>? filteredPlaces)? onFilteredPlacesChanged;
+  final VoidCallback? onBackPressed;
 
-  ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected, this.onFilteredPlacesChanged}) : super(key: key);
+  ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected, this.onFilteredPlacesChanged, this.onBackPressed}) : super(key: key);
 
   @override
   ExploreStoriedSightsBottomSheetState createState() => ExploreStoriedSightsBottomSheetState();
@@ -186,6 +187,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
+        widget.onBackPressed?.call();
     }))];
 
   double _calculateFilterButtonsHeight() {
@@ -1133,7 +1135,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           _placeCheckInDates.remove(now);
         });
 
-        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please try again.'));
+        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please sign in and try again.'));
       }
     } catch (e) {
       if (mounted) {

@@ -470,11 +470,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               places: _explores?.whereType<Place>().toList() ?? [],
               onPlaceSelected: _onStoriedSitesPlaceSelected,
               onFilteredPlacesChanged: _onStoriedSitesFilteredPlacesChanged,
+              onBackPressed: _onStoriedSitesBackPressed,
             ),
           _buildExploreTypesDropDownContainer(),
         ]),
       )
     ]);
+  }
+
+  void _onStoriedSitesBackPressed() {
+    _selectMapExplore(null);
   }
 
   // Map Widget
@@ -618,11 +623,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapType == ExploreMapType.StoriedSites) {
       if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
-       // _centerMapOnExplore(origin);
+        _selectMapExplore(origin);
       } else if (origin is List<Explore>) {
         List<places_model.Place> places = origin.cast<places_model.Place>();
         _storiedSightsKey.currentState?.selectPlaces(places);
         _centerMapOnExplore(places);
+        _selectMapExplore(places);
       }
     } else {
       _selectMapExplore(origin);
@@ -836,15 +842,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     else if (_selectedMapExplore != null) {
       _pinMapExplore(null);
+      _selectedMapExplore = null;
       _mapExploreBarAnimationController?.reverse().then((_) {
-        setStateIfMounted(() {
-          _selectedMapExplore = null;
-        });
+        setStateIfMounted(() {});
         _updateSelectedMapStopRoutes();
       });
-    }
-    else {
+    } else {
       _pinMapExplore(null);
+    }
+    if (_selectedMapType == ExploreMapType.StoriedSites) {
+      // Get the current zoom level
+      _mapController?.getZoomLevel().then((double value) {
+        _buildMapContentData(_filteredExplores ?? _explores, updateCamera: false, showProgress: false, zoom: value, forceRefresh: true);
+      });
     }
     _logAnalyticsSelect(explore);
   }
@@ -2132,7 +2142,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   // Map Content
 
-  Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
+  Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom, bool forceRefresh = false}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
 
     CameraUpdate? targetCameraUpdate;
@@ -2168,8 +2178,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         thresoldDistance = 0;
         exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
-      
-      if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
+
+      if (forceRefresh || !DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
         Future<Set<Marker>> buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMarkerGroups, pinnedExplore: pinnedExplore);
         _buildMarkersTask = buildMarkersTask;
         if (showProgress && mounted) {
@@ -2354,26 +2364,29 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (explore is MTDStop) {
         String markerAsset = 'images/map-marker-mtd-stop.png';
         markerIcon = _markerIconCache[markerAsset] ??
-          (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+            (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
         markerAnchor = Offset(0.5, 0.5);
-      }
-      else {
+      } else {
         Color? exploreColor = explore?.mapMarkerColor;
-        markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
+        if (_selectedMapType == ExploreMapType.StoriedSites && explore == _selectedMapExplore) {
+          exploreColor = Styles().colors.fillColorSecondary;
+        }
+        markerIcon = (exploreColor != null)
+            ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble())
+            : BitmapDescriptor.defaultMarker;
         markerAnchor = Offset(0.5, 1);
       }
       return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
-        position: markerPosition,
-        icon: markerIcon,
-        anchor: markerAnchor,
-        consumeTapEvents: true,
-        onTap: () => _onTapMarker(explore),
-        infoWindow: InfoWindow(
-          title:  explore?.mapMarkerTitle,
-          snippet: explore?.mapMarkerSnippet,
-          anchor: markerAnchor)
-      );
+          markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
+          position: markerPosition,
+          icon: markerIcon,
+          anchor: markerAnchor,
+          consumeTapEvents: true,
+          onTap: () => _onTapMarker(explore),
+          infoWindow: InfoWindow(
+              title: explore?.mapMarkerTitle,
+              snippet: explore?.mapMarkerSnippet,
+              anchor: markerAnchor));
     }
     return null;
   }
