@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ## Added
+- Filter pins on map to match filters/search for storied sites [#4458](https://github.com/rokwire/illinois-app/issues/4458)
 - Add search to Bottomsheet [#4456](https://github.com/rokwire/illinois-app/issues/4456)
 ## [6.0.56] - 2024-11-04
 ### Fixed
