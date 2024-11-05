@@ -666,29 +666,32 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       }).toList();
     }
 
-    // Apply selected filters
-    if (_selectedFilters.isNotEmpty) {
-      if (_selectedFilters.contains(_customSelectionFilterKey)) {
-        filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
-      } else {
-        filteredPlaces = filteredPlaces.where((place) {
-          bool matchesFilter = false;
-          if (_selectedFilters.contains('Visited')) {
-            if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
-              if (_selectedFilters.length > 1) {
-                matchesFilter = _matchesOtherFilters(place);
-              } else {
-                matchesFilter = true;
-              }
+    // Apply custom places filter if selected
+    if (_selectedFilters.contains(_customSelectionFilterKey)) {
+      filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
+    }
+
+    Set<String> filtersToApply = Set.from(_selectedFilters);
+    filtersToApply.remove(_customSelectionFilterKey);
+
+    if (filtersToApply.isNotEmpty) {
+      filteredPlaces = filteredPlaces.where((place) {
+        bool matchesFilter = false;
+        if (filtersToApply.contains('Visited')) {
+          if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
+            if (filtersToApply.length > 1) {
+              matchesFilter = _matchesOtherFilters(place, filters: filtersToApply);
             } else {
-              matchesFilter = false;
+              matchesFilter = true;
             }
           } else {
-            matchesFilter = place.tags != null && place.tags!.any((tag) => _selectedFilters.contains(tag));
+            matchesFilter = false;
           }
-          return matchesFilter;
-        }).toList();
-      }
+        } else {
+          matchesFilter = place.tags != null && place.tags!.any((tag) => filtersToApply.contains(tag));
+        }
+        return matchesFilter;
+      }).toList();
     }
 
     setState(() {
@@ -698,9 +701,9 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     widget.onFilteredPlacesChanged?.call((_storiedSights.length < _allPlaces.length) ? _storiedSights : null);
   }
 
-  bool _matchesOtherFilters(places_model.Place place) {
-
-    Set<String> otherFilters = Set.from(_selectedFilters)..remove('Visited');
+  bool _matchesOtherFilters(places_model.Place place, {Set<String>? filters}) {
+    Set<String> otherFilters = filters ?? Set.from(_selectedFilters)..remove('Visited');
+    otherFilters.remove('Visited');
     if (place.tags == null || place.tags!.isEmpty) {
       return false;
     }
