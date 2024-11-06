@@ -673,26 +673,22 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
     }
 
+    // Prepare other filters excluding 'Visited' and custom selection
     Set<String> filtersToApply = Set.from(_selectedFilters);
     filtersToApply.remove(_customSelectionFilterKey);
+    bool isVisitedFilterSelected = filtersToApply.contains('Visited');
+    if (isVisitedFilterSelected) {
+      // Filter to only visited places
+      filteredPlaces = filteredPlaces.where((place) => place.userData?.visited != null && place.userData!.visited!.isNotEmpty).toList();
+      // Remove 'Visited' from filters to apply remaining filters
+      filtersToApply.remove('Visited');
+    }
 
+    // Apply remaining filters
     if (filtersToApply.isNotEmpty) {
       filteredPlaces = filteredPlaces.where((place) {
-        bool matchesFilter = false;
-        if (filtersToApply.contains('Visited')) {
-          if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
-            if (filtersToApply.length > 1) {
-              matchesFilter = _matchesOtherFilters(place, filters: filtersToApply);
-            } else {
-              matchesFilter = true;
-            }
-          } else {
-            matchesFilter = false;
-          }
-        } else {
-          matchesFilter = place.tags != null && place.tags!.any((tag) => filtersToApply.contains(tag));
-        }
-        return matchesFilter;
+        if (place.tags == null || place.tags!.isEmpty) return false;
+        return place.tags!.any((tag) => filtersToApply.contains(tag));
       }).toList();
     }
 
@@ -701,15 +697,6 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
     });
 
     widget.onFilteredPlacesChanged?.call((_storiedSights.length < _allPlaces.length) ? _storiedSights : null);
-  }
-
-  bool _matchesOtherFilters(places_model.Place place, {Set<String>? filters}) {
-    Set<String> otherFilters = filters ?? Set.from(_selectedFilters)..remove('Visited');
-    otherFilters.remove('Visited');
-    if (place.tags == null || place.tags!.isEmpty) {
-      return false;
-    }
-    return place.tags!.any((tag) => otherFilters.contains(tag));
   }
 
   Widget _buildDragHandle() {
