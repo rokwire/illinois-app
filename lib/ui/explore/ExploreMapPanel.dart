@@ -89,6 +89,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
     ExploreMapType.MyLocations:         AnalyticsFeature.MapMyLocations,
     ExploreMapType.MentalHealth:        AnalyticsFeature.MapMentalHealth,
     ExploreMapType.StateFarmWayfinding: AnalyticsFeature.MapStateFarm,
+    ExploreMapType.StoriedSites:        AnalyticsFeature.StoriedSites,
   };
 
   final Map<String, dynamic> params = <String, dynamic>{};
@@ -229,6 +230,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Future<Set<Marker>?>? _buildMarkersTask;
   Explore? _pinnedMapExplore;
   dynamic _selectedMapExplore;
+  Explore? _selectedStoriedSiteExplore;
   AnimationController? _mapExploreBarAnimationController;
   
   String? _loadingMapStopIdRoutes;
@@ -832,6 +834,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _selectMapExplore(dynamic explore) {
+    if (_selectedMapType == ExploreMapType.StoriedSites) {
+      setState(() {
+        _selectedStoriedSiteExplore = explore is Explore ? explore : null;
+      });
+      // Rebuild markers to reflect the change in selected marker
+      _mapController?.getZoomLevel().then((double value) {
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: false, zoom: value, forceRefresh: true);
+      });
+    }
     if (explore != null) {
       _pinMapExplore(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
       setStateIfMounted(() {
@@ -849,12 +860,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       });
     } else {
       _pinMapExplore(null);
-    }
-    if (_selectedMapType == ExploreMapType.StoriedSites) {
-      // Get the current zoom level
-      _mapController?.getZoomLevel().then((double value) {
-        _buildMapContentData(_filteredExplores ?? _explores, updateCamera: false, showProgress: false, zoom: value, forceRefresh: true);
-      });
     }
     _logAnalyticsSelect(explore);
   }
@@ -1378,6 +1383,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _clearActiveFilter();
       _selectedMapType = widget._lastSelectedExploreType = item;
       _itemsDropDownValuesVisible = false;
+      if (_selectedMapType != ExploreMapType.StoriedSites) {
+        _selectedStoriedSiteExplore = null;
+      }
     });
     if (lastExploreType != item) {
       _targetMapStyle = _currentMapStyle;
@@ -2368,7 +2376,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markerAnchor = Offset(0.5, 0.5);
       } else {
         Color? exploreColor = explore?.mapMarkerColor;
-        if (_selectedMapType == ExploreMapType.StoriedSites && explore == _selectedMapExplore) {
+        if (_selectedMapType == ExploreMapType.StoriedSites && explore == _selectedStoriedSiteExplore) {
           exploreColor = Styles().colors.fillColorSecondary;
         }
         markerIcon = (exploreColor != null)
