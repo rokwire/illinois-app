@@ -843,24 +843,27 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: false, zoom: value, forceRefresh: true);
       });
     }
-    if (explore != null) {
-      _pinMapExplore(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
-      setStateIfMounted(() {
-        _selectedMapExplore = explore;
-      });
-      _updateSelectedMapStopRoutes();
-      _mapExploreBarAnimationController?.forward();
-    }
-    else if (_selectedMapExplore != null) {
-      _pinMapExplore(null);
-      _selectedMapExplore = null;
-      _mapExploreBarAnimationController?.reverse().then((_) {
-        setStateIfMounted(() {});
+    else {
+      if (explore != null) {
+        _pinMapExplore(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
+        setStateIfMounted(() {
+          _selectedMapExplore = explore;
+        });
         _updateSelectedMapStopRoutes();
-      });
-    } else {
-      _pinMapExplore(null);
+        _mapExploreBarAnimationController?.forward();
+      }
+      else if (_selectedMapExplore != null) {
+        _pinMapExplore(null);
+        _selectedMapExplore = null;
+        _mapExploreBarAnimationController?.reverse().then((_) {
+          setStateIfMounted(() {});
+          _updateSelectedMapStopRoutes();
+        });
+      } else {
+        _pinMapExplore(null);
+      }
     }
+
     _logAnalyticsSelect(explore);
   }
 
