@@ -18,8 +18,8 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Appointments.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/FlexUI.dart';
-import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
@@ -41,9 +41,9 @@ class SettingsNotificationPreferencesContentWidget extends StatefulWidget{
 class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsNotificationPreferencesContentWidget> implements NotificationsListener{
   bool _notificationsAuthorized = false;
 
-  bool _newAppointmentProgress = false;
-  bool _morningReminderProgress = false;
-  bool _nightReminderProgress = false;
+  // bool _newAppointmentProgress = false;
+  // bool _morningReminderProgress = false;
+  // bool _nightReminderProgress = false;
 
   @override
   void initState() {
@@ -97,7 +97,11 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           onTap: (){_onOpenNotifications(context);},
         ),
         Container(height: 27,),
-        _buildSettings()
+        _buildSettings(),
+        Container(height: 32.0),
+        _appLogo,
+        _appVersionWidget,
+        Container(height: 16.0),
       ],),
     );
   }
@@ -280,6 +284,24 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     );
   }
 
+  Widget get _appLogo => Container(
+    padding: const EdgeInsets.all(6),
+    child: SizedBox(width: 51, height: 51, child:
+    Styles().images.getImage('university-logo-dark-frame'),
+    ),
+  );
+
+  Widget get _appVersionWidget => Padding(padding: const EdgeInsets.only(top: 8), child:
+    RichText(textAlign: TextAlign.left, text:
+      TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
+        TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
+        TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
+      ])
+    ),
+  );
+
+  String get _appVersion => Config().appVersion ?? '';
+
   void _onOpenNotifications(BuildContext context) {
     Analytics().logSelect(target: 'Receive Notifications') ;
     _requestAuthorization(context);
@@ -307,6 +329,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     AppSettings.openAppSettings();
   }
 
+  /*
   void _onNewAppointmentToggled() {
     if(!_notificationsEnabled) {
       return;
@@ -367,6 +390,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       _nightReminderProgress = value;
     }
   }
+  */
 
   void _onEventRemindersToggled() {
     if(!_notificationsEnabled)
@@ -375,6 +399,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     FirebaseMessaging().notifyEventReminders = !FirebaseMessaging().notifyEventReminders!;
   }
 
+  /*
   void _onAthleticsUpdatesToggled() {
     if(!_notificationsEnabled)
       return ;
@@ -405,6 +430,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     Analytics().logSelect(target: "Athletics updates: News");
     FirebaseMessaging().notifyNewsAthleticsUpdates = !FirebaseMessaging().notifyNewsAthleticsUpdates!;
   }
+  */
 
   void _onGroupsUpdatesToggled() {
     if(!_notificationsEnabled)
@@ -459,9 +485,9 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     return _notificationsAuthorized && FlexUI().isNotificationsAvailable;
   }
 
-  bool get _athleticsSubNotificationsEnabled {
-    return (FirebaseMessaging().notifyAthleticsUpdates! && _toggleButtonEnabled);
-  }
+  // bool get _athleticsSubNotificationsEnabled {
+  //   return (FirebaseMessaging().notifyAthleticsUpdates! && _toggleButtonEnabled);
+  // }
 
   bool get _groupsSubNotificationsEnabled {
     return (FirebaseMessaging().notifyGroupUpdates! && _toggleButtonEnabled);
@@ -471,13 +497,13 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     return _notificationsEnabled && !FirebaseMessaging().notificationsPaused!;
   }
 
-  bool get _appointmentsNotificationsEnabled {
-    return _toggleButtonEnabled && Appointments().isAccountValid;
-  }
+  // bool get _appointmentsNotificationsEnabled {
+  //   return _toggleButtonEnabled && Appointments().isAccountValid;
+  // }
 
-  bool get _appointmentRemindersSubNotificationsEnabled {
-    return _appointmentsNotificationsEnabled && Appointments().reminderNotificationsEnabled;
-  }
+  // bool get _appointmentRemindersSubNotificationsEnabled {
+  //   return _appointmentsNotificationsEnabled && Appointments().reminderNotificationsEnabled;
+  // }
 
   String? get _notificationsStatus{
     return _notificationsEnabled?Localization().getStringEx("panel.settings.notifications.label.status.enabled", "Enabled"): Localization().getStringEx("panel.settings.notifications.label.status.disabled", "Disabled");

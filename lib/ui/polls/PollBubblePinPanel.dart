@@ -265,11 +265,11 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: Styles().colors.fillColorSecondaryVariant,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
             borderColor: Styles().colors.fillColorSecondary,
-            onTap: () { _onContinue(); }
+            onTap: _onContinue
           ),       
       );
   } 

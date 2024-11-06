@@ -2302,7 +2302,7 @@
     "panel.polls_home.card.state.text.closed":"Encuestas cerradas",
     "panel.polls_home.card.text.one_vote":"1 voto",
     "panel.polls_home.card.text.votes":"votos",
-    "panel.polls_home.card.text.pin":"Encuesta de 4 dígitos #:% s",
+    "panel.polls_home.card.text.pin":"Encuesta #: %s",
     "panel.polls_home.card.button.title.start_poll":"Comenzar encuesta",
     "panel.polls_home.card.button.title.end_poll":"Encuesta final",
     "panel.polls_home.card.button.title.vote":"Votar",
@@ -3078,7 +3078,7 @@
     "panel.guide_categories.label.heading": "Guía del Campus",
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
 
-    "panel.inbox.label.content.empty": "Ningún mensaje",
+    "panel.inbox.label.content.empty": "Sin notificaciones",
     "panel.inbox.mark_all_read.label": "Marcar todo como leido",
     "panel.inbox.label.time.any": "Cualquier momento",
     "panel.inbox.label.time.today": "Hoy dia",
@@ -3602,7 +3602,9 @@
     "widget.home.research_projects.button.all.title": "Ver todo",
     "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
-    "widget.home_create_poll.heading.title":"Encuestas",
+    "widget.home.polls.label.header.title":"ENCUESTAS",
+
+    "widget.home_create_poll.heading.title":"CREAR ENCUESTA",
     "widget.home_create_poll.button.close.label":"Cerrar",
     "widget.home_create_poll.text.title":"Crea y comparte encuestas rápidamente.",
     "widget.home_create_poll.text.description":"Las personas de tu grupo pueden recibir notificaciones para votar por la aplicación {{app_title}}. O puedes dar a los votantes el número de votación de cuatro dígitos.",
@@ -3693,7 +3695,7 @@
     "widget.home.athletics_events.button.all.title": "Ver todo",
     "widget.home.athletics_events.button.all.hint": "Toca para ver todos los eventos",
 
-    "widget.home.recent_polls.text.title": "Encuestas recientes",
+    "widget.home.recent_polls.text.title": "ENCUESTAS RECIENTES",
     "widget.home.recent_polls.text.empty.description": "No hay encuestas recientes disponibles en este momento.",
     "widget.home.recent_polls.text.offline": "Las encuestas recientes no están disponibles sin conexión.",
     "widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",

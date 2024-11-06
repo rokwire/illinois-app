@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/ui/polls/PollWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -25,7 +26,6 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:neom/service/Polls.dart' as neom;
 
@@ -99,7 +99,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
 
     if (0 < pollsLength) {
       _polls!.forEach((poll) {
-        content.add(GroupPollCard(poll: poll, group: widget.group));
+        content.add(PollCard(poll: poll, group: widget.group, showGroupName: false,));
         content.add(_constructListSeparator());
       });
     }

@@ -7,6 +7,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
   final TriangleHorzDirection horizontalDirection;
@@ -60,19 +62,22 @@ class Onboarding2BackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-        label: Localization().getStringEx('headerbar.back.title', 'Back'),
-        hint: Localization().getStringEx('headerbar.back.hint', ''),
-        button: true,
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: padding!,
-            child: Container(child: Styles().images.getImage(imageKey, color: this.color, excludeFromSemantics: true)
+    return Visibility(
+      visible: !kIsWeb,
+      child: Semantics(
+          label: Localization().getStringEx('headerbar.back.title', 'Back'),
+          hint: Localization().getStringEx('headerbar.back.hint', ''),
+          button: true,
+          child: GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: padding!,
+              child: Container(child: Styles().images.getImage(imageKey, color: this.color, excludeFromSemantics: true)
+              ),
             ),
-          ),
-        )
+          )
+      ),
     );
   }
 }

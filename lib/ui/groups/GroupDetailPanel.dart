@@ -17,7 +17,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -28,7 +27,7 @@ import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:neom/ui/groups/GroupPostDetailPanel.dart';
 import 'package:neom/ui/groups/GroupPostReportAbuse.dart';
-import 'package:neom/ui/widgets/CustomFlexibleSpaceBar.dart';
+import 'package:neom/ui/polls/PollWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/InfoPopup.dart';
 import 'package:neom/ui/widgets/QrCodePanel.dart';
@@ -113,6 +112,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   List<Event2>?      _groupEvents;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
+
+  GlobalKey          _groupHeaderKey = GlobalKey();
+  double?            _groupHeaderHeight;
 
   List<GroupPost>    _posts = <GroupPost>[];
   List<Member>?      _allMembersAllowedToPost;
@@ -729,7 +731,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : _group?.title;
     List<Widget>? barActions = (_hasOptions) ? <Widget>[
       Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
         IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
@@ -742,6 +744,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
     else if (_group != null) {
       content = _buildGroupContent(barActions);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _evalGroupHeaderHeight();
+      });
     }
     else {
       content = _buildErrorContent();
@@ -749,16 +755,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     return SafeArea(
       child: Scaffold(
-        appBar: _group == null ? HeaderBar(
+        appBar: HeaderBar(
           title: barTitle,
+          textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.fat.light"),
           actions: barActions
-        ) : null,
+        ),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
-        body: SafeArea(
-          child: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-            content,
-          ),
+        body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+          content,
         ),
       ),
     );
@@ -833,16 +838,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   // Content Builder
 
   Widget _buildLoadingContent() {
-    return Stack(children: <Widget>[
-      Column(children: <Widget>[
-        Expanded(
-          child: Center(
-            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),
-          ),
-        ),
-      ]),
-      HeaderBackButton(),
-    ],);
+    return Center(
+      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),
+    );
   }
 
   Widget _buildErrorContent() {
@@ -892,52 +890,46 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       );
     }
 
-    Size size = MediaQuery.of(context).size;
-    return IntrinsicSizeBuilder(
-      subject: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: size.height * 0.75),
-        child: Stack(children: [
-          Visibility(
-            visible: _hasGroupImage,
-            child: _buildImageHeader(),
+    return NestedScrollView(
+      controller: _scrollController,
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return [
+          SliverOverlapAbsorber(
+            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            sliver: SliverSafeArea(
+              sliver: SliverHeaderBar(
+              toolbarHeight: 0,
+              leadingWidget: Container(),
+              floating: false,
+              pinned: true,
+              expandedHeight: _groupHeaderHeight,
+              flexibleSpace: _groupHeader,
+              bottom: _isMemberOrAdmin ? TextTabBar(tabs: _buildTabs(), labelStyle: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,), controller: _tabController,
+                  backgroundColor: Styles().colors.fillColorPrimary, isScrollable: false, onTap: _onTabChanged) : null,
+              )
+            )
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0, top: _hasGroupImage ? 152.0 : 24.0),
-            child: _buildGroupDetailsHeader(),
-          )
-        ]),
-      ),
-      builder: (context, itemSize, item) {
-        return NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverSafeArea(
-                sliver: SliverHeaderBar(
-                  pinned: true,
-                  floating: false,
-                  actions: actions,
-                  title: _group?.title ?? '',
-                  leadingIconKey: 'caret-left',
-                  expandedHeight: itemSize.height,
-                  flexibleSpace: CustomFlexibleSpaceBar(
-                    expandedTitleScale: 1,
-                    collapseMode: CollapseMode.pin,
-                    background: Padding(
-                      padding: const EdgeInsets.only(top: kToolbarHeight),
-                      child: item,
-                    ),
-                  ),
-                  bottom: _isMemberOrAdmin ? TextTabBar(tabs: _buildTabs(), labelStyle: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,), controller: _tabController,
-                      backgroundColor: Styles().colors.fillColorPrimary, isScrollable: false, onTap: _onTabChanged) : null,
-                ),
-              ),
-            ];
-          },
-          body: content,
-        );
+        ];
       },
+      body: content,
+    );
+  }
+
+  Widget get _groupHeader {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      reverse: true,
+      child: Stack(key: _groupHeaderKey, children: [
+        Visibility(
+          visible: _hasGroupImage,
+          child: _buildImageHeader(),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 24.0, right: 24.0, bottom: _hasGroupImage ? 72.0 : 24.0, top: _hasGroupImage ? 152.0 : 24.0),
+          child: _buildGroupDetailsHeader(),
+        )
+      ]),
     );
   }
 
@@ -954,6 +946,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Widget _buildGroupDetailsHeader() {
     return Container(
       color: Styles().colors.surface,
+      // height: _groupDetailsHeight,
       child: Column(
         children: [
           _buildGroupInfo(),
@@ -1394,7 +1387,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       for (Poll? groupPoll in _groupPolls!) {
         if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
+          pollsContentList.add(PollCard(poll: groupPoll, group: _group, showGroupName: false,));
         }
       }
 
@@ -2372,6 +2365,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (currentContext != null) {
         Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
       }
+    }
+  }
+
+  void _evalGroupHeaderHeight() {
+    final RenderObject? renderBox = _groupHeaderKey.currentContext?.findRenderObject();
+    Size? size = (renderBox is RenderBox) ? renderBox.size : null;
+    if ((size?.height != _groupHeaderHeight) && mounted) {
+      setStateIfMounted(() {
+        _groupHeaderHeight = size?.height;
+      });
     }
   }
 

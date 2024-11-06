@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/ui/polls/PollsHomePanel.dart';
+import 'package:neom/ui/polls/PollWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/utils/AppUtils.dart';

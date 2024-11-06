@@ -2291,7 +2291,7 @@
 	"panel.polls_home.card.state.text.closed":" 投票结束 ",
 	"panel.polls_home.card.text.one_vote":"1票",
 	"panel.polls_home.card.text.votes":"投票",
-	"panel.polls_home.card.text.pin":" 四位数投票  #: %s",
+	"panel.polls_home.card.text.pin":" 投票 #: %s",
 	"panel.polls_home.card.button.title.start_poll":"开始投票",
 	"panel.polls_home.card.button.title.end_poll":"结束投票",
 	"panel.polls_home.card.button.title.vote":"投票",
@@ -3064,7 +3064,7 @@
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
 
-	"panel.inbox.label.content.empty": "沒有消息",
+	"panel.inbox.label.content.empty": "沒有通知",
 	"panel.inbox.mark_all_read.label": "標記為已讀",
 	"panel.inbox.label.time.any": "任何時間",
 	"panel.inbox.label.time.today": "今天",
@@ -3587,7 +3587,9 @@
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 
-	"widget.home_create_poll.heading.title":"民意調查",
+	"widget.home.polls.label.header.title":"民調",
+
+	"widget.home_create_poll.heading.title":"創建民意調查",
 	"widget.home_create_poll.button.close.label":"关闭",
 	"widget.home_create_poll.text.title":"快速创建和共享投票.",
 	"widget.home_create_poll.text.description":"您的群组成员可以透过{{app_title}}应用程序收到投票通知。您也可以提供使用者四码投票编号。",

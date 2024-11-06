@@ -45,8 +45,8 @@ import 'package:neom/ui/home/HomeEvent2Widget.dart';
 import 'package:neom/ui/home/HomeFavoritesWidget.dart';
 import 'package:neom/ui/home/HomeInboxWidget.dart';
 import 'package:neom/ui/home/HomeLaundryWidget.dart';
+import 'package:neom/ui/home/HomePollsWidget.dart';
 import 'package:neom/ui/home/HomePublicSurveysWidget.dart';
-import 'package:neom/ui/home/HomeRecentPollsWidget.dart';
 import 'package:neom/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:neom/ui/home/HomeSafeRidesWidget.dart';
 import 'package:neom/ui/home/HomeSafeWalkRequestWidget.dart';
@@ -69,7 +69,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/home/HomeCampusRemindersWidget.dart';
-import 'package:neom/ui/home/HomeCreatePollWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:neom/ui/home/HomeGroupsWidget.dart';
 import 'package:neom/ui/home/HomeRecentItemsWidget.dart';
@@ -266,22 +265,13 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeStudentCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'create_poll') {
+    else if (code == 'polls') {
       if (title) {
-        return HomeCreatePollWidget.title;
+        return HomePollsSectionWidget.title;
       } else if (handle) {
-        return HomeCreatePollWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomePollsSectionWidget.handle(favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeCreatePollWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'recent_polls') {
-      if (title) {
-        return HomeRecentPollsWidget.title;
-      } else if (handle) {
-        return HomeRecentPollsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRecentPollsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomePollsSectionWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'laundry') {

@@ -52,12 +52,14 @@ class _HomeGroupsSectionWidgetState extends State<HomeGroupsSectionWidget> {
 
   Widget get _widgetContent {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
+    bool hasMyGroups = favorites?.contains('my_groups') ?? false;
+    bool hasAllGroups = favorites?.contains('all_groups') ?? false;
     return Column(children: [
-      if (favorites?.contains('my_groups') ?? false)
+      if (hasMyGroups)
         HomeGroupsWidget(contentType: GroupsContentType.my, updateController: widget.updateController,),
-      if (favorites?.contains('my_groups') ?? false)
+      if (hasMyGroups && hasAllGroups)
         Container(height: 16),
-      if (favorites?.contains('all_groups') ?? false)
+      if (hasAllGroups)
         HomeGroupsWidget(contentType: GroupsContentType.all, updateController: widget.updateController,),
     ],);
   }

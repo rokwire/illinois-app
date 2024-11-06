@@ -132,7 +132,7 @@ class _MessagesInboxPageState extends State<MessagesInboxPage> implements Notifi
     else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin')),
+        Text(Localization().getStringEx('panel.messaages.label.content.empty', 'No messages'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin')),
         Expanded(child: Container(), flex: 3),
       ]);
     }

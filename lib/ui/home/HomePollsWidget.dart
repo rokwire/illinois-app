@@ -1,5 +1,5 @@
-
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -9,6 +9,8 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/polls/CreatePollPanel.dart';
+import 'package:neom/ui/polls/PollWidgets.dart';
 import 'package:neom/ui/polls/PollsHomePanel.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/SemanticsWidgets.dart';
@@ -19,11 +21,56 @@ import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:flutter/material.dart';
+
+class HomePollsSectionWidget extends StatefulWidget {
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  const HomePollsSectionWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+      HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+        title: StringUtils.capitalize(title),
+      );
+
+  static String get title => Localization().getStringEx('widget.home.polls.label.header.title', 'POLLS');
+
+  @override
+  State<StatefulWidget> createState() => _HomePollsSectionWidgetState();
+}
+
+class _HomePollsSectionWidgetState extends State<HomePollsSectionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return HomeBannerWidget(favoriteId: widget.favoriteId,
+      title: HomePollsSectionWidget.title,
+      bannerImageKey: 'banner-polls',
+      child: _widgetContent,
+      childPadding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
+    );
+  }
+
+  Widget get _widgetContent {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
+    // bool hasCreatePoll = favorites?.contains('create_poll') ?? false;
+    bool hasRecentPolls = favorites?.contains('recent_polls') ?? false;
+    return Column(children: [
+      if (hasRecentPolls)
+        HomeRecentPollsWidget(updateController: widget.updateController,),
+      // if (hasRecentPolls && hasCreatePoll)
+      //   Container(height: 16),
+      // if (hasCreatePoll)
+      //   HomeCreatePollWidget(updateController: widget.updateController,),
+    ],);
+  }
+}
 
 class HomeRecentPollsWidget extends StatefulWidget {
 
@@ -33,11 +80,11 @@ class HomeRecentPollsWidget extends StatefulWidget {
   HomeRecentPollsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
-    );
+      HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+        title: title,
+      );
 
-  static String get title => Localization().getStringEx('widget.home.recent_polls.text.title', 'Recent Polls');
+  static String get title => Localization().getStringEx('widget.home.recent_polls.text.title', 'RECENT POLLS');
 
   State<HomeRecentPollsWidget> createState() => _HomeRecentPollsWidgetState();
 }
@@ -49,7 +96,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   bool _loadingPollsPage = false;
   bool _hasMorePolls = true;
   DateTime? _pausedDateTime;
-  
+
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
@@ -113,7 +160,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       _onContentAvailabilityChanged(Auth2().isLoggedIn);
     }
     else if (name == AppLifecycle.notifyStateChanged) {
-      _onAppLifecycleStateChanged(param);
+      _onAppLivecycleStateChanged(param);
     }
     else if (name == Config.notifyConfigChanged) {
       setStateIfMounted(() {});
@@ -130,15 +177,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     else if (name == Polls.notifyStatusChanged) {
       _onPollUpdated(param);
     }
-}
+  }
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeRecentPollsWidget.title,
-      titleIconKey: 'polls',
-      child: _buildContent(),
-    );
+    return _buildContent();
   }
 
   Widget _buildContent() {
@@ -196,14 +239,14 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          onPageChanged: _onPageChanged,
-          allowImplicitScrolling: true,
-          children: pages,
-        ),
+      ExpandablePageView(
+        key: _pageViewKey,
+        controller: _pageController,
+        estimatedPageSize: _pageHeight,
+        onPageChanged: _onPageChanged,
+        allowImplicitScrolling: true,
+        children: pages,
+      ),
       );
     }
     else {
@@ -218,6 +261,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
         LinkButton(
           title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
+          textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onTapSeeAll,
         ),
       ),
@@ -322,7 +366,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     }
   }
 
-  void _onAppLifecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
@@ -365,6 +409,101 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
           _recentPolls![index] = poll;
         }
       }
+    }
+  }
+}
+
+class HomeCreatePollWidget extends StatefulWidget {
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  HomeCreatePollWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+      HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+        title: title,
+      );
+
+  static String get title => Localization().getStringEx("widget.home_create_poll.heading.title", "CREATE POLL");
+
+  @override
+  _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();
+}
+
+class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> {
+  bool _visible = true;
+  bool _authLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Visibility(visible: _visible, child:
+      HomeBannerSubsectionWidget(
+        title: HomeCreatePollWidget.title,
+        // childPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        child: _buildContent(),
+      )
+    );
+  }
+
+  Widget _buildContent() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")),
+      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        Text(_canCreatePoll ?
+        Localization().getStringEx("widget.home_create_poll.text.description", "People in your Group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) :
+        AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.polls', 'Polls')),
+            style: Styles().textStyles.getTextStyle("widget.description.medium.regular")
+        ),
+      ),
+      _buildButtons()
+    ],);
+  }
+
+  Widget _buildButtons(){
+    return _canCreatePoll?
+    RoundedButton(
+      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+      borderColor: Styles().colors.fillColorSecondary,
+      backgroundColor: Colors.white,
+      contentWeight: 0.6,
+      conentAlignment: MainAxisAlignment.start,
+      onTap: _onCreatePoll,
+    ) :
+    Padding(padding: EdgeInsets.only(right: 120), child:
+      RoundedButton(
+        label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: Colors.white,
+        progress: _authLoading,
+        onTap: _onLogin,
+      ),
+    );
+  }
+
+  void _onCreatePoll() {
+    Analytics().logSelect(target: "Create Poll", source: widget.runtimeType.toString());
+    CreatePollPanel.present(context);
+  }
+
+  bool get _canCreatePoll {
+    return Auth2().isLoggedIn;
+  }
+
+  void _onLogin(){
+    Analytics().logSelect(target: "Login", source: widget.runtimeType.toString());
+    if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+          if (result?.status != Auth2OidcAuthenticateResultStatus.succeeded) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      });
     }
   }
 }

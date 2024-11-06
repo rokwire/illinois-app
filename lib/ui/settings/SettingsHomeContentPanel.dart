@@ -117,7 +117,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       Localization.notifyLocaleChanged,
     ]);
     _buildContentValues();
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.contact);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.notifications);
   }
 
   @override

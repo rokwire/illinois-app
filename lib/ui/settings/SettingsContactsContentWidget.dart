@@ -1,6 +1,4 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
@@ -57,6 +55,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
           onTap: () => onTap?.call()
       );
 
+  /*
   Widget get _feedbackDescriptionWidget {
     final String rokwirePlatformUrlMacro = '{{rokwire_platform_url}}';
     final String universityUrlMacro = '{{university_url}}';
@@ -96,6 +95,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
           ]))
       ],)
     );
+  */
 
   Widget get _appLogo => Container(
     padding: const EdgeInsets.all(6),
@@ -116,8 +116,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
 
   String get _appVersion => Config().appVersion ?? '';
 
-  Widget get _dividerWidget =>
-      Container(color: Styles().colors.surfaceAccent, height: 1,);
+  // Widget get _dividerWidget => Container(color: Styles().colors.surfaceAccent, height: 1,);
 
   void _onReviewClicked() {
     Analytics().logSelect(target: "Provide Review");

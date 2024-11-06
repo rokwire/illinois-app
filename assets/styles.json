@@ -314,6 +314,7 @@
     "widget.detail.small.semi_fat": { "font_family": "medium", "size": 14.0, "color": "textPrimary"},
     "widget.detail.small.fat": { "font_family": "bold", "size": 14.0, "color": "textPrimary"},
     "widget.detail.dark.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textDark"},
+    "widget.detail.dark.regular": { "font_family": "regular", "size": 16.0, "color": "textDark"},
     "widget.detail.dark.small": {"font_family": "regular", "size": 14.0, "color": "textDark"},
     "widget.detail.light.small.thin": {"font_family": "regular", "size": 14.0, "color": "textLight"},
     "widget.detail.light.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textLight"},
@@ -406,8 +407,8 @@
     "widget.info.dark.small.medium_fat": { "font_family": "medium", "size": 14.0, "color": "textDark"},
     "widget.info.dark.tiny": { "font_family": "regular", "size": 12.0, "color": "textDark"},
 
-    "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "textPrimary"},
-    "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "textPrimary"},
+    "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "textDark"},
+    "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "textDark"},
 
     "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "textDark"},
     "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "textMedium"},
@@ -760,7 +761,7 @@
     "panel.poll.create.poll_option.counter": {"extends": "widget.detail.light.small.thin"},
     "panel.poll.create.stadium.geofence.dropdown.title": {"extends": "widget.detail.light.regular"},
     "panel.poll.bubble.pin.button.info": {"font_family": "extra_bold", "size": 20.0, "color": "fillColorSecondary"},
-    "panel.poll.bubble.pin.field.text": {"extends": "widget.title.extra_huge"},
+    "panel.poll.bubble.pin.field.text": {"extends": "widget.title.extra_huge", "color": "textDark"},
     "panel.poll.bubble.prompt.detail.medium.accent": {"font_family": "regular", "size": 14.0, "color": "surfaceAccent", "weight" :  "w500" },
     "panel.poll.bubble.prompt.detail.small": {"font_family": "regular", "size": 12.0, "color": "white", "weight" :  "w600" },
     "panel.poll.bubble.prompt.detail.small.thin": {"font_family": "regular", "size": 12.0, "color": "white", "weight" :  "w200" },
@@ -1165,6 +1166,7 @@
     "more-surveys": {"src": "images/more-surveys.png", "type": "flutter.asset", "size": 176},
     "more-events": {"src": "images/more-events.png", "type": "flutter.asset", "size": 176},
     "more-inbox": {"src": "images/more-inbox.png", "type": "flutter.asset", "size": 176},
+    "more-polls": {"src": "images/more-polls.png", "type": "flutter.asset", "size": 176},
 
     "guide-athletics": {"src": "images/icon-student-guide-athletics.png", "type": "flutter.asset", "size": 50, "todo": "color"},
     "guide-bus-pass": {"src": "images/icon-student-guide-bus-pass.png", "type": "flutter.asset", "size": 50, "todo": "color"},
