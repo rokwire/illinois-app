@@ -643,25 +643,51 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _selectStoriedSiteExplore(dynamic explore) {
-
     if (explore is Place) {
       _storiedSightsKey.currentState?.selectPlace(explore);
-    } else if (explore is List<Explore>) {
+    }
+    else if (explore is List<Explore>) {
       List<places_model.Place> places = explore.cast<places_model.Place>();
       _storiedSightsKey.currentState?.selectPlaces(places);
       _centerMapOnExplore(places);
     }
 
-    setState(() {
-      _selectedStoriedSiteExplore = explore is Explore ? explore : null;
-    });
-
-    // Rebuild markers to reflect the change in selected marker
-    _mapController?.getZoomLevel().then((double value) {
-      _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: false, zoom: value, forceRefresh: true);
-    });
+    _updateSelectedStoriedSiteMarker(explore is Explore ? explore : null);
 
     _logAnalyticsSelect(explore);
+  }
+
+  Future<void> _updateSelectedStoriedSiteMarker(Explore? selectedStoriedSiteExplore) async {
+    Set<Marker>? targetMarkers = (_targetMarkers != null) ? Set<Marker>.from(_targetMarkers!) : null;
+    if ((targetMarkers != null) && (_selectedStoriedSiteExplore != selectedStoriedSiteExplore)) {
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
+
+      if (_selectedStoriedSiteExplore != null) {
+        Marker? selectedStoriedSiteMarker = targetMarkers.exploreMarker(_selectedStoriedSiteExplore);
+        Marker? selectedStoriedSiteMarkerUpd = await _createExploreMarker(_selectedStoriedSiteExplore, imageConfiguration: imageConfiguration);
+        if ((selectedStoriedSiteMarker != null) && (selectedStoriedSiteMarkerUpd != null)) {
+          targetMarkers.remove(selectedStoriedSiteMarker);
+          targetMarkers.add(selectedStoriedSiteMarkerUpd);
+        }
+      }
+
+      _selectedStoriedSiteExplore = selectedStoriedSiteExplore;
+
+      if (_selectedStoriedSiteExplore != null) {
+        Marker? selectedStoriedSiteMarker = targetMarkers.exploreMarker(_selectedStoriedSiteExplore);
+        Marker? selectedStoriedSiteMarkerUpd = await _createExploreMarker(_selectedStoriedSiteExplore, imageConfiguration: imageConfiguration, markerColor: Styles().colors.fillColorSecondary);
+        if ((selectedStoriedSiteMarker != null) && (selectedStoriedSiteMarkerUpd != null)) {
+          targetMarkers.remove(selectedStoriedSiteMarker);
+          targetMarkers.add(selectedStoriedSiteMarkerUpd);
+        }
+      }
+    }
+
+    if (!DeepCollectionEquality().equals(_targetMarkers, targetMarkers)) {
+      setStateIfMounted((){
+        _targetMarkers = targetMarkers;
+      });
+    }
   }
 
   void _centerMapOnExplore(dynamic explore, {bool zoom = true}) async {
@@ -2155,7 +2181,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   // Map Content
 
-  Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom, bool forceRefresh = false}) async {
+  Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
 
     CameraUpdate? targetCameraUpdate;
@@ -2192,7 +2218,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
 
-      if (forceRefresh || !DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
+      if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
         Future<Set<Marker>> buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMarkerGroups, pinnedExplore: pinnedExplore);
         _buildMarkersTask = buildMarkersTask;
         if (showProgress && mounted) {
@@ -2369,7 +2395,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
 
-  Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
+  Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration, Color? markerColor }) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
       BitmapDescriptor? markerIcon;
@@ -2381,10 +2407,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markerAnchor = Offset(0.5, 0.5);
       }
       else {
-        Color? exploreColor = explore?.mapMarkerColor;
-        if (_selectedMapType == ExploreMapType.StoriedSites && explore == _selectedStoriedSiteExplore) {
-          exploreColor = Styles().colors.fillColorSecondary;
-        }
+        Color? exploreColor = markerColor ?? explore?.mapMarkerColor;
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
         markerAnchor = Offset(0.5, 1);
       }
@@ -2560,4 +2583,16 @@ String? _exploreMapTypeToString(ExploreMapType? value) {
 class ExploreMapSearchEventsParam {
   final String searchText;
   ExploreMapSearchEventsParam(this.searchText);
+}
+
+extension _MapMarkersSet on Set<Marker> {
+
+  Marker? exploreMarker(Explore? explore) {
+    LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
+    String? markerId = (markerPosition != null) ? "${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}" : null;
+    return (markerId != null) ? markerById(MarkerId(markerId)) : null;
+  }
+
+  Marker? markerById(MarkerId markerId) =>
+    firstWhereOrNull((marker) => marker.markerId == markerId);
 }
