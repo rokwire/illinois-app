@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.57] - 2024-11-07
+## Added
+- Filter pins on map to match filters/search for storied sites [#4458](https://github.com/rokwire/illinois-app/issues/4458)
+- Add search to Bottomsheet [#4456](https://github.com/rokwire/illinois-app/issues/4456)
+
+## [6.0.56] - 2024-11-04
+### Fixed
+- Bug fixes on the stories sites bottomsheet [#4454](https://github.com/rokwire/illinois-app/issues/4454)
+
 ## [6.0.55] - 2024-10-24
 ### Fixed
 - Bug fixes on the places bottomsheet [#4439](https://github.com/rokwire/illinois-app/issues/4439)
@@ -25,7 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated soundbyte icons [#4412](https://github.com/rokwire/illinois-app/issues/4412).
 ### Added
 - Added user_auth_type standard analytics property [#4419](https://github.com/rokwire/illinois-app/issues/4419).
-
 
 ## [6.0.51] - 2024-10-15
 ### Fixed
