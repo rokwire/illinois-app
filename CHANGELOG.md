@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.57] - 2024-11-07
 ## Added
 - Filter pins on map to match filters/search for storied sites [#4458](https://github.com/rokwire/illinois-app/issues/4458)
 - Add search to Bottomsheet [#4456](https://github.com/rokwire/illinois-app/issues/4456)
