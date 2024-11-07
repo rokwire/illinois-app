@@ -19,8 +19,10 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class ExploreStoriedSightsBottomSheet extends StatefulWidget {
   final List<places_model.Place> places;
   final Function(places_model.Place) onPlaceSelected;
+  final void Function(List<places_model.Place>? filteredPlaces)? onFilteredPlacesChanged;
+  final VoidCallback? onBackPressed;
 
-  ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected}) : super(key: key);
+  ExploreStoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected, this.onFilteredPlacesChanged, this.onBackPressed}) : super(key: key);
 
   @override
   ExploreStoriedSightsBottomSheetState createState() => ExploreStoriedSightsBottomSheetState();
@@ -185,6 +187,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
+        widget.onBackPressed?.call();
     }))];
 
   double _calculateFilterButtonsHeight() {
@@ -665,43 +668,35 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       }).toList();
     }
 
-    // Apply selected filters
-    if (_selectedFilters.isNotEmpty) {
-      if (_selectedFilters.contains(_customSelectionFilterKey)) {
-        filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
-      } else {
-        filteredPlaces = filteredPlaces.where((place) {
-          bool matchesFilter = false;
-          if (_selectedFilters.contains('Visited')) {
-            if (place.userData?.visited != null && place.userData!.visited!.isNotEmpty) {
-              if (_selectedFilters.length > 1) {
-                matchesFilter = _matchesOtherFilters(place);
-              } else {
-                matchesFilter = true;
-              }
-            } else {
-              matchesFilter = false;
-            }
-          } else {
-            matchesFilter = place.tags != null && place.tags!.any((tag) => _selectedFilters.contains(tag));
-          }
-          return matchesFilter;
-        }).toList();
-      }
+    // Apply custom places filter if selected
+    if (_selectedFilters.contains(_customSelectionFilterKey)) {
+      filteredPlaces = filteredPlaces.where((place) => _customPlaces!.contains(place)).toList();
+    }
+
+    // Prepare other filters excluding 'Visited' and custom selection
+    Set<String> filtersToApply = Set.from(_selectedFilters);
+    filtersToApply.remove(_customSelectionFilterKey);
+    bool isVisitedFilterSelected = filtersToApply.contains('Visited');
+    if (isVisitedFilterSelected) {
+      // Filter to only visited places
+      filteredPlaces = filteredPlaces.where((place) => place.userData?.visited != null && place.userData!.visited!.isNotEmpty).toList();
+      // Remove 'Visited' from filters to apply remaining filters
+      filtersToApply.remove('Visited');
+    }
+
+    // Apply remaining filters
+    if (filtersToApply.isNotEmpty) {
+      filteredPlaces = filteredPlaces.where((place) {
+        if (place.tags == null || place.tags!.isEmpty) return false;
+        return place.tags!.any((tag) => filtersToApply.contains(tag));
+      }).toList();
     }
 
     setState(() {
       _storiedSights = filteredPlaces;
     });
-  }
 
-  bool _matchesOtherFilters(places_model.Place place) {
-
-    Set<String> otherFilters = Set.from(_selectedFilters)..remove('Visited');
-    if (place.tags == null || place.tags!.isEmpty) {
-      return false;
-    }
-    return place.tags!.any((tag) => otherFilters.contains(tag));
+    widget.onFilteredPlacesChanged?.call((_storiedSights.length < _allPlaces.length) ? _storiedSights : null);
   }
 
   Widget _buildDragHandle() {
@@ -1127,7 +1122,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           _placeCheckInDates.remove(now);
         });
 
-        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please try again.'));
+        AppToast.showMessage(Localization().getStringEx('panel.explore.storied_sites.check_in.try_again', 'Check-in failed. Please sign in and try again.'));
       }
     } catch (e) {
       if (mounted) {
