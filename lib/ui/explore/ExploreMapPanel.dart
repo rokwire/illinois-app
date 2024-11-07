@@ -470,7 +470,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             ExploreStoriedSightsBottomSheet(
               key: _storiedSightsKey,
               places: _explores?.whereType<Place>().toList() ?? [],
-              onPlaceSelected: (places_model.Place place) {
+              onPlaceSelected: (Place place) {
                 _centerMapOnExplore(place);
                 _selectMapExplore(place);
               },
@@ -526,7 +526,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         onCameraIdle: _onMapCameraIdle,
         onCameraMove: _onMapCameraMove,
         onTap: _onMapTap,
-        onPoiTap: _onMapPoiTap,
+        // onPoiTap: _onMapPoiTap,
         myLocationEnabled: _userLocationEnabled,
         myLocationButtonEnabled: _userLocationEnabled,
         mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
@@ -599,26 +599,26 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  void _onMapPoiTap(PointOfInterest poi) {
-    debugPrint('ExploreMap POI tap' );
-    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
-    if (mtdStop != null) {
-      _selectMapExplore(mtdStop);
-    }
-    else if (_selectedMapType == ExploreMapType.MyLocations) {
-      _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
-    }
-    else if (_selectedMapExplore != null) {
-      _selectMapExplore(null);
-    }
-  }
+  // void _onMapPoiTap(PointOfInterest poi) {
+  //   debugPrint('ExploreMap POI tap' );
+  //   MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
+  //   if (mtdStop != null) {
+  //     _selectMapExplore(mtdStop);
+  //   }
+  //   else if (_selectedMapType == ExploreMapType.MyLocations) {
+  //     _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
+  //   }
+  //   else if (_selectedMapExplore != null) {
+  //     _selectMapExplore(null);
+  //   }
+  // }
 
   void _onTapMarker(dynamic origin) {
     if (_selectedMapType == ExploreMapType.StoriedSites) {
       if (origin is Place) {
         _storiedSightsKey.currentState?.selectPlace(origin);
       } else if (origin is List<Explore>) {
-        List<places_model.Place> places = origin.cast<places_model.Place>();
+        List<Place> places = origin.cast<Place>();
         _storiedSightsKey.currentState?.selectPlaces(places);
         _centerMapOnExplore(places);
       }

@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/ext/ImagesResult.dart';
 import 'package:neom/mainImpl.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/Config.dart';

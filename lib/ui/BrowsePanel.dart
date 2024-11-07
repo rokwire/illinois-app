@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:neom/model/Analytics.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
@@ -261,7 +262,7 @@ class _BrowseSection extends StatelessWidget {
   String get _title => title(sectionId: sectionId);
   // String get _description => description(sectionId: sectionId);
 
-  // static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
+  static String get appTitle => Localization().getStringEx('app.title', 'NEOM U');
   static String get _appTitleMacro => '{{app_title}}';
 
   static String title({required String sectionId}) {

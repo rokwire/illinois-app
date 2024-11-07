@@ -77,7 +77,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
-  static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
   static const AnalyticsFeature   Messages                       = AnalyticsFeature("Messages");
   static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
   static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});

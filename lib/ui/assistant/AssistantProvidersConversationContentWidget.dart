@@ -16,15 +16,15 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Assistant.dart';
-import 'package:illinois/service/Assistant.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/SpeechToText.dart';
-import 'package:illinois/ui/widgets/TypingIndicator.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/model/Assistant.dart';
+import 'package:neom/service/Assistant.dart';
+import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:neom/service/FlexUI.dart';
+import 'package:neom/service/IlliniCash.dart';
+import 'package:neom/service/SpeechToText.dart';
+import 'package:neom/ui/widgets/TypingIndicator.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -186,7 +186,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                     ? message.example
                                     ? Styles().colors.background
                                     : Styles().colors.blueAccent
-                                    : Styles().colors.white,
+                                    : Styles().colors.surface,
                                 borderRadius: BorderRadius.circular(16.0),
                                 child: Container(
                                     decoration: message.example
@@ -213,7 +213,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                                           visible: (message.isNegativeFeedbackMessage == true),
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
-                                                              child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
+                                                              child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.surface)))),
                                                   TextSpan(
                                                       text: (message.user ? message.content : '[${assistantProviderToDisplayString(message.provider)}] ${message.content}'),
                                                       style: message.user
@@ -322,7 +322,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         child: Material(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             child: InkWell(
                 onTap: () => _onTapSourceLink(source),
                 borderRadius: BorderRadius.circular(22),
@@ -356,7 +356,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     return Padding(
         padding: padding,
         child: Material(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10), side: BorderSide(color: Styles().colors.mediumGray2, width: 1)),
             child: InkWell(

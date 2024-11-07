@@ -717,7 +717,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
           analyticsEvent[LogStdUserRolesName] = _userRoles;
         }
         else if (attributeName == LogStdUserAuthType) {
-          analyticsEvent[LogStdUserAuthType] = _auth2LoginTypeAnalyticsValue(Auth2().account?.authType?.loginType ?? Auth2LoginType.anonymous);
+          analyticsEvent[LogStdUserAuthType] = _auth2LoginTypeAnalyticsValue(Auth2().account?.authType);
         }
         else if (attributeName == LogStdAccessibilityName) {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
@@ -1054,21 +1054,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  String? _auth2LoginTypeAnalyticsValue(Auth2LoginType? loginType) {
+  String? _auth2LoginTypeAnalyticsValue(Auth2Type? loginType) {
     if (loginType != null) {
-      switch(loginType) {
-        case Auth2LoginType.oidc:
-        case Auth2LoginType.oidcIllinois: return LogAuthTypeOidc;
-        case Auth2LoginType.code:         return LogAuthTypeCode;
-        case Auth2LoginType.password:     return LogAuthTypePassword;
-        case Auth2LoginType.passkey:      return LogAuthTypePasskey;
-        case Auth2LoginType.apiKey:
-        case Auth2LoginType.anonymous:    return LogAuthTypeAnonymous;
+      switch(loginType.code) {
+        case Auth2Type.typeOidc:
+        case Auth2Type.typeOidcIllinois: return LogAuthTypeOidc;
+        case Auth2Type.typeCode:         return LogAuthTypeCode;
+        case Auth2Type.typePassword:     return LogAuthTypePassword;
+        case Auth2Type.typePasskey:      return LogAuthTypePasskey;
+        case Auth2Type.typeApiKey:
+        case Auth2Type.typeAnonymous:    return LogAuthTypeAnonymous;
       }
     }
-    else {
-      return null;
-    }
+    return null;
   }
 
   void logGroup({String? action, Map<String, dynamic>? attributes}) {
