@@ -79,6 +79,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogStdUserUuidName                 = "user_uuid";
   static const String   LogStdUserPrivacyLevelName         = "user_privacy_level";
   static const String   LogStdUserRolesName                = "user_roles";
+  static const String   LogStdUserAuthType                 = "user_auth_type";
   static const String   LogStdAccessibilityName            = "accessibility";
   static const String   LogStdAuthCardRoleName             = "icard_role";
   static const String   LogStdAuthCardStudentLevel         = "icard_student_level";
@@ -116,6 +117,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdUserUuidName,
     LogStdUserPrivacyLevelName,
     LogStdUserRolesName,
+    LogStdUserAuthType,
     LogStdAccessibilityName,
     LogStdAuthCardRoleName,
     LogStdAuthCardStudentLevel,
@@ -298,7 +300,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogResearchQuestionnaireEventName  = "research_questionnaire";
   static const String   LogResearchQuestionnaireAnswersName= "answers";
 
-  // Event Attributes
+  // Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeSource                 = "source";
   static const String   LogAttributeEventId                = "event_id";
@@ -326,6 +328,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeLocation               = "location";
   static const String   LogAttributeRadioStation           = "radio_station";
 
+  // Auth Type Attributes
+  static const String   LogAuthTypeOidc                    = "oidc";
+  static const String   LogAuthTypeCode                    = "code";
+  static const String   LogAuthTypePassword                = "password";
+  static const String   LogAuthTypePasskey                 = "passkey";
+  static const String   LogAuthTypeAnonymous               = "anonymous";
+
+  // Unknown Attributes
   static const String   LogAnonymousUin                    = 'UINxxxxxx';
   static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
   static const String   LogAnonymousLastName               = 'LastNameXXXXXX';
@@ -706,6 +716,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         else if (attributeName == LogStdUserRolesName) {
           analyticsEvent[LogStdUserRolesName] = _userRoles;
         }
+        else if (attributeName == LogStdUserAuthType) {
+          analyticsEvent[LogStdUserAuthType] = _auth2LoginTypeAnalyticsValue(Auth2().account?.authType?.loginType ?? Auth2LoginType.anonymous);
+        }
         else if (attributeName == LogStdAccessibilityName) {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
@@ -1041,6 +1054,23 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
+  String? _auth2LoginTypeAnalyticsValue(Auth2LoginType? loginType) {
+    if (loginType != null) {
+      switch(loginType) {
+        case Auth2LoginType.oidc:
+        case Auth2LoginType.oidcIllinois: return LogAuthTypeOidc;
+        case Auth2LoginType.code:         return LogAuthTypeCode;
+        case Auth2LoginType.password:     return LogAuthTypePassword;
+        case Auth2LoginType.passkey:      return LogAuthTypePasskey;
+        case Auth2LoginType.apiKey:
+        case Auth2LoginType.anonymous:    return LogAuthTypeAnonymous;
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
   void logGroup({String? action, Map<String, dynamic>? attributes}) {
     Map<String, dynamic> event = {
       LogEventName           : LogGroupEventName,
@@ -1121,14 +1151,4 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     // Log the event
     logEvent(event);
   }
-}
-
-class _TicketWidget extends StatefulWidget {
-  @override
-  _TicketWidgetState createState() => _TicketWidgetState();
-}
-
-class _TicketWidgetState extends State<_TicketWidget> with TickerProviderStateMixin {
-  @override
-  Widget build(BuildContext context) => Container();
 }

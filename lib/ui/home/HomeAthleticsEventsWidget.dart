@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:neom/ext/Event2.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -214,7 +215,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes);
+    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes, analyticsFeature: AnalyticsFeature.Athletics);
   }
 
   void _refreshGames({bool showProgress = false}) {

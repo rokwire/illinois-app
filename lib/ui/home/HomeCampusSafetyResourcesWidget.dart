@@ -35,11 +35,40 @@ import 'package:neom/ui/guide/GuideEntryCard.dart';
 import 'package:neom/ui/guide/GuideListPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeCampusSafetyResourcesWidget extends StatefulWidget {
+abstract class _HomeSafetyResourcesBaseWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeCampusSafetyResourcesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  _HomeSafetyResourcesBaseWidget({super.key, this.favoriteId, this.updateController});
+
+  String get _title;
+  String get _localUrlMacro => '{{local_url}}';
+  String get _emptyContentDescription;
+  String get _listContentTitle;
+  String get _listEmptyContentDescription;
+
+  @override
+  State<StatefulWidget> createState() => _HomeSafetyResourcesBaseWidgetState();
+}
+
+class HomeSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
+  HomeSafetyResourcesWidget({super.key, super.favoriteId, super.updateController});
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.safety_resources.label.campus_safety_resources', 'Safety Resources');
+
+  @override String get _title => title;
+  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Safety Resources</b></a> for quick access here.");
+  @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources');
+  @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Safety Resources.");
+}
+
+class HomeCampusSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
+  HomeCampusSafetyResourcesWidget({super.key, super.favoriteId, super.updateController});
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -47,12 +76,14 @@ class HomeCampusSafetyResourcesWidget extends StatefulWidget {
     );
 
   static String get title => Localization().getStringEx('widget.home.campus_safety_resources.label.campus_safety_resources', 'Campus Safety Resources');
-  
-  @override
-  State<HomeCampusSafetyResourcesWidget> createState() => _HomeCampusSafetyResourcesWidgetState();
+
+  @override String get _title => title;
+  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.campus_safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Campus Safety Resources</b></a> for quick access here.");
+  @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources');
+  @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources.");
 }
 
-class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResourcesWidget> implements NotificationsListener {
+class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBaseWidget> implements NotificationsListener {
 
   List<Map<String, dynamic>>? _resourceItems;
 
@@ -62,7 +93,6 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
   final double _pageSpacing = 16;
 
   static const String localScheme = 'local';
-  static const String localUrlMacro = '{{local_url}}';
 
   @override
   void initState() {
@@ -118,7 +148,7 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.campus_safety_resources.label.campus_safety_resources', 'Campus Safety Resources'),
+      title: widget._title,
       titleIconKey: 'resources',
       child: _buildContent()
     );
@@ -204,9 +234,8 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
   }
 
   Widget _buildEmptyContent() {
-    String message = Localization().getStringEx("widget.home.campus_safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Safety Resources</b></a> for quick access here.")
-      .replaceAll(localUrlMacro, '$localScheme://${Guide.campusSafetyResourceContentType}');
-      return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
+    String message = widget._emptyContentDescription.replaceAll(widget._localUrlMacro, '$localScheme://${Guide.campusSafetyResourceContentType}');
+    return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
   }
 
   void _onMessageLink(String? url) {
@@ -220,8 +249,8 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
     Analytics().logSelect(target: "Campus Safety Resources Link", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      contentTitle: widget._listContentTitle,
+      contentEmptyMessage: widget._listEmptyContentDescription,
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
@@ -243,8 +272,8 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      contentTitle: widget._listContentTitle,
+      contentEmptyMessage: widget._listEmptyContentDescription,
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }

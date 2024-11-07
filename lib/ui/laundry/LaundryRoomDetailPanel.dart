@@ -37,16 +37,15 @@ import 'package:sprintf/sprintf.dart';
 
 class LaundryRoomDetailPanel extends StatefulWidget with AnalyticsInfo {
   final LaundryRoom room;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  LaundryRoomDetailPanel({required this.room});
+  LaundryRoomDetailPanel({required this.room, this.analyticsFeature});
 
   @override
   _LaundryRoomDetailPanelState createState() => _LaundryRoomDetailPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return room.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => room.analyticsAttributes;
 }
 
 class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> implements NotificationsListener {

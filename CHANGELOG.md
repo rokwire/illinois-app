@@ -80,11 +80,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+### Changed
+- Allow event custom range filters in the past [#4450](https://github.com/rokwire/illinois-app/issues/4450).
 
+## [6.1.16] - 2024-10-28
+### Added
+- Common assistants panel [#4445](https://github.com/rokwire/illinois-app/issues/4445).
+
+## [6.1.15] - 2024-10-25
+### Added
+- Google as assistant provider on dev environment [#4441](https://github.com/rokwire/illinois-app/issues/4441).
+
+## [6.1.14] - 2024-10-22
+### Changed
+- Implemented other [adjustments](https://github.com/rokwire/illinois-app/issues/4363#issuecomment-2428154698) to SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Updated app sections descriptions [#4431](https://github.com/rokwire/illinois-app/issues/4431). 
+
+## [6.1.13] - 2024-10-21
+### Fixed
+- Improved HomePanel accessibility- tab buttons and heading [#4411](https://github.com/rokwire/illinois-app/issues/4411). 
+### Changed
+- Implemented [adjustments](https://github.com/rokwire/illinois-app/issues/4363#issuecomment-2423308876) to SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+
+## [6.1.12] - 2024-10-15
 ### Changed
 - Cleaned up shared explore UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Updated SafeWalks UI [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 ### Fixed
-- Fixed Poll UI issues [#4414](https://github.com/rokwire/illinois-app/issues/4414).
+- Fixed map location selection for group markers [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Added
+- Added building search capability in location selection [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 
 ## [6.1.11] - 2024-10-09
 ### Added
@@ -150,6 +175,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.55] - 2024-10-24
+### Fixed
+- Bug fixes on the places bottomsheet [#4439](https://github.com/rokwire/illinois-app/issues/4439)
+
+## [6.0.54] - 2024-10-23
+### Added
+- Created a new map formatting and pins [#4337](https://github.com/rokwire/illinois-app/issues/4337)
+- Handled stored sites deep link processing [#4435](https://github.com/rokwire/illinois-app/issues/4435)
+
+## [6.0.53] - 2024-10-18
+### Added
+- Added sub-features for Map, Events, Groups, ResearchProjects and Dining features [#4425](https://github.com/rokwire/illinois-app/issues/4425).
+
+## [6.0.52] - 2024-10-16
+### Fixed
+- Fixed WalletHomePanel current analytics feature [#4418](https://github.com/rokwire/illinois-app/issues/4418).
+- Updated soundbyte icons [#4412](https://github.com/rokwire/illinois-app/issues/4412).
+### Added
+- Added user_auth_type standard analytics property [#4419](https://github.com/rokwire/illinois-app/issues/4419).
 
 ## [6.0.51] - 2024-10-15
 ### Fixed

@@ -31,6 +31,8 @@
 			"browse.surveys": ["public_surveys"],
 			"browse.polls": ["recent_polls"],
 
+            "assistant": ["uiuc_assistant", "google_assistant", "all_assistants", "uiuc_faqs"],
+
 			"settings": ["favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
 			"authenticate.connect": ["phone_or_email"],
@@ -160,6 +162,8 @@
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
+				"assistant.google_assistant"              : { "environment":  "dev"},
+				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
@@ -168,20 +172,25 @@
 				"new_student_checklist"                   : { "firstYearStudent": true }
 			},
 			"enable" : {
-				"library_card"                  : false,
-				"emergency"                     : false,
-				"safer"                         : false,
-				"parking"                       : false,
-				"wayfinding"                    : false,
-				"state_farm_center"             : false,
-				"create_stadium_poll"           : false,
-				"state_farm_wayfinding"         : false,
-				"app_help"                      : false,
-				"home.video_tutorials"          : false,
-				"home.system.welcome_video"     : false,
-				"wallet.illini_id_faq"          : false,
-				"explore.map.laundry"           : false,
-				"student_courses"               : "${config.settings.studentCoursesEnabled}"
+				"library_card"                            : false,
+				"emergency"                               : false,
+				"safer"                                   : false,
+				"parking"                                 : false,
+				"wayfinding"                              : false,
+				"state_farm_center"                       : false,
+				"create_stadium_poll"                     : false,
+				"state_farm_wayfinding"                   : false,
+				"all_notifications"                       : false,
+				"unread_notifications"                    : false,
+				"app_help"                                : false,
+				"home.video_tutorials"                    : false,
+				"home.system.welcome_video"               : false,
+				"wallet.illini_id_faq"                    : false,
+				"explore.map.laundry"                     : false,
+				"wellness.podcast"                        : false,
+				"wellness_podcast"                        : false,
+				"campus_safety_resources"                 : false,
+				"student_courses"                         : "${config.settings.studentCoursesEnabled}"
 			}
 		}
 	},

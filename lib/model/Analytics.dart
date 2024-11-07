@@ -38,6 +38,34 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
   static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
 
+  static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
+  static const AnalyticsFeature   MapEvents                      = AnalyticsFeature("Map: Events", priority: -1);
+  static const AnalyticsFeature   MapDining                      = AnalyticsFeature("Map: Dining", priority: -1);
+  static const AnalyticsFeature   MapLaundry                     = AnalyticsFeature("Map: Laundry", priority: -1);
+  static const AnalyticsFeature   MapBuildings                   = AnalyticsFeature("Map: Buildings", priority: -1);
+  static const AnalyticsFeature   MapStudentCourse               = AnalyticsFeature("Map: Student Courses", priority: -1);
+  static const AnalyticsFeature   MapAppointments                = AnalyticsFeature("Map: Appointments", priority: -1);
+  static const AnalyticsFeature   MapMTDStops                    = AnalyticsFeature("Map: MTD Stops", priority: -1);
+  static const AnalyticsFeature   MapMyLocations                 = AnalyticsFeature("Map: My Locations", priority: -1);
+  static const AnalyticsFeature   MapMentalHealth                = AnalyticsFeature("Map: Therapist", priority: -1);
+  static const AnalyticsFeature   MapStateFarm                   = AnalyticsFeature("Map: State Farm", priority: -1);
+
+  static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
+  static const AnalyticsFeature   EventsAll                      = AnalyticsFeature("Events: All", priority: -1);
+  static const AnalyticsFeature   EventsMy                       = AnalyticsFeature("Events: My", priority: -1);
+
+  static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
+  static const AnalyticsFeature   GroupsAll                      = AnalyticsFeature("Groups: All", priority: -1);
+  static const AnalyticsFeature   GroupsMy                       = AnalyticsFeature("Groups: My", priority: -1);
+
+  static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
+  static const AnalyticsFeature   ResearchProjectOpen            = AnalyticsFeature("Research at Illinois: Open", priority: -1);
+  static const AnalyticsFeature   ResearchProjectMy              = AnalyticsFeature("Research at Illinois: My", priority: -1);
+
+  static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
+  static const AnalyticsFeature   DiningAll                      = AnalyticsFeature("Dining: All", priority: -1);
+  static const AnalyticsFeature   DiningOpen                     = AnalyticsFeature("Dining: Open", priority: -1);
+
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
@@ -46,10 +74,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Buildings                      = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
   static const AnalyticsFeature   Guide                          = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
   static const AnalyticsFeature   Debug                          = AnalyticsFeature("Debug", priority: 1);
-  static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
-  static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
-  static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
@@ -62,8 +87,8 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
   static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
   static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
+
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
   static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
 
@@ -107,28 +132,59 @@ class AnalyticsFeature {
     AcademicsMyIllini,
     AcademicsAppointments,
 
-    Athletics,
+    Map,
+    MapEvents,
+    MapDining,
+    MapLaundry,
+    MapBuildings,
+    MapStudentCourse,
+    MapAppointments,
+    MapMTDStops,
+    MapMyLocations,
+    MapMentalHealth,
+    MapStateFarm,
+
     Events,
+    EventsAll,
+    EventsMy,
+
     Groups,
+    GroupsAll,
+    GroupsMy,
+
+    ResearchProject,
+    ResearchProjectOpen,
+    ResearchProjectMy,
+
+    Athletics,
     Guide,
     Settings,
     Profile,
     Notifications,
 
-    AppHelp,
     Dining,
+    DiningAll,
+    DiningOpen,
+
+    AppHelp,
     Buildings,
     MTD,
     Messages,
     News,
     Polls,
     Laundry,
-    Recent,
-    Debug,
-    ResearchProject,
     Radio,
+    Recent,
+    Safety,
+    Debug,
     StateFarmCenter,
     Onboarding,
+
+    Wallet,
+    WalletBusPass,
+    WalletIlliniCash,
+    WalletIlliniID,
+    WalletMealPlan,
 
     Wellness,
     WellnessDailyTips,
@@ -142,11 +198,6 @@ class AnalyticsFeature {
     WellnessPodcast,
     WellnessStruggling,
 
-    Wallet,
-    WalletBusPass,
-    WalletIlliniCash,
-    WalletIlliniID,
-    WalletMealPlan,
   ];
 
   final String name;

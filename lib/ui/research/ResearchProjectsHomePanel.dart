@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FlexUI.dart';
@@ -18,12 +19,22 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ResearchProjectsHomePanel extends StatefulWidget {
+class ResearchProjectsHomePanel extends StatefulWidget with AnalyticsInfo {
 
   final ResearchProjectsContentType? contentType;
 
   ResearchProjectsHomePanel({Key? key, this.contentType}) : super(key: key);
   
+  @override
+  AnalyticsFeature? get analyticsFeature {
+    switch (contentType) {
+      case ResearchProjectsContentType.my:   return AnalyticsFeature.ResearchProjectMy;
+      case ResearchProjectsContentType.open: return AnalyticsFeature.ResearchProjectOpen;
+      case null:                             return AnalyticsFeature.ResearchProject;
+    }
+  }
+
+  @override
   State<ResearchProjectsHomePanel> createState() => _ResearchProjectsHomePanelState();
 }
 
@@ -426,7 +437,11 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         if (researchProject.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: researchProject, displayType: cardDisplayType, onImageTap: () => _onTapImage(researchProject) ,),
+            child: GroupCard(
+              group: researchProject,
+              displayType: cardDisplayType,
+              onImageTap: () => _onTapImage(researchProject)
+            ,),
           ));
         }
       }

@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/MTD.dart';
 import 'package:neom/service/MTD.dart';
 import 'package:neom/ui/mtd/MTDWidgets.dart';
@@ -29,10 +30,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class MTDStopDeparturesPanel extends StatefulWidget  {
+class MTDStopDeparturesPanel extends StatefulWidget with AnalyticsInfo  {
   final MTDStop stop;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  MTDStopDeparturesPanel({required this.stop });
+  MTDStopDeparturesPanel({super.key, required this.stop, this.analyticsFeature });
 
   @override
   State<MTDStopDeparturesPanel> createState() => _MTDStopDeparturesPanelState();

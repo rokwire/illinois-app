@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:neom/ext/Explore.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Appointment.dart';
 import 'package:neom/model/Explore.dart';
 import 'package:neom/model/Laundry.dart';
@@ -23,6 +24,8 @@ import 'package:neom/service/MTD.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/service/StudentCourses.dart';
 import 'package:neom/service/Wellness.dart';
+import 'package:neom/ui/events2/Event2Widgets.dart';
+import 'package:neom/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:neom/ui/explore/ExploreListPanel.dart';
 import 'package:neom/ui/explore/ExploreMapPanel.dart';
 import 'package:neom/ui/widgets/FavoriteButton.dart';
@@ -36,6 +39,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
@@ -43,24 +47,39 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:universal_io/io.dart';
 
-class ExploreMapSelectLocationPanel extends StatefulWidget {
+class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
 
   final ExploreMapType? mapType;
   final Explore? selectedExplore;
+  final AnalyticsFeature? _analyticsFeature;
 
-  ExploreMapSelectLocationPanel({ Key? key, this.mapType, this.selectedExplore });
+  ExploreMapSelectLocationPanel({ Key? key, this.mapType, this.selectedExplore, AnalyticsFeature? analyticsFeature }) :
+    _analyticsFeature = analyticsFeature;
   
   @override
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? ExploreMapPanel.contentAnalyticsFeatures[mapType] ?? AnalyticsFeature.Map;
+
+  @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();
+
+  static final String routeName = "ExploreMapSelectLocationPanel";
+
+  static Future<Explore?> push(BuildContext context, { ExploreMapType? mapType, Explore? selectedExplore}) =>
+    Navigator.push<Explore>(context, CupertinoPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => ExploreMapSelectLocationPanel(
+        mapType: mapType,
+        selectedExplore: selectedExplore,
+      ),
+    ));
 }
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
   with SingleTickerProviderStateMixin implements NotificationsListener {
 
-  late ExploreMapType? _mapType;
-
   List<Explore>? _explores;
   bool _exploreProgress = false;
+  Future<List<Explore>?>? _exploreTask;
 
   final GlobalKey _mapContainerKey = GlobalKey();
   final GlobalKey _mapExploreBarKey = GlobalKey();
@@ -98,8 +117,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
-    _mapType = widget.mapType;
-
     _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: 0, upperBound: 1, vsync: this)
       ..addListener(() {
         setStateIfMounted(() {
@@ -132,13 +149,18 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.map.select.header.title", "Select Location")),
-      body: _buildScaffoldBody(),
+      body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody()),
       backgroundColor: Styles().colors.background,
     );
   }
 
   Widget _buildScaffoldBody() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Visibility(visible: (widget.mapType == ExploreMapType.Buildings), child:
+        Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
+          _buildBuildingsHeaderBar(),
+        ),
+      ),
       Expanded(child:
         Container(key: _mapContainerKey, color: Styles().colors.background, child:
           _buildContent(),
@@ -183,7 +205,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         onCameraIdle: _onMapCameraIdle,
         onCameraMove: _onMapCameraMove,
         onTap: _onMapTap,
-        // onPoiTap: _onMapPoiTap,
+        onPoiTap: _onMapPoiTap,
         myLocationEnabled: _userLocationEnabled,
         myLocationButtonEnabled: _userLocationEnabled,
         mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
@@ -252,19 +274,19 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     }
   }
 
-  // void _onMapPoiTap(PointOfInterest poi) {
-  //   debugPrint('ExploreMap POI tap' );
-  //   MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
-  //   if (mtdStop != null) {
-  //     _selectMapExplore(mtdStop);
-  //   }
-  //   else if (_selectedMapExplore != null) {
-  //     _selectMapExplore(null);
-  //   }
-  //   else {
-  //     _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
-  //   }
-  // }
+  void _onMapPoiTap(PointOfInterest poi) {
+    debugPrint('ExploreMap POI tap' );
+    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
+    if (mtdStop != null) {
+      _selectMapExplore(mtdStop);
+    }
+    else if (_selectedMapExplore != null) {
+      _selectMapExplore(null);
+    }
+    else {
+      _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
+    }
+  }
 
   void _onTapMarker(dynamic origin) {
     _selectMapExplore(origin);
@@ -373,12 +395,49 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      (_selectedMapExplore as Explore).exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature, selectLocationBuilder: _buildSelectExplore);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _mapType,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(
+        explores: _selectedMapExplore, exploreMapType: widget.mapType, analyticsFeature: widget.analyticsFeature, selectLocationBuilder: _buildSelectExplore,
+      ),));
     }
     _selectMapExplore(null);
+  }
+
+  Widget? _buildSelectExplore(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore }) {
+    switch (selectContext) {
+      case ExploreSelectLocationContext.card: return _buildSelectCardExplore(context, explore: explore);
+      case ExploreSelectLocationContext.detail: return _buildSelectDetailExplore(context, explore: explore);
+    }
+  }
+
+  Widget? _buildSelectDetailExplore(BuildContext context, { Explore? explore }) =>
+    RoundedButton(
+      label: Localization().getStringEx('panel.map.select.button.select.location.title', 'Select this Location'),
+      hint: Localization().getStringEx('panel.map.select.button.select.location.hint', ''),
+      //textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentWeight: 0.67,
+      onTap: () => _onTapSelectExploreLocation(context, explore: explore),
+    );
+
+  Widget? _buildSelectCardExplore(BuildContext context, { Explore? explore }) =>
+    RoundedButton(
+      label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
+      hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      contentWeight: -1,
+      onTap: () => _onTapSelectExploreLocation(context, explore: explore),
+    );
+
+  void _onTapSelectExploreLocation(BuildContext context, { Explore? explore }) {
+    Analytics().logSelect(target: 'Select');
+    Navigator.of(context).popUntil((Route route) => (route.settings.name == ExploreMapSelectLocationPanel.routeName));
+    if (explore != null) {
+      Navigator.pop(context, explore);
+    }
   }
 
   void _onTapMapClear() {
@@ -452,6 +511,24 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     );
   }
 
+  // Buildings Header Bar
+
+  Widget _buildBuildingsHeaderBar() => Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+        label: Localization().getStringEx('panel.explore.button.search.buildings.title', 'Search'),
+        hint: Localization().getStringEx('panel.explore.button.search.buildings.hint', 'Tap to search buildings'),
+        contentPadding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
+        onTap: _onBuildingsSearch
+    ),
+  ],);
+
+  void _onBuildingsSearch() {
+    Analytics().logSelect(target: 'Search');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingsSearchPanel(
+      selectLocationBuilder: _buildSelectExplore,
+    )));
+  }
+
   // Locaction Services
 
   bool get _userLocationEnabled {
@@ -473,12 +550,14 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     applyStateIfMounted(() {
       _exploreProgress = true;
     });
-    List<Explore>? explores = await _loadExplores();
-    if (mounted) {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    List<Explore>? explores = await (_exploreTask = exploreTask);
+    if (mounted && (exploreTask == _exploreTask)) {
       await _buildMapContentData(explores, pinnedExplore: widget.selectedExplore, updateCamera: true);
-      if (mounted) {
+      if (mounted && (exploreTask == _exploreTask)) {
         setState(() {
           _explores = explores;
+          _exploreTask = null;
           _exploreProgress = false;
           _mapKey = UniqueKey(); // force map rebuild
         });
@@ -487,10 +566,36 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     }
   }
 
+  Future<void> _refreshExplores() async {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    List<Explore>? explores = await (_exploreTask = exploreTask);
+    if (mounted && (exploreTask == _exploreTask)) {
+      if (!DeepCollectionEquality().equals(_explores, explores)) {
+        await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
+        if (mounted && (exploreTask == _exploreTask)) {
+          setState(() {
+            _explores = explores;
+            _exploreProgress = false;
+            _exploreTask = null;
+          });
+        }
+      }
+      else {
+        setState(() {
+          _exploreTask = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    await _refreshExplores() ;
+  }
+
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
-      switch (_mapType) {
-        case ExploreMapType.Events2: return Events2().loadEventsList(Events2Query());
+      switch (widget.mapType) {
+        case ExploreMapType.Events2: return _loadEvents2();
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
         case ExploreMapType.Buildings: return Gateway().loadBuildings();
@@ -499,12 +604,16 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return Wellness().loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSites: return Places().getAllPlaces();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
     }
     return null;
   }
+
+  Future<List<Explore>?> _loadEvents2() async =>
+    await Events2().loadEventsList(Events2Query());
 
   Future<List<Explore>?> _loadDinings() async {
     return Dinings().loadBackendDinings(false, null, null);
@@ -550,7 +659,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   // Favorites
 
   void _onFavoritesChanged() {
-    if (_mapType == ExploreMapType.MyLocations) {
+    if (widget.mapType == ExploreMapType.MyLocations) {
       _refreshMyLocations();
     }
     else {
@@ -730,8 +839,8 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
           context: context,
           imageSize: _mapGroupMarkerSize,
           backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
+          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor,
+          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor,
           count: exploreGroup.length,
         ));
       Offset markerAnchor = Offset(0.5, 0.5);

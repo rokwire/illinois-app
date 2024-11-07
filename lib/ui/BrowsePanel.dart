@@ -165,8 +165,8 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
     if (sectionsGrid != null) {
       contentList.add(
         HomeSlantWidget(
-          title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          titleIconKey: 'browse',
+          // title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
+          // titleIconKey: 'browse',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: sectionsGrid,
         )
@@ -262,13 +262,14 @@ class _BrowseSection extends StatelessWidget {
   // String get _description => description(sectionId: sectionId);
 
   // static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
+  static String get _appTitleMacro => '{{app_title}}';
 
   static String title({required String sectionId}) {
-    return Localization().getString('panel.browse.section.$sectionId.title') ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+    return Localization().getString('panel.browse.section.$sectionId.title')?.replaceAll(_appTitleMacro, appTitle) ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   }
 
   // static String description({required String sectionId}) {
-  //   return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll('{{app_title}}', appTitle) ?? '';
+  //   return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll(_appTitleMacro, appTitle) ?? '';
   // }
 
   static List<String>? favoritesFromCode(String code) {
@@ -399,7 +400,9 @@ class _BrowseSection extends StatelessWidget {
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events Feed");
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context,
+      analyticsFeature: AnalyticsFeature.EventsAll,
+    );
   }
 
   void _onTapTwitter(BuildContext context) {

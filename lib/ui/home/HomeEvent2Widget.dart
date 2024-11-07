@@ -22,6 +22,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:neom/ext/Event2.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
@@ -148,7 +149,7 @@ class HomeMyEvents2Widget extends HomeEvent2Widget {
       Uri? uri = (url != null) ? Uri.tryParse(url) : null;
       if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {
         Analytics().logSelect(target: 'Events Feed', source: runtimeType.toString());
-        Event2HomePanel.present(context);
+        Event2HomePanel.present(context, analyticsFeature: AnalyticsFeature.EventsAll);
       }
     },
   );
@@ -463,6 +464,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     Event2HomePanel.present(context,
       timeFilter: timeFilter, customStartTime: customEndTime, customEndTime: customEndTime,
       types: types, attributes: attributes, sortType: sortType,
+      analyticsFeature: AnalyticsFeature.EventsAll
     );
   }
 

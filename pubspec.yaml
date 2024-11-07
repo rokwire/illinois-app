@@ -69,6 +69,7 @@ dependencies:
   record: ^5.1.2
   csv: ^6.0.0
   flutter_file_dialog: ^3.0.1
+  flutter_markdown: ^0.7.4
   quick_actions: ^1.0.8
 
   # Below are the plugins imported alongside web integration

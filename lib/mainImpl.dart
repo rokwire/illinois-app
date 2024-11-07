@@ -52,6 +52,7 @@ import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -131,9 +132,13 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       // StudentCourses(),
       // Appointments(),
       // MTD(),
-      // SpeechToText(),
+      SpeechToText(),
       // Assistant(),
       // MobileAccess(),
+      // SkillsSelfEvaluation(),
+      // Gateway(),
+      // Places(),
+      // Safety(),
     ]);
 
     ServiceError? serviceError = await neom.Services().init();

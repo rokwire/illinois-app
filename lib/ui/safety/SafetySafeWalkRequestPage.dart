@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:neom/ext/Explore.dart';
 import 'package:neom/ext/Favorite.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Explore.dart';
@@ -20,6 +22,7 @@ import 'package:neom/ui/safety/SafetyHomePanel.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:neom/ui/widgets/QrCodePanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -61,86 +64,101 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     _detailsLayer(context),
   ],);
 
-  Widget _mainLayer(BuildContext context) => Container(color: widget.safetyPageBackgroundColor, child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-              Text(Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'), style: _titleTextStyle,)
+  Widget _mainLayer(BuildContext context) =>
+    Container(decoration: _mainLayerDecoration, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(left: 24, top: 32), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                Text(Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'), style: _titleTextStyle,)
+              ),
             ),
+            InkWell(onTap: () => _onTapOptions(context), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
+                Styles().images.getImage('more-white', excludeFromSemantics: true)
+              )
+            )
+          ],),
+        ),
+        Padding(padding: EdgeInsets.only(left: 24, right: 16, bottom: 24), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(_subTitle1Text, style: _subTitleTextStyle,),
+            Text(_subTitle2Text, style: _subTitleTextStyle,),
+            Container(height: 12,),
+            Text(_info1Text, style: _infoTextStyle,),
+            Text(_info2Text, style: _infoTextStyle,),
+            Container(height: 6,),
+            Text(_info3Text, style: _infoTextStyle,),
+          ])
+        ),
+        Stack(children: [
+          Positioned.fill(child:
+            Column(children: [
+              Expanded(child:
+                Container()
+              ),
+              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+                Container(height: 42,),
+              ),
+            ],)
           ),
-          InkWell(onTap: () => _onTapOptions(context), child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Styles().images.getImage('more-white', excludeFromSemantics: true)
+          Padding(padding: EdgeInsets.only(left: 24, right: 24), child:
+            SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
+          ),
+        ],),
+      ],)
+    );
+
+  Widget _detailsLayer(BuildContext context) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24,), child:
+      Column( children: [
+        HtmlWidget(_phoneDetailHtml,
+          onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
+          textStyle:  _htmlDetailTextStyle,
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+        ),
+        Container(height: 24,),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+            Styles().images.getImage('info') ?? _detailIconSpacer,
+          ),
+          Expanded(child:
+            Align(alignment: Alignment.topLeft, child:
+            HtmlWidget(_safeRidesDetailHtml,
+              onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: 'SafeRides'); return true;},
+              textStyle:  _htmlDetailTextStyle,
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+            ),
+            ),
+          )
+        ],),
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+            Styles().images.getImage('settings') ?? _detailIconSpacer,
+          ),
+          Expanded(child:
+            InkWell(onTap: () => _onTapLocationSettings(context), child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                Text(Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings'),
+                  style:  Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
+                ),
+              )
             )
           )
         ],),
-      ),
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(_subTitle1Text, style: _subTitleTextStyle,),
-          Text(_subTitle2Text, style: _subTitleTextStyle,),
-          Container(height: 12,),
-          Text(_info1Text, style: _infoTextStyle,),
-          Text(_info2Text, style: _infoTextStyle,),
-          Container(height: 6,),
-          Text(_info3Text, style: _infoTextStyle,),
-        ])
-      ),
-      Stack(children: [
-        Positioned.fill(child:
-          Column(children: [
-            Expanded(child:
-              Container()
-            ),
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-              Container(height: 42,),
-            ),
-          ],)
-        ),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
-        ),
-      ],),
-    ],)
-  );
+      ],)
+    );
 
-  Widget _detailsLayer(BuildContext context) => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16,), child:
-    Column( children: [
-      HtmlWidget(_phoneDetailHtml,
-        onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
-        textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
-        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-      ),
-      Container(height: 24,),
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.only(right: 6), child:
-          Styles().images.getImage('info') ?? _detailIconSpacer,
-        ),
-        Expanded(child:
-          HtmlWidget(_safeRidesDetailHtml,
-            onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: 'SafeRides'); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-          ),
-        )
-      ],),
-      Row(children: [
-        Padding(padding: EdgeInsets.only(right: 6), child:
-          Styles().images.getImage('settings') ?? _detailIconSpacer,
-        ),
-        Expanded(child:
-          InkWell(onTap: () => _onTapLocationSettings(context), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-              Text(Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings'),
-                style:  Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
-              ),
-            )
-          )
-        )
-      ],),
-    ],)
+  BoxDecoration get _mainLayerDecoration => BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Styles().colors.fillColorPrimaryVariant,
+        Styles().colors.gradientColorPrimary,
+      ]
+    )
   );
 
   Widget get _detailIconSpacer => SizedBox(width: 18, height: 18,);
@@ -174,13 +192,15 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
       .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '9:00 p.m.')
       .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '2:30 a.m.');
 
+  TextStyle? get _htmlDetailTextStyle => Styles().textStyles.getTextStyle('widget.message.small');
+
   String get _phoneDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.phone.html', 'You can also schedule a walk by calling <a href=\'tel:$_safeWalkPhoneNumberMacro\'>$_safeWalkPhoneNumberMacro</a>.')
       .replaceAll(_safeWalkPhoneNumberMacro, Config().safeWalkPhoneNumber ?? '');
 
   String get _safeRidesDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.saferides.html', 'Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href=\'$_safeRidesUrlMacro\'>SafeRides</a>&nbsp;<img src=\'asset:$_externalLinkMacro\' alt=\'\'/> at night..')
-      .replaceAll(_safeRidesUrlMacro, Guide().detailUrl(Config().safeRidesGuideId, analyticsFeature: AnalyticsFeature.Safety))
+      .replaceAll(_safeRidesUrlMacro, Config().safeRidesAboutUrl ?? '')
       .replaceAll(_externalLinkMacro, 'images/external-link.png');
 
   void _onTapOptions(BuildContext context) {
@@ -191,7 +211,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (context) => Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: [
           RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.about.text', 'About SafeWalks'), rightIconKey: 'external-link', onTap: () => _onTapAboutSafeWalks(context)),
           RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.share.text', 'Share SafeWalks'), onTap: () => _onTapShareSafeWalks(context)),
@@ -260,10 +280,11 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 
   final Widget? headerWidget;
   final Color? backgroundColor;
+  final BorderRadius borderRadius;
   final Map<String, dynamic>? origin;
   final Map<String, dynamic>? destination;
 
-  SafetySafeWalkRequestCard({super.key, this.headerWidget, this.backgroundColor, this.origin, this.destination});
+  SafetySafeWalkRequestCard({super.key, this.headerWidget, this.backgroundColor, this.borderRadius = const BorderRadius.all(const Radius.circular(16)), this.origin, this.destination});
 
   @override
   State<StatefulWidget> createState() => _SafetySafeWalkRequestCardState();
@@ -272,7 +293,9 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   static const String _safeWalkUserNameMacro = '{{safewalk_user_name}}';
   static const String _safeWalkOriginMacro = '{{safewalk_origin}}';
+  static const String _safeWalkOriginUrlMacro = '{{safewalk_origin_url}}';
   static const String _safeWalkDestinationMacro = '{{safewalk_destination}}';
+  static const String _safeWalkDestinationUrlMacro = '{{safewalk_destination_url}}';
 
   dynamic _originLocation, _destinationLocation;
   bool _originProgress = false, _destinationProgress = false, _sendProgress = false;
@@ -342,19 +365,18 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 
         Padding(padding: EdgeInsets.only(top: 24, bottom: 8), child:
           Row(children: [
-            Padding(padding: EdgeInsets.only(right: 8), child:
-              _detailIconSpacer,
-            ),
+            //Padding(padding: EdgeInsets.only(right: 8), child: _detailIconSpacer,),
             Expanded(child:
               Center(child:
                 RoundedButton(
                   label: Localization().getStringEx('widget.safewalks_request.start.title', 'Start with a Text'),
                   //textStyle: _sendEnabled ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                   //borderColor: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
                   padding: EdgeInsets.symmetric(vertical: 8),
-                  leftIcon: Styles().images.getImage('paper-plane'), //, color: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent),
-                  leftIconPadding: EdgeInsets.only(left: 12, right: 8),
-                  rightIconPadding: EdgeInsets.only(left: 16),
+                  leftIcon: Styles().images.getImage('paper-plane', size: _sendIconSize),
+                  leftIconPadding: EdgeInsets.symmetric(horizontal: 12),
+                  rightIconPadding: EdgeInsets.only(left: 24),
                   contentWeight: -1,
                   progress: _sendProgress,
                   onTap: _onTapSend,
@@ -373,7 +395,8 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           DropdownButton<_SafeWalkLocationType>(
             icon: Styles().images.getImage('chevron-down'),
             isExpanded: true,
-            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+            style: _dropDownItemTextStyle,
+            dropdownColor: Styles().colors.surface,
             hint: _dropdownButtonHint(text: text, progress: progress),
             items: items,
             onChanged: onChanged,
@@ -387,7 +410,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       SizedBox(width: 18, height: 18, child:
         CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
       )
-    ):
+    ) :
     Text(text ?? '', style: _dropDownItemTextStyle,);
 
   Widget _dropDownItemWidget({String? title, Widget? icon}) =>
@@ -399,13 +422,14 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         Expanded(child:
           Text(title ?? '', style: _dropDownItemTextStyle,),
         ),
-      ],)
+      ],),
     );
 
   BoxDecoration get _cardDecoration => BoxDecoration(
     color: widget.backgroundColor ?? Styles().colors.background,
-    border: Border.all(color: Styles().colors.mediumGray2, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(16))
+    //border: Border.all(color: Styles().colors.mediumGray2, width: 1),
+    borderRadius: widget.borderRadius,
+    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
   );
 
   BoxDecoration get _dropdownButtonDecoration => BoxDecoration(
@@ -437,9 +461,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       icon: _safeWalkLocationTypeDisplayIcon(locationType),
     );
 
-  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
-  TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.semi_fat');
+  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.small.fat');
+  TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.small.semi_fat');
 
+  double get _sendIconSize => 14;
   double get _detailIconSize => 18;
   Widget get _detailIconSpacer => SizedBox(width: _detailIconSize, height: _detailIconSize,);
 
@@ -495,10 +520,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   }
 
   Future<dynamic> _provideMapLocation(dynamic location, { void Function(bool)? updateProgress }) async =>
-    Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
+    ExploreMapSelectLocationPanel.push(context,
       mapType: ExploreMapType.Buildings,
       /*selectedExplore: _locationExplore(location),*/
-    )));
+    );
 
   Future<dynamic> _provideSavedLocation() async =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel(
@@ -552,6 +577,21 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     }
     else if (location is Favorite) {
       return location.favoriteTitle;
+    }
+    else {
+      return null;
+    }
+  }
+
+  Future<String?> _locationUrl(dynamic location) =>
+    GeoMapUtils.locationUrl(_locationUrlSource(location));
+
+  dynamic _locationUrlSource(dynamic location) {
+    if (location is Position) {
+      return LatLng(location.latitude, location.longitude);
+    }
+    else if (location is Explore) {
+      return location.exploreLocation?.exploreLocationMapCoordinate ?? location.exploreLocation?.displayAddress;
     }
     else {
       return null;
@@ -623,10 +663,15 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.recipient.title', 'Unable to send text message, recipient number is not available.'));
       }
       else {
-        String message = Localization().getStringEx('panel.safewalks_request.message.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n\nMy Destination:\n$_safeWalkDestinationMacro')
+        String messageSource = Auth2().isOidcLoggedIn ?
+          Localization().getStringEx('widget.safewalks_request.message.sms.logged_in.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro') :
+          Localization().getStringEx('widget.safewalks_request.message.sms.logged_out.text', 'Hi, I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro');
+        String message = messageSource
           .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Unauthenticated User'))
           .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
-          .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'));
+          .replaceAll(_safeWalkOriginUrlMacro, await _locationUrl(_originLocation) ?? '')
+          .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
+          .replaceAll(_safeWalkDestinationUrlMacro, await _locationUrl(_destinationLocation) ?? '');
 
         String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
         Uri? uri = Uri.tryParse(url);
@@ -662,7 +707,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 String? _safeWalkLocationTypeToDisplayString(_SafeWalkLocationType? locationType) {
   switch (locationType) {
     case _SafeWalkLocationType.current: return Localization().getStringEx('widget.safewalks_request.location.current.title', 'Use My Location');
-    case _SafeWalkLocationType.map: return Localization().getStringEx('widget.safewalks_request.location.map.title', 'Search Maps');
+    case _SafeWalkLocationType.map: return Localization().getStringEx('widget.safewalks_request.location.map.title', 'Search Map');
     case _SafeWalkLocationType.saved: return Localization().getStringEx('widget.safewalks_request.location.saved.title', 'View Saved Locations');
     default: return null;
   }

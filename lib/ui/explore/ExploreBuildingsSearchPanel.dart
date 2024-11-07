@@ -16,6 +16,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:neom/ext/Explore.dart';
 import 'package:neom/model/StudentCourse.dart';
 import 'package:neom/service/Gateway.dart';
 import 'package:neom/ui/explore/ExploreBuildingDetailPanel.dart';
@@ -30,7 +32,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class ExploreBuildingsSearchPanel extends StatefulWidget {
 
-  ExploreBuildingsSearchPanel({Key? key}) : super(key: key);
+  final ExploreSelectLocationBuilder? selectLocationBuilder;
+  final Position? initialLocationData;
+
+  ExploreBuildingsSearchPanel({super.key, this.initialLocationData, this.selectLocationBuilder});
 
   @override
   _ExploreBuildingsSearchPanelState createState() => _ExploreBuildingsSearchPanelState();
@@ -160,11 +165,15 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
     List<Widget> cardsList = <Widget>[];
     for (Building building in _buildings!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: 8), child:
-          ExploreCard(explore: building, onTap: () => _onTapBuilding(building)),
+        ExploreCard(explore: building,
+          locationData: widget.initialLocationData,
+          selectLocationBuilder: widget.selectLocationBuilder,
+          onTap: () => _onTapBuilding(building)
+        ),
       ),);
     }
     return Padding(padding: EdgeInsets.all(8), child:
-    Column(children:  cardsList,)
+      Column(children:  cardsList,)
     );
   }
 
@@ -188,7 +197,10 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
 
   void _onTapBuilding(Building building) {
     Analytics().logSelect(target: 'Building: ${building.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: building,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(
+      building: building,
+      selectLocationBuilder: widget.selectLocationBuilder,
+    )));
   }
 
   void _onTextChanged(String text) {

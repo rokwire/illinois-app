@@ -13,11 +13,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ExploreBuildingDetailPanel extends StatefulWidget {
+class ExploreBuildingDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Building? building;
   final String? buildingNumber;
+  final ExploreSelectLocationBuilder? selectLocationBuilder;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  ExploreBuildingDetailPanel({Key? key, this.building, this.buildingNumber}) : super(key: key);
+  ExploreBuildingDetailPanel({super.key, this.building, this.buildingNumber, this.analyticsFeature, this.selectLocationBuilder });
 
   @override
   State<StatefulWidget> createState() => _ExploreBuildingDetailPanelState();
@@ -93,6 +95,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       _buildLocation(),
       _buildShare(),
       // _buildFloorPlansAndAmenities(),
+      _buildSelectLocation(),
     ]);
 
   Widget _buildTitle() =>
@@ -156,6 +159,12 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
         ),
       ),
     );
+
+  Widget _buildSelectLocation() {
+    Widget? selectorWidget = widget.selectLocationBuilder?.call(context, ExploreSelectLocationContext.detail, explore: _building);
+    return (selectorWidget != null) ? Padding(padding: EdgeInsets.only(top: 32), child: selectorWidget) : Container();
+  }
+
 
   Widget _buildLoadingContent() => Center(child:
     Padding(padding: EdgeInsets.zero, child:

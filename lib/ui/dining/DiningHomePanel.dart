@@ -37,7 +37,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/model/Dining.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -51,17 +50,15 @@ class _DiningSortKey extends OrdinalSortKey {
   static const _DiningSortKey headerBar = _DiningSortKey(2.0);
 }
 
-class DiningHomePanel extends StatefulWidget with AnalyticsInfo{
+class DiningHomePanel extends StatefulWidget with AnalyticsInfo {
 
   final DiningFilter? initialFilter;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  DiningHomePanel({this.initialFilter });
+  DiningHomePanel({this.initialFilter, this.analyticsFeature });
 
   @override
   _DiningHomePanelState createState() => _DiningHomePanelState();
-
-  @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Dining;
 }
 
 class _DiningHomePanelState extends State<DiningHomePanel> implements NotificationsListener {
@@ -448,11 +445,10 @@ class _DiningHomePanelState extends State<DiningHomePanel> implements Notificati
 
   //Click listeners
 
-  void _onTapDining(Explore explore) {
-    Analytics().logSelect(target: explore.exploreTitle);
-
+  void _onTapDining(Dining dining) {
+    Analytics().logSelect(target: dining.title);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-        ExploreDiningDetailPanel(dining: explore as Dining)
+      ExploreDiningDetailPanel(dining: dining, analyticsFeature: widget.analyticsFeature,)
     ));
   }
 
