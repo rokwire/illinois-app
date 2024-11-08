@@ -22,6 +22,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -100,7 +101,7 @@ class _AppHelpVideoTutorialPanelState extends State<AppHelpVideoTutorialPanel> {
     String? fileContents;
     String? closedCaptionsUrl = widget.videoTutorial.ccUrl;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
-      Response? response = await Network().get(closedCaptionsUrl);
+      Response? response = await Network().get(closedCaptionsUrl, auth: Auth2());
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
         fileContents = response?.body;
