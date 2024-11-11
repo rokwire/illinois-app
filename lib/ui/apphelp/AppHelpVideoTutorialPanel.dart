@@ -101,7 +101,7 @@ class _AppHelpVideoTutorialPanelState extends State<AppHelpVideoTutorialPanel> {
     String? fileContents;
     String? closedCaptionsUrl = widget.videoTutorial.ccUrl;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
-      Response? response = await Network().get(closedCaptionsUrl, auth: Auth2());
+      Response? response = await Network().get(closedCaptionsUrl, headers: Auth2().webNetworkAuthHeaders);
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
         fileContents = response?.body;
