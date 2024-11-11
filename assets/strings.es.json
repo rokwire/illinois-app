@@ -1166,7 +1166,7 @@
 
     "panel.explore.storied_sites.title": "Storied Sites",
     "panel.explore.storied_sites.load.error": "Failed to load stored site details",
-    "panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please try again.",
+    "panel.explore.storied_sites.check_in.try_again": "Check-in failed. Please sign in and try again.",
     "panel.explore.storied_sites.check_in.failed": "Check-in failed due to an error.",
     "panel.explore.storied_sites.one.day": "You can only check in once per day.",
     "panel.explore.storied_sites.failed.clear": "Failed to clear check-in date. Please try again.",

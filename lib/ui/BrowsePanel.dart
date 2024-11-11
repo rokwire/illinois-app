@@ -143,12 +143,14 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 ///////////////////////////
 // BrowseContentWidget
 
-class BrowseContentWidget extends StatefulWidget {
+class BrowseContentWidget extends StatefulWidget with AnalyticsInfo {
   BrowseContentWidget({super.key});
 
   @override
   State<StatefulWidget> createState() => _BrowseContentWidgetState();
 
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Browse;
 }
 
 class _BrowseContentWidgetState extends State<BrowseContentWidget> implements NotificationsListener {

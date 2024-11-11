@@ -99,7 +99,14 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _HomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
+  String? get analyticsPageName =>
+    _contentWidget.runtimeType.toString();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    JsonUtils.cast<AnalyticsInfo>(_contentWidget)?.analyticsFeature;
+
+  Widget get _contentWidget => _HomePanelState()._buildContentWidget(initialContentType ?? _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites);
 
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);

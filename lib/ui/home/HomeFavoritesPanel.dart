@@ -108,7 +108,7 @@ class _HomeFavoritesPanelState extends State<HomeFavoritesPanel> with AutomaticK
 ////////////////////////
 // HomeFavoritesContentWidget
 
-class HomeFavoritesContentWidget extends StatefulWidget {
+class HomeFavoritesContentWidget extends StatefulWidget with AnalyticsInfo {
   final Set<String>? availableSystemCodes;
   final StreamController<String>? updateController;
 
@@ -116,6 +116,9 @@ class HomeFavoritesContentWidget extends StatefulWidget {
 
   @override
   _HomeFavoritesContentWidgetState createState() => _HomeFavoritesContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Favorites;
 }
 
 class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget> implements NotificationsListener {
