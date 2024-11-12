@@ -243,7 +243,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 ],
               ),
               Container(
-                child: Semantics(excludeSemantics: true, child: Styles().images.getImage('slant-dark', excludeFromSemantics: true)),
+                  height: 112,
+                  width: double.infinity,
+                  child: Styles().images.getImage('slant-dark', fit: BoxFit.fill, excludeFromSemantics: true)
               ),
               Container(
                 color: Styles().colors.background,
