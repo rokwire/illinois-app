@@ -23,6 +23,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -65,7 +66,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   int _groupsLoadingProgress = 0;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
-  bool _myGroupsBusy = false;
 
   String? _newGroupId;
   GlobalKey? _newGroupKey;
@@ -177,10 +177,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _updateState();
   }
 
-  bool get _showMyGroups {
-    return FlexUI().isAuthenticationAvailable;
-  }
-
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
     if (_userGroups != null) {
       for (Group group in _userGroups!) {
@@ -276,14 +272,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildGroupsContentSelection() {
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
-      progress: _myGroupsBusy,
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
       label: _getContentLabel(_selectedContentType),
-      onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null
+      onTap: _changeContentTypesVisibility
     ));
   }
 
@@ -471,33 +466,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyGroupsContent(){
-    List<Group> myGroups = <Group>[], myPendingGroups = <Group>[];
-    _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
-
-    if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
-      return Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-          child: RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(
-                  style: Styles().textStyles.getTextStyle("widget.message.dark.regular"),
-                  children:[
-                    TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
-                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-                        recognizer: TapGestureRecognizer()..onTap = () {
-                          Analytics().logSelect(target: "All Groups");
-                          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
-                        }, ),
-                      TextSpan(text:"."),
-              ]
-              ))
-      );
+    if (!Auth2().isLoggedIn) {
+      return _buildLoggedOutContent();
     }
     else {
-      return Column(children: [
-        _buildMyGroupsSection(myGroups),
-        _buildMyPendingGroupsSection(myPendingGroups),
-      ],);
+      List<Group> myGroups = <Group>[], myPendingGroups = <Group>[];
+      _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
+
+      if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
+        return _buildEmptyMyGroupsContent();
+      }
+      else {
+        return Column(children: [
+          _buildMyGroupsSection(myGroups),
+          _buildMyPendingGroupsSection(myPendingGroups),
+        ],);
+      }
     }
   }
 
@@ -511,7 +495,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
-              onImageTap: () { onTapImage(group); },
+              onImageTap: () { _onTapImage(group); },
               key: _getGroupKey(group),
             ),
           ));
@@ -594,6 +578,39 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  Widget _buildLoggedOutContent() {
+    final String loginMacro = "{{login}}";
+    String messageTemplate = Localization().getStringEx("panel.groups_home.label.my_groups.logged_out", "You are not logged in. To access your groups, you need to $loginMacro first.");
+    List<String> messages = messageTemplate.split(loginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "Login"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  Widget _buildEmptyMyGroupsContent() {
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children:[
+          TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
+          TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+            recognizer: TapGestureRecognizer()..onTap = _onSelectAllGroups, ),
+          TextSpan(text:"."),
+        ])
+      )
+    );
+  }
+
   Key? _getGroupKey(Group group) {
     if ((_newGroupId != null) && (_newGroupId == group.id)) {
       return _newGroupKey;
@@ -640,24 +657,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onSelectMyGroups() {
     if(_selectedContentType != rokwire.GroupsContentType.my){
-      if (Auth2().isOidcLoggedIn) {
-        setState(() { _selectedContentType = rokwire.GroupsContentType.my; });
-      }
-      else {
-        setState(() { _myGroupsBusy = true; });
-        
-        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-          if (mounted) {
-            setState(() {
-              _myGroupsBusy = false;
-              if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _selectedContentType = rokwire.GroupsContentType.my;
-              }
-            });
-          }
-        });
-
-      }
+      setState(() {
+        _selectedContentType = rokwire.GroupsContentType.my;
+      });
     }
   }
 
@@ -671,19 +673,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _reloadGroupsContent();
   }
 
-  void onTapImage(Group? group){
+  void _onTapImage(Group? group){
     Analytics().logSelect(target: "Image");
     if(group?.imageURL!=null){
       Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "Login");
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+    }
+    else {
+      Auth2().authenticateWithOidc();
+    }
+  }
   
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
-  }
-
-  bool get _canTapGroupsContentType {
-    return _showMyGroups && !_myGroupsBusy;
   }
 
   ///////////////////////////////////

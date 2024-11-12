@@ -189,7 +189,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
               ],) : Container(),
             ],)
           ),
-          ((!Auth2().isOidcLoggedIn) && _canSignIn) ? Expanded(child:
+          (!Auth2().isOidcLoggedIn) ? Expanded(child:
             Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 16), child:
               RoundedButton(
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
@@ -444,10 +444,6 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
     );
 
   Widget _buildPrivacyAlertSection() {
-    if(_canSignIn){
-      return Container();
-    }
-
     final String iconMacro = '{{privacy_level_icon}}';
     String privacyMsg = Localization().getStringEx('panel.settings.illini_cash.label.privacy_alert.msg', "With your privacy level at $iconMacro , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.");
     int iconMacroPosition = privacyMsg.indexOf(iconMacro);
@@ -538,7 +534,10 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
 
   void _onTapLogIn() {
     Analytics().logSelect(target: "Log in");
-    if (_authLoading != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+    }
+    else if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
@@ -549,10 +548,6 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
         }
       });
     }
-  }
-
-  bool get _canSignIn{
-    return FlexUI().isAuthenticationAvailable;
   }
 }
 
