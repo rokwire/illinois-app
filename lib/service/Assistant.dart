@@ -1,9 +1,11 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -15,6 +17,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
   static const String _faqContentCategory = "assistant_faqs";
   Map<String, dynamic>? _faqsContent;
+  Position? _currentLocation;
 
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
     AssistantProvider.uiuc: List<Message>.empty(growable: true),
@@ -41,6 +44,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
       Auth2.notifyLoginChanged,
+      LocationServices.notifyLocationChanged,
     ]);
   }
 
@@ -48,6 +52,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   Future<void> initService() async {
     _loadAllMessages();
     _initFaqs();
+    _loadLocation();
   }
 
   @override
@@ -58,7 +63,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Content()]);
+    return Set.from([Content(), LocationServices()]);
   }
 
   // NotificationsListener
@@ -69,6 +74,10 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
       _loadAllMessages();
+    } else if (name == LocationServices.notifyLocationChanged) {
+      if ((param == null) || (param is Position)) {
+        _currentLocation = param;
+      }
     }
   }
 
@@ -187,6 +196,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     }
   }
 
+  // Location
+
+  void _loadLocation() {
+    LocationServices().location.then((position) {
+      _currentLocation = position;
+    });
+  }
+
   // Implementation
   
   Future<Message?> sendQuery(String? query, {AssistantProvider? provider, Map<String, String>? context}) async {
@@ -207,6 +224,11 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     }
     if (provider != null) {
       body['provider'] = assistantProviderToKeyString(provider);
+    }
+    if (_currentLocation != null) {
+      body['params'] = {
+        'location': {'latitude': _currentLocation!.latitude, 'longitude': _currentLocation!.longitude}
+      };
     }
 
     try {
