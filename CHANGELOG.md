@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed analytics feature that we send for "Start with a Text" button tap [#4447](https://github.com/rokwire/illinois-app/issues/4447).
-- Fixed Padding for BrowsePanel Sections content[#4411](https://github.com/rokwire/illinois-app/issues/4411).
+- Fixed Padding for BrowsePanel Sections content [#4411](https://github.com/rokwire/illinois-app/issues/4411).
+- Fixed Slant image size in AthleticsGameDetailHeading [#4394](https://github.com/rokwire/illinois-app/issues/4394).
 ### Changed
 - Allow event custom range filters in the past [#4450](https://github.com/rokwire/illinois-app/issues/4450).
 - Consistent Create and Search UX for Groups, Events, and Research [#4448](https://github.com/rokwire/illinois-app/issues/4448).
