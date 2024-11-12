@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed analytics feature that we send for "Start with a Text" button tap [#4447](https://github.com/rokwire/illinois-app/issues/4447).
-
 ### Changed
 - Allow event custom range filters in the past [#4450](https://github.com/rokwire/illinois-app/issues/4450).
+- Consistent Create and Search UX for Groups, Events, and Research [#4448](https://github.com/rokwire/illinois-app/issues/4448).
 
 ## [6.1.16] - 2024-10-28
 ### Added

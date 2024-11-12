@@ -401,26 +401,39 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildCommandsBar() {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        Visibility(visible: _canCreateGroup, child:
-          InkWell(onTap: _onTapCreate, child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
-                Padding(padding: EdgeInsets.only(left: 4), child:
-                  Styles().images.getImage('plus-circle', excludeFromSemantics: true)
-                )
-              ])
-            ),
-          ),
+    const double defaultIconPadding = 14;
+    const double innerIconPadding = 8;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Visibility(
+          visible: _canCreateGroup,
+          child: IconButton(
+              padding:
+                  EdgeInsets.only(left: defaultIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: innerIconPadding),
+              constraints: BoxConstraints(),
+              style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              icon: Styles().images.getImage('plus-circle', excludeFromSemantics: true) ?? Container(),
+              onPressed: _onTapCreate),
         ),
-        Semantics(label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-          IconButton(icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(), onPressed: () {
-            Analytics().logSelect(target: "Search");
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-          },),
+        Semantics(
+          label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"),
+          child: IconButton(
+            padding:
+                EdgeInsets.only(left: innerIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: defaultIconPadding),
+            constraints: BoxConstraints(),
+            style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(),
+            onPressed: () {
+              Analytics().logSelect(target: "Search");
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+            },
+          ),
         )
-    ],);
+      ],
+    );
   }
 
   void _onFilterAttributes() {
