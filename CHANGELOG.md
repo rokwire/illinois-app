@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Allow event custom range filters in the past [#4450](https://github.com/rokwire/illinois-app/issues/4450).
 - Consistent Create and Search UX for Groups, Events, and Research [#4448](https://github.com/rokwire/illinois-app/issues/4448).
+- Keep login UI available when authorization is not available [#4103](https://github.com/rokwire/illinois-app/issues/4103).
 ### Added
 - Send location when requesting assistant [#4464](https://github.com/rokwire/illinois-app/issues/4464).
 
