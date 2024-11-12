@@ -3041,8 +3041,6 @@
 	"panel.research_projects.home.header_bar.title": "Research at Illinois",
 	"panel.research_projects.home.content_type.open.title": "进行中的研究计划",
 	"panel.research_projects.home.content_type.my.title": "我的研究计划",
-	"panel.research_projects.home.dropdown.create.title": "创建新的研究计划",
-	"panel.research_projects.home.dropdown.search.title": "搜寻研究计划",
 	"panel.research_projects.home.button.create.title": "创建",
 	"panel.research_projects.home.button.search.title": "搜寻",
 	"panel.research_projects.home.status.error.open.text": "无法加载进行中的研究计划。",

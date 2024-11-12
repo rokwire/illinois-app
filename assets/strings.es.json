@@ -3056,8 +3056,6 @@
     "panel.research_projects.home.header_bar.title": "Investigación en Illinois",
     "panel.research_projects.home.content_type.open.title": "Proyectos de Investigación Abiertos",
     "panel.research_projects.home.content_type.my.title": "Mi Participación en Investigación",
-    "panel.research_projects.home.dropdown.create.title": "Crear un Nuevo Proyecto de Investigación",
-    "panel.research_projects.home.dropdown.search.title": "Buscar los Proyectos de Investigación",
     "panel.research_projects.home.button.create.title": "Crear",
     "panel.research_projects.home.button.search.title": "Buscar",
     "panel.research_projects.home.status.error.open.text": "Error al cargar los proyectos de investigación abiertos.",
