@@ -217,10 +217,8 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
 
     if (sectionsList.isNotEmpty) {
       contentList.add(
-        HomeSlantWidget(
-          // title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          // titleIconKey: 'browse',
-          childPadding: HomeSlantWidget.defaultChildPadding,
+        _BrowseSlantWidget(
+          childPadding: _BrowseSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )
       );
@@ -1272,5 +1270,37 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
     else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
+  }
+}
+
+class _BrowseSlantWidget extends StatelessWidget {
+
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16);
+  final double flatHeight = 40;
+  final double slantHeight = 60;
+  final EdgeInsetsGeometry childPadding;
+  final Widget child;
+
+  const _BrowseSlantWidget({Key? key, required this.child,  required this.childPadding}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      Stack(children:<Widget>[
+        // Slant
+        Column(children: <Widget>[
+          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
+          Container(color: Styles().colors.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+              Container(height: slantHeight,),
+            ),
+          ),
+        ],),
+
+        // Content
+        Padding(padding: childPadding, child:
+          child ?? Container()
+        )
+      ]);
   }
 }
