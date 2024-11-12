@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -68,6 +70,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Map<String, String>? _userContext;
 
+  LocationServicesStatus? _locationStatus;
+  Position? _currentLocation;
+
   late StreamSubscription _streamSubscription;
   bool _loading = false;
   TextEditingController _negativeFeedbackController = TextEditingController();
@@ -81,6 +86,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
       SpeechToText.notifyError,
+      LocationServices.notifyStatusChanged,
+      LocationServices.notifyLocationChanged,
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
@@ -88,6 +95,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       _clearAllMessages();
     });
 
+    _loadLocationStatus();
     _onPullToRefresh();
 
     _userContext = _getUserContext();
@@ -138,6 +146,23 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       setState(() {
         _listening = false;
       });
+    } else if (name == LocationServices.notifyStatusChanged) {
+      if (param == null) {
+        _loadLocationStatus();
+      } else if (param is LocationServicesStatus) {
+        _locationStatus = param;
+        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
+          _loadLocationStatus();
+        } else {
+          _loadLocationIfAllowed();
+        }
+      }
+    } else if (name == LocationServices.notifyLocationChanged) {
+      if (_locationStatus == LocationServicesStatus.permissionAllowed) {
+        _currentLocation = param;
+      } else {
+        _currentLocation = null;
+      }
     }
   }
 
@@ -848,7 +873,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
-    Message? response = await Assistant().sendQuery(message, provider: provider, context: userContext);
+    Message? response = await Assistant().sendQuery(message, provider: provider, location: _currentLocation, context: userContext);
     if (mounted) {
       setState(() {
         if (response != null) {
@@ -1013,6 +1038,43 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _scrollListener() {
     _scrollPosition = _scrollController.position.pixels;
+  }
+
+  void _loadLocationStatus() {
+    LocationServices().status.then((LocationServicesStatus? status) {
+      if (status == LocationServicesStatus.serviceDisabled) {
+        LocationServices().requestService().then((status) {
+          if (status == LocationServicesStatus.permissionNotDetermined) {
+            LocationServices().requestPermission().then((LocationServicesStatus? status) {
+              _onLocationStatus(status);
+            });
+          } else {
+            _onLocationStatus(status);
+          }
+        });
+      } else if (status == LocationServicesStatus.permissionNotDetermined) {
+        LocationServices().requestPermission().then((LocationServicesStatus? status) {
+          _onLocationStatus(status);
+        });
+      } else {
+        _onLocationStatus(status);
+      }
+    });
+  }
+
+  void _onLocationStatus(LocationServicesStatus? status) {
+    _locationStatus = status;
+    _loadLocationIfAllowed();
+  }
+
+  void _loadLocationIfAllowed() {
+    if (_locationStatus == LocationServicesStatus.permissionAllowed) {
+      LocationServices().location.then((position) {
+        _currentLocation = position;
+      });
+    } else {
+      _currentLocation = null;
+    }
   }
 
   AssistantProvider get _provider => widget.provider;
