@@ -136,12 +136,6 @@
 			"locations": {
 			},
 			"privacy": {
-				"connect"                         	      : 4,
-
-				"authenticate.connected"              	  : 4,
-				"authenticate.link"                       : 4,
-				"authenticate.linked"                     : 4,
-
 				"onboarding.notifications_auth"   	      : 4,
 				"onboarding.location_auth"        	      : 2,
 				"onboarding.roles"                   	    : 3,

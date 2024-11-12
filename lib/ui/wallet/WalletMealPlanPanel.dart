@@ -268,12 +268,8 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
       widgets.add(Padding(
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
         child: RoundedButton(
-          label: Localization().getStringEx(
-              "panel.settings.meal_plan.button.login_to_view_meal_plan.text",
-              "Sign in to View Your Meal Plan"),
-          hint: Localization().getStringEx(
-              'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
-              ''),
+          label: Localization().getStringEx("panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Sign in to View Your Meal Plan"),
+          hint: Localization().getStringEx('panel.settings.meal_plan.button.login_to_view_meal_plan.hint', ''),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
           backgroundColor: Styles().colors.white,
           borderColor: Styles().colors.fillColorSecondary,
@@ -527,7 +523,10 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
 
   void _onTapLogIn() {
     Analytics().logSelect(target: "Log in");
-    if (_authLoading != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showDialogResult(context, Localization().getStringEx("common.message.login.not_available", "To sign in you need to set your privacy level to 4 or 5 under Settings."));
+    }
+    else if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
