@@ -638,7 +638,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     Analytics().logPageWidget(_contentWidget);
 
-    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
+    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI().defaultSourceContent['home.system']) ?? <String>{};
     _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
 
     super.initState();
