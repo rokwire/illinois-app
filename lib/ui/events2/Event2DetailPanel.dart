@@ -13,6 +13,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
@@ -640,16 +641,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       onTap: _onWebsiteButton,
     )] : null;
 
-  List<Widget>? get _logInButtonWidget{
-    if(Auth2().isLoggedIn == true)
-      return null;
-
-    return _isInternalRegistrationAvailable ? <Widget>[_buildButtonWidget(
-        title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
-        onTap: _onLogIn,
-        progress: _authLoading
+  List<Widget>? get _logInButtonWidget =>
+    (_isInternalRegistrationAvailable && (Auth2().isLoggedIn != true)) ? <Widget>[_buildButtonWidget(
+      title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
+      onTap: _onLogIn,
+      progress: _authLoading
     )] : null;
-  }
 
   List<Widget>? get _registrationButtonWidget{
     if (Auth2().isLoggedIn == false) //We can register only if logged in
@@ -1039,7 +1036,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onLogIn(){
     Analytics().logSelect(target: "Log in");
-    if (_authLoading != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+    }
+    else if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
         setStateIfMounted(() { _authLoading = false; });

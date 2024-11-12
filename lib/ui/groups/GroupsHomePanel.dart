@@ -683,7 +683,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onTapLogin() {
     Analytics().logSelect(target: "Login");
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));    }
+      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+    }
     else {
       Auth2().authenticateWithOidc();
     }
