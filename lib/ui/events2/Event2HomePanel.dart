@@ -545,7 +545,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _sortButton,
 
       ])),
-      Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
+      Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, verticalDirection: VerticalDirection.up, children: [
         LinkButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),

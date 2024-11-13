@@ -2870,7 +2870,6 @@
 	"panel.groups_home.label.heading": "群组",
 	"panel.groups_home.button.all_groups.title": "所有群组",
 	"panel.groups_home.button.my_groups.title": "我的群组",
-	"panel.groups_home.button.create_group.title": "创建",
 	"panel.groups_home.button.search.title": "搜寻",
 	"panel.groups_home.label.pending": "等待",
 	"panel.groups_home.label.category": "类别",
@@ -2879,6 +2878,8 @@
 	"panel.groups_home.filter.filter.label": "筛选器",
 	"panel.groups_home.label.my_groups.empty": "您还不是任何群组的成员。若要加入或是创建群组，请見 ",
 	"panel.groups_home.label.my_groups.empty.link.all_groups": "所有群组",
+	"panel.groups_home.label.my_groups.logged_out": "You are not logged in. To access your groups, you need to {{login}} first.",
+	"panel.groups_home.label.my_groups.logged_out.link.login": "Login",
 	"panel.groups_home.label.my_groups.failed": "无法加载群组",
 	"panel.groups_home.label.all_groups.empty": "没有群组符合您的筛选条件。",
 	"panel.groups_home.label.all_groups.failed": "无法加载群组",
@@ -3042,8 +3043,6 @@
 	"panel.research_projects.home.header_bar.title": "Research at Illinois",
 	"panel.research_projects.home.content_type.open.title": "进行中的研究计划",
 	"panel.research_projects.home.content_type.my.title": "我的研究计划",
-	"panel.research_projects.home.dropdown.create.title": "创建新的研究计划",
-	"panel.research_projects.home.dropdown.search.title": "搜寻研究计划",
 	"panel.research_projects.home.button.create.title": "创建",
 	"panel.research_projects.home.button.search.title": "搜寻",
 	"panel.research_projects.home.status.error.open.text": "无法加载进行中的研究计划。",
@@ -3956,7 +3955,8 @@
 	"widget.group_card.status.hint": "status: %s ,for: ",
 	"widget.group_card.member.label": "成员",
 	"widget.group_card.members.label": "成员",
-	"panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view the list of groups.",
+	"widget.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view the list of groups.",
+	"widget.group_card.login_na.msg": "You need to be logged in to access specific groups. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
 
 	"widget.group.member.card.attended.label": "已参加",
 
@@ -4232,6 +4232,7 @@
 	"common.message.offline":"你还没联网。",
 	"common.message.logged_out":"您未登入。",
 	"common.message.exit_app":"确定要退出吗?",
+	"common.message.login.not_available":"To sign in you need to set your privacy level to 4 or 5 under Settings.",
 
 	"privacy.features2.entry.disable_location_awareness":"禁用地点感知.",
 	"privacy.features2.entry.dont_store_location":"不存儲您的位置.",

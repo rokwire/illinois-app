@@ -5,11 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.17] - 2024-11-12
 ### Fixed
 - Fixed analytics feature that we send for "Start with a Text" button tap [#4447](https://github.com/rokwire/illinois-app/issues/4447).
-
+- Fixed Padding for BrowsePanel Sections content [#4411](https://github.com/rokwire/illinois-app/issues/4411).
+- Fixed Slant image size in AthleticsGameDetailHeading [#4394](https://github.com/rokwire/illinois-app/issues/4394).
 ### Changed
 - Allow event custom range filters in the past [#4450](https://github.com/rokwire/illinois-app/issues/4450).
+- Consistent Create and Search UX for Groups, Events, and Research [#4448](https://github.com/rokwire/illinois-app/issues/4448).
+- Keep login UI available when authorization is not available [#4103](https://github.com/rokwire/illinois-app/issues/4103).
+### Added
+- Send location when requesting assistant [#4464](https://github.com/rokwire/illinois-app/issues/4464).
 
 ## [6.1.16] - 2024-10-28
 ### Added

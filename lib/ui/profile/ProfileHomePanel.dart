@@ -313,7 +313,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (contentItem) {
       case ProfileContent.profile: return Auth2().isLoggedIn;
       case ProfileContent.who_are_you: return true;
-      case ProfileContent.login: return FlexUI().hasFeature('authentication');
+      case ProfileContent.login: return true;
       default: return false;
     }
   }

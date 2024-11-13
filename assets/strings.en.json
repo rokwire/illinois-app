@@ -2891,7 +2891,6 @@
     "panel.groups_home.label.heading": "Groups",
     "panel.groups_home.button.all_groups.title": "All Groups",
     "panel.groups_home.button.my_groups.title": "My Groups",
-    "panel.groups_home.button.create_group.title": "Create",
     "panel.groups_home.button.search.title": "Search",
     "panel.groups_home.label.pending": "Pending",
     "panel.groups_home.label.category": "Category",
@@ -2900,6 +2899,8 @@
     "panel.groups_home.filter.filter.label": "Filters",
     "panel.groups_home.label.my_groups.empty": "You are not a member of any group. To join or create a group, see ",
     "panel.groups_home.label.my_groups.empty.link.all_groups": "All Groups",
+    "panel.groups_home.label.my_groups.logged_out": "You are not logged in. To access your groups, you need to {{login}} first.",
+    "panel.groups_home.label.my_groups.logged_out.link.login": "Login",
     "panel.groups_home.label.my_groups.failed": "Failed to load groups.",
     "panel.groups_home.label.all_groups.empty": "There are no groups matching your filters.",
     "panel.groups_home.label.all_groups.failed": "Failed to load groups.",
@@ -3064,8 +3065,6 @@
     "panel.research_projects.home.header_bar.title": "Research at Illinois",
     "panel.research_projects.home.content_type.open.title": "Open Research Projects",
     "panel.research_projects.home.content_type.my.title": "My Research Participation",
-    "panel.research_projects.home.dropdown.create.title": "Create New Research Project",
-    "panel.research_projects.home.dropdown.search.title": "Search Research Projects",
     "panel.research_projects.home.button.create.title": "Create",
     "panel.research_projects.home.button.search.title": "Search",
     "panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",
@@ -3981,7 +3980,8 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
     "widget.group_card.member.label": "member",
     "widget.group_card.members.label": "members",
-    "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view the list of groups.",
+    "widget.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view the list of groups.",
+    "widget.group_card.login_na.msg": "You need to be logged in to access specific groups. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
 
     "widget.group.member.card.attended.label": "ATTENDED",
 
@@ -4261,6 +4261,7 @@
     "common.message.offline":"You appear to be offline",
     "common.message.logged_out":"You are not signed in",
     "common.message.exit_app":"Are you sure you want to exit?",
+    "common.message.login.not_available":"To sign in you need to set your privacy level to 4 or 5 under Settings.",
 
     "privacy.features2.entry.disable_location_awareness":"Disable location awareness.",
     "privacy.features2.entry.dont_store_location":"Not store your location.",
