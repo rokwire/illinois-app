@@ -21,6 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileConnectionsPage.dart';
 import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
@@ -30,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { login, profile, who_are_you, }
+enum ProfileContent { login, profile, connections, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
@@ -295,15 +296,18 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (_selectedContent) {
       case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
+      case ProfileContent.connections: return ProfileConnectionsPage();
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
     }
   }
 
   String? _getContentItemName(ProfileContent? contentItem) {
+    final String appTitleMacro = '{{app_title}}';
     switch (contentItem) {
       case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
       case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
+      case ProfileContent.connections: return Localization().getStringEx('panel.settings.profile.content.connections.label', 'My Info & $appTitleMacro Connections').replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
       case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
       default: return null;
     }
@@ -313,8 +317,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (contentItem) {
       case ProfileContent.profile: return Auth2().isLoggedIn;
       case ProfileContent.who_are_you: return true;
+      case ProfileContent.connections: return true;
       case ProfileContent.login: return true;
-      default: return false;
+      case null: return false;
     }
   }
 

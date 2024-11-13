@@ -1898,6 +1898,7 @@
 
     "panel.settings.profile.content.profile.label": "Mi perfil",
     "panel.settings.profile.content.who_are_you.label": "Quién eres tú",
+    "panel.settings.profile.content.connections.label": "My Info & {{app_title}} Connections",
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Perfil",
