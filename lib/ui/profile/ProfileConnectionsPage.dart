@@ -1,6 +1,7 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -16,13 +17,21 @@ class ProfileConnectionsPage extends StatefulWidget {
   _ProfileConnectionsPageState createState() => _ProfileConnectionsPageState();
 }
 
+enum _Tab { myInfo, connections }
+
 class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> implements NotificationsListener {
+
+  static const String _appTitleMacro = "{{app_title}}";
+  String get _appTitle => Localization().getStringEx('app.title', 'Illinois');
+
+  late _Tab _selectedTab;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
     ]);
+    _selectedTab = _Tab.values.first;
     super.initState();
   }
 
@@ -50,12 +59,91 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
   }
 
   Widget get _pageContent =>
-    Container();
+    Column(children: [
+      _tabsWidget,
+      _tabPage(_selectedTab),
+    ],);
 
+  // Tabs widget
+
+  Widget get _tabsWidget {
+    List<Widget> tabs = <Widget>[];
+    for (_Tab tab in _Tab.values) {
+      tabs.add(Expanded(child: _tabWidget(tab, selected: tab == _selectedTab)));
+    }
+    return Column(children: [
+      Row(children: tabs,),
+      _tabsShadow,
+    ],);
+  }
+
+  Widget _tabWidget(_Tab tab, { bool selected = false }) =>
+    InkWell(onTap: () => _selectTab(tab),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 3, vertical: 12),
+        decoration: selected ? _selectedTabDecoration : null,
+        child: Center(
+          child: Text(_tabTitle(tab), style: selected ? _selectedTabTextStyle : _regularTabTextStyle,)
+        ),
+      ),
+    );
+
+  void _selectTab(_Tab tab) {
+    Analytics().logSelect(target: _tabTitle(tab, language: 'en'));
+    if (_selectedTab != tab) {
+      setState(() {
+        _selectedTab = tab;
+      });
+    }
+  }
+
+  Widget get _tabsShadow => Container(
+    height: 5,
+    decoration: BoxDecoration(gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Styles().colors.fillColorPrimaryTransparent03,
+        Colors.transparent,
+      ]
+    )),
+  );
+
+  Widget _tabPage(_Tab tab) {
+    switch(tab) {
+      case _Tab.myInfo: return _myInfoTabPage;
+      case _Tab.connections: return _connectionsTabPage;
+    }
+  }
+
+  String _tabTitle(_Tab tab, { String? language }) {
+    switch(tab) {
+      case _Tab.myInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.title', 'My Info', language: language);
+      case _Tab.connections: return Localization().getStringEx('panel.profile.connections.tab.connections.title', '$_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitle);
+    }
+  }
+
+  TextStyle? get _regularTabTextStyle =>
+    Styles().textStyles.getTextStyle('widget.button.title.medium');
+
+  TextStyle? get _selectedTabTextStyle =>
+    Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
+
+  BoxDecoration get _selectedTabDecoration =>
+    BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2)));
+
+  // My Info
+
+  Widget get _myInfoTabPage => Container(color: Colors.amber,);
+
+  // Connections
+
+  Widget get _connectionsTabPage => Container(color: Colors.teal,);
+
+  // Signed out
   Widget get _loggedOutContent {
-    final String appTitleMacro = "{{app_title}}";
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.connections.message.signed_out', 'To view "My Info & $appTitleMacro Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.').replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
+    String messageTemplate = Localization().getStringEx('panel.profile.connections.message.signed_out', 'To view "My Info & $_appTitleMacro Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.').replaceAll(_appTitleMacro, _appTitle);
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)

@@ -2254,6 +2254,8 @@
 
     "panel.profile.connections.message.signed_out": "To view \"My Info & {{app_title}} Connections\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.profile.connections.message.signed_out.link.login": "sign in",
+    "panel.profile.connections.tab.my_info.title": "My Info",
+    "panel.profile.connections.tab.connections.title": "{{app_title}} Connections",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
