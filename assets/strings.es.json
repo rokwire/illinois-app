@@ -2884,7 +2884,6 @@
     "panel.groups_home.label.heading": "Grupos",
     "panel.groups_home.button.all_groups.title": "Todos los Grupos",
     "panel.groups_home.button.my_groups.title": "Mis Grupos",
-    "panel.groups_home.button.create_group.title": "Crear",
     "panel.groups_home.button.search.title": "Buscar",
     "panel.groups_home.label.pending": "Pendiente",
     "panel.groups_home.label.category": "Categoría",
@@ -2893,6 +2892,8 @@
     "panel.groups_home.filter.filter.label": "Filtros",
     "panel.groups_home.label.my_groups.empty": "No eres miembro de ningún grupo. Para participar o crear un grupo, consulta ",
     "panel.groups_home.label.my_groups.empty.link.all_groups": "Todos los Grupos",
+    "panel.groups_home.label.my_groups.logged_out": "You are not logged in. To access your groups, you need to {{login}} first.",
+    "panel.groups_home.label.my_groups.logged_out.link.login": "Login",
     "panel.groups_home.label.my_groups.failed": "Error al cargar los grupos",
     "panel.groups_home.label.all_groups.empty": "No hay grupos que coincidan con tus filtros.",
     "panel.groups_home.label.all_groups.failed": "Error al cargar los grupos",
@@ -3057,8 +3058,6 @@
     "panel.research_projects.home.header_bar.title": "Investigación en Illinois",
     "panel.research_projects.home.content_type.open.title": "Proyectos de Investigación Abiertos",
     "panel.research_projects.home.content_type.my.title": "Mi Participación en Investigación",
-    "panel.research_projects.home.dropdown.create.title": "Crear un Nuevo Proyecto de Investigación",
-    "panel.research_projects.home.dropdown.search.title": "Buscar los Proyectos de Investigación",
     "panel.research_projects.home.button.create.title": "Crear",
     "panel.research_projects.home.button.search.title": "Buscar",
     "panel.research_projects.home.status.error.open.text": "Error al cargar los proyectos de investigación abiertos.",
@@ -3976,7 +3975,8 @@
     "widget.group_card.status.hint": "status: %s ,para: ",
     "widget.group_card.member.label": "miembro",
     "widget.group_card.members.label": "miembros",
-    "panel.group_card.privacy_alert.msg": "Con tu nivel de privacidad en {{privacy_level_icon}}, solo puedes ver los grupos existentes.",
+    "widget.group_card.privacy_alert.msg": "Con tu nivel de privacidad en {{privacy_level_icon}}, solo puedes ver los grupos existentes.",
+    "widget.group_card.login_na.msg": "You need to be logged in to access specific groups. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
 
     "widget.group.member.card.attended.label": "ASISTIÓ",
 
@@ -4254,6 +4254,7 @@
     "common.message.offline":"Parece que estás desconectado",
     "common.message.logged_out":"No has iniciado sesión",
     "common.message.exit_app":"¿Está seguro de que desea salir?",
+    "common.message.login.not_available":"To sign in you need to set your privacy level to 4 or 5 under Settings.",
 
     "privacy.features2.entry.disable_location_awareness":"Deshabilitar reconocimiento de ubicación.",
     "privacy.features2.entry.dont_store_location":"No almacenar tu ubicación.",

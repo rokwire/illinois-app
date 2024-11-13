@@ -23,7 +23,6 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
@@ -669,7 +668,6 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
-  bool? _bussy;
 
   @override
   void initState() {
@@ -698,39 +696,28 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-          Stack(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildHeading(),
-              Container(height: 6),
-              Row(children:[
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                    _buildCategories(),
-                    _buildTitle(),
-                    _buildProperties(),
-                  ]),
-                ),
-                _buildImage()
-              ]),
-              Container(height: 4),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(child:
-                  _buildUpdateTime(),
-                ),
-                _buildMembersCount()
-              ])
-              // : Container()
-            ]),
-            Visibility(visible: (_bussy == true), child:
-              Positioned.fill(child:
-                Align(alignment: Alignment.center, child:
-                  SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-                  ),
-                ),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _buildHeading(),
+            Container(height: 6),
+            Row(children:[
+              Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                  _buildCategories(),
+                  _buildTitle(),
+                  _buildProperties(),
+                ]),
               ),
-            ),
-          ],),
+              _buildImage()
+            ]),
+            Container(height: 4),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Expanded(child:
+                _buildUpdateTime(),
+              ),
+              _buildMembersCount()
+            ])
+            // : Container()
+          ]),
         )
       )
     );
@@ -981,39 +968,32 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
-    if (FlexUI().isAuthenticationAvailable) {
-      if (Auth2().isOidcLoggedIn) {
-        Navigator.push(context, CupertinoPageRoute(
-          settings: RouteSettings(name: GroupDetailPanel.routeName),
-          builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature,)
-        ));
-      }
-      else {
-        setState(() { _bussy = true; });
-
-        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-          if (mounted) {
-            setState(() { _bussy = null; });
-            if (result == Auth2OidcAuthenticateResult.succeeded) {
-              Navigator.push(context, CupertinoPageRoute(
-                settings: RouteSettings(name: GroupDetailPanel.routeName),
-                  builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature)
-              ));
-            }
-          }
-        });
-      }
+    if (!Auth2().privacyMatch(4)) {
+      AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: _onDismissPopup)
+      ]);
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showCustomDialog(context: context, contentWidget: _buildLoggedOutAlertWidget(), actions: [
+        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: _onDismissPopup)
+      ]);
     }
     else {
-      AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
-        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: () => _onDismissPrivacyAlert(context))
-      ]);
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(name: GroupDetailPanel.routeName),
+        builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature,)
+      ));
     }
   }
 
+  Widget _buildLoggedOutAlertWidget() =>
+    Text(Localization().getStringEx('widget.group_card.login_na.msg', 'You need to be logged in to access specific groups. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.'), style:
+      Styles().textStyles.getTextStyle('widget.description.small.fat')
+    );
+
   Widget _buildPrivacyAlertWidget() {
     final String iconMacro = '{{privacy_level_icon}}';
-    String privacyMsg = Localization().getStringEx('panel.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view the list of groups.');
+    String privacyMsg = Localization().getStringEx('widget.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view the list of groups.');
     int iconMacroPosition = privacyMsg.indexOf(iconMacro);
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
@@ -1034,7 +1014,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     );
   }
 
-  void _onDismissPrivacyAlert(BuildContext context) {
+  void _onDismissPopup() {
     Analytics().logSelect(target: 'OK');
     Navigator.of(context).pop();
   }

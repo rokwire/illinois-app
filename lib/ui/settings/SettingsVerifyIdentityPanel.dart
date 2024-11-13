@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -117,7 +118,10 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   }
 
   void _onTapConnectNetId() {
-    if (_loading != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+    }
+    else if (_loading != true) {
       _setLoading(true);
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
