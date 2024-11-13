@@ -182,7 +182,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onConnectNetIdClicked() {
     Analytics().logSelect(target: "Connect netId");
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
@@ -203,7 +203,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: _popToMe),),);
@@ -622,7 +622,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       SettingsDialog.show(context,
@@ -677,7 +677,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       SettingsDialog.show(context,

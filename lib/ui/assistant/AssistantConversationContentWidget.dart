@@ -1020,7 +1020,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       } else {
         msg = Localization().getStringEx('panel.assistant.messages.delete.failed.msg', 'Failed to clear all messages.');
       }
-      AppAlert.showMessage(context, msg);
+      AppAlert.showTextMessage(context, msg);
     });
   }
 

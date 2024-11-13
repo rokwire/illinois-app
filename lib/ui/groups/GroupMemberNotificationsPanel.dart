@@ -376,7 +376,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       } else {
         msg = Localization().getStringEx('panel.group_member_notifications.save.fail.msg', 'Failed to update notification preferences.');
       }
-      AppAlert.showMessage(context, msg).then((_) {
+      AppAlert.showTextMessage(context, msg).then((_) {
         if (success) {
           Navigator.of(context).pop();
         }

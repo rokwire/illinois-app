@@ -41,7 +41,7 @@ class WalletICardHomeContentPanel extends StatefulWidget {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_id', 'Illini ID'));
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-      AppAlert.showMessage( context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
+      AppAlert.showTextMessage( context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
     }
     else {
       String? warning;
@@ -59,7 +59,7 @@ class WalletICardHomeContentPanel extends StatefulWidget {
       }
 
       if (warning != null) {
-        AppAlert.showMessage(context, warning).then((_) {
+        AppAlert.showTextMessage(context, warning).then((_) {
           _present(context, content: content);
         });
       } else {

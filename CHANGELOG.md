@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Updated authorization not available message [#4103](https://github.com/rokwire/illinois-app/issues/4103).
+
 ## [6.1.17] - 2024-11-12
 ### Fixed
 - Fixed analytics feature that we send for "Start with a Text" button tap [#4447](https://github.com/rokwire/illinois-app/issues/4447).

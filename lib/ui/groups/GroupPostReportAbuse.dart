@@ -211,7 +211,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   }
 
   Future<void> _reportReportAbuse(bool result) {
-    return AppAlert.showMessage(context, result ? _successMsg : _failMsg);
+    return AppAlert.showTextMessage(context, result ? _successMsg : _failMsg);
   }
 
   String get _successMsg =>
