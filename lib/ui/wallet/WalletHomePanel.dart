@@ -66,14 +66,14 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   static void present(BuildContext context, { WalletContentType? contentType }) {
     List<WalletContentType> contentTypes = buildContentTypes();
     if ((contentType != null) && !contentTypes.contains(contentType)) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.wallet.not_available.content_type.label', '{{content_type}} is not available.').
+      AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.not_available.content_type.label', '{{content_type}} is not available.').
         replaceAll('{{content_type}}', _walletContentTypeToDisplayString(contentType) ?? Localization().getStringEx('panel.wallet.header.title', 'Wallet')));
     }
     else if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(getTargetContentType(contentType: contentType, contentTypes: contentTypes))) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
+      AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
     }
     else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -301,7 +301,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: _walletContentTypeToDisplayString(contentType), source: widget.runtimeType.toString());
     if (!Auth2().isOidcLoggedIn && WalletHomePanel.requireOidcContentTypes.contains(contentType)) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.wallet.logged_out.content_type.label', 'To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.').
+      AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.content_type.label', 'To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.').
         replaceAll('{{content_type}}', _walletContentTypeToDisplayString(contentType) ?? Localization().getStringEx('panel.wallet.header.title', 'Wallet')));
     }
     else {

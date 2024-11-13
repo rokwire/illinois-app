@@ -665,7 +665,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       if (succeeded) {
         _loadInitialContent();
       } else {
-        AppAlert.showMessage(
+        AppAlert.showTextMessage(
             context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
       }
       _setMarkAllAsReadLoading(false);

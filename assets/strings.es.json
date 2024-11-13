@@ -1270,7 +1270,7 @@
     "panel.events2.home.attributes.sort.label.title": "Ordenar: ",
     "panel.events2.home.attributes.events.label.title": "Eventos: ",
     "panel.events2.home.attributes.launch.header.title": "Eventos",
-    "panel.events2.home.attributes.launch.header.description": "Personaliza tu canal de eventos por configurar los filtros a continuación o <a href='{{events2_url}}'>ver todos los eventos ahora<a> y elije tus filtros de eventos más tarde.",
+    "panel.events2.home.attributes.launch.header.description": "Personaliza tu canal de eventos por configurar los filtros a continuación o <a href='{{events2_url}}'>ver todos los eventos ahora</a> y elije tus filtros de eventos más tarde.",
     "panel.events2.home.attributes.launch.apply.title": "Crear Mi Canal de Eventos",
     "panel.events2.home.attributes.launch.continue.title": "Configurar Más Tarde",
     "panel.events2.home.attributes.footer.text": "How are events published in the {{app_title}} app?",
@@ -4254,7 +4254,8 @@
     "common.message.offline":"Parece que estás desconectado",
     "common.message.logged_out":"No has iniciado sesión",
     "common.message.exit_app":"¿Está seguro de que desea salir?",
-    "common.message.login.not_available":"To sign in you need to set your privacy level to 4 or 5 under Settings.",
+    "common.message.login.not_available":"To sign in, {{link.settings}} to 4 or 5 under Settings",
+    "common.message.login.not_available.link.settings":"set your privacy level",
 
     "privacy.features2.entry.disable_location_awareness":"Deshabilitar reconocimiento de ubicación.",
     "privacy.features2.entry.dont_store_location":"No almacenar tu ubicación.",

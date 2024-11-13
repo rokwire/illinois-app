@@ -49,7 +49,7 @@ class AssistantHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(
+      AppAlert.showTextMessage(
           context,
           Localization().getStringEx('panel.assistant.logged_out.label',
               'To access the Illinois Assistant, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));

@@ -579,9 +579,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildLoggedOutContent() {
-    final String loginMacro = "{{login}}";
-    String messageTemplate = Localization().getStringEx("panel.groups_home.label.my_groups.logged_out", "You are not logged in. To access your groups, you need to $loginMacro first.");
-    List<String> messages = messageTemplate.split(loginMacro);
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx("panel.groups_home.label.my_groups.logged_out", "You are not logged in. To access your groups, you need to $linkLoginMacro first.");
+    List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
@@ -683,7 +683,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onTapLogin() {
     Analytics().logSelect(target: "Login");
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       Auth2().authenticateWithOidc();
