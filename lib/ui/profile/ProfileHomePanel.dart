@@ -26,6 +26,7 @@ import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -86,6 +87,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
+      ProfileConnectionsPage.notifySignIn,
     ]);
 
     if (_isContentItemEnabled(widget.content)) {
@@ -109,9 +111,16 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   @override
   void onNotification(String name, param) {
-    if ((name == Auth2.notifyLoginChanged) ||
-        (name == FlexUI.notifyChanged)) {
+    if (name == Auth2.notifyLoginChanged) {
       _updateContentItemIfNeeded();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateContentItemIfNeeded();
+    }
+    else if (name == ProfileConnectionsPage.notifySignIn) {
+      setStateIfMounted(() {
+        _selectedContent = _lastSelectedContent = ProfileContent.login;
+      });
     }
   }
   
@@ -333,7 +342,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   }
 
   void _updateContentItemIfNeeded() {
-    if ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent)) {
+    if (mounted && ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent))) {
       ProfileContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
       if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
         setState(() {

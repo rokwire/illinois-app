@@ -2251,6 +2251,9 @@
     "panel.profile.stored_data.cafe_credit_transactions.title": "My Cafe Credit Transactions",
     "panel.profile.stored_data.recent_items.title": "My Recently Viewed",
 
+    "panel.profile.connections.message.signed_out": "To view \"My Info & {{app_title}} Connections\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.profile.connections.message.signed_out.link.login": "sign in",
+
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
 
