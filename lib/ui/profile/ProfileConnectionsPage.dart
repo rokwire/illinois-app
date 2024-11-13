@@ -18,20 +18,29 @@ class ProfileConnectionsPage extends StatefulWidget {
 }
 
 enum _Tab { myInfo, connections }
+enum _MyInfoTab { myConnectionsInfo, myDirectoryInfo }
+enum _ConnectionsTab { myConnections, appDirectory }
 
 class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> implements NotificationsListener {
 
   static const String _appTitleMacro = "{{app_title}}";
-  String get _appTitle => Localization().getStringEx('app.title', 'Illinois');
+  String get _appTitle => _appTitleEx();
+  String _appTitleEx({String? language}) => Localization().getStringEx('app.title', 'Illinois', language: language);
 
   late _Tab _selectedTab;
+  Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
     ]);
+
     _selectedTab = _Tab.values.first;
+
+    for (_Tab tab in _Tab.values) {
+      _selectedSubTabs[tab] = tab.subTabs.first;
+    }
     super.initState();
   }
 
@@ -83,7 +92,7 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
         padding: EdgeInsets.symmetric(horizontal: 3, vertical: 12),
         decoration: selected ? _selectedTabDecoration : null,
         child: Center(
-          child: Text(_tabTitle(tab), style: selected ? _selectedTabTextStyle : _regularTabTextStyle,)
+          child: Text(_tabTitle(tab), style: selected ? _selectedTabTextStyle : _regularTabTextStyle, textAlign: TextAlign.center)
         ),
       ),
     );
@@ -119,7 +128,7 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
   String _tabTitle(_Tab tab, { String? language }) {
     switch(tab) {
       case _Tab.myInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.title', 'My Info', language: language);
-      case _Tab.connections: return Localization().getStringEx('panel.profile.connections.tab.connections.title', '$_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitle);
+      case _Tab.connections: return Localization().getStringEx('panel.profile.connections.tab.connections.title', '$_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
     }
   }
 
@@ -134,11 +143,82 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
 
   // My Info
 
-  Widget get _myInfoTabPage => Container(color: Colors.amber,);
+  Widget get _myInfoTabPage => Column(children: [
+    _subTabsWidget(_Tab.myInfo)
+  ],);
 
   // Connections
 
-  Widget get _connectionsTabPage => Container(color: Colors.teal,);
+  Widget get _connectionsTabPage => Column(children: [
+    _subTabsWidget(_Tab.connections)
+  ],);
+
+  // SubTab
+
+  Widget _subTabsWidget(_Tab tab) {
+    List<Widget> widgets = <Widget>[];
+    List<Enum> subTabs = tab.subTabs;
+    for (Enum subTab in subTabs) {
+      widgets.add(Expanded(child: _subTabWidget(tab, subTab,
+        first: subTab == subTabs.first,
+        last: subTab == subTabs.last,
+        selected: subTab == _selectedSubTabs[tab]
+      )));
+    }
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+      Row(children: widgets,)
+    );
+  }
+
+  Widget _subTabWidget(_Tab tab, Enum subTab, { bool first = false, last =  false, bool selected = false }) =>
+    InkWell(onTap: () => _selectSubTab(tab, subTab),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        decoration: BoxDecoration(
+          color: selected ? _selectedSubTabColor : _regularSubTabColor,
+          border: Border.all(color: Styles().colors.mediumGray2, width: 1),
+          borderRadius: BorderRadius.horizontal(
+            left: first ? Radius.circular(24) : Radius.zero,
+            right: last ? Radius.circular(24) : Radius.zero,
+          ),
+        ),
+        child: Center(
+          child: Text(_subTabTitle(subTab), style: selected ? _selectedSubTabTextStyle : _regularSubTabTextStyle, textAlign: TextAlign.center,)
+        ),
+      ),
+    );
+
+  String _subTabTitle(Enum subTab, {String? language}) {
+    switch(subTab) {
+      case _MyInfoTab.myConnectionsInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.connections.title', 'My Connections Info', language: language);
+      case _MyInfoTab.myDirectoryInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.directory.title', 'My Directory Info', language: language);
+      case _ConnectionsTab.myConnections: return Localization().getStringEx('panel.profile.connections.tab.connections.connections.title', 'My $_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
+      case _ConnectionsTab.appDirectory: return Localization().getStringEx('panel.profile.connections.tab.connections.directory.title', '$_appTitleMacro App Directory', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
+      default: return '';
+    }
+  }
+
+  void _selectSubTab(_Tab tab, Enum subTab) {
+    Analytics().logSelect(target: _subTabTitle(subTab));
+    if (subTab != _selectedSubTabs[tab]) {
+      setState(() {
+        _selectedSubTabs[tab] = subTab;
+      });
+    }
+  }
+
+  TextStyle? get _regularSubTabTextStyle =>
+    _regularTabTextStyle;
+
+  TextStyle? get _selectedSubTabTextStyle =>
+      _selectedTabTextStyle;
+
+  Color? get _regularSubTabColor =>
+    null;
+
+  Color? get _selectedSubTabColor =>
+    Styles().colors.white;
+
 
   // Signed out
   Widget get _loggedOutContent {
@@ -162,5 +242,14 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
   }
 
   void _onTapSignIn() => NotificationService().notify(ProfileConnectionsPage.notifySignIn);
-
 }
+
+extension _TabExt on _Tab {
+  List<Enum> get subTabs {
+    switch (this) {
+      case _Tab.myInfo: return _MyInfoTab.values;
+      case _Tab.connections: return _ConnectionsTab.values;
+    }
+  }
+}
+
