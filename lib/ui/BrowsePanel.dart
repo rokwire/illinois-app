@@ -1299,7 +1299,7 @@ class _BrowseSlantWidget extends StatelessWidget {
 
         // Content
         Padding(padding: childPadding, child:
-          child ?? Container()
+          child
         )
       ]);
   }
