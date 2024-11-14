@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated authorization not available message [#4103](https://github.com/rokwire/illinois-app/issues/4103).
+### Added
+- Set custom assistant location in Debug panel [#4472](https://github.com/rokwire/illinois-app/issues/4472).
 
 ## [6.1.17] - 2024-11-12
 ### Fixed
