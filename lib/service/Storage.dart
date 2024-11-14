@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -192,6 +193,10 @@ class Storage extends rokwire.Storage {
   static const String debugAutomaticCredentialsKey  = 'debug_mobile_icard_automatic_credentials';
   bool? get debugAutomaticCredentials => getBoolWithName(debugAutomaticCredentialsKey);
   set debugAutomaticCredentials(bool? value) => setBoolWithName(debugAutomaticCredentialsKey, value);
+
+  static const String debugAssistantLocationKey  = 'debug_assistant_location';
+  AssistantLocation? get debugAssistantLocation => AssistantLocation.fromJson(JsonUtils.decodeMap(getStringWithName(debugAssistantLocationKey)));
+  set debugAssistantLocation(AssistantLocation? location) => setStringWithName(debugAssistantLocationKey, JsonUtils.encode(location?.toJson()));
 
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';

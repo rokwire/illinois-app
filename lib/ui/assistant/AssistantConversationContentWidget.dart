@@ -24,6 +24,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/SpeechToText.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -71,7 +72,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Map<String, String>? _userContext;
 
   LocationServicesStatus? _locationStatus;
-  Position? _currentLocation;
+  AssistantLocation? _currentLocation;
 
   late StreamSubscription _streamSubscription;
   bool _loading = false;
@@ -159,7 +160,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       }
     } else if (name == LocationServices.notifyLocationChanged) {
       if (_locationStatus == LocationServicesStatus.permissionAllowed) {
-        _currentLocation = param;
+        _currentLocation = _getLocation(param as Position);
       } else {
         _currentLocation = null;
       }
@@ -1070,12 +1071,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _loadLocationIfAllowed() {
     if (_locationStatus == LocationServicesStatus.permissionAllowed) {
       LocationServices().location.then((position) {
-        _currentLocation = position;
+        _currentLocation = _getLocation(position);
       });
     } else {
       _currentLocation = null;
     }
   }
+  
+  AssistantLocation? _getLocation(Position? position) => Storage().debugAssistantLocation ?? AssistantLocation.fromPosition(position);
 
   AssistantProvider get _provider => widget.provider;
 
