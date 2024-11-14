@@ -8,26 +8,27 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class ProfileConnectionsPage extends StatefulWidget {
+class ProfileDirectoryPage extends StatefulWidget {
   static const String notifySignIn = "edu.illinois.rokwire.profile.sign_in";
 
-  ProfileConnectionsPage({super.key});
+  ProfileDirectoryPage({super.key});
 
   @override
-  _ProfileConnectionsPageState createState() => _ProfileConnectionsPageState();
+  _ProfileDirectoryPageState createState() => _ProfileDirectoryPageState();
 }
 
 enum _Tab { myInfo, connections }
 enum _MyInfoTab { myConnectionsInfo, myDirectoryInfo }
 enum _ConnectionsTab { myConnections, appDirectory }
 
-class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> implements NotificationsListener {
+class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements NotificationsListener {
 
-  static const String _appTitleMacro = "{{app_title}}";
   String get _appTitle => _appTitleEx();
   String _appTitleEx({String? language}) => Localization().getStringEx('app.title', 'Illinois', language: language);
+  static const String _appTitleMacro = "{{app_title}}";
 
   late _Tab _selectedTab;
+
   Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
 
   @override
@@ -72,6 +73,26 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
       _tabsWidget,
       _tabPage(_selectedTab),
     ],);
+
+  // My Info
+
+  Widget get _myInfoTabPage => Column(children: [
+    _subTabsWidget(_Tab.myInfo)
+  ],);
+
+  // Connections
+
+  Widget get _connectionsTabPage => Column(children: [
+    _subTabsWidget(_Tab.connections),
+
+  ],);
+
+  Widget _tabPage(_Tab tab) {
+    switch(tab) {
+      case _Tab.myInfo: return _myInfoTabPage;
+      case _Tab.connections: return _connectionsTabPage;
+    }
+  }
 
   // Tabs widget
 
@@ -118,17 +139,10 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
     )),
   );
 
-  Widget _tabPage(_Tab tab) {
-    switch(tab) {
-      case _Tab.myInfo: return _myInfoTabPage;
-      case _Tab.connections: return _connectionsTabPage;
-    }
-  }
-
   String _tabTitle(_Tab tab, { String? language }) {
     switch(tab) {
-      case _Tab.myInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.title', 'My Info', language: language);
-      case _Tab.connections: return Localization().getStringEx('panel.profile.connections.tab.connections.title', '$_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
+      case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
+      case _Tab.connections: return Localization().getStringEx('panel.profile.directory.tab.connections.title', '$_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
     }
   }
 
@@ -140,18 +154,6 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
 
   BoxDecoration get _selectedTabDecoration =>
     BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2)));
-
-  // My Info
-
-  Widget get _myInfoTabPage => Column(children: [
-    _subTabsWidget(_Tab.myInfo)
-  ],);
-
-  // Connections
-
-  Widget get _connectionsTabPage => Column(children: [
-    _subTabsWidget(_Tab.connections)
-  ],);
 
   // SubTab
 
@@ -190,10 +192,10 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
 
   String _subTabTitle(Enum subTab, {String? language}) {
     switch(subTab) {
-      case _MyInfoTab.myConnectionsInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.connections.title', 'My Connections Info', language: language);
-      case _MyInfoTab.myDirectoryInfo: return Localization().getStringEx('panel.profile.connections.tab.my_info.directory.title', 'My Directory Info', language: language);
-      case _ConnectionsTab.myConnections: return Localization().getStringEx('panel.profile.connections.tab.connections.connections.title', 'My $_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
-      case _ConnectionsTab.appDirectory: return Localization().getStringEx('panel.profile.connections.tab.connections.directory.title', '$_appTitleMacro App Directory', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
+      case _MyInfoTab.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.connections.title', 'My Connections Info', language: language);
+      case _MyInfoTab.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.directory.title', 'My Directory Info', language: language);
+      case _ConnectionsTab.myConnections: return Localization().getStringEx('panel.profile.directory.tab.connections.connections.title', 'My $_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
+      case _ConnectionsTab.appDirectory: return Localization().getStringEx('panel.profile.directory.tab.connections.directory.title', '$_appTitleMacro App Directory', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
       default: return '';
     }
   }
@@ -223,13 +225,13 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
   // Signed out
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.connections.message.signed_out', 'To view "My Info & $_appTitleMacro Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.').replaceAll(_appTitleMacro, _appTitle);
+    String messageTemplate = Localization().getStringEx('panel.profile.directory.message.signed_out', 'To view "My Info & $_appTitleMacro Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.').replaceAll(_appTitleMacro, _appTitle);
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.connections.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
         recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
       spanList.add(TextSpan(text: messages[index]));
     }
@@ -241,7 +243,7 @@ class _ProfileConnectionsPageState extends State<ProfileConnectionsPage> impleme
     );
   }
 
-  void _onTapSignIn() => NotificationService().notify(ProfileConnectionsPage.notifySignIn);
+  void _onTapSignIn() => NotificationService().notify(ProfileDirectoryPage.notifySignIn);
 }
 
 extension _TabExt on _Tab {
