@@ -445,6 +445,20 @@ class AppTextUtils {
   static appTitleString(String key, String defaults, {String? language}) =>
     Localization().getStringEx(key, defaults, language: language).replaceAll(appTitleMacro, appTitleEx(language: language));
 
+  // University Name
+
+  static const String universityNameMacro = "{{university_name}}";
+  static String get universityName => universityNameEx();
+  static String universityNameEx({String? language}) =>
+    Localization().getStringEx('app.univerity_name', 'University of Illinois', language: language);
+
+  // University Long Name
+
+  static const String universityLongNameMacro = "{{university_long_name}}";
+  static String get universityLongName => universityLongNameEx();
+  static String universityLongNameEx({String? language}) =>
+    Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: language);
+
   // Logged Out Feature NA
 
   static const String featureMacro = '{{feature}}';
