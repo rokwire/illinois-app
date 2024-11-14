@@ -18,6 +18,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -969,13 +970,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapSetAssistantLocation() {
-    ExploreLocation? location = Storage().debugAssistantLocation;
+    ExploreLocation? location = Storage().debugAssistantLocation?.toExploreLocation();
     ExploreMapSelectLocationPanel.push(
       context,
       selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
     ).then((Explore? explore) {
       ExploreLocation? newLocation = explore?.exploreLocation;
-      Storage().debugAssistantLocation = newLocation;
+      Storage().debugAssistantLocation = AssistantLocation.fromExploreLocation(newLocation);
     });
   }
 
