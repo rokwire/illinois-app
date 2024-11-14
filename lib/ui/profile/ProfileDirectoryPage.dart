@@ -2,6 +2,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryConnectionsPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -18,8 +19,8 @@ class ProfileDirectoryPage extends StatefulWidget {
 }
 
 enum _Tab { myInfo, connections }
-enum _MyInfoTab { myConnectionsInfo, myDirectoryInfo }
-enum _ConnectionsTab { myConnections, appDirectory }
+enum MyDirectoryInfo { myConnectionsInfo, myDirectoryInfo }
+enum DirectoryConnections { myConnections, appDirectory }
 
 class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements NotificationsListener {
 
@@ -30,6 +31,11 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   late _Tab _selectedTab;
 
   Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
+  Map<Enum, Key> _subTabsKeys = <Enum, Key>{};
+
+  // ignore: unused_element
+  MyDirectoryInfo get _selectedInfoTab => (_selectedSubTabs[_Tab.myInfo] as MyDirectoryInfo?) ?? MyDirectoryInfo.values.first;
+  DirectoryConnections get _selectedConnectionsTab => (_selectedSubTabs[_Tab.connections] as DirectoryConnections?) ?? DirectoryConnections.values.first;
 
   @override
   void initState() {
@@ -84,7 +90,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 
   Widget get _connectionsTabPage => Column(children: [
     _subTabsWidget(_Tab.connections),
-
+    ProfileDirectoryConnectionsPage(contentType: _selectedConnectionsTab, key: _subTabsKeys[_selectedConnectionsTab] ??= GlobalKey(),),
   ],);
 
   Widget _tabPage(_Tab tab) {
@@ -113,13 +119,13 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
         padding: EdgeInsets.symmetric(horizontal: 3, vertical: 12),
         decoration: selected ? _selectedTabDecoration : null,
         child: Center(
-          child: Text(_tabTitle(tab), style: selected ? _selectedTabTextStyle : _regularTabTextStyle, textAlign: TextAlign.center)
+          child: Text(tab.title, style: selected ? _selectedTabTextStyle : _regularTabTextStyle, textAlign: TextAlign.center)
         ),
       ),
     );
 
   void _selectTab(_Tab tab) {
-    Analytics().logSelect(target: _tabTitle(tab, language: 'en'));
+    Analytics().logSelect(target: tab.titleEx(language: 'en'));
     if (_selectedTab != tab) {
       setState(() {
         _selectedTab = tab;
@@ -138,13 +144,6 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
       ]
     )),
   );
-
-  String _tabTitle(_Tab tab, { String? language }) {
-    switch(tab) {
-      case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case _Tab.connections: return Localization().getStringEx('panel.profile.directory.tab.connections.title', '$_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
-    }
-  }
 
   TextStyle? get _regularTabTextStyle =>
     Styles().textStyles.getTextStyle('widget.button.title.medium');
@@ -191,12 +190,14 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     );
 
   String _subTabTitle(Enum subTab, {String? language}) {
-    switch(subTab) {
-      case _MyInfoTab.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.connections.title', 'My Connections Info', language: language);
-      case _MyInfoTab.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.directory.title', 'My Directory Info', language: language);
-      case _ConnectionsTab.myConnections: return Localization().getStringEx('panel.profile.directory.tab.connections.connections.title', 'My $_appTitleMacro Connections', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
-      case _ConnectionsTab.appDirectory: return Localization().getStringEx('panel.profile.directory.tab.connections.directory.title', '$_appTitleMacro App Directory', language: language).replaceAll(_appTitleMacro, _appTitleEx(language: language));
-      default: return '';
+    if (subTab is MyDirectoryInfo) {
+      return subTab.titleEx(language: language);
+    }
+    else if (subTab is DirectoryConnections) {
+      return subTab.titleEx(language: language);
+    }
+    else {
+      return '';
     }
   }
 
@@ -247,11 +248,42 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 }
 
 extension _TabExt on _Tab {
+
+  String get title => titleEx();
+
+  String titleEx({String? language}) {
+    switch(this) {
+      case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
+      case _Tab.connections: return AppTextUtils.appTitleString('panel.profile.directory.tab.connections.title', '${AppTextUtils.appTitleMacro} Connections', language: language);
+    }
+  }
+
   List<Enum> get subTabs {
     switch (this) {
-      case _Tab.myInfo: return _MyInfoTab.values;
-      case _Tab.connections: return _ConnectionsTab.values;
+      case _Tab.myInfo: return MyDirectoryInfo.values;
+      case _Tab.connections: return DirectoryConnections.values;
     }
   }
 }
 
+extension MyDirectoryInfoExt on MyDirectoryInfo {
+  String get title => titleEx();
+
+  String titleEx({String? language}) {
+    switch(this) {
+      case MyDirectoryInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.connections.title', 'My Connections Info', language: language);
+      case MyDirectoryInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.directory.title', 'My Directory Info', language: language);
+    }
+  }
+}
+
+extension DirectoryConnectionsExt on DirectoryConnections {
+  String get title => titleEx();
+
+  String titleEx({String? language}) {
+    switch(this) {
+      case DirectoryConnections.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.tab.connections.connections.title', 'My ${AppTextUtils.appTitleMacro} Connections', language: language);
+      case DirectoryConnections.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.connections.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
+    }
+  }
+}
