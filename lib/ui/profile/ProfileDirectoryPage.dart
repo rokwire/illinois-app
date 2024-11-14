@@ -82,16 +82,22 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 
   // My Info
 
-  Widget get _myInfoTabPage => Column(children: [
-    _subTabsWidget(_Tab.myInfo)
-  ],);
+  Widget get _myInfoTabPage =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: [
+        _subTabsWidget(_Tab.myInfo)
+      ],),
+    );
 
   // Connections
 
-  Widget get _connectionsTabPage => Column(children: [
-    _subTabsWidget(_Tab.connections),
-    ProfileDirectoryConnectionsPage(contentType: _selectedConnectionsTab, key: _subTabsKeys[_selectedConnectionsTab] ??= GlobalKey(),),
-  ],);
+  Widget get _connectionsTabPage =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: [
+        _subTabsWidget(_Tab.connections),
+        ProfileDirectoryConnectionsPage(contentType: _selectedConnectionsTab, key: _subTabsKeys[_selectedConnectionsTab] ??= GlobalKey(),),
+      ],),
+    );
 
   Widget _tabPage(_Tab tab) {
     switch(tab) {
@@ -166,7 +172,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
         selected: subTab == _selectedSubTabs[tab]
       )));
     }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
       Row(children: widgets,)
     );
   }
@@ -214,7 +220,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     _regularTabTextStyle;
 
   TextStyle? get _selectedSubTabTextStyle =>
-      _selectedTabTextStyle;
+    _selectedTabTextStyle;
 
   Color? get _regularSubTabColor =>
     null;

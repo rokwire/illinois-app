@@ -200,6 +200,7 @@
     "widget.title.medium.semi_fat": {"font_family": "medium", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.medium.fat": {"font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.medium.extra_fat": {"font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.title.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.semi_fat": {"font_family": "semi_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
@@ -889,6 +890,9 @@
     "double-chevron-left": {"src": "0xf100", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
     "double-chevron-right": {"src": "0xf101", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
     
+    "chevron2-up": {"src": "0xf077", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 12},
+    "chevron2-down": {"src": "0xf078", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 12},
+
     "icon-up-orange": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
     "icon-down-orange": {"src": "images/icon-down-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
     "icon-up-blue": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "size issue?"},
