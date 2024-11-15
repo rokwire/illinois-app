@@ -31,7 +31,6 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   late _Tab _selectedTab;
 
   Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
-  Map<Enum, Key> _subTabsKeys = <Enum, Key>{};
 
   // ignore: unused_element
   MyDirectoryInfo get _selectedInfoTab => (_selectedSubTabs[_Tab.myInfo] as MyDirectoryInfo?) ?? MyDirectoryInfo.values.first;
@@ -43,7 +42,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
       Auth2.notifyLoginChanged,
     ]);
 
-    _selectedTab = _Tab.values.first;
+    _selectedTab = _Tab.values.last;
 
     for (_Tab tab in _Tab.values) {
       _selectedSubTabs[tab] = tab.subTabs.first;
@@ -77,7 +76,12 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   Widget get _pageContent =>
     Column(children: [
       _tabsWidget,
-      _tabPage(_selectedTab),
+      Visibility(visible: (_selectedTab == _Tab.myInfo), maintainState: true, child:
+        _tabPage(_Tab.myInfo)
+      ),
+      Visibility(visible: (_selectedTab == _Tab.connections), maintainState: true, child:
+        _tabPage(_Tab.connections)
+      ),
     ],);
 
   // My Info
@@ -95,7 +99,12 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: [
         _subTabsWidget(_Tab.connections),
-        ProfileDirectoryConnectionsPage(contentType: _selectedConnectionsTab, key: _subTabsKeys[_selectedConnectionsTab] ??= GlobalKey(),),
+        Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.myConnections), maintainState: true, child:
+          ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
+        ),
+        Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.appDirectory), maintainState: true, child:
+          ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.appDirectory,)
+        ),
       ],),
     );
 
