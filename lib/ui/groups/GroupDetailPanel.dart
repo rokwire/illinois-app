@@ -37,6 +37,7 @@ import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -55,6 +56,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
@@ -113,21 +115,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
 
-  List<GroupPost>    _posts = <GroupPost>[];
+  List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
   bool?              _hasMorePosts;
   bool?              _scrollToLastPostAfterRefresh;
 
-  List<GroupPost>    _scheduledPosts = <GroupPost>[];
+  List<Post>         _scheduledPosts = <Post>[];
   GlobalKey          _lastScheduledPostKey = GlobalKey();
   bool?              _refreshingScheduledPosts;
   bool?              _loadingScheduledPostsPage;
   bool?              _hasMoreScheduledPosts;
   bool?              _scrollToLastScheduledPostsAfterRefresh;
 
-  List<GroupPost>    _messages = <GroupPost>[];
+  List<Post>         _messages = <Post>[];
   GlobalKey          _lastMessageKey = GlobalKey();
   bool?              _refreshingMessages;
   bool?              _loadingMessagesPage;
@@ -241,9 +243,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupStatsUpdated,
-      Groups.notifyGroupPostCreated,
-      Groups.notifyGroupPostUpdated,
-      Groups.notifyGroupPostDeleted,
+      Social.notifyGroupPostCreated,
+      Social.notifyGroupPostUpdated,
+      Social.notifyGroupPostDeleted,
       Polls.notifyCreated,
       Polls.notifyDeleted,
       Polls.notifyStatusChanged,
@@ -355,18 +357,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _redirectToGroupPostIfExists() {
     if ((_groupId != null) && (_postId != null)) {
       _increaseProgress();
-      Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
+      Social().loadSinglePost(groupId: _group!.id, postId: _postId!).then((post) {
         _postId = null; // Clear _postId in order not to redirect on the next group load.
         if (post != null) {
-          if(StringUtils.isNotEmpty(post.topParentId)){ // This is reply
-            Groups().loadGroupPost(groupId: _group!.id, postId: post.topParentId).then((mainPost) {
-              _decreaseProgress();
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: mainPost)));
-            });
-          } else { //this is the main Post
+          //TBD: DDGS - implement redirect to comment
+          // if(StringUtils.isNotEmpty(post.topParentId)){ // This is reply
+          //   Groups().loadGroupPost(groupId: _group!.id, postId: post.topParentId).then((mainPost) {
+          //     _decreaseProgress();
+          //     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: mainPost)));
+          //   });
+          // } else { //this is the main Post
             _decreaseProgress();
             Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
-          }
+            //TBD: DDGS - implement redirect to comment
+          // }
         } else {
           _decreaseProgress();
         }
@@ -436,7 +440,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
       int limit = _posts.length + (delta ?? 0);
       _refreshingPosts = true;
-      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? posts) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: PostSortOrder.desc).then((List<Post>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
@@ -470,7 +474,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPostsPage() async {
-    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _posts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<Post>? postsPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.post , offset: _posts.length, limit: _postsPageSize, order: PostSortOrder.desc);
     if (postsPage != null) {
       _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
@@ -502,7 +506,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingScheduledPosts != true)) {
       int limit = _scheduledPosts.length + (delta ?? 0);
       _refreshingScheduledPosts = true;
-      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc, scheduledOnly: true).then((List<GroupPost>? scheduledPost) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: PostSortOrder.desc, status: PostStatus.draft).then((List<Post>? scheduledPost) {
         _refreshingScheduledPosts = false;
         if (mounted && (scheduledPost != null)) {
           setState(() {
@@ -536,7 +540,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadScheduledPostsPage() async {
-    List<GroupPost>? scheduledPostsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _scheduledPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc, scheduledOnly: true);
+    List<Post>? scheduledPostsPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.post , offset: _scheduledPosts.length, limit: _postsPageSize, order: PostSortOrder.desc, status: PostStatus.draft);
     if (scheduledPostsPage != null) {
       _scheduledPosts.addAll(scheduledPostsPage);
       if (scheduledPostsPage.length < _postsPageSize) {
@@ -568,7 +572,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingMessages != true)) {
       int limit = _messages.length + (delta ?? 0);
       _refreshingMessages = true;
-      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.message, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? messages) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message, offset: 0, limit: limit, order: PostSortOrder.desc).then((List<Post>? messages) {
         _refreshingMessages = false;
         if (mounted && (messages != null)) {
           setState(() {
@@ -602,7 +606,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadMessagesPage() async {
-    List<GroupPost>? messagesPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.message , offset: _messages.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<Post>? messagesPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message , offset: _messages.length, limit: _postsPageSize, order: PostSortOrder.desc);
     if (messagesPage != null) {
       _messages.addAll(messagesPage);
       if (messagesPage.length < _postsPageSize) {
@@ -754,13 +758,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
     } 
-    else if (name == Groups.notifyGroupPostCreated) {
+    else if (name == Social.notifyGroupPostCreated) {
       _onGroupPostCreated(param is GroupPost ? param : null);
     }
-    else if (name == Groups.notifyGroupPostUpdated) {
+    else if (name == Social.notifyGroupPostUpdated) {
       _onGroupPostUpdated(param is GroupPost ? param : null);
     }
-    else if (name == Groups.notifyGroupPostDeleted) {
+    else if (name == Social.notifyGroupPostDeleted) {
       _onGroupPostDeleted(param is GroupPost ? param : null);
     }
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
@@ -1207,7 +1211,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     for (int i = 0; i <_posts.length ; i++) {
-      GroupPost? post = _posts[i];
+      Post? post = _posts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
@@ -1250,7 +1254,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     for (int i = 0; i <_scheduledPosts.length ; i++) {
-      GroupPost? post = _scheduledPosts[i];
+      Post? post = _scheduledPosts[i];
       if (i > 0) {
         scheduledPostsContent.add(Container(height: 16));
       }
@@ -1302,7 +1306,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     for (int i = 0; i <_messages.length ; i++) {
-      GroupPost? message = _messages[i];
+      Post? message = _messages[i];
       if (i > 0) {
         messagesContent.add(Container(height: 16));
       }

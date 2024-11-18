@@ -31,8 +31,10 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -42,6 +44,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -1028,7 +1031,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 // GroupPostCard
 
 class GroupPostCard extends StatefulWidget {
-  final GroupPost? post;
+  final Post? post;
   final Group? group;
 
   GroupPostCard({Key? key, required this.post, required this.group}) :
@@ -1048,7 +1051,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? memberName = widget.post?.member?.displayShortName;
+    //TBD: DDGS - implement post member name etc
+    // String? memberName = widget.post?.member?.displayShortName;
+    String? memberName = 'implement Member name';
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = getVisibleRepliesCount();
@@ -1185,7 +1190,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   int getVisibleRepliesCount() {
     int result = 0;
-    List<GroupPost>? replies = widget.post?.replies;
+    //TBD: DDGS - implement replies
+    // List<GroupPost>? replies = widget.post?.replies;
+    List<GroupPost>? replies = null;
     if (replies != null) {
       bool? memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
       for (GroupPost? reply in replies) {
@@ -1204,8 +1211,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
 // GroupReplyCard
 
 class GroupReplyCard extends StatefulWidget {
-  final GroupPost? reply;
-  final GroupPost? post;
+  final Post? reply;
+  final Post? post;
   final Group? group;
   final String? iconPath;
   final String? semanticsLabel;
@@ -1224,7 +1231,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    NotificationService().subscribe(this, Social.notifyGroupPostsUpdated);
     super.initState();
   }
 
@@ -1236,7 +1243,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
-    int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
+    //TBD: DDGS - implement replies
+    // int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
+    int visibleRepliesCount = 0;
     bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1264,7 +1273,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 Semantics( child:
-                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
+                  //TBD: DDGS - implement member name
+                  // Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
+                  Text(StringUtils.ensureNotEmpty("widget.reply?.member?.displayShortName"),
                     style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")),
                 ),
                 Expanded(child: Container()),
@@ -1275,7 +1286,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     groupID: widget.group?.id,
                     post: widget.reply,
                     reaction: thumbsUpReaction,
-                    accountIDs: widget.reply?.reactions[thumbsUpReaction],
+                    //TBD: DDGS - implement reply reactions
+                    // accountIDs: widget.reply?.reactions[thumbsUpReaction],
+                    accountIDs: null,
                     selectedIconKey: 'thumbs-up-filled',
                     deselectedIconKey: 'thumbs-up-outline-gray',
                   ),
@@ -1372,7 +1385,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   void onNotification(String name, param) {
-    if (name == Groups.notifyGroupPostsUpdated) {
+    if (name == Social.notifyGroupPostsUpdated) {
       setStateIfMounted(() {});
     }
   }
@@ -1385,7 +1398,7 @@ const String thumbsUpReaction = "thumbs-up";
 
 class GroupPostReaction extends StatelessWidget {
   final String? groupID;
-  final GroupPost? post;
+  final Post? post;
   final String reaction;
   final List<String>? accountIDs;
   final String selectedIconKey;
@@ -1417,14 +1430,17 @@ class GroupPostReaction extends StatelessWidget {
                 ])));
   }
 
-  void _onTapReaction(String? groupId, GroupPost? post, String reaction) async {
+  void _onTapReaction(String? groupId, Post? post, String reaction) async {
+    //TBD: DDGS - implement reactions
+    // bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
     bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
     if (success) {
-      GroupPost? updatedPost = await Groups().loadGroupPost(groupId: groupId, postId: post?.id);
+      Post? updatedPost = await Social().loadSinglePost(groupId: groupId, postId: post!.id!);
       if (updatedPost != null) {
-        post?.reactions.clear();
-        post?.reactions.addAll(updatedPost.reactions);
-        NotificationService().notify(Groups.notifyGroupPostReactionsUpdated);
+        //TBD: DDGS - implement reactions
+        // post?.reactions.clear();
+        // post?.reactions.addAll(updatedPost.reactions);
+        // NotificationService().notify(Groups.notifyGroupPostReactionsUpdated);
       }
     }
   }
