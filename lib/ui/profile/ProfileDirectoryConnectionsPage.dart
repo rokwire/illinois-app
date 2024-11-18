@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Directory.dart';
 import 'package:illinois/model/Directory.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -190,7 +191,7 @@ class _DirectoryConnectionMemberCardState extends State<DirectoryConnectionMembe
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                Text(_nameString, style: Styles().textStyles.getTextStyleEx('widget.title.large.fat', fontHeight: 0.85)),
+                Text(widget.member.fullName, style: Styles().textStyles.getTextStyleEx('widget.title.large.fat', fontHeight: 0.85)),
                 if (widget.member.pronoun?.isNotEmpty == true)
                   Text(widget.member.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
               ],)
@@ -272,24 +273,6 @@ class _DirectoryConnectionMemberCardState extends State<DirectoryConnectionMembe
         ],)
      ),
     );
-
-  String get _nameString {
-    String string = '';
-    string = _addNameString(string, widget.member.firstName);
-    string = _addNameString(string, widget.member.middleName);
-    string = _addNameString(string, widget.member.lastName);
-    return string;
-  }
-
-  String _addNameString(String string, String? name) {
-    if (name?.isNotEmpty == true) {
-      if (string.isNotEmpty) {
-        string += ' ';
-      }
-      string += name ?? '';
-    }
-    return string;
-  }
 
   List<TextSpan> get _nameSpans {
     List<TextSpan> spans = <TextSpan>[];

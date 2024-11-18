@@ -2265,6 +2265,9 @@
     "panel.profile.directory.connections.connections.failed.text": "Failed to load {{app_title}} Connections content.",
     "panel.profile.directory.connections.directory.failed.text": "Failed to load {{app_title}} App Directory content.",
 
+    "panel.profile.directory.my_info.connections.description.text": "Preview of how your profile displays for your {{app_title}} Connections.",
+    "panel.profile.directory.my_info.directory.description.text": "Preview of how your profile displays in the directory.",
+
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
 

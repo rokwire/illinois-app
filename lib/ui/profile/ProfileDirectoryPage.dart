@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryConnectionsPage.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -33,7 +34,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
 
   // ignore: unused_element
-  MyDirectoryInfo get _selectedInfoTab => (_selectedSubTabs[_Tab.myInfo] as MyDirectoryInfo?) ?? MyDirectoryInfo.values.first;
+  MyDirectoryInfo get _selectedMyInfoTab => (_selectedSubTabs[_Tab.myInfo] as MyDirectoryInfo?) ?? MyDirectoryInfo.values.first;
   DirectoryConnections get _selectedConnectionsTab => (_selectedSubTabs[_Tab.connections] as DirectoryConnections?) ?? DirectoryConnections.values.first;
 
   @override
@@ -89,7 +90,14 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   Widget get _myInfoTabPage =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: [
-        _subTabsWidget(_Tab.myInfo)
+        _subTabsWidget(_Tab.myInfo),
+        Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myConnectionsInfo), maintainState: true, child:
+          ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
+        ),
+        Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
+          ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myDirectoryInfo,)
+        ),
+
       ],),
     );
 
