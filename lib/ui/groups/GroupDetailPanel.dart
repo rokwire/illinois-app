@@ -34,6 +34,7 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -378,20 +379,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  void _onGroupPostCreated(GroupPost? post) {
+  void _onGroupPostCreated(Post? post) {
       if (post?.isPost == true) {
-        _refreshCurrentPosts(delta: (post?.parentId == null) ? 1 : null);
+        //TBD: DDGS - check about the delta. Currently it is 1 for main posts
+        // _refreshCurrentPosts(delta: (post?.parentId == null) ? 1 : null);
+        _refreshCurrentPosts(delta: 1);
       }
       else if (post?.isMessage == true) {
-        _refreshCurrentMessages(delta: (post?.parentId == null) ? 1 : null);
+        //TBD: DDGS - check about the delta. Currently it is 1 for main posts
+        // _refreshCurrentMessages(delta: (post?.parentId == null) ? 1 : null);
+        _refreshCurrentMessages(delta: 1);
       }
       //For both post and messages
-      if(post?.isScheduled == true){
-        _refreshCurrentScheduledPosts(delta: (post?.parentId == null) ? 1 : null);
+      if(post?.isScheduled == true) {
+        //TBD: DDGS - check about the delta. Currently it is 1 for main posts
+        // _refreshCurrentScheduledPosts(delta: (post?.parentId == null) ? 1 : null);
+        _refreshCurrentScheduledPosts(delta: 1);
       }
   }
 
-  void _onGroupPostUpdated(GroupPost? post) {
+  void _onGroupPostUpdated(Post? post) {
       if (post?.isPost == true) {
         _refreshCurrentPosts();
       }
@@ -404,12 +411,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
   }
 
-  void _onGroupPostDeleted(GroupPost? post) {
+  void _onGroupPostDeleted(Post? post) {
       if (post?.isPost == true) {
-        _refreshCurrentPosts(delta: (post?.parentId == null) ? -1 : null);
+        //TBD: DDGS - check about the delta. Currently it is -1 for main posts
+        // _refreshCurrentPosts(delta: (post?.parentId == null) ? -1 : null);
+        _refreshCurrentPosts(delta: -1);
       }
       else if (post?.isMessage == true) {
-        _refreshCurrentMessages(delta: (post?.parentId == null) ? -1 : null);
+        //TBD: DDGS - check about the delta. Currently it is -1 for main posts
+        // _refreshCurrentMessages(delta: (post?.parentId == null) ? -1 : null);
+        _refreshCurrentMessages(delta: -1);
       }
       //For both post and messages
       if(post?.isScheduled == true){
@@ -474,7 +485,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPostsPage() async {
-    List<Post>? postsPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.post , offset: _posts.length, limit: _postsPageSize, order: PostSortOrder.desc);
+    List<Post>? postsPage = await Social().loadPosts(
+        groupId: widget.groupId,
+        type: PostType.post,
+        status: PostStatus.active,
+        offset: _posts.length,
+        limit: _postsPageSize,
+        sortBy: PostSortBy.date_created);
     if (postsPage != null) {
       _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
@@ -540,7 +557,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadScheduledPostsPage() async {
-    List<Post>? scheduledPostsPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.post , offset: _scheduledPosts.length, limit: _postsPageSize, order: PostSortOrder.desc, status: PostStatus.draft);
+    List<Post>? scheduledPostsPage = await Social().loadPosts(
+        groupId: widget.groupId,
+        type: PostType.post,
+        offset: _scheduledPosts.length,
+        limit: _postsPageSize,
+        status: PostStatus.draft,
+        sortBy: PostSortBy.activation_date);
     if (scheduledPostsPage != null) {
       _scheduledPosts.addAll(scheduledPostsPage);
       if (scheduledPostsPage.length < _postsPageSize) {
@@ -759,13 +782,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadGroup(loadEvents: true);
     } 
     else if (name == Social.notifyGroupPostCreated) {
-      _onGroupPostCreated(param is GroupPost ? param : null);
+      _onGroupPostCreated(param is Post ? param : null);
     }
     else if (name == Social.notifyGroupPostUpdated) {
-      _onGroupPostUpdated(param is GroupPost ? param : null);
+      _onGroupPostUpdated(param is Post ? param : null);
     }
     else if (name == Social.notifyGroupPostDeleted) {
-      _onGroupPostDeleted(param is GroupPost ? param : null);
+      _onGroupPostDeleted(param is Post ? param : null);
     }
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
@@ -2190,7 +2213,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
     if (_group != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
-        if (result is GroupPost) {
+        if (result is Post) {
           if(result.isScheduled){ //Post and messages can be both scheduled, so check for scheduled first
             _scrollToLastScheduledPostsAfterRefresh = true;
             if (_refreshingScheduledPosts != true) {

@@ -28,7 +28,7 @@ extension PostExt on Post {
           : PostType.post;
   bool get isPost => (type == PostType.post);
   bool get isMessage => (type == PostType.direct_message);
-  bool get isScheduled => dateActivatedUtc?.isAfter(DateTime.now()) == true;
+  bool get isScheduled => (status == PostStatus.draft);
 
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
