@@ -102,7 +102,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
           title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
           bgImageKey: 'event-filters-background',
           descriptionBuilder: _buildOnboardingDescription,
-          sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
+          sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.fat.highlight'),
           sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
           sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
           applyBuilder: _buildOnboardingApply,

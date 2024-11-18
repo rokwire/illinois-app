@@ -427,7 +427,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   padding: EdgeInsets.only(bottom: 8, top:24),
                   child: Text(
                     labelTitle,
-                    style: Styles().textStyles.getTextStyle("widget.title.tiny")
+                    style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")
                   ),
                 ),
                 Padding(
