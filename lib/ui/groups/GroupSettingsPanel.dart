@@ -1177,7 +1177,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Semantics(container: true, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Semantics(label: title, header: true, excludeSemantics: true, child:
-            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny")),
+            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
           ),
           ((description != null) && description.isNotEmpty) ? Container(padding: EdgeInsets.only(top: 2), child:
               Text(description, style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
