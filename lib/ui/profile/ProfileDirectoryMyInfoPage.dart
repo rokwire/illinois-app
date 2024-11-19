@@ -28,6 +28,10 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     _member = DirectoryMemberExt.fromExternalData(
       auth2Account: Auth2().account,
       studentClassification: IlliniCash().studentClassification,
+      pronoun: 'he',
+      college: 'Academic Affairs',
+      department: 'Center for Advanced Study',
+      phone: '(234) 567-8901'
     );
     super.initState();
   }
@@ -71,19 +75,25 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
     ),
     child: Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-            Row(children: [
-              Expanded(child:
-                Center(child:
-                  Text(_member.fullName, style: Styles().textStyles.getTextStyle('widget.title.medium_large.fat'), textAlign: TextAlign.center,))
-                )
-              ],),
-            Padding(padding: EdgeInsets.only(top: 12), child:
-              DirectoryMemberDetails(_member)
-            )
-        ],)
-      )
+      _cardContent
     ),
+  );
+
+  Widget get _cardContent =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        Row(children: [
+          Expanded(child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(_member.fullName, style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
+              if (_member.pronoun?.isNotEmpty == true)
+                Text(_member.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+            ]),
+          ),
+        ],),
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          DirectoryMemberDetails(_member)
+        )
+    ],)
   );
 }
