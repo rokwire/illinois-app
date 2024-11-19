@@ -219,6 +219,7 @@ class Building with Explore {
   
   final double? latitude;
   final double? longitude;
+  List<BuildingFeature>? features;
   
   List<BuildingEntrance>? entrances;
 
@@ -228,7 +229,7 @@ class Building with Explore {
     this.city, this.state, this.zipCode,
     this.imageURL, this.mailCode,
     this.latitude, this.longitude,
-    this.entrances,
+    this.entrances, this.features
   });
 
   static Building? fromJson(Map<String, dynamic>? json) {
@@ -251,6 +252,7 @@ class Building with Explore {
       latitude: JsonUtils.doubleValue(MapUtils.get2(json, ['latitude', 'Latitude'])),
       longitude: JsonUtils.doubleValue(MapUtils.get2(json, ['longitude', 'Longitude'])),
 
+      features: BuildingFeature.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['Features']))),
       entrances: BuildingEntrance.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['entrances', 'Entrances']))),
     ) : null;
   }
@@ -274,6 +276,7 @@ class Building with Explore {
     'latitude': latitude,
     'longitude': longitude,
 
+    'features': BuildingFeature.listToJson(features),
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
@@ -300,7 +303,7 @@ class Building with Explore {
     
     (latitude == other.latitude) &&
     (longitude == other.longitude) &&
-    
+
     DeepCollectionEquality().equals(entrances, other.entrances);
 
   @override
@@ -391,6 +394,63 @@ class Building with Explore {
       }
     }
     return null;
+  }
+}
+// BuildingFeature
+
+class BuildingFeatureValue {
+
+  final String? name;
+  List<String>? floors;
+
+  BuildingFeatureValue({this.name, this.floors});
+
+  static BuildingFeatureValue? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? BuildingFeatureValue(
+      name: JsonUtils.stringValue(MapUtils.get2(json, ['name'])),
+      floors: JsonUtils.listStringsValue(MapUtils.get2(json, ['floors'])),
+    ) : null;
+  }
+}
+
+class BuildingFeature {
+
+  final String? key;
+  final BuildingFeatureValue? value;
+
+  BuildingFeature({this.key, this.value});
+
+  static BuildingFeature? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? BuildingFeature(
+      key: JsonUtils.stringValue(MapUtils.get2(json, ['key'])),
+      value: BuildingFeatureValue.fromJson(JsonUtils.mapValue(json['value'])),
+    ) : null;
+  }
+
+  toJson () => {
+    "key": key,
+    "value": value
+  };
+
+  static List<BuildingFeature>? listFromJson(List<dynamic>? jsonList) {
+    List<BuildingFeature>? values = [];
+    if (jsonList != null) {
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, BuildingFeature.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<BuildingFeature>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (BuildingFeature value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
   }
 }
 

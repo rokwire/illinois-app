@@ -96,6 +96,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       _buildShare(),
       // _buildFloorPlansAndAmenities(),
       _buildSelectLocation(),
+      (_building!.features!.length > 0) ? _buildFeatureList() : Container()
     ]);
 
   Widget _buildTitle() =>
@@ -163,6 +164,15 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   Widget _buildSelectLocation() {
     Widget? selectorWidget = widget.selectLocationBuilder?.call(context, ExploreSelectLocationContext.detail, explore: _building);
     return (selectorWidget != null) ? Padding(padding: EdgeInsets.only(top: 32), child: selectorWidget) : Container();
+  }
+
+  Widget _buildFeatureList() {
+    return Column(children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Text('Amenities include:', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))),
+      Padding(padding: EdgeInsets.only(left: 16.0), child:
+          Column(children: _building!.features!.map((feature) => Text('• ${feature.value!.name}: Floor${(feature.value!.floors!.length > 1) ? 's' : ''} ${feature.value?.floors?.join(", ")}', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),)).toList(), crossAxisAlignment: CrossAxisAlignment.start,)
+      )
+    ], crossAxisAlignment: CrossAxisAlignment.start,);
   }
 
 
