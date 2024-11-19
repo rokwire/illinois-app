@@ -25,10 +25,6 @@ enum DirectoryConnections { myConnections, appDirectory }
 
 class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements NotificationsListener {
 
-  String get _appTitle => _appTitleEx();
-  String _appTitleEx({String? language}) => Localization().getStringEx('app.title', 'Illinois', language: language);
-  static const String _appTitleMacro = "{{app_title}}";
-
   late _Tab _selectedTab;
 
   Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
@@ -249,7 +245,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   // Signed out
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.directory.message.signed_out', 'To view "My Info & $_appTitleMacro Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.').replaceAll(_appTitleMacro, _appTitle);
+    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.message.signed_out', 'To view "My Info & ${AppTextUtils.appTitleMacro} Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
