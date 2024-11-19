@@ -2267,6 +2267,11 @@
 
     "panel.profile.directory.my_info.connections.description.text": "Preview of how your profile displays for your {{app_title}} Connections.",
     "panel.profile.directory.my_info.directory.description.text": "Preview of how your profile displays in the directory.",
+    "panel.profile.directory.my_info.command.button.edit.text": "Edit My Info",
+    "panel.profile.directory.my_info.command.button.swap.text": "Swap Info",
+    "panel.profile.directory.my_info.command.link.sign_out.text": "Sign Out",
+    "panel.profile.directory.my_info.command.link.delete_account.text": "Delete My {{app_title}} App Account",
+    "panel.profile.directory.my_info.command.link.share.text": "Share my info outside the {{app_title}} app",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
