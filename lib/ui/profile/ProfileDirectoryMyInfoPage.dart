@@ -95,19 +95,19 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   );
 
   Widget get _cardContent =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Row(children: [
-          Expanded(child:
-            _cardContentHeading,
-          ),
-        ],),
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          Row(children: [
+            Expanded(child:
+              _cardContentHeading,
+            ),
+          ],),
+        ),
         Padding(padding: EdgeInsets.only(top: 12), child:
           DirectoryMemberDetails(_member)
         ),
-        Padding(padding: EdgeInsets.only(top: 6), child:
-          _shareButton,
-        )
+        _shareButton,
     ],)
   );
 
@@ -168,7 +168,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
         title: AppTextUtils.appTitleString('panel.profile.directory.my_info.command.link.share.text', 'Share my info outside the ${AppTextUtils.appTitleMacro} app'),
         textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
         textAlign: TextAlign.left,
-        padding: EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(vertical: 16),
         onTap: _onShare,
       ),
     ),

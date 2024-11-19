@@ -39,7 +39,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
       Auth2.notifyLoginChanged,
     ]);
 
-    _selectedTab = _Tab.values.last;
+    _selectedTab = _Tab.values.first;
 
     for (_Tab tab in _Tab.values) {
       _selectedSubTabs[tab] = tab.subTabs.first;
