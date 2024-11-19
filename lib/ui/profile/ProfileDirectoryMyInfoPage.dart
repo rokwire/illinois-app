@@ -8,6 +8,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -186,6 +187,11 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   void _onSignOut() {
     Analytics().logSelect(target: 'Sign Out');
+    showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
+      if (result == true) {
+        Auth2().logout();
+      }
+    });
   }
 
   Widget get _deleteAccountButton => LinkButton(
