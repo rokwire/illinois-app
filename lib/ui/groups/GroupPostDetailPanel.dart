@@ -274,13 +274,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           container: true,
                           child: Padding(
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
-                              child: Text(
-                                  StringUtils.ensureNotEmpty(
-                                    //TBD: DDGS - implement post member name
-                                      // _post?.member?.displayShortName ),
-                                      "_post?.member?.displayShortName" ),
-                                  style: Styles().textStyles.getTextStyle("widget.detail.large.thin"),
-                                  ))),
+                              child: Text(StringUtils.ensureNotEmpty(_post?.creatorName),
+                                  style: Styles().textStyles.getTextStyle("widget.detail.large.thin")))),
                       Semantics(
                           sortKey: OrdinalSortKey(3),
                           container: true,
@@ -1021,13 +1016,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool _isCurrentUserCreator(Post? item) {
-    String? currentMemberEmail = widget.group?.currentMember?.userId;
-    //TBD: DDGS - implement member user id
-    // String? itemMemberUserId = item?.member?.userId;
-    String? itemMemberUserId = 'item?.member?.userId';
-    return StringUtils.isNotEmpty(currentMemberEmail) &&
-        StringUtils.isNotEmpty(itemMemberUserId) &&
-        (currentMemberEmail == itemMemberUserId);
+    String? currentMemberId = widget.group?.currentMember?.userId;
+    String? itemMemberUserId = item?.creatorId;
+    return StringUtils.isNotEmpty(currentMemberId) && StringUtils.isNotEmpty(itemMemberUserId) && (currentMemberId == itemMemberUserId);
   }
 
   bool get _isEditPostVisible {

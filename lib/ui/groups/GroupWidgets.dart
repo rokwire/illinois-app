@@ -1051,9 +1051,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    //TBD: DDGS - implement post member name etc
-    // String? memberName = widget.post?.member?.displayShortName;
-    String? memberName = 'implement Member name';
+    String? creatorName = widget.post?.creatorName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = getVisibleRepliesCount();
@@ -1139,7 +1137,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 3,
                             child:Container(
                               padding: EdgeInsets.only(right: 6),
-                              child:Text(StringUtils.ensureNotEmpty(memberName),
+                              child:Text(StringUtils.ensureNotEmpty(creatorName),
                                 textAlign: TextAlign.left,
                                 style: Styles().textStyles.getTextStyle('widget.description.small')),
                           )),
@@ -1273,9 +1271,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 Semantics( child:
-                  //TBD: DDGS - implement member name
-                  // Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
-                  Text(StringUtils.ensureNotEmpty("widget.reply?.member?.displayShortName"),
+                  //TBD: DDGS - implement comment member name
+                  Text(StringUtils.ensureNotEmpty(widget.reply?.creatorName),
                     style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")),
                 ),
                 Expanded(child: Container()),

@@ -67,4 +67,7 @@ extension PostExt on Post {
     }
     return null;
   }
+
+  String? get creatorName => creator?.name;
+  String? get creatorId => creator?.accountId;
 }
