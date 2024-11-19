@@ -130,7 +130,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
-            Styles().images.getImage('share', excludeFromSemantics: true),
+            Styles().images.getImage('share-nodes', excludeFromSemantics: true),
           ),
           Expanded(child:
             Text(Localization().getStringEx('panel.explore_building_detail.detail.share', 'Share This Location'), style:
