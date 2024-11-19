@@ -59,34 +59,12 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            _expandedPhotoImage
+            DirectoryMemberPhoto(widget.member, imageSize: _photoImageSize, borderSize: 12,)
           ),
         ),
         //Container(width: 32,),
       ],),
     );
-
-  Widget get _expandedPhotoImage => (widget.member.photoUrl?.isNotEmpty == true) ?
-    Container(
-      width: _photoImageSize + 12, height: _photoImageSize + 12,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Styles().colors.surfaceAccent,
-      ),
-      child: Center(
-        child: Container(
-          width: _photoImageSize, height: _photoImageSize,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Styles().colors.background,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(widget.member.photoUrl ?? '')
-            ),
-          )
-        )
-      ),
-    ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: _photoImageSize) ?? Container());
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 4;
 
@@ -170,4 +148,38 @@ void _launchUrl(String? url) {
       }
     }
   }
+}
+
+class DirectoryMemberPhoto extends StatelessWidget {
+  final DirectoryMember member;
+  final double imageSize;
+  final double borderSize;
+  final Map<String, String>? headers;
+
+  DirectoryMemberPhoto(this.member, { super.key, required this.imageSize, this.borderSize = 0, this.headers });
+
+  @override
+  Widget build(BuildContext context) => (member.photoUrl?.isNotEmpty == true) ?
+    Container(
+      width: imageSize + borderSize, height: imageSize + borderSize,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Styles().colors.surfaceAccent,
+      ),
+      child: Center(
+        child: Container(
+          width: imageSize, height: imageSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Styles().colors.background,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(member.photoUrl ?? '',
+                headers: headers
+              )
+            ),
+          )
+        )
+      ),
+    ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
 }

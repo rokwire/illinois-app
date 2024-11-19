@@ -43,7 +43,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                 _cardWidget,
               ),
               Center(child:
-                _photoImage,
+                DirectoryMemberPhoto(_member, imageSize: _photoImageSize, headers: _photoImageHeaders,),
               )
             ])
         )
@@ -59,24 +59,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
-  Widget get _photoImage => (_member.photoUrl?.isNotEmpty == true) ?
-    Container(
-      width: _photoImageSize, height: _photoImageSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Styles().colors.background,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(_member.photoUrl ?? '', headers: _photoImageHeaders)
-        ),
-      )
-    ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: _photoImageSize) ?? Container());
-
   Map<String, String> get _photoImageHeaders => <String, String>{
     HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
   };
-//String tokenType = Auth2().token?.tokenType ?? 'Bearer';
-//String token = Auth2().token?.accessToken ?? '';
 
   Widget get _cardWidget => Container(
     decoration: BoxDecoration(
