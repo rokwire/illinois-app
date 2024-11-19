@@ -560,11 +560,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapDeletePost() {
     Analytics().logSelect(target: 'Delete Post');
+    String deleteMsg = (_post?.isLinkedToMoreThanOneGroup ?? false)
+        ? Localization().getStringEx('panel.group.detail.post.delete.many_groups.confirm.msg',
+            'This post is visible in more than one group. Are you sure that you want to delete it?')
+        : Localization().getStringEx('panel.group.detail.post.delete.confirm.msg', 'Are you sure that you want to delete this post?');
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx(
-            'panel.group.detail.post.delete.confirm.msg',
-            'Are you sure that you want to delete this post?')),
+        contentWidget: Text(deleteMsg),
         actions: <Widget>[
           TextButton(
               child:
