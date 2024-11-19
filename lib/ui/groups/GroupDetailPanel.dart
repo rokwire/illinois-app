@@ -976,7 +976,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             RibbonButton(
             label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
             hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
-            leftIconKey: 'share',
+            leftIconKey: 'share-nodes',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
@@ -1440,7 +1440,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Share this group"),
       hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-      leftIconKey: 'share',
+      leftIconKey: 'share-nodes',
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onTapPromote,
     );
