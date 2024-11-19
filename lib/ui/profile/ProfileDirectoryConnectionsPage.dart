@@ -87,7 +87,7 @@ class _ProfileDirectoryConnectionsPageState extends State<ProfileDirectoryConnec
     ];
     for (DirectoryMember member in members) {
       result.add(_sectionSplitter);
-      result.add(DirectoryConnectionMemberCard(member, expanded: (_expandedMemberId != null) && (member.id == _expandedMemberId), onToggleExpanded: () => _onToggleMemberExpanded(member),));
+      result.add(DirectoryMemberCard(member, expanded: (_expandedMemberId != null) && (member.id == _expandedMemberId), onToggleExpanded: () => _onToggleMemberExpanded(member),));
     }
     if (members.isNotEmpty) {
       result.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));

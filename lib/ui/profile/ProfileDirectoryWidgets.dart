@@ -10,17 +10,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DirectoryConnectionMemberCard extends StatefulWidget {
+class DirectoryMemberCard extends StatefulWidget {
   final DirectoryMember member;
   final bool expanded;
   final void Function()? onToggleExpanded;
-  DirectoryConnectionMemberCard(this.member, { super.key, this.expanded = false, this.onToggleExpanded });
+  DirectoryMemberCard(this.member, { super.key, this.expanded = false, this.onToggleExpanded });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryConnectionMemberCardState();
+  State<StatefulWidget> createState() => _DirectoryMemberCardState();
 }
 
-class _DirectoryConnectionMemberCardState extends State<DirectoryConnectionMemberCard> {
+class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
   @override
   Widget build(BuildContext context) =>
     widget.expanded ? _expandedContent : _collapsedContent;
