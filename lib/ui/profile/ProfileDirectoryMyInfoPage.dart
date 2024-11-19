@@ -4,15 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Directory.dart';
 import 'package:illinois/model/Directory.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProfileDirectoryMyInfoPage extends StatefulWidget {
   final MyDirectoryInfo contentType;
@@ -98,52 +95,10 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                 )
               ],),
             Padding(padding: EdgeInsets.only(top: 12), child:
-              _expandedDetails
+              DirectoryMemberDetails(_member)
             )
         ],)
       )
     ),
   );
-
-  Widget get _expandedDetails =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (_member.college?.isNotEmpty == true)
-          Text(_member.college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (_member.department?.isNotEmpty == true)
-          Text(_member.department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (_member.major?.isNotEmpty == true)
-          Text(_member.major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (_member.email?.isNotEmpty == true)
-          _linkDetail(_member.email ?? '', 'mailto:${_member.email}'),
-        if (_member.email2?.isNotEmpty == true)
-          _linkDetail(_member.email2 ?? '', 'mailto:${_member.email2}'),
-        if (_member.phone?.isNotEmpty == true)
-          _linkDetail(_member.phone ?? '', 'tel:${_member.phone}'),
-        if (_member.website?.isNotEmpty == true)
-          _linkDetail(_member.website ?? '', UrlUtils.fixUrl(_member.website ?? '', scheme: 'https') ?? _member.website ?? ''),
-      ],);
-
-  Widget _linkDetail(String text, String url) =>
-    InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:
-      Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline', decorationColor: Styles().colors.fillColorPrimary),),
-    );
-
-  void _onTapLink(String url, {String? analyticsTarget}) {
-    Analytics().logSelect(target: analyticsTarget ?? url);
-    _launchUrl(context, url);
-  }
-
-  static void _launchUrl(BuildContext context, String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
-      }
-    }
-  }
 }

@@ -21,6 +21,7 @@ class DirectoryMemberCard extends StatefulWidget {
 }
 
 class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
+
   @override
   Widget build(BuildContext context) =>
     widget.expanded ? _expandedContent : _collapsedContent;
@@ -53,7 +54,7 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 12), child:
-            _expandedDetails
+            DirectoryMemberDetails(widget.member),
           ),
         ),
         Expanded(child:
@@ -63,29 +64,6 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
         ),
         //Container(width: 32,),
       ],),
-    );
-
-  Widget get _expandedDetails =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (widget.member.college?.isNotEmpty == true)
-          Text(widget.member.college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (widget.member.department?.isNotEmpty == true)
-          Text(widget.member.department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (widget.member.major?.isNotEmpty == true)
-          Text(widget.member.major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (widget.member.email?.isNotEmpty == true)
-          _linkDetail(widget.member.email ?? '', 'mailto:${widget.member.email}'),
-        if (widget.member.email2?.isNotEmpty == true)
-          _linkDetail(widget.member.email2 ?? '', 'mailto:${widget.member.email2}'),
-        if (widget.member.phone?.isNotEmpty == true)
-          _linkDetail(widget.member.phone ?? '', 'tel:${widget.member.phone}'),
-        if (widget.member.website?.isNotEmpty == true)
-          _linkDetail(widget.member.website ?? '', UrlUtils.fixUrl(widget.member.website ?? '', scheme: 'https') ?? widget.member.website ?? ''),
-      ],);
-
-  Widget _linkDetail(String text, String url) =>
-    InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:
-      Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline', decorationColor: Styles().colors.fillColorPrimary),),
     );
 
   Widget get _expandedPhotoImage => (widget.member.photoUrl?.isNotEmpty == true) ?
@@ -135,22 +113,51 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
       spans.add(TextSpan(text: name ?? '', style: style));
     }
   }
+}
 
-  void _onTapLink(String url, {String? analyticsTarget}) {
+class DirectoryMemberDetails extends StatelessWidget {
+  final DirectoryMember member;
+  DirectoryMemberDetails(this.member, { super.key });
+
+  @override
+  Widget build(BuildContext context) =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (member.college?.isNotEmpty == true)
+          Text(member.college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+        if (member.department?.isNotEmpty == true)
+          Text(member.department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+        if (member.major?.isNotEmpty == true)
+          Text(member.major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+        if (member.email?.isNotEmpty == true)
+          _linkDetail(member.email ?? '', 'mailto:${member.email}'),
+        if (member.email2?.isNotEmpty == true)
+          _linkDetail(member.email2 ?? '', 'mailto:${member.email2}'),
+        if (member.phone?.isNotEmpty == true)
+          _linkDetail(member.phone ?? '', 'tel:${member.phone}'),
+        if (member.website?.isNotEmpty == true)
+          _linkDetail(member.website ?? '', UrlUtils.fixUrl(member.website ?? '', scheme: 'https') ?? member.website ?? ''),
+      ],);
+
+  Widget _linkDetail(String text, String url) =>
+    InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:
+      Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline', decorationColor: Styles().colors.fillColorPrimary),),
+    );
+
+  void _onTapLink(String url, { String? analyticsTarget }) {
     Analytics().logSelect(target: analyticsTarget ?? url);
-    _launchUrl(context, url);
+    _launchUrl(url);
   }
+}
 
-  static void _launchUrl(BuildContext context, String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+void _launchUrl(String? url) {
+  if (StringUtils.isNotEmpty(url)) {
+    if (DeepLink().isAppUrl(url)) {
+      DeepLink().launchUrl(url);
+    }
+    else {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
       }
     }
   }
