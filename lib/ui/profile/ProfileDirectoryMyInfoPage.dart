@@ -9,9 +9,11 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
+import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -27,6 +29,7 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
 class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>  {
 
   late DirectoryMember _member;
+  bool _preparingDeleteAccount = false;
 
   @override
   void initState() {
@@ -194,14 +197,62 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     });
   }
 
-  Widget get _deleteAccountButton => LinkButton(
-    title: AppTextUtils.appTitleString('panel.profile.directory.my_info.command.link.delete_account.text', 'Delete My ${AppTextUtils.appTitleMacro} App Account'),
-    textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
-    onTap: _onDeleteAccount,
-  );
+  Widget get _deleteAccountButton => Stack(children: [
+    LinkButton(
+      title: AppTextUtils.appTitleString('panel.profile.directory.my_info.command.link.delete_account.text', 'Delete My ${AppTextUtils.appTitleMacro} App Account'),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+      onTap: _onDeleteAccount,
+    ),
+    if (_preparingDeleteAccount)
+      Positioned.fill(child:
+        Center(child:
+          SizedBox(width: 14, height: 14, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+          )
+        )
+      )
+  ],);
 
   void _onDeleteAccount() {
     Analytics().logSelect(target: 'Delete Account');
+    if (!_preparingDeleteAccount) {
+      setState(() {
+        _preparingDeleteAccount = true;
+      });
+      Groups().getUserPostCount().then((int userPostCount) {
+        if (mounted) {
+          setState(() {
+            _preparingDeleteAccount = false;
+          });
+          final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
+          SettingsDialog.show(context,
+              title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
+              message: [
+                TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
+                TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles.getTextStyle("widget.text.fat")),
+                TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+                if (0 < userPostCount)
+                  TextSpan(text:Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.")),
+              ],
+              options: (0 < userPostCount) ? [groupsSwitchTitle] : null,
+              initialOptionsSelection: (0 < userPostCount) ?  [groupsSwitchTitle] : [],
+              continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
+              onContinue: (List<String> selectedValues, OnContinueProgressController progressController) async {
+                Analytics().logAlert(text: "Remove My Information", selection: "Yes");
+                progressController(loading: true);
+                if (selectedValues.contains(groupsSwitchTitle)){
+                  await Groups().deleteUserData();
+                }
+                await Auth2().deleteUser();
+                progressController(loading: false);
+                Navigator.pop(context);
+              },
+              longButtonTitle: true
+          );
+        }
+      });
+    }
   }
 
 }
