@@ -90,7 +90,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Social.notifyGroupPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
+    NotificationService().subscribe(this, [Social.notifyPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
     _loadMembersAllowedToPost();
     _post = widget.post ?? Post(); //If no post then prepare data for post creation
     //TBD: DDGS - implement comments / replies and sorting
@@ -1055,7 +1055,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   // Notifications Listener
   @override
   void onNotification(String name, param) {
-    if (name == Social.notifyGroupPostsUpdated) {
+    if (name == Social.notifyPostsUpdated) {
       _reloadPost();
     } else if (name == Groups.notifyGroupPostReactionsUpdated) {
       setStateIfMounted(() { });

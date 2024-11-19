@@ -1231,7 +1231,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Social.notifyGroupPostsUpdated);
+    NotificationService().subscribe(this, Social.notifyPostsUpdated);
     super.initState();
   }
 
@@ -1385,7 +1385,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   void onNotification(String name, param) {
-    if (name == Social.notifyGroupPostsUpdated) {
+    if (name == Social.notifyPostsUpdated) {
       setStateIfMounted(() {});
     }
   }
