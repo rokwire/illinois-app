@@ -68,15 +68,24 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
 
   Widget get _expandedPhotoImage => (widget.member.photoUrl?.isNotEmpty == true) ?
     Container(
-      width: _photoImageSize, height: _photoImageSize,
+      width: _photoImageSize + 12, height: _photoImageSize + 12,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Styles().colors.background,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(widget.member.photoUrl ?? ''
-        )),
-      )
+        color: Styles().colors.surfaceAccent,
+      ),
+      child: Center(
+        child: Container(
+          width: _photoImageSize, height: _photoImageSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Styles().colors.background,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(widget.member.photoUrl ?? '')
+            ),
+          )
+        )
+      ),
     ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: _photoImageSize) ?? Container());
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 4;
