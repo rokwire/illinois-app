@@ -369,7 +369,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           //   });
           // } else { //this is the main Post
             _decreaseProgress();
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
             //TBD: DDGS - implement redirect to comment
           // }
         } else {
@@ -1238,7 +1238,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
@@ -1281,7 +1281,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (i > 0) {
         scheduledPostsContent.add(Container(height: 16));
       }
-      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group));
+      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {
@@ -1333,7 +1333,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (i > 0) {
         messagesContent.add(Container(height: 16));
       }
-      messagesContent.add(GroupPostCard(key: (i == 0) ? _lastMessageKey : null, post: message, group: _group));
+      messagesContent.add(GroupPostCard(key: (i == 0) ? _lastMessageKey : null, post: message, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreMessages != false) && (0 < _messages.length)) {

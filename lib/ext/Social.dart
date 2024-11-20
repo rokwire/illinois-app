@@ -15,10 +15,10 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 
 extension PostExt on Post {
 
@@ -67,6 +67,8 @@ extension PostExt on Post {
     }
     return null;
   }
+
+  DateTime? get dateActivatedLocal => dateActivatedUtc?.toLocalTZ();
 
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;

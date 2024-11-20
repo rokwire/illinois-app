@@ -1032,7 +1032,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
 class GroupPostCard extends StatefulWidget {
   final Post? post;
-  final Group? group;
+  final Group group;
 
   GroupPostCard({Key? key, required this.post, required this.group}) :
     super(key: key);
@@ -1192,7 +1192,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
     // List<GroupPost>? replies = widget.post?.replies;
     List<GroupPost>? replies = null;
     if (replies != null) {
-      bool? memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
+      bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
       for (GroupPost? reply in replies) {
         if ((reply!.private != true) || (memberOrAdmin == true)) {
           result++;
@@ -1377,7 +1377,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   void _onTapCard(){
     Analytics().logSelect(target: "Group reply");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply, hidePostOptions: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group!, focusedReply: widget.reply, hidePostOptions: true,)));
   }
 
   @override
@@ -1746,12 +1746,11 @@ class GroupMembersSelectionWidget extends StatefulWidget{
   State<StatefulWidget> createState() => _GroupMembersSelectionState();
 
   //When we work with Update post the member stored in the post came with less populated fields and they do not match the == operator
-  static List<Member>? constructUpdatedMembersList({List<Member>? selection, List<Member>? upToDateMembers}){
-    if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(upToDateMembers)){
-      return upToDateMembers!.where((member) => selection!.any((outdatedMember) => outdatedMember.userId == member.userId)).toList();
+  static List<Member>? constructUpdatedMembersList({List<String>? selectedAccountIds, List<Member>? upToDateMembers}) {
+    if (CollectionUtils.isNotEmpty(selectedAccountIds) && CollectionUtils.isNotEmpty(upToDateMembers)) {
+      return upToDateMembers!.where((member) => selectedAccountIds!.any((memberAccountId) => memberAccountId == member.userId)).toList();
     }
-
-    return selection;
+    return null;
   }
 }
 
@@ -1897,9 +1896,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(data != null){
       switch (data.type){
         case GroupMemberSelectionDataType.Selection:
+          List<String>? selectedMemberAccountIds = MemberExt.extractUserIds(data.selection);
           _onSelectionChanged(data.requiresValidation?
               /*Trim Members which are no longer present*/
-            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: _allMembersAllowedToPost) :
+            GroupMembersSelectionWidget.constructUpdatedMembersList(selectedAccountIds: selectedMemberAccountIds, upToDateMembers: _allMembersAllowedToPost) :
               data.selection);
           break;
         case GroupMemberSelectionDataType.PerformNewSelection:
@@ -1941,11 +1941,12 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   void _loadAllMembersAllowedToPost() {
     Groups().loadMembersAllowedToPost(groupId: widget.groupId).then((members) {
       if (mounted && CollectionUtils.isNotEmpty(members)) {
+        List<String>? selectedAccountIds = MemberExt.extractUserIds(widget.selectedMembers);
         setState(() {
             _allMembersAllowedToPost = members;
             if((_allMembersAllowedToPost?.isNotEmpty ?? false) && (widget.selectedMembers?.isNotEmpty ?? false)){
               //If we have successfully loaded the group data -> refresh initial selection
-               _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selection: widget.selectedMembers)); //Notify Parent widget with the updated values
+               _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selectedAccountIds: selectedAccountIds)); //Notify Parent widget with the updated values
             }
         });
       }

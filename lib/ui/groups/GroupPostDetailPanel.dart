@@ -47,7 +47,7 @@ class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   //TBD: DDGS - implement replies and comments
   final Post? focusedReply;
   final List<Post>? replyThread;
-  final Group? group;
+  final Group group;
   final bool hidePostOptions;
 
   GroupPostDetailPanel(
@@ -57,10 +57,10 @@ class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
 }
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
@@ -132,18 +132,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildContent(){
     return Stack(children: [
       Stack(alignment: Alignment.topCenter, children: [
-        SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
-        Column(children: [
-          Container(height: _sliverHeaderHeight ?? 0,),
-          _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
-            ? ImageChooserWidget(key: _postImageHolderKey, buttonVisible: _isEditMainPost,
-            imageUrl:_isEditMainPost ?  _mainPostUpdateData?.imageUrl : _post?.imageUrl,
-            onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
-            : Container(),
-          _buildPostContent(),
-          _buildRepliesSection(),
-          _buildPostEdit(),
-          ],)),
+        SingleChildScrollView(
+            key: _scrollContainerKey,
+            controller: _scrollController,
+            child: Column(children: [
+              Container(height: _sliverHeaderHeight ?? 0),
+              _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
+                  ? ImageChooserWidget(
+                      key: _postImageHolderKey,
+                      buttonVisible: _isEditMainPost,
+                      imageUrl: _isEditMainPost ? _mainPostUpdateData?.imageUrl : _post?.imageUrl,
+                      onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url)
+                  : Container(),
+              _buildPostContent(),
+              _buildRepliesSection(),
+              _buildPostEdit()
+            ])),
           Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               Row(children: [
@@ -156,11 +160,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 ),
 
                 Visibility(
-                  visible: Config().showGroupPostReactions && (widget.group?.currentUserHasPermissionToSendReactions == true),
+                  visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
                   child: Padding(
                     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
                     child: GroupPostReaction(
-                      groupID: widget.group?.id,
+                      groupID: _groupId,
                       post: _post,
                       reaction: thumbsUpReaction,
                       //TBD: DDGS - implement reactions
@@ -288,18 +292,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   style: Styles().textStyles.getTextStyle("widget.detail.medium"),))),
                       Container(height: 6,),
                       GroupMembersSelectionWidget(
-                        //TBD: DDGS - implement post members
-                        // selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_isEditMainPost ? _mainPostUpdateData?.members : _post?.members), upToDateMembers: _allMembersAllowedToPost),
-                        allMembers: _allMembersAllowedToPost,
-                        enabled: _isEditMainPost,
-                        groupId: widget.group?.id,
-                        groupPrivacy: widget.group?.privacy,
-                        onSelectionChanged: (members){
-                          setStateIfMounted(() {
-                            _mainPostUpdateData?.members = members;
-                          });
-                        },),
-                      Container(height: 6,),
+                      selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(
+                          selectedAccountIds: (_isEditMainPost
+                              ? MemberExt.extractUserIds(_mainPostUpdateData?.members)
+                              : _post?.getMemberAccountIds(groupId: _groupId)),
+                          upToDateMembers: _allMembersAllowedToPost),
+                      allMembers: _allMembersAllowedToPost,
+                      enabled: _isEditMainPost,
+                      groupId: _groupId,
+                      groupPrivacy: widget.group.privacy,
+                      onSelectionChanged: (members) {
+                        setStateIfMounted(() {
+                          _mainPostUpdateData?.members = members;
+                        });
+                      }),
+                  Container(height: 6,),
                       Visibility(visible: widget.post?.dateActivatedUtc != null, child:
                         GroupScheduleTimeWidget(
                           timeZone: null,//TBD pass timezone
@@ -321,16 +328,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _loadMembersAllowedToPost() {
     _setLoading(true);
-    Groups().loadMembersAllowedToPost(groupId: widget.group!.id).then((members) {
+    Groups().loadMembersAllowedToPost(groupId: _groupId).then((members) {
       _allMembersAllowedToPost = members;
       _setLoading(false);
     });
   }
 
   void _refreshPostData(){
-    if((widget.group != null) && (_post?.id != null)) {
+    if(_post?.id != null) {
       _setLoading(true);
-      Social().loadSinglePost(groupId: widget.group!.id, postId: _post!.id!).then((updatedPost){
+      Social().loadSinglePost(groupId: _groupId, postId: _post!.id!).then((updatedPost){
           _setLoading(false);
           if(updatedPost != null){
             //TBD: DDGS - implement comments / replies and sorting
@@ -377,7 +384,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildPostEdit() {
     return Visibility(
         key: _postEditKey,
-        visible: widget.group?.currentUserHasPermissionToSendReply == true,
+        visible: widget.group.currentUserHasPermissionToSendReply == true,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -522,8 +529,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       return null;
     }
     List<Post> visibleReplies = [];
-    bool currentUserIsMemberOrAdmin =
-        widget.group?.currentUserIsMemberOrAdmin ?? false;
+    bool currentUserIsMemberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
     //TBD: DDGS - implement replies and their visibility
     for (Post? reply in replies!) {
       // bool replyVisible = (reply!.private == false) ||
@@ -751,33 +757,40 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
     Analytics().logSelect(target: analyticsTarget);
 
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: _groupId, postId: (post ?? widget.post)?.id)));
   }
 
-  void _onTapEditMainPost(){
-    //TBD: DDGS - implement members
-    // _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost), dateScheduled: _post?.dateScheduledUtc);
-    // setStateIfMounted(() { });
+  void _onTapEditMainPost() {
+    List<String>? selectedAccountIds = _post?.getMemberAccountIds(groupId: _groupId);
+    _mainPostUpdateData = PostDataModel(
+        body: _post?.body,
+        imageUrl: _post?.imageUrl,
+        members: GroupMembersSelectionWidget.constructUpdatedMembersList(
+            selectedAccountIds: selectedAccountIds, upToDateMembers: _allMembersAllowedToPost),
+        dateScheduled: _post?.dateActivatedLocal);
+    setStateIfMounted(() {});
   }
 
-  void _onTapUpdateMainPost(){
+  void _onTapUpdateMainPost() {
     String? body = _mainPostUpdateData?.body;
     String? imageUrl = _mainPostUpdateData?.imageUrl ?? _post?.imageUrl;
     List<Member>? toMembers = _mainPostUpdateData?.members;
     if (StringUtils.isEmpty(body)) {
-      String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
+      String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', 'Post message required');
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
-    String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
 
+    String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, dateScheduledUtc: _mainPostUpdateData?.dateScheduled, private: true);
-    Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
+    _post!.body = htmlModifiedBody;
+    _post!.imageUrl = imageUrl;
+    _post!.dateActivatedUtc = _mainPostUpdateData?.dateScheduled?.toUtc();
+    _post!.setMemberAccountIds(groupId: _groupId, accountIds: MemberExt.extractUserIds(toMembers));
+    Social().updatePost(post: _post!).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
     });
-
   }
 
   void _onTapEditPost({Post? reply}) {
@@ -802,7 +815,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _reloadPost() {
     //TODO: Can we optimize this to only load data for the relevant updated post(s)?
     _setLoading(true);
-    Social().loadPosts(groupId: widget.group?.id).then((posts) {
+    Social().loadPosts(groupId: _groupId).then((posts) {
       if (CollectionUtils.isNotEmpty(posts)) {
         try {
           // GroupPost? post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null); //Remove to fix reload Error: type '() => Null' is not a subtype of type '(() => GroupPost)?' of 'orElse'
@@ -850,6 +863,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
+  //TBD: DDGS - implement reply and post update
   void _onTapSend() {
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
@@ -870,7 +884,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_editingReply != null) {
       imageUrl = StringUtils.isNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply?.imageUrl;
       GroupPost postToUpdate = GroupPost(id: _editingReply?.id, subject: _editingReply?.subject, imageUrl: imageUrl , body: body, private: true);
-      Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
+      Groups().updatePost(_groupId, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
@@ -888,7 +902,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       }
       
       GroupPost post = GroupPost(parentId: parentId, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
-      Groups().createPost(widget.group?.id, post).then((succeeded) {
+      Groups().createPost(_groupId, post).then((succeeded) {
         _onSendFinished(succeeded);
       });
     }
@@ -1004,9 +1018,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool _isDeleteVisible(Post? item) {
-    if (widget.group?.currentUserIsAdmin ?? false) {
+    if (widget.group.currentUserIsAdmin) {
       return true;
-    } else if (widget.group?.currentUserIsMember ?? false) {
+    } else if (widget.group.currentUserIsMember) {
       return _isCurrentUserCreator(item);
     } else {
       return false;
@@ -1018,7 +1032,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool _isCurrentUserCreator(Post? item) {
-    String? currentMemberId = widget.group?.currentMember?.userId;
+    String? currentMemberId = widget.group.currentMember?.userId;
     String? itemMemberUserId = item?.creatorId;
     return StringUtils.isNotEmpty(currentMemberId) && StringUtils.isNotEmpty(itemMemberUserId) && (currentMemberId == itemMemberUserId);
   }
@@ -1032,18 +1046,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isReplyVisible {
-    return widget.group?.currentUserHasPermissionToSendReply == true;
+    return widget.group.currentUserHasPermissionToSendReply == true;
   }
 
-  bool get _isReportAbuseVisible {
-    return widget.group?.currentUserIsMemberOrAdmin ?? false;
-  }
+  bool get _isReportAbuseVisible => widget.group.currentUserIsMemberOrAdmin;
 
-  bool get _isEditMainPost {
-    return _mainPostUpdateData!=null;
-  }
+  bool get _isEditMainPost => _mainPostUpdateData != null;
 
   bool get _isSubReplySupported => false; //Disable sub-reply TBD if we do not return i sub-reply remove all internal logic and UI related to it.
+
+  String get _groupId => widget.group.id!;
 
   // Notifications Listener
   @override
