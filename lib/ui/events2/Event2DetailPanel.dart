@@ -794,6 +794,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
           _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: "Duplicate event", onTap: _onSettingDuplicateEvent),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -1106,6 +1107,35 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             });
           }
         });
+  }
+
+  void _onSettingDuplicateEvent() {
+    Analytics().logSelect(target: "Duplicate event");
+
+    if (_event != null) {
+      Event2Popup.showPrompt(context,
+        title: Localization().getStringEx('', 'Duplicate'),
+        message: Localization().getStringEx('', 'Are you sure you want to duplicate event ${_event?.name}?'),
+      ).then((bool? result) {
+        if (result == true) {
+          setStateIfMounted(() {
+            _eventProcessing = true;
+          });
+         //TBD  // 1. Acknowledge Event Admins
+          Events2().createEvent(_event!.duplicate).then((event){
+              setStateIfMounted((){
+                _eventProcessing = false;
+              });
+
+              if (result == true) {
+                Navigator.pop(context);
+              } else {
+                Event2Popup.showErrorResult(context, result);
+              }
+          });
+        }
+      });
+    }
   }
 
   void _onSettingEventRegistration(){
