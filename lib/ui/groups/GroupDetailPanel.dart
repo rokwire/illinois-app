@@ -451,7 +451,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
       int limit = _posts.length + (delta ?? 0);
       _refreshingPosts = true;
-      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: PostSortOrder.desc).then((List<Post>? posts) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
@@ -491,7 +491,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         status: PostStatus.active,
         offset: _posts.length,
         limit: _postsPageSize,
-        sortBy: PostSortBy.date_created);
+        sortBy: SocialSortBy.date_created);
     if (postsPage != null) {
       _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
@@ -523,7 +523,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingScheduledPosts != true)) {
       int limit = _scheduledPosts.length + (delta ?? 0);
       _refreshingScheduledPosts = true;
-      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: PostSortOrder.desc, status: PostStatus.draft).then((List<Post>? scheduledPost) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc, status: PostStatus.draft).then((List<Post>? scheduledPost) {
         _refreshingScheduledPosts = false;
         if (mounted && (scheduledPost != null)) {
           setState(() {
@@ -563,7 +563,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         offset: _scheduledPosts.length,
         limit: _postsPageSize,
         status: PostStatus.draft,
-        sortBy: PostSortBy.activation_date);
+        sortBy: SocialSortBy.activation_date);
     if (scheduledPostsPage != null) {
       _scheduledPosts.addAll(scheduledPostsPage);
       if (scheduledPostsPage.length < _postsPageSize) {
@@ -595,7 +595,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingMessages != true)) {
       int limit = _messages.length + (delta ?? 0);
       _refreshingMessages = true;
-      Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message, offset: 0, limit: limit, order: PostSortOrder.desc).then((List<Post>? messages) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? messages) {
         _refreshingMessages = false;
         if (mounted && (messages != null)) {
           setState(() {
@@ -629,7 +629,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadMessagesPage() async {
-    List<Post>? messagesPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message , offset: _messages.length, limit: _postsPageSize, order: PostSortOrder.desc);
+    List<Post>? messagesPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message , offset: _messages.length, limit: _postsPageSize, order: SocialSortOrder.desc);
     if (messagesPage != null) {
       _messages.addAll(messagesPage);
       if (messagesPage.length < _postsPageSize) {
