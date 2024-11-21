@@ -2,8 +2,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Directory.dart';
-import 'package:illinois/model/Directory.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
@@ -12,11 +10,14 @@ import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDirectoryMyInfoPage extends StatefulWidget {
   final MyDirectoryInfo contentType;
@@ -28,19 +29,21 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
 
 class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>  {
 
-  late DirectoryMember _member;
+  late Auth2UserProfile _profile;
   bool _preparingDeleteAccount = false;
 
   @override
   void initState() {
-    _member = DirectoryMemberExt.fromExternalData(
-      auth2Account: Auth2().account,
-      studentClassification: IlliniCash().studentClassification,
-      pronoun: 'he',
-      college: 'Academic Affairs',
-      department: 'Center for Advanced Study',
-      phone: '(234) 567-8901'
-    );
+    _profile = Auth2UserProfile.fromOther(Auth2().profile,
+      photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
+      phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
+      data: <String, dynamic> {
+        Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),
+        Auth2UserProfile.departmentDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.departmentName, 'Center for Advanced Study'),
+        Auth2UserProfile.pronounDataKey : 'he',
+      }
+    ) ?? Auth2UserProfile.empty();
+
     super.initState();
   }
 
@@ -55,7 +58,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                 _cardWidget,
               ),
               Center(child:
-                DirectoryMemberPhoto(_member, imageSize: _photoImageSize, headers: _photoImageHeaders,),
+                DirectoryMemberPhoto(_profile.photoUrl, imageSize: _photoImageSize, headers: _photoImageHeaders,),
               )
             ])
         ),
@@ -109,7 +112,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           ],),
         ),
         Padding(padding: EdgeInsets.only(top: 12), child:
-          DirectoryMemberDetails(_member)
+          ProfileDetails(_profile)
         ),
         _shareButton,
     ],)
@@ -117,9 +120,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   Widget get _cardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(_member.fullName, style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
-      if (_member.pronoun?.isNotEmpty == true)
-        Text(_member.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+      Text(_profile.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
+      if (_profile.pronoun?.isNotEmpty == true)
+        Text(_profile.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
 
   Widget get _commandBar {
