@@ -812,36 +812,37 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     UrlUtils.launchExternal(url);
   }
 
-  void _reloadPost() {
-    //TODO: Can we optimize this to only load data for the relevant updated post(s)?
-    _setLoading(true);
-    Social().loadPosts(groupId: _groupId).then((posts) {
-      if (CollectionUtils.isNotEmpty(posts)) {
-        try {
-          // GroupPost? post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null); //Remove to fix reload Error: type '() => Null' is not a subtype of type '(() => GroupPost)?' of 'orElse'
-          List<Post?> nullablePosts = List.of(posts!);
-          _post = nullablePosts.firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null);
-        } catch (e) {
-          print(e);
-        }
-        //TBD: DDGS - implement replies
-        // _sortReplies(_post?.replies);
-        Post? updatedReply = _deepFindPost(posts, _focusedReply?.id);
-        if(updatedReply!=null){
-          setStateIfMounted(() {
-            _focusedReply = updatedReply;
-            //TBD: DDGS - implement replies
-            // _sortReplies(_focusedReply?.replies);
-          });
-        } else {
-          setStateIfMounted(() {}); // Refresh MainPost
-        }
-      } else {
-        _post = null;
-      }
-      _setLoading(false);
-    });
-  }
+  //TBD: DDGS - remove after all tests for Social pass
+  // void _reloadPost() {
+  //   //TODO: Can we optimize this to only load data for the relevant updated post(s)?
+  //   _setLoading(true);
+  //   Social().loadPosts(groupId: _groupId).then((posts) {
+  //     if (CollectionUtils.isNotEmpty(posts)) {
+  //       try {
+  //         // GroupPost? post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null); //Remove to fix reload Error: type '() => Null' is not a subtype of type '(() => GroupPost)?' of 'orElse'
+  //         List<Post?> nullablePosts = List.of(posts!);
+  //         _post = nullablePosts.firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null);
+  //       } catch (e) {
+  //         print(e);
+  //       }
+  //       //TBD: DDGS - implement replies
+  //       // _sortReplies(_post?.replies);
+  //       Post? updatedReply = _deepFindPost(posts, _focusedReply?.id);
+  //       if(updatedReply!=null){
+  //         setStateIfMounted(() {
+  //           _focusedReply = updatedReply;
+  //           //TBD: DDGS - implement replies
+  //           // _sortReplies(_focusedReply?.replies);
+  //         });
+  //       } else {
+  //         setStateIfMounted(() {}); // Refresh MainPost
+  //       }
+  //     } else {
+  //       _post = null;
+  //     }
+  //     _setLoading(false);
+  //   });
+  // }
 
   void _setLoading(bool loading) {
     setStateIfMounted(() {
@@ -1061,7 +1062,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void onNotification(String name, param) {
     if (name == Social.notifyPostsUpdated) {
-      _reloadPost();
+      //TBD: DDGS - remove after all tests for Social pass
+      // _reloadPost();
+      _refreshPostData();
     } else if (name == Groups.notifyGroupPostReactionsUpdated) {
       setStateIfMounted(() { });
     }

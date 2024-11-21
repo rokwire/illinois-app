@@ -370,19 +370,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onGroupPostCreated(Post? post) {
       if (post?.isPost == true) {
-        //TBD: DDGS - check about the delta. Currently it is 1 for main posts
-        // _refreshCurrentPosts(delta: (post?.parentId == null) ? 1 : null);
         _refreshCurrentPosts(delta: 1);
       }
       else if (post?.isMessage == true) {
-        //TBD: DDGS - check about the delta. Currently it is 1 for main posts
-        // _refreshCurrentMessages(delta: (post?.parentId == null) ? 1 : null);
         _refreshCurrentMessages(delta: 1);
       }
       //For both post and messages
       if(post?.isScheduled == true) {
-        //TBD: DDGS - check about the delta. Currently it is 1 for main posts
-        // _refreshCurrentScheduledPosts(delta: (post?.parentId == null) ? 1 : null);
         _refreshCurrentScheduledPosts(delta: 1);
       }
   }
@@ -402,13 +396,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onGroupPostDeleted(Post? post) {
       if (post?.isPost == true) {
-        //TBD: DDGS - check about the delta. Currently it is -1 for main posts
-        // _refreshCurrentPosts(delta: (post?.parentId == null) ? -1 : null);
         _refreshCurrentPosts(delta: -1);
       }
       else if (post?.isMessage == true) {
-        //TBD: DDGS - check about the delta. Currently it is -1 for main posts
-        // _refreshCurrentMessages(delta: (post?.parentId == null) ? -1 : null);
         _refreshCurrentMessages(delta: -1);
       }
       //For both post and messages
