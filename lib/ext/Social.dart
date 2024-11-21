@@ -34,10 +34,10 @@ extension PostExt on Post {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
+      if (deviceDateTime.compareTo(now) <= 0) {
+        Duration difference = now.difference(deviceDateTime);
         if (difference.inSeconds < 60) {
-          return "now";
+          return Localization().getStringEx('generic.time.now', 'now');
         }
         else if (difference.inMinutes < 60) {
           return "${difference.inMinutes} ${Localization().getStringEx("generic.time.minutes", "minutes")}";
