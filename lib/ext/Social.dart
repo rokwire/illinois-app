@@ -15,60 +15,45 @@
  */
 
 import 'package:collection/collection.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 
 extension PostExt on Post {
-
   PostType get type =>
       (authorizationContext?.items?.firstWhereOrNull((item) => item.members?.type == ContextItemMembersType.listed_accounts) != null)
           ? PostType.direct_message
           : PostType.post;
+
   bool get isPost => (type == PostType.post);
   bool get isMessage => (type == PostType.direct_message);
   bool get isScheduled => (status == PostStatus.draft);
 
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    if (deviceDateTime != null) {
-      DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) <= 0) {
-        Duration difference = now.difference(deviceDateTime);
-        if (difference.inSeconds < 60) {
-          return Localization().getStringEx('generic.time.now', 'now');
-        }
-        else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes} ${Localization().getStringEx("generic.time.minutes", "minutes")}";
-        }
-        else if (difference.inHours < 24) {
-          return "${difference.inHours} ${Localization().getStringEx("generic.time.hours", "hours")}";
-        }
-        else if (difference.inDays < 30) {
-          return "${difference.inDays} ${Localization().getStringEx("generic.time.days", "days")}";
-        }
-        else {
-          int differenceInMonths = difference.inDays ~/ 30;
-          if (differenceInMonths < 12) {
-            return "$differenceInMonths ${Localization().getStringEx("generic.time.months", "months")}";
-          }
-        }
-      }
-      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
-    }
-    return null;
+    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
   }
 
   String? get displayScheduledTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateActivatedUtc);
-    if(deviceDateTime != null){
+    if (deviceDateTime != null) {
       return DateFormat("MMM dd, HH:mm").format(deviceDateTime);
     }
     return null;
   }
 
   DateTime? get dateActivatedLocal => dateActivatedUtc?.toLocalTZ();
+
+  String? get creatorName => creator?.name;
+  String? get creatorId => creator?.accountId;
+}
+
+extension CommentExt on Comment {
+  String? get displayDateTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
+    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
+  }
 
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;

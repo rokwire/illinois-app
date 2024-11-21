@@ -1209,7 +1209,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 // GroupReplyCard
 
 class GroupReplyCard extends StatefulWidget {
-  final Post? reply;
+  final Comment? reply;
   final Post? post;
   final Group? group;
   final String? iconPath;
@@ -1271,7 +1271,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 Semantics( child:
-                  //TBD: DDGS - implement comment member name
                   Text(StringUtils.ensureNotEmpty(widget.reply?.creatorName),
                     style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")),
                 ),
@@ -1281,7 +1280,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: GroupPostReaction(
                     groupID: widget.group?.id,
-                    post: widget.reply,
+                    //TBD: DDGS - implement reply reactions
+                    // post: widget.reply,
+                    post: Post(),
                     reaction: thumbsUpReaction,
                     //TBD: DDGS - implement reply reactions
                     // accountIDs: widget.reply?.reactions[thumbsUpReaction],

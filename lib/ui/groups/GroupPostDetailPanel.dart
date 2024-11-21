@@ -44,14 +44,11 @@ import 'package:sprintf/sprintf.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
-  //TBD: DDGS - implement replies and comments
-  final Post? focusedReply;
-  final List<Post>? replyThread;
+  final Comment? focusedReply;
   final Group group;
   final bool hidePostOptions;
 
-  GroupPostDetailPanel(
-      {required this.group, this.post, this.focusedReply, this.hidePostOptions = false, this.replyThread});
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -67,12 +64,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
   Post? _post; //Main post {Data Presentation}
+  List<Comment>? _replies; //Main post comments
   PostDataModel? _mainPostUpdateData;//Main Post Edit
   List<Member>? _allMembersAllowedToPost;
   //Reply - Edit/Create/Show
-  Post? _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread //TBD: DDGS - implement post and reply
+  Comment? _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
   String? _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  Post? _editingReply; //Edit Mode for Reply {Data Edit}
+  Comment? _editingReply; //Edit Mode for Reply {Data Edit}
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
   bool _loading = false;
@@ -91,14 +89,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Social.notifyPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
-    _loadMembersAllowedToPost();
     _post = widget.post ?? Post(); //If no post then prepare data for post creation
-    //TBD: DDGS - implement comments / replies and sorting
-    // _focusedReply = widget.focusedReply;
-    //TBD: DDGS - implement comments / replies and sorting
-    // _sortReplies(_post?.replies);
-    //TBD: DDGS - implement comments / replies and sorting
-    // _sortReplies(_focusedReply?.replies);
+    _loadMembersAllowedToPost();
+    _loadComments();
+    _focusedReply = widget.focusedReply;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
@@ -119,14 +113,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return Scaffold(
         appBar: AppBar(
             leading: HeaderBackButton(),
-            title: Text(
-              Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-              style:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),
+            title: Text(Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
+                style: Styles().textStyles.getTextStyle('widget.heading.regular.extra_fat')),
             centerTitle: false),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
-        body: _buildContent(),
-      );
+        body: _buildContent());
   }
 
   Widget _buildContent(){
@@ -334,51 +326,49 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  void _refreshPostData(){
-    if(_post?.id != null) {
+  void _loadComments() {
+    String? postId = _post?.id;
+    if (StringUtils.isNotEmpty(postId)) {
       _setLoading(true);
-      Social().loadSinglePost(groupId: _groupId, postId: _post!.id!).then((updatedPost){
-          _setLoading(false);
-          if(updatedPost != null){
-            //TBD: DDGS - implement comments / replies and sorting
-            // _sortReplies(updatedPost.replies);
-            setStateIfMounted((){
-              _post = updatedPost;
-            });
-          }
+      Social().loadComments(postId: postId!).then((comments) {
+        _replies = comments;
+        _sortReplies(_replies);
+        _setLoading(false);
+      });
+    }
+  }
+
+  void _refreshPostData() {
+    if (_post?.id != null) {
+      _setLoading(true);
+      Social().loadSinglePost(groupId: _groupId, postId: _post!.id!).then((updatedPost) {
+        _setLoading(false);
+        if (updatedPost != null) {
+          _loadComments();
+          setStateIfMounted(() {
+            _post = updatedPost;
+          });
+        }
       });
     }
   }
 
   Widget _buildRepliesSection(){
-    List<Post>? replies;
+    List<Comment>? replies;
     if (_focusedReply != null) {
-      replies = _generateFocusedThreadList();
+      replies = [_focusedReply!];
     }
     else if (_editingReply != null) {
       replies = [_editingReply!];
     }
     else {
-      //TBD: DDGS - implement post replies
-      // replies = _post?.replies;
+      replies = _replies;
     }
 
     return Padding(
         padding: EdgeInsets.only(
             bottom: _outerPadding),
         child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null));
-  }
-  
-  List<Post> _generateFocusedThreadList(){
-    List<Post> result = [];
-    if(CollectionUtils.isNotEmpty(widget.replyThread)){
-      result.addAll(widget.replyThread!);
-    }
-    if(_focusedReply!=null){
-      result.add(_focusedReply!);
-    }
-    
-    return result;
   }
 
   Widget _buildPostEdit() {
@@ -400,7 +390,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors.fillColorSecondary,
                         backgroundColor: Styles().colors.white,
-                        onTap: _onTapSend)),
+                        onTap: _onTapSendReply)),
                 Container(width: 20),
                 Flexible(
                     flex: 1,
@@ -440,27 +430,26 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildRepliesWidget(
-      {List<Post>? replies,
+      {List<Comment>? replies,
       double leftPaddingOffset = 0,
       bool nestedReply = false,
       bool showRepliesCount = true,
       String? focusedReplyId,
       }) {
-    List<Post>? visibleReplies = _getVisibleReplies(replies);
-    if (CollectionUtils.isEmpty(visibleReplies)) {
+    if (CollectionUtils.isEmpty(replies)) {
       return Container();
     }
     List<Widget> replyWidgetList = [];
-    if(StringUtils.isEmpty(focusedReplyId) && CollectionUtils.isNotEmpty(visibleReplies) ){
+    if(StringUtils.isEmpty(focusedReplyId) && CollectionUtils.isNotEmpty(replies) ){
       replyWidgetList.add(_buildRepliesHeader());
       replyWidgetList.add(Container(height: 8,));
     }
 
-    for (int i = 0; i < visibleReplies!.length; i++) {
+    for (int i = 0; i < replies!.length; i++) {
       if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
       }
-      Post? reply = visibleReplies[i];
+      Comment? reply = replies[i];
       String? optionsIconPath;
       void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
@@ -479,8 +468,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
-                onIconTap: optionsFunctionTap,
-                onCardTap: (){_onTapReplyCard(reply);},
+                onIconTap: optionsFunctionTap
             ))));
       if(reply.id == focusedReplyId) {
         //TBD: DDGS - implement replies
@@ -522,46 +510,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         )
       ],
     ));
-  }
-
-  List<Post>? _getVisibleReplies(List<Post>? replies) {
-    if (CollectionUtils.isEmpty(replies)) {
-      return null;
-    }
-    List<Post> visibleReplies = [];
-    bool currentUserIsMemberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
-    //TBD: DDGS - implement replies and their visibility
-    for (Post? reply in replies!) {
-      // bool replyVisible = (reply!.private == false) ||
-      //     (reply.private == null) ||
-      //     currentUserIsMemberOrAdmin;
-      // if (replyVisible) {
-      //   visibleReplies.add(reply);
-      // }
-    }
-    return visibleReplies;
-  }
-
-  //Tap Actions
-  void _onTapReplyCard(Post? reply){
-    if(_isSubReplySupported){  //Forbid sub reply //TODO if we do not bring back this functionality DELETE all related code.
-      if((reply != null) &&
-          ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
-        //Already focused reply.
-        // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
-        return;
-      }
-
-      Analytics().logSelect(target: 'Reply Card');
-      List<Post> thread = [];
-      if(CollectionUtils.isNotEmpty(widget.replyThread)){
-        thread.addAll(widget.replyThread!);
-      }
-      if(_focusedReply!=null) {
-        thread.add(_focusedReply!);
-      }
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
-    }
   }
 
   void _onTapDeletePost() {
@@ -633,7 +581,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       });
   }
 
-  void _onTapReplyOptions(Post? reply) {
+  void _onTapReplyOptions(Comment? reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
       context: context,
@@ -647,23 +595,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Visibility(visible: _isReplyVisible && _isSubReplySupported, child: RibbonButton(
-                leftIconKey: "reply",
+              // Do not reply to reply
+              Visibility(visible: false, child: RibbonButton(
+                leftIconKey: 'reply',
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _onTapPostReply(reply: reply);
                 },
               )),
-              Visibility(visible: _isEditVisible(reply), child: RibbonButton(
+              Visibility(visible: _isEditVisible(reply?.creatorId), child: RibbonButton(
                 leftIconKey: "edit",
                 label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _onTapEditPost(reply: reply);
+                  _onTapEditReply(reply: reply);
                 },
               )),
-              Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
+              Visibility(visible: _isDeleteReplyVisible(reply?.creatorId), child: RibbonButton(
                 leftIconKey: "trash",
                 label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                 onTap: () {
@@ -688,7 +637,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       });
   }
 
-  void _onTapDeleteReply(Post? reply) {
+  void _onTapDeleteReply(Comment? reply) {
     Analytics().logSelect(target: 'Delete Reply');
     AppAlert.showCustomDialog(
         context: context,
@@ -713,10 +662,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]);
   }
 
-  void _deleteReply(Post? reply) {
+  void _deleteReply(Comment? reply) {
     _setLoading(true);
     _clearSelectedReplyId();
-    Social().deletePost(post: reply!).then((succeeded) {
+    Social().deleteComment(comment: reply!).then((succeeded) {
       _setLoading(false);
       if (!succeeded) {
         AppAlert.showDialogResult(
@@ -734,7 +683,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapPostReply({Post? reply}) {
+  void _onTapPostReply({Comment? reply}) {
     Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
     setStateIfMounted(() {
@@ -793,7 +742,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  void _onTapEditPost({Post? reply}) {
+  void _onTapEditReply({Comment? reply}) {
     Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
       setState(() {
@@ -864,11 +813,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  //TBD: DDGS - implement reply and post update
-  void _onTapSend() {
+  void _onTapSendReply() {
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
-    
+
     String? body = _replyEditData?.body;
     String? imageUrl;
 
@@ -879,31 +827,32 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
-    String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
-    
+
     _setLoading(true);
+    String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     if (_editingReply != null) {
       imageUrl = StringUtils.isNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply?.imageUrl;
-      GroupPost postToUpdate = GroupPost(id: _editingReply?.id, subject: _editingReply?.subject, imageUrl: imageUrl , body: body, private: true);
-      Groups().updatePost(_groupId, postToUpdate).then((succeeded) {
-        _onUpdateFinished(succeeded);
+      _editingReply!.body = htmlModifiedBody;
+      _editingReply!.imageUrl = imageUrl;
+      Social().updateComment(comment: _editingReply!).then((succeeded) {
+        _setLoading(false);
+        if (!succeeded) {
+          AppAlert.showDialogResult(
+              context, Localization().getStringEx('panel.group.detail.post.update.reply.failed.msg', 'Failed to edit reply.'));
+        }
       });
     } else {
+      imageUrl = _replyEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       String? parentId;
-
-      imageUrl =  _replyEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
-      }
-      else if (_focusedReply != null) {
+      } else if (_focusedReply != null) {
         parentId = _focusedReply!.id;
-      }
-      else if (_post != null) {
+      } else if (_post != null) {
         parentId = _post!.id;
       }
-      
-      GroupPost post = GroupPost(parentId: parentId, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
-      Groups().createPost(_groupId, post).then((succeeded) {
+      Comment comment = Comment(parentId: parentId, body: htmlModifiedBody, imageUrl: imageUrl);
+      Social().createComment(comment: comment).then((succeeded) {
         _onSendFinished(succeeded);
       });
     }
@@ -924,7 +873,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  void _onUpdateFinished(bool succeeded) {
+  void _onEditReplyFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
       Navigator.of(context).pop(true);
@@ -1004,57 +953,45 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return result;
   }
 
-  void _sortReplies(List<GroupPost>? replies){
-    if(CollectionUtils.isNotEmpty(replies)) {
+  void _sortReplies(List<Comment>? replies) {
+    if (CollectionUtils.isNotEmpty(replies)) {
       try {
-        replies!.sort((post1, post2) =>
-            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
-      } catch (e) {}
+        replies!.sort((c1, c2) => c1.dateCreatedUtc!.compareTo(c2.dateCreatedUtc!));
+      } catch (e) {
+        Log.e('Failed to sort comments. Exception: ${e.toString()}');
+      }
     }
   }
 
   //Getters
-  bool _isEditVisible(Post? post) {
-    return _isCurrentUserCreator(post);
-  }
+  bool _isEditVisible(String? creatorId) => _isCurrentUserCreator(creatorId);
 
-  bool _isDeleteVisible(Post? item) {
+  bool _isDeleteVisible(String? creatorId) {
     if (widget.group.currentUserIsAdmin) {
       return true;
     } else if (widget.group.currentUserIsMember) {
-      return _isCurrentUserCreator(item);
+      return _isCurrentUserCreator(creatorId);
     } else {
       return false;
     }
   }
 
-  bool _isDeleteReplyVisible(Post? reply) {
-    return _isDeleteVisible(reply);
-  }
+  bool _isDeleteReplyVisible(String? creatorId) => _isDeleteVisible(creatorId);
 
-  bool _isCurrentUserCreator(Post? item) {
+  bool _isCurrentUserCreator(String? creatorId) {
     String? currentMemberId = widget.group.currentMember?.userId;
-    String? itemMemberUserId = item?.creatorId;
-    return StringUtils.isNotEmpty(currentMemberId) && StringUtils.isNotEmpty(itemMemberUserId) && (currentMemberId == itemMemberUserId);
+    return StringUtils.isNotEmpty(currentMemberId) && StringUtils.isNotEmpty(creatorId) && (currentMemberId == creatorId);
   }
 
-  bool get _isEditPostVisible {
-    return _isEditVisible(_post);
-  }
+  bool get _isEditPostVisible => _isEditVisible(_post?.creatorId);
 
-  bool get _isDeletePostVisible {
-    return _isDeleteVisible(_post);
-  }
+  bool get _isDeletePostVisible => _isDeleteVisible(_post?.creatorId);
 
-  bool get _isReplyVisible {
-    return widget.group.currentUserHasPermissionToSendReply == true;
-  }
+  bool get _isReplyVisible => (widget.group.currentUserHasPermissionToSendReply == true);
 
   bool get _isReportAbuseVisible => widget.group.currentUserIsMemberOrAdmin;
 
   bool get _isEditMainPost => _mainPostUpdateData != null;
-
-  bool get _isSubReplySupported => false; //Disable sub-reply TBD if we do not return i sub-reply remove all internal logic and UI related to it.
 
   String get _groupId => widget.group.id!;
 
