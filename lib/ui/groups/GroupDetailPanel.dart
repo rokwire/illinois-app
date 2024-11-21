@@ -360,20 +360,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _increaseProgress();
       Social().loadSinglePost(groupId: _group!.id, postId: _postId!).then((post) {
         _postId = null; // Clear _postId in order not to redirect on the next group load.
+        _decreaseProgress();
         if (post != null) {
-          //TBD: DDGS - implement redirect to comment
-          // if(StringUtils.isNotEmpty(post.topParentId)){ // This is reply
-          //   Groups().loadGroupPost(groupId: _group!.id, postId: post.topParentId).then((mainPost) {
-          //     _decreaseProgress();
-          //     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: mainPost)));
-          //   });
-          // } else { //this is the main Post
-            _decreaseProgress();
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
-            //TBD: DDGS - implement redirect to comment
-          // }
-        } else {
-          _decreaseProgress();
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
         }
       });
     }
