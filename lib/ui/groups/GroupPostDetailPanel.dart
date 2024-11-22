@@ -470,20 +470,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 showRepliesCount: showRepliesCount,
                 onIconTap: optionsFunctionTap
             ))));
-      if(reply.id == focusedReplyId) {
-        //TBD: DDGS - implement replies
-        // if(CollectionUtils.isNotEmpty(reply.replies)){
-        //   replyWidgetList.add(Container(height: 8,));
-        //   replyWidgetList.add(_buildRepliesHeader());
-        // }
-        replyWidgetList.add(_buildRepliesWidget(
-          //TBD: DD - implement replies
-            // replies: reply.replies,
-            leftPaddingOffset: (leftPaddingOffset /*+ 5*/),
-            nestedReply: true,
-            focusedReplyId: focusedReplyId
-        ));
-      }
     }
     return Padding(
         padding: EdgeInsets.only(top: nestedReply ? 0 : 20),
@@ -620,7 +606,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 _onTapDeleteReply(reply);
               },
               )),
-              //TBD: DDGS - implement post reply
+              //TBD: DDGS - implement report
               // Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
               //   leftIconKey: "feedback",
               //   label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
@@ -760,38 +746,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     UrlUtils.launchExternal(url);
   }
 
-  //TBD: DDGS - remove after all tests for Social pass
-  // void _reloadPost() {
-  //   //TODO: Can we optimize this to only load data for the relevant updated post(s)?
-  //   _setLoading(true);
-  //   Social().loadPosts(groupId: _groupId).then((posts) {
-  //     if (CollectionUtils.isNotEmpty(posts)) {
-  //       try {
-  //         // GroupPost? post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null); //Remove to fix reload Error: type '() => Null' is not a subtype of type '(() => GroupPost)?' of 'orElse'
-  //         List<Post?> nullablePosts = List.of(posts!);
-  //         _post = nullablePosts.firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null);
-  //       } catch (e) {
-  //         print(e);
-  //       }
-  //       //TBD: DDGS - implement replies
-  //       // _sortReplies(_post?.replies);
-  //       Post? updatedReply = _deepFindPost(posts, _focusedReply?.id);
-  //       if(updatedReply!=null){
-  //         setStateIfMounted(() {
-  //           _focusedReply = updatedReply;
-  //           //TBD: DDGS - implement replies
-  //           // _sortReplies(_focusedReply?.replies);
-  //         });
-  //       } else {
-  //         setStateIfMounted(() {}); // Refresh MainPost
-  //       }
-  //     } else {
-  //       _post = null;
-  //     }
-  //     _setLoading(false);
-  //   });
-  // }
-
   void _setLoading(bool loading) {
     setStateIfMounted(() {
       _loading = loading;
@@ -928,27 +882,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Utils
-  Post? _deepFindPost(List<Post>? posts, String? id){
-    if(CollectionUtils.isEmpty(posts) || StringUtils.isEmpty(id)){
-      return null;
-    }
-
-    Post? result;
-    for(Post post in posts!){
-      if(post.id == id){
-        result = post;
-        break;
-      } else {
-        result = null;// _deepfindpost(post.replies, id); //TBD: DDGS - implement replies and finding reply in post
-        if(result!=null){
-          break;
-        }
-      }
-    }
-
-    return result;
-  }
-
   void _sortReplies(List<Comment>? replies) {
     if (CollectionUtils.isNotEmpty(replies)) {
       try {
@@ -995,8 +928,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void onNotification(String name, param) {
     if (name == Social.notifyPostsUpdated) {
-      //TBD: DDGS - remove after all tests for Social pass
-      // _reloadPost();
       _refreshPostData();
     } else if (name == Groups.notifyGroupPostReactionsUpdated) {
       setStateIfMounted(() { });
