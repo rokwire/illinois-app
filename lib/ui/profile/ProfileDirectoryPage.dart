@@ -27,11 +27,10 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 
   late _Tab _selectedTab;
 
-  Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
+  //Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
 
-  // ignore: unused_element
-  MyDirectoryInfo get _selectedMyInfoTab => (_selectedSubTabs[_Tab.myInfo] as MyDirectoryInfo?) ?? MyDirectoryInfo.values.first;
-  DirectoryConnections get _selectedConnectionsTab => (_selectedSubTabs[_Tab.connections] as DirectoryConnections?) ?? DirectoryConnections.values.first;
+  //MyDirectoryInfo get _selectedMyInfoTab => (_selectedSubTabs[_Tab.myInfo] as MyDirectoryInfo?) ?? MyDirectoryInfo.values.first;
+  //DirectoryConnections get _selectedConnectionsTab => (_selectedSubTabs[_Tab.connections] as DirectoryConnections?) ?? DirectoryConnections.values.first;
 
   @override
   void initState() {
@@ -41,9 +40,9 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 
     _selectedTab = _Tab.values.first;
 
-    for (_Tab tab in _Tab.values) {
-      _selectedSubTabs[tab] = tab.subTabs.first;
-    }
+    //for (_Tab tab in _Tab.values) {
+    //  _selectedSubTabs[tab] = tab.subTabs.first;
+    //}
     super.initState();
   }
 
@@ -81,18 +80,25 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
       ),
     ],);
 
+  Widget _tabPage(_Tab tab) {
+    switch(tab) {
+      case _Tab.myInfo: return _myInfoTabPage;
+      case _Tab.connections: return _connectionsTabPage;
+    }
+  }
+
   // My Info
 
   Widget get _myInfoTabPage =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(children: [
-        _subTabsWidget(_Tab.myInfo),
-        Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myConnectionsInfo), maintainState: true, child:
-          ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
-        ),
-        Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
+        //_subTabsWidget(_Tab.myInfo),
+        //Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myConnectionsInfo), maintainState: true, child:
+          //ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
+        //),
+        //Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
           ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myDirectoryInfo,)
-        ),
+        //),
 
       ],),
     );
@@ -100,24 +106,17 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   // Connections
 
   Widget get _connectionsTabPage =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(children: [
-        _subTabsWidget(_Tab.connections),
-        Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.myConnections), maintainState: true, child:
-          ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
-        ),
-        Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.appDirectory), maintainState: true, child:
+        //_subTabsWidget(_Tab.connections),
+        //Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.myConnections), maintainState: true, child:
+          //ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
+        //),
+        //Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.appDirectory), maintainState: true, child:
           ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.appDirectory,)
-        ),
+        //),
       ],),
     );
-
-  Widget _tabPage(_Tab tab) {
-    switch(tab) {
-      case _Tab.myInfo: return _myInfoTabPage;
-      case _Tab.connections: return _connectionsTabPage;
-    }
-  }
 
   // Tabs widget
 
@@ -175,7 +174,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 
   // SubTab
 
-  Widget _subTabsWidget(_Tab tab) {
+  /*Widget _subTabsWidget(_Tab tab) {
     List<Widget> widgets = <Widget>[];
     List<Enum> subTabs = tab.subTabs;
     for (Enum subTab in subTabs) {
@@ -240,7 +239,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
 
   Color? get _selectedSubTabColor =>
     Styles().colors.white;
-
+   */
 
   // Signed out
   Widget get _loggedOutContent {
@@ -277,12 +276,12 @@ extension _TabExt on _Tab {
     }
   }
 
-  List<Enum> get subTabs {
+  /*List<Enum> get subTabs {
     switch (this) {
       case _Tab.myInfo: return MyDirectoryInfo.values;
       case _Tab.connections: return DirectoryConnections.values;
     }
-  }
+  }*/
 }
 
 extension MyDirectoryInfoExt on MyDirectoryInfo {
