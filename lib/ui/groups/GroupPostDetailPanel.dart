@@ -667,12 +667,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _clearSelectedReplyId();
     Social().deleteComment(comment: reply!).then((succeeded) {
       _setLoading(false);
-      if (!succeeded) {
+      if (succeeded) {
+        _loadComments();
+      } else {
         AppAlert.showDialogResult(
-            context,
-            Localization().getStringEx(
-                'panel.group.detail.post.reply.delete.failed.msg',
-                'Failed to delete reply.'));
+            context, Localization().getStringEx('panel.group.detail.post.reply.delete.failed.msg', 'Failed to delete reply.'));
       }
     });
   }
@@ -803,12 +802,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Cancel');
     if (_editingReply != null) {
       setStateIfMounted(() {
-        _editingReply = null;
-        _replyEditData?.imageUrl = null;
-        _replyEditData?.body = '';
+        _clearEditingReply();
+        _clearImageSelection();
+        _clearBodyControllerContent();
       });
-    }
-    else {
+    } else {
       Navigator.of(context).pop();
     }
   }
@@ -836,7 +834,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       _editingReply!.imageUrl = imageUrl;
       Social().updateComment(comment: _editingReply!).then((succeeded) {
         _setLoading(false);
-        if (!succeeded) {
+        if (succeeded) {
+          _onSendFinished(succeeded);
+        } else {
           AppAlert.showDialogResult(
               context, Localization().getStringEx('panel.group.detail.post.update.reply.failed.msg', 'Failed to edit reply.'));
         }
@@ -862,23 +862,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _setLoading(false);
     if (succeeded) {
       setStateIfMounted(() {
+        _clearEditingReply();
         _clearSelectedReplyId();
         _clearBodyControllerContent();
         _clearImageSelection();
       });
       // Navigator.of(context).pop(true);
-      _refreshPostData();
+      _loadComments();
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.reply.failed.msg', 'Failed to create new reply.'));
-    }
-  }
-
-  void _onEditReplyFinished(bool succeeded) {
-    _setLoading(false);
-    if (succeeded) {
-      Navigator.of(context).pop(true);
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.update.reply.failed.msg', 'Failed to edit reply.'));
     }
   }
 
@@ -891,7 +883,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _clearImageSelection(){
-  _replyEditData?.imageUrl = null;
+    _replyEditData?.imageUrl = null;
+  }
+
+  void _clearEditingReply() {
+    _editingReply = null;
   }
 
   //Scroll
