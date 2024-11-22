@@ -2,26 +2,25 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Directory.dart';
-import 'package:illinois/model/Directory.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/directory.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DirectoryMemberCard extends StatefulWidget {
-  final DirectoryMember member;
+class DirectoryProfileCard extends StatefulWidget {
+  final Auth2PublicAccount account;
   final bool expanded;
   final void Function()? onToggleExpanded;
-  DirectoryMemberCard(this.member, { super.key, this.expanded = false, this.onToggleExpanded });
+  DirectoryProfileCard(this.account, { super.key, this.expanded = false, this.onToggleExpanded });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryMemberCardState();
+  State<StatefulWidget> createState() => _DirectoryProfileCardState();
 }
 
-class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
+class _DirectoryProfileCardState extends State<DirectoryProfileCard> {
 
   @override
   Widget build(BuildContext context) =>
@@ -38,9 +37,9 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                Text(widget.member.fullName, style: Styles().textStyles.getTextStyleEx('widget.title.large.fat', fontHeight: 0.85)),
-                if (widget.member.pronoun?.isNotEmpty == true)
-                  Text(widget.member.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+                Text(widget.account.profile?.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.large.fat', fontHeight: 0.85)),
+                if (widget.account.profile?.pronoun?.isNotEmpty == true)
+                  Text(widget.account.profile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
               ],)
           ),
         ),
@@ -55,12 +54,12 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 12), child:
-            DirectoryMemberDetails(widget.member),
+          DirectoryProfileDetails(widget.account.profile),
           ),
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryMemberPhoto(widget.member.photoUrl, imageSize: _photoImageSize, borderSize: 12,)
+            DirectoryProfilePhoto(widget.account.profile?.photoUrl, imageSize: _photoImageSize, borderSize: 12,)
           ),
         ),
         //Container(width: 32,),
@@ -87,9 +86,9 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
 
   List<TextSpan> get _nameSpans {
     List<TextSpan> spans = <TextSpan>[];
-    _addNameSpan(spans, widget.member.firstName);
-    _addNameSpan(spans, widget.member.middleName);
-    _addNameSpan(spans, widget.member.lastName, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'));
+    _addNameSpan(spans, widget.account.profile?.firstName);
+    _addNameSpan(spans, widget.account.profile?.middleName);
+    _addNameSpan(spans, widget.account.profile?.lastName, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'));
     return spans;
   }
 
@@ -103,8 +102,10 @@ class _DirectoryMemberCardState extends State<DirectoryMemberCard> {
   }
 }
 
-class _DetailsWidget extends StatelessWidget {
-  _DetailsWidget({super.key});
+class DirectoryProfileDetails extends StatelessWidget {
+  final Auth2UserProfile? profile;
+
+  DirectoryProfileDetails(this.profile, { super.key });
   
   String? get college => null;
   String? get department => null;
@@ -118,20 +119,20 @@ class _DetailsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (college?.isNotEmpty == true)
-          Text(college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (department?.isNotEmpty == true)
-          Text(department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (major?.isNotEmpty == true)
-          Text(major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (email?.isNotEmpty == true)
-          _linkDetail(email ?? '', 'mailto:${email}'),
-        if (email2?.isNotEmpty == true)
-          _linkDetail(email2 ?? '', 'mailto:${email2}'),
-        if (phone?.isNotEmpty == true)
-          _linkDetail(phone ?? '', 'tel:${phone}'),
-        if (website?.isNotEmpty == true)
-          _linkDetail(website ?? '', UrlUtils.fixUrl(website ?? '', scheme: 'https') ?? website ?? ''),
+        if (profile?.college?.isNotEmpty == true)
+          Text(profile?.college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+        if (profile?.department?.isNotEmpty == true)
+          Text(profile?.department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+        if (profile?.major?.isNotEmpty == true)
+          Text(profile?.major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+        if (profile?.email?.isNotEmpty == true)
+          _linkDetail(profile?.email ?? '', 'mailto:${email}'),
+        if (profile?.email2?.isNotEmpty == true)
+          _linkDetail(profile?.email2 ?? '', 'mailto:${email2}'),
+        if (profile?.phone?.isNotEmpty == true)
+          _linkDetail(profile?.phone ?? '', 'tel:${phone}'),
+        if (profile?.website?.isNotEmpty == true)
+          _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? ''),
       ],);
 
   Widget _linkDetail(String text, String url) =>
@@ -143,34 +144,6 @@ class _DetailsWidget extends StatelessWidget {
     Analytics().logSelect(target: analyticsTarget ?? url);
     _launchUrl(url);
   }
-}
-
-class DirectoryMemberDetails extends _DetailsWidget {
-  final DirectoryMember member;
-  DirectoryMemberDetails(this.member, { super.key });
-
-  @override String? get college => member.college;
-  @override String? get department => member.department;
-  @override String? get major => member.major;
-  
-  @override String? get email => member.email;
-  @override String? get email2 => member.email2;
-  @override String? get phone => member.phone;
-  @override String? get website => member.website;
-}
-
-class ProfileDetails extends _DetailsWidget {
-  final Auth2UserProfile profile;
-  ProfileDetails(this.profile, { super.key });
-
-  @override String? get college => profile.college;
-  @override String? get department => profile.department;
-  @override String? get major => profile.major;
-  
-  @override String? get email => profile.email;
-  @override String? get email2 => profile.email2;
-  @override String? get phone => profile.phone;
-  @override String? get website => profile.website;
 }
 
 void _launchUrl(String? url) {
@@ -187,13 +160,13 @@ void _launchUrl(String? url) {
   }
 }
 
-class DirectoryMemberPhoto extends StatelessWidget {
+class DirectoryProfilePhoto extends StatelessWidget {
   final String? photoUrl;
   final double imageSize;
   final double borderSize;
   final Map<String, String>? headers;
 
-  DirectoryMemberPhoto(this.photoUrl, { super.key, required this.imageSize, this.borderSize = 0, this.headers });
+  DirectoryProfilePhoto(this.photoUrl, { super.key, required this.imageSize, this.borderSize = 0, this.headers });
 
   @override
   Widget build(BuildContext context) => (photoUrl?.isNotEmpty == true) ?

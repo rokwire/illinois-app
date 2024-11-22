@@ -58,7 +58,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                 _cardWidget,
               ),
               Center(child:
-                DirectoryMemberPhoto(_profile.photoUrl, imageSize: _photoImageSize, headers: _photoImageHeaders,),
+                DirectoryProfilePhoto(_profile.photoUrl, imageSize: _photoImageSize, headers: _photoImageHeaders,),
               )
             ])
         ),
@@ -112,7 +112,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           ],),
         ),
         Padding(padding: EdgeInsets.only(top: 12), child:
-          ProfileDetails(_profile)
+          DirectoryProfileDetails(_profile)
         ),
         _shareButton,
     ],)
