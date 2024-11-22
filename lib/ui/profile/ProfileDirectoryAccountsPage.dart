@@ -6,6 +6,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/directory.dart';
 import 'package:rokwire_plugin/service/directory.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -23,21 +24,29 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   Map<String, List<Auth2PublicAccount>>? _accounts;
   String? _expandedAccountId;
 
+  late TextEditingController _searchTextController;
+  late FocusNode _searchFocusNode;
+
 
   @override
   void initState() {
     _loading = true;
+    _searchTextController = TextEditingController();
+    _searchFocusNode = FocusNode();
     Directory().loadAccounts().then((List<Auth2PublicAccount>? accounts){
       setStateIfMounted(() {
         _loading = false;
         _accounts = (accounts != null) ? _buildAccounts(accounts) : null;
       });
     });
+
     super.initState();
   }
 
   @override
   void dispose() {
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -58,7 +67,9 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   }
 
   Widget get _accountsContent {
-    List<Widget> sections = <Widget>[];
+    List<Widget> sections = <Widget>[
+      _searchBarWidget,
+    ];
     int? firstCharCode, lastCharCode;
     _accounts?.forEach((key, value){
       int charCode = key.codeUnits.first;
@@ -106,6 +117,68 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     Padding(padding: EdgeInsets.zero, child:
       Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
     );
+
+  Widget get _searchBarWidget =>
+    Padding(padding: const EdgeInsets.only(bottom: 16), child:
+      Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+        Row(children: <Widget>[
+          Expanded(child:
+            _searchTextWidget
+          ),
+          _searchImageButton('close',
+            label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+            hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+            rightPadding: _searchImageButtonHorzPadding / 2,
+            onTap: _onTapClear,
+          ),
+          _searchImageButton('search',
+            label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+            hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+            leftPadding: _searchImageButtonHorzPadding / 2,
+            onTap: _onTapSearch,
+          ),
+        ],)
+      ),
+    );
+
+    Widget get _searchTextWidget =>
+      Semantics(
+        label: Localization().getStringEx('panel.profile.directory.accounts.search.field.label', 'SEARCH FIELD'),
+        hint: null,
+        textField: true,
+        excludeSemantics: true,
+        value: _searchTextController.text,
+        child: TextField(
+          controller: _searchTextController,
+          focusNode: _searchFocusNode,
+          decoration: InputDecoration(border: InputBorder.none,),
+          style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
+          cursorColor: Styles().colors.fillColorSecondary,
+          keyboardType: TextInputType.text,
+          autocorrect: false,
+          autofocus: true,
+          maxLines: 1,
+          onSubmitted: (_) => _onTapSearch(),
+      )
+    );
+
+  Decoration get _searchBarDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+    borderRadius: BorderRadius.circular(12),
+  );
+
+  Widget _searchImageButton(String image, { String? label, String? hint, double leftPadding = _searchImageButtonHorzPadding, double rightPadding = _searchImageButtonHorzPadding, void Function()? onTap }) =>
+    Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+      InkWell(onTap: onTap, child:
+        Padding(padding: EdgeInsets.only(left: leftPadding, right: rightPadding, top: _searchImageButtonVertPadding, bottom: _searchImageButtonVertPadding), child:
+          Styles().images.getImage(image, excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  static const double _searchImageButtonHorzPadding = 16;
+  static const double _searchImageButtonVertPadding = 12;
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
@@ -157,6 +230,15 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
       });
     }
     return result;
+  }
+
+  void _onTapClear() {
+    Analytics().logSelect(target: 'Search Clear');
+    _searchTextController.text = '';
+  }
+
+  void _onTapSearch() {
+    Analytics().logSelect(target: 'Search Text');
   }
 
 }
