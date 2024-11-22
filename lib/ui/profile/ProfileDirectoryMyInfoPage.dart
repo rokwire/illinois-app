@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDirectoryMyInfoPage extends StatefulWidget {
-  final MyDirectoryInfo contentType;
+  final MyProfileInfo contentType;
   ProfileDirectoryMyInfoPage({super.key, required this.contentType});
 
   @override
@@ -78,8 +78,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   String get _desriptionText {
     switch (widget.contentType) {
-      case MyDirectoryInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
-      case MyDirectoryInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.description.text', 'Preview of how your profile displays in the directory.');
+      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
+      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.description.text', 'Preview of how your profile displays in the directory.');
     }
   }
 
@@ -127,8 +127,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   Widget get _commandBar {
     switch (widget.contentType) {
-      case MyDirectoryInfo.myConnectionsInfo: return _myConnectionsInfoCommandBar;
-      case MyDirectoryInfo.myDirectoryInfo: return _myDirectoryInfoCommandBar;
+      case MyProfileInfo.myConnectionsInfo: return _myConnectionsInfoCommandBar;
+      case MyProfileInfo.myDirectoryInfo: return _myDirectoryInfoCommandBar;
     }
   }
 

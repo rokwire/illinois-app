@@ -9,15 +9,15 @@ import 'package:rokwire_plugin/service/directory.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ProfileDirectoryConnectionsPage extends StatefulWidget {
-  final DirectoryConnections contentType;
-  ProfileDirectoryConnectionsPage({super.key, required this.contentType});
+class ProfileDirectoryAccountsPage extends StatefulWidget {
+  final DirectoryAccounts contentType;
+  ProfileDirectoryAccountsPage({super.key, required this.contentType});
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryConnectionsPageState();
+  State<StatefulWidget> createState() => _ProfileDirectoryAccountsPageState();
 }
 
-class _ProfileDirectoryConnectionsPageState extends State<ProfileDirectoryConnectionsPage>  {
+class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage>  {
 
   bool _loading = false;
   Map<String, List<Auth2PublicAccount>>? _accounts;
@@ -125,15 +125,15 @@ class _ProfileDirectoryConnectionsPageState extends State<ProfileDirectoryConnec
 
   String get _emptyText {
     switch (widget.contentType) {
-      case DirectoryConnections.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.connections.connections.empty.text', 'You do not have any ${AppTextUtils.appTitleMacro} Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
-      case DirectoryConnections.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.connections.directory.empty.text', 'The ${AppTextUtils.appTitleMacro} App Directory is empty.');
+      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.empty.text', 'You do not have any ${AppTextUtils.appTitleMacro} Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
+      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.empty.text', 'The ${AppTextUtils.appTitleMacro} App Directory is empty.');
     }
   }
 
   String get _failedText {
     switch (widget.contentType) {
-      case DirectoryConnections.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.connections.connections.failed.text', 'Failed to load ${AppTextUtils.appTitleMacro} Connections content.');
-      case DirectoryConnections.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.connections.directory.failed.text', 'Failed to load ${AppTextUtils.appTitleMacro} App Directory content.');
+      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.failed.text', 'Failed to load ${AppTextUtils.appTitleMacro} Connections content.');
+      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.failed.text', 'Failed to load ${AppTextUtils.appTitleMacro} App Directory content.');
     }
   }
 

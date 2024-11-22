@@ -2,7 +2,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryConnectionsPage.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -19,9 +19,9 @@ class ProfileDirectoryPage extends StatefulWidget {
   _ProfileDirectoryPageState createState() => _ProfileDirectoryPageState();
 }
 
-enum _Tab { myInfo, connections }
-enum MyDirectoryInfo { myConnectionsInfo, myDirectoryInfo }
-enum DirectoryConnections { myConnections, appDirectory }
+enum _Tab { myInfo, accounts }
+enum MyProfileInfo { myConnectionsInfo, myDirectoryInfo }
+enum DirectoryAccounts { myConnections, appDirectory }
 
 class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements NotificationsListener {
 
@@ -75,15 +75,15 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
       Visibility(visible: (_selectedTab == _Tab.myInfo), maintainState: true, child:
         _tabPage(_Tab.myInfo)
       ),
-      Visibility(visible: (_selectedTab == _Tab.connections), maintainState: true, child:
-        _tabPage(_Tab.connections)
+      Visibility(visible: (_selectedTab == _Tab.accounts), maintainState: true, child:
+        _tabPage(_Tab.accounts)
       ),
     ],);
 
   Widget _tabPage(_Tab tab) {
     switch(tab) {
       case _Tab.myInfo: return _myInfoTabPage;
-      case _Tab.connections: return _connectionsTabPage;
+      case _Tab.accounts: return _connectionsTabPage;
     }
   }
 
@@ -97,7 +97,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
         //),
         //Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
-          ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myDirectoryInfo,)
+          ProfileDirectoryMyInfoPage(contentType: MyProfileInfo.myDirectoryInfo,)
         //),
 
       ],),
@@ -113,7 +113,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
         //),
         //Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.appDirectory), maintainState: true, child:
-          ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.appDirectory,)
+          ProfileDirectoryAccountsPage(contentType: DirectoryAccounts.appDirectory,)
         //),
       ],),
     );
@@ -272,7 +272,7 @@ extension _TabExt on _Tab {
   String titleEx({String? language}) {
     switch(this) {
       case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case _Tab.connections: return AppTextUtils.appTitleString('panel.profile.directory.tab.connections.title', '${AppTextUtils.appTitleMacro} Connections', language: language);
+      case _Tab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} Connections', language: language);
     }
   }
 
@@ -284,24 +284,24 @@ extension _TabExt on _Tab {
   }*/
 }
 
-extension MyDirectoryInfoExt on MyDirectoryInfo {
+extension MyDirectoryInfoExt on MyProfileInfo {
   String get title => titleEx();
 
   String titleEx({String? language}) {
     switch(this) {
-      case MyDirectoryInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.connections.title', 'My Connections Info', language: language);
-      case MyDirectoryInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.directory.title', 'My Directory Info', language: language);
+      case MyProfileInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.connections.title', 'My Connections Info', language: language);
+      case MyProfileInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.directory.title', 'My Directory Info', language: language);
     }
   }
 }
 
-extension DirectoryConnectionsExt on DirectoryConnections {
+extension DirectoryConnectionsExt on DirectoryAccounts {
   String get title => titleEx();
 
   String titleEx({String? language}) {
     switch(this) {
-      case DirectoryConnections.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.tab.connections.connections.title', 'My ${AppTextUtils.appTitleMacro} Connections', language: language);
-      case DirectoryConnections.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.connections.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
+      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.connections.title', 'My ${AppTextUtils.appTitleMacro} Connections', language: language);
+      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
 }
