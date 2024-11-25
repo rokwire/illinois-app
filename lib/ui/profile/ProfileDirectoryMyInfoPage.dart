@@ -31,6 +31,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   Auth2UserProfile? _profile;
   bool _loadingProfile = false;
+  bool _editing = false;
   bool _preparingDeleteAccount = false;
 
   @override
@@ -49,7 +50,6 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
               Auth2UserProfile.pronounDataKey : 'he',
             }
           );
-
         });
       }
     });
@@ -62,6 +62,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     if (_loadingProfile) {
       return _loadingContent;
     }
+    else if (_editing) {
+      return _editContent;
+    }
     else {
       return _previewContent;
     }
@@ -73,16 +76,16 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           Text(_previewDesriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
           Padding(padding: EdgeInsets.only(top: 24), child:
               Stack(children: [
-                Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+                Padding(padding: EdgeInsets.only(top: _previewPhotoImageSize / 2), child:
                   _previewCardWidget,
                 ),
                 Center(child:
-                  DirectoryProfilePhoto(_profile?.photoUrl, imageSize: _photoImageSize, headers: _photoImageHeaders,),
+                  DirectoryProfilePhoto(_profile?.photoUrl, imageSize: _previewPhotoImageSize, headers: _photoImageHeaders,),
                 )
               ])
           ),
           Padding(padding: EdgeInsets.only(top: 24), child:
-            _commandBar,
+            _previewCommandBar,
           ),
           Padding(padding: EdgeInsets.only(top: 8), child:
             _signOutButton,
@@ -96,12 +99,12 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   String get _previewDesriptionText {
     switch (widget.contentType) {
-      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
-      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.description.text', 'Preview of how your profile displays in the directory.');
+      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.preview.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
+      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.preview.description.text', 'Preview of how your profile displays in the directory.');
     }
   }
 
-  double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+  double get _previewPhotoImageSize => MediaQuery.of(context).size.width / 3;
 
   Map<String, String> get _photoImageHeaders => <String, String>{
     HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
@@ -114,7 +117,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       borderRadius: BorderRadius.all(Radius.circular(16)),
       boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
     ),
-    child: Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+    child: Padding(padding: EdgeInsets.only(top: _previewPhotoImageSize / 2), child:
       _previewCardContent
     ),
   );
@@ -143,7 +146,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
         Text(_profile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
 
-  Widget get _commandBar {
+  Widget get _previewCommandBar {
     switch (widget.contentType) {
       case MyProfileInfo.myConnectionsInfo: return _myConnectionsInfoCommandBar;
       case MyProfileInfo.myDirectoryInfo: return _myDirectoryInfoCommandBar;
@@ -151,18 +154,18 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   }
 
   Widget get _myConnectionsInfoCommandBar => Row(children: [
-    Expanded(child: editInfoButton,),
+    Expanded(child: _editInfoButton,),
     Container(width: 8),
-    Expanded(child: swapInfoButton,),
+    Expanded(child: _swapInfoButton,),
   ],);
 
   Widget get _myDirectoryInfoCommandBar => Row(children: [
     Expanded(flex: 1, child: Container(),),
-    Expanded(flex: 2, child: editInfoButton,),
+    Expanded(flex: 2, child: _editInfoButton,),
     Expanded(flex: 1, child: Container(),),
   ],);
 
-  Widget get editInfoButton => RoundedButton(
+  Widget get _editInfoButton => RoundedButton(
     label: Localization().getStringEx('panel.profile.directory.my_info.command.button.edit.text', 'Edit My Info'),
     fontFamily: Styles().fontFamilies.bold, fontSize: 16,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -171,9 +174,12 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   void _onEditInfo() {
     Analytics().logSelect(target: 'Edit My Info');
+    setState(() {
+      _editing = true;
+    });
   }
 
-  Widget get swapInfoButton => RoundedButton(
+  Widget get _swapInfoButton => RoundedButton(
       label: Localization().getStringEx('panel.profile.directory.my_info.command.button.swap.text', 'Swap Info'),
       fontFamily: Styles().fontFamilies.bold, fontSize: 16,
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -284,4 +290,114 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     )
   );
 
+  Widget get _editContent =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: [
+        Text(_editDesriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          _editPhotoWidget,
+        ),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          _editCommandBar,
+        ),
+        Padding(padding: EdgeInsets.only(top: 8)),
+      ],),
+    );
+
+  String get _editDesriptionText {
+    switch (widget.contentType) {
+      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.edit.description.text', 'Edit how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
+      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.edit.description.text', 'Edit how your profile displays in the directory.');
+    }
+  }
+
+
+  double get _editPhotoImageSize => MediaQuery.of(context).size.width / 3;
+
+  Widget get _editPhotoWidget => Stack(children: [
+    Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
+      DirectoryProfilePhoto(_profile?.photoUrl, imageSize: _editPhotoImageSize, headers: _photoImageHeaders,),
+    ),
+    Positioned.fill(child:
+      Align(alignment: Alignment.bottomLeft, child:
+        _editPhotoButton
+      )
+    ),
+    Positioned.fill(child:
+      Align(alignment: Alignment.bottomRight, child:
+      _togglePhotoVisibilityButton
+      )
+    )
+  ],);
+
+  Widget get _editPhotoButton => _photoButton(
+    icon: 'edit',
+    iconColor: Styles().colors.fillColorPrimary,
+    onTap: _onEditPhoto
+  );
+
+  void _onEditPhoto() {
+    Analytics().logSelect(target: 'Edit Photo');
+  }
+
+  Widget get _togglePhotoVisibilityButton => _photoButton(
+      icon: 'eye-slash',
+      iconColor: Styles().colors.mediumGray2,
+      onTap: _onTogglePhotoVisibility
+  );
+
+  void _onTogglePhotoVisibility() {
+    Analytics().logSelect(target: 'Toggle Photo Visibility');
+  }
+
+  Widget _photoButton({String? icon, Color? iconColor, void Function()? onTap}) =>
+    InkWell(onTap: onTap, child:
+      Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
+        ),
+        child: Padding(padding: EdgeInsets.all(12), child:
+            Styles().images.getImage(icon, color: iconColor)
+        ),
+      )
+
+
+    );
+
+
+  Widget get _editCommandBar => Row(children: [
+    Expanded(child: _cancelEditButton,),
+    Container(width: 8),
+    Expanded(child: _saveEditButton,),
+  ],);
+
+  Widget get _cancelEditButton => RoundedButton(
+    label: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    onTap: _onCancelEdit,
+  );
+
+  void _onCancelEdit() {
+    Analytics().logSelect(target: 'Cancel Edit');
+    setState(() {
+      _editing = false;
+    });
+  }
+
+  Widget get _saveEditButton => RoundedButton(
+    label: Localization().getStringEx('dialog.save.title', 'Save'),
+    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    onTap: _onSaveEdit,
+  );
+
+  void _onSaveEdit() {
+    Analytics().logSelect(target: 'Save Edit');
+    setState(() {
+      _editing = true;
+    });
+  }
 }
