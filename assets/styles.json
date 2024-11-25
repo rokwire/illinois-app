@@ -814,7 +814,7 @@
     "sound": {"src": "images/icon-listen.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size issue"},
     "play-circle": {"src": "images/icon-watch.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "compass": {"src": "images/tab-explore.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
-    "eye":  {"src": "images/view-only-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
+    "eye":  {"src": "0xf06e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "football": {"src": "images/posession.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo":  "size, color"},
     "bluetooth": {"src": "images/bluetooth.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "color issue, size issue"},
     "academics-0": {"src": "images/tab-academics-selected.png", "type": "flutter.asset", "size": 18, "todo": "color issue"},
