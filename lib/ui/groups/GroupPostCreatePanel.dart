@@ -306,7 +306,6 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         selectedGroups = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups));
       }
     }
-    //TBD: DDGS - implement reply
     late Post post;
     if (CollectionUtils.isNotEmpty(selectedGroups)) {
       List<String> groupIds = selectedGroups!.map((group) => group.id!).toList(growable: true);
