@@ -41,7 +41,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
   static final EdgeInsets _defaultBottomPadding = EdgeInsets.only(bottom: 8);
   static final int _notificationsCount = 2;
 
-  late List<dynamic> _notificationSettings;
+  late List<Event2NotificationSetting?> _notificationSettings;
   late List<TextEditingController> _bodyControllers;
   late List<dynamic> _sendDates;
   late List<dynamic> _sendTimes;
@@ -95,26 +95,27 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                             label:
                             'If you have used the app to take attendance and send a follow-up survey, a notification will be sent to all event attendees at the time you designate under your event follow-up survey settings.')),
                     _buildNotificationsContent(defaultBottomPadding: _defaultBottomPadding, bottom10Padding: EdgeInsets.only(bottom: 10)),
-                    // Padding(
-                    //     padding: _defaultBottomPadding,
-                    //         child: Row(children: [
-                    //           Expanded(child:
-                    //             RoundedButton(
-                    //                 label: 'Save',
-                    //                 borderColor: Styles().colors.fillColorPrimary,
-                    //                 textColor: Styles().colors.fillColorSecondary,
-                    //                 backgroundColor: Colors.white,
-                    //                 onTap: _onTapSave)),
-                    //           Container(width: 16),
-                    //           Expanded(child:
-                    //             RoundedButton(
-                    //                 label: 'Clear All',
-                    //                 borderColor: Styles().colors.fillColorPrimary,
-                    //                 textColor: Styles().colors.fillColorSecondary,
-                    //                 backgroundColor: Colors.white,
-                    //                 progress: _deleting,
-                    //                 onTap: _onTapClearAll)),
-                    //         ]))
+                    Container(
+                        // constraints: BoxConstraints(),
+                        padding: _defaultBottomPadding,
+                            child: Row(mainAxisSize: MainAxisSize.min, children: [
+                              Expanded(child:
+                                RoundedButton(
+                                    label: 'Save',
+                                    borderColor: Styles().colors.fillColorSecondary,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    backgroundColor: Colors.white,
+                                    onTap: _onTapSave)),
+                              Container(width: 16),
+                              Expanded(child:
+                                RoundedButton(
+                                    label: 'Clear All',
+                                    borderColor: Styles().colors.fillColorSecondary,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    backgroundColor: Colors.white,
+                                    progress: _deleting,
+                                    onTap: _onTapClearAll)),
+                            ]))
                   ])
             )));
   }
@@ -233,7 +234,8 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 6),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Image.asset((toggled && enabled) ? 'images/icon-switch-on.png' : 'images/icon-switch-off.png'),
+              Container(child:
+                Styles().images.getImage((enabled == true && toggled == true) ? 'toggle-on' : 'toggle-off')),
               Expanded(
                   child: Padding(
                       padding: EdgeInsets.only(left: 10, right: 16),
@@ -460,7 +462,8 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     }
     if (_eventId == null) {
       // New event, so pass the notifications to the event and save them on create event operation
-      Navigator.of(context).pop(_notificationSettings);
+      List<Event2NotificationSetting>? result = _notificationSettings.whereType<Event2NotificationSetting>().toList(); // cast
+      Navigator.of(context).pop(result);
       return;
     }
     setStateIfMounted(() {
