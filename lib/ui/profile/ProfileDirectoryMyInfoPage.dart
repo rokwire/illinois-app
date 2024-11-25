@@ -29,54 +29,72 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
 
 class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>  {
 
-  late Auth2UserProfile _profile;
+  Auth2UserProfile? _profile;
+  bool _loadingProfile = false;
   bool _preparingDeleteAccount = false;
 
   @override
   void initState() {
-    _profile = Auth2UserProfile.fromOther(Auth2().profile,
-      photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
-      phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
-      data: <String, dynamic> {
-        Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),
-        Auth2UserProfile.departmentDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.departmentName, 'Center for Advanced Study'),
-        Auth2UserProfile.pronounDataKey : 'he',
+    _loadingProfile = true;
+    Auth2().loadUserProfile().then((Auth2UserProfile? profile) {
+      if (mounted) {
+        setState(() {
+          _loadingProfile = false;
+          _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,
+            photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
+            phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
+            data: <String, dynamic> {
+              Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),
+              Auth2UserProfile.departmentDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.departmentName, 'Center for Advanced Study'),
+              Auth2UserProfile.pronounDataKey : 'he',
+            }
+          );
+
+        });
       }
-    ) ?? Auth2UserProfile.empty();
+    });
 
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Column(children: [
-        Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
-        Padding(padding: EdgeInsets.only(top: 24), child:
-            Stack(children: [
-              Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
-                _cardWidget,
-              ),
-              Center(child:
-                DirectoryProfilePhoto(_profile.photoUrl, imageSize: _photoImageSize, headers: _photoImageHeaders,),
-              )
-            ])
-        ),
-        Padding(padding: EdgeInsets.only(top: 24), child:
-          _commandBar,
-        ),
-        Padding(padding: EdgeInsets.only(top: 8), child:
-          _signOutButton,
-        ),
-        Padding(padding: EdgeInsets.zero, child:
-          _deleteAccountButton,
-        ),
-      Padding(padding: EdgeInsets.only(top: 8)),
+  Widget build(BuildContext context) {
+    if (_loadingProfile) {
+      return _loadingContent;
+    }
+    else {
+      return _previewContent;
+    }
+  }
 
-      ],),
-    );
+  Widget get _previewContent =>
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(children: [
+          Text(_previewDesriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
+          Padding(padding: EdgeInsets.only(top: 24), child:
+              Stack(children: [
+                Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+                  _previewCardWidget,
+                ),
+                Center(child:
+                  DirectoryProfilePhoto(_profile?.photoUrl, imageSize: _photoImageSize, headers: _photoImageHeaders,),
+                )
+              ])
+          ),
+          Padding(padding: EdgeInsets.only(top: 24), child:
+            _commandBar,
+          ),
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            _signOutButton,
+          ),
+          Padding(padding: EdgeInsets.zero, child:
+            _deleteAccountButton,
+          ),
+          Padding(padding: EdgeInsets.only(top: 8)),
+        ],),
+      );
 
-  String get _desriptionText {
+  String get _previewDesriptionText {
     switch (widget.contentType) {
       case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
       case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.description.text', 'Preview of how your profile displays in the directory.');
@@ -89,7 +107,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
   };
 
-  Widget get _cardWidget => Container(
+  Widget get _previewCardWidget => Container(
     decoration: BoxDecoration(
       color: Styles().colors.white,
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -97,11 +115,11 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
     ),
     child: Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
-      _cardContent
+      _previewCardContent
     ),
   );
 
-  Widget get _cardContent =>
+  Widget get _previewCardContent =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 12), child:
@@ -120,9 +138,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   Widget get _cardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(_profile.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
-      if (_profile.pronoun?.isNotEmpty == true)
-        Text(_profile.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+      Text(_profile?.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
+      if (_profile?.pronoun?.isNotEmpty == true)
+        Text(_profile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
 
   Widget get _commandBar {
@@ -257,5 +275,13 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       });
     }
   }
+
+  Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+      )
+    )
+  );
 
 }
