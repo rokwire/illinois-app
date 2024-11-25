@@ -156,7 +156,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
           cursorColor: Styles().colors.fillColorSecondary,
           keyboardType: TextInputType.text,
           autocorrect: false,
-          autofocus: true,
+          autofocus: false,
           maxLines: 1,
           onSubmitted: (_) => _onTapSearch(),
       )
