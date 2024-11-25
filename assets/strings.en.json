@@ -2270,8 +2270,8 @@
 
     "panel.profile.directory.my_info.connections.preview.description.text": "Preview of how your profile displays for your {{app_title}} Connections.",
     "panel.profile.directory.my_info.directory.preview.description.text": "Preview of how your profile displays in the directory.",
-    "panel.profile.directory.my_info.connections.edit.description.text": "Edit how your profile displays for your {{app_title}} Connections.",
-    "panel.profile.directory.my_info.directory.edit.description.text": "Edit how your profile displays in the directory.",
+    "panel.profile.directory.my_info.connections.edit.description.text": "Choose how your profile displays for your {{app_title}} Connections.",
+    "panel.profile.directory.my_info.directory.edit.description.text": "Choose how your profile displays in the directory.",
     "panel.profile.directory.my_info.command.button.edit.text": "Edit My Info",
     "panel.profile.directory.my_info.command.button.swap.text": "Swap Info",
     "panel.profile.directory.my_info.command.link.sign_out.text": "Sign Out",

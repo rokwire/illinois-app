@@ -30,36 +30,24 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
 class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>  {
 
   Auth2UserProfile? _profile;
-  bool _loadingProfile = false;
+  // ignore: unused_field
+  Auth2UserPrivacy? _privacy;
+  Auth2UserProfileFieldsVisibility? _visibility;
+  Auth2UserProfile? _previewProfile;
+
+  bool _loading = false;
   bool _editing = false;
   bool _preparingDeleteAccount = false;
 
   @override
   void initState() {
-    _loadingProfile = true;
-    Auth2().loadUserProfile().then((Auth2UserProfile? profile) {
-      if (mounted) {
-        setState(() {
-          _loadingProfile = false;
-          _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,
-            photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
-            phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
-            data: <String, dynamic> {
-              Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),
-              Auth2UserProfile.departmentDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.departmentName, 'Center for Advanced Study'),
-              Auth2UserProfile.pronounDataKey : 'he',
-            }
-          );
-        });
-      }
-    });
-
+    _loadProfileAndPrivacy();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loadingProfile) {
+    if (_loading) {
       return _loadingContent;
     }
     else if (_editing) {
@@ -80,7 +68,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                   _previewCardWidget,
                 ),
                 Center(child:
-                  DirectoryProfilePhoto(_profile?.photoUrl, imageSize: _previewPhotoImageSize, headers: _photoImageHeaders,),
+                  DirectoryProfilePhoto(_previewProfile?.photoUrl, imageSize: _previewPhotoImageSize, headers: _photoImageHeaders,),
                 )
               ])
           ),
@@ -133,7 +121,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           ],),
         ),
         Padding(padding: EdgeInsets.only(top: 12), child:
-          DirectoryProfileDetails(_profile)
+          DirectoryProfileDetails(_previewProfile)
         ),
         _shareButton,
     ],)
@@ -141,9 +129,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   Widget get _cardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(_profile?.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
-      if (_profile?.pronoun?.isNotEmpty == true)
-        Text(_profile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+      Text(_previewProfile?.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
+      if (_previewProfile?.pronoun?.isNotEmpty == true)
+        Text(_previewProfile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
 
   Widget get _previewCommandBar {
@@ -306,8 +294,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   String get _editDesriptionText {
     switch (widget.contentType) {
-      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.edit.description.text', 'Edit how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
-      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.edit.description.text', 'Edit how your profile displays in the directory.');
+      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.edit.description.text', 'Choose how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
+      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.edit.description.text', 'Choose how your profile displays in the directory.');
     }
   }
 
@@ -330,8 +318,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     )
   ],);
 
-  Widget get _editPhotoButton => _photoButton(
-    icon: 'edit',
+  Widget get _editPhotoButton => _photoIconButton('edit',
     iconColor: Styles().colors.fillColorPrimary,
     onTap: _onEditPhoto
   );
@@ -340,17 +327,16 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     Analytics().logSelect(target: 'Edit Photo');
   }
 
-  Widget get _togglePhotoVisibilityButton => _photoButton(
-      icon: 'eye-slash',
-      iconColor: Styles().colors.mediumGray2,
-      onTap: _onTogglePhotoVisibility
+  Widget get _togglePhotoVisibilityButton => _photoIconButton('eye-slash',
+    iconColor: Styles().colors.mediumGray2,
+    onTap: _onTogglePhotoVisibility
   );
 
   void _onTogglePhotoVisibility() {
     Analytics().logSelect(target: 'Toggle Photo Visibility');
   }
 
-  Widget _photoButton({String? icon, Color? iconColor, void Function()? onTap}) =>
+  Widget _photoIconButton(String? icon, {Color? iconColor, void Function()? onTap}) =>
     InkWell(onTap: onTap, child:
       Container(
         decoration: BoxDecoration(
@@ -362,8 +348,6 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
             Styles().images.getImage(icon, color: iconColor)
         ),
       )
-
-
     );
 
 
@@ -399,5 +383,52 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     setState(() {
       _editing = true;
     });
+  }
+
+  Future<void> _loadProfileAndPrivacy() async {
+    setState(() {
+      _loading = true;
+    });
+    List<dynamic> results = await Future.wait([
+      Auth2().loadUserProfile(),
+      Auth2().loadUserPrivacy(),
+    ]);
+    if (mounted) {
+      Auth2UserProfile? profile = JsonUtils.cast<Auth2UserProfile>(ListUtils.entry(results, 0));
+      Auth2UserPrivacy? privacy = JsonUtils.cast<Auth2UserPrivacy>(ListUtils.entry(results, 1));
+      setState(() {
+        //TMP: Added some sample data
+        _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,
+          photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
+          phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
+          data: <String, dynamic> {
+            Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),
+            Auth2UserProfile.departmentDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.departmentName, 'Center for Advanced Study'),
+            Auth2UserProfile.pronounDataKey : 'he',
+          }
+        );
+
+        _privacy = privacy;
+
+        //TMP: Added some sample data
+        _visibility = Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
+          firstName: Auth2FieldVisibility.public,
+          middleName: Auth2FieldVisibility.public,
+          lastName: Auth2FieldVisibility.public,
+          email: Auth2FieldVisibility.public,
+        );
+
+        _previewProfile = Auth2UserProfile.fromFieldVisibility(_profile, _visibility, permitted: _permittedVisibility);
+
+        _loading = false;
+      });
+    }
+  }
+
+  Set<Auth2FieldVisibility> get _permittedVisibility {
+    switch(widget.contentType) {
+      case MyProfileInfo.myDirectoryInfo: return <Auth2FieldVisibility>{Auth2FieldVisibility.public};
+      case MyProfileInfo.myConnectionsInfo: return <Auth2FieldVisibility>{Auth2FieldVisibility.public, Auth2FieldVisibility.connections };
+    }
   }
 }
