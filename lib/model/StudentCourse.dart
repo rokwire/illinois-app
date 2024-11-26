@@ -413,6 +413,11 @@ class BuildingFeatureValue {
       floors: JsonUtils.listStringsValue(MapUtils.get2(json, ['floors'])),
     ) : null;
   }
+
+  toJson () => {
+    "name": name,
+    "floors": floors,
+  };
 }
 
 class BuildingFeature {
@@ -431,7 +436,7 @@ class BuildingFeature {
 
   toJson () => {
     "key": key,
-    "value": value
+    "value": value?.toJson(),
   };
 
   static List<BuildingFeature>? listFromJson(List<dynamic>? jsonList) {
