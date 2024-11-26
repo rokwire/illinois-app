@@ -123,6 +123,7 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 
+    "generic.time.now": "ahora",
     "generic.time.minutes": "minutos",
     "generic.time.hours": "horas",
     "generic.time.days": "días",
@@ -3001,6 +3002,7 @@
 
     "panel.group.detail.post.header.title": "Publicación",
     "panel.group.detail.post.delete.confirm.msg": "¿Estás seguro/a que quieres eliminar esta publicación?",
+    "panel.group.detail.post.delete.many_groups.confirm.msg": "Esta publicación está visible en más de un grupo. ¿Estás seguro de que deseas eliminarla?",
     "panel.group.detail.post.delete.failed.msg": "No se pudo eliminar la publicación.",
     "panel.group.detail.post.reply.delete.confirm.msg": "¿Estás seguro/a que quieres eliminar esta respuesta?",
     "panel.group.detail.post.reply.delete.failed.msg": "No se pudo eliminar la respuesta.",
@@ -3971,6 +3973,9 @@
     "widget.group.card.reply.single.reply.label": "Respuesta",
     "widget.group.card.reply.multiple.replies.label": "Respuestas",
     "widget.group.card.reply.edited.reply.label": "editado",
+
+    "widget.group.card.reaction.failed.msg": "Failed to react. Please, try again.",
+    "widget.group.card.reaction.thumbs_up.label": "thumbs-up",
 
     "widget.group_card.status.private": "Privado",
     "widget.group_card.status.public": "Público",

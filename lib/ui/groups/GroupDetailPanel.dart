@@ -34,9 +34,11 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -55,6 +57,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
@@ -113,21 +116,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
 
-  List<GroupPost>    _posts = <GroupPost>[];
+  List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
   bool?              _hasMorePosts;
   bool?              _scrollToLastPostAfterRefresh;
 
-  List<GroupPost>    _scheduledPosts = <GroupPost>[];
+  List<Post>         _scheduledPosts = <Post>[];
   GlobalKey          _lastScheduledPostKey = GlobalKey();
   bool?              _refreshingScheduledPosts;
   bool?              _loadingScheduledPostsPage;
   bool?              _hasMoreScheduledPosts;
   bool?              _scrollToLastScheduledPostsAfterRefresh;
 
-  List<GroupPost>    _messages = <GroupPost>[];
+  List<Post>         _messages = <Post>[];
   GlobalKey          _lastMessageKey = GlobalKey();
   bool?              _refreshingMessages;
   bool?              _loadingMessagesPage;
@@ -241,9 +244,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupStatsUpdated,
-      Groups.notifyGroupPostCreated,
-      Groups.notifyGroupPostUpdated,
-      Groups.notifyGroupPostDeleted,
+      Social.notifyPostCreated,
+      Social.notifyPostUpdated,
+      Social.notifyPostDeleted,
       Polls.notifyCreated,
       Polls.notifyDeleted,
       Polls.notifyStatusChanged,
@@ -355,39 +358,30 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _redirectToGroupPostIfExists() {
     if ((_groupId != null) && (_postId != null)) {
       _increaseProgress();
-      Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
+      Social().loadSinglePost(groupId: _group!.id, postId: _postId!).then((post) {
         _postId = null; // Clear _postId in order not to redirect on the next group load.
+        _decreaseProgress();
         if (post != null) {
-          if(StringUtils.isNotEmpty(post.topParentId)){ // This is reply
-            Groups().loadGroupPost(groupId: _group!.id, postId: post.topParentId).then((mainPost) {
-              _decreaseProgress();
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: mainPost)));
-            });
-          } else { //this is the main Post
-            _decreaseProgress();
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
-          }
-        } else {
-          _decreaseProgress();
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
         }
       });
     }
   }
 
-  void _onGroupPostCreated(GroupPost? post) {
+  void _onGroupPostCreated(Post? post) {
       if (post?.isPost == true) {
-        _refreshCurrentPosts(delta: (post?.parentId == null) ? 1 : null);
+        _refreshCurrentPosts(delta: 1);
       }
       else if (post?.isMessage == true) {
-        _refreshCurrentMessages(delta: (post?.parentId == null) ? 1 : null);
+        _refreshCurrentMessages(delta: 1);
       }
       //For both post and messages
-      if(post?.isScheduled == true){
-        _refreshCurrentScheduledPosts(delta: (post?.parentId == null) ? 1 : null);
+      if(post?.isScheduled == true) {
+        _refreshCurrentScheduledPosts(delta: 1);
       }
   }
 
-  void _onGroupPostUpdated(GroupPost? post) {
+  void _onGroupPostUpdated(Post? post) {
       if (post?.isPost == true) {
         _refreshCurrentPosts();
       }
@@ -400,12 +394,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
   }
 
-  void _onGroupPostDeleted(GroupPost? post) {
+  void _onGroupPostDeleted(Post? post) {
       if (post?.isPost == true) {
-        _refreshCurrentPosts(delta: (post?.parentId == null) ? -1 : null);
+        _refreshCurrentPosts(delta: -1);
       }
       else if (post?.isMessage == true) {
-        _refreshCurrentMessages(delta: (post?.parentId == null) ? -1 : null);
+        _refreshCurrentMessages(delta: -1);
       }
       //For both post and messages
       if(post?.isScheduled == true){
@@ -436,7 +430,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
       int limit = _posts.length + (delta ?? 0);
       _refreshingPosts = true;
-      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? posts) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
@@ -470,7 +464,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPostsPage() async {
-    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _posts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<Post>? postsPage = await Social().loadPosts(
+        groupId: widget.groupId,
+        type: PostType.post,
+        status: PostStatus.active,
+        offset: _posts.length,
+        limit: _postsPageSize,
+        sortBy: SocialSortBy.date_created);
     if (postsPage != null) {
       _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
@@ -502,7 +502,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingScheduledPosts != true)) {
       int limit = _scheduledPosts.length + (delta ?? 0);
       _refreshingScheduledPosts = true;
-      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc, scheduledOnly: true).then((List<GroupPost>? scheduledPost) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc, status: PostStatus.draft).then((List<Post>? scheduledPost) {
         _refreshingScheduledPosts = false;
         if (mounted && (scheduledPost != null)) {
           setState(() {
@@ -536,7 +536,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadScheduledPostsPage() async {
-    List<GroupPost>? scheduledPostsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _scheduledPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc, scheduledOnly: true);
+    List<Post>? scheduledPostsPage = await Social().loadPosts(
+        groupId: widget.groupId,
+        type: PostType.post,
+        offset: _scheduledPosts.length,
+        limit: _postsPageSize,
+        status: PostStatus.draft,
+        sortBy: SocialSortBy.activation_date);
     if (scheduledPostsPage != null) {
       _scheduledPosts.addAll(scheduledPostsPage);
       if (scheduledPostsPage.length < _postsPageSize) {
@@ -568,7 +574,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingMessages != true)) {
       int limit = _messages.length + (delta ?? 0);
       _refreshingMessages = true;
-      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.message, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? messages) {
+      Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? messages) {
         _refreshingMessages = false;
         if (mounted && (messages != null)) {
           setState(() {
@@ -602,7 +608,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadMessagesPage() async {
-    List<GroupPost>? messagesPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.message , offset: _messages.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<Post>? messagesPage = await Social().loadPosts(groupId: widget.groupId, type: PostType.direct_message , offset: _messages.length, limit: _postsPageSize, order: SocialSortOrder.desc);
     if (messagesPage != null) {
       _messages.addAll(messagesPage);
       if (messagesPage.length < _postsPageSize) {
@@ -754,14 +760,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
     } 
-    else if (name == Groups.notifyGroupPostCreated) {
-      _onGroupPostCreated(param is GroupPost ? param : null);
+    else if (name == Social.notifyPostCreated) {
+      _onGroupPostCreated(param is Post ? param : null);
     }
-    else if (name == Groups.notifyGroupPostUpdated) {
-      _onGroupPostUpdated(param is GroupPost ? param : null);
+    else if (name == Social.notifyPostUpdated) {
+      _onGroupPostUpdated(param is Post ? param : null);
     }
-    else if (name == Groups.notifyGroupPostDeleted) {
-      _onGroupPostDeleted(param is GroupPost ? param : null);
+    else if (name == Social.notifyPostDeleted) {
+      _onGroupPostDeleted(param is Post ? param : null);
     }
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
@@ -1207,11 +1213,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     for (int i = 0; i <_posts.length ; i++) {
-      GroupPost? post = _posts[i];
+      Post? post = _posts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
@@ -1250,11 +1256,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     for (int i = 0; i <_scheduledPosts.length ; i++) {
-      GroupPost? post = _scheduledPosts[i];
+      Post? post = _scheduledPosts[i];
       if (i > 0) {
         scheduledPostsContent.add(Container(height: 16));
       }
-      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group));
+      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {
@@ -1302,11 +1308,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     for (int i = 0; i <_messages.length ; i++) {
-      GroupPost? message = _messages[i];
+      Post? message = _messages[i];
       if (i > 0) {
         messagesContent.add(Container(height: 16));
       }
-      messagesContent.add(GroupPostCard(key: (i == 0) ? _lastMessageKey : null, post: message, group: _group));
+      messagesContent.add(GroupPostCard(key: (i == 0) ? _lastMessageKey : null, post: message, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreMessages != false) && (0 < _messages.length)) {
@@ -2186,7 +2192,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
     if (_group != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
-        if (result is GroupPost) {
+        if (result is Post) {
           if(result.isScheduled){ //Post and messages can be both scheduled, so check for scheduled first
             _scrollToLastScheduledPostsAfterRefresh = true;
             if (_refreshingScheduledPosts != true) {
