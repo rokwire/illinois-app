@@ -1225,6 +1225,10 @@
     "panel.explore_building_detail.message.failed": "Failed to load location details",
     "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
     "panel.explore_building_detail.detail.share": "Share This Location",
+    "panel.explore_building_detail.detail.heading.amenities": "Amenities include:",
+    "panel.explore_building_detail.detail.entry.amenity.floors": "• {{name}}: Floors {{floors}}",
+    "panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
+    "panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
 
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
