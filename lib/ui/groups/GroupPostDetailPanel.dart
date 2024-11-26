@@ -155,15 +155,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
                   child: Padding(
                     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
-                    child: GroupPostReaction(
-                      groupID: _groupId,
-                      post: _post,
-                      reaction: thumbsUpReaction,
-                      //TBD: DDGS - implement reactions
+                    child: GroupReaction(
+                      groupId: _groupId,
+                      entityId: _post?.id,
+                      reactionSource: ReactionSource.post,
+                      //TBD: DDGS - implement long press reaction
                       // accountIDs: _post?.reactions[thumbsUpReaction],
-                      selectedIconKey: 'thumbs-up-filled',
-                      deselectedIconKey: 'thumbs-up-outline-gray',
-                      // onTapEnabled: _canSendReaction,
                     ),
                   ),
                 ),

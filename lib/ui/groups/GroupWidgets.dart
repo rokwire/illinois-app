@@ -1278,17 +1278,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 Visibility(
                   visible: Config().showGroupPostReactions &&
                       (widget.group?.currentUserHasPermissionToSendReactions == true),
-                  child: GroupPostReaction(
-                    groupID: widget.group?.id,
-                    //TBD: DDGS - implement reply reactions
-                    // post: widget.reply,
-                    post: Post(),
-                    reaction: thumbsUpReaction,
+                  child: GroupReaction(
+                    groupId: widget.group?.id,
+                    entityId: widget.reply?.id,
+                    reactionSource: ReactionSource.comment,
                     //TBD: DDGS - implement reply reactions
                     // accountIDs: widget.reply?.reactions[thumbsUpReaction],
                     accountIDs: null,
-                    selectedIconKey: 'thumbs-up-filled',
-                    deselectedIconKey: 'thumbs-up-outline-gray',
                   ),
                 ),
                 Visibility(
@@ -1392,65 +1388,87 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 //////////////////////////////////////
 // GroupPostReaction
 
-const String thumbsUpReaction = "thumbs-up";
-
-class GroupPostReaction extends StatelessWidget {
-  final String? groupID;
-  final Post? post;
-  final String reaction;
+class GroupReaction extends StatefulWidget {
+  final String? groupId;
+  final String? entityId;
+  final ReactionSource reactionSource;
+  //TBD: DDGS - implement long press reaction
   final List<String>? accountIDs;
-  final String selectedIconKey;
-  final String deselectedIconKey;
-  final bool onTapEnabled;
-  final bool onLongPressEnabled;
 
-  GroupPostReaction({required this.groupID, required this.post, required this.reaction,
-    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey, this.onTapEnabled = true, this.onLongPressEnabled = true});
+  GroupReaction({required this.groupId, this.entityId, required this.reactionSource, this.accountIDs});
+
+  @override
+  State<GroupReaction> createState() => _GroupReactionState();
+}
+
+class _GroupReactionState extends State<GroupReaction> {
+
+  ReactionsResult? _reactions;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReactions();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
-    return Semantics(button: true, label: reaction,
-        child: InkWell(
-            onTap: () => onTapEnabled ? _onTapReaction(groupID, post, reaction) : null,
-            onLongPress: () => onLongPressEnabled ? _onLongPressReactions(context, accountIDs, groupID): null,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Styles().images.getImage(selected ? selectedIconKey : deselectedIconKey, excludeFromSemantics: true) ?? Container(),
-                  Visibility(visible: accountIDs != null && accountIDs!.length > 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(accountIDs?.length.toString() ?? '',
-                            style: Styles().textStyles.getTextStyle("widget.button.title.small")),
-                      ))
-                ])));
+    bool selected = _reactions?.isLiked ?? false;
+    return Semantics(
+        button: true,
+        label: Localization().getStringEx('widget.group.card.reaction.thumbs_up.label', 'thumbs-up'),
+        child: Stack(alignment: Alignment.center, children: [
+          Visibility(
+              visible: _loading,
+              child: SizedBox.square(
+                  dimension: 16, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2))),
+          InkWell(
+              onTap: _onTapReaction,
+              onLongPress: _onLongPressReactions,
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
+                Styles().images.getImage(selected ? 'thumbs-up-filled' : 'thumbs-up-outline-gray', excludeFromSemantics: true) ??
+                    Container(),
+                Visibility(
+                    visible: widget.accountIDs != null && widget.accountIDs!.length > 0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Text(_reactionsCountLabel, style: Styles().textStyles.getTextStyle("widget.button.title.small")),
+                    ))
+              ]))
+        ]));
   }
 
-  void _onTapReaction(String? groupId, Post? post, String reaction) async {
-    //TBD: DDGS - implement reactions
-    // bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
-    bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
-    if (success) {
-      Post? updatedPost = await Social().loadSinglePost(groupId: groupId, postId: post!.id!);
-      if (updatedPost != null) {
-        //TBD: DDGS - implement reactions
-        // post?.reactions.clear();
-        // post?.reactions.addAll(updatedPost.reactions);
-        // NotificationService().notify(Groups.notifyGroupPostReactionsUpdated);
-      }
+  void _onTapReaction() {
+    Analytics().logSelect(target: 'Reaction');
+    if (!_hasEntityId) {
+      return;
     }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().react(entityId: widget.entityId!, source: widget.reactionSource).then((succeeded) {
+      if (succeeded) {
+        _loadReactions();
+      } else {
+        setStateIfMounted(() {
+          _loading = false;
+        });
+        AppAlert.showDialogResult(
+            context, Localization().getStringEx('widget.group.card.reaction.failed.msg', 'Failed to react. Please, try again.'));
+      }
+    });
   }
 
-  void _onLongPressReactions(BuildContext context, List<String>? accountIDs, String? groupID) async {
-    if (accountIDs == null || accountIDs.isEmpty || groupID == null || groupID.isEmpty) {
+  //TBD: DDGS - implement long press reaction to list reacted users
+  void _onLongPressReactions() async {
+    if (CollectionUtils.isEmpty(widget.accountIDs) || StringUtils.isEmpty(widget.groupId)) {
       return;
     }
     Analytics().logSelect(target: 'Reactions List');
 
     List<Widget> reactions = [];
-    List<Member>? members = await Groups().loadMembers(groupId: groupID, userIds: accountIDs);
+    List<Member>? members = await Groups().loadMembers(groupId: widget.groupId, userIds: widget.accountIDs);
     for (Member member in members ?? []) {
       reactions.add(Padding(
         padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
@@ -1490,6 +1508,28 @@ class GroupPostReaction extends StatelessWidget {
           );
         });
   }
+
+  void _loadReactions() {
+    if (!_hasEntityId) {
+      return;
+    }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) {
+      setStateIfMounted(() {
+        _loading = false;
+        _reactions = result;
+      });
+    });
+  }
+
+  String get _reactionsCountLabel {
+    int reactionsCount = _reactions?.likesCount ?? 0;
+    return (reactionsCount > 0) ? reactionsCount.toString() : '';
+  }
+
+  bool get _hasEntityId => (widget.entityId != null);
 }
 
 typedef void OnBodyChangedListener(String text);

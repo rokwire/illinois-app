@@ -3975,6 +3975,9 @@
     "widget.group.card.reply.multiple.replies.label": "Replies",
     "widget.group.card.reply.edited.reply.label": "edited",
 
+    "widget.group.card.reaction.failed.msg": "Failed to react. Please, try again.",
+    "widget.group.card.reaction.thumbs_up.label": "thumbs-up",
+
     "widget.group_card.status.private": "Private",
     "widget.group_card.status.public": "Public",
     "widget.group_card.status.authman": "Managed",

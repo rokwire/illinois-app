@@ -3970,6 +3970,9 @@
     "widget.group.card.reply.multiple.replies.label": "Respuestas",
     "widget.group.card.reply.edited.reply.label": "editado",
 
+    "widget.group.card.reaction.failed.msg": "Failed to react. Please, try again.",
+    "widget.group.card.reaction.thumbs_up.label": "thumbs-up",
+
     "widget.group_card.status.private": "Privado",
     "widget.group_card.status.public": "Público",
     "widget.group_card.status.authman": "Administrado",

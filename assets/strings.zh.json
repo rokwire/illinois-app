@@ -3950,6 +3950,9 @@
 	"widget.group.card.reply.multiple.replies.label": "回复",
 	"widget.group.card.reply.edited.reply.label": "已编辑",
 
+	"widget.group.card.reaction.failed.msg": "Failed to react. Please, try again.",
+	"widget.group.card.reaction.thumbs_up.label": "thumbs-up",
+
 	"widget.group_card.status.private": "私人",
 	"widget.group_card.status.public": "公开",
 	"widget.group_card.status.authman": "管理",
