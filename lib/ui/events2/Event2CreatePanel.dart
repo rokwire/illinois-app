@@ -16,7 +16,6 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupGroupsPanel.dart';
-import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
@@ -481,8 +480,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Survey? _survey;
   List<Survey> _surveysCache = <Survey>[];
 
-  List<Event2NotificationSetting>? _notificationSettings;
-
   List<Group>? _eventGroups;
   Set<String>? _initialGroupIds;
   bool _loadingEventGroups = false;
@@ -576,7 +573,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _typeAndLocationSectionExpanded = widget.isUpdate;
     _costSectionExpanded = widget.isUpdate;
 
-    _notificationSettings = widget.event?.notificationSettings;
     _errorMap = _buildErrorMap();
 
     _titleController.addListener(_updateErrorMap);
@@ -644,7 +640,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             _buildAttendanceButtonSection(),
             _buildSurveyButtonSection(),
             _buildSponsorshipAndContactsButtonSection(),
-            _buildCustomNotificationsButton(),
             _buildGroupsButtonSection(),
             _buildPublishedSection(),
             _buildVisibilitySection(),
@@ -1574,36 +1569,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         setState(() {
           _sponsor = (result.sponsor?.isNotEmpty ?? false) ? result.sponsor : null;
           _contacts = (result.contacts?.isNotEmpty ?? false) ? result.contacts : null;
-        });
-      }
-    });
-  }
-
-  // Custom Notifications
-
-  Widget _buildCustomNotificationsButton() => Event2CreatePanel.buildButtonSectionWidget(
-      heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-        title: Localization().getStringEx('panel.event2.create.button.custom_notifications.title', 'CUSTOM NOTIFICATIONS'), //TBD localize
-        subTitle: Localization().getStringEx('panel.event2.create.button.custom_notifications.description', 'Create and schedule up to two custom Illinois app event notifications.'), //TBD localize
-        onTap: _onCustomNotifications,
-      ),
-  );
-
-  void _onCustomNotifications() {
-    Analytics().logSelect(target: "Custom Notifications");
-    Event2CreatePanel.hideKeyboard(context);
-
-    Navigator.push<List<Event2NotificationSetting>?>(context, CupertinoPageRoute(builder: (context) => Event2SetupNotificationsPanel(
-      event: widget.event,
-      eventName: widget.event?.name,
-      eventStartDateTimeUtc:  DateTime(_startDate!.year, _startDate!.month, _startDate!.day, _startTime!.hour, _startTime!.minute),
-      eventHasInternalRegistration: (_registrationDetails?.type == Event2RegistrationType.internal),
-      notifications: _notificationSettings,
-      isGroupEvent: widget.event?.isGroupEvent,
-    ))).then((result){
-      if(result!=null){
-        setStateIfMounted((){
-          _notificationSettings = result;
         });
       }
     });
