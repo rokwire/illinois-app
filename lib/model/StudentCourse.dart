@@ -219,8 +219,8 @@ class Building with Explore {
   
   final double? latitude;
   final double? longitude;
+
   List<BuildingFeature>? features;
-  
   List<BuildingEntrance>? entrances;
 
   Building({
@@ -229,7 +229,7 @@ class Building with Explore {
     this.city, this.state, this.zipCode,
     this.imageURL, this.mailCode,
     this.latitude, this.longitude,
-    this.entrances, this.features
+    this.features, this.entrances,
   });
 
   static Building? fromJson(Map<String, dynamic>? json) {
@@ -304,6 +304,7 @@ class Building with Explore {
     (latitude == other.latitude) &&
     (longitude == other.longitude) &&
 
+    DeepCollectionEquality().equals(features, other.features) &&
     DeepCollectionEquality().equals(entrances, other.entrances);
 
   @override
@@ -326,6 +327,7 @@ class Building with Explore {
     (latitude?.hashCode ?? 0) ^
     (longitude?.hashCode ?? 0) ^
     
+    DeepCollectionEquality().hash(features)  ^
     DeepCollectionEquality().hash(entrances);
 
   // Accessories
