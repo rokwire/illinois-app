@@ -433,13 +433,41 @@ extension StateExt on State {
 }
 
 class AppTextUtils {
-  static const String _featureMacro = '{{feature}}';
+
+  // App Title
+
+  static const String appTitleMacro = "{{app_title}}";
+
+  static String get appTitle => appTitleEx();
+  static String appTitleEx({String? language}) =>
+    Localization().getStringEx('app.title', 'Illinois', language: language);
+
+  static appTitleString(String key, String defaults, {String? language}) =>
+    Localization().getStringEx(key, defaults, language: language).replaceAll(appTitleMacro, appTitleEx(language: language));
+
+  // University Name
+
+  static const String universityNameMacro = "{{university_name}}";
+  static String get universityName => universityNameEx();
+  static String universityNameEx({String? language}) =>
+    Localization().getStringEx('app.univerity_name', 'University of Illinois', language: language);
+
+  // University Long Name
+
+  static const String universityLongNameMacro = "{{university_long_name}}";
+  static String get universityLongName => universityLongNameEx();
+  static String universityLongNameEx({String? language}) =>
+    Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: language);
+
+  // Logged Out Feature NA
+
+  static const String featureMacro = '{{feature}}';
 
   static loggedOutFeatureNA(String featureName, { bool verbose = false }) {
     String message = verbose ?
       Localization().getStringEx('auth.logged_out.feature.not_available.message.verbose', 'To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.') :
       Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
-    return message.replaceAll(_featureMacro, featureName);
+    return message.replaceAll(featureMacro, featureName);
   }
 
 }

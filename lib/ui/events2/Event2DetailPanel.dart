@@ -448,7 +448,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')));
 
   List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
-    _buildTextDetailWidget(_publishedStatus, 'eye'),
+    _buildTextDetailWidget(_publishedStatus, 'eye', iconColor: Styles().colors.fillColorPrimary),
     _detailSpacerWidget
   ] : null;
 
@@ -810,6 +810,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget _buildTextDetailWidget(String text, String iconKey, {
     TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
     int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
+    Color? iconColor,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true, bool showProgress = false, bool underlined = false,
@@ -821,6 +822,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         overflow: overflow,
       ),
       iconKey,
+      iconColor: iconColor,
       detailPadding: detailPadding,
       iconPadding: iconPadding,
       iconVisible: iconVisible,
@@ -828,13 +830,14 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
+    Color? iconColor,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true,
     bool showProgress = false,
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true, color: iconColor);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child: showProgress ?
         Stack(children: [
