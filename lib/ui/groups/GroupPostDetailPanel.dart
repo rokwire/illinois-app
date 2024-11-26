@@ -88,7 +88,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Social.notifyPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
+    NotificationService().subscribe(this, [Social.notifyPostsUpdated]);
     _post = widget.post ?? Post(); //If no post then prepare data for post creation
     _loadMembersAllowedToPost();
     _loadComments();
@@ -926,8 +926,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void onNotification(String name, param) {
     if (name == Social.notifyPostsUpdated) {
       _refreshPostData();
-    } else if (name == Groups.notifyGroupPostReactionsUpdated) {
-      setStateIfMounted(() { });
     }
   }
 }

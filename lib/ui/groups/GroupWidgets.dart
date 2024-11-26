@@ -1054,7 +1054,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
     String? creatorName = widget.post?.creatorName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
-    int visibleRepliesCount = getVisibleRepliesCount();
+    int visibleRepliesCount = _visibleRepliesCount;
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1186,7 +1186,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
     UrlUtils.launchExternal(url);
   }
 
-  int getVisibleRepliesCount() {
+  int get _visibleRepliesCount {
     int result = 0;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
@@ -1241,13 +1241,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
-    //TBD: DDGS - implement replies
-    // int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
-    int visibleRepliesCount = 0;
-    bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
-    String? repliesLabel = (visibleRepliesCount == 1)
-        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
-        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
     String? bodyText = StringUtils.ensureNotEmpty(widget.reply?.body);
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
@@ -1355,14 +1348,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                                 style: Styles().textStyles.getTextStyle('widget.description.small'))),)),
-                      Visibility(
-                        visible: isRepliesLabelVisible,
-                        child: Expanded(child: Container(
-                          child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
-                              textAlign: TextAlign.right,
-                              style: Styles().textStyles.getTextStyle('widget.description.small_underline')
-                        ))),
-                      ))
                 ],),)
             ])))));
   }
