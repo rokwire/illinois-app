@@ -105,6 +105,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                     borderColor: Styles().colors.fillColorSecondary,
                                     textColor: Styles().colors.fillColorPrimary,
                                     backgroundColor: Colors.white,
+                                    progress: _saving,
                                     onTap: _onTapSave)),
                               Container(width: 16),
                               Expanded(child:
@@ -462,8 +463,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     }
     if (_eventId == null) {
       // New event, so pass the notifications to the event and save them on create event operation
-      List<Event2NotificationSetting>? result = _notificationSettings.whereType<Event2NotificationSetting>().toList(); // cast
-      Navigator.of(context).pop(result);
+      Navigator.of(context).pop(_notificationsSettingsResult);
       return;
     }
     setStateIfMounted(() {
@@ -475,6 +475,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
       });
       if (result is String) {
         AppAlert.showDialogResult(context, result);
+      } else { //Success
+        //We will reload when notified
+        // Navigator.of(context).pop(_notificationsSettingsResult);
       }
     });
   }
@@ -558,7 +561,6 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
         message: 'Are you sure that you want to remove all notifications?',
         positiveButtonLabel: 'Yes',
         positiveCallback: () {
-          Navigator.of(context).pop(true);
           _clearAllNotifications(notificationIds);
         },
         negativeButtonLabel: 'No');
@@ -676,6 +678,8 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
   TextStyle? get _disabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.title.disabled");
 
   bool get _processing => (_loading || _saving || _deleting);
+
+  List<Event2NotificationSetting>? get _notificationsSettingsResult => _notificationSettings.whereType<Event2NotificationSetting>().toList();
 
   @override
   void onNotification(String name, param) {
