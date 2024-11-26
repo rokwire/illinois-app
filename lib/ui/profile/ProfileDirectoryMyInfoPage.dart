@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -38,7 +39,7 @@ enum _ProfileField {
   address, state, zip, country,
 }
 
-class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>  {
+class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage> with WidgetsBindingObserver {
 
   Auth2UserProfile? _profile;
   // ignore: unused_field
@@ -51,12 +52,20 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   bool _saving = false;
   bool _preparingDeleteAccount = false;
 
+  late double _screenInsetsBottom;
+  Timer? _onScreenInsetsBottomChangedTimer;
+
+
   Map<_ProfileField, Auth2FieldVisibility?>? _fieldVisibilities;
   final Map<_ProfileField, TextEditingController?> _fieldTextControllers = {};
   final Map<_ProfileField, FocusNode?> _fieldFocusNodes = {};
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+    });
     for (_ProfileField field in _ProfileField.values) {
       _fieldTextControllers[field] = TextEditingController();
       _fieldFocusNodes[field] = FocusNode();
@@ -71,6 +80,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       _fieldTextControllers[field]?.dispose();
       _fieldFocusNodes[field]?.dispose();
     }
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -85,6 +95,22 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     else {
       return _previewContent;
     }
+  }
+
+  @override
+  void didChangeMetrics() {
+    double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+    if (screenInsetsBottom != _screenInsetsBottom) {
+      _screenInsetsBottom = screenInsetsBottom;
+      _onScreenInsetsBottomChangedTimer?.cancel();
+      _onScreenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 100), _didChangeScreenInsetsBottom);
+    }
+  }
+
+  void _didChangeScreenInsetsBottom() {
+    _onScreenInsetsBottomChangedTimer = null;
+    setStateIfMounted(() {
+    });
   }
 
   //////////////////////////////
@@ -350,6 +376,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           _editCommandBar,
         ),
         Padding(padding: EdgeInsets.only(top: 8)),
+        if (_screenInsetsBottom > 0)
+          Padding(padding: EdgeInsets.only(top: _screenInsetsBottom)),
       ],),
     );
 
