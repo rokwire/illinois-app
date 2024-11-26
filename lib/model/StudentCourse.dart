@@ -418,6 +418,18 @@ class BuildingFeatureValue {
     "name": name,
     "floors": floors,
   };
+
+  @override
+  bool operator==(Object other) =>
+    (other is BuildingFeatureValue) &&
+
+    (name == other.name) &&
+    DeepCollectionEquality().equals(floors, other.floors);
+
+  @override
+  int get hashCode =>
+    (name?.hashCode ?? 0) ^
+    DeepCollectionEquality().hash(floors);
 }
 
 class BuildingFeature {
@@ -438,6 +450,18 @@ class BuildingFeature {
     "key": key,
     "value": value?.toJson(),
   };
+
+  @override
+  bool operator==(Object other) =>
+    (other is BuildingFeature) &&
+
+    (key == other.key) &&
+    (value == other.value);
+
+  @override
+  int get hashCode =>
+    (key?.hashCode ?? 0) ^
+    (value?.hashCode ?? 0);
 
   static List<BuildingFeature>? listFromJson(List<dynamic>? jsonList) {
     List<BuildingFeature>? values = [];
