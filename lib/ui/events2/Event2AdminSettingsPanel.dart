@@ -78,6 +78,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       event: _event,
       eventName: _event?.name,
       eventHasInternalRegistration: (_event?.registrationDetails?.type == Event2RegistrationType.internal),
+      eventStartDateTimeUtc: _event?.startTimeUtc,
       isGroupEvent: widget.event?.isGroupEvent,
     )));
   }
