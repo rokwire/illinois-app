@@ -48,6 +48,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   bool _loading = false;
   bool _editing = false;
+  bool _saving = false;
   bool _preparingDeleteAccount = false;
 
   Map<_ProfileField, Auth2FieldVisibility?>? _fieldVisibilities;
@@ -600,13 +601,23 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     label: Localization().getStringEx('dialog.save.title', 'Save'),
     fontFamily: Styles().fontFamilies.bold, fontSize: 16,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    progress: _saving,
     onTap: _onSaveEdit,
   );
 
   void _onSaveEdit() {
     Analytics().logSelect(target: 'Save Edit');
-    setState(() {
-      _editing = true;
+    _saveProfileAndPrivacy().then((bool result) {
+      if (mounted) {
+        if (result) {
+          setState(() {
+            _editing = false;
+          });
+        }
+        else {
+          AppAlert.showTextMessage(context, "Failed to update profile and privacy settings.");
+        }
+      }
     });
   }
 
@@ -647,6 +658,60 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
         _loading = false;
       });
+    }
+  }
+
+  Future<bool> _saveProfileAndPrivacy() async {
+    Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(_profile, _fieldTextControllers);
+    Auth2UserProfileFieldsVisibility profileVisibility = _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities);
+
+    List<Future> futures = [];
+
+    int? profileIndex = (_profile != profile) ? futures.length : null;
+    if (profileIndex != null) {
+      futures.add(Auth2().saveUserProfile(profile));
+    }
+
+    int? privacyIndex = (_profileVisibility != profileVisibility) ? futures.length : null;
+    if (privacyIndex != null) {
+      futures.add(Auth2().saveUserPrivacy(Auth2UserPrivacy.fromOther(_privacy, fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(_privacy?.fieldsVisibility, profile: profileVisibility))));
+    }
+
+    if (0 < futures.length) {
+      setState(() {
+        _saving = true;
+      });
+
+      List<dynamic> results = await Future.wait(futures);
+
+      bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
+      bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+
+      setStateIfMounted((){
+        if (profileResult == true) {
+          _profile = profile;
+        }
+
+        if (privacyResult == true) {
+          _profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(profileVisibility,
+            firstName: Auth2FieldVisibility.public,
+            middleName: Auth2FieldVisibility.public,
+            lastName: Auth2FieldVisibility.public,
+            email: Auth2FieldVisibility.public,
+          );
+        }
+
+        if ((profileResult == true) || (privacyResult == true)) {
+          _previewProfile = Auth2UserProfile.fromFieldVisibility(_profile, _profileVisibility, permitted: _permittedVisibility);
+        }
+
+        _saving = false;
+      });
+
+      return (profileResult ?? true) && (privacyResult ?? true);
+    }
+    else {
+      return true;
     }
   }
 
@@ -699,6 +764,49 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.zip: zip,
     _ProfileField.country: country,
   };
+
+  static Auth2UserProfileFieldsVisibility buildModified(Auth2UserProfileFieldsVisibility? other, Map<_ProfileField, Auth2FieldVisibility?>? fields) =>
+    Auth2UserProfileFieldsVisibility.fromOther(other,
+      firstName : fields?[_ProfileField.firstName],
+      middleName : fields?[_ProfileField.middleName],
+      lastName : fields?[_ProfileField.lastName],
+
+      birthYear : fields?[_ProfileField.birthYear],
+      photoUrl : fields?[_ProfileField.photoUrl],
+      email : fields?[_ProfileField.email],
+      phone : fields?[_ProfileField.phone],
+
+      address : fields?[_ProfileField.address],
+      state : fields?[_ProfileField.state],
+      zip : fields?[_ProfileField.zip],
+      country : fields?[_ProfileField.country],
+
+      data: MapUtils.ensureEmpty({
+        if (fields?[_ProfileField.pronoun] != null)
+          Auth2UserProfile.pronounDataKey: fields?[_ProfileField.pronoun],
+
+        if (fields?[_ProfileField.pronunciationUrl] != null)
+          Auth2UserProfile.pronunciationUrlDataKey: fields?[_ProfileField.pronunciationUrl],
+
+        if (fields?[_ProfileField.title] != null)
+          Auth2UserProfile.titleDataKey: fields?[_ProfileField.title],
+
+        if (fields?[_ProfileField.college] != null)
+          Auth2UserProfile.collegeDataKey: fields?[_ProfileField.college],
+
+        if (fields?[_ProfileField.department] != null)
+          Auth2UserProfile.departmentDataKey: fields?[_ProfileField.department],
+
+        if (fields?[_ProfileField.major] != null)
+          Auth2UserProfile.majorDataKey: fields?[_ProfileField.major],
+
+        if (fields?[_ProfileField.email2] != null)
+          Auth2UserProfile.email2DataKey: fields?[_ProfileField.email2],
+
+        if (fields?[_ProfileField.website] != null)
+          Auth2UserProfile.websiteDataKey: fields?[_ProfileField.website],
+      }),
+    );
 }
 
 extension _Auth2UserProfileUtils on Auth2UserProfile {
@@ -731,4 +839,47 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.country: return country;
     }
   }
+
+  static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) =>
+    Auth2UserProfile.fromOther(other,
+      firstName: StringUtils.ensureEmpty(fields[_ProfileField.firstName]?.text),
+      middleName: StringUtils.ensureEmpty(fields[_ProfileField.middleName]?.text),
+      lastName: StringUtils.ensureEmpty(fields[_ProfileField.lastName]?.text),
+
+      birthYear: JsonUtils.intValue(StringUtils.ensureEmpty(fields[_ProfileField.birthYear]?.text)),
+      photoUrl: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
+      email: StringUtils.ensureEmpty(fields[_ProfileField.email]?.text),
+      phone: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
+
+      address: StringUtils.ensureEmpty(fields[_ProfileField.address]?.text),
+      state: StringUtils.ensureEmpty(fields[_ProfileField.state]?.text),
+      zip: StringUtils.ensureEmpty(fields[_ProfileField.zip]?.text),
+      country: StringUtils.ensureEmpty(fields[_ProfileField.country]?.text),
+
+      data: {
+        if (fields[_ProfileField.pronoun]?.text.isNotEmpty == true)
+          Auth2UserProfile.pronounDataKey: fields[_ProfileField.pronoun]?.text,
+
+        if (fields[_ProfileField.pronunciationUrl]?.text.isNotEmpty == true)
+          Auth2UserProfile.pronunciationUrlDataKey: fields[_ProfileField.pronunciationUrl]?.text,
+
+        if (fields[_ProfileField.title]?.text.isNotEmpty == true)
+          Auth2UserProfile.titleDataKey: fields[_ProfileField.title]?.text,
+
+        if (fields[_ProfileField.college]?.text.isNotEmpty == true)
+          Auth2UserProfile.collegeDataKey: fields[_ProfileField.college]?.text,
+
+        if (fields[_ProfileField.department]?.text.isNotEmpty == true)
+          Auth2UserProfile.departmentDataKey: fields[_ProfileField.department]?.text,
+
+        if (fields[_ProfileField.major]?.text.isNotEmpty == true)
+          Auth2UserProfile.majorDataKey: fields[_ProfileField.major]?.text,
+
+        if (fields[_ProfileField.email2]?.text.isNotEmpty == true)
+          Auth2UserProfile.email2DataKey: fields[_ProfileField.email2]?.text,
+
+        if (fields[_ProfileField.website]?.text.isNotEmpty == true)
+          Auth2UserProfile.websiteDataKey: fields[_ProfileField.website]?.text,
+      }
+    );
 }
