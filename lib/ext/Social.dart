@@ -58,3 +58,8 @@ extension CommentExt on Comment {
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
 }
+
+extension ReactionsResultExt on ReactionsResult {
+  int get likesCount => (likes?.count ?? 0);
+  bool get isLiked => (likes?.reacted ?? false);
+}
