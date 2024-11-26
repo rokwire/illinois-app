@@ -96,7 +96,8 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       _buildShare(),
       // _buildFloorPlansAndAmenities(),
       _buildSelectLocation(),
-      (_building!.features!.length > 0) ? _buildFeatureList() : Container()
+      if (_building?.features?.isNotEmpty == true)
+        _buildFeatureList(),
     ]);
 
   Widget _buildTitle() =>
@@ -167,14 +168,17 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   }
 
   Widget _buildFeatureList() {
-    return Column(children: [
-      Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Text('Amenities include:', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        Text(Localization().getStringEx('panel.explore_building_detail.detail.heading.amenities', 'Amenities include:'), style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))
+      ),
       Padding(padding: EdgeInsets.only(left: 16.0), child:
-          Column(children: _building!.features!.map((feature) => Text('• ${feature.value!.name}: Floor${(feature.value!.floors!.length > 1) ? 's' : ''} ${feature.value?.floors?.join(", ")}', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),)).toList(), crossAxisAlignment: CrossAxisAlignment.start,)
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: _building?.features?.map((feature) =>
+          (feature.value?.name?.isNotEmpty == true) ? Text(feature.detailText, style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),) : Container()
+        ).toList() ?? [],)
       )
-    ], crossAxisAlignment: CrossAxisAlignment.start,);
+    ]);
   }
-
 
   Widget _buildLoadingContent() => Center(child:
     Padding(padding: EdgeInsets.zero, child:
@@ -214,4 +218,25 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
     Analytics().logSelect(target: "Floor Plans & Amenities");
     // TODO: present the relevant UI
   }
+}
+
+extension _BuildingFeatureExt on BuildingFeature {
+
+  String get detailText {
+    String resourcePatern;
+    final String nameMacro = '{{name}}';
+    final String floorsMacro = '{{floors}}';
+    int floorsCount = value?.floors?.length ?? 0;
+    if (floorsCount > 1) {
+      resourcePatern = Localization().getStringEx('panel.explore_building_detail.detail.entry.amenity.floors', '• $nameMacro: Floors $floorsMacro');
+    } else if (floorsCount == 1) {
+      resourcePatern = Localization().getStringEx('panel.explore_building_detail.detail.entry.amenity.floor', '• $nameMacro: Floor $floorsMacro');
+    } else {
+      resourcePatern = Localization().getStringEx('panel.explore_building_detail.detail.entry.amenity', '• $nameMacro');
+    }
+    return resourcePatern
+      .replaceAll(nameMacro, value?.name ?? '')
+      .replaceAll(floorsMacro, value?.floors?.join(", ") ?? '');
+  }
+
 }
