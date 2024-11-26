@@ -174,7 +174,8 @@ class DirectoryProfilePhoto extends StatelessWidget {
       width: imageSize + borderSize, height: imageSize + borderSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Styles().colors.surfaceAccent,
+        color: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       ),
       child: Center(
         child: Container(

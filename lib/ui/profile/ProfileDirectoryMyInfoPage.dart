@@ -1,9 +1,11 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
@@ -27,22 +29,48 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPageState();
 }
 
+enum _ProfileField {
+  firstName, middleName, lastName,
+  pronoun, title, birthYear,
+  photoUrl, pronunciationUrl,
+  email, email2, phone, website,
+  college, department, major,
+  address, state, zip, country,
+}
+
 class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>  {
 
   Auth2UserProfile? _profile;
   // ignore: unused_field
   Auth2UserPrivacy? _privacy;
-  Auth2UserProfileFieldsVisibility? _visibility;
+  Auth2UserProfileFieldsVisibility? _profileVisibility;
   Auth2UserProfile? _previewProfile;
 
   bool _loading = false;
   bool _editing = false;
   bool _preparingDeleteAccount = false;
 
+  Map<_ProfileField, Auth2FieldVisibility?>? _fieldVisibilities;
+  final Map<_ProfileField, TextEditingController?> _fieldTextControllers = {};
+  final Map<_ProfileField, FocusNode?> _fieldFocusNodes = {};
+
   @override
   void initState() {
+    for (_ProfileField field in _ProfileField.values) {
+      _fieldTextControllers[field] = TextEditingController();
+      _fieldFocusNodes[field] = FocusNode();
+    }
     _loadProfileAndPrivacy();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    for (_ProfileField field in _ProfileField.values) {
+      _fieldTextControllers[field]?.dispose();
+      _fieldFocusNodes[field]?.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -57,6 +85,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       return _previewContent;
     }
   }
+
+  //////////////////////////////
+  // Preview Content
 
   Widget get _previewContent =>
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -116,7 +147,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
         Padding(padding: EdgeInsets.only(top: 12), child:
           Row(children: [
             Expanded(child:
-              _cardContentHeading,
+              _previewCardContentHeading,
             ),
           ],),
         ),
@@ -127,12 +158,15 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     ],)
   );
 
-  Widget get _cardContentHeading =>
+  Widget get _previewCardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(_previewProfile?.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85), textAlign: TextAlign.center,),
+      Text(_previewProfile?.fullName ?? '', style: _nameTextStyle, textAlign: TextAlign.center,),
       if (_previewProfile?.pronoun?.isNotEmpty == true)
         Text(_previewProfile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
+
+  TextStyle? get _nameTextStyle =>
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85);
 
   Widget get _previewCommandBar {
     switch (widget.contentType) {
@@ -162,8 +196,14 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   void _onEditInfo() {
     Analytics().logSelect(target: 'Edit My Info');
+
+    for (_ProfileField field in _ProfileField.values) {
+      _fieldTextControllers[field]?.text = _profile?.fieldValue(field) ?? '';
+    }
+
     setState(() {
       _editing = true;
+      _fieldVisibilities = _profileVisibility?.fieldsVisibility ?? <_ProfileField, Auth2FieldVisibility?>{};
     });
   }
 
@@ -270,6 +310,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     }
   }
 
+  //////////////////////////////
+  // Loading Content
+
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:
       SizedBox(width: 32, height: 32, child:
@@ -278,13 +321,30 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     )
   );
 
+  //////////////////////////////
+  // Editing Content
+
   Widget get _editContent =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    Padding(padding: EdgeInsets.zero, child:
       Column(children: [
         Text(_editDesriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
         Padding(padding: EdgeInsets.only(top: 24), child:
           _editPhotoWidget,
         ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          _editNameWidget,
+        ),
+
+        _editPronounsWidget,
+        _editTitleWidget,
+        _editCollegeWidget,
+        _editDepartmentWidget,
+        _editMajorWidget,
+        _editEmailWidget,
+        _editEmail2Widget,
+        _editPhoneWidget,
+        _editWebsiteWidget,
+
         Padding(padding: EdgeInsets.only(top: 24), child:
           _editCommandBar,
         ),
@@ -313,30 +373,39 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     ),
     Positioned.fill(child:
       Align(alignment: Alignment.bottomRight, child:
-      _togglePhotoVisibilityButton
+        _togglePhotoVisibilityButton
       )
     )
   ],);
 
-  Widget get _editPhotoButton => _photoIconButton('edit',
-    iconColor: Styles().colors.fillColorPrimary,
-    onTap: _onEditPhoto
-  );
+  Widget get _editPhotoButton =>
+    _editPhotoIconButton(_editIcon, onTap: _onEditPhoto);
 
   void _onEditPhoto() {
     Analytics().logSelect(target: 'Edit Photo');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(isUserPic: true))).then((imageUploadResult) {
+      if (mounted) {
+        switch (imageUploadResult?.resultType) {
+          case ImagesResultType.cancelled:
+            break;
+
+          case ImagesResultType.error:
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
+            break;
+
+          case ImagesResultType.succeeded:
+            break;
+
+            default:
+            break;
+        }
+      }
+    });
   }
 
-  Widget get _togglePhotoVisibilityButton => _photoIconButton('eye-slash',
-    iconColor: Styles().colors.mediumGray2,
-    onTap: _onTogglePhotoVisibility
-  );
+  Widget get _togglePhotoVisibilityButton => _editPhotoIconButton(_editVisibilityIcon(_fieldVisibilities?[_ProfileField.photoUrl]), onTap: () => _onToggleFieldVisibility(_ProfileField.photoUrl));
 
-  void _onTogglePhotoVisibility() {
-    Analytics().logSelect(target: 'Toggle Photo Visibility');
-  }
-
-  Widget _photoIconButton(String? icon, {Color? iconColor, void Function()? onTap}) =>
+  Widget _editPhotoIconButton(Widget? icon, { void Function()? onTap}) =>
     InkWell(onTap: onTap, child:
       Container(
         decoration: BoxDecoration(
@@ -345,11 +414,167 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
         ),
         child: Padding(padding: EdgeInsets.all(12), child:
-            Styles().images.getImage(icon, color: iconColor)
+          icon
         ),
       )
     );
 
+  static const double _editButtonIconSize = 16;
+
+  Widget get _editNameWidget =>
+    Text(_profile?.fullName ?? '', style: _nameTextStyle, textAlign: TextAlign.center,);
+
+  Widget get _editPronounsWidget => _editFieldWidget(_ProfileField.pronoun,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronouns.text', 'Pronouns'),
+  );
+
+  Widget get _editTitleWidget => _editFieldWidget(_ProfileField.title,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.title.text', 'Title'),
+    headingHint: Localization().getStringEx('panel.profile.directory.my_info.title.title.hint', '(Ex: Professional/Extracurricular Role)')
+  );
+
+  Widget get _editCollegeWidget => _editFieldWidget(_ProfileField.college,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.college.text', 'College'),
+    enabled: false,
+  );
+
+  Widget get _editDepartmentWidget => _editFieldWidget(_ProfileField.department,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.department.text', 'Department'),
+    enabled: false,
+  );
+
+  Widget get _editMajorWidget => _editFieldWidget(_ProfileField.major,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.major.text', 'Major'),
+    enabled: false,
+  );
+
+  Widget get _editEmailWidget => _editFieldWidget(_ProfileField.email,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.email.text', 'Email Address'),
+    enabled: false, public: true,
+  );
+
+  Widget get _editEmail2Widget => _editFieldWidget(_ProfileField.email2,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.email2.text', 'Alternate Email Address'),
+  );
+
+  Widget get _editPhoneWidget => _editFieldWidget(_ProfileField.phone,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.phone.text', 'Phone Number'),
+  );
+
+  Widget get _editWebsiteWidget => _editFieldWidget(_ProfileField.website,
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.website.text', 'Website URL'),
+    headingHint: Localization().getStringEx('panel.profile.directory.my_info.title.website.hinr', '(Ex: Linkedin)'),
+  );
+
+  Widget _editFieldWidget(_ProfileField field, {
+    String? headingTitle, String? headingHint,
+    TextInputType textInputType = TextInputType.text,
+    bool autocorrect = true,
+    bool enabled = true,
+    bool public = false,
+  }) => Padding(padding: EdgeInsets.only(top: 12), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+      if (headingTitle?.isNotEmpty == true)
+        _editHeadingWidget(headingTitle ?? '', hint: headingHint),
+      Row(children: [
+        Expanded(child:
+          _editTextWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
+        ),
+        _editVisibilityButton(field, public: public),
+      ],)
+    ],)
+  );
+
+  Widget _editHeadingWidget(String? title, { String? hint }) =>
+    Padding(padding: EdgeInsets.only(bottom: 2), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle('widget.title.tiny.fat.spaced'), children: [
+          TextSpan(text: title?.toUpperCase()),
+          if (hint?.isNotEmpty == true)
+            TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.tiny'))
+        ]),
+      ),
+    );
+
+  Widget _editTextWidget(_ProfileField field, {
+    TextInputType textInputType = TextInputType.text,
+    bool autocorrect = true,
+    bool enabled = true,
+  }) =>
+    Container(decoration: _editCtrlDecoration, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 12, right: enabled ? 12 : 0, top: 0, bottom: 0), child:
+            TextField(
+              controller: _fieldTextControllers[field],
+              focusNode: _fieldFocusNodes[field],
+              decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.zero),
+              style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
+              maxLines: 1,
+              keyboardType: textInputType,
+              autocorrect: autocorrect,
+              readOnly: (enabled != true),
+            )
+          )
+        ),
+        if (enabled)
+          InkWell(onTap: () => _onToggleTextEditing(field), child:
+            Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
+              Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _editButtonIconSize)
+            )
+          ),
+      ])
+    );
+
+  Widget _editVisibilityButton(_ProfileField field, { bool public = false}) =>
+    InkWell(onTap: public ? null : () => _onToggleFieldVisibility(field), child:
+      Padding(padding: EdgeInsets.only(left: 6), child:
+        Container(decoration: _editCtrlDecoration, child:
+          Padding(padding: EdgeInsets.all(15), child:
+            _editVisibilityIcon(_fieldVisibilities?[field], public: public),
+          )
+        )
+      )
+    );
+
+  Widget? _editVisibilityIcon(Auth2FieldVisibility? visibility, { bool public = false} ) {
+    if (public) {
+      return _lockIcon;
+    } else if (_permittedVisibility.contains(visibility)) {
+      return _publicIcon;
+    } else {
+      return _privateIcon;
+    }
+  }
+
+  Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+  Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _editButtonIconSize);
+  Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _editButtonIconSize);
+  Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _editButtonIconSize);
+
+  Decoration get _editCtrlDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+  );
+
+  void _onToggleTextEditing(_ProfileField field) {
+    FocusNode? focusNode = _fieldFocusNodes[field];
+    if (focusNode?.hasFocus == true) {
+      focusNode?.unfocus();
+    } else {
+      focusNode?.requestFocus();
+    }
+  }
+
+  void _onToggleFieldVisibility(_ProfileField field) {
+    Analytics().logSelect(target: 'Toggle $field Visibility');
+    setState(() {
+      Auth2FieldVisibility? visibility = _fieldVisibilities?[field];
+      _fieldVisibilities?[field] = (_permittedVisibility.contains(visibility)) ?
+        Auth2FieldVisibility.private : _positiveVisibility;
+    });
+  }
 
   Widget get _editCommandBar => Row(children: [
     Expanded(child: _cancelEditButton,),
@@ -411,24 +636,99 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
         _privacy = privacy;
 
         //TMP: Added some sample data
-        _visibility = Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
+        _profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
           firstName: Auth2FieldVisibility.public,
           middleName: Auth2FieldVisibility.public,
           lastName: Auth2FieldVisibility.public,
           email: Auth2FieldVisibility.public,
         );
 
-        _previewProfile = Auth2UserProfile.fromFieldVisibility(_profile, _visibility, permitted: _permittedVisibility);
+        _previewProfile = Auth2UserProfile.fromFieldVisibility(_profile, _profileVisibility, permitted: _permittedVisibility);
 
         _loading = false;
       });
     }
   }
 
+  static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
+  static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
+
+  Auth2FieldVisibility get _positiveVisibility {
+    switch(widget.contentType) {
+      case MyProfileInfo.myDirectoryInfo: return _directoryPositiveVisibility;
+      case MyProfileInfo.myConnectionsInfo: return _connectionsPositiveVisibility;
+    }
+  }
+
+  static const Set<Auth2FieldVisibility> _directoryPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility };
+  static const Set<Auth2FieldVisibility> _connectionsPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility, _connectionsPositiveVisibility };
+
   Set<Auth2FieldVisibility> get _permittedVisibility {
     switch(widget.contentType) {
-      case MyProfileInfo.myDirectoryInfo: return <Auth2FieldVisibility>{Auth2FieldVisibility.public};
-      case MyProfileInfo.myConnectionsInfo: return <Auth2FieldVisibility>{Auth2FieldVisibility.public, Auth2FieldVisibility.connections };
+      case MyProfileInfo.myDirectoryInfo: return _directoryPermittedVisibility;
+      case MyProfileInfo.myConnectionsInfo: return _connectionsPermittedVisibility;
+    }
+  }
+
+}
+
+extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibility {
+  Map<_ProfileField, Auth2FieldVisibility?> get fieldsVisibility => <_ProfileField, Auth2FieldVisibility?>{
+    _ProfileField.firstName: firstName,
+    _ProfileField.middleName: middleName,
+    _ProfileField.lastName: lastName,
+
+    _ProfileField.pronoun: pronoun,
+    _ProfileField.title: title,
+    _ProfileField.birthYear: birthYear,
+
+    _ProfileField.photoUrl: photoUrl,
+    _ProfileField.pronunciationUrl: pronunciationUrl,
+
+    _ProfileField.email: email,
+    _ProfileField.email2: email2,
+    _ProfileField.phone: phone,
+    _ProfileField.website: website,
+
+    _ProfileField.college: college,
+    _ProfileField.department: department,
+    _ProfileField.major: major,
+
+    _ProfileField.address: address,
+    _ProfileField.state: state,
+    _ProfileField.zip: zip,
+    _ProfileField.country: country,
+  };
+}
+
+extension _Auth2UserProfileUtils on Auth2UserProfile {
+
+  String? fieldValue(_ProfileField field) {
+    switch(field) {
+      case _ProfileField.firstName: return firstName;
+      case _ProfileField.middleName: return middleName;
+      case _ProfileField.lastName: return lastName;
+
+      case _ProfileField.pronoun: return pronoun;
+      case _ProfileField.title: return title;
+      case _ProfileField.birthYear: return birthYear?.toString();
+
+      case _ProfileField.photoUrl: return photoUrl;
+      case _ProfileField.pronunciationUrl: return pronunciationUrl;
+
+      case _ProfileField.email: return email;
+      case _ProfileField.email2: return email2;
+      case _ProfileField.phone: return phone;
+      case _ProfileField.website: return website;
+
+      case _ProfileField.college: return college;
+      case _ProfileField.department: return department;
+      case _ProfileField.major: return major;
+
+      case _ProfileField.address: return address;
+      case _ProfileField.state: return state;
+      case _ProfileField.zip: return zip;
+      case _ProfileField.country: return country;
     }
   }
 }
