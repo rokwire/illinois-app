@@ -123,6 +123,7 @@
 	"generic.app.feature.checklist.uiuc": "New Student Checklist",
 	"generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 
+	"generic.time.now": "現在",
 	"generic.time.minutes": "分",
 	"generic.time.hours": "时",
 	"generic.time.days": "日",
@@ -3024,6 +3025,7 @@
 
 	"panel.group.detail.post.header.title": "贴文",
 	"panel.group.detail.post.delete.confirm.msg": "您确定要删除此贴文？",
+	"panel.group.detail.post.delete.many_groups.confirm.msg": "這篇文章在多個群組中可見。您確定要刪除它嗎？",
 	"panel.group.detail.post.delete.failed.msg": "无法删除此贴文。",
 	"panel.group.detail.post.reply.delete.confirm.msg": "您确定要删除此回复？",
 	"panel.group.detail.post.reply.delete.failed.msg": "无法删除此回复。",
@@ -3988,6 +3990,9 @@
 	"widget.group.card.reply.single.reply.label": "回复",
 	"widget.group.card.reply.multiple.replies.label": "回复",
 	"widget.group.card.reply.edited.reply.label": "已编辑",
+
+	"widget.group.card.reaction.failed.msg": "Failed to react. Please, try again.",
+	"widget.group.card.reaction.thumbs_up.label": "thumbs-up",
 
 	"widget.group_card.status.private": "私人",
 	"widget.group_card.status.public": "公开",

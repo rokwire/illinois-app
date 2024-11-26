@@ -124,6 +124,7 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 
+    "generic.time.now": "now",
     "generic.time.minutes": "minutes",
     "generic.time.hours": "hours",
     "generic.time.days": "days",
@@ -3046,6 +3047,7 @@
 
     "panel.group.detail.post.header.title": "Post",
     "panel.group.detail.post.delete.confirm.msg": "Are you sure that you want to delete this post?",
+    "panel.group.detail.post.delete.many_groups.confirm.msg": "This post is visible in more than one group. Are you sure that you want to delete it?",
     "panel.group.detail.post.delete.failed.msg": "Failed to delete post.",
     "panel.group.detail.post.reply.delete.confirm.msg": "Are you sure that you want to delete this reply?",
     "panel.group.detail.post.reply.delete.failed.msg": "Failed to delete reply.",
@@ -4014,6 +4016,9 @@
     "widget.group.card.reply.single.reply.label": "Reply",
     "widget.group.card.reply.multiple.replies.label": "Replies",
     "widget.group.card.reply.edited.reply.label": "edited",
+
+    "widget.group.card.reaction.failed.msg": "Failed to react. Please, try again.",
+    "widget.group.card.reaction.thumbs_up.label": "thumbs-up",
 
     "widget.group_card.status.private": "Private",
     "widget.group_card.status.public": "Public",

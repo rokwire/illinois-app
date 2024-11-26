@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed "widget.title.tiny" texty style name.
 - "share" image definition renamed to "share-nodes" as the corresponding FA character is called.
+### Added
+- Use Social BB for Posts, Comments and Reactions (task in progress) [#4474](https://github.com/rokwire/illinois-app/issues/4474).
 
 ## [6.1.18] - 2024-11-14
 ### Changed
