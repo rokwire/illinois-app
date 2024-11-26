@@ -15,6 +15,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/ui/events2/Event2AdminSettingsPanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -794,6 +795,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
           _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: "Additional Settings", onTap: _onSettingAdditionalSettings),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -1106,6 +1108,15 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             });
           }
         });
+  }
+
+  void _onSettingAdditionalSettings() {
+    Analytics().logSelect(target: "Additional Settings");
+    if (_event != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
+        event: _event,
+      )));
+    }
   }
 
   void _onSettingEventRegistration(){

@@ -2282,7 +2282,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       contacts: _contacts,
     );
   }
-
 }
 
 // _Event2Visibility

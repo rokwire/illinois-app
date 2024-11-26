@@ -316,6 +316,35 @@ extension Event2Ext on Event2 {
       return null;
     }
   }
+
+  Event2 get duplicate => Event2(
+      name: '${name} copy',
+      description: description,
+      instructions: instructions,
+      imageUrl: imageUrl,
+      eventUrl: eventUrl,
+      canceled: canceled,
+      published: false, //Explicitly set published to false - #612. This is comment from Admin app
+      startTimeUtc: startTimeUtc,
+      endTimeUtc: endTimeUtc,
+      allDay: allDay,
+      free: free,
+      eventType: eventType,
+      onlineDetails: onlineDetails,
+      grouping: grouping ?? grouping,
+      registrationDetails: registrationDetails,
+      attendanceDetails: attendanceDetails,
+      surveyDetails: surveyDetails,
+      authorizationContext: authorizationContext,
+      context: context,
+      attributes: attributes,
+      location: location,
+      sponsor: sponsor,
+      speaker: speaker,
+      contacts: contacts,
+      userRole: userRole,
+      cost: cost,
+      timezone: timezone);
 }
 
 extension Event2ContactExt on Event2Contact {
