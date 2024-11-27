@@ -12,6 +12,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -51,6 +52,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   bool _editing = false;
   bool _saving = false;
   bool _preparingDeleteAccount = false;
+  bool _clearingUserPhoto = false;
 
   late double _screenInsetsBottom;
   Timer? _onScreenInsetsBottomChangedTimer;
@@ -416,15 +418,40 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   ],);
 
   Widget get _editPhotoButton =>
-    _editPhotoIconButton(_editIcon, onTap: _onEditPhoto);
+    _editPhotoIconButton(_editIcon,
+      onTap: _onEditPhotoButton,
+      progress: _clearingUserPhoto,
+    );
+
+  void _onEditPhotoButton() {
+    Analytics().logSelect(target: 'Edit Photo');
+    if (StringUtils.isNotEmpty(_fieldTextControllers[_ProfileField.photoUrl]?.text)) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            RibbonButton(label: Localization().getStringEx('panel.profile.directory.my_info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
+            RibbonButton(label: Localization().getStringEx('panel.profile.directory.my_info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
+          ])
+        ),
+      );
+    }
+    else {
+      _onEditPhoto();
+    }
+  }
 
   void _onEditPhoto() {
     Analytics().logSelect(target: 'Edit Photo');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(isUserPic: true))).then((imageUploadResult) {
       if (mounted && (imageUploadResult is ImagesResult)) {
         if (imageUploadResult.resultType == ImagesResultType.succeeded) {
-          _fieldTextControllers[_ProfileField.photoUrl]?.text = Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
           setState(() {
+            _fieldTextControllers[_ProfileField.photoUrl]?.text = Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
             _photoImageToken = _DateTimeUtils.imageToken;
           });
         }
@@ -435,9 +462,56 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     });
   }
 
-  Widget get _togglePhotoVisibilityButton => _editPhotoIconButton(_editVisibilityIcon(_fieldVisibilities?[_ProfileField.photoUrl]), onTap: () => _onToggleFieldVisibility(_ProfileField.photoUrl));
+  void _onClearPhoto() {
+    Analytics().logSelect(target: 'Clear Photo');
+    AppAlert.showConfirmationDialog(buildContext: context,
+        message: _clearPhotoPrompt(),
+        positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
+        negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((bool result) {
+      if (result) {
+        _onConfirmClearPhoto();
+      } else {
+        _onCancelClearPhoto();
+      }
+    });
+  }
 
-  Widget _editPhotoIconButton(Widget? icon, { void Function()? onTap}) =>
+  String _clearPhotoPrompt({ String? language }) =>
+    Localization().getStringEx('panel.profile_info.picture.delete.confirmation.msg', 'Are you sure you want to remove this profile picture?', language: language);
+
+  void _onConfirmClearPhoto() {
+    Analytics().logAlert(text: _clearPhotoPrompt(language: 'en'), selection: 'OK');
+    setState(() {
+      _clearingUserPhoto = true;
+    });
+    Content().deleteCurrentUserProfileImage().then((ImagesResult deleteImageResult) {
+      if (mounted) {
+        setState(() {
+          _clearingUserPhoto = false;
+        });
+        if (deleteImageResult.resultType == ImagesResultType.succeeded) {
+          setState(() {
+            _fieldTextControllers[_ProfileField.photoUrl]?.text = '';
+          });
+        }
+        else if (deleteImageResult.resultType == ImagesResultType.error) {
+          AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+        }
+      }
+    });
+  }
+
+  void _onCancelClearPhoto() {
+    Analytics().logAlert(text: _clearPhotoPrompt(language: 'en'), selection: 'OK');
+  }
+
+  Widget get _togglePhotoVisibilityButton =>
+    _editPhotoIconButton(_editVisibilityIcon(_fieldVisibilities?[_ProfileField.photoUrl]),
+      onTap: () => _onToggleFieldVisibility(_ProfileField.photoUrl)
+    );
+
+  Widget _editPhotoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
     InkWell(onTap: onTap, child:
       Container(
         decoration: BoxDecoration(
@@ -445,8 +519,12 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           color: Styles().colors.white,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
         ),
-        child: Padding(padding: EdgeInsets.all(12), child:
-          icon
+        child: Padding(padding: EdgeInsets.all(12),
+          child: progress ? SizedBox(
+            width: _editButtonIconSize,
+            height: _editButtonIconSize,
+            child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,),
+          ) : icon
         ),
       )
     );
@@ -880,7 +958,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       birthYear: JsonUtils.intValue(StringUtils.ensureEmpty(fields[_ProfileField.birthYear]?.text)),
       photoUrl: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
       email: StringUtils.ensureEmpty(fields[_ProfileField.email]?.text),
-      phone: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
+      phone: StringUtils.ensureEmpty(fields[_ProfileField.phone]?.text),
 
       address: StringUtils.ensureEmpty(fields[_ProfileField.address]?.text),
       state: StringUtils.ensureEmpty(fields[_ProfileField.state]?.text),
@@ -918,3 +996,4 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 extension _DateTimeUtils on DateTime {
   static String get imageToken => DateTime.now().millisecondsSinceEpoch.toString();
 }
+

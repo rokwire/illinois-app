@@ -2282,6 +2282,8 @@
     "panel.profile.directory.my_info.command.link.sign_out.text": "Sign Out",
     "panel.profile.directory.my_info.command.link.delete_account.text": "Delete My {{app_title}} App Account",
     "panel.profile.directory.my_info.command.link.share.text": "Share my info outside the {{app_title}} app",
+    "panel.profile.directory.my_info.command.button.photo.edit.text": "Edit Photo",
+    "panel.profile.directory.my_info.command.button.photo.clear.text": "Clear Photo",
     "panel.profile.directory.my_info.title.pronouns.text": "Pronouns",
     "panel.profile.directory.my_info.title.title.text": "Title",
     "panel.profile.directory.my_info.title.title.hint": "(Ex: Professional/Extracurricular Role)",
