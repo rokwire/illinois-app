@@ -4,8 +4,10 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -17,20 +19,19 @@ class GroupPostReportAbuseOptions {
   GroupPostReportAbuseOptions({ this.reportToDeanOfStudents = false, this.reportToGroupAdmins = false});
 }
 
-class GroupPostReportAbuse extends StatefulWidget {
-
+class GroupPostReportAbusePanel extends StatefulWidget {
   final GroupPostReportAbuseOptions options;
   final String? groupId;
-  final String? postId;
+  final String? socialEntityId;
+  final SocialEntityType? socialEntityType;
 
-  GroupPostReportAbuse({Key? key, required this.options, this.groupId, this.postId}) : super(key: key);
+  GroupPostReportAbusePanel({Key? key, required this.options, this.groupId, this.socialEntityId, this.socialEntityType}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _GroupPostReportAbuseState();
-
+  State<StatefulWidget> createState() => _GroupPostReportAbusePanelState();
 }
 
-class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
+class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
 
   final _commentController = TextEditingController();
   bool _sending = false;
@@ -190,23 +191,40 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       _sending = true;
     });
 
-    Groups().reportAbuse(
-      groupId: widget.groupId,
-      postId: widget.postId,
-      comment: _commentController.text,
-      reportToDeanOfStudents: widget.options.reportToDeanOfStudents,
-      reportToGroupAdmins: widget.options.reportToGroupAdmins,
-    ).then((bool result) {
-      if (mounted) {
-        setState(() {
-          _sending = false;
-        });
-      }
-      _reportReportAbuse(result).then((_){
-        if (result) {
-          Navigator.of(context).pop();
-        }
+    if (_isPostReport) {
+      Social()
+          .reportAbuse(
+              groupId: widget.groupId,
+              entityId: widget.socialEntityId,
+              source: widget.socialEntityType,
+              reportMsg: _commentController.text,
+              reportToDeanOfStudents: widget.options.reportToDeanOfStudents,
+              reportToGroupAdmins: widget.options.reportToGroupAdmins)
+          .then((result) {
+        _onReport(result);
       });
+    } else {
+      Groups()
+          .reportAbuse(
+        groupId: widget.groupId,
+        comment: _commentController.text,
+        reportToDeanOfStudents: widget.options.reportToDeanOfStudents,
+        reportToGroupAdmins: widget.options.reportToGroupAdmins,
+      )
+          .then((bool result) {
+        _onReport(result);
+      });
+    }
+  }
+
+  void _onReport(bool result) {
+    setStateIfMounted(() {
+      _sending = false;
+    });
+    _reportReportAbuse(result).then((_) {
+      if (result) {
+        Navigator.of(context).pop();
+      }
     });
   }
 
@@ -220,5 +238,5 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   String get _failMsg =>
       _isPostReport ? Localization().getStringEx("panel.group.detail.post.report_abuse.failed.msg", "Failed to report post.") :  Localization().getStringEx("", "Failed to report group.");
 
-  bool get _isPostReport => StringUtils.isNotEmpty(widget.postId);
+  bool get _isPostReport => StringUtils.isNotEmpty(widget.socialEntityId);
 }

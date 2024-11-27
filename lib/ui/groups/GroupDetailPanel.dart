@@ -1982,7 +1982,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     Analytics().logSelect(target: analyticsTarget);
 
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id)));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: widget.group?.id)));
   }
 
   /*void _onTapTakeAttendance() {

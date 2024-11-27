@@ -1267,7 +1267,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   child: GroupReaction(
                     groupId: widget.group?.id,
                     entityId: widget.reply?.id,
-                    reactionSource: ReactionSource.comment,
+                    reactionSource: SocialEntityType.comment,
                   ),
                 ),
                 Visibility(
@@ -1366,7 +1366,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 class GroupReaction extends StatefulWidget {
   final String? groupId;
   final String? entityId;
-  final ReactionSource reactionSource;
+  final SocialEntityType reactionSource;
 
   GroupReaction({required this.groupId, this.entityId, required this.reactionSource});
 

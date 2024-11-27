@@ -158,7 +158,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     child: GroupReaction(
                       groupId: _groupId,
                       entityId: _post?.id,
-                      reactionSource: ReactionSource.post
+                      reactionSource: SocialEntityType.post
                     ),
                   ),
                 ),
@@ -549,12 +549,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
-                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
             ],
           ),
@@ -562,7 +562,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       });
   }
 
-  void _onTapReplyOptions(Comment? reply) {
+  void _onTapReplyOptions(Comment reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
       context: context,
@@ -585,7 +585,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   _onTapPostReply(reply: reply);
                 },
               )),
-              Visibility(visible: _isEditVisible(reply?.creatorId), child: RibbonButton(
+              Visibility(visible: _isEditVisible(reply.creatorId), child: RibbonButton(
                 leftIconKey: "edit",
                 label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
                 onTap: () {
@@ -593,7 +593,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   _onTapEditReply(reply: reply);
                 },
               )),
-              Visibility(visible: _isDeleteReplyVisible(reply?.creatorId), child: RibbonButton(
+              Visibility(visible: _isDeleteReplyVisible(reply.creatorId), child: RibbonButton(
                 leftIconKey: "trash",
                 label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                 onTap: () {
@@ -601,17 +601,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 _onTapDeleteReply(reply);
               },
               )),
-              //TBD: DDGS - implement report
-              // Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-              //   leftIconKey: "feedback",
-              //   label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-              //   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), post: reply),
-              // )),
-              // Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-              //   leftIconKey: "feedback",
-              //   label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
-              //   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: reply),
-              // )),
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconKey: "feedback",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), entityId: reply.id!, entityType: SocialEntityType.comment),
+              )),
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconKey: "feedback",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), entityId: reply.id!, entityType: SocialEntityType.comment),
+              )),
             ],
           ),
         );
@@ -673,7 +672,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, Post? post}) {
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, required String entityId, required SocialEntityType entityType}) {
     String? analyticsTarget;
     if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
       analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
@@ -686,7 +685,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
     Analytics().logSelect(target: analyticsTarget);
 
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: _groupId, postId: (post ?? widget.post)?.id)));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _groupId, socialEntityId: entityId, socialEntityType: entityType)));
   }
 
   void _onTapEditMainPost() {
