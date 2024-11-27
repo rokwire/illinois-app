@@ -682,7 +682,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           email: Auth2FieldVisibility.public,
         );
 
-        _previewProfile = Auth2UserProfile.fromFieldVisibility(_profile, _profileVisibility, permitted: _permittedVisibility);
+        _previewProfile = Auth2UserProfile.fromFieldsVisibility(_profile, _profileVisibility, permitted: _permittedVisibility);
 
         _loading = false;
       });
@@ -730,7 +730,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
         }
 
         if ((profileResult == true) || (privacyResult == true)) {
-          _previewProfile = Auth2UserProfile.fromFieldVisibility(_profile, _profileVisibility, permitted: _permittedVisibility);
+          _previewProfile = Auth2UserProfile.fromFieldsVisibility(_profile, _profileVisibility, permitted: _permittedVisibility);
         }
 
         _saving = false;

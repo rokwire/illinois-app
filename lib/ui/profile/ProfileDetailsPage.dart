@@ -505,7 +505,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             lastName: lastName,
           );
           if (userProfile != updatedUserProfile) {
-            Auth2().saveAccountUserProfile(updatedUserProfile).then((bool result) {
+            Auth2().saveUserProfile(updatedUserProfile).then((bool result) {
               if (mounted) {
                 setState(() { _isSaving = false; });
                 if (result == true) {
