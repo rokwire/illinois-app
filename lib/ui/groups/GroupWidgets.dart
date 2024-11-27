@@ -1169,13 +1169,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
         ))
     ]));
 
-      // Semantics(child: Container(
-      // padding: EdgeInsets.all(6),
-      // child: Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}",
-      //     semanticsLabel: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}",
-      //     textAlign: TextAlign.right,
-      //     style: Styles().textStyles.getTextStyle('widget.description.small.fat'))));
-
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));

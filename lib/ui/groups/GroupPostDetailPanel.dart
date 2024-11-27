@@ -158,9 +158,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     child: GroupReaction(
                       groupId: _groupId,
                       entityId: _post?.id,
-                      reactionSource: ReactionSource.post,
-                      //TBD: DDGS - implement long press reaction
-                      // accountIDs: _post?.reactions[thumbsUpReaction],
+                      reactionSource: ReactionSource.post
                     ),
                   ),
                 ),
