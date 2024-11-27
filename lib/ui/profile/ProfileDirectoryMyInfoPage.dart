@@ -55,6 +55,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   late double _screenInsetsBottom;
   Timer? _onScreenInsetsBottomChangedTimer;
 
+  static const String _photoImageKey = 'edu.illinois.rokwire.token';
+  String _photoImageToken = _DateTimeUtils.imageToken;
 
   Map<_ProfileField, Auth2FieldVisibility?>? _fieldVisibilities;
   final Map<_ProfileField, TextEditingController?> _fieldTextControllers = {};
@@ -126,7 +128,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                   _previewCardWidget,
                 ),
                 Center(child:
-                  DirectoryProfilePhoto(_previewProfile?.photoUrl, imageSize: _previewPhotoImageSize, headers: _photoImageHeaders,),
+                  DirectoryProfilePhoto(_previewPhotoUrl, imageSize: _previewPhotoImageSize, headers: _photoImageHeaders,),
                 )
               ])
           ),
@@ -150,7 +152,12 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     }
   }
 
+  String? get _previewPhotoUrl => _photoImageUrl(_previewProfile?.photoUrl);
+
   double get _previewPhotoImageSize => MediaQuery.of(context).size.width / 3;
+
+  String? _photoImageUrl(String? photoUrl) => (photoUrl != null) ?
+    UrlUtils.addQueryParameters(photoUrl, { _photoImageKey : _photoImageToken}) : null;
 
   Map<String, String> get _photoImageHeaders => <String, String>{
     HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
@@ -389,11 +396,12 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   }
 
 
+  String? get _editPhotoUrl => _photoImageUrl(StringUtils.ensureEmpty(_fieldTextControllers[_ProfileField.photoUrl]?.text));
   double get _editPhotoImageSize => MediaQuery.of(context).size.width / 3;
 
   Widget get _editPhotoWidget => Stack(children: [
     Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
-      DirectoryProfilePhoto(_profile?.photoUrl, imageSize: _editPhotoImageSize, headers: _photoImageHeaders,),
+      DirectoryProfilePhoto(_editPhotoUrl, imageSize: _editPhotoImageSize, headers: _photoImageHeaders,),
     ),
     Positioned.fill(child:
       Align(alignment: Alignment.bottomLeft, child:
@@ -413,20 +421,15 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   void _onEditPhoto() {
     Analytics().logSelect(target: 'Edit Photo');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(isUserPic: true))).then((imageUploadResult) {
-      if (mounted) {
-        switch (imageUploadResult?.resultType) {
-          case ImagesResultType.cancelled:
-            break;
-
-          case ImagesResultType.error:
-            AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
-            break;
-
-          case ImagesResultType.succeeded:
-            break;
-
-            default:
-            break;
+      if (mounted && (imageUploadResult is ImagesResult)) {
+        if (imageUploadResult.resultType == ImagesResultType.succeeded) {
+          _fieldTextControllers[_ProfileField.photoUrl]?.text = Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
+          setState(() {
+            _photoImageToken = _DateTimeUtils.imageToken;
+          });
+        }
+        else if (imageUploadResult.resultType == ImagesResultType.error) {
+          AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
         }
       }
     });
@@ -910,4 +913,8 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
           Auth2UserProfile.websiteDataKey: fields[_ProfileField.website]?.text,
       }
     );
+}
+
+extension _DateTimeUtils on DateTime {
+  static String get imageToken => DateTime.now().millisecondsSinceEpoch.toString();
 }
