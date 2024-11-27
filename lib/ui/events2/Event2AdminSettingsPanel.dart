@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -85,7 +86,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
 
   void _onSuperEvent() {
     Analytics().logSelect(target: "Super Event");
-   AppToast.showMessage("TBD");
+    Navigator.push(context,  CupertinoPageRoute(builder: (context) => Event2SetupSuperEventPanel(event: _event)));
   }
 
   void _onDownloadRegistrants() {
