@@ -39,24 +39,28 @@ class Event2SetupSuperEventPanel extends StatefulWidget{
     return Text(title, style: (enabled ? TextStyle() : TextStyle()),maxLines: maxLines);
   }
 }
-
+//TBD Notifications for events updated - reload content
 class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   final TextEditingController _subEventController = TextEditingController();
 
   String? _searchText;
+  List<Event2>? _initialSubEvents;
+
   List<Event2>? _subEvents;
   List<Event2>? _subEventCandidates;
-
   Client? _loadCandidatesClient;
+
+  bool _applying = false;
 
   @override
   void initState() {
+    _initialSubEvents = widget.subEvents;
     _subEvents = _initialSubEvents != null ? List.from(_initialSubEvents!) : null;
     _subEventController.text = _searchText ?? '';
     _subEventController.addListener(_loadSubEventCandidates);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(CollectionUtils.isEmpty(_subEvents)){
-        _loadSubEvents();
+        _loadSubEvents(init: true);
       }
       _loadSubEventCandidates();
     });
@@ -72,7 +76,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.super_event.header.title', 'Super Event Settings')),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.super_event.header.title', 'Super Event Settings'), actions: _headerBarActions,),
       body: _buildContent(),
       backgroundColor: Styles().colors.white,
     );
@@ -86,7 +90,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
                 text: 'Set and manage this event as a multi-event “super event.” After creating one or more related events, you can nest those events as sub-events within a super event (e.g., sessions in a conference, performances in a festival).'
             ),
             Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
-            _buildSubeventsSection(_subEvents,
+            _buildSubEventsSection(_subEvents,
                 emptyMsg: 'This event is not linked to any sub-events. Please see below.',
                 showUnlink: true),
             Padding(padding: EdgeInsets.only(top: 12), child:
@@ -97,7 +101,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
             )),
             Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('LINK EVENT(s)')),
             _buildSubeventSelectionSection(),
-            _buildSubeventsSection(_subEventCandidates,
+            _buildSubEventsSection(_subEventCandidates,
                 emptyMsg:  'You currently have no upcoming events. To link and create sub-events within a super event, please first create your sub-events as basic events.',
                 showLink: true, ),
           ])
@@ -112,7 +116,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
               style: Styles().textStyles.getTextStyle("widget.description.regular")))
     ]);
 
-  Widget _buildSubeventsSection(events, {bool showLink = false, bool showUnlink = false, String? emptyMsg}) {
+  Widget _buildSubEventsSection(events, {bool showLink = false, bool showUnlink = false, String? emptyMsg}) {
     Widget resultWidget;
     if (CollectionUtils.isEmpty(events)) {
       return _buildDescriptionWidget(text: emptyMsg ?? "");
@@ -158,7 +162,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
 
           if(identical(_loadCandidatesClient, client)) {
             candidates?.removeWhere(_skipCandidateCondition);
-            // candidates?.addAll(_additionalCandidates);
+            candidates?.addAll(_additionalCandidates);
             setStateIfMounted(() {
               _subEventCandidates = candidates;
             });
@@ -167,11 +171,14 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     }
   }
 
-  void _loadSubEvents() {
+  void _loadSubEvents({bool init = false}) {
     _asyncLoadSubEvents()?.then((loadResult) {
       List<Event2>? events = loadResult?.events;
         setStateIfMounted(() {
           _subEvents = events;
+
+          if(init)
+            _initialSubEvents ??=events != null ? List.from(events) : null;
         });
       });
   }
@@ -205,16 +212,38 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     });
   }
 
+  void _onApply(){
+    setStateIfMounted(() => _applying = true);
+    Event2SuperEventsController(superEvent:_event, existingSubEvents: _initialSubEvents).updateWith(subEventsSelection: _subEvents).then((result){
+      setStateIfMounted(() => _applying = false);
+    });
+  }
+
   bool _skipCandidateCondition(Event2 candidate) =>
       candidate.id == _event?.id //Exclude this Event
       || candidate.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
       || _subEvents?.contains(candidate) == true; //candidate is already selected but not uploaded yet
 
-  // Iterable<Event2> get _additionalCandidates => _initialSubEvents?.where(
-  //         (Event2 event) => _subEvents?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
+  Iterable<Event2> get _additionalCandidates => _initialSubEvents?.where(
+          (Event2 event) => _subEvents?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
+
+  List<Widget>? get _headerBarActions {
+    if (_applying) {
+      return [Event2CreatePanel.buildHeaderBarActionProgress()];
+    }
+    else if (_isModified) {
+      return [Event2CreatePanel.buildHeaderBarActionButton(
+        title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+        onTap: _onApply,
+      )];
+    }
+    else {
+      return null;
+    }
+  }
 
   Event2? get _event => widget.event;
-  List<Event2>? get _initialSubEvents => widget.subEvents;
+  bool get _isModified => CollectionUtils.equals(_subEvents, _initialSubEvents) == false;
 }
 
 class _EventCard extends StatelessWidget{
@@ -225,6 +254,7 @@ class _EventCard extends StatelessWidget{
   final Function(Event2)? onTapUnlink;
 
   const _EventCard({super.key, required this.event, this.showLink, this.showUnlink, this.onTapLink, this.onTapUnlink});
+
   @override
   Widget build(BuildContext context) =>
     // TBD consider custom card with link/unlink button like in the Admin App
@@ -235,4 +265,85 @@ class _EventCard extends StatelessWidget{
         else if(showUnlink == true)
           this.onTapUnlink?.call(event);
         });
+}
+
+class Event2SuperEventUpdateResult{
+    String? error;
+    dynamic data;
+
+    Event2SuperEventUpdateResult({String? this.error, this.data});
+
+    static Event2SuperEventUpdateResult fail(String? error) => Event2SuperEventUpdateResult(error: error ?? "error");
+
+    static Event2SuperEventUpdateResult success({dynamic data}) => Event2SuperEventUpdateResult(data: data);
+
+    bool get successful => this.error == null;
+}
+
+class Event2SuperEventsController {
+  final Event2? superEvent;
+  List<Event2>? existingSubEvents;
+
+  Event2SuperEventsController({this.superEvent, this.existingSubEvents});
+
+  Future<Event2SuperEventUpdateResult> updateWith({List<Event2>? subEventsSelection}) async {
+    // calculate the difference between existing subEvents and _subEvents
+    List<Event2>? addedSubEvents = [];
+    List<Event2>? removedSubEvents = [];
+    if((subEventsSelection == null) || (subEventsSelection.length == 0)) {
+      removedSubEvents = existingSubEvents;
+    } else {
+        subEventsSelection.forEach((sub) {
+        if ((existingSubEvents == null) || !existingSubEvents!.map((event) => (event.id)).contains(sub.id)) {
+          addedSubEvents.add(sub);
+        }
+      });
+      existingSubEvents?.forEach((sub) {
+        if (!subEventsSelection.map((event)=>(event.id)).contains(sub.id)) {
+          removedSubEvents?.add(sub);
+        }
+      });
+    }
+    int addedSubEventsCount = 0;
+    int removedSubEventsCount = 0;
+
+    // update unlinked subEvents to calendar BB
+    if(removedSubEvents != null) {
+      for (final removeSubEvent in removedSubEvents) {
+        Event2? eventWithoutGrouping = _createUpdatedEventData(removeSubEvent);
+        dynamic response = eventWithoutGrouping != null ?  await Events2().updateEvent(eventWithoutGrouping) : null;
+        bool succeeded = response is Event2;
+        if (!succeeded) {
+          // AppAlert.showDialogResult(context, 'Failed to remove sub-event. Response: ${response.body}');
+        } else {
+          removedSubEventsCount++;
+        }
+      }
+    }
+    //TBD Link newly added
+
+    return Event2SuperEventUpdateResult.success();
+  }
+
+  Event2? _createUpdatedEventData(Event2 event, {Event2Grouping? grouping, /*bool? published,*/ Event2AuthorizationContext? authorizationContext, Event2Context? event2Context}) {
+    if (authorizationContext != null) {
+      event.authorizationContext = authorizationContext;
+    }
+    if (event2Context != null) {
+      event.context = event2Context;
+    }
+    // if (published != null) {
+    //   event.published = published;
+    // }
+
+    Map<String, dynamic> json = event.toJson();
+    if(grouping != null)
+      json['grouping'] = grouping.toJson();
+    else
+      json['grouping'] = "";
+    if(!json.containsKey("role") || json["role"] == null) {
+      json["role"] = "admin";
+    }
+    return Event2.fromJson(json);
+  }
 }
