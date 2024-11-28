@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -45,6 +46,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   String? _searchText;
   List<Event2>? _subEvents;
   List<Event2>? _subEventCandidates;
+
+  Client? _loadCandidatesClient;
 
   @override
   void initState() {
@@ -117,12 +120,14 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       events!.forEach((event) {
         eventsWidgetList.add(Padding(
             padding: EdgeInsets.only(bottom: 10),
-            child: _EventCard(event: event,
+            child: _EventCard(key: GlobalKey(),
+                event: event,
                 showLink: showLink,
                 showUnlink: showUnlink,
                 // onTapLink: () => _onTapLinkEventCard(event), //TBD
                 // onTapUnlink: () => _onTapUnlinkEventCard(event) //TBD
-            )));
+            )
+        ));
       });
       resultWidget = Column(crossAxisAlignment: CrossAxisAlignment.center, children: eventsWidgetList);
     }
@@ -137,19 +142,29 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   void _loadSubEventCandidates() {
     final text = _subEventController.text;
     if(_searchText?.compareTo(text) != 0) {
-      _searchText = text;
+      Client client = Client();
+
+      _loadCandidatesClient?.close();
+      setStateIfMounted((){
+        _searchText = text;
+        _loadCandidatesClient = client;
+      });
+
       print('subevent title search: $text (${text.characters.length})');
 
-      _asyncLoadCandidates()?.then((loadResult) {
-        List<Event2>? events = loadResult?.events;
-        if(events != null)
-          events.removeWhere((Event2? event) =>
-            event?.id == _event?.id //Exclude this Event
-            || event?.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
-          );
+      _asyncLoadCandidates(client: client)?.then((result) {
+        if(identical(_loadCandidatesClient, client)) {
+          Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+          List<Event2>? events = listResult?.events;
+          if (events != null)
+            events.removeWhere((Event2? event) =>
+              event?.id == _event?.id //Exclude this Event
+              || event?.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
+            );
           setStateIfMounted(() {
             _subEventCandidates = events;
           });
+        }
       });
     }
   }
@@ -163,11 +178,11 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       });
   }
 
-  Future<Events2ListResult?>? _asyncLoadCandidates() async => Events2().loadEvents(
+  Future<dynamic>? _asyncLoadCandidates({Client? client}) async => Events2().loadEventsEx(
     Events2Query(
       searchText: _searchText,
       person:  Event2Person(role: Event2UserRole.admin, identifier: Event2PersonIdentifier(externalId: Auth2().netId))
-    ));
+    ), client: client);
 
   Future<Events2ListResult?>? _asyncLoadSubEvents() async => _event?.isSuperEvent == true ? Events2().loadEvents(
       Events2Query(grouping:  _event?.linkedEventsGroupingQuery)
