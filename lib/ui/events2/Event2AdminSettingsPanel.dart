@@ -84,9 +84,12 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     )));
   }
 
-  void _onSuperEvent() {
+  void _onSuperEvent() async {
     Analytics().logSelect(target: "Super Event");
-    Navigator.push(context,  CupertinoPageRoute(builder: (context) => Event2SetupSuperEventPanel(event: _event)));
+    //We can skip passing supEvents, they will be loaded in the panel. This is designed to pass during create/edit.
+    List<Event2>? subEvents; /*= (await Events2().loadEvents(
+        Events2Query(grouping:  _event?.linkedEventsGroupingQuery)))?.events;*/
+    Navigator.push(context,  CupertinoPageRoute(builder: (context) => Event2SetupSuperEventPanel(event: _event, subEvents: subEvents)));
   }
 
   void _onDownloadRegistrants() {

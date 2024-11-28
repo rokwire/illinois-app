@@ -86,7 +86,9 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
                 text: 'Set and manage this event as a multi-event “super event.” After creating one or more related events, you can nest those events as sub-events within a super event (e.g., sessions in a conference, performances in a festival).'
             ),
             Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
-            _buildSubeventsSection(_subEvents, showUnlink: true),
+            _buildSubeventsSection(_subEvents,
+                emptyMsg: 'This event is not linked to any sub-events. Please see below.',
+                showUnlink: true),
             Padding(padding: EdgeInsets.only(top: 12), child:
             Container(decoration: BoxDecoration(
                 color: Colors.white,
@@ -95,7 +97,9 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
             )),
             Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('LINK EVENT(s)')),
             _buildSubeventSelectionSection(),
-            _buildSubeventsSection(_subEventCandidates, showLink: true, candidates: true),
+            _buildSubeventsSection(_subEventCandidates,
+                emptyMsg:  'You currently have no upcoming events. To link and create sub-events within a super event, please first create your sub-events as basic events.',
+                showLink: true, ),
           ])
         ));
 
@@ -108,13 +112,10 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
               style: Styles().textStyles.getTextStyle("widget.description.regular")))
     ]);
 
-  Widget _buildSubeventsSection(events, {bool showLink = false, bool showUnlink = false, bool candidates = false}) {
+  Widget _buildSubeventsSection(events, {bool showLink = false, bool showUnlink = false, String? emptyMsg}) {
     Widget resultWidget;
     if (CollectionUtils.isEmpty(events)) {
-      String missingEventsLabel = candidates
-          ? 'You currently have no upcoming events. To link and create sub-events within a super event, please first create your sub-events as basic events from the event listing page.'
-          : 'This event is not linked to any sub-events. Please see below.';
-      return _buildDescriptionWidget(text: missingEventsLabel);
+      return _buildDescriptionWidget(text: emptyMsg ?? "");
     } else {
       List<Widget> eventsWidgetList = [];
       events!.forEach((event) {
@@ -124,8 +125,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
                 event: event,
                 showLink: showLink,
                 showUnlink: showUnlink,
-                // onTapLink: () => _onTapLinkEventCard(event), //TBD
-                // onTapUnlink: () => _onTapUnlinkEventCard(event) //TBD
+                onTapLink: _onLinkEvent,
+                onTapUnlink: _onUnlinkEvent
             )
         ));
       });
@@ -151,20 +152,17 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       });
 
       print('subevent title search: $text (${text.characters.length})');
-
       _asyncLoadCandidates(client: client)?.then((result) {
-        if(identical(_loadCandidatesClient, client)) {
           Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
-          List<Event2>? events = listResult?.events;
-          if (events != null)
-            events.removeWhere((Event2? event) =>
-              event?.id == _event?.id //Exclude this Event
-              || event?.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
-            );
-          setStateIfMounted(() {
-            _subEventCandidates = events;
-          });
-        }
+          List<Event2>? candidates = listResult?.events;
+
+          if(identical(_loadCandidatesClient, client)) {
+            candidates?.removeWhere(_skipCandidateCondition);
+            // candidates?.addAll(_additionalCandidates);
+            setStateIfMounted(() {
+              _subEventCandidates = candidates;
+            });
+          }
       });
     }
   }
@@ -178,7 +176,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       });
   }
 
-  Future<dynamic>? _asyncLoadCandidates({Client? client}) async => Events2().loadEventsEx(
+  Future<dynamic>? _asyncLoadCandidates({Client? client}) async => Events2().loadEventsEx( //TBD load in portions: pass offset and limit
     Events2Query(
       searchText: _searchText,
       person:  Event2Person(role: Event2UserRole.admin, identifier: Event2PersonIdentifier(externalId: Auth2().netId))
@@ -188,17 +186,53 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       Events2Query(grouping:  _event?.linkedEventsGroupingQuery)
   ) : null;
 
+  void _onLinkEvent(Event2 event){
+    setStateIfMounted(() {
+      _subEventCandidates?.remove(event);
+      if(_subEvents == null) {
+        _subEvents = [];
+      }
+      if(_subEvents!.contains(event) == false)
+      _subEvents!.add(event);
+    });
+  }
+
+  void _onUnlinkEvent(Event2 event){
+    setStateIfMounted(() {
+      if(_subEventCandidates?.contains(event) == false)
+        _subEventCandidates?.add(event);
+      _subEvents!.remove(event);
+    });
+  }
+
+  bool _skipCandidateCondition(Event2 candidate) =>
+      candidate.id == _event?.id //Exclude this Event
+      || candidate.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
+      || _subEvents?.contains(candidate) == true; //candidate is already selected but not uploaded yet
+
+  // Iterable<Event2> get _additionalCandidates => _initialSubEvents?.where(
+  //         (Event2 event) => _subEvents?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
+
   Event2? get _event => widget.event;
-  List<Event2>? get _initialSubEvents => widget. subEvents;
+  List<Event2>? get _initialSubEvents => widget.subEvents;
 }
 
 class _EventCard extends StatelessWidget{
   final Event2 event;
+  final bool? showLink;
+  final bool? showUnlink;
+  final Function(Event2)? onTapLink;
+  final Function(Event2)? onTapUnlink;
 
-  const _EventCard({super.key, required this.event, bool? showLink, bool? showUnlink, Function()? onTapLink, Function()? onTapUnlink});
+  const _EventCard({super.key, required this.event, this.showLink, this.showUnlink, this.onTapLink, this.onTapUnlink});
   @override
   Widget build(BuildContext context) =>
-    // TBD
-    Event2Card(event);
-
+    // TBD consider custom card with link/unlink button like in the Admin App
+    Event2Card(event,
+        onTap: (){
+        if(this.showLink == true)
+          this.onTapLink?.call(event);
+        else if(showUnlink == true)
+          this.onTapUnlink?.call(event);
+        });
 }
