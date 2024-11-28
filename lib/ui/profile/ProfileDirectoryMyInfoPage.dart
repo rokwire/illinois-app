@@ -451,7 +451,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       if (mounted && (imageUploadResult is ImagesResult)) {
         if (imageUploadResult.resultType == ImagesResultType.succeeded) {
           setState(() {
-            _fieldTextControllers[_ProfileField.photoUrl]?.text = Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
+            _fieldTextControllers[_ProfileField.photoUrl]?.text = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
             _photoImageToken = _DateTimeUtils.imageToken;
           });
         }
@@ -485,7 +485,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     setState(() {
       _clearingUserPhoto = true;
     });
-    Content().deleteCurrentUserProfileImage().then((ImagesResult deleteImageResult) {
+    Content().deleteUserPhoto().then((ImagesResult deleteImageResult) {
       if (mounted) {
         setState(() {
           _clearingUserPhoto = false;
@@ -744,7 +744,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       setState(() {
         //TMP: Added some sample data
         _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,
-          photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserProfileImage(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
+          photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
           phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
           data: <String, dynamic> {
             Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),

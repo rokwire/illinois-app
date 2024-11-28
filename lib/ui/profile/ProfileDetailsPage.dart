@@ -433,7 +433,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
   void _loadUserProfilePicture() {
     _setProfilePicProcessing(true);
-    Content().loadDefaultUserProfileImage().then((imageBytes) {
+    Content().loadDefaultUserPhoto().then((imageBytes) {
       _profileImageBytes = imageBytes;
       _setProfilePicProcessing(false);
     });
@@ -572,7 +572,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   void _deleteProfilePicture(){
     Analytics().logSelect(target: "Delete Profile Picture");
     _setProfilePicProcessing(true);
-    Content().deleteCurrentUserProfileImage().then((deleteImageResult) {
+    Content().deleteUserPhoto().then((deleteImageResult) {
       ImagesResultType? resultType = deleteImageResult.resultType;
       switch (resultType) {
         case ImagesResultType.error:

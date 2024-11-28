@@ -185,7 +185,7 @@ class Auth2 extends rokwire.Auth2 {
     await _saveAuthPictureToCache(_authPicture);
 
     _authVoiceRecord = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(token.accessToken) ?
-    await _loadAuthVoiceRecordFromNet(accountId: account.id, token: token) : null;
+      await _loadAuthVoiceRecordFromNet(accountId: account.id, token: token) : null;
     await _saveAuthVoiceRecordToCache(_authVoiceRecord);
 
     await super.applyLogin(account, token, scope: scope, params: params);
@@ -371,8 +371,8 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   Future<Uint8List?> _loadAuthPictureFromNet({String? accountId, Auth2Token? token}) async {
-    String? url = Content().getUserProfileImage(accountId: accountId, type: UserProfileImageType.small);
     String? accessToken = token?.accessToken;
+    String? url = Content().getUserPhotoUrl(type: UserProfileImageType.small);
     if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
       String? tokenType = token?.tokenType ?? 'Bearer';
       Response? response = await Network().get(url, headers: {
@@ -380,11 +380,13 @@ class Auth2 extends rokwire.Auth2 {
       });
       return (response?.statusCode == 200) ? response?.bodyBytes : null;
     }
-    return null;
+    else {
+      return null;
+    }
   }
 
   Future<Uint8List?> _refreshAuthPicture() async {
-    Uint8List? authPicture = StringUtils.isNotEmpty(Auth2().account?.id) ? await Content().loadUserProfileImage(UserProfileImageType.small, accountId: Auth2().account?.id) : null;
+    Uint8List? authPicture = StringUtils.isNotEmpty(Auth2().account?.id) ? await Content().loadUserPhoto(UserProfileImageType.small) : null;
     if (authPicture != _authPicture) {
       _authPicture = authPicture;
       await _saveAuthPictureToCache(authPicture);
@@ -433,14 +435,18 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   Future<Uint8List?> _loadAuthVoiceRecordFromNet({String? accountId, Auth2Token? token}) async {
-    Map<String, String>? authHeaders;
     String? accessToken = token?.accessToken;
-    if (StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
+    String? url = Content().getUserNamePronunciationUrl();
+    if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
       String? tokenType = token?.tokenType ?? 'Bearer';
-      authHeaders = {HttpHeaders.authorizationHeader: "$tokenType $accessToken"};
+      Response? response = await Network().get(url, headers: {
+        HttpHeaders.authorizationHeader : "$tokenType $accessToken"
+      });
+      return (response?.statusCode == 200) ? response?.bodyBytes : null;
     }
-    AudioResult? voiceRecordResponse = await Content().retrieveVoiceRecord(authHeaders: authHeaders);
-    return (voiceRecordResponse?.resultType == AudioResultType.succeeded ) ? voiceRecordResponse?.getDataAs<Uint8List>() : null;
+    else {
+      return null;
+    }
   }
 
   Future<Uint8List?> _refreshAuthVoiceRecord() async {

@@ -148,7 +148,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
     _ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
       if (mounted && (result == true)) {
         setStateIfMounted(() => _loading = true);
-        Content().deleteVoiceRecord().then((result) {
+        Content().deleteUserNamePronunciation().then((result) {
           setStateIfMounted(() => _loading = false);
           if(result?.resultType != AudioResultType.succeeded){
             AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
@@ -331,7 +331,7 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadVoiceRecord(audioBytes);
+        AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
           Log.d(result.data ?? "");
