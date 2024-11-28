@@ -18,6 +18,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -302,7 +303,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       setState(() {
         _preparingDeleteAccount = true;
       });
-      Groups().getUserPostCount().then((int userPostCount) {
+      Social().getUserPostsCount().then((int userPostCount) {
         if (mounted) {
           setState(() {
             _preparingDeleteAccount = false;
@@ -324,7 +325,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                 Analytics().logAlert(text: "Remove My Information", selection: "Yes");
                 progressController(loading: true);
                 if (selectedValues.contains(groupsSwitchTitle)){
-                  await Groups().deleteUserData();
+                  Future.wait([Groups().deleteUserData(), Social().deleteContributions()]);
                 }
                 await Auth2().deleteUser();
                 progressController(loading: false);
