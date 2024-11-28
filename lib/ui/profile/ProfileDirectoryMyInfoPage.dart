@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
@@ -32,11 +31,10 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
 }
 
 enum _ProfileField {
-  firstName, middleName, lastName,
-  pronoun, title, birthYear,
-  photoUrl, pronunciationUrl,
+  firstName, middleName, lastName, pronouns,
+  birthYear, photoUrl, pronunciationUrl,
   email, email2, phone, website,
-  college, department, major,
+  college, department, major, title,
   address, state, zip, country,
 }
 
@@ -197,8 +195,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   Widget get _previewCardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
       Text(_previewProfile?.fullName ?? '', style: _nameTextStyle, textAlign: TextAlign.center,),
-      if (_previewProfile?.pronoun?.isNotEmpty == true)
-        Text(_previewProfile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+      if (_previewProfile?.pronouns?.isNotEmpty == true)
+        Text(_previewProfile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
 
   TextStyle? get _nameTextStyle =>
@@ -534,7 +532,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   Widget get _editNameWidget =>
     Text(_profile?.fullName ?? '', style: _nameTextStyle, textAlign: TextAlign.center,);
 
-  Widget get _editPronounsWidget => _editFieldWidget(_ProfileField.pronoun,
+  Widget get _editPronounsWidget => _editFieldWidget(_ProfileField.pronouns,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronouns.text', 'Pronouns'),
   );
 
@@ -743,16 +741,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       Auth2UserPrivacy? privacy = JsonUtils.cast<Auth2UserPrivacy>(ListUtils.entry(results, 1));
       setState(() {
         //TMP: Added some sample data
-        _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,
-          photoUrl: StringUtils.firstNotEmpty(Auth2().profile?.photoUrl, Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium)),
-          phone: StringUtils.firstNotEmpty(Auth2().profile?.phone , '(234) 567-8901'),
-          data: <String, dynamic> {
-            Auth2UserProfile.collegeDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.collegeName, 'Academic Affairs'),
-            Auth2UserProfile.departmentDataKey : StringUtils.firstNotEmpty(IlliniCash().studentClassification?.departmentName, 'Center for Advanced Study'),
-            Auth2UserProfile.pronounDataKey : 'he',
-          }
-        );
-
+        _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,);
         _privacy = privacy;
 
         //TMP: Added some sample data
@@ -851,11 +840,9 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.firstName: firstName,
     _ProfileField.middleName: middleName,
     _ProfileField.lastName: lastName,
+    _ProfileField.pronouns: pronouns,
 
-    _ProfileField.pronoun: pronoun,
-    _ProfileField.title: title,
     _ProfileField.birthYear: birthYear,
-
     _ProfileField.photoUrl: photoUrl,
     _ProfileField.pronunciationUrl: pronunciationUrl,
 
@@ -867,6 +854,7 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.college: college,
     _ProfileField.department: department,
     _ProfileField.major: major,
+    _ProfileField.title: title,
 
     _ProfileField.address: address,
     _ProfileField.state: state,
@@ -879,11 +867,15 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       firstName : fields?[_ProfileField.firstName],
       middleName : fields?[_ProfileField.middleName],
       lastName : fields?[_ProfileField.lastName],
+      pronouns : fields?[_ProfileField.pronouns],
 
       birthYear : fields?[_ProfileField.birthYear],
       photoUrl : fields?[_ProfileField.photoUrl],
+      pronunciationUrl : fields?[_ProfileField.pronunciationUrl],
+
       email : fields?[_ProfileField.email],
       phone : fields?[_ProfileField.phone],
+      website : fields?[_ProfileField.website],
 
       address : fields?[_ProfileField.address],
       state : fields?[_ProfileField.state],
@@ -891,14 +883,6 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       country : fields?[_ProfileField.country],
 
       data: MapUtils.ensureEmpty({
-        if (fields?[_ProfileField.pronoun] != null)
-          Auth2UserProfile.pronounDataKey: fields?[_ProfileField.pronoun],
-
-        if (fields?[_ProfileField.pronunciationUrl] != null)
-          Auth2UserProfile.pronunciationUrlDataKey: fields?[_ProfileField.pronunciationUrl],
-
-        if (fields?[_ProfileField.title] != null)
-          Auth2UserProfile.titleDataKey: fields?[_ProfileField.title],
 
         if (fields?[_ProfileField.college] != null)
           Auth2UserProfile.collegeDataKey: fields?[_ProfileField.college],
@@ -909,11 +893,11 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
         if (fields?[_ProfileField.major] != null)
           Auth2UserProfile.majorDataKey: fields?[_ProfileField.major],
 
+        if (fields?[_ProfileField.title] != null)
+          Auth2UserProfile.titleDataKey: fields?[_ProfileField.title],
+
         if (fields?[_ProfileField.email2] != null)
           Auth2UserProfile.email2DataKey: fields?[_ProfileField.email2],
-
-        if (fields?[_ProfileField.website] != null)
-          Auth2UserProfile.websiteDataKey: fields?[_ProfileField.website],
       }),
     );
 }
@@ -925,11 +909,9 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.firstName: return firstName;
       case _ProfileField.middleName: return middleName;
       case _ProfileField.lastName: return lastName;
+      case _ProfileField.pronouns: return pronouns;
 
-      case _ProfileField.pronoun: return pronoun;
-      case _ProfileField.title: return title;
       case _ProfileField.birthYear: return birthYear?.toString();
-
       case _ProfileField.photoUrl: return photoUrl;
       case _ProfileField.pronunciationUrl: return pronunciationUrl;
 
@@ -941,6 +923,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.college: return college;
       case _ProfileField.department: return department;
       case _ProfileField.major: return major;
+      case _ProfileField.title: return title;
 
       case _ProfileField.address: return address;
       case _ProfileField.state: return state;
@@ -954,11 +937,15 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       firstName: StringUtils.ensureEmpty(fields[_ProfileField.firstName]?.text),
       middleName: StringUtils.ensureEmpty(fields[_ProfileField.middleName]?.text),
       lastName: StringUtils.ensureEmpty(fields[_ProfileField.lastName]?.text),
+      pronouns: StringUtils.ensureEmpty(fields[_ProfileField.pronouns]?.text),
 
       birthYear: JsonUtils.intValue(StringUtils.ensureEmpty(fields[_ProfileField.birthYear]?.text)),
       photoUrl: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
+      pronunciationUrl: StringUtils.ensureEmpty(fields[_ProfileField.pronunciationUrl]?.text),
+
       email: StringUtils.ensureEmpty(fields[_ProfileField.email]?.text),
       phone: StringUtils.ensureEmpty(fields[_ProfileField.phone]?.text),
+      website: StringUtils.ensureEmpty(fields[_ProfileField.website]?.text),
 
       address: StringUtils.ensureEmpty(fields[_ProfileField.address]?.text),
       state: StringUtils.ensureEmpty(fields[_ProfileField.state]?.text),
@@ -966,15 +953,6 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       country: StringUtils.ensureEmpty(fields[_ProfileField.country]?.text),
 
       data: {
-        if (fields[_ProfileField.pronoun]?.text.isNotEmpty == true)
-          Auth2UserProfile.pronounDataKey: fields[_ProfileField.pronoun]?.text,
-
-        if (fields[_ProfileField.pronunciationUrl]?.text.isNotEmpty == true)
-          Auth2UserProfile.pronunciationUrlDataKey: fields[_ProfileField.pronunciationUrl]?.text,
-
-        if (fields[_ProfileField.title]?.text.isNotEmpty == true)
-          Auth2UserProfile.titleDataKey: fields[_ProfileField.title]?.text,
-
         if (fields[_ProfileField.college]?.text.isNotEmpty == true)
           Auth2UserProfile.collegeDataKey: fields[_ProfileField.college]?.text,
 
@@ -984,11 +962,11 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         if (fields[_ProfileField.major]?.text.isNotEmpty == true)
           Auth2UserProfile.majorDataKey: fields[_ProfileField.major]?.text,
 
+        if (fields[_ProfileField.title]?.text.isNotEmpty == true)
+          Auth2UserProfile.titleDataKey: fields[_ProfileField.title]?.text,
+
         if (fields[_ProfileField.email2]?.text.isNotEmpty == true)
           Auth2UserProfile.email2DataKey: fields[_ProfileField.email2]?.text,
-
-        if (fields[_ProfileField.website]?.text.isNotEmpty == true)
-          Auth2UserProfile.websiteDataKey: fields[_ProfileField.website]?.text,
       }
     );
 }

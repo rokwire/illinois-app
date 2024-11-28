@@ -38,8 +38,8 @@ class _DirectoryProfileCardState extends State<DirectoryProfileCard> {
           Padding(padding: EdgeInsets.only(top: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text(widget.account.profile?.fullName ?? '', style: Styles().textStyles.getTextStyleEx('widget.title.large.fat', fontHeight: 0.85)),
-                if (widget.account.profile?.pronoun?.isNotEmpty == true)
-                  Text(widget.account.profile?.pronoun ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
+                if (widget.account.profile?.pronouns?.isNotEmpty == true)
+                  Text(widget.account.profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
               ],)
           ),
         ),
