@@ -436,7 +436,7 @@ class Auth2 extends rokwire.Auth2 {
 
   Future<Uint8List?> _loadAuthVoiceRecordFromNet({String? accountId, Auth2Token? token}) async {
     String? accessToken = token?.accessToken;
-    String? url = Content().getUserNamePronunciationUrl();
+    String? url = Content().getUserNamePronunciationUrl(accountId: accountId);
     if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
       String? tokenType = token?.tokenType ?? 'Bearer';
       Response? response = await Network().get(url, headers: {

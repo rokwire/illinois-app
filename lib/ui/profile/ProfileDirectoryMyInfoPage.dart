@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,13 @@ import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
+import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/AudioUtils.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -51,6 +55,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   bool _saving = false;
   bool _preparingDeleteAccount = false;
   bool _clearingUserPhoto = false;
+  bool _clearingUserPronunciation = false;
+  bool _initializingAudioPlayer = false;
+  AudioPlayer? _audioPlayer;
 
   late double _screenInsetsBottom;
   Timer? _onScreenInsetsBottomChangedTimer;
@@ -78,11 +85,12 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     for (_ProfileField field in _ProfileField.values) {
       _fieldTextControllers[field]?.dispose();
       _fieldFocusNodes[field]?.dispose();
     }
-    WidgetsBinding.instance.removeObserver(this);
+    _audioPlayer?.dispose();
     super.dispose();
   }
 
@@ -121,7 +129,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   Widget get _previewContent =>
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(children: [
-          Text(_previewDesriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
+          Text(_previewDesriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
           Padding(padding: EdgeInsets.only(top: 24), child:
               Stack(children: [
                 Padding(padding: EdgeInsets.only(top: _previewPhotoImageSize / 2), child:
@@ -297,7 +305,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       Positioned.fill(child:
         Center(child:
           SizedBox(width: 14, height: 14, child:
-            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+            _progressWidget
           )
         )
       )
@@ -361,7 +369,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   Widget get _editContent =>
     Padding(padding: EdgeInsets.zero, child:
       Column(children: [
-        Text(_editDesriptionText, style: Styles().textStyles.getTextStyle('widget.title.tiny'), textAlign: TextAlign.center,),
+        Text(_editDesriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
         Padding(padding: EdgeInsets.only(top: 24), child:
           _editPhotoWidget,
         ),
@@ -369,15 +377,16 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           _editNameWidget,
         ),
 
-        _editPronounsWidget,
-        _editTitleWidget,
-        _editCollegeWidget,
-        _editDepartmentWidget,
-        _editMajorWidget,
-        _editEmailWidget,
-        _editEmail2Widget,
-        _editPhoneWidget,
-        _editWebsiteWidget,
+        _editPronunciationSection,
+        _editPronounsSection,
+        _editTitleSection,
+        _editCollegeSection,
+        _editDepartmentSection,
+        _editMajorSection,
+        _editEmailSection,
+        _editEmail2Section,
+        _editPhoneSection,
+        _editWebsiteSection,
 
         Padding(padding: EdgeInsets.only(top: 24), child:
           _editCommandBar,
@@ -395,8 +404,9 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     }
   }
 
+  // Edit: Photo
 
-  String? get _editPhotoUrl => _photoImageUrl(StringUtils.ensureEmpty(_fieldTextControllers[_ProfileField.photoUrl]?.text));
+  String? get _editPhotoUrl => _photoImageUrl(StringUtils.ensureEmpty(_editPhotoText));
   double get _editPhotoImageSize => MediaQuery.of(context).size.width / 3;
 
   Widget get _editPhotoWidget => Stack(children: [
@@ -423,7 +433,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   void _onEditPhotoButton() {
     Analytics().logSelect(target: 'Edit Photo');
-    if (StringUtils.isNotEmpty(_fieldTextControllers[_ProfileField.photoUrl]?.text)) {
+    if (StringUtils.isNotEmpty(_editPhotoText)) {
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -449,7 +459,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       if (mounted && (imageUploadResult is ImagesResult)) {
         if (imageUploadResult.resultType == ImagesResultType.succeeded) {
           setState(() {
-            _fieldTextControllers[_ProfileField.photoUrl]?.text = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
+            _editPhotoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
             _photoImageToken = _DateTimeUtils.imageToken;
           });
         }
@@ -490,7 +500,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
         });
         if (deleteImageResult.resultType == ImagesResultType.succeeded) {
           setState(() {
-            _fieldTextControllers[_ProfileField.photoUrl]?.text = '';
+            _editPhotoText = '';
           });
         }
         else if (deleteImageResult.resultType == ImagesResultType.error) {
@@ -521,7 +531,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           child: progress ? SizedBox(
             width: _editButtonIconSize,
             height: _editButtonIconSize,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,),
+            child: _progressWidget,
           ) : icon
         ),
       )
@@ -532,64 +542,249 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   Widget get _editNameWidget =>
     Text(_profile?.fullName ?? '', style: _nameTextStyle, textAlign: TextAlign.center,);
 
-  Widget get _editPronounsWidget => _editFieldWidget(_ProfileField.pronouns,
+  // Edit: Pronunciation
+
+  Widget get _editPronunciationSection => _editFieldSection(
+    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronunciation.text', 'Name Pronunciation'),
+    fieldControl: StringUtils.isNotEmpty(_editPronunciationText) ? _pronunciationEditBar: _pronunciationCreateControl,
+  );
+
+  Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    Styles().images.getImage('plus-circle', size: 24) ?? Container(),
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+        InkWell(onTap: _onCreatePronunciation, child:
+          Text(_pronunciationCreateText(), style: Styles().textStyles.getTextStyle('widget.detail.small.underline'),)
+        ),
+      ),
+    ),
+    Padding(padding: EdgeInsets.only(left: 6), child:
+      _editVisibilityButton(_ProfileField.pronunciationUrl),
+    ),
+  ],);
+
+  String _pronunciationCreateText({String? language}) =>
+    Localization().getStringEx('panel.profile.directory.my_info.command.link.pronunciation.text', 'Add name pronunciation and how you prefer to be addressed (Ex: "Please call me Dr. Last Name, First Name or Nickname")', language: language);
+
+  Widget get _pronunciationEditBar => Row(children: [
+    Wrap( spacing: 6, runSpacing: 6, children: [
+      _pronunciationPreviewButton,
+      _pronunciationEditButton,
+      _pronunciationDeleteButton,
+      _editVisibilityButton(_ProfileField.pronunciationUrl),
+    ],)
+  ],);
+
+  Widget get _pronunciationPreviewButton => _editIconButton(
+    icon: _pronunciationPreviewIcon,
+    progress: _initializingAudioPlayer,
+    onTap: _onPreviewPronunciation,
+  );
+
+  Widget? get _pronunciationPreviewIcon => (_audioPlayer?.playing == true) ? _pauseIcon : _playIcon;
+
+  Widget get _pronunciationEditButton => _editIconButton(
+    icon: _editIcon,
+    onTap: _onEditPronunciation,
+  );
+
+  Widget get _pronunciationDeleteButton => _editIconButton(
+    icon: _trashIcon,
+    progress: _clearingUserPronunciation,
+    onTap: _onDeletePronunciation,
+  );
+
+  void _onCreatePronunciation() {
+    Analytics().logSelect(target: _pronunciationCreateText(language: 'en'));
+    _createPronunciation();
+  }
+
+  void _onEditPronunciation() {
+    Analytics().logSelect(target: 'Edit Pronuncaion');
+    _createPronunciation();
+  }
+
+  void _createPronunciation() {
+    ProfileSoundRecorderDialog.show(context).then((AudioResult? result) {
+      if (result?.resultType == AudioResultType.succeeded) {
+        setState(() {
+          _editPronunciationText = Content().getUserNamePronunciationUrl(accountId: Auth2().accountId);
+        });
+      }
+    });
+  }
+
+  void _onDeletePronunciation() {
+    Analytics().logSelect(target: 'Delete Pronuncaion');
+    //AppAlert.showConfirmationDialog(bu)
+    ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
+      if (mounted && (result == true)) {
+        setState(() {
+          _clearingUserPronunciation = true;
+        });
+        Content().deleteUserNamePronunciation().then((AudioResult? result){
+          if (mounted) {
+            if (result?.resultType == AudioResultType.succeeded) {
+              setState(() {
+                _clearingUserPronunciation = false;
+                _editPronunciationText = null;
+              });
+            }
+            else {
+              setState(() {
+                _clearingUserPronunciation = false;
+              });
+              AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile_info.pronunciation.delete.failed.msg', 'Failed to delete pronunciation audio. Please try again later.'));
+            }
+          }
+        });
+      }
+    });
+  }
+
+  void _onPreviewPronunciation() async {
+    if (_audioPlayer == null) {
+      setState(() {
+        _initializingAudioPlayer = true;
+      });
+
+      AudioResult? result = await Content().loadUserNamePronunciation(accountId: Auth2().accountId);
+      if (mounted) {
+        Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+        if (audioData != null) {
+          _audioPlayer = AudioPlayer();
+
+          _audioPlayer?.playerStateStream.listen((PlayerState state) {
+            if ((state.processingState == ProcessingState.completed) && mounted) {
+              setState(() {
+                _audioPlayer?.dispose();
+                _audioPlayer = null;
+              });
+            }
+          });
+
+          Duration? duration;
+          try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
+          catch(e) {}
+
+          if (mounted) {
+            if ((duration != null) && (duration.inMilliseconds > 0)) {
+              setState(() {
+                _initializingAudioPlayer = false;
+                _audioPlayer?.play();
+              });
+            }
+            else {
+              _handlePronunciationPlaybackError();
+            }
+          }
+        }
+        else {
+          _handlePronunciationPlaybackError();
+        }
+      }
+    }
+    else if (_audioPlayer?.playing == true) {
+      _audioPlayer?.pause();
+    }
+    else {
+      _audioPlayer?.play();
+    }
+  }
+
+  void _handlePronunciationPlaybackError() {
+    setState(() {
+      _initializingAudioPlayer = false;
+      _audioPlayer?.dispose();
+      _audioPlayer = null;
+    });
+    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.playback.failed.text', 'Failed to play audio stream.'));
+  }
+
+  // Edit: Other Sections
+
+  Widget get _editPronounsSection => _editTextFieldSection(_ProfileField.pronouns,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronouns.text', 'Pronouns'),
   );
 
-  Widget get _editTitleWidget => _editFieldWidget(_ProfileField.title,
+  Widget get _editTitleSection => _editTextFieldSection(_ProfileField.title,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.title.text', 'Title'),
     headingHint: Localization().getStringEx('panel.profile.directory.my_info.title.title.hint', '(Ex: Professional/Extracurricular Role)')
   );
 
-  Widget get _editCollegeWidget => _editFieldWidget(_ProfileField.college,
+  Widget get _editCollegeSection => _editTextFieldSection(_ProfileField.college,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.college.text', 'College'),
     enabled: false,
   );
 
-  Widget get _editDepartmentWidget => _editFieldWidget(_ProfileField.department,
+  Widget get _editDepartmentSection => _editTextFieldSection(_ProfileField.department,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.department.text', 'Department'),
     enabled: false,
   );
 
-  Widget get _editMajorWidget => _editFieldWidget(_ProfileField.major,
+  Widget get _editMajorSection => _editTextFieldSection(_ProfileField.major,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.major.text', 'Major'),
     enabled: false,
   );
 
-  Widget get _editEmailWidget => _editFieldWidget(_ProfileField.email,
+  Widget get _editEmailSection => _editTextFieldSection(_ProfileField.email,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.email.text', 'Email Address'),
     enabled: false, public: true,
   );
 
-  Widget get _editEmail2Widget => _editFieldWidget(_ProfileField.email2,
+  Widget get _editEmail2Section => _editTextFieldSection(_ProfileField.email2,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.email2.text', 'Alternate Email Address'),
   );
 
-  Widget get _editPhoneWidget => _editFieldWidget(_ProfileField.phone,
+  Widget get _editPhoneSection => _editTextFieldSection(_ProfileField.phone,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.phone.text', 'Phone Number'),
   );
 
-  Widget get _editWebsiteWidget => _editFieldWidget(_ProfileField.website,
+  Widget get _editWebsiteSection => _editTextFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.website.text', 'Website URL'),
     headingHint: Localization().getStringEx('panel.profile.directory.my_info.title.website.hinr', '(Ex: Linkedin)'),
   );
 
-  Widget _editFieldWidget(_ProfileField field, {
+  Widget _editTextFieldSection(_ProfileField field, {
     String? headingTitle, String? headingHint,
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
     bool public = false,
+  }) => _editFieldSection(
+    headingTitle: headingTitle,
+    headingHint: headingTitle,
+    fieldControl: _editTextFieldControl(field,
+        textInputType: textInputType,
+        autocorrect: autocorrect,
+        enabled: enabled,
+        public: public,
+    )
+  );
+
+  Widget _editTextFieldControl(_ProfileField field, {
+    TextInputType textInputType = TextInputType.text,
+    bool autocorrect = true,
+    bool enabled = true,
+    bool public = false,
+    }) => Row(children: [
+      Expanded(child:
+        _editTextWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
+      ),
+      Padding(padding: EdgeInsets.only(left: 6), child:
+        _editVisibilityButton(field, public: public),
+      ),
+    ],);
+
+  Widget _editFieldSection({
+    String? headingTitle, String? headingHint,
+    Widget? fieldControl,
   }) => Padding(padding: EdgeInsets.only(top: 12), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
       if (headingTitle?.isNotEmpty == true)
         _editHeadingWidget(headingTitle ?? '', hint: headingHint),
-      Row(children: [
-        Expanded(child:
-          _editTextWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
-        ),
-        _editVisibilityButton(field, public: public),
-      ],)
+      if (fieldControl != null)
+        fieldControl
     ],)
   );
 
@@ -635,15 +830,24 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
     );
 
   Widget _editVisibilityButton(_ProfileField field, { bool public = false}) =>
-    InkWell(onTap: public ? null : () => _onToggleFieldVisibility(field), child:
-      Padding(padding: EdgeInsets.only(left: 6), child:
-        Container(decoration: _editCtrlDecoration, child:
-          Padding(padding: EdgeInsets.all(15), child:
-            _editVisibilityIcon(_fieldVisibilities?[field], public: public),
-          )
+    _editIconButton(
+      icon: _editVisibilityIcon(_fieldVisibilities?[field], public: public),
+      onTap: public ? null : () => _onToggleFieldVisibility(field),
+    );
+
+  Widget _editIconButton({ Widget? icon, bool progress = false, void Function()? onTap}) =>
+    InkWell(onTap: onTap, child:
+      Container(decoration: _editCtrlDecoration, child:
+        Padding(padding: EdgeInsets.all(15), child:
+          SizedBox(width: _editButtonIconSize, height: _editButtonIconSize, child:
+            progress ? _progressWidget : Center(child: icon,)
+          ),
         )
       )
     );
+
+  Widget get _progressWidget =>
+    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,);
 
   Widget? _editVisibilityIcon(Auth2FieldVisibility? visibility, { bool public = false} ) {
     if (public) {
@@ -656,15 +860,26 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
   }
 
   Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+  Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
   Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _editButtonIconSize);
   Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _editButtonIconSize);
   Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _editButtonIconSize);
+  Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+  Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+  //Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
   Decoration get _editCtrlDecoration => BoxDecoration(
     color: Styles().colors.white,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8)),
   );
+
+
+  String? get _editPhotoText => _fieldTextControllers[_ProfileField.photoUrl]?.text;
+  set _editPhotoText(String? value) => (_fieldTextControllers[_ProfileField.photoUrl] ??= TextEditingController()).text = value ?? '';
+
+  String? get _editPronunciationText => _fieldTextControllers[_ProfileField.pronunciationUrl]?.text;
+  set _editPronunciationText(String? value) => (_fieldTextControllers[_ProfileField.pronunciationUrl] ??= TextEditingController()).text = value ?? '';
 
   void _onToggleTextEditing(_ProfileField field) {
     FocusNode? focusNode = _fieldFocusNodes[field];
@@ -722,7 +937,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
           });
         }
         else {
-          AppAlert.showTextMessage(context, "Failed to update profile and privacy settings.");
+          AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.save.failed.text', 'Failed to update profile and privacy settings.'));
         }
       }
     });

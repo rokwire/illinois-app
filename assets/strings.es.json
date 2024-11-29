@@ -2221,6 +2221,9 @@
     "panel.profile_info.picture.upload.failed.msg":"No se pudo cargar la imagen de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.failed.msg":"Error al eliminar la foto de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.confirmation.msg": "¿Estás seguro/a que deseas eliminar esta imagen de perfil?",
+    "panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload pronunciation audio. Please try again later.",
+    "panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete pronunciation audio. Please try again later.",
+    "panel.profile_info.pronunciation.delete.confirmation.msg": "Are you sure you want to remove this pronunciation audio?",
 
     "panel.profile.stored_data.header.title": "My Stored Data",
     "panel.profile.stored_data.button.copy_all.title": "Copy All",
@@ -2282,6 +2285,8 @@
     "panel.profile.directory.my_info.command.link.share.text": "Share my info outside the {{app_title}} app",
     "panel.profile.directory.my_info.command.button.photo.edit.text": "Edit Photo",
     "panel.profile.directory.my_info.command.button.photo.clear.text": "Clear Photo",
+    "panel.profile.directory.my_info.command.link.pronunciation.text": "Add name pronunciation and how you prefer to be addressed (Ex: \"Please call me Dr. Last Name, First Name or Nickname\")",
+    "panel.profile.directory.my_info.title.pronunciation.text": "Name Pronunciation",
     "panel.profile.directory.my_info.title.pronouns.text": "Pronouns",
     "panel.profile.directory.my_info.title.title.text": "Title",
     "panel.profile.directory.my_info.title.title.hint": "(Ex: Professional/Extracurricular Role)",
@@ -2293,6 +2298,8 @@
     "panel.profile.directory.my_info.title.phone.text": "Phone Number",
     "panel.profile.directory.my_info.title.website.text": "Website URL",
     "panel.profile.directory.my_info.title.website.hint": "Ex: Linkedin",
+    "panel.profile.directory.my_info.save.failed.text": "Failed to update profile and privacy settings.",
+    "panel.profile.directory.my_info.playback.failed.text": "Failed to play audio stream.",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
