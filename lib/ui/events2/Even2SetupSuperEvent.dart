@@ -214,9 +214,15 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
 
   void _onApply(){
     setStateIfMounted(() => _applying = true);
-    Event2SuperEventsController(superEvent:_event, existingSubEvents: _initialSubEvents).updateWith(subEventsSelection: _subEvents).then((result){
-      setStateIfMounted(() => _applying = false);
-    });
+    if(_event != null) {
+      Event2SuperEventsController.update(
+        superEvent: _event!,
+        existingSubEvents: _initialSubEvents,
+        updatedEventsSelection: _subEvents).then(
+          (result) {
+            setStateIfMounted(() => _applying = false);
+          });
+    }
   }
 
   bool _skipCandidateCondition(Event2 candidate) =>
@@ -281,63 +287,115 @@ class Event2SuperEventUpdateResult{
 }
 
 class Event2SuperEventsController {
-  final Event2? superEvent;
-  List<Event2>? existingSubEvents;
 
-  Event2SuperEventsController({this.superEvent, this.existingSubEvents});
+  static Future<Event2SuperEventUpdateResult> update({required Event2 superEvent, List<Event2>? existingSubEvents,
+    List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
+      Event2SuperEventUpdateResult linkedResult = await updateUnlinked(existingSubEvents: existingSubEvents, updatedEventsSelection: updatedEventsSelection);
+      Event2SuperEventUpdateResult unlinkedResult = await updateLinked(superEvent: superEvent, existingSubEvents: existingSubEvents, updatedEventsSelection: updatedEventsSelection, publishLinkedEvents: publishLinkedEvents);
+      return linkedResult.successful && unlinkedResult.successful ?
+        Event2SuperEventUpdateResult.success() :
+        Event2SuperEventUpdateResult.fail("${linkedResult.error} ${unlinkedResult.error}");
+  }
 
-  Future<Event2SuperEventUpdateResult> updateWith({List<Event2>? subEventsSelection}) async {
-    // calculate the difference between existing subEvents and _subEvents
-    List<Event2>? addedSubEvents = [];
-    List<Event2>? removedSubEvents = [];
-    if((subEventsSelection == null) || (subEventsSelection.length == 0)) {
-      removedSubEvents = existingSubEvents;
-    } else {
-        subEventsSelection.forEach((sub) {
-        if ((existingSubEvents == null) || !existingSubEvents!.map((event) => (event.id)).contains(sub.id)) {
-          addedSubEvents.add(sub);
-        }
-      });
-      existingSubEvents?.forEach((sub) {
-        if (!subEventsSelection.map((event)=>(event.id)).contains(sub.id)) {
-          removedSubEvents?.add(sub);
-        }
-      });
-    }
-    int addedSubEventsCount = 0;
+  static Future<Event2SuperEventUpdateResult> updateUnlinked({List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection}) async{
+    List<Event2>? unlinkedSubEvents = filterNeedUnlink(existingSubEvents, updatedEventsSelection);
+
+    if(CollectionUtils.isEmpty(unlinkedSubEvents))
+      return Event2SuperEventUpdateResult.success();//nothing to add;
+
     int removedSubEventsCount = 0;
-
+    String error = "";
     // update unlinked subEvents to calendar BB
-    if(removedSubEvents != null) {
-      for (final removeSubEvent in removedSubEvents) {
-        Event2? eventWithoutGrouping = _createUpdatedEventData(removeSubEvent);
+    if(unlinkedSubEvents != null) {
+      for (final unlinkedSubEvent in unlinkedSubEvents) {
+        Event2? eventWithoutGrouping = _createUpdatedEventData(unlinkedSubEvent);
         dynamic response = eventWithoutGrouping != null ?  await Events2().updateEvent(eventWithoutGrouping) : null;
         bool succeeded = response is Event2;
-        if (!succeeded) {
-          // AppAlert.showDialogResult(context, 'Failed to remove sub-event. Response: ${response.body}');
-        } else {
+        if (succeeded) {
           removedSubEventsCount++;
+        } else {
+          error += "$response\n";
+          // AppAlert.showDialogResult(context, 'Failed to remove sub-event. Response: ${response.body}');
         }
       }
     }
-    //TBD Link newly added
 
-    return Event2SuperEventUpdateResult.success();
+    return StringUtils.isEmpty(error) ?
+      Event2SuperEventUpdateResult.success(data: removedSubEventsCount) :
+      Event2SuperEventUpdateResult.fail(error);
   }
 
-  Event2? _createUpdatedEventData(Event2 event, {Event2Grouping? grouping, /*bool? published,*/ Event2AuthorizationContext? authorizationContext, Event2Context? event2Context}) {
+  static  Future<Event2SuperEventUpdateResult> updateLinked({required Event2 superEvent, List<Event2>? existingSubEvents,
+    List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
+      List<Event2>? linkSubEvents = Event2SuperEventsController.filterNeedLink(existingSubEvents, updatedEventsSelection);
+
+      if(CollectionUtils.isEmpty(linkSubEvents))
+        return Event2SuperEventUpdateResult.success();//nothing to add;
+
+      int addedSubEventsCount = 0;
+      String error = "";
+      // update linked subEvents to calendar BB
+      if (linkSubEvents!.length > 0) {
+        Event2Grouping grouping = Event2Grouping(type: Event2GroupingType.superEvent, superEventId: superEvent.id, displayAsIndividual: false);
+        for (final linkEvent in linkSubEvents) {
+          Event2? newLinkEventData = _createUpdatedEventData(linkEvent, grouping: grouping, published: publishLinkedEvents);
+          dynamic response = newLinkEventData != null ? await Events2().updateEvent(newLinkEventData) : null;
+          bool succeeded = response is Event2;
+          if (succeeded) {
+            addedSubEventsCount++;
+          } else {
+            error += "$response\n";
+            // AppAlert.showDialogResult(context, 'Failed to remove sub-event. Response: ${response.body}');
+          }
+        }
+    }
+    
+    if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
+      Event2? updatedEventData = _createUpdatedEventData(superEvent, grouping: Event2Grouping(type: Event2GroupingType.superEvent));
+      var mainEventResponse = updatedEventData != null ? await Events2().updateEvent(updatedEventData) : null;
+      error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
+    }
+
+    return StringUtils.isEmpty(error) ?
+    Event2SuperEventUpdateResult.success(data: addedSubEventsCount) :
+    Event2SuperEventUpdateResult.fail(error);
+  }
+
+  static List<Event2>? filterNeedUnlink(List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection){
+    if(CollectionUtils.isEmpty(existingSubEvents))
+      return null; //nothing to update
+
+    return CollectionUtils.isEmpty(updatedEventsSelection) ?
+      existingSubEvents :
+      existingSubEvents?.where(
+              (sub) => !updatedEventsSelection!.map((event)=>(event.id)).contains(sub.id)
+      ).toList();
+  }
+
+  static List<Event2>? filterNeedLink(List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection){
+    if(CollectionUtils.isEmpty(updatedEventsSelection))
+      return null; //nothing to update
+
+    return CollectionUtils.isEmpty(existingSubEvents) ?
+      updatedEventsSelection :
+      updatedEventsSelection!.where(
+              (sub)=> !existingSubEvents!.map((event) => (event.id)).contains(sub.id)
+      ).toList();
+  }
+
+  static Event2? _createUpdatedEventData(Event2 event, {Event2Grouping? grouping, bool? published, Event2AuthorizationContext? authorizationContext, Event2Context? event2Context}) {
     if (authorizationContext != null) {
       event.authorizationContext = authorizationContext;
     }
     if (event2Context != null) {
       event.context = event2Context;
     }
-    // if (published != null) {
+    // if (published != null) { //TBD
     //   event.published = published;
     // }
 
     Map<String, dynamic> json = event.toJson();
-    if(grouping != null)
+    if(grouping != null) //TBD better way?
       json['grouping'] = grouping.toJson();
     else
       json['grouping'] = "";
