@@ -472,11 +472,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   void _onClearPhoto() {
     Analytics().logSelect(target: 'Clear Photo');
-    AppAlert.showConfirmationDialog(buildContext: context,
-        message: _clearPhotoPrompt(),
-        positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
-        negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
-    ).then((bool result) {
+    AppAlert.showConfirmationDialog(context, message: _clearPhotoPrompt(),).then((bool result) {
       if (result) {
         _onConfirmClearPhoto();
       } else {
@@ -616,8 +612,8 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
 
   void _onDeletePronunciation() {
     Analytics().logSelect(target: 'Delete Pronuncaion');
-    //AppAlert.showConfirmationDialog(bu)
-    ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
+
+    AppAlert.showConfirmationDialog(context, message: Localization().getStringEx("panel.profile_info.pronunciation.delete.confirmation.msg", "Are you sure you want to remove this pronunciation audio?")).then((bool? result) {
       if (mounted && (result == true)) {
         setState(() {
           _clearingUserPronunciation = true;
@@ -685,10 +681,14 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
       }
     }
     else if (_audioPlayer?.playing == true) {
-      _audioPlayer?.pause();
+      setState(() {
+        _audioPlayer?.pause();
+      });
     }
     else {
-      _audioPlayer?.play();
+      setState(() {
+        _audioPlayer?.play();
+      });
     }
   }
 
