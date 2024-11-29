@@ -159,7 +159,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
       Event2Contact contact = _contacts[index];
     
       String message = Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.contacts.prompt.confirm.delete.title', 'Delete {{name}} contact?.').replaceAll('{{name}}', contact.fullName);
-      AppAlert.showConfirmationDialog(buildContext: context, message: message,
+      AppAlert.showConfirmationDialog(context, message: message,
         positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
         negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
       ).then((value) {

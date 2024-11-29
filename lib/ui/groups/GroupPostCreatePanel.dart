@@ -247,11 +247,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _showPollConfirmationDialogIfNeeded() {
     if (_selectedNudge?.canPoll ?? false) {
-      AppAlert.showConfirmationDialog(
-          buildContext: context,
-          message: Localization()
-              .getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
-          positiveCallback: _onCreatePollConfirmed);
+      AppAlert.showConfirmationDialog(context,
+        message: Localization().getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
+        positiveCallback: _onCreatePollConfirmed
+      );
     }
   }
 
