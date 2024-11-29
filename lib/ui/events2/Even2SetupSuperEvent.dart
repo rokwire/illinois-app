@@ -221,6 +221,10 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
         updatedEventsSelection: _subEvents).then(
           (result) {
             setStateIfMounted(() => _applying = false);
+            if(result.successful)
+              AppAlert.showDialogResult(context, 'Successfully updated ${result.data} sub events');
+            else
+              AppAlert.showDialogResult(context, 'Unable to update: \n ${result.error}');
           });
     }
   }
