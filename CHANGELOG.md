@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Modify and load Posts, Comments and Reactions using Social BB (task in progress) [#4474](https://github.com/rokwire/illinois-app/issues/4474).
+
 ## [6.1.19] - 2024-11-26
 ### Fixed
 - Fixed "widget.title.tiny" text style name.
