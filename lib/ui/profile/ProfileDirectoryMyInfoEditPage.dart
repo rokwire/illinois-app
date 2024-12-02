@@ -266,15 +266,15 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
           ),
           child: Padding(padding: EdgeInsets.all(12),
             child: progress ? SizedBox(
-              width: _editButtonIconSize,
-              height: _editButtonIconSize,
+              width: _buttonIconSize,
+              height: _buttonIconSize,
               child: super.progressWidget,
             ) : icon
           ),
         )
       );
 
-    static const double _editButtonIconSize = 16;
+    static const double _buttonIconSize = 16;
 
     Widget get _nameWidget =>
       Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
@@ -570,7 +570,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
           if (enabled)
             InkWell(onTap: () => _onToggleTextEditing(field), child:
               Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
-                Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _editButtonIconSize)
+                Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
               )
             ),
         ])
@@ -586,7 +586,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       InkWell(onTap: onTap, child:
         Container(decoration: _controlDecoration, child:
           Padding(padding: EdgeInsets.all(15), child:
-            SizedBox(width: _editButtonIconSize, height: _editButtonIconSize, child:
+            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
               progress ? super.progressWidget : Center(child: icon,)
             ),
           )
@@ -603,13 +603,13 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       }
     }
 
-    Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
-    Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
-    Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _editButtonIconSize);
-    Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _editButtonIconSize);
-    Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _editButtonIconSize);
-    Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
-    Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+    Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+    Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+    Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+    Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+    Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+    Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+    Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
     //Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
     Decoration get _controlDecoration => BoxDecoration(

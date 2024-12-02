@@ -61,7 +61,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     else {
       return ProfileDirectoryMyInfoPreviewPage(
         contentType: widget.contentType,
-        previewProfile: _previewProfile,
+        profile: _previewProfile,
         photoImageToken: photoImageToken,
         onEditInfo: _onEditInfo,
       );

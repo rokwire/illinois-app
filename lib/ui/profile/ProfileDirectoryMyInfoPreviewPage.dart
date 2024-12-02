@@ -22,10 +22,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
   final MyProfileInfo contentType;
-  final Auth2UserProfile? previewProfile;
+  final Auth2UserProfile? profile;
   final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.previewProfile, this.photoImageToken, this.onEditInfo });
+  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.photoImageToken, this.onEditInfo });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPreviewPageState();
@@ -84,7 +84,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     }
   }
 
-  String? get _photoUrl => photoImageUrl(widget.previewProfile?.photoUrl);
+  String? get _photoUrl => photoImageUrl(widget.profile?.photoUrl);
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
@@ -109,7 +109,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
           ),
         ],),
         Padding(padding: EdgeInsets.only(top: 12), child:
-          DirectoryProfileDetails(widget.previewProfile)
+          DirectoryProfileDetails(widget.profile)
         ),
         _shareButton,
     ],)
@@ -117,16 +117,16 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   Widget get _cardContentHeading => Center(child:
     Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (widget.previewProfile?.pronunciationUrl?.isNotEmpty == true)
+      if (widget.profile?.pronunciationUrl?.isNotEmpty == true)
         _pronunciationButtonStaticContent(),
       Column(mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 16), child:
-          Text(widget.previewProfile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
+          Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
         ),
-        if (widget.previewProfile?.pronouns?.isNotEmpty == true)
-          Text(widget.previewProfile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+        if (widget.profile?.pronouns?.isNotEmpty == true)
+          Text(widget.profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
-      if (widget.previewProfile?.pronunciationUrl?.isNotEmpty == true)
+      if (widget.profile?.pronunciationUrl?.isNotEmpty == true)
         _pronunciationButton,
     ],),
   );
