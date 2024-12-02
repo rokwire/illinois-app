@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -658,7 +659,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
   void _onTapDeleteData() async {
     final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
-    int userPostCount = await Groups().getUserPostCount();
+    int userPostCount = await Social().getUserPostsCount();
     bool contributeInGroups = userPostCount > 0;
 
     SettingsDialog.show(context,
@@ -677,8 +678,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
           progressController(loading: true);
-          if(selectedValues.contains(groupsSwitchTitle)){
+          if (selectedValues.contains(groupsSwitchTitle)) {
             Groups().deleteUserData();
+            Social().deleteUser();
           }
           _deleteUserData().then((_){
             progressController(loading: false);

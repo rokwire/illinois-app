@@ -15,6 +15,7 @@
  */
 
 import 'package:collection/collection.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -59,7 +60,8 @@ extension CommentExt on Comment {
   String? get creatorId => creator?.accountId;
 }
 
-extension ReactionsResultExt on ReactionsResult {
-  int get likesCount => (likes?.count ?? 0);
-  bool get isLiked => (likes?.reacted ?? false);
+extension ReactionExt on Reaction {
+  String? get engagerName => engager?.name;
+  String? get engagerId => engager?.accountId;
+  bool get isCurrentUserReacted => (Auth2().accountId == engagerId);
 }
