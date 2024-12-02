@@ -320,8 +320,8 @@ class Event2SuperEventsController {
       String error = uploadResult?.error ?? "";
 
       if (CollectionUtils.isEmpty(updatedEventsSelection) && superEvent?.isSuperEvent == true) { //Mark Main event as regular event
-        Event2? updatedEventData = _createUpdatedEventData(superEvent!);
-        var mainEventResponse = updatedEventData != null ? await Events2().updateEvent(updatedEventData) : null;
+        Event2? updatedEventData = superEvent!.copyWithNullable(grouping: NullableValue.empty());
+        var mainEventResponse = await Events2().updateEvent(updatedEventData);
         error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
       }
 
@@ -342,8 +342,8 @@ class Event2SuperEventsController {
 
      String error = uploadResult?.error ?? "";
     if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
-      Event2? updatedEventData = _createUpdatedEventData(superEvent, grouping: Event2Grouping(type: Event2GroupingType.superEvent));
-      var mainEventResponse = updatedEventData != null ? await Events2().updateEvent(updatedEventData) : null;
+      Event2 updatedEventData = superEvent.copyWithNullable(grouping: NullableValue(Event2Grouping(type: Event2GroupingType.superEvent)));
+      var mainEventResponse = await Events2().updateEvent(updatedEventData);
       error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
     }
 
@@ -381,8 +381,8 @@ class Event2SuperEventsController {
       return Event2SuperEventUpdateResult.success(data: successCount); //nothing to upload
 
     for (final linkEvent in events!) {
-      Event2? updatedEventData = _createUpdatedEventData(linkEvent, grouping: grouping);
-      dynamic response = updatedEventData != null ? await Events2().updateEvent(updatedEventData) : null;
+      Event2? updatedEventData = linkEvent.copyWithNullable(grouping: NullableValue(grouping));
+      dynamic response = await Events2().updateEvent(updatedEventData);
       bool succeeded = response is Event2;
       if (succeeded) {
         successCount++;
@@ -395,27 +395,5 @@ class Event2SuperEventsController {
     return StringUtils.isEmpty(error) ?
     Event2SuperEventUpdateResult.success(data: successCount) :
     Event2SuperEventUpdateResult.fail(error);
-  }
-
-  static Event2? _createUpdatedEventData(Event2 event, {Event2Grouping? grouping, bool? published, Event2AuthorizationContext? authorizationContext, Event2Context? event2Context}) {
-    if (authorizationContext != null) {
-      event.authorizationContext = authorizationContext;
-    }
-    if (event2Context != null) {
-      event.context = event2Context;
-    }
-    // if (published != null) { //TBD
-    //   event.published = published;
-    // }
-
-    Map<String, dynamic> json = event.toJson();
-    if(grouping != null) //TBD better way?
-      json['grouping'] = grouping.toJson();
-    else
-      json['grouping'] = "";
-    if(!json.containsKey("role") || json["role"] == null) {
-      json["role"] = "admin";
-    }
-    return Event2.fromJson(json);
   }
 }

@@ -49,10 +49,11 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                 title: Localization().getStringEx('panel.event2.create.button.custom_notifications.title', 'CUSTOM NOTIFICATIONS'), //TBD localize
                 subTitle: Localization().getStringEx('panel.event2.create.button.custom_notifications.description', 'Create and schedule up to two custom Illinois app event notifications.'), //TBD localize
                 onTap: _onCustomNotifications),
-              _ButtonWidget(
-                title: 'SUPER EVENT',
-                subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
-                onTap: _onSuperEvent),
+              Visibility(visible: _showSuperEvent,
+                child:_ButtonWidget(
+                  title: 'SUPER EVENT',
+                  subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
+                  onTap: _onSuperEvent)),
               _ButtonWidget(
                 title: 'DOWNLOAD REGISTRANTS .csv',
                 onTap: _onDownloadRegistrants),
@@ -147,6 +148,8 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   }
 
   Event2? get _event => widget.event;
+
+  bool get _showSuperEvent =>_event?.isSuperEventChild == false;
 }
 
 class _ButtonWidget extends StatelessWidget{
