@@ -1169,13 +1169,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
         ))
     ]));
 
-      // Semantics(child: Container(
-      // padding: EdgeInsets.all(6),
-      // child: Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}",
-      //     semanticsLabel: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}",
-      //     textAlign: TextAlign.right,
-      //     style: Styles().textStyles.getTextStyle('widget.description.small.fat'))));
-
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
@@ -1190,14 +1183,16 @@ class _GroupPostCardState extends State<GroupPostCard> {
     int result = 0;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
-    List<GroupPost>? replies = null;
+    List<Comment>? replies = null;
     if (replies != null) {
-      bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
-      for (GroupPost? reply in replies) {
-        if ((reply!.private != true) || (memberOrAdmin == true)) {
-          result++;
-        }
-      }
+      //TBD: DD - implement comments count
+      // bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
+      // for (Comment? reply in replies) {
+      //   if ((reply!.private != true) || (memberOrAdmin == true)) {
+      //     result++;
+      //   }
+      // }
+      result = replies.length;
     }
     return result;
   }
@@ -1218,7 +1213,7 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onCardTap;
   final bool showRepliesCount;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1274,10 +1269,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   child: GroupReaction(
                     groupId: widget.group?.id,
                     entityId: widget.reply?.id,
-                    reactionSource: ReactionSource.comment,
-                    //TBD: DDGS - implement reply reactions
-                    // accountIDs: widget.reply?.reactions[thumbsUpReaction],
-                    accountIDs: null,
+                    reactionSource: SocialEntityType.comment,
                   ),
                 ),
                 Visibility(
@@ -1376,11 +1368,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 class GroupReaction extends StatefulWidget {
   final String? groupId;
   final String? entityId;
-  final ReactionSource reactionSource;
-  //TBD: DDGS - implement long press reaction
-  final List<String>? accountIDs;
+  final SocialEntityType reactionSource;
 
-  GroupReaction({required this.groupId, this.entityId, required this.reactionSource, this.accountIDs});
+  GroupReaction({required this.groupId, this.entityId, required this.reactionSource});
 
   @override
   State<GroupReaction> createState() => _GroupReactionState();
@@ -1388,7 +1378,7 @@ class GroupReaction extends StatefulWidget {
 
 class _GroupReactionState extends State<GroupReaction> {
 
-  ReactionsResult? _reactions;
+  List<Reaction>? _reactions;
   bool _loading = false;
 
   @override
@@ -1399,7 +1389,6 @@ class _GroupReactionState extends State<GroupReaction> {
 
   @override
   Widget build(BuildContext context) {
-    bool selected = _reactions?.isLiked ?? false;
     return Semantics(
         button: true,
         label: Localization().getStringEx('widget.group.card.reaction.thumbs_up.label', 'thumbs-up'),
@@ -1412,10 +1401,10 @@ class _GroupReactionState extends State<GroupReaction> {
               onTap: _onTapReaction,
               onLongPress: _onLongPressReactions,
               child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
-                Styles().images.getImage(selected ? 'thumbs-up-filled' : 'thumbs-up-outline-gray', excludeFromSemantics: true) ??
+                Styles().images.getImage(_isCurrentUserReacted ? 'thumbs-up-filled' : 'thumbs-up-outline-gray', excludeFromSemantics: true) ??
                     Container(),
                 Visibility(
-                    visible: widget.accountIDs != null && widget.accountIDs!.length > 0,
+                    visible: _hasReactions,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Text(_reactionsCountLabel, style: Styles().textStyles.getTextStyle("widget.button.title.small")),
@@ -1445,25 +1434,24 @@ class _GroupReactionState extends State<GroupReaction> {
     });
   }
 
-  //TBD: DDGS - implement long press reaction to list reacted users
-  void _onLongPressReactions() async {
-    if (CollectionUtils.isEmpty(widget.accountIDs) || StringUtils.isEmpty(widget.groupId)) {
+  void _onLongPressReactions() {
+    if (!_hasReactions) {
       return;
     }
     Analytics().logSelect(target: 'Reactions List');
 
     List<Widget> reactions = [];
-    List<Member>? members = await Groups().loadMembers(groupId: widget.groupId, userIds: widget.accountIDs);
-    for (Member member in members ?? []) {
+    for (Reaction reaction in _reactions!) {
       reactions.add(Padding(
         padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            // Currently we have only likes
             Styles().images.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
-            Text(member.displayShortName, style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+            Text(StringUtils.ensureNotEmpty(reaction.engagerName), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
           ],
         ),
       ));
@@ -1509,9 +1497,23 @@ class _GroupReactionState extends State<GroupReaction> {
     });
   }
 
+  int get _reactionsCount => (_reactions?.length ?? 0);
+
+  bool get _hasReactions => (_reactionsCount > 0);
+
   String get _reactionsCountLabel {
-    int reactionsCount = _reactions?.likesCount ?? 0;
-    return (reactionsCount > 0) ? reactionsCount.toString() : '';
+    return _hasReactions ? _reactionsCount.toString() : '';
+  }
+
+  bool get _isCurrentUserReacted {
+    if (_hasReactions) {
+      for (Reaction reaction in _reactions!) {
+        if (reaction.isCurrentUserReacted) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   bool get _hasEntityId => (widget.entityId != null);
