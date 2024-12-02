@@ -34,6 +34,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
   @override
   void initState() {
+    super.photoImageToken = ProfileDirectoryMyInfoDateTimeUtils.imageToken;
     _loadProfileAndPrivacy();
     super.initState();
   }
@@ -53,6 +54,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
+          photoImageToken: photoImageToken,
           onFinishEdit: _onFinishEditInfo,
       );
     }
@@ -60,6 +62,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       return ProfileDirectoryMyInfoPreviewPage(
         contentType: widget.contentType,
         previewProfile: _previewProfile,
+        photoImageToken: photoImageToken,
         onEditInfo: _onEditInfo,
       );
     }
@@ -109,7 +112,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     });
   }
 
-  void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy}) {
+  void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, String? photoImageToken }) {
     setStateIfMounted((){
       if (profile != null) {
         _profile = profile;
@@ -117,6 +120,10 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
       if (privacy != null) {
         _privacy = privacy;
+      }
+
+      if (photoImageToken != null) {
+        super.photoImageToken = photoImageToken;
       }
 
       if ((profile != null) || (privacy != null)) {
@@ -145,10 +152,10 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   // Photo Image
 
   static const String _photoImageKey = 'edu.illinois.rokwire.token';
-  String photoImageToken = ProfileDirectoryMyInfoDateTimeUtils.imageToken;
+  String? photoImageToken;
 
-  String? photoImageUrl(String? photoUrl) => (photoUrl != null) ?
-    UrlUtils.addQueryParameters(photoUrl, { _photoImageKey : photoImageToken}) : null;
+  String? photoImageUrl(String? photoUrl) => ((photoUrl != null) && (photoImageToken != null)) ?
+    UrlUtils.addQueryParameters(photoUrl, { _photoImageKey : photoImageToken ?? ''}) : photoUrl;
 
   Map<String, String> get photoImageHeaders => <String, String>{
     HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",

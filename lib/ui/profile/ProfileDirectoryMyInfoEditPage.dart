@@ -26,8 +26,10 @@ class ProfileDirectoryMyInfoEditPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
-  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy})? onFinishEdit;
-  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.onFinishEdit });
+  final String? photoImageToken;
+  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, String? photoImageToken})? onFinishEdit;
+
+  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageToken, this.onFinishEdit });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoEditPageState();
@@ -70,6 +72,8 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     );
 
     _fieldVisibilities.addAll(_profileVisibility.fieldsVisibility);
+
+    super.photoImageToken = widget.photoImageToken;
 
     super.initState();
   }
@@ -699,6 +703,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             widget.onFinishEdit?.call(
               profile: (profileResult == true) ? profile : null,
               privacy: (privacyResult == true) ? privacy : null,
+              photoImageToken: (widget.photoImageToken != photoImageToken) ? photoImageToken : null,
             );
           }
           else {
@@ -707,7 +712,9 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         }
       }
       else {
-        widget.onFinishEdit?.call();
+        widget.onFinishEdit?.call(
+          photoImageToken: (widget.photoImageToken != photoImageToken) ? photoImageToken : null,
+        );
       }
     }
 

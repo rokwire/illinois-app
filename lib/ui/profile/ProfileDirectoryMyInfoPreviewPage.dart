@@ -19,8 +19,9 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? previewProfile;
+  final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.previewProfile, this.onEditInfo });
+  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.previewProfile, this.photoImageToken, this.onEditInfo });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPreviewPageState();
@@ -29,6 +30,17 @@ class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
 class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPreviewPage> {
 
   bool _preparingDeleteAccount = false;
+
+  @override
+  void initState() {
+    super.photoImageToken = widget.photoImageToken;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) =>
