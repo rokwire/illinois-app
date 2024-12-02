@@ -1095,8 +1095,8 @@
     "icon-recording": {"src": "images/icon-recording.png", "type": "flutter.asset"},
     "icon-play": {"src": "images/icon-play.png", "type": "flutter.asset"},
     "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
-    "icon-soundbyte": {"src": "0xf6a8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
-    "icon-soundbyte-play": {"src": "0xf028", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "volume": {"src": "0xf6a8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "volume-high": {"src": "0xf028", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
 
     "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
 

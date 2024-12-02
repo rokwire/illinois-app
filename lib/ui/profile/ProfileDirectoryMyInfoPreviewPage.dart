@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
@@ -8,8 +9,11 @@ import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/AudioUtils.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -30,6 +34,8 @@ class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
 class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPreviewPage> {
 
   bool _preparingDeleteAccount = false;
+  bool _initializingAudioPlayer = false;
+  AudioPlayer? _audioPlayer;
 
   @override
   void initState() {
@@ -39,6 +45,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   @override
   void dispose() {
+    _audioPlayer?.dispose();
     super.dispose();
   }
 
@@ -112,10 +119,114 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   Widget get _cardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(widget.previewProfile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
+      _nameWidget,
       if (widget.previewProfile?.pronouns?.isNotEmpty == true)
         Text(widget.previewProfile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
+
+  Widget get _nameWidget => (widget.previewProfile?.pronunciationUrl?.isNotEmpty == true) ?
+    Row(mainAxisSize: MainAxisSize.min, children: [
+      _nameTextWidget,
+      _pronunciationButton,
+    ],) : _nameTextWidget;
+
+  Widget get _nameTextWidget =>
+    Text(widget.previewProfile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
+
+  Widget get _pronunciationButton => InkWell(onTap: _onPronunciation, child:
+    _pronunciationButtonContent
+  );
+
+  Widget? get _pronunciationButtonContent =>
+    _initializingAudioPlayer ? _pronunciationButtonInitializingContent : _pronunciationButtonPlaybackContent;
+
+  Widget get _pronunciationButtonInitializingContent =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 18), child:
+      SizedBox(width: _pronunciationButtonIconSize, height: _pronunciationButtonIconSize, child:
+        super.progressWidget
+      ),
+    );
+
+  Widget get _pronunciationButtonPlaybackContent =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: _pronunciationPlaying ? 13 : 14, vertical: 18), child:
+      Styles().images.getImage(_pronunciationPlaying ? 'volume-high' : 'volume', size: _pronunciationButtonIconSize),
+    );
+
+  bool get _pronunciationPlaying =>
+    _audioPlayer?.playing == true;
+
+  static const double _pronunciationButtonIconSize = 16;
+
+  void _onPronunciation() async {
+    Analytics().logSelect(target: 'pronunciation');
+
+    if (_audioPlayer == null) {
+      if (_initializingAudioPlayer == false) {
+        setState(() {
+          _initializingAudioPlayer = true;
+        });
+
+        AudioResult? result = await Content().loadUserNamePronunciation(accountId: Auth2().accountId);
+
+        if (mounted) {
+          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+          if (audioData != null) {
+            _audioPlayer = AudioPlayer();
+
+            _audioPlayer?.playerStateStream.listen((PlayerState state) {
+              if ((state.processingState == ProcessingState.completed) && mounted) {
+                setState(() {
+                  _audioPlayer?.dispose();
+                  _audioPlayer = null;
+                });
+              }
+            });
+
+            Duration? duration;
+            try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
+            catch(e) {}
+
+            if (mounted) {
+              if ((duration != null) && (duration.inMilliseconds > 0)) {
+                setState(() {
+                  _initializingAudioPlayer = false;
+                  _audioPlayer?.play();
+                });
+              }
+              else {
+                _handlePronunciationPlaybackError();
+              }
+            }
+          }
+          else {
+            _handlePronunciationPlaybackError();
+          }
+        }
+      }
+      else {
+        // ignore taps while initializing
+      }
+    }
+    else if (_audioPlayer?.playing == true) {
+      setState(() {
+        _audioPlayer?.pause();
+      });
+    }
+    else {
+      setState(() {
+        _audioPlayer?.play();
+      });
+    }
+  }
+
+  void _handlePronunciationPlaybackError() {
+    setState(() {
+      _initializingAudioPlayer = false;
+      _audioPlayer?.dispose();
+      _audioPlayer = null;
+    });
+    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.playback.failed.text', 'Failed to play audio stream.'));
+  }
 
   Widget get _commandBar {
     switch (widget.contentType) {

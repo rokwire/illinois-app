@@ -305,20 +305,20 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     Widget get _pronunciationEditBar => Row(children: [
       Wrap( spacing: 6, runSpacing: 6, children: [
-        _pronunciationPreviewButton,
+        _pronunciationPlayButton,
         _pronunciationEditButton,
         _pronunciationDeleteButton,
         _visibilityButton(_ProfileField.pronunciationUrl),
       ],)
     ],);
 
-    Widget get _pronunciationPreviewButton => _iconButton(
-      icon: _pronunciationPreviewIcon,
+    Widget get _pronunciationPlayButton => _iconButton(
+      icon: _pronunciationPlayIcon,
       progress: _initializingAudioPlayer,
-      onTap: _onPreviewPronunciation,
+      onTap: _onPlayPronunciation,
     );
 
-    Widget? get _pronunciationPreviewIcon => (_audioPlayer?.playing == true) ? _pauseIcon : _playIcon;
+    Widget? get _pronunciationPlayIcon => (_audioPlayer?.playing == true) ? _pauseIcon : _playIcon;
 
     Widget get _pronunciationEditButton => _iconButton(
       icon: _editIcon,
@@ -379,46 +379,52 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       });
     }
 
-    void _onPreviewPronunciation() async {
+    void _onPlayPronunciation() async {
       if (_audioPlayer == null) {
-        setState(() {
-          _initializingAudioPlayer = true;
-        });
+        if (_initializingAudioPlayer == false) {
+          setState(() {
+            _initializingAudioPlayer = true;
+          });
 
-        AudioResult? result = await Content().loadUserNamePronunciation(accountId: Auth2().accountId);
-        if (mounted) {
-          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
-          if (audioData != null) {
-            _audioPlayer = AudioPlayer();
+          AudioResult? result = await Content().loadUserNamePronunciation(accountId: Auth2().accountId);
 
-            _audioPlayer?.playerStateStream.listen((PlayerState state) {
-              if ((state.processingState == ProcessingState.completed) && mounted) {
-                setState(() {
-                  _audioPlayer?.dispose();
-                  _audioPlayer = null;
-                });
-              }
-            });
+          if (mounted) {
+            Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+            if (audioData != null) {
+              _audioPlayer = AudioPlayer();
 
-            Duration? duration;
-            try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
-            catch(e) {}
+              _audioPlayer?.playerStateStream.listen((PlayerState state) {
+                if ((state.processingState == ProcessingState.completed) && mounted) {
+                  setState(() {
+                    _audioPlayer?.dispose();
+                    _audioPlayer = null;
+                  });
+                }
+              });
 
-            if (mounted) {
-              if ((duration != null) && (duration.inMilliseconds > 0)) {
-                setState(() {
-                  _initializingAudioPlayer = false;
-                  _audioPlayer?.play();
-                });
-              }
-              else {
-                _handlePronunciationPlaybackError();
+              Duration? duration;
+              try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
+              catch(e) {}
+
+              if (mounted) {
+                if ((duration != null) && (duration.inMilliseconds > 0)) {
+                  setState(() {
+                    _initializingAudioPlayer = false;
+                    _audioPlayer?.play();
+                  });
+                }
+                else {
+                  _handlePronunciationPlaybackError();
+                }
               }
             }
+            else {
+              _handlePronunciationPlaybackError();
+            }
           }
-          else {
-            _handlePronunciationPlaybackError();
-          }
+        }
+        else {
+          // ignore taps while initializing
         }
       }
       else if (_audioPlayer?.playing == true) {

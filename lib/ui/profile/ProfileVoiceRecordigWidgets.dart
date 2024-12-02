@@ -109,7 +109,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   );
 
   Widget get _pronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
-    Styles().images.getImage('icon-soundbyte', excludeFromSemantics: true),
+    Styles().images.getImage('volume', excludeFromSemantics: true),
   );
 
   Widget get _addPronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
