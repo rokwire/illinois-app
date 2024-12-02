@@ -189,7 +189,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin;
   }
 
-  bool get _canReportAbuse => true;  //Even non members car report the group
+  bool get _canReportAbuse => StringUtils.isNotEmpty(_groupId);  // Even non members car report the group. Allow reporting abuse only to existing groups
 
 
   bool get _canDeleteGroup {
@@ -1970,6 +1970,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
+    if (!_canReportAbuse) {
+      debugPrint('Missing group id - user is not allowed to report abuse.');
+      return;
+    }
     String? analyticsTarget;
     if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
       analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
@@ -1982,7 +1986,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     Analytics().logSelect(target: analyticsTarget);
 
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: widget.group?.id)));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _groupId!)));
   }
 
   /*void _onTapTakeAttendance() {

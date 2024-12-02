@@ -21,11 +21,11 @@ class GroupPostReportAbuseOptions {
 
 class GroupPostReportAbusePanel extends StatefulWidget {
   final GroupPostReportAbuseOptions options;
-  final String? groupId;
+  final String groupId;
   final String? socialEntityId;
   final SocialEntityType? socialEntityType;
 
-  GroupPostReportAbusePanel({Key? key, required this.options, this.groupId, this.socialEntityId, this.socialEntityType}) : super(key: key);
+  GroupPostReportAbusePanel({Key? key, required this.options, required this.groupId, this.socialEntityId, this.socialEntityType}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupPostReportAbusePanelState();
@@ -204,14 +204,7 @@ class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
         _onReport(result);
       });
     } else {
-      Groups()
-          .reportAbuse(
-        groupId: widget.groupId,
-        comment: _commentController.text,
-        reportToDeanOfStudents: widget.options.reportToDeanOfStudents,
-        reportToGroupAdmins: widget.options.reportToGroupAdmins,
-      )
-          .then((bool result) {
+      Groups().reportGroupAbuse(groupId: widget.groupId, comment: _commentController.text).then((bool result) {
         _onReport(result);
       });
     }
