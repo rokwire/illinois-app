@@ -268,7 +268,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             child: progress ? SizedBox(
               width: _buttonIconSize,
               height: _buttonIconSize,
-              child: super.progressWidget,
+              child: DirectoryProgressWidget(),
             ) : icon
           ),
         )
@@ -587,7 +587,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         Container(decoration: _controlDecoration, child:
           Padding(padding: EdgeInsets.all(15), child:
             SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-              progress ? super.progressWidget : Center(child: icon,)
+              progress ? DirectoryProgressWidget() : Center(child: icon,)
             ),
           )
         )

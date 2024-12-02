@@ -166,11 +166,6 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  // Progress Widget
-
-  Widget get progressWidget =>
-    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,);
-
   // Positive and Permited visibility
 
   static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
