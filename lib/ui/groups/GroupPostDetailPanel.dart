@@ -457,6 +457,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             child: Padding(
               padding: EdgeInsets.only(left: leftPaddingOffset),
               child: GroupReplyCard(
+                onCardTap: () => {}, // Do not allow nested comments
                 reply: reply,
                 post: widget.post,
                 group: widget.group,
