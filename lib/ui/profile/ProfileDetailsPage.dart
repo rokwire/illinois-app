@@ -680,7 +680,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           progressController(loading: true);
           if (selectedValues.contains(groupsSwitchTitle)) {
             Groups().deleteUserData();
-            Social().deleteContributions();
+            Social().deleteUser();
           }
           _deleteUserData().then((_){
             progressController(loading: false);

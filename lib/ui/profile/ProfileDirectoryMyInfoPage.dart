@@ -325,7 +325,7 @@ class _ProfileDirectoryMyInfoPageState extends State<ProfileDirectoryMyInfoPage>
                 Analytics().logAlert(text: "Remove My Information", selection: "Yes");
                 progressController(loading: true);
                 if (selectedValues.contains(groupsSwitchTitle)){
-                  Future.wait([Groups().deleteUserData(), Social().deleteContributions()]);
+                  Future.wait([Groups().deleteUserData(), Social().deleteUser()]);
                 }
                 await Auth2().deleteUser();
                 progressController(loading: false);
