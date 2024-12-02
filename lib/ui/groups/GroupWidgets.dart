@@ -1183,14 +1183,16 @@ class _GroupPostCardState extends State<GroupPostCard> {
     int result = 0;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
-    List<GroupPost>? replies = null;
+    List<Comment>? replies = null;
     if (replies != null) {
-      bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
-      for (GroupPost? reply in replies) {
-        if ((reply!.private != true) || (memberOrAdmin == true)) {
-          result++;
-        }
-      }
+      //TBD: DD - implement comments count
+      // bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
+      // for (Comment? reply in replies) {
+      //   if ((reply!.private != true) || (memberOrAdmin == true)) {
+      //     result++;
+      //   }
+      // }
+      result = replies.length;
     }
     return result;
   }
