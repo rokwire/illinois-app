@@ -46,19 +46,19 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   Widget build(BuildContext context) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: [
-        Text(_previewDesriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+        Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
         Padding(padding: EdgeInsets.only(top: 24), child:
             Stack(children: [
-              Padding(padding: EdgeInsets.only(top: _previewPhotoImageSize / 2), child:
-                _previewCardWidget,
+              Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+                _cardWidget,
               ),
               Center(child:
-                DirectoryProfilePhoto(_previewPhotoUrl, imageSize: _previewPhotoImageSize, headers: photoImageHeaders,),
+                DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: photoImageHeaders,),
               )
             ])
         ),
         Padding(padding: EdgeInsets.only(top: 24), child:
-          _previewCommandBar,
+          _commandBar,
         ),
         Padding(padding: EdgeInsets.only(top: 8), child:
           _signOutButton,
@@ -70,36 +70,36 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
       ],),
     );
 
-  String get _previewDesriptionText {
+  String get _desriptionText {
     switch (widget.contentType) {
       case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.preview.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
       case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.preview.description.text', 'Preview of how your profile displays in the directory.');
     }
   }
 
-  String? get _previewPhotoUrl => photoImageUrl(widget.previewProfile?.photoUrl);
+  String? get _photoUrl => photoImageUrl(widget.previewProfile?.photoUrl);
 
-  double get _previewPhotoImageSize => MediaQuery.of(context).size.width / 3;
+  double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
-  Widget get _previewCardWidget => Container(
+  Widget get _cardWidget => Container(
     decoration: BoxDecoration(
       color: Styles().colors.white,
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(16)),
       boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
     ),
-    child: Padding(padding: EdgeInsets.only(top: _previewPhotoImageSize / 2), child:
-      _previewCardContent
+    child: Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+      _cardContent
     ),
   );
 
-  Widget get _previewCardContent =>
+  Widget get _cardContent =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 12), child:
           Row(children: [
             Expanded(child:
-              _previewCardContentHeading,
+              _cardContentHeading,
             ),
           ],),
         ),
@@ -110,14 +110,14 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     ],)
   );
 
-  Widget get _previewCardContentHeading =>
+  Widget get _cardContentHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
       Text(widget.previewProfile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
       if (widget.previewProfile?.pronouns?.isNotEmpty == true)
         Text(widget.previewProfile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
     ]);
 
-  Widget get _previewCommandBar {
+  Widget get _commandBar {
     switch (widget.contentType) {
       case MyProfileInfo.myConnectionsInfo: return _myConnectionsInfoCommandBar;
       case MyProfileInfo.myDirectoryInfo: return _myDirectoryInfoCommandBar;
