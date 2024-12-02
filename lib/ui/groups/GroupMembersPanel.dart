@@ -379,10 +379,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _onTapApproveAll(){
-    AppAlert.showConfirmationDialog(  buildContext: context,
-        message: Localization()
-            .getStringEx('', 'Do you want to approve all pending user requests?'),
-        positiveCallback: _onTapConfirmApproveAll);
+    AppAlert.showConfirmationDialog(context,
+      message: Localization().getStringEx('', 'Do you want to approve all pending user requests?'),
+      positiveCallback: _onTapConfirmApproveAll
+    );
   }
 
   _onTapConfirmApproveAll(){

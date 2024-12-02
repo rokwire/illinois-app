@@ -126,15 +126,15 @@ class AppAlert {
       );
     },);
 
-  static Future<bool> showConfirmationDialog(
-      {required BuildContext buildContext,
+  static Future<bool> showConfirmationDialog(BuildContext context, {
       required String message,
       String? positiveButtonLabel,
       VoidCallback? positiveCallback,
+      String? negativeButtonLabel,
       VoidCallback? negativeCallback,
-      String? negativeButtonLabel}) async {
+  }) async {
     bool alertDismissed = await showDialog(
-        context: buildContext,
+        context: context,
         builder: (context) {
           return AlertDialog(content: Text(message), actions: <Widget>[
             TextButton(
