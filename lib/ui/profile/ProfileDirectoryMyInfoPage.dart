@@ -164,7 +164,7 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   // Name Text Style
 
   TextStyle? get nameTextStyle =>
-    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85);
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
   // Progress Widget
 

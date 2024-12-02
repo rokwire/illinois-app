@@ -101,15 +101,13 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   );
 
   Widget get _cardContent =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Padding(padding: EdgeInsets.only(top: 12), child:
-          Row(children: [
-            Expanded(child:
-              _cardContentHeading,
-            ),
-          ],),
-        ),
+        Row(children: [
+          Expanded(child:
+            _cardContentHeading,
+          ),
+        ],),
         Padding(padding: EdgeInsets.only(top: 12), child:
           DirectoryProfileDetails(widget.previewProfile)
         ),
@@ -117,21 +115,21 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     ],)
   );
 
-  Widget get _cardContentHeading =>
-    Column(mainAxisSize: MainAxisSize.min, children: [
-      _nameWidget,
-      if (widget.previewProfile?.pronouns?.isNotEmpty == true)
-        Text(widget.previewProfile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small')),
-    ]);
-
-  Widget get _nameWidget => (widget.previewProfile?.pronunciationUrl?.isNotEmpty == true) ?
-    Row(mainAxisSize: MainAxisSize.min, children: [
-      _nameTextWidget,
-      _pronunciationButton,
-    ],) : _nameTextWidget;
-
-  Widget get _nameTextWidget =>
-    Text(widget.previewProfile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
+  Widget get _cardContentHeading => Center(child:
+    Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (widget.previewProfile?.pronunciationUrl?.isNotEmpty == true)
+        _pronunciationButtonStaticContent(),
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          Text(widget.previewProfile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
+        ),
+        if (widget.previewProfile?.pronouns?.isNotEmpty == true)
+          Text(widget.previewProfile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+      ]),
+      if (widget.previewProfile?.pronunciationUrl?.isNotEmpty == true)
+        _pronunciationButton,
+    ],),
+  );
 
   Widget get _pronunciationButton => InkWell(onTap: _onPronunciation, child:
     _pronunciationButtonContent
@@ -141,14 +139,17 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     _initializingAudioPlayer ? _pronunciationButtonInitializingContent : _pronunciationButtonPlaybackContent;
 
   Widget get _pronunciationButtonInitializingContent =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 18), child:
-      SizedBox(width: _pronunciationButtonIconSize, height: _pronunciationButtonIconSize, child:
-        super.progressWidget
-      ),
-    );
+    _pronunciationButtonStaticContent(child: super.progressWidget);
+
+  Widget _pronunciationButtonStaticContent({Widget? child}) =>
+      Padding(padding: EdgeInsets.symmetric(horizontal: 13, vertical: 18), child:
+        SizedBox(width: _pronunciationButtonIconSize, height: _pronunciationButtonIconSize, child:
+          child
+        ),
+      );
 
   Widget get _pronunciationButtonPlaybackContent =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: _pronunciationPlaying ? 13 : 14, vertical: 18), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: _pronunciationPlaying ? 11 : 12, vertical: 18), child:
       Styles().images.getImage(_pronunciationPlaying ? 'volume-high' : 'volume', size: _pronunciationButtonIconSize),
     );
 
