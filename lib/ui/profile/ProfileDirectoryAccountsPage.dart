@@ -13,7 +13,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
-  ProfileDirectoryAccountsPage({super.key, required this.contentType});
+  final ScrollController? scrollController;
+  ProfileDirectoryAccountsPage({super.key, required this.contentType, this.scrollController});
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryAccountsPageState();
@@ -21,31 +22,31 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
 
 class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage>  {
 
+  Map<String, List<Auth2PublicAccount>> _accountsMap = <String, List<Auth2PublicAccount>>{};
+  String _searchText = '';
+  String? _errorText;
   bool _loading = false;
-  Map<String, List<Auth2PublicAccount>>? _accounts;
+  bool _extending = false;
+  bool _canExtend = false;
+  static const int _pageLength = 32;
+
   String? _expandedAccountId;
 
-  late TextEditingController _searchTextController;
-  late FocusNode _searchFocusNode;
+  final TextEditingController _searchTextController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
 
   @override
   void initState() {
-    _loading = true;
-    _searchTextController = TextEditingController();
-    _searchFocusNode = FocusNode();
-    Auth2().loadDirectoryAccounts().then((List<Auth2PublicAccount>? accounts){
-      setStateIfMounted(() {
-        _loading = false;
-        _accounts = (accounts != null) ? _buildAccounts(accounts) : null;
-      });
-    });
-
+    widget.scrollController?.addListener(_scrollListener);
+    _load();
     super.initState();
   }
 
+
   @override
   void dispose() {
+    widget.scrollController?.removeListener(_scrollListener);
     _searchTextController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -53,26 +54,29 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> contentList = <Widget>[
+      _searchBarWidget,
+    ];
     if (_loading) {
-      return _loadingContent;
+      contentList.add(_loadingContent);
     }
-    else if (_accounts == null) {
-      return _messageContent(_failedText);
+    else if (_errorText != null) {
+      contentList.add(_messageContent(_errorText ?? ''));
     }
-    else if (_accounts?.isEmpty == true) {
-      return _messageContent(_emptyText);
+    else if (_accountsMap.isEmpty) {
+      contentList.add(_messageContent(_emptyText));
     }
     else {
-      return _accountsContent;
+      contentList.add(_accountsContent);
     }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
   Widget get _accountsContent {
-    List<Widget> sections = <Widget>[
-      _searchBarWidget,
-    ];
+    List<Widget> sections = <Widget>[];
+
     int? firstCharCode, lastCharCode;
-    _accounts?.forEach((key, value){
+    _accountsMap.forEach((key, value){
       int charCode = key.codeUnits.first;
       if ((firstCharCode == null) || (charCode < firstCharCode!)) {
         firstCharCode = charCode;
@@ -81,15 +85,21 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
         lastCharCode = charCode;
       }
     });
+
     if ((firstCharCode != null) && (lastCharCode != null)) {
       for (int charCode = firstCharCode!; charCode <= lastCharCode!; charCode++) {
         String dirEntry = String.fromCharCode(charCode);
-        List<Auth2PublicAccount>? accounts = _accounts?[dirEntry];
+        List<Auth2PublicAccount>? accounts = _accountsMap[dirEntry];
         if (accounts != null) {
           sections.addAll(_accountsSection(dirEntry, accounts));
         }
       }
     }
+
+    if (_extending) {
+      sections.add(_extendingIndicator);
+    }
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: sections);
   }
 
@@ -183,6 +193,15 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
+  Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+    Align(alignment: Alignment.center, child:
+      SizedBox(width: 24, height: 24, child:
+        DirectoryProgressWidget()
+      ),
+    ),
+  );
+
+
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:
       SizedBox(width: 32, height: 32, child:
@@ -211,7 +230,85 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     }
   }
 
-  Map<String, List<Auth2PublicAccount>> _buildAccounts(List<Auth2PublicAccount> accounts) {
+  void _scrollListener() {
+    ScrollController? scrollController = widget.scrollController;
+    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend && !_loading && !_extending) {
+      _extend();
+    }
+  }
+
+  Future<void> _load({ int limit = _pageLength }) async {
+    if (!_loading) {
+      setStateIfMounted(() {
+        _loading = true;
+        _extending = false;
+      });
+
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(_searchText),
+        limit: limit
+      );
+
+      setStateIfMounted(() {
+        _loading = false;
+        if (accounts != null) {
+          _accountsMap = _buildAccounts(accounts);
+          _errorText = null;
+          _canExtend = (accounts.length >= limit);
+        }
+        else {
+          _accountsMap.clear();
+          _errorText = _failedText;
+          _canExtend = false;
+        }
+      });
+    }
+  }
+
+  Future<void> _extend() async {
+    if (!_loading && !_extending) {
+      setStateIfMounted(() {
+        _extending = true;
+      });
+    }
+
+    List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+      search: StringUtils.ensureEmpty(_searchText),
+      offset: _accountsCount,
+      limit: _pageLength
+    );
+
+    if (mounted && _extending && !_loading) {
+      setState(() {
+        if (accounts != null) {
+          _addAccounts(_buildAccounts(accounts));
+          _canExtend = (accounts.length >= _pageLength);
+          _errorText = null;
+        }
+        _extending = false;
+      });
+    }
+  }
+
+  int get _accountsCount {
+    int accountsCount = 0;
+    for (List<Auth2PublicAccount> entries in _accountsMap.values) {
+      accountsCount += entries.length;
+    }
+    return accountsCount;
+  }
+
+  void _addAccounts(Map<String, List<Auth2PublicAccount>> accountsMap) {
+    for (String code in accountsMap.keys) {
+      List<Auth2PublicAccount>? accounts = accountsMap[code];
+      if ((accounts != null) && accounts.isNotEmpty) {
+        List<Auth2PublicAccount> codeAccounts = _accountsMap[code] ??= <Auth2PublicAccount>[];
+        codeAccounts.addAll(accounts);
+      }
+    }
+  }
+
+  static Map<String, List<Auth2PublicAccount>> _buildAccounts(List<Auth2PublicAccount> accounts) {
     Map<String, List<Auth2PublicAccount>> result = <String, List<Auth2PublicAccount>>{};
     for (Auth2PublicAccount account in accounts) {
       String mapKey = ((account.profile?.lastName?.isNotEmpty == true) ? account.profile?.lastName?.substring(0, 1).toUpperCase() : null) ?? ' ';
@@ -235,11 +332,25 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   void _onTapClear() {
     Analytics().logSelect(target: 'Search Clear');
-    _searchTextController.text = '';
+    if (_searchText.isNotEmpty) {
+      setState(() {
+        _searchTextController.text = _searchText = '';
+      });
+      _searchFocusNode.unfocus();
+      _load();
+    }
+
   }
 
   void _onTapSearch() {
     Analytics().logSelect(target: 'Search Text');
+    if (_searchText != _searchTextController.text) {
+      setState(() {
+        _searchText = _searchTextController.text;
+      });
+      _searchFocusNode.unfocus();
+      _load();
+    }
   }
 
 }
