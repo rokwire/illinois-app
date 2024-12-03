@@ -10,6 +10,7 @@ import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/directory.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -80,7 +81,11 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryProfilePhoto(widget.account.profile?.photoUrl, imageSize: _photoImageSize, borderSize: 12,)
+            DirectoryProfilePhoto(widget.account.profile?.photoUrl,
+              imageSize: _photoImageSize,
+              headers: _photoImageHeaders,
+              borderSize: 12,
+            )
           ),
         ),
         //Container(width: 32,),
@@ -88,6 +93,10 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
     );
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+
+  Map<String, String> get _photoImageHeaders => <String, String>{
+    HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
+  };
 
   Widget get _collapsedContent =>
     InkWell(onTap: widget.onToggleExpanded, child:
