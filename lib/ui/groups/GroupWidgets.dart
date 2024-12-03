@@ -2632,7 +2632,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _loadImage() {
     if (StringUtils.isNotEmpty(widget.userId)) {
       _setImageLoading(true);
-      Content().loadSmallUserProfileImage(accountId: widget.userId).then((imageBytes) {
+      Content().loadSmallUserPhoto(accountId: widget.userId).then((imageBytes) {
         _imageBytes = imageBytes;
         _setImageLoading(false);
       });
@@ -2642,14 +2642,9 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _onImageTap() {
     Analytics().logSelect(target: "Group Member Image");
     if (_imageBytes != null) {
-      String? imageUrl = Content().getUserProfileImage(accountId: widget.userId, type: UserProfileImageType.defaultType);
+      String? imageUrl = Content().getUserPhotoUrl(accountId: widget.userId, type: UserProfileImageType.defaultType);
       if (StringUtils.isNotEmpty(imageUrl)) {
-        Navigator.push(
-            context,
-            PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (context, _, __) =>
-                    ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
       }
     }
   }
