@@ -182,7 +182,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onConnectNetIdClicked() {
     Analytics().logSelect(target: "Connect netId");
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
@@ -203,7 +203,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: _popToMe),),);
@@ -382,45 +382,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     } else if (Auth2().isEmailLoggedIn) {
       Analytics().logSelect(target: "Disconnect email");
     }
-    showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
-  }
-
-  Widget _buildLogoutDialog(BuildContext context) {
-    return Dialog(child:
-      Padding(padding: EdgeInsets.all(18), child:
-        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-            style: Styles().textStyles.getTextStyle("widget.message.dark.extra_large"),
-          ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-            Text(Localization().getStringEx("panel.settings.home.logout.message", _promptEn), textAlign: TextAlign.left,
-              style: Styles().textStyles.getTextStyle("widget.message.dark.medium")
-            ),
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            TextButton(onPressed: _onConfirmLogout, child:
-              Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))
-            ),
-            TextButton(onPressed: _onRejectLogout, child:
-              Text(Localization().getStringEx("panel.settings.home.logout.no", "No"))
-            )
-          ],),
-        ],),
-      ),
-    );
-  }
-
-  static const String _promptEn = 'Are you sure you want to sign out?';
-
-  void _onConfirmLogout() {
-    Analytics().logAlert(text: _promptEn, selection: "Yes");
-    Navigator.pop(context);
-    Auth2().logout();
-  }
-
-  void _onRejectLogout() {
-    Analytics().logAlert(text: _promptEn, selection: "No");
-    Navigator.pop(context);
+    showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
+      if (result == true) {
+        Auth2().logout();
+      }
+    });
   }
 
   // Linked
@@ -622,7 +588,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       SettingsDialog.show(context,
@@ -677,7 +643,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       SettingsDialog.show(context,
@@ -810,5 +776,44 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       return BorderRadius.zero;
     }
   }
+}
 
+class ProfilePromptLogoutWidget extends StatelessWidget {
+  ProfilePromptLogoutWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) => Dialog(child:
+    Padding(padding: EdgeInsets.all(18), child:
+      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Text(AppTextUtils.appTitleString("panel.settings.home.logout.title", AppTextUtils.appTitleMacro),
+          style: Styles().textStyles.getTextStyle("widget.message.dark.extra_large"),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
+          Text(_promptText(), textAlign: TextAlign.left,
+            style: Styles().textStyles.getTextStyle("widget.message.dark.medium")
+          ),
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+          TextButton(onPressed: () => _onTapYes(context), child:
+            Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))
+          ),
+          TextButton(onPressed: () => _onTapNo(context), child:
+            Text(Localization().getStringEx("panel.settings.home.logout.no", "No"))
+          )
+        ],),
+      ],),
+    ),
+  );
+
+  String _promptText({String? language}) => Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?", language: 'en');
+
+  void _onTapYes(BuildContext context) {
+    Analytics().logAlert(text: _promptText(language: 'en'), selection: "Yes");
+    Navigator.pop(context, true);
+  }
+
+  void _onTapNo(BuildContext context) {
+    Analytics().logAlert(text: _promptText(language: 'en'), selection: "No");
+    Navigator.pop(context, false);
+  }
 }

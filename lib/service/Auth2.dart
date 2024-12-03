@@ -33,11 +33,12 @@ class Auth2 extends rokwire.Auth2 {
   static String get notifyAccountChanged    => rokwire.Auth2.notifyAccountChanged;
   static String get notifyProfileChanged    => rokwire.Auth2.notifyProfileChanged;
   static String get notifyPrefsChanged      => rokwire.Auth2.notifyPrefsChanged;
+  static String get notifyPrivacyChanged    => rokwire.Auth2.notifyPrivacyChanged;
   static String get notifyUserDeleted       => rokwire.Auth2.notifyUserDeleted;
   static String get notifyPrepareUserDelete => rokwire.Auth2.notifyPrepareUserDelete;
 
-  static const String notifyCardChanged             = "edu.illinois.rokwire.auth2.card.changed";
-  static const String notifyPictureChanged          = "edu.illinois.rokwire.auth2.picture.changed";
+  static const String notifyCardChanged     = "edu.illinois.rokwire.auth2.card.changed";
+  static const String notifyPictureChanged  = "edu.illinois.rokwire.auth2.picture.changed";
   static const String notifyVoiceRecordChanged = "edu.illinois.rokwire.auth2.voice.record.changed";
 
   static const String _authCardName             = "idCard.json";

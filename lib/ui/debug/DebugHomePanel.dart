@@ -19,15 +19,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -500,6 +504,21 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   )
                 ),
 
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: 'Set Assistant Location',
+                    backgroundColor: Styles().colors.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapSetAssistantLocation
+                  )
+                ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
+
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Padding(padding: EdgeInsets.only(bottom: 10), child: Text('Font Awesome Pro Icons: ', style: Styles().textStyles.getTextStyle('widget.message.medium'))),
@@ -951,6 +970,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       CustomCourses().deleteUserCourse(Config().essentialSkillsCoachKey!);
     }
+  }
+
+  void _onTapSetAssistantLocation() {
+    ExploreLocation? location = Storage().debugAssistantLocation?.toExploreLocation();
+    ExploreMapSelectLocationPanel.push(
+      context,
+      selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
+    ).then((Explore? explore) {
+      ExploreLocation? newLocation = explore?.exploreLocation;
+      Storage().debugAssistantLocation = AssistantLocation.fromExploreLocation(newLocation);
+    });
   }
 
   String get _refreshTokenTitle {

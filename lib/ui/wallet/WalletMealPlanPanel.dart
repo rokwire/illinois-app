@@ -524,7 +524,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
   void _onTapLogIn() {
     Analytics().logSelect(target: "Log in");
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });

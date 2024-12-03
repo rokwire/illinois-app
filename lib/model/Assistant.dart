@@ -1,3 +1,5 @@
+import 'package:geolocator/geolocator.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -188,6 +190,47 @@ class Link {
     }
     return items;
   }
+}
+
+///
+/// AssistantLocation
+///
+class AssistantLocation {
+  final double? latitude;
+  final double? longitude;
+
+  AssistantLocation({this.latitude, this.longitude});
+
+  static AssistantLocation? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: JsonUtils.doubleValue(json['latitude']), longitude: JsonUtils.doubleValue(json['longitude']));
+  }
+
+  static AssistantLocation? fromPosition(Position? position) {
+    if (position == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: position.latitude, longitude: position.longitude);
+  }
+
+  static AssistantLocation? fromExploreLocation(ExploreLocation? exploreLocation) {
+    if (exploreLocation == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: exploreLocation.latitude, longitude: exploreLocation.longitude);
+  }
+
+  Map<String, dynamic> toJson() => {'latitude': latitude, 'longitude': longitude};
+
+  ExploreLocation toExploreLocation() => ExploreLocation(latitude: latitude, longitude: longitude);
+
+  @override
+  bool operator ==(Object other) => (other is AssistantLocation) && (latitude == other.latitude) && (longitude == other.longitude);
+
+  @override
+  int get hashCode => (latitude?.hashCode ?? 0) ^ (longitude?.hashCode ?? 0);
 }
 
 ///

@@ -973,7 +973,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         children: [
           Row(
             children: [
-              Styles().images.getImage('share', excludeFromSemantics: true) ?? const SizedBox(),
+              Styles().images.getImage('share-nodes', excludeFromSemantics: true) ?? const SizedBox(),
               SizedBox(width: 8.0),
               Expanded(
                 child: Text(

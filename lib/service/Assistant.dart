@@ -1,4 +1,3 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -190,7 +189,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   // Implementation
   
-  Future<Message?> sendQuery(String? query, {AssistantProvider? provider, Position? location, Map<String, String>? context}) async {
+  Future<Message?> sendQuery(String? query, {AssistantProvider? provider, AssistantLocation? location, Map<String, String>? context}) async {
     if (!_isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
       return null;

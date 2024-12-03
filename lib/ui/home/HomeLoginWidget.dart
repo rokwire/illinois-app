@@ -169,7 +169,7 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
       AppAlert.showOfflineMessage(context,"");
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
@@ -227,7 +227,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
     else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: () => _didLogin(context)),),);
