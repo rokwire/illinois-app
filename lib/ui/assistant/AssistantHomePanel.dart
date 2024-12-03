@@ -49,7 +49,7 @@ class AssistantHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(
+      AppAlert.showTextMessage(
           context,
           Localization().getStringEx('panel.assistant.logged_out.label',
               'To access the Illinois Assistant, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
@@ -225,7 +225,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   void _onTapClearAll() {
     Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
-    AppAlert.showConfirmationDialog(buildContext: context,
+    AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('panel.assistant.clear_all.confirm_prompt.text', 'Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.'),
       positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
       negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),

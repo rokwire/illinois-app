@@ -124,7 +124,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   void _onLogin(){
     Analytics().logSelect(target: "Login", source: widget.runtimeType.toString());
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });

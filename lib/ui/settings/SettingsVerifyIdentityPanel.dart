@@ -119,7 +119,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
 
   void _onTapConnectNetId() {
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_loading != true) {
       _setLoading(true);

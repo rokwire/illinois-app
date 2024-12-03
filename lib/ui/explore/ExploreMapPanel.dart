@@ -837,7 +837,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if ((launchTask != null) && !await launchTask) {
-      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
+      AppAlert.showTextMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));
     }
     
     // AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));

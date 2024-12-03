@@ -6,8 +6,10 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -86,7 +88,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   Container(height: 12,),
                   Visibility(
                     visible: _canSelectMembers,
-                    child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
+                    child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: _groupId, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
                   ),
                   Container(height: 12,),
                   _buildScheduleWidget(),
@@ -245,11 +247,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _showPollConfirmationDialogIfNeeded() {
     if (_selectedNudge?.canPoll ?? false) {
-      AppAlert.showConfirmationDialog(
-          buildContext: context,
-          message: Localization()
-              .getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
-          positiveCallback: _onCreatePollConfirmed);
+      AppAlert.showConfirmationDialog(context,
+        message: Localization().getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
+        positiveCallback: _onCreatePollConfirmed
+      );
     }
   }
 
@@ -296,53 +297,36 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
-
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers, dateScheduledUtc: scheduleDate); // if no parentId then this is a new post for the group.
-
-    Groups().createPost(widget.group.id, post).then((success) {
-      if(success){
-          if(_canSentToOtherAdminCroups){
-            _processPostToOtherAdminGroups(post).then((success){
-              _onCreateFinished(post); //Finished posting to other groups
-            }).onError((error, stackTrace){
-              _onCreateFinished(null); //Failed posting to other groups
-            });
-          } else {// Don't want to post to other groups
-            _onCreateFinished(post); //Successfully posted single post
-          }
-      } else { // Fail
-        _onCreateFinished(null); //Failed posting to original group
+    List<Group>? selectedGroups;
+    if (_canSentToOtherAdminGroups) {
+      selectedGroups = [];
+      List<Group>? otherGroups = await _loadOtherAdminUserGroups();
+      if (CollectionUtils.isNotEmpty(otherGroups)) {
+        selectedGroups = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups));
       }
-    }).onError((error, stackTrace) {
-      _onCreateFinished(null);//Failed posting to original group
+    }
+    late Post post;
+    if (CollectionUtils.isNotEmpty(selectedGroups)) {
+      List<String> groupIds = selectedGroups!.map((group) => group.id!).toList(growable: true);
+      groupIds.add(_groupId); // add current group id.
+      post = Post.forGroups(
+          groupIds: groupIds, subject: subject!, body: htmlModifiedBody, imageUrl: imageUrl, dateActivatedUtc: scheduleDate?.toUtc());
+    } else {
+      List<String>? memberAccountIds = MemberExt.extractUserIds(_selectedMembers);
+      post = Post.forGroup(
+          groupId: _groupId,
+          subject: subject!,
+          body: htmlModifiedBody,
+          imageUrl: imageUrl,
+          dateActivatedUtc: scheduleDate?.toUtc(),
+          memberAccountIds: memberAccountIds);
+    }
+    Social().createPost(post: post).then((success) {
+      _onCreateFinished(success ? post : null);
     });
   }
 
-  Future<bool> _processPostToOtherAdminGroups(post) async{
-    // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
-    //If post has membersSelection then do not allow linking to other groups
-    List<Group> selectedGroups = [];
-    List<Group>? otherGroups = await _loadOtherAdminUserGroups();
-    if (CollectionUtils.isNotEmpty(otherGroups)) {
-      selectedGroups = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));
-    }
-
-    if(CollectionUtils.isEmpty(selectedGroups)){
-      return true; //No selection
-    }
-
-    //process with selection
-    List<Future<bool>> futures = [];
-    for(Group group in selectedGroups){
-      futures.add(Groups().createPost(group.id, post));
-    }
-
-    List<bool> results = await Future.wait(futures);
-
-    return !results.contains(false);
-  }
-
-  void _onCreateFinished(GroupPost? post) {
+  void _onCreateFinished(Post? post) {
     _decreaseProgress();
     if (post != null) {
       Navigator.of(context).pop(post);
@@ -353,7 +337,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _loadMembersAllowedToPost() {
     _increaseProgress();
-    Groups().loadMembersAllowedToPost(groupId: widget.group.id).then((members) {
+    Groups().loadMembersAllowedToPost(groupId: _groupId).then((members) {
       _allMembersAllowedToPost = members;
       _decreaseProgress();
     });
@@ -379,9 +363,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     List<Group>? userAdminGroups;
     if (CollectionUtils.isNotEmpty(userGroups)) {
       userAdminGroups = [];
-      String? currentGroupId = widget.group.id;
       for (Group? group in userGroups!) {
-        if (group!.currentUserIsAdmin && (group.id != currentGroupId)) {
+        if (group!.currentUserIsAdmin && (group.id != _groupId)) {
           userAdminGroups.add(group);
         }
       }
@@ -419,7 +402,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return CollectionUtils.isEmpty(_selectedMembers);
   }
 
-  bool get _canSentToOtherAdminCroups{
+  bool get _canSentToOtherAdminGroups{
       return _allowSenPostToOtherGroups && CollectionUtils.isEmpty(_selectedMembers);
   }
+
+  String get _groupId => widget.group.id!;
 }

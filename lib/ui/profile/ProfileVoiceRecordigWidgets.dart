@@ -149,7 +149,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         Content().deleteVoiceRecord().then((result) {
           setStateIfMounted(() => _loading = false);
           if(result?.resultType != AudioResultType.succeeded){
-            AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+            AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
           }
         });
       }
@@ -336,10 +336,10 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
           _closeModal();
         } else {
           Log.d(result.errorMessage ?? "");
-          AppAlert.showMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
+          AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
         }
       } else {
-        AppAlert.showMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
+        AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
         Log.d("No File to save");
       }
     }catch(e){

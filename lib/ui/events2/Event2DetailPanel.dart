@@ -13,6 +13,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/ui/events2/Event2AdminSettingsPanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -446,7 +447,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')));
 
   List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
-    _buildTextDetailWidget(_publishedStatus, 'eye'),
+    _buildTextDetailWidget(_publishedStatus, 'eye', iconColor: Styles().colors.fillColorPrimary),
     _detailSpacerWidget
   ] : null;
 
@@ -613,7 +614,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share This Event'), 'share', underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share This Event'), 'share-nodes', underlined: true)),
     _detailSpacerWidget
   ];
 
@@ -793,6 +794,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
           _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: "Additional Settings", onTap: _onSettingAdditionalSettings),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -807,6 +809,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget _buildTextDetailWidget(String text, String iconKey, {
     TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
     int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
+    Color? iconColor,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true, bool showProgress = false, bool underlined = false,
@@ -818,6 +821,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         overflow: overflow,
       ),
       iconKey,
+      iconColor: iconColor,
       detailPadding: detailPadding,
       iconPadding: iconPadding,
       iconVisible: iconVisible,
@@ -825,13 +829,14 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
+    Color? iconColor,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true,
     bool showProgress = false,
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true, color: iconColor);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child: showProgress ?
         Stack(children: [
@@ -1036,7 +1041,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   void _onLogIn(){
     Analytics().logSelect(target: "Log in");
     if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showMessage(context, Localization().getStringEx('common.message.login.not_available', 'To sign in you need to set your privacy level to 4 or 5 under Settings.'));
+      AppAlert.showAuthenticationNAMessage(context);
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
@@ -1105,6 +1110,15 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             });
           }
         });
+  }
+
+  void _onSettingAdditionalSettings() {
+    Analytics().logSelect(target: "Additional Settings");
+    if (_event != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
+        event: _event,
+      )));
+    }
   }
 
   void _onSettingEventRegistration(){

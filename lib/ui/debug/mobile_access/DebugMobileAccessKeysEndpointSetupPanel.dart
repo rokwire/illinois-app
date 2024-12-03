@@ -151,11 +151,11 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
         } else {
           msg = 'Failed to initiate device registration.';
         }
-        AppAlert.showMessage(context, msg);
+        AppAlert.showTextMessage(context, msg);
         _decreaseProgress();
       });
     } else {
-      AppAlert.showMessage(context, 'Please, fill valid code in format XXXX-XXXX-XXXX-XXXX');
+      AppAlert.showTextMessage(context, 'Please, fill valid code in format XXXX-XXXX-XXXX-XXXX');
     }
   }
 

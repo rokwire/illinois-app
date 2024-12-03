@@ -164,7 +164,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget _buildStep({required int index}) {
     List<Widget> stepContent = [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny")),
+        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
       ),
       Stack(children: <Widget>[
         Container(color: Styles().colors.white,

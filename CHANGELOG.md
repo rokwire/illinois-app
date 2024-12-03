@@ -5,6 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.20] - 2024-12-02
+### Added
+- Modify and load Posts, Comments and Reactions using Social BB (task in progress) [#4474](https://github.com/rokwire/illinois-app/issues/4474).
+
+## [6.1.19] - 2024-11-26
+### Fixed
+- Fixed "widget.title.tiny" text style name.
+### Changed
+- "share" image definition renamed to "share-nodes" as the corresponding FA character is called.
+### Added
+- Use Social BB for Posts, Comments and Reactions (task in progress) [#4474](https://github.com/rokwire/illinois-app/issues/4474).
+- Acknowledge event.notification_settings field and APIs [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+- First preview of InfoSwap (My Info & Illinois Connections) [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.18] - 2024-11-14
+### Changed
+- Updated authorization not available message [#4103](https://github.com/rokwire/illinois-app/issues/4103).
+### Added
+- Set custom assistant location in Debug panel [#4472](https://github.com/rokwire/illinois-app/issues/4472).
+
 ## [6.1.17] - 2024-11-12
 ### Fixed
 - Fixed analytics feature that we send for "Start with a Text" button tap [#4447](https://github.com/rokwire/illinois-app/issues/4447).
