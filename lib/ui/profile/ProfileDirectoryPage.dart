@@ -12,8 +12,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class ProfileDirectoryPage extends StatefulWidget {
   static const String notifySignIn = "edu.illinois.rokwire.profile.sign_in";
+  final ScrollController? scrollController;
 
-  ProfileDirectoryPage({super.key});
+  ProfileDirectoryPage({super.key, this.scrollController});
 
   @override
   _ProfileDirectoryPageState createState() => _ProfileDirectoryPageState();
@@ -113,7 +114,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
         //),
         //Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.appDirectory), maintainState: true, child:
-          ProfileDirectoryAccountsPage(contentType: DirectoryAccounts.appDirectory,)
+          ProfileDirectoryAccountsPage(contentType: DirectoryAccounts.appDirectory, scrollController: widget.scrollController,)
         //),
       ],),
     );
