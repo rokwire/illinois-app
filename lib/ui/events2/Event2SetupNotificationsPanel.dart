@@ -556,8 +556,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
       }
     }
 
-    AppAlert.showConfirmationDialog(
-        buildContext: context,
+    AppAlert.showConfirmationDialog(context,
         message: 'Are you sure that you want to remove all notifications?',
         positiveButtonLabel: 'Yes',
         positiveCallback: () {
