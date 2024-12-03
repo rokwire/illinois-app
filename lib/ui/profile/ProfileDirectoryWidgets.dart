@@ -16,17 +16,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DirectoryProfileCard extends StatefulWidget {
+class DirectoryAccountCard extends StatefulWidget {
   final Auth2PublicAccount account;
   final bool expanded;
   final void Function()? onToggleExpanded;
-  DirectoryProfileCard(this.account, { super.key, this.expanded = false, this.onToggleExpanded });
+  DirectoryAccountCard(this.account, { super.key, this.expanded = false, this.onToggleExpanded });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryProfileCardState();
+  State<StatefulWidget> createState() => _DirectoryAccountCardState();
 }
 
-class _DirectoryProfileCardState extends State<DirectoryProfileCard> {
+class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
 
   @override
   Widget build(BuildContext context) =>
@@ -348,4 +348,20 @@ class DirectoryProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,);
+}
+
+class DirectoryProfileCard extends StatelessWidget {
+  final Widget? child;
+  DirectoryProfileCard({super.key, this.child});
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: cardDecoration, child: child);
+
+  Decoration get cardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(16)),
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
 }

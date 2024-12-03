@@ -27,7 +27,6 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
-  Auth2UserProfile? _previewProfile;
 
   bool _loading = false;
   bool _editing = false;
@@ -61,7 +60,8 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     else {
       return ProfileDirectoryMyInfoPreviewPage(
         contentType: widget.contentType,
-        profile: _previewProfile,
+        profile: _profile,
+        privacy: _privacy,
         photoImageToken: photoImageToken,
         onEditInfo: _onEditInfo,
       );
@@ -92,15 +92,6 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,);
         _privacy = privacy;
 
-        Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
-          firstName: Auth2FieldVisibility.public,
-          middleName: Auth2FieldVisibility.public,
-          lastName: Auth2FieldVisibility.public,
-          email: Auth2FieldVisibility.public,
-        );
-
-        _previewProfile = Auth2UserProfile.fromFieldsVisibility(_profile, profileVisibility, permitted: _permittedVisibility);
-
         _loading = false;
       });
     }
@@ -126,22 +117,9 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         super.photoImageToken = photoImageToken;
       }
 
-      if ((profile != null) || (privacy != null)) {
-        Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(_privacy?.fieldsVisibility?.profile,
-          firstName: Auth2FieldVisibility.public,
-          middleName: Auth2FieldVisibility.public,
-          lastName: Auth2FieldVisibility.public,
-          email: Auth2FieldVisibility.public,
-        );
-        _previewProfile = Auth2UserProfile.fromFieldsVisibility(_profile, profileVisibility, permitted: _permittedVisibility);
-      }
-
       _editing = false;
     });
   }
-
-  Set<Auth2FieldVisibility> get _permittedVisibility =>
-    super.permittedVisibility(widget.contentType);
 }
 
 ///////////////////////////////////////////

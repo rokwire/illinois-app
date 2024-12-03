@@ -37,6 +37,7 @@ class ProfileDirectoryMyInfoEditPage extends StatefulWidget {
 
 class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoEditPage> with WidgetsBindingObserver {
 
+  late bool _directoryVisibility;
   late Auth2UserProfileFieldsVisibility _profileVisibility;
 
   final Map<_ProfileField, Auth2FieldVisibility?> _fieldVisibilities = {};
@@ -59,6 +60,8 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
     });
 
+    _directoryVisibility = (widget.privacy?.public == true);
+
     super.photoImageToken = widget.photoImageToken;
 
     for (_ProfileField field in _ProfileField.values) {
@@ -74,7 +77,6 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     );
 
     _fieldVisibilities.addAll(_profileVisibility.fieldsVisibility);
-
 
     super.initState();
   }
@@ -118,6 +120,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             _nameWidget,
           ),
 
+          _directoryVisibilitySection,
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
@@ -279,11 +282,57 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     Widget get _nameWidget =>
       Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
 
+    // Edit: Directory Visibility
+
+  Widget get _directoryVisibilitySection => _fieldSection(
+      headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.directory_visibility.text', 'Directory Visibility'),
+      fieldControl: _directoryVisibilityControl,
+    );
+
+    Widget get _directoryVisibilityControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Styles().images.getImage('gear', size: 20) ?? Container(),
+      Expanded(child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(_directoryVisibilityTitle, style: Styles().textStyles.getTextStyle('widget.detail.small.fat'),),
+            Text(_directoryVisibilityDescription, style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+          ],)
+        ),
+      ),
+      Padding(padding: EdgeInsets.only(left: 6), child:
+        _directoryVisibilityButton,
+      ),
+    ],);
+
+    Widget get _directoryVisibilityButton =>
+      _iconButton(
+        icon: _directoryVisibilityIcon,
+        onTap: _onToggleDirectoryVisibility,
+      );
+
+    void _onToggleDirectoryVisibility() {
+      Analytics().logSelect(target: 'Directory Visibility');
+      setState(() {
+        _directoryVisibility = !_directoryVisibility;
+      });
+    }
+
+  String get _directoryVisibilityTitle => _directoryVisibility ?
+    Localization().getStringEx('panel.profile.directory.my_info.edit.directory_visibility.public.title.text', 'Public') :
+    Localization().getStringEx('panel.profile.directory.my_info.edit.directory_visibility.private.title.text', 'Private');
+
+    String get _directoryVisibilityDescription => _directoryVisibility ?
+      AppTextUtils.appTitleString('panel.profile.directory.my_info.edit.directory_visibility.public.description.text', 'Anyone on or off the ${AppTextUtils.appTitleMacro} App Directory can view your account') :
+      AppTextUtils.appTitleString('panel.profile.directory.my_info.edit.directory_visibility.private.description.text', 'Your account is available only to you');
+
+    Widget? get _directoryVisibilityIcon =>
+      _directoryVisibility ? _publicIcon : _privateIcon;
+
     // Edit: Pronunciation
 
     Widget get _pronunciationSection => _fieldSection(
       headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronunciation.text', 'Name Pronunciation'),
-      fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar: _pronunciationCreateControl,
+      fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
     );
 
     Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -674,7 +723,12 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserProfileFieldsVisibility profileVisibility = _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities);
-      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy, fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility, profile: profileVisibility));
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+        public: _directoryVisibility,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+            profile: profileVisibility
+        )
+      );
 
       List<Future> futures = [];
 
@@ -683,7 +737,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         futures.add(Auth2().saveUserProfile(profile));
       }
 
-      int? privacyIndex = (_profileVisibility != profileVisibility) ? futures.length : null;
+      int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
       if (privacyIndex != null) {
         futures.add(Auth2().saveUserPrivacy(privacy));
       }

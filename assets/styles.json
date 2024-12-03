@@ -842,6 +842,7 @@
     "browse": {"src": "0xf0c9", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 19},
     "close": {"src": "images/close-orange-small.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14},
     "settings": {"src": "images/icon-settings.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
+    "gear": {"src": "0xf013", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "external-link": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15},
     "paper-plane": {"src": "0xf1d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "person-walking": {"src": "0xf554", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},

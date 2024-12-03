@@ -98,7 +98,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     ];
     for (Auth2PublicAccount account in accounts) {
       result.add(_sectionSplitter);
-      result.add(DirectoryProfileCard(account, expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId), onToggleExpanded: () => _onToggleAccountExpanded(account),));
+      result.add(DirectoryAccountCard(account, expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId), onToggleExpanded: () => _onToggleAccountExpanded(account),));
     }
     if (accounts.isNotEmpty) {
       result.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));

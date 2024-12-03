@@ -1,4 +1,5 @@
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
@@ -19,9 +20,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? profile;
+  final Auth2UserPrivacy? privacy;
   final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.photoImageToken, this.onEditInfo });
+  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageToken, this.onEditInfo });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPreviewPageState();
@@ -29,10 +31,20 @@ class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
 
 class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPreviewPage> {
 
+  Auth2UserProfile? _profile;
   bool _preparingDeleteAccount = false;
 
   @override
   void initState() {
+    Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
+      firstName: Auth2FieldVisibility.public,
+      middleName: Auth2FieldVisibility.public,
+      lastName: Auth2FieldVisibility.public,
+      email: Auth2FieldVisibility.public,
+    );
+
+    _profile = Auth2UserProfile.fromFieldsVisibility(widget.profile, profileVisibility, permitted: _permittedVisibility);
+
     super.photoImageToken = widget.photoImageToken;
     super.initState();
   }
@@ -46,17 +58,9 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   Widget build(BuildContext context) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: [
-        Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-        Padding(padding: EdgeInsets.only(top: 24), child:
-            Stack(children: [
-              Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
-                _cardWidget,
-              ),
-              Center(child:
-                DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: photoImageHeaders,),
-              )
-            ])
-        ),
+        if (_directoryVisibility)
+          Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+        _profileContent,
         Padding(padding: EdgeInsets.only(top: 24), child:
           _commandBar,
         ),
@@ -77,23 +81,30 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     }
   }
 
-  String? get _photoUrl => photoImageUrl(widget.profile?.photoUrl);
+  Widget get _profileContent => _directoryVisibility ?
+    _publicProfileContent : _privateProfileContent;
+
+  String? get _photoUrl => photoImageUrl(_profile?.photoUrl);
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
-  Widget get _cardWidget => Container(
-    decoration: BoxDecoration(
-      color: Styles().colors.white,
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      borderRadius: BorderRadius.all(Radius.circular(16)),
-      boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-    ),
-    child: Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
-      _cardContent
-    ),
-  );
+  Widget get _publicProfileContent =>
+    Padding(padding: EdgeInsets.only(top: 24), child:
+      Stack(children: [
+        Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+          DirectoryProfileCard(child:
+            Padding(padding: EdgeInsets.only(top: _photoImageSize / 2), child:
+              _publicCardContent
+            )
+          ),
+        ),
+        Center(child:
+          DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: photoImageHeaders,),
+        )
+      ]),
+    );
 
-  Widget get _cardContent =>
+  Widget get _publicCardContent =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
@@ -102,7 +113,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
           ),
         ],),
         Padding(padding: EdgeInsets.only(top: 12), child:
-          DirectoryProfileDetails(widget.profile)
+          DirectoryProfileDetails(_profile)
         ),
         _shareButton,
     ],)
@@ -110,19 +121,64 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   Widget get _cardContentHeading => Center(child:
     Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (widget.profile?.pronunciationUrl?.isNotEmpty == true)
+      if (_profile?.pronunciationUrl?.isNotEmpty == true)
         DirectoryPronunciationButton.spacer(),
       Column(mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 16), child:
-          Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
+          Text(_profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
         ),
-        if (widget.profile?.pronouns?.isNotEmpty == true)
-          Text(widget.profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+        if (_profile?.pronouns?.isNotEmpty == true)
+          Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
-      if (widget.profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton(url: widget.profile?.pronunciationUrl,),
+      if (_profile?.pronunciationUrl?.isNotEmpty == true)
+        DirectoryPronunciationButton(url: _profile?.pronunciationUrl,),
     ],),
   );
+
+  Widget get _privateProfileContent =>
+    Padding(padding: EdgeInsets.only(top: 12), child:
+      DirectoryProfileCard(child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+          Center(child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+              Text(_privateProfileTitle, style: Styles().textStyles.getTextStyle('widget.detail.regular.fat')),
+              Padding(padding: EdgeInsets.only(top: 6), child:
+                _privateProfileDescriptionContent,
+              )
+            ],)
+          )
+        ),
+      ),
+    );
+
+  String get _privateProfileTitle =>
+    AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.title.text', 'Your Directory Visibility is set to Private');
+
+  Widget get _privateProfileDescriptionContent {
+    final String linkEditMacro = "{{link.edit}}";
+    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.description.text', 'To make your account visible in the ${AppTextUtils.appTitleMacro} App Directory, $linkEditMacro your privacy settings and set your Directory Visibility to Public.');
+    List<String> messages = messageTemplate.split(linkEditMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.my_info.directory_visibility.private.link.edit', "edit"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onEditInfo, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return RichText(textAlign: TextAlign.left, text:
+      TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.regular"), children: spanList)
+    );
+  }
+  //AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.description.text!', 'Choose "{{button_title}}" to change this setting and make your account available in the ${AppTextUtils.appTitleMacro} App Directory.').
+  //    replaceAll('{{button_title}}', _editInfoButtonTitle);
+
+  //Text(_privateProfileDescription, style: Styles().textStyles.getTextStyle('widget.detail.regular')),
+
+  //String get _privateProfileDescription =>
+  //  AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.description.text', 'Your Directory Visibility is set to Private.\n\nChoose "{{button_title}}" to change this setting and make your account available in the ${AppTextUtils.appTitleMacro} App Directory.').
+  //    replaceAll('{{button_title}}', _editInfoButtonTitle);
 
   Widget get _commandBar {
     switch (widget.contentType) {
@@ -144,11 +200,14 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   ],);
 
   Widget get _editInfoButton => RoundedButton(
-    label: Localization().getStringEx('panel.profile.directory.my_info.command.button.edit.text', 'Edit My Info'),
+    label: _editInfoButtonTitle,
     fontFamily: Styles().fontFamilies.bold, fontSize: 16,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onEditInfo,
   );
+
+  String get _editInfoButtonTitle =>
+    Localization().getStringEx('panel.profile.directory.my_info.command.button.edit.text', 'Edit My Info');
 
   void _onEditInfo() {
     Analytics().logSelect(target: 'Edit My Info');
@@ -257,4 +316,10 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
       });
     }
   }
+
+  bool get _directoryVisibility =>
+    widget.privacy?.public == true;
+
+  Set<Auth2FieldVisibility> get _permittedVisibility =>
+    super.permittedVisibility(widget.contentType);
 }
