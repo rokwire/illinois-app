@@ -127,42 +127,40 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
         message: Localization().getStringEx('', 'Are you sure you want to duplicate event ${_event?.name}?'),
       ).then((bool? result) async {
         if (result == true) {
-          setStateIfMounted(() {
-            _duplicating = true;
-          });
+          setStateIfMounted(() {_duplicating = true;});
           Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(grouping:  _event?.linkedEventsGroupingQuery));
 
           //TBD  // 1. Acknowledge Event Admins
-          Events2().createEvent(_event!.duplicate).then((createdEvent){
-            setStateIfMounted((){
-              _duplicating = false;
-            });
+          Events2().createEvent(_event!.duplicate).then((createdEvent) async {
             if (createdEvent is Event2) {
               if(CollectionUtils.isEmpty(subEventsLoad?.events)){
                 Navigator.pop(context);
                 Event2Popup.showMessage(context, message: "Successfully duplicated Event");
+                setStateIfMounted((){_duplicating = false;});
                 return;
               }
 
               //Duplicate sub events
               String error = "";
               int subCount = 0;
-              Event2Grouping subGrouping = Event2Grouping.superEvent(createdEvent.id);
-              subEventsLoad?.events?.forEach((Event2 subEvent) async {
+              for(Event2 subEvent in  subEventsLoad!.events!) {
+                Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
                 var subCreateResult = await Events2().createEvent(subEvent.duplicateWith(grouping: subGrouping));
                 if (subCreateResult is Event2) {
                   subCount ++;
                 } else if(subCreateResult is String){
                   error += "$subCreateResult \n";
                 }
-              });
+              }
               if(StringUtils.isNotEmpty(error)){
                 Event2Popup.showErrorResult(context, error);
               } else {
                 Event2Popup.showMessage(context, message: "Successfully duplicated Super event and $subCount sub events");
               }
+              setStateIfMounted((){_duplicating = false;});
             } else {
               Event2Popup.showErrorResult(context, createdEvent);
+              setStateIfMounted((){_duplicating = false;});
             }
           });
         }
