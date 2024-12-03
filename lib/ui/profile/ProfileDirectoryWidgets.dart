@@ -9,7 +9,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/directory.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';

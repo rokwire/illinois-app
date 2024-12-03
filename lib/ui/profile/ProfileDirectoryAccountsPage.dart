@@ -4,8 +4,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/directory.dart';
-import 'package:rokwire_plugin/service/directory.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -33,7 +34,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     _loading = true;
     _searchTextController = TextEditingController();
     _searchFocusNode = FocusNode();
-    Directory().loadAccounts().then((List<Auth2PublicAccount>? accounts){
+    Auth2().loadDirectoryAccounts().then((List<Auth2PublicAccount>? accounts){
       setStateIfMounted(() {
         _loading = false;
         _accounts = (accounts != null) ? _buildAccounts(accounts) : null;

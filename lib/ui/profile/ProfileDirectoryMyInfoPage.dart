@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +9,9 @@ import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPreviewPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -35,6 +38,25 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
   void initState() {
     super.photoImageToken = ProfileDirectoryMyInfoDateTimeUtils.imageToken;
     _loadProfileAndPrivacy();
+
+
+    Map<String, dynamic> result = {};
+    ContentAttributes? attribs = Events2().contentAttributes;
+    ContentAttribute? colleges = attribs?.findAttribute(id: 'college');
+    ContentAttribute? departments = attribs?.findAttribute(id: 'department');
+    if (colleges != null) {
+      for (ContentAttributeValue college in colleges.values ?? []) {
+        List<ContentAttributeValue>? collegeDepartments = departments?.attributeValuesFromSelection({'college' : LinkedHashSet.from([college.value])});
+        if (collegeDepartments != null) {
+          result[college.value] = List.from(collegeDepartments.map((attributeValue) => attributeValue.value ?? ''));
+        }
+      }
+    }
+
+    String? jsonText = JsonUtils.encode(result);
+    debugPrint(jsonText);
+
+
     super.initState();
   }
 
