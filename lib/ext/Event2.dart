@@ -393,6 +393,19 @@ extension Event2Ext on Event2 {
   }
 }
 
+extension Event2GroupingExt on Event2Grouping{
+
+    bool? get canDisplayAsIndividual => displayAsIndividual is bool ? displayAsIndividual : null;
+
+    Event2Grouping copyWith({Event2GroupingType? type, String? superEventId, String? recurrenceId, displayAsIndividual}) =>
+      Event2Grouping(
+        type: type ?? this.type,
+        recurrenceId: recurrenceId ?? this.recurrenceId,
+        displayAsIndividual: displayAsIndividual ?? this.displayAsIndividual,
+        superEventId: superEventId ?? this.superEventId
+      );
+}
+
 extension Event2ContactExt on Event2Contact {
   
   String get fullName {

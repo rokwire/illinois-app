@@ -4,6 +4,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -49,6 +50,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   List<Event2>? _subEvents;
   List<Event2>? _subEventCandidates;
   Client? _loadCandidatesClient;
+  bool? _superEventChildDisplayOnlyUnderSuperEvent = false;
 
   bool _applying = false;
 
@@ -57,6 +59,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     _initialSubEvents = widget.subEvents;
     _subEvents = _initialSubEvents != null ? List.from(_initialSubEvents!) : null;
     _subEventController.text = _searchText ?? '';
+    _superEventChildDisplayOnlyUnderSuperEvent = _event?.isSuperEventChild == true && _event?.grouping?.canDisplayAsIndividual == false;
     _subEventController.addListener(_loadSubEventCandidates);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(CollectionUtils.isEmpty(_subEvents)){
@@ -85,27 +88,52 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   Widget _buildContent() =>
       SingleChildScrollView(child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildDescriptionWidget(
-                text: 'Set and manage this event as a multi-event “super event.” After creating one or more related events, you can nest those events as sub-events within a super event (e.g., sessions in a conference, performances in a festival).'
-            ),
-            Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
-            _buildSubEventsSection(_subEvents,
-                emptyMsg: 'This event is not linked to any sub-events. Please see below.',
-                showUnlink: true),
-            Padding(padding: EdgeInsets.only(top: 12), child:
-            Container(decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(top: BorderSide(color: Color(0xFF717273), width: 1))
-            ), padding: EdgeInsets.only(top: 12, left: 16, right: 16)
-            )),
-            Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('LINK EVENT(s)')),
-            _buildSubeventSelectionSection(),
-            _buildSubEventsSection(_subEventCandidates,
+          _event?.isSuperEventChild == true ? _buildSuperEventChildContent() : //Super Event child see limited options,
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _buildDescriptionWidget(
+                  text: 'Set and manage this event as a multi-event “super event.” After creating one or more related events, you can nest those events as sub-events within a super event (e.g., sessions in a conference, performances in a festival).'
+              ),
+              Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
+              _buildSubEventsSection(_subEvents,
+                  emptyMsg: 'This event is not linked to any sub-events. Please see below.',
+                  showUnlink: true),
+              Padding(padding: EdgeInsets.only(top: 12), child:
+              Container(decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(top: BorderSide(color: Color(0xFF717273), width: 1))
+              ), padding: EdgeInsets.only(top: 12, left: 16, right: 16)
+              )),
+              Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('LINK EVENT(s)')),
+              _buildSubeventSelectionSection(),
+              _buildSubEventsSection(_subEventCandidates,
                 emptyMsg:  'You currently have no upcoming events. To link and create sub-events within a super event, please first create your sub-events as basic events.',
                 showLink: true, ),
-          ])
+            ])
         ));
+
+  Widget _buildSuperEventChildContent(){ //Sub Events see limited options
+      if(_event?.isSuperEventChild != true)
+        return Container();
+
+      bool toggled = _superEventChildDisplayOnlyUnderSuperEvent == true;
+      return Column(children: [
+          Semantics(toggled: toggled, excludeSemantics: true,
+          label: Localization().getStringEx("", "DISPLAY ONLY UNDER SUPER EVENT"),
+          hint: Localization().getStringEx("", ""),
+          child: ToggleRibbonButton(
+            label: Localization().getStringEx("", "DISPLAY ONLY UNDER SUPER EVENT"),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            toggled: toggled,
+            onTap: (){
+              setStateIfMounted(() {
+                _superEventChildDisplayOnlyUnderSuperEvent = !toggled;
+              });
+            },
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+          ))
+      ]);
+  }
 
   Widget _buildDescriptionWidget({required String text}) =>
     Row(children: [
@@ -215,17 +243,37 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   void _onApply(){
     setStateIfMounted(() => _applying = true);
     if(_event != null) {
-      Event2SuperEventsController.update(
-        superEvent: _event!,
-        existingSubEvents: _initialSubEvents,
-        updatedEventsSelection: _subEvents).then(
-          (result) {
-            setStateIfMounted(() => _applying = false);
-            if(result.successful)
-              AppAlert.showDialogResult(context, 'Successfully updated ${result.data} sub events');
-            else
-              AppAlert.showDialogResult(context, 'Unable to update: \n ${result.error}');
-          });
+      if(_isSuperEventChild){
+        if(_isSuperEventChildModified) {
+          Event2Grouping? updatedGrouping = _event?.grouping?.copyWith(displayAsIndividual: !(_superEventChildDisplayOnlyUnderSuperEvent == true));
+          if(updatedGrouping != null){
+            // Event2SuperEventUpdateResult? uploadResult =
+            Event2SuperEventsController.uploadGroupingUpdate(events: [_event!], grouping: updatedGrouping).then((result){
+              setStateIfMounted(() => _applying = false);
+              if (result.successful)
+                AppAlert.showDialogResult(
+                    context, 'Successfully updated ${result.data} sub events');
+              else
+                AppAlert.showDialogResult(
+                    context, 'Unable to update: \n ${result.error}');
+            });
+            };
+        }
+      } else {
+        Event2SuperEventsController.update(
+            superEvent: _event!,
+            existingSubEvents: _initialSubEvents,
+            updatedEventsSelection: _subEvents).then(
+                (result) {
+              setStateIfMounted(() => _applying = false);
+              if (result.successful)
+                AppAlert.showDialogResult(
+                    context, 'Successfully updated ${result.data} sub events');
+              else
+                AppAlert.showDialogResult(
+                    context, 'Unable to update: \n ${result.error}');
+            });
+      }
     }
   }
 
@@ -253,7 +301,16 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   }
 
   Event2? get _event => widget.event;
-  bool get _isModified => CollectionUtils.equals(_subEvents, _initialSubEvents) == false;
+
+  bool get _isModified =>
+      CollectionUtils.equals(_subEvents, _initialSubEvents) == false ||
+          _isSuperEventChildModified;
+
+  bool get _isSuperEventChild => _event?.isSuperEventChild == true;
+
+  bool get _isSuperEventChildModified => _isSuperEventChild &&
+      _superEventChildDisplayOnlyUnderSuperEvent != null &&
+      _superEventChildDisplayOnlyUnderSuperEvent == _event?.grouping?.canDisplayAsIndividual;
 }
 
 class _EventCard extends StatelessWidget{
@@ -316,8 +373,8 @@ class Event2SuperEventsController {
       if(CollectionUtils.isEmpty(unlinkedSubEvents))
         return Event2SuperEventUpdateResult.success(data: 0);//nothing to unlink;
 
-      Event2SuperEventUpdateResult? uploadResult = await uploadGroupingUpdate(events: unlinkedSubEvents);
-      String error = uploadResult?.error ?? "";
+      Event2SuperEventUpdateResult? uploadResult = await uploadGroupingUpdate(events: unlinkedSubEvents, grouping: null);
+      String error = uploadResult.error ?? "";
 
       if (CollectionUtils.isEmpty(updatedEventsSelection) && superEvent?.isSuperEvent == true) { //Mark Main event as regular event
         Event2? updatedEventData = superEvent!.copyWithNullable(grouping: NullableValue.empty());
@@ -326,7 +383,7 @@ class Event2SuperEventsController {
       }
 
       return StringUtils.isEmpty(error) ?
-        Event2SuperEventUpdateResult.success(data: uploadResult?.data) :
+        Event2SuperEventUpdateResult.success(data: uploadResult.data) :
         Event2SuperEventUpdateResult.fail(error);
   }
 
@@ -340,7 +397,7 @@ class Event2SuperEventsController {
      Event2SuperEventUpdateResult? uploadResult = await uploadGroupingUpdate(events: linkSubEvents,
          grouping: Event2Grouping(type: Event2GroupingType.superEvent, superEventId: superEvent.id, displayAsIndividual: false));
 
-     String error = uploadResult?.error ?? "";
+     String error = uploadResult.error ?? "";
     if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
       Event2 updatedEventData = superEvent.copyWithNullable(grouping: NullableValue(Event2Grouping(type: Event2GroupingType.superEvent)));
       var mainEventResponse = await Events2().updateEvent(updatedEventData);
@@ -348,7 +405,7 @@ class Event2SuperEventsController {
     }
 
     return StringUtils.isEmpty(error) ?
-    Event2SuperEventUpdateResult.success(data: uploadResult?.data) :
+    Event2SuperEventUpdateResult.success(data: uploadResult.data) :
     Event2SuperEventUpdateResult.fail(error);
   }
 
@@ -374,7 +431,7 @@ class Event2SuperEventsController {
       ).toList();
   }
 
-  static Future<Event2SuperEventUpdateResult?> uploadGroupingUpdate({Iterable<Event2>? events, Event2Grouping? grouping}) async {
+  static Future<Event2SuperEventUpdateResult> uploadGroupingUpdate({Iterable<Event2>? events, Event2Grouping? grouping}) async {
     String error = "";
     int successCount = 0;
     if(CollectionUtils.isEmpty(events))
