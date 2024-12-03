@@ -320,13 +320,16 @@ extension Event2Ext on Event2 {
     }
   }
 
-  Event2 get duplicate => copyWithNullable(
+  Event2 get duplicate => duplicateWith();
+
+  Event2 get copy => copyWithNullable();
+
+  Event2 duplicateWith({Event2Grouping? grouping}) => copyWithNullable(
     id: NullableValue.empty(),
     name: NullableValue('${name} copy'),
     published: NullableValue(false), //Explicitly set published to false - #612. This is comment from Admin app
+    grouping: grouping != null ? NullableValue(grouping) : null, //Expose nullable if we want to be able to clear(pass null) not just update
   );
-
-  Event2 get copy => copyWithNullable();
 
   Event2 copyWithNullable({ // We can pass null to skip the value, NullableValue(null) to explicitly pass null
     NullableValue<String>? id,

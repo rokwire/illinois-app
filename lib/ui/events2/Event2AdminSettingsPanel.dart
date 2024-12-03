@@ -125,21 +125,44 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       Event2Popup.showPrompt(context,
         title: Localization().getStringEx('', 'Duplicate'),
         message: Localization().getStringEx('', 'Are you sure you want to duplicate event ${_event?.name}?'),
-      ).then((bool? result) {
+      ).then((bool? result) async {
         if (result == true) {
           setStateIfMounted(() {
             _duplicating = true;
           });
+          Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(grouping:  _event?.linkedEventsGroupingQuery));
+
           //TBD  // 1. Acknowledge Event Admins
-          Events2().createEvent(_event!.duplicate).then((event){
+          Events2().createEvent(_event!.duplicate).then((createdEvent){
             setStateIfMounted((){
               _duplicating = false;
             });
+            if (createdEvent is Event2) {
+              if(CollectionUtils.isEmpty(subEventsLoad?.events)){
+                Navigator.pop(context);
+                Event2Popup.showMessage(context, message: "Successfully duplicated Event");
+                return;
+              }
 
-            if (result == true) {
-              Navigator.pop(context);
+              //Duplicate sub events
+              String error = "";
+              int subCount = 0;
+              Event2Grouping subGrouping = Event2Grouping.superEvent(createdEvent.id);
+              subEventsLoad?.events?.forEach((Event2 subEvent) async {
+                var subCreateResult = await Events2().createEvent(subEvent.duplicateWith(grouping: subGrouping));
+                if (subCreateResult is Event2) {
+                  subCount ++;
+                } else if(subCreateResult is String){
+                  error += "$subCreateResult \n";
+                }
+              });
+              if(StringUtils.isNotEmpty(error)){
+                Event2Popup.showErrorResult(context, error);
+              } else {
+                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and $subCount sub events");
+              }
             } else {
-              Event2Popup.showErrorResult(context, result);
+              Event2Popup.showErrorResult(context, createdEvent);
             }
           });
         }
