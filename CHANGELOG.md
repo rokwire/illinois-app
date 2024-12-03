@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Second round of InfoSwap (My Info & Illinois Connections) [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Event2SetupSuperEventPanel[#4478](https://github.com/rokwire/illinois-app/issues/4478).
 
 ## [6.1.20] - 2024-12-02
 ### Added
