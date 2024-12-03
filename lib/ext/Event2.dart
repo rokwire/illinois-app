@@ -16,6 +16,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 
+import '../utils/Utils.dart';
+
 // Event2
 
 extension Event2Ext on Event2 {

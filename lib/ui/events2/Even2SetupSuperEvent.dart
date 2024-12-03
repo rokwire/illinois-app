@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -64,7 +64,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     _subEventController.text = _searchText ?? '';
     _superEventChildDisplayOnlyUnderSuperEvent = _event?.isSuperEventChild == true && _event?.grouping?.canDisplayAsIndividual == false;
     _initPublishAllSubEventsField();
-    _subEventController.addListener(_loadSubEventCandidates);
+    _subEventController.addListener(onTextChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(CollectionUtils.isEmpty(_subEvents)){
         _loadSubEvents(init: true);
@@ -195,9 +195,15 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   );
 
 //
-  void _loadSubEventCandidates() {
+  void onTextChanged(){
     final text = _subEventController.text;
     if(_searchText?.compareTo(text) != 0) {
+      _loadSubEvents();
+    }
+  }
+
+  void _loadSubEventCandidates() {
+    final text = _subEventController.text;
       Client client = Client();
 
       _loadCandidatesClient?.close();
@@ -219,7 +225,6 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
             });
           }
       });
-    }
   }
 
   void _loadSubEvents({bool init = false}) {
@@ -238,7 +243,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   Future<dynamic>? _asyncLoadCandidates({Client? client}) async => Events2().loadEventsEx( //TBD load in portions: pass offset and limit
     Events2Query(
       searchText: _searchText,
-      person:  Event2Person(role: Event2UserRole.admin, identifier: Event2PersonIdentifier(externalId: Auth2().netId))
+      types: {Event2TypeFilter.admin}
     ), client: client);
 
   Future<Events2ListResult?>? _asyncLoadSubEvents() async => _event?.isSuperEvent == true ? Events2().loadEvents(
@@ -294,16 +299,19 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
             publishLinkedEvents: _event?.published == true || _publishAllSubEvents
         ).then((result) {
            if ( result.successful){
-             if( _isSuperEvent && _publishAllSubEvents)
-             Event2SuperEventsController.publishAllSubEvents(_event).then((publishResult){
-               setStateIfMounted(() => _applying = false);
-               if (result.successful)
-                 AppAlert.showDialogResult(
-                     context, 'Successfully updated ${result.data + publishResult.data} sub events');
-               else
-                 AppAlert.showDialogResult(
-                     context, 'Unable to update: \n ${publishResult.error}');
-             });
+             if( _isSuperEvent && _publishAllSubEvents && _event?.published == true) //Need to handle publish all sub events
+               Event2SuperEventsController.applyPublishAllSubEvents(_event).then((publishResult){
+                 setStateIfMounted(() => _applying = false);
+                 if (result.successful)
+                   AppAlert.showDialogResult(
+                       context, 'Successfully updated ${result.data} sub events');
+                 else
+                   AppAlert.showDialogResult(
+                       context, 'Unable to update: \n ${publishResult.error}');
+               });
+             else
+               AppAlert.showDialogResult(
+                   context, 'Successfully updated ${result.data + result.data} sub events');
            } else {
              AppAlert.showDialogResult(
                  context, 'Unable to update: \n ${result.error}');
@@ -345,7 +353,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   bool get _isModified =>
       CollectionUtils.equals(_subEvents, _initialSubEvents) == false ||
           _isSuperEventChildModified||
-          _publishAllSubEvents == _hasSubEventToPublish;
+          (_isSuperEvent && _publishAllSubEvents == true && _hasSubEventToPublish == true); // need to apply publish to sub events
 
   bool get _isSuperEventChild => _event?.isSuperEventChild == true;
 
@@ -505,8 +513,8 @@ class Event2SuperEventsController {
       uploadMultiUpdate(events: events,
           updateDataBuilder: (Event2 event) => event.copyWithNullable(grouping: NullableValue(grouping)));
 
-  static Future<Event2SuperEventUpdateResult> publishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
-      if(event?.published == false || event?.isSuperEvent == false)
+  static Future<Event2SuperEventUpdateResult> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
+      if(event?.published == false)
         return Event2SuperEventUpdateResult.success(data: 0);
 
       if(CollectionUtils.isEmpty(subEvents)) {
