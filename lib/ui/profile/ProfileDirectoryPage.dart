@@ -245,7 +245,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   // Signed out
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.message.signed_out', 'To view "My Info & ${AppTextUtils.appTitleMacro} Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.message.signed_out', 'To view "My Info & ${AppTextUtils.appTitleMacro} App Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)

@@ -1890,7 +1890,7 @@
 
 	"panel.settings.profile.content.profile.label": "我的个人资料",
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
-	"panel.settings.profile.content.directory.label": "My Info & {{app_title}} Connections",
+	"panel.settings.profile.content.directory.label": "My Info & {{app_title}} App Directory",
 	"panel.settings.profile.content.privacy.label": "我的应用隐私设置",
 	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
 	"panel.settings.profile.header.profile.label": "个人资料",
@@ -2247,7 +2247,7 @@
 	"panel.profile.stored_data.cafe_credit_transactions.title": "My Cafe Credit Transactions",
 	"panel.profile.stored_data.recent_items.title": "My Recently Viewed",
 
-	"panel.profile.directory.message.signed_out": "To view \"My Info & {{app_title}} Connections\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+	"panel.profile.directory.message.signed_out": "To view \"My Info & {{app_title}} App Directory\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
 	"panel.profile.directory.message.signed_out.link.login": "sign in",
 	"panel.profile.directory.tab.my_info.title": "My Info",
 	"panel.profile.directory.tab.accounts.title": "{{app_title}} App Directory",
