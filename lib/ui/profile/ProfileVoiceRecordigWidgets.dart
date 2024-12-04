@@ -42,7 +42,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Auth2.notifyVoiceRecordChanged]);
+    NotificationService().subscribe(this, [Auth2.notifyProfileNamePronunciationChanged]);
     super.initState();
   }
 
@@ -103,7 +103,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
 
   @override
   void onNotification(String name, param) {
-    if(name == Auth2.notifyVoiceRecordChanged){
+    if(name == Auth2.notifyProfileNamePronunciationChanged){
       setStateIfMounted(() { });
     }
   }
