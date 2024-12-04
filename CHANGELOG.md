@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Removed voice recording caching in Auth2, reworked profile picture caching and processing in Auth2 [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Minor UI updates in My Info & Connections profile page [#4402](https://github.com/rokwire/illinois-app/issues/4402).
 
 ## [6.1.21] - 2024-12-03
 ### Added
