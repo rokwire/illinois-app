@@ -499,11 +499,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       if (mounted) {
         if (userProfile != null) {
           Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
-            email: email,
-            phone: phone,
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
+            override: Auth2UserProfile(firstName: firstName, middleName: middleName, lastName: lastName, email: email, phone: phone,),
+            scope: {Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName, Auth2UserProfileScope.email, Auth2UserProfileScope.phone,}
           );
           if (userProfile != updatedUserProfile) {
             Auth2().saveUserProfile(updatedUserProfile).then((bool result) {
