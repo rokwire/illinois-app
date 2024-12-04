@@ -107,7 +107,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   );
 
   Widget get _pronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
-    Styles().images.getImage('icon-soundbyte', excludeFromSemantics: true),
+    Styles().images.getImage('volume', excludeFromSemantics: true),
   );
 
   Widget get _addPronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
@@ -135,21 +135,21 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   }
 
   void _onRecordNamePronouncement(){
-    _ProfileSoundRecorderDialog.show(context);
+    ProfileSoundRecorderDialog.show(context);
   }
 
   void _onEditRecord(){
-    _ProfileSoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
+    ProfileSoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
   }
 
   void _onDeleteNamePronouncement(){
-    _ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
+    ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
       if (mounted && (result == true)) {
         setStateIfMounted(() => _loading = true);
-        Content().deleteVoiceRecord().then((result) {
+        Content().deleteUserNamePronunciation().then((result) {
           setStateIfMounted(() => _loading = false);
           if(result?.resultType != AudioResultType.succeeded){
-            AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete pronunciation audio. Please try again later."));
           }
         });
       }
@@ -163,30 +163,30 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
 
 enum _RecorderMode {record, play}
 
-class _ProfileSoundRecorderDialog extends StatefulWidget {
+class ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
 
   // ignore: unused_element
-  const _ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
+  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
 
   @override
   _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
 
   // ignore: unused_element
-  static Future show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
-    return showDialog(
+  static Future<AudioResult?> show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
+    return showDialog<AudioResult?>(
         context: context,
         builder: (_) =>
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: _ProfileSoundRecorderDialog(initialRecordBytes: initialRecordBytes),
+              child: ProfileSoundRecorderDialog(initialRecordBytes: initialRecordBytes),
             )
     );
   }
 }
 
-class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog> {
+class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog> {
   late _ProfileSoundRecorderController _controller;
   bool _loading = false;
 
@@ -329,17 +329,17 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadVoiceRecord(audioBytes);
+        AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
           Log.d(result.data ?? "");
-          _closeModal();
+          _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
-          AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
+          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
         }
       } else {
-        AppAlert.showTextMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
         Log.d("No File to save");
       }
     }catch(e){
@@ -352,9 +352,9 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
     _closeModal();
   }
 
-  void _closeModal() {
+  void _closeModal({ AudioResult? result }) {
     _controller.stopRecord();
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(result);
   }
 
   Widget? get _playButtonIcon {
@@ -587,9 +587,9 @@ class _ProfileSoundRecorderController {
   }
 }
 
-class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
+class ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
   // ignore: unused_element
-  static Future<bool?> show(BuildContext context) => showDialog<bool?>(context: context, builder: (_) => _ProfileNamePronouncementConfirmDeleteDialog());
+  static Future<bool?> show(BuildContext context) => showDialog<bool?>(context: context, builder: (_) => ProfileNamePronouncementConfirmDeleteDialog());
 
   @override
   Widget build(BuildContext context) => Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(5)), child:
@@ -603,8 +603,11 @@ class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
                   Column(children: [
                     Container(height: 8,),
                     Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
-                      Text(Localization().getStringEx("", "Delete current recording?"), style:
-                        Styles().textStyles.getTextStyle("widget.detail.regular"),)
+                      Row(children: [Expanded(child:
+                        Text(Localization().getStringEx("panel.profile_info.pronunciation.delete.confirmation.msg", "Are you sure you want to remove this pronunciation audio?"), style:
+                          Styles().textStyles.getTextStyle("widget.detail.regular"),
+                        )
+                      )],)
                       ),
                       Container(height: 16,),
                       Container(padding: EdgeInsets.symmetric(horizontal: 24), child:

@@ -232,3 +232,10 @@ class LinearProgressColorUtils {
     )!;
   }
 }
+
+class NullableValue<T> {
+  final T? value;
+  NullableValue(this.value);
+
+  factory  NullableValue.empty() => NullableValue(null);
+}

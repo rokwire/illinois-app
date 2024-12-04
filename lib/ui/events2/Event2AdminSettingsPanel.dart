@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -48,10 +49,11 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                 title: Localization().getStringEx('panel.event2.create.button.custom_notifications.title', 'CUSTOM NOTIFICATIONS'), //TBD localize
                 subTitle: Localization().getStringEx('panel.event2.create.button.custom_notifications.description', 'Create and schedule up to two custom Illinois app event notifications.'), //TBD localize
                 onTap: _onCustomNotifications),
-              _ButtonWidget(
-                title: 'SUPER EVENT',
-                subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
-                onTap: _onSuperEvent),
+              Visibility(visible: _showSuperEvent,
+                child:_ButtonWidget(
+                  title: 'SUPER EVENT',
+                  subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
+                  onTap: _onSuperEvent)),
               _ButtonWidget(
                 title: 'DOWNLOAD REGISTRANTS .csv',
                 onTap: _onDownloadRegistrants),
@@ -83,9 +85,12 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     )));
   }
 
-  void _onSuperEvent() {
+  void _onSuperEvent() async {
     Analytics().logSelect(target: "Super Event");
-   AppToast.showMessage("TBD");
+    //We can skip passing supEvents, they will be loaded in the panel. This is designed to pass during create/edit.
+    List<Event2>? subEvents; /*= (await Events2().loadEvents(
+        Events2Query(grouping:  _event?.linkedEventsGroupingQuery)))?.events;*/
+    Navigator.push(context,  CupertinoPageRoute(builder: (context) => Event2SetupSuperEventPanel(event: _event, subEvents: subEvents)));
   }
 
   void _onDownloadRegistrants() {
@@ -120,21 +125,42 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       Event2Popup.showPrompt(context,
         title: Localization().getStringEx('', 'Duplicate'),
         message: Localization().getStringEx('', 'Are you sure you want to duplicate event ${_event?.name}?'),
-      ).then((bool? result) {
+      ).then((bool? result) async {
         if (result == true) {
-          setStateIfMounted(() {
-            _duplicating = true;
-          });
-          //TBD  // 1. Acknowledge Event Admins
-          Events2().createEvent(_event!.duplicate).then((event){
-            setStateIfMounted((){
-              _duplicating = false;
-            });
+          setStateIfMounted(() {_duplicating = true;});
+          Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(grouping:  _event?.linkedEventsGroupingQuery));
 
-            if (result == true) {
-              Navigator.pop(context);
+          //TBD  // 1. Acknowledge Event Admins
+          Events2().createEvent(_event!.duplicate).then((createdEvent) async {
+            if (createdEvent is Event2) {
+              if(CollectionUtils.isEmpty(subEventsLoad?.events)){
+                Navigator.pop(context);
+                Event2Popup.showMessage(context, message: "Successfully duplicated Event");
+                setStateIfMounted((){_duplicating = false;});
+                return;
+              }
+
+              //Duplicate sub events
+              String error = "";
+              int subCount = 0;
+              for(Event2 subEvent in  subEventsLoad!.events!) {
+                Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
+                var subCreateResult = await Events2().createEvent(subEvent.duplicateWith(grouping: subGrouping));
+                if (subCreateResult is Event2) {
+                  subCount ++;
+                } else if(subCreateResult is String){
+                  error += "$subCreateResult \n";
+                }
+              }
+              if(StringUtils.isNotEmpty(error)){
+                Event2Popup.showErrorResult(context, error);
+              } else {
+                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and $subCount sub events");
+              }
+              setStateIfMounted((){_duplicating = false;});
             } else {
-              Event2Popup.showErrorResult(context, result);
+              Event2Popup.showErrorResult(context, createdEvent);
+              setStateIfMounted((){_duplicating = false;});
             }
           });
         }
@@ -143,6 +169,8 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   }
 
   Event2? get _event => widget.event;
+
+  bool get _showSuperEvent => true /*_event?.isSuperEventChild == false*/;
 }
 
 class _ButtonWidget extends StatelessWidget{

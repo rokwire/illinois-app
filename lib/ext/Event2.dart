@@ -8,12 +8,15 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+
+import '../utils/Utils.dart';
 
 // Event2
 
@@ -317,34 +320,95 @@ extension Event2Ext on Event2 {
     }
   }
 
-  Event2 get duplicate => Event2(
-      name: '${name} copy',
-      description: description,
-      instructions: instructions,
-      imageUrl: imageUrl,
-      eventUrl: eventUrl,
-      canceled: canceled,
-      published: false, //Explicitly set published to false - #612. This is comment from Admin app
-      startTimeUtc: startTimeUtc,
-      endTimeUtc: endTimeUtc,
-      allDay: allDay,
-      free: free,
-      eventType: eventType,
-      onlineDetails: onlineDetails,
-      grouping: grouping ?? grouping,
-      registrationDetails: registrationDetails,
-      attendanceDetails: attendanceDetails,
-      surveyDetails: surveyDetails,
-      authorizationContext: authorizationContext,
-      context: context,
-      attributes: attributes,
-      location: location,
-      sponsor: sponsor,
-      speaker: speaker,
-      contacts: contacts,
-      userRole: userRole,
-      cost: cost,
-      timezone: timezone);
+  Event2 get duplicate => duplicateWith();
+
+  Event2 get copy => copyWithNullable();
+
+  Event2 duplicateWith({Event2Grouping? grouping}) => copyWithNullable(
+    id: NullableValue.empty(),
+    name: NullableValue('${name} copy'),
+    published: NullableValue(false), //Explicitly set published to false - #612. This is comment from Admin app
+    grouping: grouping != null ? NullableValue(grouping) : null, //Expose nullable if we want to be able to clear(pass null) not just update
+  );
+
+  Event2 copyWithNullable({ // We can pass null to skip the value, NullableValue(null) to explicitly pass null
+    NullableValue<String>? id,
+    NullableValue<String>? name,
+    NullableValue<String>? description,
+    NullableValue<String>? instructions,
+    NullableValue<String>? imageUrl,
+    NullableValue<String>? eventUrl,
+    NullableValue<bool>? canceled,
+    NullableValue<bool>? published,
+    NullableValue<String>? timezone,
+    NullableValue<DateTime>? startTimeUtc,
+    NullableValue<DateTime>? endTimeUtc,
+    NullableValue<bool>? allDay,
+    NullableValue<bool>? free,
+    NullableValue<Event2Type>? eventType,
+    NullableValue<Event2OnlineDetails>? onlineDetails,
+    NullableValue<Event2Grouping>? grouping,
+    NullableValue<Event2RegistrationDetails>? registrationDetails,
+    NullableValue<Event2AttendanceDetails>? attendanceDetails,
+    NullableValue<Event2SurveyDetails>? surveyDetails,
+    NullableValue<Event2AuthorizationContext>? authorizationContext,
+    NullableValue<Event2Context>? context,
+    NullableValue<Map<String, dynamic>>? attributes,
+    NullableValue<ExploreLocation>? location,
+    NullableValue<String>? sponsor,
+    NullableValue<String>? speaker,
+    NullableValue<List<Event2Contact>>? contacts,
+    NullableValue<Event2UserRole>? userRole,
+    NullableValue<String>? cost,
+    NullableValue<List<Event2NotificationSetting>>? notificationSettings,
+  }){
+    return Event2(
+      id: id != null ?  id.value : this.id,
+      name: name != null ? name.value : this.name,
+      description: description != null ? description.value : this.description,
+      instructions: instructions  != null ? instructions.value : this.instructions,
+      imageUrl: imageUrl != null ? imageUrl.value : this.imageUrl,
+      eventUrl: eventUrl != null ? eventUrl.value : this.eventUrl,
+      canceled: canceled  != null ? canceled.value : this.canceled,
+      published: published  != null ? published.value : this.published,
+      timezone: timezone != null ?  timezone.value : this.timezone,
+      startTimeUtc: startTimeUtc != null ? startTimeUtc.value : this.startTimeUtc,
+      endTimeUtc: endTimeUtc != null ? endTimeUtc.value : this.endTimeUtc,
+      allDay: allDay != null ? allDay.value : this.allDay,
+      free: free != null ? free.value : this.free,
+      eventType: eventType != null ? eventType.value : this.eventType,
+      onlineDetails: onlineDetails != null ? onlineDetails.value : this.onlineDetails,
+      grouping: grouping != null ? grouping.value : this.grouping,
+      registrationDetails: registrationDetails != null ? registrationDetails.value : this.registrationDetails,
+      attendanceDetails: attendanceDetails != null ? attendanceDetails.value : this.attendanceDetails,
+      surveyDetails: surveyDetails != null ? surveyDetails.value : this.surveyDetails,
+      authorizationContext: authorizationContext != null ? authorizationContext.value : this.authorizationContext,
+      context: context != null ? context.value : this.context,
+      attributes: attributes != null ? attributes.value : this.attributes,
+      location: location != null ? location.value : this.location,
+      sponsor: sponsor != null ? sponsor.value : this.sponsor,
+      speaker: speaker != null ? speaker.value : this.speaker,
+      contacts: contacts != null ? contacts.value : this.contacts,
+      userRole: userRole != null ? userRole.value : this.userRole,
+      cost: cost != null ? cost.value : this.cost,
+      notificationSettings: notificationSettings != null ? notificationSettings.value : this.notificationSettings,
+      source: this.source,
+      data: this.data,
+    );
+  }
+}
+
+extension Event2GroupingExt on Event2Grouping{
+
+    bool? get canDisplayAsIndividual => displayAsIndividual is bool ? displayAsIndividual : null;
+
+    Event2Grouping copyWith({Event2GroupingType? type, String? superEventId, String? recurrenceId, displayAsIndividual}) =>
+      Event2Grouping(
+        type: type ?? this.type,
+        recurrenceId: recurrenceId ?? this.recurrenceId,
+        displayAsIndividual: displayAsIndividual ?? this.displayAsIndividual,
+        superEventId: superEventId ?? this.superEventId
+      );
 }
 
 extension Event2ContactExt on Event2Contact {
