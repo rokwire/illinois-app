@@ -41,13 +41,13 @@ class Auth2 extends rokwire.Auth2 {
   static const String notifyPictureChanged  = "edu.illinois.rokwire.auth2.picture.changed";
   static const String notifyVoiceRecordChanged = "edu.illinois.rokwire.auth2.voice.record.changed";
 
-  static const String _authCardName             = "idCard.json";
+  static const String _iCardFileName             = "idCard.json";
   static const String _authPictureName          = "profilePicture.small.bin";
 
   Auth2Token? _uiucToken;
 
-  AuthCard?  _authCard;
-  File? _authCardCacheFile;
+  AuthCard?  _iCard;
+  File? _iCardCacheFile;
 
   Uint8List? _authPicture;
   File? _authPictureCacheFile;
@@ -85,8 +85,8 @@ class Auth2 extends rokwire.Auth2 {
   Future<void> initService() async {
     _uiucToken = Storage().auth2UiucToken;
 
-    _authCardCacheFile = await _getAuthCardCacheFile();
-    _authCard = await _loadAuthCardFromCache();
+    _iCardCacheFile = await _getICardCacheFile();
+    _iCard = await _loadICardFromCache();
 
     _authPictureCacheFile = await _getAuthPictureCacheFile();
     _authPicture = await _loadAuthPictureFromCache();
@@ -123,7 +123,7 @@ class Auth2 extends rokwire.Auth2 {
       //TMP: _convertFile('student.guide.import.json', 'Illinois_Student_Guide_Final.json');
       //Log.d("UIUC Token: ${JsonUtils.encode(_uiucToken?.toJson())}", lineLength: 512);
 
-      _refreshAuthCardIfNeeded();
+      _refreshICardIfNeeded();
 
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
@@ -136,7 +136,7 @@ class Auth2 extends rokwire.Auth2 {
 
   // Getters
   
-  AuthCard? get authCard => _authCard;
+  AuthCard? get iCard => _iCard;
   
   Auth2Token? get uiucToken => _uiucToken;
 
@@ -158,11 +158,11 @@ class Auth2 extends rokwire.Auth2 {
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
-    String? authCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
-      await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
-    _authCard = AuthCard.fromJson(JsonUtils.decodeMap(authCardString));
-    Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
-    await _saveAuthCardStringToCache(authCardString);
+    String? iCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
+      await _loadICardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
+    _iCard = AuthCard.fromJson(JsonUtils.decodeMap(iCardString));
+    Storage().auth2CardTime = (_iCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
+    await _saveICardStringToCache(iCardString);
 
     _authPicture = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(token.accessToken) ?
       await _loadAuthPictureFromNet(accountId: account.id, token: token) : null;
@@ -189,9 +189,9 @@ class Auth2 extends rokwire.Auth2 {
       Storage().auth2UiucToken = _uiucToken = null;
     }
 
-    if (_authCard != null) {
-      _authCard = null;
-      _saveAuthCardStringToCache(null);
+    if (_iCard != null) {
+      _iCard = null;
+      _saveICardStringToCache(null);
       Storage().auth2CardTime = null;
       NotificationService().notify(notifyCardChanged);
     }
@@ -221,19 +221,19 @@ class Auth2 extends rokwire.Auth2 {
     settings: FirebaseMessaging.storedSettings,
   );
 
-  // Auth Card
+  // iCard
 
-  String get authCardName => _authCardName;
+  String get iCardFileName => _iCardFileName;
 
-  Future<File> _getAuthCardCacheFile() async {
+  Future<File> _getICardCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authCardName);
+    String cacheFilePath = join(appDocDir.path, iCardFileName);
     return File(cacheFilePath);
   }
 
-  Future<String?> _loadAuthCardStringFromCache() async {
+  Future<String?> _loadICardStringFromCache() async {
     try {
-      return ((_authCardCacheFile != null) && await _authCardCacheFile!.exists()) ? Storage().decrypt(await _authCardCacheFile!.readAsString()) : null;
+      return ((_iCardCacheFile != null) && await _iCardCacheFile!.exists()) ? Storage().decrypt(await _iCardCacheFile!.readAsString()) : null;
     }
     on Exception catch (e) {
       debugPrint(e.toString());
@@ -241,14 +241,14 @@ class Auth2 extends rokwire.Auth2 {
     return null;
   }
 
-  Future<void> _saveAuthCardStringToCache(String? value) async {
+  Future<void> _saveICardStringToCache(String? value) async {
     try {
-      if (_authCardCacheFile != null) {
+      if (_iCardCacheFile != null) {
         if (value != null) {
-          await _authCardCacheFile!.writeAsString(Storage().encrypt(value)!, flush: true);
+          await _iCardCacheFile!.writeAsString(Storage().encrypt(value)!, flush: true);
         }
-        else if (await _authCardCacheFile!.exists()) {
-          await _authCardCacheFile!.delete();
+        else if (await _iCardCacheFile!.exists()) {
+          await _iCardCacheFile!.delete();
         }
       }
     }
@@ -257,26 +257,26 @@ class Auth2 extends rokwire.Auth2 {
     }
   }
 
-  Future<AuthCard?> _loadAuthCardFromCache() async {
-    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
+  Future<AuthCard?> _loadICardFromCache() async {
+    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadICardStringFromCache()));
   }
 
-  Future<Response?> loadAuthCardResponse() async =>
-    _loadAuthCardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+  Future<Response?> loadICardResponse() async =>
+    _loadICardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
 
-  Future<Response?> _loadAuthCardFromNetEx({String? uin, String? accessToken}) async =>
+  Future<Response?> _loadICardFromNetEx({String? uin, String? accessToken}) async =>
     (StringUtils.isNotEmpty(Config().iCardUrl) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) ?
       Network().post(Config().iCardUrl, headers: {
         'UIN': uin,
         'access_token': accessToken
       }) : null;
 
-  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
-    Response? response = await _loadAuthCardFromNetEx(uin: uin, accessToken: accessToken);
+  Future<String?> _loadICardStringFromNet({String? uin, String? accessToken}) async {
+    Response? response = await _loadICardFromNetEx(uin: uin, accessToken: accessToken);
     return (response?.statusCode == 200) ? response?.body : null;
   }
 
-  Future<void> _refreshAuthCardIfNeeded() async {
+  Future<void> _refreshICardIfNeeded() async {
     int? lastCheckTime = Storage().auth2CardTime;
     DateTime? lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
     DateTime? lastCheckMidnight = DateTimeUtils.midnight(lastCheckDate);
@@ -286,22 +286,22 @@ class Auth2 extends rokwire.Auth2 {
 
     // Do it one per day
     if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight!) < 0)) {
-      if (await _refreshAuthCard() != null) {
+      if (await _refreshICard() != null) {
         Storage().auth2CardTime = now.millisecondsSinceEpoch;
       }
     }
   }
 
-  Future<AuthCard?> _refreshAuthCard() async {
-    String? authCardString = await _loadAuthCardStringFromNet(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
-    AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap((authCardString)));
-    if ((authCard != null) && (authCard != _authCard)) {
-      _authCard = authCard;
-      await _saveAuthCardStringToCache(authCardString);
-      Log.d('Auth Card Refreshed');
+  Future<AuthCard?> _refreshICard() async {
+    String? iCardString = await _loadICardStringFromNet(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+    AuthCard? iCard = AuthCard.fromJson(JsonUtils.decodeMap((iCardString)));
+    if ((iCard != null) && (iCard != _iCard)) {
+      _iCard = iCard;
+      await _saveICardStringToCache(iCardString);
+      Log.d('iCard Refreshed');
       NotificationService().notify(notifyCardChanged);
     }
-    return authCard;
+    return iCard;
   }
 
 

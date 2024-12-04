@@ -722,10 +722,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
         else if (attributeName == LogStdAuthCardRoleName) {
-          analyticsEvent[LogStdAuthCardRoleName] = Auth2().authCard?.role;
+          analyticsEvent[LogStdAuthCardRoleName] = Auth2().iCard?.role;
         }
         else if (attributeName == LogStdAuthCardStudentLevel) {
-          analyticsEvent[LogStdAuthCardStudentLevel] = Auth2().authCard?.studentLevel;
+          analyticsEvent[LogStdAuthCardStudentLevel] = Auth2().iCard?.studentLevel;
         }
         else if (attributeName == LogStdStudentTermCode) {
           analyticsEvent[LogStdStudentTermCode] = IlliniCash().studentClassification?.termCode;
