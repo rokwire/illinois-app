@@ -10,6 +10,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -40,9 +41,18 @@ class Event2SetupSuperEventPanel extends StatefulWidget{
   static Widget buildSectionTitleWidget(String title, {bool enabled = true, int? maxLines}) {
     return Text(title, style: (enabled ? TextStyle() : TextStyle()),maxLines: maxLines);
   }
+
+  static Widget buildDescriptionWidget({required String text}) =>
+      Row(children: [
+        Expanded(
+            child: Text(text,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 8,
+                style: Styles().textStyles.getTextStyle("widget.description.regular")))
+      ]);
 }
-//TBD Notifications for events updated - reload content
-class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
+
+class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> implements NotificationsListener{
   final TextEditingController _subEventController = TextEditingController();
 
   String? _searchText;
@@ -65,6 +75,9 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     _superEventChildDisplayOnlyUnderSuperEvent = _event?.isSuperEventChild == true && _event?.grouping?.canDisplayAsIndividual == false;
     _initPublishAllSubEventsField();
     _subEventController.addListener(onTextChanged);
+
+    NotificationService().subscribe(this, [Events2.notifyUpdated,]);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(CollectionUtils.isEmpty(_subEvents)){
         _loadSubEvents(init: true);
@@ -94,7 +107,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           _event?.isSuperEventChild == true ? _buildSuperEventChildContent() : //Super Event child see limited options,
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _buildDescriptionWidget(
+              Event2SetupSuperEventPanel.buildDescriptionWidget(
                   text: 'Set and manage this event as a multi-event “super event.” After creating one or more related events, you can nest those events as sub-events within a super event (e.g., sessions in a conference, performances in a festival).'
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 8),child:
@@ -158,19 +171,10 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       ]);
   }
 
-  Widget _buildDescriptionWidget({required String text}) =>
-    Row(children: [
-      Expanded(
-          child: Text(text,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 8,
-              style: Styles().textStyles.getTextStyle("widget.description.regular")))
-    ]);
-
   Widget _buildSubEventsSection(events, {bool showLink = false, bool showUnlink = false, String? emptyMsg}) {
     Widget resultWidget;
     if (CollectionUtils.isEmpty(events)) {
-      return _buildDescriptionWidget(text: emptyMsg ?? "");
+      return Event2SetupSuperEventPanel.buildDescriptionWidget(text: emptyMsg ?? "");
     } else {
       List<Widget> eventsWidgetList = [];
       events!.forEach((event) {
@@ -279,7 +283,6 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
         if(_isSuperEventChildModified) {
           Event2Grouping? updatedGrouping = _event?.grouping?.copyWith(displayAsIndividual: !(_superEventChildDisplayOnlyUnderSuperEvent == true));
           if(updatedGrouping != null){
-            // Event2SuperEventUpdateResult? uploadResult =
             Event2SuperEventsController.uploadMultiGroupingUpdate(events: [_event!], grouping: updatedGrouping).then((result){
               setStateIfMounted(() => _applying = false);
               if (result.successful)
@@ -296,7 +299,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
             superEvent: _event!,
             existingSubEvents: _initialSubEvents,
             updatedEventsSelection: _subEvents,
-            publishLinkedEvents: _event?.published == true || _publishAllSubEvents
+            publishLinkedEvents: _event?.published == true && _publishAllSubEvents
         ).then((result) {
            if ( result.successful){
              if( _isSuperEvent && _publishAllSubEvents && _event?.published == true) //Need to handle publish all sub events
@@ -311,7 +314,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
                });
              else
                AppAlert.showDialogResult(
-                   context, 'Successfully updated ${result.data + result.data} sub events');
+                   context, 'Successfully updated ${(result.data ?? 0) + (result.data ?? 0)} sub events');
            } else {
              AppAlert.showDialogResult(
                  context, 'Unable to update: \n ${result.error}');
@@ -366,6 +369,14 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   bool get _isSuperEvent => CollectionUtils.isNotEmpty(_subEvents);
 
   bool get _publishAllSubEventsVisible => _isSuperEvent;
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Events2.notifyUpdated) {
+      _loadSubEvents();
+      _loadSubEventCandidates();
+    }
+  }
 }
 
 class _EventCard extends StatelessWidget{
@@ -395,33 +406,33 @@ class Event2SuperEventUpdateResult<T>{
 
     Event2SuperEventUpdateResult({String? this.error, this.data});
 
-    static Event2SuperEventUpdateResult fail(String? error) => Event2SuperEventUpdateResult(error: error ?? "error");
+    static Event2SuperEventUpdateResult<T> fail<T>(String? error) => Event2SuperEventUpdateResult(error: error ?? "error");
 
-    static Event2SuperEventUpdateResult success<T>({required T data}) => Event2SuperEventUpdateResult(data: data);
+    static Event2SuperEventUpdateResult<T> success<T>({required T data}) => Event2SuperEventUpdateResult(data: data);
 
     bool get successful => this.error == null;
 }
 
 class Event2SuperEventsController {
 
-  static Future<Event2SuperEventUpdateResult> update({required Event2 superEvent, List<Event2>? existingSubEvents,
+  static Future<Event2SuperEventUpdateResult<int>> update({required Event2 superEvent, List<Event2>? existingSubEvents,
     List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async { //TBD use publish linked events
-      Event2SuperEventUpdateResult linkedResult = await updateUnlinked(
+      Event2SuperEventUpdateResult<int> linkedResult = await updateUnlinked(
           superEvent: superEvent,
           existingSubEvents: existingSubEvents,
           updatedEventsSelection: updatedEventsSelection);
-      Event2SuperEventUpdateResult unlinkedResult = await updateLinked(
+      Event2SuperEventUpdateResult<int> unlinkedResult = await updateLinked(
           superEvent: superEvent,
           existingSubEvents: existingSubEvents,
           updatedEventsSelection: updatedEventsSelection,
           publishLinkedEvents: publishLinkedEvents);
 
       return linkedResult.successful && unlinkedResult.successful ?
-        Event2SuperEventUpdateResult.success(data: linkedResult.data + unlinkedResult.data) :
+        Event2SuperEventUpdateResult.success(data: (linkedResult.data ?? 0) + (unlinkedResult.data ?? 0)) :
         Event2SuperEventUpdateResult.fail("${linkedResult.error} ${unlinkedResult.error}");
   }
 
-  static Future<Event2SuperEventUpdateResult> updateUnlinked({Event2? superEvent, List<Event2>?existingSubEvents,
+  static Future<Event2SuperEventUpdateResult<int>> updateUnlinked({Event2? superEvent, List<Event2>?existingSubEvents,
     List<Event2>? updatedEventsSelection}) async{
       List<Event2>? unlinkedSubEvents = filterNeedUnlink(existingSubEvents, updatedEventsSelection);
 
@@ -442,9 +453,9 @@ class Event2SuperEventsController {
         Event2SuperEventUpdateResult.fail(error);
   }
 
-  static  Future<Event2SuperEventUpdateResult> updateLinked({required Event2 superEvent,
+  static  Future<Event2SuperEventUpdateResult<int>> updateLinked({required Event2 superEvent,
     List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
-      List<Event2>? linkSubEvents = Event2SuperEventsController.filterNeedLink(existingSubEvents, updatedEventsSelection);
+      List<Event2>? linkSubEvents = filterNeedLink(existingSubEvents, updatedEventsSelection);
 
       if(CollectionUtils.isEmpty(linkSubEvents))
         return Event2SuperEventUpdateResult.success(data: 0);//nothing to add;
@@ -486,7 +497,7 @@ class Event2SuperEventsController {
       ).toList();
   }
 
-  static Future<Event2SuperEventUpdateResult> uploadMultiUpdate({required Iterable<Event2>? events, required Event2? Function(Event2) updateDataBuilder}) async{
+  static Future<Event2SuperEventUpdateResult<int>> uploadMultiUpdate({required Iterable<Event2>? events, required Event2? Function(Event2) updateDataBuilder}) async{
     String error = "";
     int successCount = 0;
     if(CollectionUtils.isEmpty(events))
@@ -509,11 +520,11 @@ class Event2SuperEventsController {
     Event2SuperEventUpdateResult.fail(error);
   }
 
-  static Future<Event2SuperEventUpdateResult> uploadMultiGroupingUpdate({Iterable<Event2>? events, Event2Grouping? grouping}) async =>
+  static Future<Event2SuperEventUpdateResult<int>> uploadMultiGroupingUpdate({Iterable<Event2>? events, Event2Grouping? grouping}) async =>
       uploadMultiUpdate(events: events,
           updateDataBuilder: (Event2 event) => event.copyWithNullable(grouping: NullableValue(grouping)));
 
-  static Future<Event2SuperEventUpdateResult> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
+  static Future<Event2SuperEventUpdateResult<int>> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
       if(event?.published == false)
         return Event2SuperEventUpdateResult.success(data: 0);
 
