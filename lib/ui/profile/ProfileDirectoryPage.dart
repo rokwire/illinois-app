@@ -273,7 +273,7 @@ extension _TabExt on _Tab {
   String titleEx({String? language}) {
     switch(this) {
       case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case _Tab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} Connections', language: language);
+      case _Tab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
 

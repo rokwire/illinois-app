@@ -2250,7 +2250,7 @@
 	"panel.profile.directory.message.signed_out": "To view \"My Info & {{app_title}} Connections\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
 	"panel.profile.directory.message.signed_out.link.login": "sign in",
 	"panel.profile.directory.tab.my_info.title": "My Info",
-	"panel.profile.directory.tab.accounts.title": "{{app_title}} Connections",
+	"panel.profile.directory.tab.accounts.title": "{{app_title}} App Directory",
 	"panel.profile.directory.tab.my_info.connections.title": "My Connections Info",
  	"panel.profile.directory.tab.my_info.directory.title": "My Directory Info",
  	"panel.profile.directory.tab.accounts.connections.title": "My {{app_title}} Connections",
