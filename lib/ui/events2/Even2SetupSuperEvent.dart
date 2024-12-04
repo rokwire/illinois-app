@@ -283,7 +283,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
         if(_isSuperEventChildModified) {
           Event2Grouping? updatedGrouping = _event?.grouping?.copyWith(displayAsIndividual: !(_superEventChildDisplayOnlyUnderSuperEvent == true));
           if(updatedGrouping != null){
-            Event2SuperEventsController.uploadMultiGroupingUpdate(events: [_event!], grouping: updatedGrouping).then((result){
+            Event2? updateEventData = _event?.copyWithNullable(grouping: NullableValue(updatedGrouping));
+            Event2SuperEventsController.multiUploadUpdate(events: [updateEventData!]).then((result){
               setStateIfMounted(() => _applying = false);
               if (result.successful)
                 AppAlert.showDialogResult(
@@ -400,46 +401,48 @@ class _EventCard extends StatelessWidget{
         });
 }
 
-class Event2SuperEventUpdateResult<T>{
+class Event2SuperEventResult<T>{
     String? error;
     T? data;
 
-    Event2SuperEventUpdateResult({String? this.error, this.data});
+    Event2SuperEventResult({String? this.error, this.data});
 
-    static Event2SuperEventUpdateResult<T> fail<T>(String? error) => Event2SuperEventUpdateResult(error: error ?? "error");
+    static Event2SuperEventResult<T> fail<T>(String? error) => Event2SuperEventResult(error: error ?? "error");
 
-    static Event2SuperEventUpdateResult<T> success<T>({required T data}) => Event2SuperEventUpdateResult(data: data);
+    static Event2SuperEventResult<T> success<T>({required T data}) => Event2SuperEventResult(data: data);
 
     bool get successful => this.error == null;
 }
 
 class Event2SuperEventsController {
 
-  static Future<Event2SuperEventUpdateResult<int>> update({required Event2 superEvent, List<Event2>? existingSubEvents,
-    List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async { //TBD use publish linked events
-      Event2SuperEventUpdateResult<int> linkedResult = await updateUnlinked(
+  static Future<Event2SuperEventResult<int>> update({required Event2 superEvent, List<Event2>? existingSubEvents,
+    List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
+      Event2SuperEventResult<int> linkedResult = await updateUnlinked(
           superEvent: superEvent,
           existingSubEvents: existingSubEvents,
           updatedEventsSelection: updatedEventsSelection);
-      Event2SuperEventUpdateResult<int> unlinkedResult = await updateLinked(
+      Event2SuperEventResult<int> unlinkedResult = await updateLinked(
           superEvent: superEvent,
           existingSubEvents: existingSubEvents,
           updatedEventsSelection: updatedEventsSelection,
           publishLinkedEvents: publishLinkedEvents);
 
       return linkedResult.successful && unlinkedResult.successful ?
-        Event2SuperEventUpdateResult.success(data: (linkedResult.data ?? 0) + (unlinkedResult.data ?? 0)) :
-        Event2SuperEventUpdateResult.fail("${linkedResult.error} ${unlinkedResult.error}");
+        Event2SuperEventResult.success(data: (linkedResult.data ?? 0) + (unlinkedResult.data ?? 0)) :
+        Event2SuperEventResult.fail("${linkedResult.error} ${unlinkedResult.error}");
   }
 
-  static Future<Event2SuperEventUpdateResult<int>> updateUnlinked({Event2? superEvent, List<Event2>?existingSubEvents,
+  static Future<Event2SuperEventResult<int>> updateUnlinked({Event2? superEvent, List<Event2>?existingSubEvents,
     List<Event2>? updatedEventsSelection}) async{
       List<Event2>? unlinkedSubEvents = filterNeedUnlink(existingSubEvents, updatedEventsSelection);
 
       if(CollectionUtils.isEmpty(unlinkedSubEvents))
-        return Event2SuperEventUpdateResult.success(data: 0);//nothing to unlink;
+        return Event2SuperEventResult.success(data: 0);//nothing to unlink;
 
-      Event2SuperEventUpdateResult? uploadResult = await uploadMultiGroupingUpdate(events: unlinkedSubEvents, grouping: null);
+      Event2SuperEventResult? uploadResult = await multiUploadUpdate(
+          events: applyCollectionChange(collection: unlinkedSubEvents,
+              change: (event) => event.copyWithNullable(grouping: NullableValue.empty())));;
       String error = uploadResult.error ?? "";
 
       if (CollectionUtils.isEmpty(updatedEventsSelection) && superEvent?.isSuperEvent == true) { //Mark Main event as regular event
@@ -449,30 +452,32 @@ class Event2SuperEventsController {
       }
 
       return StringUtils.isEmpty(error) ?
-        Event2SuperEventUpdateResult.success(data: uploadResult.data) :
-        Event2SuperEventUpdateResult.fail(error);
+        Event2SuperEventResult.success(data: uploadResult.data) :
+        Event2SuperEventResult.fail(error);
   }
 
-  static  Future<Event2SuperEventUpdateResult<int>> updateLinked({required Event2 superEvent,
+  static  Future<Event2SuperEventResult<int>> updateLinked({required Event2 superEvent,
     List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
       List<Event2>? linkSubEvents = filterNeedLink(existingSubEvents, updatedEventsSelection);
 
       if(CollectionUtils.isEmpty(linkSubEvents))
-        return Event2SuperEventUpdateResult.success(data: 0);//nothing to add;
+        return Event2SuperEventResult.success(data: 0);//nothing to add;
 
-     Event2SuperEventUpdateResult? uploadResult = await uploadMultiGroupingUpdate(events: linkSubEvents,
-         grouping: Event2Grouping(type: Event2GroupingType.superEvent, superEventId: superEvent.id, displayAsIndividual: false));
+      final updateGroupingData = Event2Grouping(type: Event2GroupingType.superEvent, superEventId: superEvent.id, displayAsIndividual: false);
+     Event2SuperEventResult? uploadResult = await multiUploadUpdate(
+            events: applyCollectionChange(collection: linkSubEvents,
+                change: (event) => event.copyWithNullable(grouping: NullableValue(updateGroupingData))));
 
      String error = uploadResult.error ?? "";
-    if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
-      Event2 updatedEventData = superEvent.copyWithNullable(grouping: NullableValue(Event2Grouping(type: Event2GroupingType.superEvent)));
-      var mainEventResponse = await Events2().updateEvent(updatedEventData);
-      error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
-    }
+      if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
+        Event2 updatedEventData = superEvent.copyWithNullable(grouping: NullableValue(Event2Grouping(type: Event2GroupingType.superEvent)));
+        var mainEventResponse = await Events2().updateEvent(updatedEventData);
+        error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
+      }
 
-    return StringUtils.isEmpty(error) ?
-    Event2SuperEventUpdateResult.success(data: uploadResult.data) :
-    Event2SuperEventUpdateResult.fail(error);
+      return StringUtils.isEmpty(error) ?
+      Event2SuperEventResult.success(data: uploadResult.data) :
+      Event2SuperEventResult.fail(error);
   }
 
   static List<Event2>? filterNeedUnlink(List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection){
@@ -497,15 +502,14 @@ class Event2SuperEventsController {
       ).toList();
   }
 
-  static Future<Event2SuperEventUpdateResult<int>> uploadMultiUpdate({required Iterable<Event2>? events, required Event2? Function(Event2) updateDataBuilder}) async{
+  static Future<Event2SuperEventResult<int>> multiUpload({required Iterable<Event2>? events, required Future Function(Event2) uploadAPI}) async {
     String error = "";
     int successCount = 0;
     if(CollectionUtils.isEmpty(events))
-      return Event2SuperEventUpdateResult.success(data: successCount); //nothing to upload
+      return Event2SuperEventResult.success(data: successCount); //nothing to upload
 
     for (final updateEvent in events!) {
-      Event2? updatedEventData = updateDataBuilder(updateEvent);
-      dynamic response = updatedEventData != null ? await Events2().updateEvent(updatedEventData) : null;
+      dynamic response = await uploadAPI(updateEvent);
       bool succeeded = response is Event2;
       if (succeeded) {
         successCount++;
@@ -514,30 +518,34 @@ class Event2SuperEventsController {
         // AppAlert.showDialogResult(context, 'Failed to remove sub-event. Response: ${response.body}');
       }
     }
-
     return StringUtils.isEmpty(error) ?
-    Event2SuperEventUpdateResult.success(data: successCount) :
-    Event2SuperEventUpdateResult.fail(error);
+    Event2SuperEventResult.success(data: successCount) :
+    Event2SuperEventResult.fail(error);
   }
 
-  static Future<Event2SuperEventUpdateResult<int>> uploadMultiGroupingUpdate({Iterable<Event2>? events, Event2Grouping? grouping}) async =>
-      uploadMultiUpdate(events: events,
-          updateDataBuilder: (Event2 event) => event.copyWithNullable(grouping: NullableValue(grouping)));
+  static Future<Event2SuperEventResult<int>> multiUploadUpdate({required Iterable<Event2>? events}) async =>
+      multiUpload(events: events, uploadAPI: Events2().updateEvent);
 
-  static Future<Event2SuperEventUpdateResult<int>> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
+  static Future<Event2SuperEventResult<int>> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
       if(event?.published == false)
-        return Event2SuperEventUpdateResult.success(data: 0);
+        return Event2SuperEventResult.success(data: 0);
 
       if(CollectionUtils.isEmpty(subEvents)) {
         Events2ListResult? result = await Events2().loadEvents(Events2Query(grouping: event?.linkedEventsGroupingQuery));
         subEvents = result?.events;
       }
       Iterable<Event2>? unpublishedEvents = subEvents?.where((Event2 event) => event.published == false);
-      if(CollectionUtils.isEmpty(unpublishedEvents))
-        return Event2SuperEventUpdateResult.success(data: 0);
 
-      return uploadMultiUpdate(events: unpublishedEvents, updateDataBuilder:
-          (Event2 event) => event.copyWithNullable(published: NullableValue(true)));
+      if(CollectionUtils.isEmpty(unpublishedEvents))
+        return Event2SuperEventResult.success(data: 0);
+
+      return multiUploadUpdate(events: unpublishedEvents?.map(
+              (Event2 event) => event.copyWithNullable(published: NullableValue(true))));
 
   }
+
+  static Iterable<Event2>? applyCollectionChange({required Iterable<Event2>? collection, required Event2 Function(Event2) change})
+    => collection?.map(change);
+
+
 }

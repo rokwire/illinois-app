@@ -141,21 +141,18 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
               }
 
               //Duplicate sub events
-              String error = "";
-              int subCount = 0;
-              for(Event2 subEvent in  subEventsLoad!.events!) {
-                Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
-                var subCreateResult = await Events2().createEvent(subEvent.duplicateWith(grouping: subGrouping));
-                if (subCreateResult is Event2) {
-                  subCount ++;
-                } else if(subCreateResult is String){
-                  error += "$subCreateResult \n";
-                }
-              }
-              if(StringUtils.isNotEmpty(error)){
-                Event2Popup.showErrorResult(context, error);
+             Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
+                  events: Event2SuperEventsController.applyCollectionChange(
+                      collection: subEventsLoad?.events,
+                      change: (subEvent) {
+                        Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
+                        return subEvent.duplicateWith(grouping: subGrouping);}),
+                  uploadAPI: Events2().createEvent);
+
+              if(updateResult.successful){
+                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and ${updateResult.data} sub events");
               } else {
-                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and $subCount sub events");
+                Event2Popup.showErrorResult(context, updateResult.error);
               }
               setStateIfMounted((){_duplicating = false;});
             } else {
