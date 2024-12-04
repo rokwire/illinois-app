@@ -1,8 +1,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
@@ -38,25 +38,21 @@ class Auth2 extends rokwire.Auth2 {
   static String get notifyPrepareUserDelete => rokwire.Auth2.notifyPrepareUserDelete;
 
   static const String notifyCardChanged     = "edu.illinois.rokwire.auth2.card.changed";
-  static const String notifyPictureChanged  = "edu.illinois.rokwire.auth2.picture.changed";
-  static const String notifyVoiceRecordChanged = "edu.illinois.rokwire.auth2.voice.record.changed";
+  static const String notifyProfilePictureChanged  = "edu.illinois.rokwire.auth2.profile.picture.changed";
+  static const String notifyProfileNamePronunciationChanged = "edu.illinois.rokwire.auth2.profile.name.pronunciation.changed";
 
-  static const String _authCardName             = "idCard.json";
-  static const String _authPictureName          = "profilePicture.small.bin";
-  static const String _authVoiceRecordName = "profileVoiceRecord.bin";
+  static const String _iCardFileName             = "idCard.json";
+  static const String _profilePictureFileName      = "profilePicture.small.bin";
 
   Auth2Token? _uiucToken;
 
-  AuthCard?  _authCard;
-  File? _authCardCacheFile;
+  AuthCard? _iCard;
+  File? _iCardCacheFile;
 
-  Uint8List? _authPicture;
-  File? _authPictureCacheFile;
+  Uint8List? _profilePicture;
+  File? _profilePictureCacheFile;
 
-  Uint8List? _authVoiceRecord;
-  File? _authVoiceRecordCacheFile;
-
-  DateTime?      _pausedDateTime;
+  DateTime? _pausedDateTime;
 
   // Singletone Factory
 
@@ -73,7 +69,6 @@ class Auth2 extends rokwire.Auth2 {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Content.notifyUserProfilePictureChanged,
-      Content.notifyUserProfileVoiceRecordChanged,
     ]);
   }
 
@@ -82,7 +77,6 @@ class Auth2 extends rokwire.Auth2 {
     NotificationService().unsubscribe(this, [
       FlexUI.notifyChanged,
       Content.notifyUserProfilePictureChanged,
-      Content.notifyUserProfileVoiceRecordChanged,
     ]);
     super.destroyService();
   }
@@ -91,14 +85,10 @@ class Auth2 extends rokwire.Auth2 {
   Future<void> initService() async {
     _uiucToken = Storage().auth2UiucToken;
 
-    _authCardCacheFile = await _getAuthCardCacheFile();
-    _authCard = await _loadAuthCardFromCache();
-
-    _authPictureCacheFile = await _getAuthPictureCacheFile();
-    _authPicture = await _loadAuthPictureFromCache();
-
-    _authVoiceRecordCacheFile = await _getAuthVoiceRecordCacheFile();
-    _authVoiceRecord = await _loadAuthVoiceRecordFromCache();
+    Future.wait([
+      _initICardFromCache(),
+      _initProfilePictureFromCache(),
+    ]);
 
     await super.initService();
   }
@@ -112,11 +102,7 @@ class Auth2 extends rokwire.Auth2 {
       _checkEnabled();
     }
     else if (name == Content.notifyUserProfilePictureChanged) {
-      _refreshAuthPicture();
-    }
-
-    else if (name == Content.notifyUserProfileVoiceRecordChanged) {
-      _refreshAuthVoiceRecord();
+      _refreshProfilePicture();
     }
   }
 
@@ -136,13 +122,12 @@ class Auth2 extends rokwire.Auth2 {
       //TMP: _convertFile('student.guide.import.json', 'Illinois_Student_Guide_Final.json');
       //Log.d("UIUC Token: ${JsonUtils.encode(_uiucToken?.toJson())}", lineLength: 512);
 
-      _refreshAuthCardIfNeeded();
+      _refreshICardIfNeeded();
 
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshAuthPicture();
-          _refreshAuthVoiceRecord();
+          _refreshProfilePicture();
         }
       }
     }
@@ -150,13 +135,11 @@ class Auth2 extends rokwire.Auth2 {
 
   // Getters
   
-  AuthCard? get authCard => _authCard;
-  
   Auth2Token? get uiucToken => _uiucToken;
 
-  Uint8List? get authPicture => _authPicture;
+  AuthCard? get iCard => _iCard;
 
-  Uint8List? get authVoiceRecord => _authVoiceRecord;
+  Uint8List? get profilePicture => _profilePicture;
 
   bool get canFavorite => FlexUI().isPersonalizationAvailable;
 
@@ -174,25 +157,16 @@ class Auth2 extends rokwire.Auth2 {
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
-    String? authCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
-      await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
-    _authCard = AuthCard.fromJson(JsonUtils.decodeMap(authCardString));
-    Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
-    await _saveAuthCardStringToCache(authCardString);
-
-    _authPicture = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(token.accessToken) ?
-      await _loadAuthPictureFromNet(accountId: account.id, token: token) : null;
-    await _saveAuthPictureToCache(_authPicture);
-
-    _authVoiceRecord = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(token.accessToken) ?
-      await _loadAuthVoiceRecordFromNet(accountId: account.id, token: token) : null;
-    await _saveAuthVoiceRecordToCache(_authVoiceRecord);
+    Future.wait([
+      _initICardOnLogin(account, token),
+      _initProfilePictureOnLogin(account, token),
+    ]);
 
     await super.applyLogin(account, token, scope: scope, params: params);
     
     NotificationService().notify(notifyCardChanged);
-    NotificationService().notify(notifyPictureChanged);
-    NotificationService().notify(notifyVoiceRecordChanged);
+    NotificationService().notify(notifyProfilePictureChanged);
+    NotificationService().notify(notifyProfileNamePronunciationChanged);
   }
 
   @override
@@ -209,29 +183,26 @@ class Auth2 extends rokwire.Auth2 {
       Storage().auth2UiucToken = _uiucToken = null;
     }
 
-    if (_authCard != null) {
-      _authCard = null;
-      _saveAuthCardStringToCache(null);
+    if (_iCard != null) {
+      _iCard = null;
+      _saveICardStringToCache(null);
       Storage().auth2CardTime = null;
       NotificationService().notify(notifyCardChanged);
     }
 
-    if (_authPicture != null) {
-      _authPicture = null;
-      _saveAuthPictureToCache(null);
-      NotificationService().notify(notifyPictureChanged);
-    }
-
-    if (_authVoiceRecord != null) {
-      _authVoiceRecord = null;
-      _saveAuthPictureToCache(null);
-      NotificationService().notify(notifyVoiceRecordChanged);
+    if (_profilePicture != null) {
+      _profilePicture = null;
+      _saveProfilePictureToCache(null);
+      NotificationService().notify(notifyProfilePictureChanged);
     }
 
     super.logout(prefs: prefs);
   }
 
-  // Overrides
+  @protected
+  void onUserAccountProfileChanged(Auth2UserProfile? profile) {
+    _refreshProfilePicture();
+  }
 
   @override
   String? get deviceIdIdentifier => 'deviceUUID';
@@ -247,19 +218,19 @@ class Auth2 extends rokwire.Auth2 {
     settings: FirebaseMessaging.storedSettings,
   );
 
-  // Auth Card
+  // iCard
 
-  String get authCardName => _authCardName;
+  String get iCardFileName => _iCardFileName;
 
-  Future<File> _getAuthCardCacheFile() async {
+  Future<File> _getICardCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authCardName);
+    String cacheFilePath = join(appDocDir.path, iCardFileName);
     return File(cacheFilePath);
   }
 
-  Future<String?> _loadAuthCardStringFromCache() async {
+  Future<String?> _loadICardStringFromCache() async {
     try {
-      return ((_authCardCacheFile != null) && await _authCardCacheFile!.exists()) ? Storage().decrypt(await _authCardCacheFile!.readAsString()) : null;
+      return ((_iCardCacheFile != null) && await _iCardCacheFile!.exists()) ? Storage().decrypt(await _iCardCacheFile!.readAsString()) : null;
     }
     on Exception catch (e) {
       debugPrint(e.toString());
@@ -267,14 +238,14 @@ class Auth2 extends rokwire.Auth2 {
     return null;
   }
 
-  Future<void> _saveAuthCardStringToCache(String? value) async {
+  Future<void> _saveICardStringToCache(String? value) async {
     try {
-      if (_authCardCacheFile != null) {
+      if (_iCardCacheFile != null) {
         if (value != null) {
-          await _authCardCacheFile!.writeAsString(Storage().encrypt(value)!, flush: true);
+          await _iCardCacheFile!.writeAsString(Storage().encrypt(value)!, flush: true);
         }
-        else if (await _authCardCacheFile!.exists()) {
-          await _authCardCacheFile!.delete();
+        else if (await _iCardCacheFile!.exists()) {
+          await _iCardCacheFile!.delete();
         }
       }
     }
@@ -283,26 +254,39 @@ class Auth2 extends rokwire.Auth2 {
     }
   }
 
-  Future<AuthCard?> _loadAuthCardFromCache() async {
-    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
+  Future<AuthCard?> _loadICardFromCache() async {
+    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadICardStringFromCache()));
   }
 
-  Future<Response?> loadAuthCardResponse() async =>
-    _loadAuthCardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+  Future<void> _initICardFromCache() async {
+    _iCardCacheFile = await _getICardCacheFile();
+    _iCard = await _loadICardFromCache();
+  }
 
-  Future<Response?> _loadAuthCardFromNetEx({String? uin, String? accessToken}) async =>
+  Future<void> _initICardOnLogin(Auth2Account account, Auth2Token token) async {
+    String? iCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
+      await _loadICardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
+    _iCard = AuthCard.fromJson(JsonUtils.decodeMap(iCardString));
+    Storage().auth2CardTime = (_iCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
+    await _saveICardStringToCache(iCardString);
+  }
+
+  Future<Response?> loadICardResponse() async =>
+    _loadICardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+
+  Future<Response?> _loadICardFromNetEx({String? uin, String? accessToken}) async =>
     (StringUtils.isNotEmpty(Config().iCardUrl) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) ?
       Network().post(Config().iCardUrl, headers: {
         'UIN': uin,
         'access_token': accessToken
       }) : null;
 
-  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
-    Response? response = await _loadAuthCardFromNetEx(uin: uin, accessToken: accessToken);
+  Future<String?> _loadICardStringFromNet({String? uin, String? accessToken}) async {
+    Response? response = await _loadICardFromNetEx(uin: uin, accessToken: accessToken);
     return (response?.statusCode == 200) ? response?.body : null;
   }
 
-  Future<void> _refreshAuthCardIfNeeded() async {
+  Future<void> _refreshICardIfNeeded() async {
     int? lastCheckTime = Storage().auth2CardTime;
     DateTime? lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
     DateTime? lastCheckMidnight = DateTimeUtils.midnight(lastCheckDate);
@@ -312,39 +296,39 @@ class Auth2 extends rokwire.Auth2 {
 
     // Do it one per day
     if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight!) < 0)) {
-      if (await _refreshAuthCard() != null) {
+      if (await _refreshICard() != null) {
         Storage().auth2CardTime = now.millisecondsSinceEpoch;
       }
     }
   }
 
-  Future<AuthCard?> _refreshAuthCard() async {
-    String? authCardString = await _loadAuthCardStringFromNet(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
-    AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap((authCardString)));
-    if ((authCard != null) && (authCard != _authCard)) {
-      _authCard = authCard;
-      await _saveAuthCardStringToCache(authCardString);
-      Log.d('Auth Card Refreshed');
+  Future<AuthCard?> _refreshICard() async {
+    String? iCardString = await _loadICardStringFromNet(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+    AuthCard? iCard = AuthCard.fromJson(JsonUtils.decodeMap((iCardString)));
+    if ((iCard != null) && (iCard != _iCard)) {
+      _iCard = iCard;
+      await _saveICardStringToCache(iCardString);
+      Log.d('iCard Refreshed');
       NotificationService().notify(notifyCardChanged);
     }
-    return authCard;
+    return iCard;
   }
 
 
   // Auth Picture
 
-  String get authPictureName => _authPictureName;
+  String get profilePictureFileName => _profilePictureFileName;
 
-  Future<File> _getAuthPictureCacheFile() async {
+  Future<File> _getProfilePictureCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authPictureName);
+    String cacheFilePath = join(appDocDir.path, profilePictureFileName);
     return File(cacheFilePath);
   }
 
-  Future<Uint8List?> _loadAuthPictureFromCache() async {
+  Future<Uint8List?> _loadProfilePictureFromCache() async {
     try {
-      if ((_authPictureCacheFile != null) && await _authPictureCacheFile!.exists()) {
-        String? base64 = Storage().decrypt(await _authPictureCacheFile!.readAsString());
+      if ((_profilePictureCacheFile != null) && await _profilePictureCacheFile!.exists()) {
+        String? base64 = Storage().decrypt(await _profilePictureCacheFile!.readAsString());
         return (base64 != null) ? base64Decode(base64) : null;
       }
     }
@@ -354,14 +338,14 @@ class Auth2 extends rokwire.Auth2 {
     return null;
   }
 
-  Future<void> _saveAuthPictureToCache(Uint8List? value) async {
+  Future<void> _saveProfilePictureToCache(Uint8List? value) async {
     try {
-      if (_authPictureCacheFile != null) {
+      if (_profilePictureCacheFile != null) {
         if (value != null) {
-          await _authPictureCacheFile!.writeAsString(Storage().encrypt(base64Encode(value)) ?? '', flush: true);
+          await _profilePictureCacheFile!.writeAsString(Storage().encrypt(base64Encode(value)) ?? '', flush: true);
         }
-        else if (await _authPictureCacheFile!.exists()) {
-          await _authPictureCacheFile!.delete();
+        else if (await _profilePictureCacheFile!.exists()) {
+          await _profilePictureCacheFile!.delete();
         }
       }
     }
@@ -370,7 +354,18 @@ class Auth2 extends rokwire.Auth2 {
     }
   }
 
-  Future<Uint8List?> _loadAuthPictureFromNet({String? accountId, Auth2Token? token}) async {
+  Future<void> _initProfilePictureFromCache() async {
+    _profilePictureCacheFile = await _getProfilePictureCacheFile();
+    _profilePicture = await _loadProfilePictureFromCache();
+  }
+
+  Future<void> _initProfilePictureOnLogin(Auth2Account account, Auth2Token token) async {
+    _profilePicture = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(account.profile?.photoUrl) && StringUtils.isNotEmpty(token.accessToken) ?
+      await _loadProfilePictureFromNet(accountId: account.id, token: token) : null;
+    await _saveProfilePictureToCache(_profilePicture);
+  }
+
+  Future<Uint8List?> _loadProfilePictureFromNet({String? accountId, Auth2Token? token}) async {
     String? accessToken = token?.accessToken;
     String? url = Content().getUserPhotoUrl(type: UserProfileImageType.small);
     if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
@@ -385,77 +380,13 @@ class Auth2 extends rokwire.Auth2 {
     }
   }
 
-  Future<Uint8List?> _refreshAuthPicture() async {
-    Uint8List? authPicture = StringUtils.isNotEmpty(Auth2().account?.id) ? await Content().loadUserPhoto(UserProfileImageType.small) : null;
-    if (authPicture != _authPicture) {
-      _authPicture = authPicture;
-      await _saveAuthPictureToCache(authPicture);
-      NotificationService().notify(notifyPictureChanged);
+  Future<void> _refreshProfilePicture() async {
+    Uint8List? profilePicture = StringUtils.isNotEmpty(Auth2().account?.id) && StringUtils.isNotEmpty(Auth2().account?.profile?.photoUrl) ?
+      await Content().loadUserPhoto(UserProfileImageType.small) : null;
+    if (!listEquals(_profilePicture, profilePicture)) {
+      _profilePicture = profilePicture;
+      await _saveProfilePictureToCache(profilePicture);
+      NotificationService().notify(notifyProfilePictureChanged);
     }
-    return authPicture;
-  }
-
-  // Auth Voice Record
-
-  String get authVoiceRecordName => _authVoiceRecordName;
-
-  Future<File> _getAuthVoiceRecordCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authVoiceRecordName);
-    return File(cacheFilePath);
-  }
-
-  Future<Uint8List?> _loadAuthVoiceRecordFromCache() async {
-    try {
-      if ((_authVoiceRecordCacheFile != null) && await _authVoiceRecordCacheFile!.exists()) {
-        String? base64 = Storage().decrypt(await _authVoiceRecordCacheFile!.readAsString());
-        return (base64 != null) ? base64Decode(base64) : null;
-      }
-    }
-    on Exception catch (e) {
-      debugPrint(e.toString());
-    }
-    return null;
-  }
-
-  Future<void> _saveAuthVoiceRecordToCache(Uint8List? value) async {
-    try {
-      if (_authVoiceRecordCacheFile != null) {
-        if (value != null) {
-          await _authVoiceRecordCacheFile!.writeAsString(Storage().encrypt(base64Encode(value)) ?? '', flush: true);
-        }
-        else if (await _authVoiceRecordCacheFile!.exists()) {
-          await _authVoiceRecordCacheFile!.delete();
-        }
-      }
-    }
-    on Exception catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  Future<Uint8List?> _loadAuthVoiceRecordFromNet({String? accountId, Auth2Token? token}) async {
-    String? accessToken = token?.accessToken;
-    String? url = Content().getUserNamePronunciationUrl(accountId: accountId);
-    if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
-      String? tokenType = token?.tokenType ?? 'Bearer';
-      Response? response = await Network().get(url, headers: {
-        HttpHeaders.authorizationHeader : "$tokenType $accessToken"
-      });
-      return (response?.statusCode == 200) ? response?.bodyBytes : null;
-    }
-    else {
-      return null;
-    }
-  }
-
-  Future<Uint8List?> _refreshAuthVoiceRecord() async {
-    Uint8List? authVoiceRecord = await _loadAuthVoiceRecordFromNet();
-    if (authVoiceRecord != _authVoiceRecord) {
-      _authVoiceRecord = authVoiceRecord;
-      await _saveAuthVoiceRecordToCache(authVoiceRecord);
-      NotificationService().notify(notifyVoiceRecordChanged);
-    }
-    return authVoiceRecord;
   }
 }

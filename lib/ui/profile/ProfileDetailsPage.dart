@@ -433,11 +433,13 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   void _loadUserProfilePicture() {
-    _setProfilePicProcessing(true);
-    Content().loadDefaultUserPhoto().then((imageBytes) {
-      _profileImageBytes = imageBytes;
-      _setProfilePicProcessing(false);
-    });
+    if (StringUtils.isNotEmpty(Auth2().profile?.photoUrl)) {
+      _setProfilePicProcessing(true);
+      Content().loadDefaultUserPhoto().then((imageBytes) {
+        _profileImageBytes = imageBytes;
+        _setProfilePicProcessing(false);
+      });
+    }
   }
 
   void _setProfilePicProcessing(bool processing) {
@@ -499,11 +501,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       if (mounted) {
         if (userProfile != null) {
           Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
-            email: email,
-            phone: phone,
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
+            override: Auth2UserProfile(firstName: firstName, middleName: middleName, lastName: lastName, email: email, phone: phone,),
+            scope: {Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName, Auth2UserProfileScope.email, Auth2UserProfileScope.phone,}
           );
           if (userProfile != updatedUserProfile) {
             Auth2().saveUserProfile(updatedUserProfile).then((bool result) {
@@ -551,15 +550,21 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
               _setProfilePicProcessing(false);
               break;
             case ImagesResultType.error:
-              AppAlert.showDialogResult(
-                  context,
-                  Localization().getStringEx(
-                      'panel.profile_info.picture.upload.failed.msg',
-                      'Failed to upload profile picture. Please, try again later.'));
+              AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
               _setProfilePicProcessing(false);
               break;
             case ImagesResultType.succeeded:
-              _loadUserProfilePicture();
+              _updateProfilePicture(true).then((bool updateResult){
+                if (mounted) {
+                  if (updateResult) {
+                    _loadUserProfilePicture();
+                  }
+                  else {
+                    AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
+                    _setProfilePicProcessing(false);
+                  }
+                }
+              });
               break;
             default:
               break;
@@ -574,24 +579,43 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     Analytics().logSelect(target: "Delete Profile Picture");
     _setProfilePicProcessing(true);
     Content().deleteUserPhoto().then((deleteImageResult) {
-      ImagesResultType? resultType = deleteImageResult.resultType;
-      switch (resultType) {
-        case ImagesResultType.error:
-          AppAlert.showDialogResult(
-              context,
-              Localization().getStringEx(
-                  'panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
-          _setProfilePicProcessing(false);
-          break;
-        case ImagesResultType.succeeded:
-          _profileImageBytes = null;
-          _setProfilePicProcessing(false);
-          break;
-        default:
-          _setProfilePicProcessing(false);
-          break;
+      if (mounted) {
+        ImagesResultType? resultType = deleteImageResult.resultType;
+        switch (resultType) {
+          case ImagesResultType.error:
+            AppAlert.showDialogResult(context,Localization().getStringEx('panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+            _setProfilePicProcessing(false);
+            break;
+          case ImagesResultType.succeeded:
+            setState(() {
+              _profileImageBytes = null;
+            });
+            _updateProfilePicture(false).then((bool updateResult){
+              if (mounted) {
+                if (!updateResult) {
+                  AppAlert.showDialogResult(context,Localization().getStringEx('panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+                }
+                _setProfilePicProcessing(false);
+              }
+            });
+
+            break;
+          default:
+            _setProfilePicProcessing(false);
+            break;
+        }
       }
     });
+  }
+
+  Future<bool> _updateProfilePicture(bool hasPicture) async {
+    Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
+      override: Auth2UserProfile(
+        photoUrl: hasPicture ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : null,
+      ),
+      scope: { Auth2UserProfileScope.photoUrl }
+    );
+    return await Auth2().saveUserProfile(profile);
   }
 
   void _onTapDeletePicture() {

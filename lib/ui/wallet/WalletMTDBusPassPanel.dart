@@ -38,7 +38,7 @@ class WalletMTDBusPassPanel extends StatelessWidget {
     if (!Auth2().isOidcLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.bus_pass', 'MTD Bus Pass'));
     }
-    else if (Auth2().authCard == null) {
+    else if (Auth2().iCard == null) {
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.'));
     }
     else {
@@ -163,7 +163,7 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
   }
 
   Future<MemoryImage?> _loadAsyncPhotoImage() async{
-    Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
+    Uint8List? photoBytes = await  Auth2().iCard?.photoBytes;
     return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
@@ -216,7 +216,7 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(children: <Widget>[
         _buildAvatar(),
-        Text(Auth2().authCard?.role ?? '', style: Styles().textStyles.getTextStyle("panel.mtd_bus.role")),
+        Text(Auth2().iCard?.role ?? '', style: Styles().textStyles.getTextStyle("panel.mtd_bus.role")),
         BusClockWidget(),
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 10), child:
