@@ -93,7 +93,7 @@ class Config extends rokwire.Config {
   String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);
   String? get shibbolethOauthPathUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_path_url']);
   String? get userAuthUrl            => JsonUtils.stringValue(otherUniversityServices['user_auth_url']);
-  String? get assetsUrl              => JsonUtils.stringValue(otherUniversityServices['assets_url']);
+  String? get assetsUrl              => getOtherServicesUrl(key: 'assets_url');
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
   String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
