@@ -374,8 +374,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   @override
   void onNotification(String name, param) {
     if (name == Events2.notifyUpdated) {
-      _loadSubEvents();
-      _loadSubEventCandidates();
+      // _loadSubEvents(init: true); //resetting the selection
+      // _loadSubEventCandidates();
     }
   }
 }
@@ -541,7 +541,6 @@ class Event2SuperEventsController {
 
       return multiUploadUpdate(events: unpublishedEvents?.map(
               (Event2 event) => event.copyWithNullable(published: NullableValue(true))));
-
   }
 
   static Iterable<Event2>? applyCollectionChange({required Iterable<Event2>? collection, required Event2 Function(Event2) change})
