@@ -1726,7 +1726,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Widget _buildPublishedSection() =>  Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
 
-  Widget _buildPublishedToggle() => Semantics(toggled: _free, excludeSemantics: true, 
+  Widget _buildPublishedToggle() => Semantics(toggled: _published, excludeSemantics: true,
     label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
     hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
     child: ToggleRibbonButton(

@@ -81,6 +81,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -179,7 +181,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return Column(key: _pageKey, children: <Widget>[
       Expanded(child:
         Container(color: Styles().colors.background, child:
-          SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
+          SingleChildScrollView(controller: _scrollController, physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
@@ -305,7 +307,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (_selectedContent) {
       case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
-      case ProfileContent.directory: return ProfileDirectoryPage();
+      case ProfileContent.directory: return ProfileDirectoryPage(scrollController: _scrollController,);
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
     }

@@ -442,7 +442,7 @@ class AppTextUtils {
   static String appTitleEx({String? language}) =>
     Localization().getStringEx('app.title', 'Illinois', language: language);
 
-  static appTitleString(String key, String defaults, {String? language}) =>
+  static String appTitleString(String key, String defaults, {String? language}) =>
     Localization().getStringEx(key, defaults, language: language).replaceAll(appTitleMacro, appTitleEx(language: language));
 
   // University Name
