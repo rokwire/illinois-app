@@ -1,9 +1,11 @@
 
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -43,6 +45,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
+  Map<String, dynamic> _filters = <String, dynamic>{};
 
   @override
   void initState() {
@@ -168,25 +171,32 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   Widget get _searchBarWidget =>
     Padding(padding: const EdgeInsets.only(bottom: 16), child:
-      Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
-        Row(children: <Widget>[
-          Expanded(child:
-            _searchTextWidget
-          ),
-          _searchImageButton('close',
-            label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-            hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-            rightPadding: _searchImageButtonHorzPadding / 2,
-            onTap: _onTapClear,
-          ),
-          _searchImageButton('search',
-            label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-            hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-            leftPadding: _searchImageButtonHorzPadding / 2,
-            onTap: _onTapSearch,
-          ),
-        ],)
-      ),
+      Row(children: [
+        Expanded(child:
+          Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+            Row(children: <Widget>[
+              Expanded(child:
+                _searchTextWidget
+              ),
+              _searchImageButton('close',
+                label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+                hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+                rightPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapClear,
+              ),
+              _searchImageButton('search',
+                label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+                hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+                leftPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapSearch,
+              ),
+            ],)
+          )
+        ),
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          _filtersButton
+        ),
+      ],),
     );
 
     Widget get _searchTextWidget =>
@@ -227,6 +237,37 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   static const double _searchImageButtonHorzPadding = 16;
   static const double _searchImageButtonVertPadding = 12;
+
+  Widget get _filtersButton =>
+    InkWell(onTap: _onFilter, child:
+      Container(decoration: _searchBarDecoration, padding: EdgeInsets.symmetric(vertical: 14, horizontal: 14), child:
+        Styles().images.getImage('filters') ?? SizedBox(width: 18, height: 18,),
+      ),
+    );
+
+  void _onFilter() {
+    Analytics().logSelect(target: 'Filters');
+
+    if (Auth2().directoryAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'App Directory Filters'),
+        description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
+        scope: Auh2Directory.attributesScope,
+        contentAttributes: Auth2().directoryAttributes,
+        selection: _filters,
+        sortType: ContentAttributesSortType.alphabetical,
+        filtersMode: true,
+      ))).then((selection) {
+        if ((selection != null) && mounted) {
+          setState(() {
+            _filters = selection;
+          });
+          _load();
+        }
+      });
+    }
+
+  }
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
@@ -305,7 +346,6 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   }
 
   Future<void> _refresh() async {
-    return;
     if (!_loading) {
       setStateIfMounted(() {
         _loading = true;
@@ -330,7 +370,6 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   }
 
   Future<void> _extend() async {
-    return;
     if (!_loading && !_extending) {
       setStateIfMounted(() {
         _extending = true;
