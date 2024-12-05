@@ -202,7 +202,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   void onTextChanged(){
     final text = _subEventController.text;
     if(_searchText?.compareTo(text) != 0) {
-      _loadSubEvents();
+      _loadSubEventCandidates();
     }
   }
 
