@@ -56,9 +56,9 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   final TextEditingController _subEventController = TextEditingController();
 
   String? _searchText;
-  List<Event2>? _initialSubEvents;
+  List<Event2>? _bbSubEvents;
 
-  List<Event2>? _subEvents;
+  List<Event2>? _selectedSubEvents;
   List<Event2>? _subEventCandidates;
   Client? _loadCandidatesClient;
 
@@ -69,8 +69,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
 
   @override
   void initState() {
-    _initialSubEvents = widget.subEvents;
-    _subEvents = _initialSubEvents != null ? List.from(_initialSubEvents!) : null;
+    _bbSubEvents = widget.subEvents;
+    _selectedSubEvents = _bbSubEvents != null ? List.from(_bbSubEvents!) : null;
     _subEventController.text = _searchText ?? '';
     _superEventChildDisplayOnlyUnderSuperEvent = _event?.isSuperEventChild == true && _event?.grouping?.canDisplayAsIndividual == false;
     _initPublishAllSubEventsField();
@@ -79,8 +79,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     NotificationService().subscribe(this, [Events2.notifyUpdated,]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(CollectionUtils.isEmpty(_subEvents)){
-        _loadSubEvents(init: true);
+      if(CollectionUtils.isEmpty(_selectedSubEvents)){
+        _updateSubEventsFromBB(init: true);
       }
       _loadSubEventCandidates();
     });
@@ -130,7 +130,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
                       borderRadius: BorderRadius.all(Radius.circular(4)),
                     )))),
               Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
-              _buildSubEventsSection(_subEvents,
+              _buildSubEventsSection(_selectedSubEvents,
                   emptyMsg: 'This event is not linked to any sub-events. Please see below.',
                   showUnlink: true),
               Padding(padding: EdgeInsets.only(top: 12), child:
@@ -210,10 +210,10 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     final text = _subEventController.text;
       Client client = Client();
 
-      _loadCandidatesClient?.close();
+    _loadCandidatesClient?.close();
+    _loadCandidatesClient = client;
       setStateIfMounted((){
         _searchText = text;
-        _loadCandidatesClient = client;
       });
 
       print('subevent title search: $text (${text.characters.length})');
@@ -222,6 +222,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
           List<Event2>? candidates = listResult?.events;
 
           if(identical(_loadCandidatesClient, client)) {
+            _subEventCandidates?.clear();
             candidates?.removeWhere(_skipCandidateCondition);
             candidates?.addAll(_additionalCandidates);
             setStateIfMounted(() {
@@ -231,15 +232,17 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
       });
   }
 
-  void _loadSubEvents({bool init = false}) {
+  void _updateSubEventsFromBB({bool init = false}) {
     _asyncLoadSubEvents()?.then((loadResult) {
       List<Event2>? events = loadResult?.events;
         setStateIfMounted(() {
-          _subEvents = events;
-          _initPublishAllSubEventsField();
+          _bbSubEvents = events;
           if(init) {
-            _initialSubEvents ??= events != null ? List.from(events) : null;
+            _selectedSubEvents ??= events != null ? List.from(events) : null;
           }
+
+          _mergeCollectionWithUpdates(_selectedSubEvents, _bbSubEvents);
+          _initPublishAllSubEventsField();
         });
       });
   }
@@ -257,11 +260,11 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   void _onLinkEvent(Event2 event){
     setStateIfMounted(() {
       _subEventCandidates?.remove(event);
-      if(_subEvents == null) {
-        _subEvents = [];
+      if(_selectedSubEvents == null) {
+        _selectedSubEvents = [];
       }
-      if(_subEvents!.contains(event) == false)
-      _subEvents!.add(event);
+      if(_selectedSubEvents!.contains(event) == false)
+      _selectedSubEvents!.add(event);
 
       _initPublishAllSubEventsField();
     });
@@ -271,7 +274,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     setStateIfMounted(() {
       if(_subEventCandidates?.contains(event) == false)
         _subEventCandidates?.add(event);
-      _subEvents!.remove(event);
+      _selectedSubEvents!.remove(event);
       _initPublishAllSubEventsField();
     });
   }
@@ -298,12 +301,12 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
       } else {
         Event2SuperEventsController.update(
             superEvent: _event!,
-            existingSubEvents: _initialSubEvents,
-            updatedEventsSelection: _subEvents,
+            existingSubEvents: _bbSubEvents,
+            updatedEventsSelection: _selectedSubEvents,
             publishLinkedEvents: _event?.published == true && _publishAllSubEvents
         ).then((result) {
            if ( result.successful){
-             if( _isSuperEvent && _publishAllSubEvents && _event?.published == true) //Need to handle publish all sub events
+             if(_needToApplyPushAll &&  _event?.published == true) //Need to handle publish all sub events
                Event2SuperEventsController.applyPublishAllSubEvents(_event).then((publishResult){
                  setStateIfMounted(() => _applying = false);
                  if (result.successful)
@@ -313,10 +316,14 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
                    AppAlert.showDialogResult(
                        context, 'Unable to update: \n ${publishResult.error}');
                });
-             else
+             else {
+               setStateIfMounted(() => _applying = false);
                AppAlert.showDialogResult(
-                   context, 'Successfully updated ${(result.data ?? 0) + (result.data ?? 0)} sub events');
+                   context, 'Successfully updated ${(result.data ?? 0) +
+                   (result.data ?? 0)} sub events');
+             }
            } else {
+             setStateIfMounted(() => _applying = false);
              AppAlert.showDialogResult(
                  context, 'Unable to update: \n ${result.error}');
            }
@@ -332,10 +339,10 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   bool _skipCandidateCondition(Event2 candidate) =>
       candidate.id == _event?.id //Exclude this Event
       || candidate.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
-      || _subEvents?.contains(candidate) == true; //candidate is already selected but not uploaded yet
+      || _selectedSubEvents?.contains(candidate) == true; //candidate is already selected but not uploaded yet
 
-  Iterable<Event2> get _additionalCandidates => _initialSubEvents?.where(
-          (Event2 event) => _subEvents?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
+  Iterable<Event2> get _additionalCandidates => _bbSubEvents?.where(
+          (Event2 event) => _selectedSubEvents?.contains(event) == false && _subEventCandidates?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
 
   List<Widget>? get _headerBarActions {
     if (_applying) {
@@ -355,28 +362,48 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   Event2? get _event => widget.event;
 
   bool get _isModified =>
-      CollectionUtils.equals(_subEvents, _initialSubEvents) == false ||
+      CollectionUtils.equals(_selectedSubEvents, _bbSubEvents) == false ||
           _isSuperEventChildModified||
-          (_isSuperEvent && _publishAllSubEvents == true && _hasSubEventToPublish == true); // need to apply publish to sub events
+          _needToApplyPushAll; // need to apply publish to sub events
 
   bool get _isSuperEventChild => _event?.isSuperEventChild == true;
+
+  bool get _needToApplyPushAll =>
+      _isSuperEvent && _publishAllSubEvents == true && _hasSubEventToPublish == true;
 
   bool get _isSuperEventChildModified => _isSuperEventChild &&
       _superEventChildDisplayOnlyUnderSuperEvent != null &&
       _superEventChildDisplayOnlyUnderSuperEvent == _event?.grouping?.canDisplayAsIndividual;
 
-  bool get _hasSubEventToPublish =>  _subEvents?.any((Event2 event) => event.published == false) == true;
+  bool get _hasSubEventToPublish =>  _selectedSubEvents?.any((Event2 event) => event.published == false) == true;
 
-  bool get _isSuperEvent => CollectionUtils.isNotEmpty(_subEvents);
+  bool get _isSuperEvent => CollectionUtils.isNotEmpty(_selectedSubEvents);
 
   bool get _publishAllSubEventsVisible => _isSuperEvent;
 
   @override
   void onNotification(String name, param) {
     if (name == Events2.notifyUpdated) {
-      // _loadSubEvents(init: true); //resetting the selection
-      // _loadSubEventCandidates();
+      _updateSubEventsFromBB();
+      _loadSubEventCandidates();
     }
+  }
+
+  //Util
+  List<Event2>? _mergeCollectionWithUpdates(List<Event2>? collection, List<Event2>? updatedCollection){
+    if (updatedCollection == null || updatedCollection.isEmpty) {
+      return collection;
+    }
+
+    // map of updated events
+    final updatedEventMap = Map.fromIterable(updatedCollection,
+        key: (e) => (e as Event2).id,
+        value: (e) => e as Event2);
+
+    // Map over the original collection, replacing each event with its updated value
+    return collection?.map((event) =>
+       updatedEventMap[event.id] ?? event
+    ).toList();
   }
 }
 
