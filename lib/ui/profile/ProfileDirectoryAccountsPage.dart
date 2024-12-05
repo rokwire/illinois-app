@@ -2,6 +2,7 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
@@ -18,6 +19,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDirectoryAccountsPage extends StatefulWidget {
+  static const String notifyEditInfo  = "edu.illinois.rokwire.profile.directory.accounts.edit";
+
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   ProfileDirectoryAccountsPage({super.key, required this.contentType, this.scrollController});
@@ -91,6 +94,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[
+      _editDescription,
       _searchBarWidget,
     ];
     if (_loadingProgress) {
@@ -168,6 +172,40 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     Padding(padding: EdgeInsets.zero, child:
       Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
     );
+
+  Widget get _editDescription {
+    final String linkEditMacro = "{{link.edit.info}}";
+    List<String> messages = _editDescriptionTemplate.split(linkEditMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(
+        text: Localization().getStringEx('panel.profile.directory.accounts.command.edit.info.text', 'Edit'),
+        style : Styles().textStyles.getTextStyleEx("widget.detail.small.fat.underline", color: Styles().colors.fillColorSecondary),
+        recognizer: TapGestureRecognizer()..onTap = _onTapEditInfo, )
+      );
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Padding(padding: EdgeInsets.only(bottom: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
+      )
+    );
+  }
+
+  String get _editDescriptionTemplate {
+    switch(widget.contentType) {
+      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.edit.info.description', '{{link.edit}} your information that shows up in the ${AppTextUtils.appTitleMacro} Connections.');
+      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.edit.info.description', '{{link.edit}} your information that shows up in the ${AppTextUtils.appTitleMacro} App Directory.');
+    }
+  }
+
+  void _onTapEditInfo() {
+    Analytics().logSelect(target: 'Edit Info');
+    NotificationService().notify(ProfileDirectoryAccountsPage.notifyEditInfo, widget.contentType.profileInfo);
+  }
 
   Widget get _searchBarWidget =>
     Padding(padding: const EdgeInsets.only(bottom: 16), child:

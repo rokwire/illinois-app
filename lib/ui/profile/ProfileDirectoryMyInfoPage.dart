@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPreviewPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
@@ -9,6 +10,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -23,7 +25,7 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPageState();
 }
 
-class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPage> {
+class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPage> implements NotificationsListener {
 
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
@@ -34,13 +36,26 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      ProfileDirectoryAccountsPage.notifyEditInfo,
+    ]);
     _loadProfileAndPrivacy();
     super.initState();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+      setStateIfMounted((){
+        _editing = true;
+      });
+    }
   }
 
   @override
