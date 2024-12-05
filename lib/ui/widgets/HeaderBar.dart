@@ -259,7 +259,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     NotificationService().subscribe(this, [
       RadioPlayer.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
-      Auth2.notifyPictureChanged,
+      Auth2.notifyProfilePictureChanged,
     ]);
     super.initState();
   }
@@ -284,7 +284,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
         setState(() {});
       }
     }
-    else if (name == Auth2.notifyPictureChanged) {
+    else if (name == Auth2.notifyProfilePictureChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -376,11 +376,11 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
-        CollectionUtils.isNotEmpty(Auth2().authPicture) ?
+        CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
           Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
+                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
               )
             )
           ) :

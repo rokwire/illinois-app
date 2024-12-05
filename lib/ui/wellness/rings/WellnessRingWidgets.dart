@@ -48,7 +48,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated,
       WellnessRings.notifyUserRingsAccomplished,
-      Auth2.notifyPictureChanged,
+      Auth2.notifyProfilePictureChanged,
     ]);
     _loadRingsData();
     _controllerCenter = ConfettiController(duration: const Duration(seconds: 5));
@@ -203,7 +203,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   }
 
   Widget _buildProfilePicture() {
-    Uint8List? profileImageBytes = Auth2().authPicture;
+    Uint8List? profileImageBytes = Auth2().profilePicture;
     bool hasProfilePicture = (profileImageBytes != null);
     Image? profileImage = hasProfilePicture ? Image.memory(profileImageBytes) : null;
     Widget profilePictureWidget = hasProfilePicture
@@ -328,7 +328,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       if(widget.accomplishmentConfettiEnabled) {
         _playConfetti();
       }
-    } else if (name == Auth2.notifyPictureChanged) {
+    } else if (name == Auth2.notifyProfilePictureChanged) {
       if (mounted) {
         setState(() {});
       }

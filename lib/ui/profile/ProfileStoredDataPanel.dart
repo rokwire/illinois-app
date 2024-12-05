@@ -444,7 +444,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ),
   ];
 
-  Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
+  Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadICardResponse());
 
   // housing.illinois.edu
 
