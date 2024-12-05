@@ -105,17 +105,17 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     );
 
   Widget get _publicCardContent =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
             _cardContentHeading,
           ),
         ],),
-        Padding(padding: EdgeInsets.only(top: 12), child:
+        Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
           DirectoryProfileDetails(_profile)
         ),
-        _shareButton,
+        //_shareButton,
     ],)
   );
 
@@ -225,6 +225,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     Analytics().logSelect(target: 'Swap Info');
   }
 
+  // ignore: unused_element
   Widget get _shareButton => Row(children: [
     Padding(padding: EdgeInsets.only(right: 4), child:
       Styles().images.getImage('share', size: 14) ?? Container()

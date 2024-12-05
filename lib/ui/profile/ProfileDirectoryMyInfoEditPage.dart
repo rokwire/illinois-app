@@ -435,7 +435,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             _initializingAudioPlayer = true;
           });
 
-          AudioResult? result = await Content().loadUserNamePronunciation(accountId: Auth2().accountId);
+          AudioResult? result = await Content().loadUserNamePronunciation();
 
           if (mounted) {
             Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
@@ -829,40 +829,43 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 
   static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) =>
     Auth2UserProfile.fromOther(other,
-      firstName: StringUtils.ensureEmpty(fields[_ProfileField.firstName]?.text),
-      middleName: StringUtils.ensureEmpty(fields[_ProfileField.middleName]?.text),
-      lastName: StringUtils.ensureEmpty(fields[_ProfileField.lastName]?.text),
-      pronouns: StringUtils.ensureEmpty(fields[_ProfileField.pronouns]?.text),
+      override: Auth2UserProfile(
+        firstName: StringUtils.ensureEmpty(fields[_ProfileField.firstName]?.text),
+        middleName: StringUtils.ensureEmpty(fields[_ProfileField.middleName]?.text),
+        lastName: StringUtils.ensureEmpty(fields[_ProfileField.lastName]?.text),
+        pronouns: StringUtils.ensureEmpty(fields[_ProfileField.pronouns]?.text),
 
-      birthYear: JsonUtils.intValue(StringUtils.ensureEmpty(fields[_ProfileField.birthYear]?.text)),
-      photoUrl: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
-      pronunciationUrl: StringUtils.ensureEmpty(fields[_ProfileField.pronunciationUrl]?.text),
+        birthYear: JsonUtils.intValue(StringUtils.ensureEmpty(fields[_ProfileField.birthYear]?.text)),
+        photoUrl: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
+        pronunciationUrl: StringUtils.ensureEmpty(fields[_ProfileField.pronunciationUrl]?.text),
 
-      email: StringUtils.ensureEmpty(fields[_ProfileField.email]?.text),
-      phone: StringUtils.ensureEmpty(fields[_ProfileField.phone]?.text),
-      website: StringUtils.ensureEmpty(fields[_ProfileField.website]?.text),
+        email: StringUtils.ensureEmpty(fields[_ProfileField.email]?.text),
+        phone: StringUtils.ensureEmpty(fields[_ProfileField.phone]?.text),
+        website: StringUtils.ensureEmpty(fields[_ProfileField.website]?.text),
 
-      address: StringUtils.ensureEmpty(fields[_ProfileField.address]?.text),
-      state: StringUtils.ensureEmpty(fields[_ProfileField.state]?.text),
-      zip: StringUtils.ensureEmpty(fields[_ProfileField.zip]?.text),
-      country: StringUtils.ensureEmpty(fields[_ProfileField.country]?.text),
+        address: StringUtils.ensureEmpty(fields[_ProfileField.address]?.text),
+        state: StringUtils.ensureEmpty(fields[_ProfileField.state]?.text),
+        zip: StringUtils.ensureEmpty(fields[_ProfileField.zip]?.text),
+        country: StringUtils.ensureEmpty(fields[_ProfileField.country]?.text),
 
-      data: {
-        if (fields[_ProfileField.college]?.text.isNotEmpty == true)
-          Auth2UserProfile.collegeDataKey: fields[_ProfileField.college]?.text,
+        data: {
+          if (fields[_ProfileField.college]?.text.isNotEmpty == true)
+            Auth2UserProfile.collegeDataKey: fields[_ProfileField.college]?.text,
 
-        if (fields[_ProfileField.department]?.text.isNotEmpty == true)
-          Auth2UserProfile.departmentDataKey: fields[_ProfileField.department]?.text,
+          if (fields[_ProfileField.department]?.text.isNotEmpty == true)
+            Auth2UserProfile.departmentDataKey: fields[_ProfileField.department]?.text,
 
-        if (fields[_ProfileField.major]?.text.isNotEmpty == true)
-          Auth2UserProfile.majorDataKey: fields[_ProfileField.major]?.text,
+          if (fields[_ProfileField.major]?.text.isNotEmpty == true)
+            Auth2UserProfile.majorDataKey: fields[_ProfileField.major]?.text,
 
-        if (fields[_ProfileField.title]?.text.isNotEmpty == true)
-          Auth2UserProfile.titleDataKey: fields[_ProfileField.title]?.text,
+          if (fields[_ProfileField.title]?.text.isNotEmpty == true)
+            Auth2UserProfile.titleDataKey: fields[_ProfileField.title]?.text,
 
-        if (fields[_ProfileField.email2]?.text.isNotEmpty == true)
-          Auth2UserProfile.email2DataKey: fields[_ProfileField.email2]?.text,
-      }
+          if (fields[_ProfileField.email2]?.text.isNotEmpty == true)
+            Auth2UserProfile.email2DataKey: fields[_ProfileField.email2]?.text,
+        }
+      ),
+      scope: Auth2UserProfileScopeImpl.fullScope,
     );
 }
 

@@ -474,12 +474,12 @@ class Guide with Service implements NotificationsListener {
     Map<String, dynamic>? card = (promotion != null) ? JsonUtils.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !BoolExpr.eval(cardRole, (dynamic role) { return (role is String) ? (Auth2().authCard?.role?.toLowerCase() == role.toLowerCase()) : null; })) {
+      if ((cardRole != null) && !BoolExpr.eval(cardRole, (dynamic role) { return (role is String) ? (Auth2().iCard?.role?.toLowerCase() == role.toLowerCase()) : null; })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (dynamic studentLevel) { return (studentLevel is String) ? (Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel.toLowerCase()) : null; })) {
+      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (dynamic studentLevel) { return (studentLevel is String) ? (Auth2().iCard?.studentLevel?.toLowerCase() == studentLevel.toLowerCase()) : null; })) {
         return false;
       }
     }

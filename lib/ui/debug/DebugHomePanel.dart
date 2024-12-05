@@ -815,7 +815,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onUserCardInfoClicked() {
-    String? cardInfo = JsonUtils.encode(Auth2().authCard?.toShortJson(), prettify: true);
+    String? cardInfo = JsonUtils.encode(Auth2().iCard?.toShortJson(), prettify: true);
     if (StringUtils.isNotEmpty(cardInfo)) {
       showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
     }
