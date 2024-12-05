@@ -722,11 +722,10 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       Analytics().logSelect(target: 'Save Edit');
 
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-      Auth2UserProfileFieldsVisibility profileVisibility = _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         public: _directoryVisibility,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
-            profile: profileVisibility
+            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
         )
       );
 
@@ -786,12 +785,24 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 ///////////////////////////////////////////
 // _ProfileField
 
+// NB: Use same naming with Auth2UserProfileScope
 enum _ProfileField {
-  firstName, middleName, lastName, pronouns,
-  birthYear, photoUrl, pronunciationUrl,
+  pronouns,
+  photoUrl, pronunciationUrl,
   email, email2, phone, website,
   college, department, major, title,
-  address, state, zip, country,
+}
+
+extension _ProfileFieldImpl on _ProfileField {
+
+  // static _ProfileField? fromString(String value) => _ProfileField.values.firstWhereOrNull((field) => (field.toString() == value));
+
+  static Set<Auth2UserProfileScope> get profileScope => <Auth2UserProfileScope> {
+    Auth2UserProfileScope.pronouns,
+    Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+    Auth2UserProfileScope.email, /*Auth2UserProfileScope.email2,*/ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+    /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
+  };
 }
 
 ///////////////////////////////////////////
@@ -801,12 +812,8 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 
   String? fieldValue(_ProfileField field) {
     switch(field) {
-      case _ProfileField.firstName: return firstName;
-      case _ProfileField.middleName: return middleName;
-      case _ProfileField.lastName: return lastName;
       case _ProfileField.pronouns: return pronouns;
 
-      case _ProfileField.birthYear: return birthYear?.toString();
       case _ProfileField.photoUrl: return photoUrl;
       case _ProfileField.pronunciationUrl: return pronunciationUrl;
 
@@ -819,53 +826,30 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.department: return department;
       case _ProfileField.major: return major;
       case _ProfileField.title: return title;
-
-      case _ProfileField.address: return address;
-      case _ProfileField.state: return state;
-      case _ProfileField.zip: return zip;
-      case _ProfileField.country: return country;
     }
   }
 
   static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) =>
     Auth2UserProfile.fromOther(other,
       override: Auth2UserProfile(
-        firstName: StringUtils.ensureEmpty(fields[_ProfileField.firstName]?.text),
-        middleName: StringUtils.ensureEmpty(fields[_ProfileField.middleName]?.text),
-        lastName: StringUtils.ensureEmpty(fields[_ProfileField.lastName]?.text),
-        pronouns: StringUtils.ensureEmpty(fields[_ProfileField.pronouns]?.text),
+        pronouns: StringUtils.ensureNotEmpty(fields[_ProfileField.pronouns]?.text),
 
-        birthYear: JsonUtils.intValue(StringUtils.ensureEmpty(fields[_ProfileField.birthYear]?.text)),
-        photoUrl: StringUtils.ensureEmpty(fields[_ProfileField.photoUrl]?.text),
-        pronunciationUrl: StringUtils.ensureEmpty(fields[_ProfileField.pronunciationUrl]?.text),
+        photoUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.photoUrl]?.text),
+        pronunciationUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.pronunciationUrl]?.text),
 
-        email: StringUtils.ensureEmpty(fields[_ProfileField.email]?.text),
-        phone: StringUtils.ensureEmpty(fields[_ProfileField.phone]?.text),
-        website: StringUtils.ensureEmpty(fields[_ProfileField.website]?.text),
-
-        address: StringUtils.ensureEmpty(fields[_ProfileField.address]?.text),
-        state: StringUtils.ensureEmpty(fields[_ProfileField.state]?.text),
-        zip: StringUtils.ensureEmpty(fields[_ProfileField.zip]?.text),
-        country: StringUtils.ensureEmpty(fields[_ProfileField.country]?.text),
+        email: StringUtils.ensureNotEmpty(fields[_ProfileField.email]?.text),
+        phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
+        website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
 
         data: {
-          if (fields[_ProfileField.college]?.text.isNotEmpty == true)
-            Auth2UserProfile.collegeDataKey: fields[_ProfileField.college]?.text,
-
-          if (fields[_ProfileField.department]?.text.isNotEmpty == true)
-            Auth2UserProfile.departmentDataKey: fields[_ProfileField.department]?.text,
-
-          if (fields[_ProfileField.major]?.text.isNotEmpty == true)
-            Auth2UserProfile.majorDataKey: fields[_ProfileField.major]?.text,
-
-          if (fields[_ProfileField.title]?.text.isNotEmpty == true)
-            Auth2UserProfile.titleDataKey: fields[_ProfileField.title]?.text,
-
-          if (fields[_ProfileField.email2]?.text.isNotEmpty == true)
-            Auth2UserProfile.email2DataKey: fields[_ProfileField.email2]?.text,
+          Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.college]?.text),
+          Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department]?.text),
+          Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major]?.text),
+          Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.title]?.text),
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
         }
       ),
-      scope: Auth2UserProfileScopeImpl.fullScope,
+      scope: _ProfileFieldImpl.profileScope,
     );
 }
 
@@ -875,12 +859,8 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibility {
 
   Map<_ProfileField, Auth2FieldVisibility?> get fieldsVisibility => <_ProfileField, Auth2FieldVisibility?>{
-    _ProfileField.firstName: firstName,
-    _ProfileField.middleName: middleName,
-    _ProfileField.lastName: lastName,
     _ProfileField.pronouns: pronouns,
 
-    _ProfileField.birthYear: birthYear,
     _ProfileField.photoUrl: photoUrl,
     _ProfileField.pronunciationUrl: pronunciationUrl,
 
@@ -893,32 +873,18 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.department: department,
     _ProfileField.major: major,
     _ProfileField.title: title,
-
-    _ProfileField.address: address,
-    _ProfileField.state: state,
-    _ProfileField.zip: zip,
-    _ProfileField.country: country,
   };
 
   static Auth2UserProfileFieldsVisibility buildModified(Auth2UserProfileFieldsVisibility? other, Map<_ProfileField, Auth2FieldVisibility?>? fields) =>
     Auth2UserProfileFieldsVisibility.fromOther(other,
-      firstName : fields?[_ProfileField.firstName],
-      middleName : fields?[_ProfileField.middleName],
-      lastName : fields?[_ProfileField.lastName],
       pronouns : fields?[_ProfileField.pronouns],
 
-      birthYear : fields?[_ProfileField.birthYear],
       photoUrl : fields?[_ProfileField.photoUrl],
       pronunciationUrl : fields?[_ProfileField.pronunciationUrl],
 
       email : fields?[_ProfileField.email],
       phone : fields?[_ProfileField.phone],
       website : fields?[_ProfileField.website],
-
-      address : fields?[_ProfileField.address],
-      state : fields?[_ProfileField.state],
-      zip : fields?[_ProfileField.zip],
-      country : fields?[_ProfileField.country],
 
       data: MapUtils.ensureEmpty({
 
