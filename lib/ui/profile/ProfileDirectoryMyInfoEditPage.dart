@@ -705,9 +705,35 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       onTap: _onCancelEdit,
     );
 
-    void _onCancelEdit() {
+    void _onCancelEdit() async {
       Analytics().logSelect(target: 'Cancel Edit');
-      widget.onFinishEdit?.call();
+
+      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+        public: _directoryVisibility,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+        )
+      );
+
+      String? prompt;
+      if (widget.profile != profile) {
+        prompt = (widget.privacy != privacy) ?
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.loose.profile_and_privacy.prompt.text', 'Loose your profile and privacy settings updates?') :
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.loose.profile.prompt.text', 'Loose your profile settings updates?');
+      }
+      else if (widget.privacy != privacy) {
+        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.loose.privacy.prompt.text', 'Loose your privacy settings updates?');
+      }
+
+      bool canFinish = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
+        message: prompt,
+        positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+        negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No')
+      ) : true;
+      if (canFinish) {
+        widget.onFinishEdit?.call();
+      }
     }
 
     Widget get _saveEditButton => RoundedButton(
