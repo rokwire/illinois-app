@@ -19,9 +19,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DirectoryAccountCard extends StatefulWidget {
   final Auth2PublicAccount account;
+  final String? photoImageToken;
   final bool expanded;
   final void Function()? onToggleExpanded;
-  DirectoryAccountCard(this.account, { super.key, this.expanded = false, this.onToggleExpanded });
+
+  DirectoryAccountCard(this.account, { super.key, this.photoImageToken, this.expanded = false, this.onToggleExpanded });
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountCardState();
@@ -81,9 +83,9 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryProfilePhoto(widget.account.profile?.photoUrl,
+            DirectoryProfilePhoto(_photoUrl,
               imageSize: _photoImageSize,
-              headers: _photoImageHeaders,
+              headers: _photoAuthHeaders,
               borderSize: 12,
             )
           ),
@@ -92,11 +94,12 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
       ],),
     );
 
+  String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
+    Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.account.id, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
+
   double get _photoImageSize => MediaQuery.of(context).size.width / 4;
 
-  Map<String, String> get _photoImageHeaders => <String, String>{
-    HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
-  };
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
   Widget get _collapsedContent =>
     InkWell(onTap: widget.onToggleExpanded, child:
@@ -191,6 +194,7 @@ void _launchUrl(String? url) {
 }
 
 class DirectoryProfilePhoto extends StatelessWidget {
+
   final String? photoUrl;
   final double imageSize;
   final double borderSize;
@@ -223,6 +227,25 @@ class DirectoryProfilePhoto extends StatelessWidget {
         )
       ),
     ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+}
+
+class DirectoryProfilePhotoUtils {
+
+  static const String tokenKey = 'edu.illinois.rokwire.token';
+
+  static String get newToken => DateTime.now().millisecondsSinceEpoch.toString();
+
+  static Map<String, String>? tokenUrlParam(String? token) => (token != null) ? <String, String>{
+    tokenKey : token
+  } : null;
+
+  static Map<String, String>? get authHeaders {
+    String tokenType = Auth2().token?.tokenType ?? 'Bearer';
+    String? accessToken = Auth2().token?.accessToken;
+    return (accessToken != null) ? <String, String>{
+      HttpHeaders.authorizationHeader : "$tokenType $accessToken",
+    } : null;
+  }
 }
 
 class DirectoryPronunciationButton extends StatefulWidget {
@@ -374,3 +397,4 @@ class DirectoryProfileCard extends StatelessWidget {
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
   );
 }
+

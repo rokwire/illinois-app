@@ -11,11 +11,13 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
   final MyProfileInfo contentType;
@@ -45,7 +47,6 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
     _profile = Auth2UserProfile.fromFieldsVisibility(widget.profile, profileVisibility, permitted: _permittedVisibility);
 
-    super.photoImageToken = widget.photoImageToken;
     super.initState();
   }
 
@@ -55,8 +56,8 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   }
 
   @override
-  Widget build(BuildContext context) =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+  Widget build(BuildContext context) {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: [
         if (_directoryVisibility)
           Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
@@ -73,6 +74,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
         Padding(padding: EdgeInsets.only(top: 8)),
       ],),
     );
+  }
 
   String get _desriptionText {
     switch (widget.contentType) {
@@ -84,9 +86,12 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   Widget get _profileContent => _directoryVisibility ?
     _publicProfileContent : _privateProfileContent;
 
-  String? get _photoUrl => photoImageUrl(_profile?.photoUrl);
+  String? get _photoUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
+    Content().getUserPhotoUrl(type: UserProfileImageType.defaultType, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
   Widget get _publicProfileContent =>
     Padding(padding: EdgeInsets.only(top: 24), child:
@@ -99,7 +104,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
           ),
         ),
         Center(child:
-          DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: photoImageHeaders,),
+          DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: _photoAuthHeaders,),
         )
       ]),
     );

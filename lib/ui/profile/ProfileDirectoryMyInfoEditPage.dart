@@ -39,6 +39,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
   late bool _directoryVisibility;
   late Auth2UserProfileFieldsVisibility _profileVisibility;
+  late String? _photoImageToken;
 
   final Map<_ProfileField, Auth2FieldVisibility?> _fieldVisibilities = {};
   final Map<_ProfileField, TextEditingController?> _fieldTextControllers = {};
@@ -62,7 +63,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     _directoryVisibility = (widget.privacy?.public == true);
 
-    super.photoImageToken = widget.photoImageToken;
+    _photoImageToken = widget.photoImageToken;
 
     for (_ProfileField field in _ProfileField.values) {
       _fieldTextControllers[field] = TextEditingController(text: widget.profile?.fieldValue(field) ?? '');
@@ -150,12 +151,16 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     // Edit: Photo
 
-    String? get _photoUrl => photoImageUrl(StringUtils.ensureEmpty(_photoText));
+    String? get _photoUrl => StringUtils.isNotEmpty(_photoText) ?
+      Content().getUserPhotoUrl(type: UserProfileImageType.defaultType, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)) : null;
+
     double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+
+    Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
     Widget get _photoWidget => Stack(children: [
       Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
-        DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: photoImageHeaders,),
+        DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: _photoAuthHeaders,),
       ),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomLeft, child:
@@ -203,8 +208,8 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         if (mounted && (imageUploadResult is ImagesResult)) {
           if (imageUploadResult.resultType == ImagesResultType.succeeded) {
             setState(() {
-              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
-              photoImageToken = ProfileDirectoryMyInfoDateTimeUtils.imageToken;
+              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId) ?? '';
+              _photoImageToken = DirectoryProfilePhotoUtils.newToken;
             });
           }
           else if (imageUploadResult.resultType == ImagesResultType.error) {
@@ -786,7 +791,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             widget.onFinishEdit?.call(
               profile: (profileResult == true) ? profile : null,
               privacy: (privacyResult == true) ? privacy : null,
-              photoImageToken: (widget.photoImageToken != photoImageToken) ? photoImageToken : null,
+              photoImageToken: (widget.photoImageToken != _photoImageToken) ? _photoImageToken : null,
             );
           }
           else {
@@ -796,7 +801,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       }
       else {
         widget.onFinishEdit?.call(
-          photoImageToken: (widget.photoImageToken != photoImageToken) ? photoImageToken : null,
+          photoImageToken: (widget.photoImageToken != _photoImageToken) ? _photoImageToken : null,
         );
       }
     }

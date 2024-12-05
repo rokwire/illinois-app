@@ -1,6 +1,9 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -8,6 +11,7 @@ import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -20,17 +24,21 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileDirectoryAccountsPageState();
 }
 
-class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage>  {
+class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
 
   Map<String, List<Auth2PublicAccount>> _accountsMap = <String, List<Auth2PublicAccount>>{};
-  String _searchText = '';
   String? _errorText;
+  String _searchText = '';
   bool _loading = false;
+  bool _loadingProgress = false;
   bool _extending = false;
   bool _canExtend = false;
   static const int _pageLength = 32;
 
   String? _expandedAccountId;
+
+  String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+  String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
 
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -38,6 +46,11 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      illinois.Auth2.notifyProfilePictureChanged,
+      Auth2.notifyProfileChanged,
+      Auth2.notifyPrivacyChanged,
+    ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
     super.initState();
@@ -46,6 +59,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     widget.scrollController?.removeListener(_scrollListener);
     _searchTextController.dispose();
     _searchFocusNode.dispose();
@@ -53,11 +67,30 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   }
 
   @override
+  void onNotification(String name, dynamic param) {
+    if (name == illinois.Auth2.notifyProfilePictureChanged) {
+      if (mounted) {
+        setState((){
+          _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+        });
+      }
+    }
+    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged)) {
+      if (mounted) {
+        setState((){
+          _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+        });
+        _refresh();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[
       _searchBarWidget,
     ];
-    if (_loading) {
+    if (_loadingProgress) {
       contentList.add(_loadingContent);
     }
     else if (_errorText != null) {
@@ -109,7 +142,11 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     ];
     for (Auth2PublicAccount account in accounts) {
       result.add(_sectionSplitter);
-      result.add(DirectoryAccountCard(account, expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId), onToggleExpanded: () => _onToggleAccountExpanded(account),));
+      result.add(DirectoryAccountCard(account,
+        photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
+        expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
+        onToggleExpanded: () => _onToggleAccountExpanded(account),
+      ));
     }
     if (accounts.isNotEmpty) {
       result.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -241,6 +278,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     if (!_loading) {
       setStateIfMounted(() {
         _loading = true;
+        _loadingProgress = true;
         _extending = false;
       });
 
@@ -251,6 +289,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
       setStateIfMounted(() {
         _loading = false;
+        _loadingProgress = false;
         if (accounts != null) {
           _accountsMap = _buildAccounts(accounts);
           _errorText = null;
@@ -265,28 +304,54 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     }
   }
 
+  Future<void> _refresh() async {
+    return;
+    if (!_loading) {
+      setStateIfMounted(() {
+        _loading = true;
+        _extending = false;
+      });
+
+      int limit = max(_accountsCount, _pageLength);
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(_searchText),
+        limit: limit
+      );
+
+      setStateIfMounted(() {
+        _loading = false;
+        if (accounts != null) {
+          _accountsMap = _buildAccounts(accounts);
+          _errorText = null;
+          _canExtend = (accounts.length >= limit);
+        }
+      });
+    }
+  }
+
   Future<void> _extend() async {
+    return;
     if (!_loading && !_extending) {
       setStateIfMounted(() {
         _extending = true;
       });
-    }
 
-    List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
-      search: StringUtils.ensureEmpty(_searchText),
-      offset: _accountsCount,
-      limit: _pageLength
-    );
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(_searchText),
+        offset: _accountsCount,
+        limit: _pageLength
+      );
 
-    if (mounted && _extending && !_loading) {
-      setState(() {
-        if (accounts != null) {
-          _addAccounts(_buildAccounts(accounts));
-          _canExtend = (accounts.length >= _pageLength);
-          _errorText = null;
-        }
-        _extending = false;
-      });
+      if (mounted && _extending && !_loading) {
+        setState(() {
+          if (accounts != null) {
+            _addAccounts(_buildAccounts(accounts));
+            _canExtend = (accounts.length >= _pageLength);
+            _errorText = null;
+          }
+          _extending = false;
+        });
+      }
     }
   }
 
