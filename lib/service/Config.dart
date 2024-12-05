@@ -95,9 +95,9 @@ class Config extends rokwire.Config {
   String? get userAuthUrl            => JsonUtils.stringValue(otherUniversityServices['user_auth_url']);
   String? get assetsUrl              => getOtherServicesUrl(key: 'assets_url');
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
-  String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
+  String? get iCardUrl               => getOtherServicesUrl(key: 'icard_url');
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
-  String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);
+  String? get illiniCashBaseUrl      => getOtherServicesUrl(key: 'illini_cash_base_url');
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
   String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
