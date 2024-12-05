@@ -308,7 +308,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
                  setStateIfMounted(() => _applying = false);
                  if (result.successful)
                    AppAlert.showDialogResult(
-                       context, 'Successfully updated ${result.data} sub events');
+                       context, 'Successfully updated ${publishResult.data} sub events');
                  else
                    AppAlert.showDialogResult(
                        context, 'Unable to update: \n ${publishResult.error}');
@@ -543,8 +543,7 @@ class Event2SuperEventsController {
               (Event2 event) => event.copyWithNullable(published: NullableValue(true))));
   }
 
+  //Utils
   static Iterable<Event2>? applyCollectionChange({required Iterable<Event2>? collection, required Event2 Function(Event2) change})
     => collection?.map(change);
-
-
 }
