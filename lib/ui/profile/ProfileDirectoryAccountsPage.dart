@@ -156,15 +156,16 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
       Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
     );
 
+  static const String _linkEditMacro = "{{link.edit.info}}";
+
   Widget get _editDescription {
-    final String linkEditMacro = "{{link.edit.info}}";
-    List<String> messages = _editDescriptionTemplate.split(linkEditMacro);
+    List<String> messages = _editDescriptionTemplate.split(_linkEditMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(
-        text: Localization().getStringEx('panel.profile.directory.accounts.command.edit.info.text', 'Edit'),
+        text: Localization().getStringEx('panel.profile.directory.accounts.command.edit.info.text', 'Edit your information'),
         style : Styles().textStyles.getTextStyleEx("widget.detail.small.fat.underline", color: Styles().colors.fillColorSecondary),
         recognizer: TapGestureRecognizer()..onTap = _onTapEditInfo, )
       );
@@ -180,8 +181,8 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   String get _editDescriptionTemplate {
     switch(widget.contentType) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.edit.info.description', '{{link.edit}} your information that shows up in the ${AppTextUtils.appTitleMacro} Connections.');
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.edit.info.description', '{{link.edit}} your information that shows up in the ${AppTextUtils.appTitleMacro} App Directory.');
+      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the ${AppTextUtils.appTitleMacro} Connections.');
+      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the ${AppTextUtils.appTitleMacro} App Directory.');
     }
   }
 
