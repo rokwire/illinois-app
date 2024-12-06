@@ -18,6 +18,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Identity.dart';
@@ -480,6 +481,9 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
         HttpHeaders.acceptHeader : 'application/json',
         'x-api-key': Config().padaapiApiKey!
       };
+      if (kIsWeb) {
+        headers.addAll(Auth2().webNetworkAuthHeaders!);
+      }
       Response? response = await Network().get(url, headers: headers);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;

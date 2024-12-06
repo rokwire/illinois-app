@@ -80,13 +80,13 @@ class Config extends rokwire.Config {
   String? get illiniCashHmacKey      => JsonUtils.stringValue(secretIlliniCash['hmac_key']);
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
 
-  String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
+  String? get padaapiApiKey          => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.padaapi.api_key' : JsonUtils.stringValue(secretPadaapi['api_key']);
 
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
 
-  String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
-  String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
+  String? get canvasToken            => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.canvas.token' : JsonUtils.stringValue(secretCanvas['token']);
+  String? get canvasTokenType        => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.canvas.token_type' : JsonUtils.stringValue(secretCanvas['token_type']);
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
@@ -109,7 +109,7 @@ class Config extends rokwire.Config {
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
   String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
-  String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
+  String? get padaapiUrl             => getOtherServicesUrl(key: 'padaapi_url');
   String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
