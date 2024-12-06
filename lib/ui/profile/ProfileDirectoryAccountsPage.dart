@@ -1,6 +1,12 @@
 
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart' as illinois;
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -8,10 +14,13 @@ import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDirectoryAccountsPage extends StatefulWidget {
+  static const String notifyEditInfo  = "edu.illinois.rokwire.profile.directory.accounts.edit";
+
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   ProfileDirectoryAccountsPage({super.key, required this.contentType, this.scrollController});
@@ -20,24 +29,34 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileDirectoryAccountsPageState();
 }
 
-class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage>  {
+class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
 
   Map<String, List<Auth2PublicAccount>> _accountsMap = <String, List<Auth2PublicAccount>>{};
-  String _searchText = '';
   String? _errorText;
+  String _searchText = '';
   bool _loading = false;
+  bool _loadingProgress = false;
   bool _extending = false;
   bool _canExtend = false;
   static const int _pageLength = 32;
 
   String? _expandedAccountId;
 
+  String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+  String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
+  Map<String, dynamic> _filters = <String, dynamic>{};
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      illinois.Auth2.notifyProfilePictureChanged,
+      Auth2.notifyProfileChanged,
+      Auth2.notifyPrivacyChanged,
+    ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
     super.initState();
@@ -46,6 +65,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     widget.scrollController?.removeListener(_scrollListener);
     _searchTextController.dispose();
     _searchFocusNode.dispose();
@@ -53,11 +73,31 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
   }
 
   @override
+  void onNotification(String name, dynamic param) {
+    if (name == illinois.Auth2.notifyProfilePictureChanged) {
+      if (mounted) {
+        setState((){
+          _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+        });
+      }
+    }
+    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged)) {
+      if (mounted) {
+        setState((){
+          _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+        });
+        _refresh();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[
+      _editDescription,
       _searchBarWidget,
     ];
-    if (_loading) {
+    if (_loadingProgress) {
       contentList.add(_loadingContent);
     }
     else if (_errorText != null) {
@@ -109,7 +149,11 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     ];
     for (Auth2PublicAccount account in accounts) {
       result.add(_sectionSplitter);
-      result.add(DirectoryAccountCard(account, expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId), onToggleExpanded: () => _onToggleAccountExpanded(account),));
+      result.add(DirectoryAccountCard(account,
+        photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
+        expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
+        onToggleExpanded: () => _onToggleAccountExpanded(account),
+      ));
     }
     if (accounts.isNotEmpty) {
       result.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -129,27 +173,68 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
       Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
     );
 
+  Widget get _editDescription {
+    final String linkEditMacro = "{{link.edit.info}}";
+    List<String> messages = _editDescriptionTemplate.split(linkEditMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(
+        text: Localization().getStringEx('panel.profile.directory.accounts.command.edit.info.text', 'Edit'),
+        style : Styles().textStyles.getTextStyleEx("widget.detail.small.fat.underline", color: Styles().colors.fillColorSecondary),
+        recognizer: TapGestureRecognizer()..onTap = _onTapEditInfo, )
+      );
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Padding(padding: EdgeInsets.only(bottom: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
+      )
+    );
+  }
+
+  String get _editDescriptionTemplate {
+    switch(widget.contentType) {
+      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.edit.info.description', '{{link.edit}} your information that shows up in the ${AppTextUtils.appTitleMacro} Connections.');
+      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.edit.info.description', '{{link.edit}} your information that shows up in the ${AppTextUtils.appTitleMacro} App Directory.');
+    }
+  }
+
+  void _onTapEditInfo() {
+    Analytics().logSelect(target: 'Edit Info');
+    NotificationService().notify(ProfileDirectoryAccountsPage.notifyEditInfo, widget.contentType.profileInfo);
+  }
+
   Widget get _searchBarWidget =>
     Padding(padding: const EdgeInsets.only(bottom: 16), child:
-      Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
-        Row(children: <Widget>[
-          Expanded(child:
-            _searchTextWidget
-          ),
-          _searchImageButton('close',
-            label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-            hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-            rightPadding: _searchImageButtonHorzPadding / 2,
-            onTap: _onTapClear,
-          ),
-          _searchImageButton('search',
-            label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-            hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-            leftPadding: _searchImageButtonHorzPadding / 2,
-            onTap: _onTapSearch,
-          ),
-        ],)
-      ),
+      Row(children: [
+        Expanded(child:
+          Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+            Row(children: <Widget>[
+              Expanded(child:
+                _searchTextWidget
+              ),
+              _searchImageButton('close',
+                label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+                hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+                rightPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapClear,
+              ),
+              _searchImageButton('search',
+                label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+                hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+                leftPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapSearch,
+              ),
+            ],)
+          )
+        ),
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          _filtersButton
+        ),
+      ],),
     );
 
     Widget get _searchTextWidget =>
@@ -190,6 +275,37 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   static const double _searchImageButtonHorzPadding = 16;
   static const double _searchImageButtonVertPadding = 12;
+
+  Widget get _filtersButton =>
+    InkWell(onTap: _onFilter, child:
+      Container(decoration: _searchBarDecoration, padding: EdgeInsets.symmetric(vertical: 14, horizontal: 14), child:
+        Styles().images.getImage('filters') ?? SizedBox(width: 18, height: 18,),
+      ),
+    );
+
+  void _onFilter() {
+    Analytics().logSelect(target: 'Filters');
+
+    if (Auth2().directoryAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'App Directory Filters'),
+        description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
+        scope: Auh2Directory.attributesScope,
+        contentAttributes: Auth2().directoryAttributes,
+        selection: _filters,
+        sortType: ContentAttributesSortType.alphabetical,
+        filtersMode: true,
+      ))).then((selection) {
+        if ((selection != null) && mounted) {
+          setState(() {
+            _filters = selection;
+          });
+          _load();
+        }
+      });
+    }
+
+  }
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
@@ -241,6 +357,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     if (!_loading) {
       setStateIfMounted(() {
         _loading = true;
+        _loadingProgress = true;
         _extending = false;
       });
 
@@ -251,6 +368,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
       setStateIfMounted(() {
         _loading = false;
+        _loadingProgress = false;
         if (accounts != null) {
           _accountsMap = _buildAccounts(accounts);
           _errorText = null;
@@ -265,28 +383,52 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     }
   }
 
+  Future<void> _refresh() async {
+    if (!_loading) {
+      setStateIfMounted(() {
+        _loading = true;
+        _extending = false;
+      });
+
+      int limit = max(_accountsCount, _pageLength);
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(_searchText),
+        limit: limit
+      );
+
+      setStateIfMounted(() {
+        _loading = false;
+        if (accounts != null) {
+          _accountsMap = _buildAccounts(accounts);
+          _errorText = null;
+          _canExtend = (accounts.length >= limit);
+        }
+      });
+    }
+  }
+
   Future<void> _extend() async {
     if (!_loading && !_extending) {
       setStateIfMounted(() {
         _extending = true;
       });
-    }
 
-    List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
-      search: StringUtils.ensureEmpty(_searchText),
-      offset: _accountsCount,
-      limit: _pageLength
-    );
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(_searchText),
+        offset: _accountsCount,
+        limit: _pageLength
+      );
 
-    if (mounted && _extending && !_loading) {
-      setState(() {
-        if (accounts != null) {
-          _addAccounts(_buildAccounts(accounts));
-          _canExtend = (accounts.length >= _pageLength);
-          _errorText = null;
-        }
-        _extending = false;
-      });
+      if (mounted && _extending && !_loading) {
+        setState(() {
+          if (accounts != null) {
+            _addAccounts(_buildAccounts(accounts));
+            _canExtend = (accounts.length >= _pageLength);
+            _errorText = null;
+          }
+          _extending = false;
+        });
+      }
     }
   }
 
