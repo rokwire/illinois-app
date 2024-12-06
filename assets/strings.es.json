@@ -2278,6 +2278,9 @@
     "panel.profile.directory.accounts.connections.edit.info.description": "{{link.edit.info}} that shows up in the {{app_title}} Connections.",
    	"panel.profile.directory.accounts.directory.edit.info.description": "{{link.edit.info}} that shows up in the {{app_title}} App Directory.",
    	"panel.profile.directory.accounts.command.edit.info.text": "Edit your information",
+    "panel.profile.directory.accounts.attributes.groups.hint.empty": "My Groups",
+    "panel.profile.directory.accounts.groups.hint.empty": "Select groups",
+    "panel.profile.directory.accounts.groups.hint.semantics": "Double type to show groups.",
 
     "panel.profile.directory.my_info.connections.preview.description.text": "Preview of how your profile displays for your {{app_title}} Connections.",
     "panel.profile.directory.my_info.directory.preview.description.text": "Preview of how your profile displays in the directory.",

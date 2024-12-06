@@ -11,8 +11,11 @@ import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -269,13 +272,13 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   void _onFilter() {
     Analytics().logSelect(target: 'Filters');
-
-    if (Auth2().directoryAttributes != null) {
+    ContentAttributes? directoryAttributes = _directoryAttributes;
+    if (directoryAttributes != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'App Directory Filters'),
         description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
         scope: Auh2Directory.attributesScope,
-        contentAttributes: Auth2().directoryAttributes,
+        contentAttributes: directoryAttributes,
         selection: _filters,
         sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
@@ -288,8 +291,44 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
         }
       });
     }
-
   }
+
+  ContentAttributes? get _directoryAttributes {
+    ContentAttributes? directoryAttributes = Auth2().directoryAttributes;
+    if (directoryAttributes != null) {
+      ContentAttribute? groupsAttribute = _groupsAttribute;
+      if (groupsAttribute != null) {
+        directoryAttributes = ContentAttributes.fromOther(directoryAttributes);
+        directoryAttributes?.attributes?.add(groupsAttribute);
+      }
+      return directoryAttributes;
+    }
+    else {
+      return null;
+    }
+  }
+
+  static const String _groupsAttributeId = 'groups';
+
+  ContentAttribute? get _groupsAttribute {
+    List<Group>? userGroups = Groups().userGroups;
+    return ((userGroups != null) && userGroups.isNotEmpty) ?
+      ContentAttribute(
+        id: _groupsAttributeId,
+        title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
+        emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
+        semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
+        widget: ContentAttributeWidget.dropdown,
+        scope: <String>{ Auh2Directory.attributesScope },
+        requirements: null,
+        values: List.from(userGroups.map<ContentAttributeValue>((Group group) => ContentAttributeValue(
+          label: group.title,
+          value: group.id,
+        )))
+      ) : null;
+  }
+
+
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
