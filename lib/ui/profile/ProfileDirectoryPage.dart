@@ -37,6 +37,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      ProfileDirectoryAccountsPage.notifyEditInfo,
     ]);
 
     _selectedTab = _Tab.values.first;
@@ -57,6 +58,11 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted();
+    }
+    else if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+      setStateIfMounted((){
+        _selectedTab = _Tab.myInfo;
+      });
     }
   }
 
@@ -305,4 +311,12 @@ extension DirectoryConnectionsExt on DirectoryAccounts {
       case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
+
+  MyProfileInfo get profileInfo {
+    switch(this) {
+      case DirectoryAccounts.myConnections: return MyProfileInfo.myConnectionsInfo;
+      case DirectoryAccounts.appDirectory: return MyProfileInfo.myDirectoryInfo;
+    }
+  }
+
 }
