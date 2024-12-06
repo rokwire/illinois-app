@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed directory accounts list pagination [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Super event update/delete/create [#4478](https://github.com/rokwire/illinois-app/issues/4478).
 ### Changed
 - Updated Edit my Info control in directory accounts page [#4402](https://github.com/rokwire/illinois-app/issues/4402).
 ### Added
