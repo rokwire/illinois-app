@@ -57,6 +57,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
 
   String? _searchText;
 
+  Event2? _event;
   List<Event2>? _bbSubEvents;
   List<Event2>? _selectedSubEvents;
   List<Event2>? _subEventCandidates;
@@ -70,11 +71,12 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
 
   @override
   void initState() {
+    _event = widget.event;
     _bbSubEvents = widget.subEvents;
     _selectedSubEvents = _bbSubEvents != null ? List.from(_bbSubEvents!) : null;
     _subEventController.text = _searchText ?? '';
     _superEventChildDisplayOnlyUnderSuperEvent = _event?.isSuperEventChild == true && _event?.grouping?.canDisplayAsIndividual == false;
-    _initPublishAllSubEventsField();
+    _evaluatePublishAllSubEventsField();
     _subEventController.addListener(onTextChanged);
 
     NotificationService().subscribe(this, [Events2.notifyUpdated,]);
@@ -249,14 +251,16 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     if (loadResult is String){
       return; //error
     }
+
     List<Event2>? events = loadResult is Events2ListResult ? loadResult.events : null;
     setStateIfMounted(() {
+      _bbSubEvents = events;
       if(init) {
         _selectedSubEvents ??= events != null ? List.from(events) : null;
+      } else {
+        _selectedSubEvents = _mergeCollectionWithUpdates(collection: _selectedSubEvents, updatedCollection: events);
       }
-      _bbSubEvents = events;
-      _selectedSubEvents = _mergeCollectionWithUpdates(collection: _selectedSubEvents, updatedCollection: events);
-      _initPublishAllSubEventsField();
+      _evaluatePublishAllSubEventsField();
     });
   }
 
@@ -280,7 +284,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
       if(_selectedSubEvents!.contains(event) == false)
       _selectedSubEvents!.add(event);
 
-      _initPublishAllSubEventsField();
+      _evaluatePublishAllSubEventsField();
     });
   }
 
@@ -289,7 +293,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
       if(_subEventCandidates?.contains(event) == false)
         _subEventCandidates?.add(event);
       _selectedSubEvents!.remove(event);
-      _initPublishAllSubEventsField();
+      _evaluatePublishAllSubEventsField();
     });
   }
 
@@ -345,7 +349,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     }
   }
 
-  void _initPublishAllSubEventsField(){
+  void _evaluatePublishAllSubEventsField(){
     _publishAllSubEvents = !_hasSubEventToPublish;
   }
 
@@ -371,8 +375,6 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
       return null;
     }
   }
-
-  Event2? get _event => widget.event;
 
   bool get _isModified => !_printCollectionEquality() || //debug tool TBD remove when done
         _isSelectedSubEventsModified || //Need to apply selection change
@@ -402,6 +404,9 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
       _updateSubEventsFromBB().then((_){
         _loadSubEventCandidates();
       });
+      if(_event?.id != null)
+        Events2().loadEvent(_event!.id!).then(
+                (event) => _event = event ?? _event);
     }
   }
 
