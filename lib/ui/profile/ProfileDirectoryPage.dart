@@ -37,6 +37,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      ProfileDirectoryAccountsPage.notifyEditInfo,
     ]);
 
     _selectedTab = _Tab.values.first;
@@ -57,6 +58,11 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted();
+    }
+    else if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+      setStateIfMounted((){
+        _selectedTab = _Tab.myInfo;
+      });
     }
   }
 
@@ -245,7 +251,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   // Signed out
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.message.signed_out', 'To view "My Info & ${AppTextUtils.appTitleMacro} Connections", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.message.signed_out', 'To view "My Info & ${AppTextUtils.appTitleMacro} App Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
@@ -273,7 +279,7 @@ extension _TabExt on _Tab {
   String titleEx({String? language}) {
     switch(this) {
       case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case _Tab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} Connections', language: language);
+      case _Tab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
 
@@ -305,4 +311,12 @@ extension DirectoryConnectionsExt on DirectoryAccounts {
       case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
+
+  MyProfileInfo get profileInfo {
+    switch(this) {
+      case DirectoryAccounts.myConnections: return MyProfileInfo.myConnectionsInfo;
+      case DirectoryAccounts.appDirectory: return MyProfileInfo.myDirectoryInfo;
+    }
+  }
+
 }

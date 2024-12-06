@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.23] - 2024-12-05
+### Fixed
+- Fixed photo image refresh in directory listing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- Added Filters and Edit Info in directory listing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.22] - 2024-12-04
+### Changed
+- Removed voice recording caching in Auth2, reworked profile picture caching and processing in Auth2 [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Minor UI updates in My Info & Connections profile page [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
 ## [6.1.21] - 2024-12-03
 ### Added
 - Second round of InfoSwap (My Info & Illinois Connections) [#4402](https://github.com/rokwire/illinois-app/issues/4402).

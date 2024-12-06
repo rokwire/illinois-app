@@ -1,17 +1,16 @@
 
 import 'dart:async';
-import 'dart:collection';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPreviewPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -26,43 +25,37 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPageState();
 }
 
-class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPage> {
+class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPage> implements NotificationsListener {
 
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
+  String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
 
   bool _loading = false;
   bool _editing = false;
 
   @override
   void initState() {
-    super.photoImageToken = ProfileDirectoryMyInfoDateTimeUtils.imageToken;
+    NotificationService().subscribe(this, [
+      ProfileDirectoryAccountsPage.notifyEditInfo,
+    ]);
     _loadProfileAndPrivacy();
-
-
-    Map<String, dynamic> result = {};
-    ContentAttributes? attribs = Events2().contentAttributes;
-    ContentAttribute? colleges = attribs?.findAttribute(id: 'college');
-    ContentAttribute? departments = attribs?.findAttribute(id: 'department');
-    if (colleges != null) {
-      for (ContentAttributeValue college in colleges.values ?? []) {
-        List<ContentAttributeValue>? collegeDepartments = departments?.attributeValuesFromSelection({'college' : LinkedHashSet.from([college.value])});
-        if (collegeDepartments != null) {
-          result[college.value] = List.from(collegeDepartments.map((attributeValue) => attributeValue.value ?? ''));
-        }
-      }
-    }
-
-    String? jsonText = JsonUtils.encode(result);
-    debugPrint(jsonText);
-
-
     super.initState();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+      setStateIfMounted((){
+        _editing = true;
+      });
+    }
   }
 
   @override
@@ -75,7 +68,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
-          photoImageToken: photoImageToken,
+          photoImageToken: _photoImageToken,
           onFinishEdit: _onFinishEditInfo,
       );
     }
@@ -84,7 +77,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         contentType: widget.contentType,
         profile: _profile,
         privacy: _privacy,
-        photoImageToken: photoImageToken,
+        photoImageToken: _photoImageToken,
         onEditInfo: _onEditInfo,
       );
     }
@@ -136,7 +129,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       }
 
       if (photoImageToken != null) {
-        super.photoImageToken = photoImageToken;
+        _photoImageToken = photoImageToken;
       }
 
       _editing = false;
@@ -149,24 +142,12 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
 class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends State<T> {
 
-  // Photo Image
-
-  static const String _photoImageKey = 'edu.illinois.rokwire.token';
-  String? photoImageToken;
-
-  String? photoImageUrl(String? photoUrl) => ((photoUrl != null) && (photoImageToken != null)) ?
-    UrlUtils.addQueryParameters(photoUrl, { _photoImageKey : photoImageToken ?? ''}) : photoUrl;
-
-  Map<String, String> get photoImageHeaders => <String, String>{
-    HttpHeaders.authorizationHeader : "${Auth2().token?.tokenType ?? 'Bearer'} ${Auth2().token?.accessToken}",
-  };
-
   // Name Text Style
 
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  // Positive and Permited visibility
+  // Positive and Permitted visibility
 
   static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
   static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
@@ -191,11 +172,4 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   @override
   Widget build(BuildContext context) =>
     throw UnimplementedError();
-}
-
-///////////////////////////////////////////
-// DateTime Utils
-
-extension ProfileDirectoryMyInfoDateTimeUtils on DateTime {
-  static String get imageToken => DateTime.now().millisecondsSinceEpoch.toString();
 }

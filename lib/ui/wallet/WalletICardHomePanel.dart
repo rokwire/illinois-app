@@ -40,20 +40,20 @@ class WalletICardHomeContentPanel extends StatefulWidget {
     if (!Auth2().isOidcLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_id', 'Illini ID'));
     }
-    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
+    else if (StringUtils.isEmpty(Auth2().iCard?.cardNumber)) {
       AppAlert.showTextMessage( context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
     }
     else {
       String? warning;
-      int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
+      int? expirationDays = Auth2().iCard?.expirationIntervalInDays;
       if (expirationDays != null) {
         if (expirationDays <= 0) {
           warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'),
-            [Auth2().authCard?.expirationDate ?? '']
+            [Auth2().iCard?.expirationDate ?? '']
           );
         } else if ((0 < expirationDays) && (expirationDays < 30)) {
           warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id', 'Your ID will expire on %s. Please visit the ID Center.'),
-            [Auth2().authCard?.expirationDate ?? '']
+            [Auth2().iCard?.expirationDate ?? '']
           );
         }
       }
