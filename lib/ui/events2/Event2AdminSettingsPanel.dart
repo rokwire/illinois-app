@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
-import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -14,6 +13,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import '../../service/Analytics.dart';
 import '../widgets/HeaderBar.dart';
+import '../widgets/RibbonButton.dart';
+import 'Event2CreatePanel.dart';
 
 class Event2AdminSettingsPanel extends StatefulWidget{
   final Event2? event;
@@ -183,11 +184,21 @@ class _ButtonWidget extends StatelessWidget{
     return _buildWidget();
   }
 
-  Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
-    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: title?? "",
-      subTitle: subTitle,
-      onTap: () => onTap?.call()
-    ),
-  );
+  // Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  //   heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+  //       title: title?? "",
+  //       subTitle: subTitle,
+  //       onTap: () => onTap?.call()
+  //   ),
+  // );
+
+Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  heading: RibbonButton(
+        label: title?? "",
+        description: subTitle,
+        progress: progress,
+        onTap: () => onTap?.call(),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        progressSize: 18,
+      ));
 }
