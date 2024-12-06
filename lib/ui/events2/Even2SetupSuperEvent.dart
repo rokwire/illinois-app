@@ -333,8 +333,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
              else {
                setStateIfMounted(() => _applying = false);
                AppAlert.showDialogResult(
-                   context, 'Successfully updated ${(result.data ?? 0) +
-                   (result.data ?? 0)} sub events');
+                   context, 'Successfully updated ${(result.data ?? 0)} sub events');
              }
            } else {
              setStateIfMounted(() => _applying = false);
