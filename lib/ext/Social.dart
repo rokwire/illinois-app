@@ -48,6 +48,7 @@ extension PostExt on Post {
 
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
+  bool get createdByUser => creatorId == Auth2().accountId;
 }
 
 extension CommentExt on Comment {

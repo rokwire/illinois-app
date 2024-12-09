@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -8,9 +8,8 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/messages.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/messages.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,6 +38,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _listening = false;
   bool _loadingResponse = false;
   bool _loading = false;
+  
+  List<Post> _messages = [];
 
   @override
   void initState() {
@@ -54,8 +55,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _scrollController.addListener(_scrollListener);
 
     _contentCodes = buildContentCodes();
+    
+    //TODO: insert some test messages into _messages for now - use Social() service to get these messages later
 
-    if (CollectionUtils.isNotEmpty(Messages().messages)) {
+    if (CollectionUtils.isNotEmpty(_messages)) {
       _shouldScrollToBottom = true;
     }
 
@@ -110,7 +113,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildContent() {
     return Stack(children: [
-      Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: Messages().messages.isNotEmpty ?
+      Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: _messages.isNotEmpty ?
         Stack(alignment: Alignment.center, children: [
           SingleChildScrollView(
               controller: _scrollController,
@@ -130,7 +133,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    for (Message message in Messages().messages) {
+    for (Post message in _messages) {
       contentList.add(Padding(padding: EdgeInsets.only(bottom: 16),
           child: _buildChatBubble(message)));
     }
@@ -142,26 +145,26 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return contentList;
   }
 
-  Widget _buildChatBubble(Message message) {
-    EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
+  Widget _buildChatBubble(Post message) {
+    EdgeInsets bubblePadding = message.createdByUser ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: bubblePadding,
           child: Row(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
+              mainAxisAlignment: message.createdByUser ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
                 Flexible(
-                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == Messages().messages.lastOrNull),
+                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == _messages.lastOrNull),
                         child: Material(
-                            color: message.user
+                            color: message.createdByUser
                                 ? Styles().colors.blueAccent
                                 : Styles().colors.surface,
                             borderRadius: BorderRadius.circular(16.0),
                             child: Padding(
                                 padding: const EdgeInsets.all(16.0),
-                                child: Text(message.content,
-                                    style: message.user
+                                child: Text(message.body ?? '',
+                                    style: message.createdByUser
                                         ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
                                         : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'),
                                     textAlign: TextAlign.start)
@@ -280,9 +283,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       }
 
       setState(() {
-        if (message.isNotEmpty) {
-          Messages().addMessage(Message(content: message, user: true, displayName: Auth2().fullName ?? '', dateCreated: DateTime.now()));
-        }
+        //TODO: create message on Social BB
+        // if (message.isNotEmpty) {
+        //   Social().addMessage(Post(content: message, user: true, displayName: Auth2().fullName ?? '', dateCreated: DateTime.now()));
+        // }
         _inputController.text = '';
         _loadingResponse = true;
         _shouldScrollToBottom = true;
