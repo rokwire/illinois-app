@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/RadioPlayer.dart';
+import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -339,6 +340,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   List<Widget> _buildHeaderActions() {
     return <Widget>[
       _buildHeaderPersonalInfoButton(),
+      _buildHeaderMessagesButton(),
       _buildHeaderNotificationsButton(),
       _buildHeaderSettingsButton()
     ];
@@ -350,6 +352,17 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       InkWell(onTap: () => _onTapSettings(), child:
         Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
           Styles().images.getImage('settings-white', excludeFromSemantics: true),
+        )
+      )
+    );
+  }
+
+  Widget _buildHeaderMessagesButton() {
+    //TODO: add unread messages count using Social BB (see notifications button below)
+    return Semantics(label: Localization().getStringEx('headerbar.messages.title', 'Messages'), hint: Localization().getStringEx('headerbar.messages.hint', ''), button: true, excludeSemantics: true, child:
+      InkWell(onTap: _onTapMessages, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
+          Styles().images.getImage('messages-white', excludeFromSemantics: true),
         )
       )
     );
@@ -377,14 +390,14 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
         CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
-          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 8), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
                 DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
               )
             )
           ) :
-          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
             Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
           ),
       )
@@ -413,6 +426,14 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     }
     else {
       SettingsHomeContentPanel.present(context);
+    }
+  }
+
+  void _onTapMessages() {
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != MessagesHomePanel.routeName) {
+      Analytics().logSelect(target: "Messages");
+      MessagesHomePanel.present(context);
     }
   }
 

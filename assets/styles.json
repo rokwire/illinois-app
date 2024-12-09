@@ -937,8 +937,9 @@
     "plus-circle-white": {"src": "images/icons-control-add-small-white.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "minus-circle-white": {"src": "images/group-decrease.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "notification-white": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "surface", "size": 16, "todo": "size"},
+    "messages-white": {"src": "0xf0e0", "type": "fa.icon", "weight": "solid", "color": "surface", "size": 16},
     "play-circle-white": {"src": "images/icon-watch.png", "type": "flutter.asset", "color": "surface", "size": 32},
-    "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
+    "clock-white": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
 
     "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
     "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
