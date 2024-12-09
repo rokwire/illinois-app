@@ -15,6 +15,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2AdminSettingsPanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
@@ -1184,25 +1185,41 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     if (_eventId != null) {
       Event2Popup.showPrompt(context,
         title: Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
-        message: Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+        message: _event?.isSuperEvent == true?
+          Localization().getStringEx('', 'You are about to delete the following event "${_event?.name}" and its sub-events.') : //TBD localize
+          Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
       ).then((bool? result) {
         if (result == true) {
           setStateIfMounted(() {
             _eventProcessing = true;
           });
 
-          Events2().deleteEvent(eventId: _eventId!, groupIds: widget.event?.groupIds).then((result) {
-            if (mounted) {
-              setState(() {
-                _eventProcessing = false;
-              });
-                
-              if (result == true) {
-                Navigator.pop(context);
+          Events2().deleteEvent(eventId: _eventId!, groupIds: widget.event?.groupIds).then((result) async {
+            if (result == true) {
+              bool subDeleteResultSuccess = true; //Delete sub events if any
+              if (_event?.isSuperEvent == true && CollectionUtils.isNotEmpty(_linkedEvents)) {//TBD check if there are more to load
+                subDeleteResultSuccess = (await Event2SuperEventsController.multiUpload(events: _linkedEvents,
+                    uploadAPI: (event) => event.id != null ? Events2().deleteEvent(eventId: event.id!) : Future.value("missing id"))).successful;
+                // for (Event2 subEvent in _linkedEvents!) {
+                //   var subDeleteResult = await Events2().deleteEvent(eventId: subEvent.id ?? "");
+                //   subDeleteResultSuccess &= (subDeleteResult is bool) ? subDeleteResult : false;
+                // }
               }
-              else {
-                Event2Popup.showErrorResult(context, result);
+              if (mounted) {
+                setState(() {
+                  _eventProcessing = false;
+                });
+
+                if (subDeleteResultSuccess == true) {
+                  Navigator.pop(context);
+                } else {
+                  Event2Popup.showErrorResult(
+                      context, "Unable to delete sub events");
+                }
               }
+            } else {
+              Event2Popup.showErrorResult(
+                  context, "Unable to delete event");
             }
           });
         }

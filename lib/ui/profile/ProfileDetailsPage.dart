@@ -435,7 +435,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   void _loadUserProfilePicture() {
     if (StringUtils.isNotEmpty(Auth2().profile?.photoUrl)) {
       _setProfilePicProcessing(true);
-      Content().loadDefaultUserPhoto().then((imageBytes) {
+      Content().loadUserPhoto(type: UserProfileImageType.defaultType).then((imageBytes) {
         _profileImageBytes = imageBytes;
         _setProfilePicProcessing(false);
       });
@@ -611,7 +611,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   Future<bool> _updateProfilePicture(bool hasPicture) async {
     Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
       override: Auth2UserProfile(
-        photoUrl: hasPicture ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : null,
+        photoUrl: hasPicture ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : "",
       ),
       scope: { Auth2UserProfileScope.photoUrl }
     );

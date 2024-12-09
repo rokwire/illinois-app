@@ -12,21 +12,30 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class ProfileDirectoryPage extends StatefulWidget {
   static const String notifySignIn = "edu.illinois.rokwire.profile.sign_in";
-  final ScrollController? scrollController;
 
-  ProfileDirectoryPage({super.key, this.scrollController});
+  static const String tabParamKey = 'edu.illinois.rokwire.profile.directory.tab';
+
+  final ScrollController? scrollController;
+  final Map<String, dynamic>? params;
+
+  ProfileDirectoryPage({super.key, this.scrollController, this.params});
 
   @override
   _ProfileDirectoryPageState createState() => _ProfileDirectoryPageState();
+
+  ProfileDirectoryTab? get tabParam {
+    dynamic tab = (params != null) ? params![tabParamKey] : null;
+    return (tab is ProfileDirectoryTab) ? tab : null;
+  }
 }
 
-enum _Tab { myInfo, accounts }
+enum ProfileDirectoryTab { myInfo, accounts }
 enum MyProfileInfo { myConnectionsInfo, myDirectoryInfo }
 enum DirectoryAccounts { myConnections, appDirectory }
 
 class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements NotificationsListener {
 
-  late _Tab _selectedTab;
+  late ProfileDirectoryTab _selectedTab;
 
   //Map<_Tab, Enum> _selectedSubTabs = <_Tab, Enum>{};
 
@@ -37,9 +46,10 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      ProfileDirectoryAccountsPage.notifyEditInfo,
     ]);
 
-    _selectedTab = _Tab.values.first;
+    _selectedTab = widget.tabParam ?? ProfileDirectoryTab.values.first;
 
     //for (_Tab tab in _Tab.values) {
     //  _selectedSubTabs[tab] = tab.subTabs.first;
@@ -58,6 +68,11 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted();
     }
+    else if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+      setStateIfMounted((){
+        _selectedTab = ProfileDirectoryTab.myInfo;
+      });
+    }
   }
 
   @override
@@ -73,18 +88,18 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   Widget get _pageContent =>
     Column(children: [
       _tabsWidget,
-      Visibility(visible: (_selectedTab == _Tab.myInfo), maintainState: true, child:
-        _tabPage(_Tab.myInfo)
+      Visibility(visible: (_selectedTab == ProfileDirectoryTab.myInfo), maintainState: true, child:
+        _tabPage(ProfileDirectoryTab.myInfo)
       ),
-      Visibility(visible: (_selectedTab == _Tab.accounts), maintainState: true, child:
-        _tabPage(_Tab.accounts)
+      Visibility(visible: (_selectedTab == ProfileDirectoryTab.accounts), maintainState: true, child:
+        _tabPage(ProfileDirectoryTab.accounts)
       ),
     ],);
 
-  Widget _tabPage(_Tab tab) {
+  Widget _tabPage(ProfileDirectoryTab tab) {
     switch(tab) {
-      case _Tab.myInfo: return _myInfoTabPage;
-      case _Tab.accounts: return _connectionsTabPage;
+      case ProfileDirectoryTab.myInfo: return _myInfoTabPage;
+      case ProfileDirectoryTab.accounts: return _connectionsTabPage;
     }
   }
 
@@ -98,7 +113,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
         //),
         //Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
-          ProfileDirectoryMyInfoPage(contentType: MyProfileInfo.myDirectoryInfo,)
+          ProfileDirectoryMyInfoPage(contentType: MyProfileInfo.myDirectoryInfo, params: widget.params,)
         //),
 
       ],),
@@ -114,16 +129,19 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
         //),
         //Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.appDirectory), maintainState: true, child:
-          ProfileDirectoryAccountsPage(contentType: DirectoryAccounts.appDirectory, scrollController: widget.scrollController,)
+          ProfileDirectoryAccountsPage(DirectoryAccounts.appDirectory, scrollController: widget.scrollController, onEditProfile: _onEditProfile,)
         //),
       ],),
     );
+
+  void _onEditProfile(DirectoryAccounts contentType) =>
+    NotificationService().notify(ProfileDirectoryAccountsPage.notifyEditInfo, contentType.profileInfo);
 
   // Tabs widget
 
   Widget get _tabsWidget {
     List<Widget> tabs = <Widget>[];
-    for (_Tab tab in _Tab.values) {
+    for (ProfileDirectoryTab tab in ProfileDirectoryTab.values) {
       tabs.add(Expanded(child: _tabWidget(tab, selected: tab == _selectedTab)));
     }
     return Column(children: [
@@ -132,7 +150,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     ],);
   }
 
-  Widget _tabWidget(_Tab tab, { bool selected = false }) =>
+  Widget _tabWidget(ProfileDirectoryTab tab, { bool selected = false }) =>
     InkWell(onTap: () => _selectTab(tab),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 3, vertical: 12),
@@ -143,7 +161,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
       ),
     );
 
-  void _selectTab(_Tab tab) {
+  void _selectTab(ProfileDirectoryTab tab) {
     Analytics().logSelect(target: tab.titleEx(language: 'en'));
     if (_selectedTab != tab) {
       setState(() {
@@ -266,14 +284,14 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void _onTapSignIn() => NotificationService().notify(ProfileDirectoryPage.notifySignIn);
 }
 
-extension _TabExt on _Tab {
+extension _TabExt on ProfileDirectoryTab {
 
   String get title => titleEx();
 
   String titleEx({String? language}) {
     switch(this) {
-      case _Tab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case _Tab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
+      case ProfileDirectoryTab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
+      case ProfileDirectoryTab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
 
@@ -305,4 +323,12 @@ extension DirectoryConnectionsExt on DirectoryAccounts {
       case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
     }
   }
+
+  MyProfileInfo get profileInfo {
+    switch(this) {
+      case DirectoryAccounts.myConnections: return MyProfileInfo.myConnectionsInfo;
+      case DirectoryAccounts.appDirectory: return MyProfileInfo.myDirectoryInfo;
+    }
+  }
+
 }

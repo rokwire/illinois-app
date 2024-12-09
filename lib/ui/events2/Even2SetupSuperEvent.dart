@@ -10,6 +10,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -40,17 +41,28 @@ class Event2SetupSuperEventPanel extends StatefulWidget{
   static Widget buildSectionTitleWidget(String title, {bool enabled = true, int? maxLines}) {
     return Text(title, style: (enabled ? TextStyle() : TextStyle()),maxLines: maxLines);
   }
+
+  static Widget buildDescriptionWidget({required String text}) =>
+      Row(children: [
+        Expanded(
+            child: Text(text,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 8,
+                style: Styles().textStyles.getTextStyle("widget.description.regular")))
+      ]);
 }
-//TBD Notifications for events updated - reload content
-class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
+
+class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> implements NotificationsListener{
   final TextEditingController _subEventController = TextEditingController();
 
   String? _searchText;
-  List<Event2>? _initialSubEvents;
 
-  List<Event2>? _subEvents;
+  Event2? _event;
+  List<Event2>? _bbSubEvents;
+  List<Event2>? _selectedSubEvents;
   List<Event2>? _subEventCandidates;
   Client? _loadCandidatesClient;
+  Client? _loadBBEventsClient;
 
   bool? _superEventChildDisplayOnlyUnderSuperEvent = false;
   bool _publishAllSubEvents = false;
@@ -59,15 +71,19 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
 
   @override
   void initState() {
-    _initialSubEvents = widget.subEvents;
-    _subEvents = _initialSubEvents != null ? List.from(_initialSubEvents!) : null;
+    _event = widget.event;
+    _bbSubEvents = widget.subEvents;
+    _selectedSubEvents = _bbSubEvents != null ? List.from(_bbSubEvents!) : null;
     _subEventController.text = _searchText ?? '';
     _superEventChildDisplayOnlyUnderSuperEvent = _event?.isSuperEventChild == true && _event?.grouping?.canDisplayAsIndividual == false;
-    _initPublishAllSubEventsField();
+    _evaluatePublishAllSubEventsField();
     _subEventController.addListener(onTextChanged);
+
+    NotificationService().subscribe(this, [Events2.notifyUpdated,]);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(CollectionUtils.isEmpty(_subEvents)){
-        _loadSubEvents(init: true);
+      if(CollectionUtils.isEmpty(_selectedSubEvents)){
+        _updateSubEventsFromBB(init: true);
       }
       _loadSubEventCandidates();
     });
@@ -94,7 +110,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           _event?.isSuperEventChild == true ? _buildSuperEventChildContent() : //Super Event child see limited options,
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _buildDescriptionWidget(
+              Event2SetupSuperEventPanel.buildDescriptionWidget(
                   text: 'Set and manage this event as a multi-event “super event.” After creating one or more related events, you can nest those events as sub-events within a super event (e.g., sessions in a conference, performances in a festival).'
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 8),child:
@@ -117,7 +133,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
                       borderRadius: BorderRadius.all(Radius.circular(4)),
                     )))),
               Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
-              _buildSubEventsSection(_subEvents,
+              _buildSubEventsSection(_selectedSubEvents,
                   emptyMsg: 'This event is not linked to any sub-events. Please see below.',
                   showUnlink: true),
               Padding(padding: EdgeInsets.only(top: 12), child:
@@ -158,19 +174,10 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       ]);
   }
 
-  Widget _buildDescriptionWidget({required String text}) =>
-    Row(children: [
-      Expanded(
-          child: Text(text,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 8,
-              style: Styles().textStyles.getTextStyle("widget.description.regular")))
-    ]);
-
   Widget _buildSubEventsSection(events, {bool showLink = false, bool showUnlink = false, String? emptyMsg}) {
     Widget resultWidget;
     if (CollectionUtils.isEmpty(events)) {
-      return _buildDescriptionWidget(text: emptyMsg ?? "");
+      return Event2SetupSuperEventPanel.buildDescriptionWidget(text: emptyMsg ?? "");
     } else {
       List<Widget> eventsWidgetList = [];
       events!.forEach((event) {
@@ -198,18 +205,18 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
   void onTextChanged(){
     final text = _subEventController.text;
     if(_searchText?.compareTo(text) != 0) {
-      _loadSubEvents();
+      _loadSubEventCandidates();
     }
   }
 
-  void _loadSubEventCandidates() {
+  Future<void> _loadSubEventCandidates() async{
     final text = _subEventController.text;
       Client client = Client();
 
-      _loadCandidatesClient?.close();
+    _loadCandidatesClient?.close();
+    _loadCandidatesClient = client;
       setStateIfMounted((){
         _searchText = text;
-        _loadCandidatesClient = client;
       });
 
       print('subevent title search: $text (${text.characters.length})');
@@ -218,8 +225,13 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
           List<Event2>? candidates = listResult?.events;
 
           if(identical(_loadCandidatesClient, client)) {
-            candidates?.removeWhere(_skipCandidateCondition);
-            candidates?.addAll(_additionalCandidates);
+            candidates?.removeWhere(_skipCandidateCondition); //Additional filtering
+
+            // var additionalCandidates = _additionalCandidates.where((additionalCandidate) =>
+            //   candidates?.any((candidate) => candidate.id == additionalCandidate.id) == false); //Items which are removed but not uploaded yet
+            candidates?.addAll(_additionalCandidates.where((additionalCandidate) =>
+              candidates.contains(additionalCandidate) == false)); //Do not double items. When we add/remove we directly manipulate, but when we search text we loose these items
+
             setStateIfMounted(() {
               _subEventCandidates = candidates;
             });
@@ -227,17 +239,29 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       });
   }
 
-  void _loadSubEvents({bool init = false}) {
-    _asyncLoadSubEvents()?.then((loadResult) {
-      List<Event2>? events = loadResult?.events;
-        setStateIfMounted(() {
-          _subEvents = events;
-          _initPublishAllSubEventsField();
-          if(init) {
-            _initialSubEvents ??= events != null ? List.from(events) : null;
-          }
-        });
-      });
+  Future<void> _updateSubEventsFromBB({bool init = false}) async {
+      Client client = Client();
+    _loadBBEventsClient?.close();
+    _loadBBEventsClient = client;
+
+    var loadResult = await _asyncLoadSubEvents(client: client);
+    if(identical(_loadBBEventsClient, client) == false) {
+      return;
+    }
+    if (loadResult is String){
+      return; //error
+    }
+
+    List<Event2>? events = loadResult is Events2ListResult ? loadResult.events : null;
+    setStateIfMounted(() {
+      _bbSubEvents = events;
+      if(init) {
+        _selectedSubEvents ??= events != null ? List.from(events) : null;
+      } else {
+        _selectedSubEvents = _mergeCollectionWithUpdates(collection: _selectedSubEvents, updatedCollection: events);
+      }
+      _evaluatePublishAllSubEventsField();
+    });
   }
 
   Future<dynamic>? _asyncLoadCandidates({Client? client}) async => Events2().loadEventsEx( //TBD load in portions: pass offset and limit
@@ -246,20 +270,21 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       types: {Event2TypeFilter.admin}
     ), client: client);
 
-  Future<Events2ListResult?>? _asyncLoadSubEvents() async => _event?.isSuperEvent == true ? Events2().loadEvents(
-      Events2Query(grouping:  _event?.linkedEventsGroupingQuery)
+  Future<dynamic>? _asyncLoadSubEvents({Client? client}) async => _event?.isSuperEvent == true ? Events2().loadEventsEx(
+      Events2Query(grouping:  _event?.linkedEventsGroupingQuery),
+      client: client
   ) : null;
 
   void _onLinkEvent(Event2 event){
     setStateIfMounted(() {
       _subEventCandidates?.remove(event);
-      if(_subEvents == null) {
-        _subEvents = [];
+      if(_selectedSubEvents == null) {
+        _selectedSubEvents = [];
       }
-      if(_subEvents!.contains(event) == false)
-      _subEvents!.add(event);
+      if(_selectedSubEvents!.contains(event) == false)
+      _selectedSubEvents!.add(event);
 
-      _initPublishAllSubEventsField();
+      _evaluatePublishAllSubEventsField();
     });
   }
 
@@ -267,8 +292,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     setStateIfMounted(() {
       if(_subEventCandidates?.contains(event) == false)
         _subEventCandidates?.add(event);
-      _subEvents!.remove(event);
-      _initPublishAllSubEventsField();
+      _selectedSubEvents!.remove(event);
+      _evaluatePublishAllSubEventsField();
     });
   }
 
@@ -279,8 +304,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
         if(_isSuperEventChildModified) {
           Event2Grouping? updatedGrouping = _event?.grouping?.copyWith(displayAsIndividual: !(_superEventChildDisplayOnlyUnderSuperEvent == true));
           if(updatedGrouping != null){
-            // Event2SuperEventUpdateResult? uploadResult =
-            Event2SuperEventsController.uploadMultiGroupingUpdate(events: [_event!], grouping: updatedGrouping).then((result){
+            Event2? updateEventData = _event?.copyWithNullable(grouping: NullableValue(updatedGrouping));
+            Event2SuperEventsController.multiUploadUpdate(events: [updateEventData!]).then((result){
               setStateIfMounted(() => _applying = false);
               if (result.successful)
                 AppAlert.showDialogResult(
@@ -294,25 +319,28 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
       } else {
         Event2SuperEventsController.update(
             superEvent: _event!,
-            existingSubEvents: _initialSubEvents,
-            updatedEventsSelection: _subEvents,
-            publishLinkedEvents: _event?.published == true || _publishAllSubEvents
+            existingSubEvents: _bbSubEvents,
+            updatedEventsSelection: _selectedSubEvents,
+            publishLinkedEvents: _event?.published == true && _publishAllSubEvents
         ).then((result) {
            if ( result.successful){
-             if( _isSuperEvent && _publishAllSubEvents && _event?.published == true) //Need to handle publish all sub events
+             if(_needToApplyPushAll &&  _event?.published == true) //Need to handle publish all sub events
                Event2SuperEventsController.applyPublishAllSubEvents(_event).then((publishResult){
                  setStateIfMounted(() => _applying = false);
                  if (result.successful)
                    AppAlert.showDialogResult(
-                       context, 'Successfully updated ${result.data} sub events');
+                       context, 'Successfully updated ${(publishResult.data ?? 0) + (result.data ?? 0)} sub events');
                  else
                    AppAlert.showDialogResult(
                        context, 'Unable to update: \n ${publishResult.error}');
                });
-             else
+             else {
+               setStateIfMounted(() => _applying = false);
                AppAlert.showDialogResult(
-                   context, 'Successfully updated ${result.data + result.data} sub events');
+                   context, 'Successfully updated ${(result.data ?? 0)} sub events');
+             }
            } else {
+             setStateIfMounted(() => _applying = false);
              AppAlert.showDialogResult(
                  context, 'Unable to update: \n ${result.error}');
            }
@@ -321,17 +349,17 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     }
   }
 
-  void _initPublishAllSubEventsField(){
+  void _evaluatePublishAllSubEventsField(){
     _publishAllSubEvents = !_hasSubEventToPublish;
   }
 
   bool _skipCandidateCondition(Event2 candidate) =>
       candidate.id == _event?.id //Exclude this Event
       || candidate.grouping?.type == Event2GroupingType.superEvent //Exclude super events and sub events
-      || _subEvents?.contains(candidate) == true; //candidate is already selected but not uploaded yet
+      || _selectedSubEvents?.contains(candidate) == true; //candidate is already selected but not uploaded yet
 
-  Iterable<Event2> get _additionalCandidates => _initialSubEvents?.where(
-          (Event2 event) => _subEvents?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
+  Iterable<Event2> get _additionalCandidates => _bbSubEvents?.where(
+          (Event2 event) => _selectedSubEvents?.contains(event) == false) ?? [];//candidates that were unlinked but not uploaded yet
 
   List<Widget>? get _headerBarActions {
     if (_applying) {
@@ -348,24 +376,79 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> {
     }
   }
 
-  Event2? get _event => widget.event;
+  bool get _isModified => /*!_printCollectionEquality() ||*/  //debug tool TBD remove when done
+        _isSelectedSubEventsModified || //Need to apply selection change
+        _isSuperEventChildModified|| //Need to apply show only under super event change
+        _needToApplyPushAll; // need to apply publish to sub events
 
-  bool get _isModified =>
-      CollectionUtils.equals(_subEvents, _initialSubEvents) == false ||
-          _isSuperEventChildModified||
-          (_isSuperEvent && _publishAllSubEvents == true && _hasSubEventToPublish == true); // need to apply publish to sub events
+  bool get _isSelectedSubEventsModified => CollectionUtils.equals( _selectedSubEvents?.toSet(), _bbSubEvents?.toSet()) == false; //Ignore order
 
-  bool get _isSuperEventChild => _event?.isSuperEventChild == true;
+  bool get _needToApplyPushAll =>
+      _isSuperEvent && _publishAllSubEvents == true && _hasSubEventToPublish == true;
 
   bool get _isSuperEventChildModified => _isSuperEventChild &&
       _superEventChildDisplayOnlyUnderSuperEvent != null &&
       _superEventChildDisplayOnlyUnderSuperEvent == _event?.grouping?.canDisplayAsIndividual;
 
-  bool get _hasSubEventToPublish =>  _subEvents?.any((Event2 event) => event.published == false) == true;
+  bool get _isSuperEventChild => _event?.isSuperEventChild == true;
 
-  bool get _isSuperEvent => CollectionUtils.isNotEmpty(_subEvents);
+  bool get _hasSubEventToPublish =>  _selectedSubEvents?.any((Event2 event) => event.published == false) == true;
+
+  bool get _isSuperEvent => CollectionUtils.isNotEmpty(_selectedSubEvents);
 
   bool get _publishAllSubEventsVisible => _isSuperEvent;
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Events2.notifyUpdated) {
+      _updateSubEventsFromBB().then((_){
+        _loadSubEventCandidates();
+      });
+      if(_event?.id != null)
+        Events2().loadEvent(_event!.id!).then(
+                (event) => _event = event ?? _event);
+    }
+  }
+
+  //Util
+  List<Event2>? _mergeCollectionWithUpdates({List<Event2>? collection, List<Event2>? updatedCollection}){
+    if (updatedCollection == null || updatedCollection.isEmpty)
+      return collection;
+
+    final updates = Map.fromIterable(updatedCollection,
+        key: (e) => (e as Event2).id,
+        value: (e) => e as Event2);
+
+    return Event2SuperEventsController.applyCollectionChange(collection: collection,
+        change: (event) => updates[event.id] ?? event)?.toList(); //replacing each event with its updated value
+  }
+
+  //TBD Remove when Done
+  // bool _printCollectionEquality(){
+  //   if(CollectionUtils.isEmpty(_selectedSubEvents) ||
+  //       CollectionUtils.isEmpty(_bbSubEvents) ||
+  //       CollectionUtils.equals(_selectedSubEvents?.toSet(), _bbSubEvents?.toSet()))
+  //     return true;
+  //
+  //   print('_selectedSubEvents: $_selectedSubEvents');
+  //   print('_bbSubEvents: $_bbSubEvents');
+  //   if(CollectionUtils.isNotEmpty(_selectedSubEvents) && CollectionUtils.isNotEmpty(_bbSubEvents)) {
+  //     for (Event2 event in _bbSubEvents ?? []) {
+  //       print('Event ${event.id} has Equal: ${_selectedSubEvents!.contains(event)}');
+  //       if(!_selectedSubEvents!.contains(event)){
+  //         var secondEvent = _selectedSubEvents!.where((selectedEvent)=> selectedEvent.id == event.id);
+  //         print('Not Equal Event Data First: ${event.toJson()} \n');
+  //         print('Not Equal Event Data Second: ${secondEvent.isNotEmpty ? secondEvent.first.toJson() : 'null'} \n');
+  //       }
+  //     }
+  //     bool areListsEqual = CollectionUtils.equals(_selectedSubEvents, _bbSubEvents);
+  //     bool areSetsEqual = CollectionUtils.equals(_selectedSubEvents?.toSet(), _bbSubEvents?.toSet());
+  //     print('areListsEqual: $areListsEqual');
+  //     print('areSetsEqual: $areSetsEqual');
+  //   }
+  //
+  //   return true;
+  // }
 }
 
 class _EventCard extends StatelessWidget{
@@ -389,46 +472,48 @@ class _EventCard extends StatelessWidget{
         });
 }
 
-class Event2SuperEventUpdateResult<T>{
+class Event2SuperEventResult<T>{
     String? error;
     T? data;
 
-    Event2SuperEventUpdateResult({String? this.error, this.data});
+    Event2SuperEventResult({String? this.error, this.data});
 
-    static Event2SuperEventUpdateResult fail(String? error) => Event2SuperEventUpdateResult(error: error ?? "error");
+    static Event2SuperEventResult<T> fail<T>(String? error) => Event2SuperEventResult(error: error ?? "error");
 
-    static Event2SuperEventUpdateResult success<T>({required T data}) => Event2SuperEventUpdateResult(data: data);
+    static Event2SuperEventResult<T> success<T>({required T data}) => Event2SuperEventResult(data: data);
 
     bool get successful => this.error == null;
 }
 
 class Event2SuperEventsController {
 
-  static Future<Event2SuperEventUpdateResult> update({required Event2 superEvent, List<Event2>? existingSubEvents,
-    List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async { //TBD use publish linked events
-      Event2SuperEventUpdateResult linkedResult = await updateUnlinked(
+  static Future<Event2SuperEventResult<int>> update({required Event2 superEvent, List<Event2>? existingSubEvents,
+    List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
+      Event2SuperEventResult<int> linkedResult = await updateUnlinked(
           superEvent: superEvent,
           existingSubEvents: existingSubEvents,
           updatedEventsSelection: updatedEventsSelection);
-      Event2SuperEventUpdateResult unlinkedResult = await updateLinked(
+      Event2SuperEventResult<int> unlinkedResult = await updateLinked(
           superEvent: superEvent,
           existingSubEvents: existingSubEvents,
           updatedEventsSelection: updatedEventsSelection,
           publishLinkedEvents: publishLinkedEvents);
 
       return linkedResult.successful && unlinkedResult.successful ?
-        Event2SuperEventUpdateResult.success(data: linkedResult.data + unlinkedResult.data) :
-        Event2SuperEventUpdateResult.fail("${linkedResult.error} ${unlinkedResult.error}");
+        Event2SuperEventResult.success(data: (linkedResult.data ?? 0) + (unlinkedResult.data ?? 0)) :
+        Event2SuperEventResult.fail("${linkedResult.error} ${unlinkedResult.error}");
   }
 
-  static Future<Event2SuperEventUpdateResult> updateUnlinked({Event2? superEvent, List<Event2>?existingSubEvents,
+  static Future<Event2SuperEventResult<int>> updateUnlinked({Event2? superEvent, List<Event2>?existingSubEvents,
     List<Event2>? updatedEventsSelection}) async{
       List<Event2>? unlinkedSubEvents = filterNeedUnlink(existingSubEvents, updatedEventsSelection);
 
       if(CollectionUtils.isEmpty(unlinkedSubEvents))
-        return Event2SuperEventUpdateResult.success(data: 0);//nothing to unlink;
+        return Event2SuperEventResult.success(data: 0);//nothing to unlink;
 
-      Event2SuperEventUpdateResult? uploadResult = await uploadMultiGroupingUpdate(events: unlinkedSubEvents, grouping: null);
+      Event2SuperEventResult? uploadResult = await multiUploadUpdate(
+          events: applyCollectionChange(collection: unlinkedSubEvents,
+              change: (event) => event.copyWithNullable(grouping: NullableValue.empty())));;
       String error = uploadResult.error ?? "";
 
       if (CollectionUtils.isEmpty(updatedEventsSelection) && superEvent?.isSuperEvent == true) { //Mark Main event as regular event
@@ -438,30 +523,32 @@ class Event2SuperEventsController {
       }
 
       return StringUtils.isEmpty(error) ?
-        Event2SuperEventUpdateResult.success(data: uploadResult.data) :
-        Event2SuperEventUpdateResult.fail(error);
+        Event2SuperEventResult.success(data: uploadResult.data) :
+        Event2SuperEventResult.fail(error);
   }
 
-  static  Future<Event2SuperEventUpdateResult> updateLinked({required Event2 superEvent,
+  static  Future<Event2SuperEventResult<int>> updateLinked({required Event2 superEvent,
     List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection, bool? publishLinkedEvents = false}) async {
-      List<Event2>? linkSubEvents = Event2SuperEventsController.filterNeedLink(existingSubEvents, updatedEventsSelection);
+      List<Event2>? linkSubEvents = filterNeedLink(existingSubEvents, updatedEventsSelection);
 
       if(CollectionUtils.isEmpty(linkSubEvents))
-        return Event2SuperEventUpdateResult.success(data: 0);//nothing to add;
+        return Event2SuperEventResult.success(data: 0);//nothing to add;
 
-     Event2SuperEventUpdateResult? uploadResult = await uploadMultiGroupingUpdate(events: linkSubEvents,
-         grouping: Event2Grouping(type: Event2GroupingType.superEvent, superEventId: superEvent.id, displayAsIndividual: false));
+      final updateGroupingData = Event2Grouping(type: Event2GroupingType.superEvent, superEventId: superEvent.id, displayAsIndividual: false);
+     Event2SuperEventResult? uploadResult = await multiUploadUpdate(
+            events: applyCollectionChange(collection: linkSubEvents,
+                change: (event) => event.copyWithNullable(grouping: NullableValue(updateGroupingData))));
 
      String error = uploadResult.error ?? "";
-    if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
-      Event2 updatedEventData = superEvent.copyWithNullable(grouping: NullableValue(Event2Grouping(type: Event2GroupingType.superEvent)));
-      var mainEventResponse = await Events2().updateEvent(updatedEventData);
-      error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
-    }
+      if (superEvent.isSuperEvent == false) { //Mark Main event as super event if not marked
+        Event2 updatedEventData = superEvent.copyWithNullable(grouping: NullableValue(Event2Grouping(type: Event2GroupingType.superEvent)));
+        var mainEventResponse = await Events2().updateEvent(updatedEventData);
+        error += mainEventResponse is Event2 ? "" : "$mainEventResponse\n";
+      }
 
-    return StringUtils.isEmpty(error) ?
-    Event2SuperEventUpdateResult.success(data: uploadResult.data) :
-    Event2SuperEventUpdateResult.fail(error);
+      return StringUtils.isEmpty(error) ?
+      Event2SuperEventResult.success(data: uploadResult.data) :
+      Event2SuperEventResult.fail(error);
   }
 
   static List<Event2>? filterNeedUnlink(List<Event2>? existingSubEvents, List<Event2>? updatedEventsSelection){
@@ -486,47 +573,48 @@ class Event2SuperEventsController {
       ).toList();
   }
 
-  static Future<Event2SuperEventUpdateResult> uploadMultiUpdate({required Iterable<Event2>? events, required Event2? Function(Event2) updateDataBuilder}) async{
+  static Future<Event2SuperEventResult<int>> multiUpload({required Iterable<Event2>? events, required Future Function(Event2) uploadAPI}) async {
     String error = "";
     int successCount = 0;
     if(CollectionUtils.isEmpty(events))
-      return Event2SuperEventUpdateResult.success(data: successCount); //nothing to upload
+      return Event2SuperEventResult.success(data: successCount); //nothing to upload
 
     for (final updateEvent in events!) {
-      Event2? updatedEventData = updateDataBuilder(updateEvent);
-      dynamic response = updatedEventData != null ? await Events2().updateEvent(updatedEventData) : null;
-      bool succeeded = response is Event2;
-      if (succeeded) {
-        successCount++;
-      } else {
+      dynamic response = await uploadAPI(updateEvent);
+      bool fail = response == null || response is String;
+      if (fail) {
         error += "$response\n";
         // AppAlert.showDialogResult(context, 'Failed to remove sub-event. Response: ${response.body}');
+      } else {
+        successCount++;
       }
     }
-
     return StringUtils.isEmpty(error) ?
-    Event2SuperEventUpdateResult.success(data: successCount) :
-    Event2SuperEventUpdateResult.fail(error);
+    Event2SuperEventResult.success(data: successCount) :
+    Event2SuperEventResult.fail(error);
   }
 
-  static Future<Event2SuperEventUpdateResult> uploadMultiGroupingUpdate({Iterable<Event2>? events, Event2Grouping? grouping}) async =>
-      uploadMultiUpdate(events: events,
-          updateDataBuilder: (Event2 event) => event.copyWithNullable(grouping: NullableValue(grouping)));
+  static Future<Event2SuperEventResult<int>> multiUploadUpdate({required Iterable<Event2>? events}) async =>
+      multiUpload(events: events, uploadAPI: Events2().updateEvent);
 
-  static Future<Event2SuperEventUpdateResult> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
+  static Future<Event2SuperEventResult<int>> applyPublishAllSubEvents(Event2? event, {List<Event2>? subEvents}) async {
       if(event?.published == false)
-        return Event2SuperEventUpdateResult.success(data: 0);
+        return Event2SuperEventResult.success(data: 0);
 
       if(CollectionUtils.isEmpty(subEvents)) {
         Events2ListResult? result = await Events2().loadEvents(Events2Query(grouping: event?.linkedEventsGroupingQuery));
         subEvents = result?.events;
       }
       Iterable<Event2>? unpublishedEvents = subEvents?.where((Event2 event) => event.published == false);
+
       if(CollectionUtils.isEmpty(unpublishedEvents))
-        return Event2SuperEventUpdateResult.success(data: 0);
+        return Event2SuperEventResult.success(data: 0);
 
-      return uploadMultiUpdate(events: unpublishedEvents, updateDataBuilder:
-          (Event2 event) => event.copyWithNullable(published: NullableValue(true)));
-
+      return multiUploadUpdate(events: unpublishedEvents?.map(
+              (Event2 event) => event.copyWithNullable(published: NullableValue(true))));
   }
+
+  //Utils
+  static Iterable<Event2>? applyCollectionChange({required Iterable<Event2>? collection, required Event2 Function(Event2) change})
+    => collection?.map(change);
 }

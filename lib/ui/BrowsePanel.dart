@@ -30,6 +30,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -50,6 +51,7 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
@@ -616,6 +618,8 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
+      case "directory.app_directory":        _onTapAppDirectory(context); break;
+
       case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
@@ -871,6 +875,11 @@ class _BrowseEntry extends StatelessWidget {
       initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}),
       analyticsFeature: AnalyticsFeature.DiningOpen,
     )));
+  }
+
+  void _onTapAppDirectory(BuildContext context) {
+    Analytics().logSelect(target: "Illinois App Directory");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ProfileDirectoryAccountsPanel(DirectoryAccounts.appDirectory); } ));
   }
 
   void _onTapLaundry(BuildContext context) {
