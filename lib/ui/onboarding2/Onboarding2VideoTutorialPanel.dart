@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
@@ -137,7 +138,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
     String? fileContents;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
-      Response? response = await Network().get(closedCaptionsUrl);
+      Response? response = await Network().get(closedCaptionsUrl, headers: Auth2().webNetworkAuthHeaders);
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
         fileContents = response?.body;

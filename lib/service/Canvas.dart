@@ -124,9 +124,16 @@ class Canvas with Service implements NotificationsListener {
 
   bool get _useCanvasApi => (Storage().debugUseCanvasLms == true);
 
-  Map<String, String>? get _canvasAuthHeaders => _isCanvasAvailable
-      ? {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"}
-      : null;
+  Map<String, String>? get _canvasAuthHeaders {
+    if (!_isCanvasAvailable) {
+      return null;
+    }
+    Map<String, String> headers = {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"};
+    if (kIsWeb) {
+      headers.addAll(Auth2().webNetworkAuthHeaders!);
+    }
+    return headers;
+  }
 
   List<int>? get _medicineCoursesAccountIds => Config().canvasMedicineCoursesAccountIds;
 

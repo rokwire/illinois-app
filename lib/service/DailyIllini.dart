@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/DailyIllini.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -37,12 +38,12 @@ class DailyIllini  /* with Service */ {
   // Service
 
   Future<List<DailyIlliniItem>?> loadFeed() async {
-    if (StringUtils.isEmpty(Config().dailyIlliniFeedUrl)) {
+    String? feedUrl = Config().dailyIlliniFeedUrl;
+    if (StringUtils.isEmpty(feedUrl)) {
       debugPrint('Failed to load Daily Illini feed - missing url.');
       return null;
     }
-    String url = Config().dailyIlliniFeedUrl!;
-    Response? response = await Network().get(url);
+    Response? response = await Network().get(feedUrl, headers: Auth2().webNetworkAuthHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {

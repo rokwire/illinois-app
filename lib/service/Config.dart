@@ -80,24 +80,24 @@ class Config extends rokwire.Config {
   String? get illiniCashHmacKey      => JsonUtils.stringValue(secretIlliniCash['hmac_key']);
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
 
-  String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
+  String? get padaapiApiKey          => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.padaapi.api_key' : JsonUtils.stringValue(secretPadaapi['api_key']);
 
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
 
-  String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
-  String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
+  String? get canvasToken            => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.canvas.token' : JsonUtils.stringValue(secretCanvas['token']);
+  String? get canvasTokenType        => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.canvas.token_type' : JsonUtils.stringValue(secretCanvas['token_type']);
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
   String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);
   String? get shibbolethOauthPathUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_path_url']);
   String? get userAuthUrl            => JsonUtils.stringValue(otherUniversityServices['user_auth_url']);
-  String? get assetsUrl              => JsonUtils.stringValue(otherUniversityServices['assets_url']);
+  String? get assetsUrl              => getOtherServicesUrl(key: 'assets_url');
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
-  String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
+  String? get iCardUrl               => getOtherServicesUrl(key: 'icard_url');
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
-  String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);
+  String? get illiniCashBaseUrl      => getOtherServicesUrl(key: 'illini_cash_base_url');
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
   String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
@@ -109,8 +109,8 @@ class Config extends rokwire.Config {
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
   String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
-  String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
-  String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
+  String? get padaapiUrl             => getOtherServicesUrl(key: 'padaapi_url');
+  String? get canvasUrl              => getOtherServicesUrl(key: 'canvas_url');
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
@@ -124,7 +124,7 @@ class Config extends rokwire.Config {
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
   String? get universityHomepageUrl  => JsonUtils.stringValue(otherUniversityServices['university_homepage_url']);
   String? get dailyIlliniHomepageUrl => JsonUtils.stringValue(otherUniversityServices['daily_illini_homepage_url']);
-  String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
+  String? get dailyIlliniFeedUrl     => getOtherServicesUrl(key: 'daily_illini_feed_url');
   String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
   String? get eventsPublishingInfoUrl => JsonUtils.stringValue(otherUniversityServices['events_publishing_info_url']); // ?? 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=addingevents';
 

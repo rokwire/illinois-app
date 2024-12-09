@@ -274,12 +274,17 @@ class Auth2 extends rokwire.Auth2 {
   Future<Response?> loadICardResponse() async =>
     _loadICardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
 
-  Future<Response?> _loadICardFromNetEx({String? uin, String? accessToken}) async =>
-    (StringUtils.isNotEmpty(Config().iCardUrl) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) ?
-      Network().post(Config().iCardUrl, headers: {
-        'UIN': uin,
-        'access_token': accessToken
-      }) : null;
+  Future<Response?> _loadICardFromNetEx({String? uin, String? accessToken}) async {
+    if (StringUtils.isNotEmpty(Config().iCardUrl) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) {
+      Map<String, String> headers = {'UIN': uin!, 'access_token': accessToken!};
+      if (kIsWeb) {
+        headers.addAll(Auth2().webNetworkAuthHeaders!);
+      }
+      return Network().post(Config().iCardUrl, headers: headers);
+    } else {
+      return null;
+    }
+  }
 
   Future<String?> _loadICardStringFromNet({String? uin, String? accessToken}) async {
     Response? response = await _loadICardFromNetEx(uin: uin, accessToken: accessToken);

@@ -17,6 +17,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -132,7 +133,7 @@ class Dinings with Service implements ContentItemCategoryClient{
 
   Future<String?> _loadDiningsFromServer() async {
     final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/LocationSchedules" : null;
-    final response = await Network().get(url);
+    final response = await Network().get(url, headers: Auth2().webNetworkAuthHeaders);
     String? responseBody;
     if ((response != null) && (response.statusCode == 200)) {
       responseBody = response.body;
@@ -148,7 +149,7 @@ class Dinings with Service implements ContentItemCategoryClient{
         String? filterDateString = DiningUtils.dateToRequestString(diningDate);
 
         final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Menu/$diningId/$filterDateString" : null;
-        final response = await Network().get(url);
+        final response = await Network().get(url, headers: Auth2().webNetworkAuthHeaders);
         if ((response != null) && (response.statusCode == 200)) {
           List<dynamic>? jsonList = JsonUtils.decode(response.body);
           List<DiningProductItem> productList = <DiningProductItem>[];
@@ -175,7 +176,7 @@ class Dinings with Service implements ContentItemCategoryClient{
     if(_enabled) {
       // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Nutrition/44";
       final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Nutrition/$itemId" : null;
-      final response = await Network().get(url);
+      final response = await Network().get(url, headers: Auth2().webNetworkAuthHeaders);
       String? responseBody;
       if ((response != null) && (response.statusCode == 200)) {
         responseBody = response.body;
@@ -197,7 +198,7 @@ class Dinings with Service implements ContentItemCategoryClient{
     _diningSpecialsResponse = null;
     // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Offers";
     final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Offers" : null;
-    final response = await Network().get(url);
+    final response = await Network().get(url, headers: Auth2().webNetworkAuthHeaders);
     if ((response != null) && (response.statusCode == 200)) {
       _diningSpecialsResponse = response.body;
       _lastDiningSpecialsRequestTime = DateTime.now();
