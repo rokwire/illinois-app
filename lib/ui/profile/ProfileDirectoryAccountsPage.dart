@@ -26,7 +26,8 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
 
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
-  ProfileDirectoryAccountsPage({super.key, required this.contentType, this.scrollController});
+  final void Function(DirectoryAccounts contentType)? onEditProfile;
+  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile});
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryAccountsPageState();
@@ -191,7 +192,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   void _onTapEditInfo() {
     Analytics().logSelect(target: 'Edit Info');
-    NotificationService().notify(ProfileDirectoryAccountsPage.notifyEditInfo, widget.contentType.profileInfo);
+    widget.onEditProfile?.call(widget.contentType);
   }
 
   Widget get _searchBarWidget =>

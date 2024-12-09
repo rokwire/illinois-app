@@ -27,7 +27,7 @@
 
 			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
-			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "safety", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
+			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "safety", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
@@ -36,6 +36,7 @@
 			"browse.laundry": ["laundry", "my_laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_safety_resources", "campus_guide", "my_campus_guide"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
+			"browse.directory": ["app_directory"],
 			"browse.events": ["event_feed", "my_events"],
 			"browse.feeds": ["twitter", "daily_illini"],
 			"browse.groups": ["all_groups", "my_groups"],

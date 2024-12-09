@@ -18,11 +18,20 @@ import 'package:rokwire_plugin/utils/utils.dart';
 // ProfileDirectoryMyInfoPage
 
 class ProfileDirectoryMyInfoPage extends StatefulWidget {
+  static const String editParamKey = 'edu.illinois.rokwire.profile.directory.info.edit';
+
   final MyProfileInfo contentType;
-  ProfileDirectoryMyInfoPage({super.key, required this.contentType});
+  final Map<String, dynamic>? params;
+
+  ProfileDirectoryMyInfoPage({super.key, required this.contentType, this.params});
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPageState();
+
+  bool? get editParam {
+    dynamic edit = (params != null) ? params![editParamKey] : null;
+    return (edit is bool) ? edit : null;
+  }
 }
 
 class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPage> implements NotificationsListener {
@@ -39,6 +48,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     NotificationService().subscribe(this, [
       ProfileDirectoryAccountsPage.notifyEditInfo,
     ]);
+    _editing = widget.editParam ?? false;
     _loadProfileAndPrivacy();
     super.initState();
   }

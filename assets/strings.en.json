@@ -302,6 +302,8 @@
     "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
     "panel.browse.section.dinings.title": "Dining",
     "panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
+    "panel.browse.section.directory.title": "Directory",
+    "panel.browse.section.directory.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et risus ut metus tristique rhoncus in vitae libero.",
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
     "panel.browse.section.feeds.title": "Illini News",
@@ -374,6 +376,8 @@
     "panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
     "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
+
+    "panel.browse.entry.directory.app_directory.title": "Illinois App Directory",
 
     "panel.browse.entry.events.event_feed.title": "All Events",
     "panel.browse.entry.events.my_events.title": "My Events",
