@@ -26,13 +26,15 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
 
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
-  ProfileDirectoryAccountsPage({super.key, required this.contentType, this.scrollController});
+  final void Function(DirectoryAccounts contentType)? onEditProfile;
+  
+  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile});
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryAccountsPageState();
+  State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
 }
 
-class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
+class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
   String _searchText = '';
@@ -88,7 +90,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
         setState((){
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
         });
-        _refresh();
+        refresh();
       }
     }
   }
@@ -191,7 +193,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
 
   void _onTapEditInfo() {
     Analytics().logSelect(target: 'Edit Info');
-    NotificationService().notify(ProfileDirectoryAccountsPage.notifyEditInfo, widget.contentType.profileInfo);
+    widget.onEditProfile?.call(widget.contentType);
   }
 
   Widget get _searchBarWidget =>
@@ -404,7 +406,7 @@ class _ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsP
     }
   }
 
-  Future<void> _refresh() =>
+  Future<void> refresh() =>
     _load(limit: max(_accountsCount, _pageLength), silent: true);
 
   Future<void> _extend() async {

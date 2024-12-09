@@ -38,13 +38,14 @@ class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
 
   final ProfileContent? content;
+  final Map<String, dynamic>? contentParams;
 
-  ProfileHomePanel._({this.content});
+  ProfileHomePanel._({this.content, this.contentParams});
 
   @override
   _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, {ProfileContent? content}) {
+  static void present(BuildContext context, {ProfileContent? content, Map<String, dynamic>? contentParams}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -59,7 +60,7 @@ class ProfileHomePanel extends StatefulWidget {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return ProfileHomePanel._(content: content);
+          return ProfileHomePanel._(content: content, contentParams: contentParams,);
         }
       );
 
@@ -307,7 +308,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (_selectedContent) {
       case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
-      case ProfileContent.directory: return ProfileDirectoryPage(scrollController: _scrollController,);
+      case ProfileContent.directory: return ProfileDirectoryPage(scrollController: _scrollController, params: widget.contentParams,);
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
     }
