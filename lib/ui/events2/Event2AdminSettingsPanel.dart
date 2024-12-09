@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
-import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -14,6 +13,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import '../../service/Analytics.dart';
 import '../widgets/HeaderBar.dart';
+import '../widgets/RibbonButton.dart';
+import 'Event2CreatePanel.dart';
 
 class Event2AdminSettingsPanel extends StatefulWidget{
   final Event2? event;
@@ -141,21 +142,18 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
               }
 
               //Duplicate sub events
-              String error = "";
-              int subCount = 0;
-              for(Event2 subEvent in  subEventsLoad!.events!) {
-                Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
-                var subCreateResult = await Events2().createEvent(subEvent.duplicateWith(grouping: subGrouping));
-                if (subCreateResult is Event2) {
-                  subCount ++;
-                } else if(subCreateResult is String){
-                  error += "$subCreateResult \n";
-                }
-              }
-              if(StringUtils.isNotEmpty(error)){
-                Event2Popup.showErrorResult(context, error);
+             Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
+                  events: Event2SuperEventsController.applyCollectionChange(
+                      collection: subEventsLoad?.events,
+                      change: (subEvent) {
+                        Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
+                        return subEvent.duplicateWith(grouping: subGrouping);}),
+                  uploadAPI: Events2().createEvent);
+
+              if(updateResult.successful){
+                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and ${updateResult.data} sub events");
               } else {
-                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and $subCount sub events");
+                Event2Popup.showErrorResult(context, updateResult.error);
               }
               setStateIfMounted((){_duplicating = false;});
             } else {
@@ -186,11 +184,21 @@ class _ButtonWidget extends StatelessWidget{
     return _buildWidget();
   }
 
-  Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
-    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: title?? "",
-      subTitle: subTitle,
-      onTap: () => onTap?.call()
-    ),
-  );
+  // Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  //   heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+  //       title: title?? "",
+  //       subTitle: subTitle,
+  //       onTap: () => onTap?.call()
+  //   ),
+  // );
+
+Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  heading: RibbonButton(
+        label: title?? "",
+        description: subTitle,
+        progress: progress,
+        onTap: () => onTap?.call(),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        progressSize: 18,
+      ));
 }
