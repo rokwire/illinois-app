@@ -19,6 +19,7 @@ class ProfileDirectoryAccountsPanel extends StatefulWidget {
 
 class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccountsPanel> {
 
+  final GlobalKey<ProfileDirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -48,7 +49,7 @@ class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccounts
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          ProfileDirectoryAccountsPage(widget.contentType, scrollController: _scrollController, onEditProfile: _onEditProfile,),
+          ProfileDirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile,),
         )
       )
     );
@@ -63,6 +64,6 @@ class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccounts
     );
   }
 
-  Future<void> _onRefresh() async {
-  }
+  Future<void> _onRefresh() async =>
+    _pageKey.currentState?.refresh();
 }
