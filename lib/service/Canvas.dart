@@ -132,6 +132,7 @@ class Canvas with Service implements NotificationsListener {
     if (kIsWeb) {
       headers.addAll(Auth2().webNetworkAuthHeaders!);
     }
+    return headers;
   }
 
   List<int>? get _medicineCoursesAccountIds => Config().canvasMedicineCoursesAccountIds;
