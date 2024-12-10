@@ -376,7 +376,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     }
   }
 
-  bool get _isModified => !_printCollectionEquality() || //debug tool TBD remove when done
+  bool get _isModified => /*!_printCollectionEquality() ||*/  //debug tool TBD remove when done
         _isSelectedSubEventsModified || //Need to apply selection change
         _isSuperEventChildModified|| //Need to apply show only under super event change
         _needToApplyPushAll; // need to apply publish to sub events
@@ -423,27 +423,32 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
         change: (event) => updates[event.id] ?? event)?.toList(); //replacing each event with its updated value
   }
 
-  bool _printCollectionEquality(){
-    print('_selectedSubEvents: $_selectedSubEvents');
-    print('_bbSubEvents: $_bbSubEvents');
-
-    if(CollectionUtils.isNotEmpty(_selectedSubEvents) && CollectionUtils.isNotEmpty(_bbSubEvents)) {
-      for (Event2 event in _bbSubEvents ?? []) {
-        print('Event ${event.id} has Equal: ${_selectedSubEvents!.contains(event)}');
-        if(!_selectedSubEvents!.contains(event)){
-          var secondEvent = _selectedSubEvents!.where((selectedEvent)=> selectedEvent.id == event.id);
-          print('Not Equal Event Data First: ${event.toJson()} \n');
-          print('Not Equal Event Data Second: ${secondEvent.firstOrNull?.toJson()} \n');
-        }
-      }
-      bool areListsEqual = CollectionUtils.equals(_selectedSubEvents, _bbSubEvents);
-      bool areSetsEqual = CollectionUtils.equals(_selectedSubEvents?.toSet(), _bbSubEvents?.toSet());
-      print('areListsEqual: $areListsEqual');
-      print('areSetsEqual: $areSetsEqual');
-    }
-
-    return true;
-  }
+  //TBD Remove when Done
+  // bool _printCollectionEquality(){
+  //   if(CollectionUtils.isEmpty(_selectedSubEvents) ||
+  //       CollectionUtils.isEmpty(_bbSubEvents) ||
+  //       CollectionUtils.equals(_selectedSubEvents?.toSet(), _bbSubEvents?.toSet()))
+  //     return true;
+  //
+  //   print('_selectedSubEvents: $_selectedSubEvents');
+  //   print('_bbSubEvents: $_bbSubEvents');
+  //   if(CollectionUtils.isNotEmpty(_selectedSubEvents) && CollectionUtils.isNotEmpty(_bbSubEvents)) {
+  //     for (Event2 event in _bbSubEvents ?? []) {
+  //       print('Event ${event.id} has Equal: ${_selectedSubEvents!.contains(event)}');
+  //       if(!_selectedSubEvents!.contains(event)){
+  //         var secondEvent = _selectedSubEvents!.where((selectedEvent)=> selectedEvent.id == event.id);
+  //         print('Not Equal Event Data First: ${event.toJson()} \n');
+  //         print('Not Equal Event Data Second: ${secondEvent.isNotEmpty ? secondEvent.first.toJson() : 'null'} \n');
+  //       }
+  //     }
+  //     bool areListsEqual = CollectionUtils.equals(_selectedSubEvents, _bbSubEvents);
+  //     bool areSetsEqual = CollectionUtils.equals(_selectedSubEvents?.toSet(), _bbSubEvents?.toSet());
+  //     print('areListsEqual: $areListsEqual');
+  //     print('areSetsEqual: $areSetsEqual');
+  //   }
+  //
+  //   return true;
+  // }
 }
 
 class _EventCard extends StatelessWidget{
