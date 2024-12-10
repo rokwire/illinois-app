@@ -236,7 +236,16 @@
 				"wellness.podcast"                        : false,
 				"wellness_podcast"                        : false,
 				"campus_safety_resources"                 : false,
-				"student_courses"                         : "${config.settings.studentCoursesEnabled}"
+				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
+				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
+				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",
+				"add_illini_cash"                         : "${config.settings.wallet.addIlliniCashEnabled}",
+				"illini_id"                               : "${config.settings.wallet.illiniIdEnabled}",
+				"illini_id_card"                          : "${config.settings.wallet.illiniIdEnabled}",
+				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
+				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
+				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
+				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}"
 			}
 		}
 	},
