@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
@@ -137,7 +139,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(color: Styles().colors.white, child:
         Row(children: [
           Expanded(child:
@@ -155,6 +157,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         ],),
       ),
       Container(color: Styles().colors.surfaceAccent, height: 1,),
+      _buildBanner(),
+      _buildAdditionalButtons(),
+      _buildFilters(),
       Expanded(child:
         _buildPage(context),
       )
@@ -293,7 +298,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   //Buttons
   Widget _buildAdditionalButtons() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -318,27 +323,30 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   // Filters
   Widget _buildFilters() {
-    return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-    Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-      FilterSelector(
-          padding: EdgeInsets.symmetric(horizontal: 4),
-          title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
-          titleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
-          activeTitleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.secondary'),
-          active: _selectedFilter == _FilterType.Muted,
-          onTap: () { _onFilter(_FilterType.Muted); }
-      ),
-      FilterSelector(
-          padding: EdgeInsets.symmetric(horizontal: 4),
-          title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
-          titleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
-          activeTitleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.secondary'),
-          active: _selectedFilter == _FilterType.Time,
-          onTap: () { _onFilter(_FilterType.Time); }
-      ),
-      _buildEditBar(),
-    ],
-    ));
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        FilterSelector(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
+            titleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            activeTitleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.secondary'),
+            active: _selectedFilter == _FilterType.Muted,
+            onTap: () { _onFilter(_FilterType.Muted); }
+        ),
+        FilterSelector(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
+            titleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            activeTitleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.secondary'),
+            active: _selectedFilter == _FilterType.Time,
+            onTap: () { _onFilter(_FilterType.Time); }
+        ),
+        _buildEditBar(),
+      ],
+      )),
+    );
   }
 
   void _onFilter(_FilterType? filterType) {
@@ -470,24 +478,25 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   Widget _buildOptionsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
-    Stack(children: [
-      IconButton(icon: Styles().images.getImage('more') ?? Container(), onPressed: _onOptions),
-      Visibility(visible: (_processingOption == true), child:
-      Container(padding: EdgeInsets.all(13), child:
-      SizedBox(width: 22, height: 22, child:
-      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.surface),),
-      ),
-      ),
-      ),
-    ],)
+      Stack(children: [
+        IconButton(icon: Styles().images.getImage('more') ?? Container(), onPressed: _onOptions),
+        Visibility(visible: (_processingOption == true), child:
+          Container(padding: EdgeInsets.all(13), child:
+            SizedBox(width: 22, height: 22, child:
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.surface),),
+            ),
+          ),
+        ),
+      ],)
     );
   }
 
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
-    TextButton(onPressed: _onEdit, child:
-    Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles.getTextStyle("widget.button.light.title.medium"),)
-    ));
+      TextButton(onPressed: _onEdit, child:
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles.getTextStyle("widget.button.light.title.medium"),)
+      )
+    );
   }
 
   Widget _buildNewMessageButton() {
@@ -495,14 +504,15 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       width: 168,
       child: RibbonButton(
           textWidget: Text(Localization().getStringEx('panel.messages.new.title', 'New Message'),
-            style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),
+            style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
           ),
           label: Localization().getStringEx('panel.messages.new.title', 'New Message'),
           hint: Localization().getStringEx('panel.messages.new.hint', ''),
-          backgroundColor: Styles().colors.fillColorSecondary,
+          backgroundColor: Styles().colors.fillColorPrimary,
           leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
           rightIconKey: null,
-          borderRadius: BorderRadius.all(Radius.circular(8))
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          onTap: _onTapNewMessage,
         // onTap: _onNewMessage,
       ),
     );
@@ -714,6 +724,11 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   void _onCancelConfirmation({String? message, String? selection}) {
     Analytics().logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
+  }
+
+  void _onTapNewMessage() {
+    Analytics().logSelect(target: "Messages Directory");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel()));
   }
 
   /*

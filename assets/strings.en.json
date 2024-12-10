@@ -3194,6 +3194,10 @@
     "panel.inbox.label.muted.hide": "Hide Muted",
     "panel.inbox.mark_as_read.failed.msg": "Failed to mark all messages as read.",
 
+    "panel.messages.new.header.title": "Send To",
+    "panel.messages.new.tab.recent.label": "Recent",
+    "panel.messages.new.tab.all.label": "All Users",
+
     "widget.inbox_message_card.selected.hint": "Selected",
     "widget.inbox_message_card.unselected.hint": "Not Selected",
     "widget.inbox_message_card.status.muted": "Muted",
