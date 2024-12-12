@@ -301,7 +301,7 @@
     "panel.browse.section.dinings.title": "Comida",
     "panel.browse.section.dinings.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
     "panel.browse.section.directory.title": "Directory",
-    "panel.browse.section.directory.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et risus ut metus tristique rhoncus in vitae libero.",
+    "panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
     "panel.browse.section.events.title": "Eventos",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
     "panel.browse.section.feeds.title": "Illini News",

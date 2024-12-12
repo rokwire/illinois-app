@@ -303,7 +303,7 @@
     "panel.browse.section.dinings.title": "Dining",
     "panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "panel.browse.section.directory.title": "Directory",
-    "panel.browse.section.directory.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et risus ut metus tristique rhoncus in vitae libero.",
+    "panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
     "panel.browse.section.feeds.title": "Illini News",
