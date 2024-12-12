@@ -724,11 +724,11 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       String? prompt;
       if (widget.profile != profile) {
         prompt = (widget.privacy != privacy) ?
-          Localization().getStringEx('panel.profile.directory.my_info.cancel.loose.profile_and_privacy.prompt.text', 'Loose your profile and privacy settings updates?') :
-          Localization().getStringEx('panel.profile.directory.my_info.cancel.loose.profile.prompt.text', 'Loose your profile settings updates?');
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.profile_and_privacy.prompt.text', 'Lose your profile and privacy settings updates?') :
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.profile.prompt.text', 'Lose your profile settings updates?');
       }
       else if (widget.privacy != privacy) {
-        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.loose.privacy.prompt.text', 'Loose your privacy settings updates?');
+        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.privacy.prompt.text', 'Lose your privacy settings updates?');
       }
 
       bool canFinish = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
