@@ -298,10 +298,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   ContentAttributes? get _directoryAttributes {
     ContentAttributes? directoryAttributes = Auth2().directoryAttributes;
     if (directoryAttributes != null) {
-      ContentAttribute? groupsAttribute = _groupsAttribute;
-      if (groupsAttribute != null) {
+      ContentAttribute? groupAttribute = _groupAttribute;
+      if (groupAttribute != null) {
         directoryAttributes = ContentAttributes.fromOther(directoryAttributes);
-        directoryAttributes?.attributes?.add(groupsAttribute);
+        directoryAttributes?.attributes?.add(groupAttribute);
       }
       return directoryAttributes;
     }
@@ -310,13 +310,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
   }
 
-  static const String _groupsAttributeId = 'groups';
+  static const String _groupAttributeId = 'group';
 
-  ContentAttribute? get _groupsAttribute {
+  ContentAttribute? get _groupAttribute {
     List<Group>? userGroups = Groups().userGroups;
     return ((userGroups != null) && userGroups.isNotEmpty) ?
       ContentAttribute(
-        id: _groupsAttributeId,
+        id: _groupAttributeId,
         title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
         emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
         semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
