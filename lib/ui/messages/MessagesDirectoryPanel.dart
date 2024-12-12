@@ -82,10 +82,6 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       });
     }
   }
-
-  void _onTapConversation() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel()));
-  }
 }
 
 enum MessagesDirectoryContentType { recent, all }

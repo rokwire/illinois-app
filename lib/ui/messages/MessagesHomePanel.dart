@@ -20,6 +20,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -201,7 +202,14 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
         Text(Localization().getStringEx('panel.messaages.label.content.empty', 'No messages'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.regular.thin')),
-        Expanded(child: Container(), flex: 3),
+        Expanded(child: Container(), flex: 2),
+        //TODO: remove this button later
+        RibbonButton(
+          backgroundColor: Styles().colors.fillColorPrimary,
+          label: "Go To Conversations Panel",
+          textColor: Styles().colors.surface,
+          onTap: _onTapConversation,
+        )
       ]);
     }
   }
@@ -729,6 +737,10 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   void _onTapNewMessage() {
     Analytics().logSelect(target: "Messages Directory");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel()));
+  }
+
+  void _onTapConversation() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel()));
   }
 
   /*
