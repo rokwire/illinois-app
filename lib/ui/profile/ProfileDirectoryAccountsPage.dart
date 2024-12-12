@@ -52,7 +52,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
-  Map<String, dynamic> _filters = <String, dynamic>{};
+  Map<String, dynamic> _filterAttributes = <String, dynamic>{};
 
   @override
   void initState() {
@@ -281,13 +281,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
         scope: Auh2Directory.attributesScope,
         contentAttributes: directoryAttributes,
-        selection: _filters,
+        selection: _filterAttributes,
         sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {
           setState(() {
-            _filters = selection;
+            _filterAttributes = selection;
           });
           _load();
         }
@@ -388,7 +388,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(_searchText),
-        limit: limit
+        attriutes: _filterAttributes,
+        limit: limit,
       );
 
       setStateIfMounted(() {
@@ -417,6 +418,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(_searchText),
+        attriutes: _filterAttributes,
         offset: _accountsCount,
         limit: _pageLength
       );
