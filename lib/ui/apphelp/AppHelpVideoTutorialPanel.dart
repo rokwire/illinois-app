@@ -22,10 +22,11 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth;
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -101,7 +102,8 @@ class _AppHelpVideoTutorialPanelState extends State<AppHelpVideoTutorialPanel> {
     String? fileContents;
     String? closedCaptionsUrl = widget.videoTutorial.ccUrl;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
-      Response? response = await Network().get(closedCaptionsUrl, headers: Auth2().webNetworkAuthHeaders);
+      String proxyCaptionsUrl = Config().wrapWebProxyUrl(sourceUrl: closedCaptionsUrl!)!;
+      Response? response = await Network().get(proxyCaptionsUrl, auth: rokwire_auth.Auth2Csrf());
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
         fileContents = response?.body;

@@ -124,16 +124,8 @@ class Canvas with Service implements NotificationsListener {
 
   bool get _useCanvasApi => (Storage().debugUseCanvasLms == true);
 
-  Map<String, String>? get _canvasAuthHeaders {
-    if (!_isCanvasAvailable) {
-      return null;
-    }
-    Map<String, String> headers = {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"};
-    if (kIsWeb) {
-      headers.addAll(Auth2().webNetworkAuthHeaders!);
-    }
-    return headers;
-  }
+  Map<String, String>? get _canvasAuthHeaders =>
+      _isCanvasAvailable ? {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"} : null;
 
   List<int>? get _medicineCoursesAccountIds => Config().canvasMedicineCoursesAccountIds;
 
@@ -198,7 +190,7 @@ class Canvas with Service implements NotificationsListener {
         url += '?include[]=$includeValue';
       }
       url = _masquerade(url);
-      response = await Network().get(url, headers: _canvasAuthHeaders);
+      response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     } else {
       url = '${Config().lmsUrl}/courses/$courseId';
       response = await Network().get(url, auth: Auth2());
@@ -224,7 +216,7 @@ class Canvas with Service implements NotificationsListener {
     http.Response? response;
     if (_useCanvasApi) {
       url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments&include[]=submission');
-      response = await Network().get(url, headers: _canvasAuthHeaders);
+      response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     } else {
       url = '${Config().lmsUrl}/courses/$courseId/assignment-groups?include=assignments,submission';
       response = await Network().get(url, auth: Auth2());
@@ -250,7 +242,7 @@ class Canvas with Service implements NotificationsListener {
     http.Response? response;
     if (_useCanvasApi) {
       url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/users/self?include[]=enrollments&include[]=current_grading_period_scores');
-      response = await Network().get(url, headers: _canvasAuthHeaders);
+      response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     } else {
       url = '${Config().lmsUrl}/courses/$courseId/users?include=enrollments,scores';
       response = await Network().get(url, auth: Auth2());
@@ -282,7 +274,7 @@ class Canvas with Service implements NotificationsListener {
   Future<http.Response?> loadSelfUserResponse() async {
     if (_isAvailable) {
       return _useCanvasApi?
-        Network().get(_masquerade('${Config().canvasUrl}/api/v1/users/self'), headers: _canvasAuthHeaders) :
+        Network().get(_masquerade('${Config().canvasUrl}/api/v1/users/self'), headers: _canvasAuthHeaders, auth: Auth2Csrf()) :
         Network().get('${Config().lmsUrl}/users/self', auth: Auth2());
     }
     else {
@@ -313,7 +305,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -382,7 +374,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -403,7 +395,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -424,7 +416,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -447,7 +439,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -490,7 +482,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -511,7 +503,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -534,7 +526,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -557,7 +549,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -588,7 +580,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return null;
     }
-    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -631,7 +623,7 @@ class Canvas with Service implements NotificationsListener {
       Log.w('Failed to masquerade a canvas user - missing net id.');
       return false;
     }
-    http.Response? response = await Network().post(url, body: errorBody, headers: _canvasAuthHeaders);
+    http.Response? response = await Network().post(url, body: errorBody, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -752,7 +744,7 @@ class Canvas with Service implements NotificationsListener {
     http.Response? response;
     if (_useCanvasApi) {
       url = _masquerade('${Config().canvasUrl}/api/v1/courses?per_page=$limit');
-      response = await Network().get(url, headers: _canvasAuthHeaders);
+      response = await Network().get(url, headers: _canvasAuthHeaders, auth: Auth2Csrf());
     } else {
       url = '${Config().lmsUrl}/courses?limit=$limit';
       response = await Network().get(url, auth: Auth2());

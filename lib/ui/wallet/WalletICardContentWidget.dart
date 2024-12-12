@@ -35,6 +35,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -480,10 +481,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
         HttpHeaders.acceptHeader : 'application/json',
         'x-api-key': Config().padaapiApiKey!
       };
-      if (kIsWeb) {
-        headers.addAll(Auth2().webNetworkAuthHeaders!);
-      }
-      Response? response = await Network().get(url, headers: headers);
+      Response? response = await Network().get(url, headers: headers, auth: rokwire_auth.Auth2Csrf());
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;
     }

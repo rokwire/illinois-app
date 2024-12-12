@@ -24,6 +24,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -159,7 +160,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   }
 
   Future<Response?> loadBalanceRequest() async => _enabled ?
-    Network().get("${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}", auth: this, headers: Auth2().webNetworkAuthHeaders,
+    Network().get("${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}", auth: this, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders,
       analyticsUrl: "${Config().illiniCashBaseUrl}/Balances/${Analytics.LogAnonymousUin}",
     ) : null;
 
@@ -202,7 +203,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String url =  "${Config().illiniCashBaseUrl}/StudentSummary/$uin/$firstName/$lastName";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
-      try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this, headers: Auth2().webNetworkAuthHeaders); } on Exception catch(e) { print(e.toString()); }
+      try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders); } on Exception catch(e) { print(e.toString()); }
       return response;
     }
     else {
@@ -258,7 +259,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-      final result = await Network().get(transactionHistoryUrl, auth: this, headers: Auth2().webNetworkAuthHeaders, analyticsUrl: analyticsUrl);
+      final result = await Network().get(transactionHistoryUrl, auth: this, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders, analyticsUrl: analyticsUrl);
       return result;
     }
     else {
@@ -279,7 +280,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-      final result = await Network().get(transactionHistoryUrl, auth: this, headers: Auth2().webNetworkAuthHeaders, analyticsUrl: analyticsUrl);
+      final result = await Network().get(transactionHistoryUrl, auth: this, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders, analyticsUrl: analyticsUrl);
       return result;
     }
     else {
@@ -301,7 +302,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-      final result = await Network().get(transactionHistoryUrl, auth: this, headers: Auth2().webNetworkAuthHeaders, analyticsUrl: analyticsUrl);
+      final result = await Network().get(transactionHistoryUrl, auth: this, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders, analyticsUrl: analyticsUrl);
       return result;
     }
     else {
@@ -405,7 +406,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String url = "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
-      try { response = await Network().get(url, headers: Auth2().webNetworkAuthHeaders, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
+      try { response = await Network().get(url, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
       if ((response != null) && responseCode >= 200 && responseCode <= 301) {
         String responseString = response.body;
