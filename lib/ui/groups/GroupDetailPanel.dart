@@ -105,8 +105,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
-
-  final int          _postsPageSize = 8;
+  static final int          _postsPageSize = 8;
 
   Group?             _group;
   GroupStats?        _groupStats;
@@ -118,13 +117,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
 
   StreamController _updateController = StreamController.broadcast();
-
-  List<Post>         _posts = <Post>[];
-  GlobalKey          _lastPostKey = GlobalKey();
-  bool?              _refreshingPosts;
-  bool?              _loadingPostsPage;
-  bool?              _hasMorePosts;
-  bool?              _scrollToLastPostAfterRefresh;
 
   List<Post>         _scheduledPosts = <Post>[];
   GlobalKey          _lastScheduledPostKey = GlobalKey();
@@ -307,14 +299,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         }
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
-        _loadInitialPosts();
+        // _loadInitialPosts();
         _loadInitialScheduledPosts();
         _loadInitialMessages();
         _loadPolls();
+        _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       if (loadEvents) {
         // _loadEvents(); //TBD
-        _updateController.add(GroupDetailPanel.notifyRefresh);
+        _updateController.add(_GroupDetailEventsContent.notifyEventsRefresh);
       }
       _decreaseProgress();
     }
@@ -327,11 +320,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _group = group;
           if (refreshEvents) {
             // _refreshEvents();
-            _updateController.add(GroupDetailPanel.notifyRefresh);
+            _updateController.add(_GroupDetailEventsContent.notifyEventsRefresh);
           }
           _refreshGroupAdmins();
         });
-        _refreshCurrentPosts();
+        _updateController.add(GroupDetailPanel.notifyRefresh);
+        // _refreshCurrentPosts();
         _refreshCurrentScheduledPosts();
         _refreshCurrentMessages();
         _refreshPolls();
@@ -358,10 +352,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onGroupPostCreated(Post? post) {
-      if (post?.isPost == true) {
-        _refreshCurrentPosts(delta: 1);
-      }
-      else if (post?.isMessage == true) {
+      // if (post?.isPost == true) {
+      //   //_refreshCurrentPosts(delta: 1);
+      //   _updateController.add({_GroupDetailPostsContent.notifyPostRefreshWithDelta : 1});
+      // } else
+        if (post?.isMessage == true) {
         _refreshCurrentMessages(delta: 1);
       }
       //For both post and messages
@@ -372,7 +367,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onGroupPostUpdated(Post? post) {
       if (post?.isPost == true) {
-        _refreshCurrentPosts();
+        // _refreshCurrentPosts();
       }
       else if (post?.isMessage == true) {
         _refreshCurrentMessages();
@@ -385,7 +380,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onGroupPostDeleted(Post? post) {
       if (post?.isPost == true) {
-        _refreshCurrentPosts(delta: -1);
+        // _refreshCurrentPosts(delta: -1);
+        // _updateController.add({_GroupDetailPostsContent.notifyPostRefreshWithDelta : -1});
       }
       else if (post?.isMessage == true) {
         _refreshCurrentMessages(delta: -1);
@@ -394,78 +390,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if(post?.isScheduled == true){
         _refreshCurrentScheduledPosts();
       }
-  }
-
-  // Posts
-
-  void _loadInitialPosts() {
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
-      setState(() {
-        _progress++;
-        _loadingPostsPage = true;
-      });
-      _loadPostsPage().then((_) {
-        if (mounted) {
-          setState(() {
-            _progress--;
-            _loadingPostsPage = false;
-          });
-        }
-      });
-    }
-  }
-
-  void _refreshCurrentPosts({int? delta}) {
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
-      int limit = _posts.length + (delta ?? 0);
-      _refreshingPosts = true;
-      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? posts) {
-        _refreshingPosts = false;
-        if (mounted && (posts != null)) {
-          setState(() {
-            _posts = posts;
-            if (posts.length < limit) {
-              _hasMorePosts = false;
-            }
-          });
-          if (_scrollToLastPostAfterRefresh == true) {
-            _scheduleLastPostScroll();
-          }
-        }
-        _scrollToLastPostAfterRefresh = null;
-      });
-    }
-  }
-
-  void _loadNextPostsPage() {
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_loadingPostsPage != true)) {
-      setState(() {
-        _loadingPostsPage = true;
-      });
-      _loadPostsPage().then((_) {
-        if (mounted) {
-          setState(() {
-            _loadingPostsPage = false;
-          });
-        }
-      });
-    }
-  }
-
-  Future<void> _loadPostsPage() async {
-    List<Post>? postsPage = await Social().loadPosts(
-        groupId: widget.groupId,
-        type: PostType.post,
-        status: PostStatus.active,
-        offset: _posts.length,
-        limit: _postsPageSize,
-        sortBy: SocialSortBy.date_created);
-    if (postsPage != null) {
-      _posts.addAll(postsPage);
-      if (postsPage.length < _postsPageSize) {
-        _hasMorePosts = false;
-      }
-    }
   }
 
   // Scheduled Posts
@@ -756,13 +680,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
     } 
-    else if (name == Social.notifyPostCreated) {
+    else if (name == Social.notifyPostCreated) { //TBD remove to child
       _onGroupPostCreated(param is Post ? param : null);
     }
-    else if (name == Social.notifyPostUpdated) {
+    else if (name == Social.notifyPostUpdated) { //TBD remove to child
       _onGroupPostUpdated(param is Post ? param : null);
     }
-    else if (name == Social.notifyPostDeleted) {
+    else if (name == Social.notifyPostDeleted) { //TBD remove to child
       _onGroupPostDeleted(param is Post ? param : null);
     }
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
@@ -846,17 +770,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ];
     if (_isMemberOrAdmin) {
       content.add(_buildTabs());
-      if (_currentTab != _DetailTab.About) {
-        content.add(_GroupEventsContent(group: _group, updateController: _updateController));
-        content.add(_buildPosts());
-        content.add(_buildScheduledPosts());
-        content.add(_buildMessages());
-        content.add(_buildPolls());
-      }
-      else if (_currentTab == _DetailTab.About) {
+      if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
         content.add(_buildPrivacyDescription());
         content.add(_buildAdmins());
+      } else if (_currentTab == _DetailTab.Events) {
+       content.add(_GroupDetailEventsContent(
+           group: _group, updateController: _updateController));
+      } else if (_currentTab == _DetailTab.Posts) {
+       content.add(_GroupDetailPostsContent(group: _group, updateController: _updateController,));
+      } else {
+          content.add(_buildScheduledPosts());
+          content.add(_buildMessages());
+          content.add(_buildPolls());
       }
     }
     else {
@@ -864,7 +790,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
       if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD
-        content.add(_GroupEventsContent(group: _group, updateController: _updateController));
+        content.add(_GroupDetailEventsContent(group: _group, updateController: _updateController));
       }
       content.add(_buildResearchProjectMembershipRequest());
     }
@@ -1147,61 +1073,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ]));
   }
 
-  Widget _buildPosts() {
-    List<Widget> postsContent = [];
-
-    if (CollectionUtils.isEmpty(_posts)) {
-      if (_isMemberOrAdmin) {
-        Column(children: <Widget>[
-          SectionSlantHeader(
-              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-              titleIconKey: 'posts',
-              // rightIconKey: _canCreatePost ? "plus-circle" : null,
-              // rightIconAction: _canCreatePost ? _onTapCreatePost : null,
-              // rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
-              children: postsContent)
-        ]);
-      } else {
-        return Container();
-      }
-    }
-
-    for (int i = 0; i <_posts.length ; i++) {
-      Post? post = _posts[i];
-      if (i > 0) {
-        postsContent.add(Container(height: 16));
-      }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!));
-    }
-
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
-      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
-      postsContent.add(Container(padding: EdgeInsets.only(top: 16),
-        child: Semantics(label: title, button: true, excludeSemantics: true,
-          child: InkWell(onTap: _loadNextPostsPage,
-              child: Container(height: 36,
-                child: Align(alignment: Alignment.topCenter,
-                  child: (_loadingPostsPage == true) ?
-                  SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
-                  Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
-                ),
-              )
-          )
-      ))
-      );
-    }
-
-    return Column(children: <Widget>[
-      SectionSlantHeader(
-          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-          titleIconKey: 'posts',
-          // rightIconKey: _canCreatePost ? "plus-circle" : null,
-          // rightIconAction: _canCreatePost ? _onTapCreatePost : null,
-          // rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
-          children: postsContent)
-    ]);
-  }
-
   Widget _buildScheduledPosts() {
     List<Widget> scheduledPostsContent = [];
 
@@ -1276,7 +1147,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: InkWell(onTap: _loadNextMessagesPage,
               child: Container(height: 36,
                 child: Align(alignment: Alignment.topCenter,
-                  child: (_loadingPostsPage == true) ?
+                  child: (_loadingMessagesPage == true) ?
                   SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
                   Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
                 ),
@@ -1916,9 +1787,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       switch (_currentTab) {
         case _DetailTab.Posts:
-          if (CollectionUtils.isNotEmpty(_posts)) {
-            _scheduleLastPostScroll();
-          }
+          // if (CollectionUtils.isNotEmpty(_posts)) { //TBD check if needed
+            // _scheduleLastPostScroll();
+          // }
           break;
         case _DetailTab.Messages:
           if (CollectionUtils.isNotEmpty(_messages)) {
@@ -2238,10 +2109,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             }
           }
           else if (result.isPost) {
-            _scrollToLastPostAfterRefresh = true;
-            if (_refreshingPosts != true) {
-              _refreshCurrentPosts();
-            }
+            _updateController.add(_GroupDetailPostsContent.notifyPostRefreshWithScrollToLast);
+            // _scrollToLastPostAfterRefresh = true;
+            // if (_refreshingPosts != true) {
+            //   _refreshCurrentPosts();
+            // }
           }
           else if (result.isMessage) {
             _scrollToLastMessageAfterRefresh = true;
@@ -2289,21 +2161,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _refreshGroupAdmins();
       _refreshGroupStats();
       //_refreshEvents();
-      _refreshCurrentPosts();
+      // _refreshCurrentPosts();
       _refreshCurrentScheduledPosts();
       _refreshCurrentMessages();
       _updateController.add(GroupDetailPanel.notifyRefresh);
     }
-  }
-
-  void _scheduleLastPostScroll() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToLastPost();
-    });
-  }
-
-  void _scrollToLastPost() {
-    _scrollTo(_lastPostKey);
   }
 
   void _scheduleLastScheduledPostScroll() {
@@ -2462,19 +2324,22 @@ class GroupEventSelector2 extends Event2Selector2 {
   }
 }
 
-class _GroupEventsContent extends StatefulWidget {
+class _GroupDetailEventsContent extends StatefulWidget {
+  static const String notifyEventsRefresh  = "edu.illinois.rokwire.group_detail.events.refresh";
+
   final Group? group;
   final StreamController<dynamic>? updateController;
 
-  const _GroupEventsContent({super.key, this.updateController, this.group});
+  const _GroupDetailEventsContent({super.key, this.updateController, this.group});
 
   String? get groupId => group?.id;
 
   @override
-  State<StatefulWidget> createState() => _GroupEventsContentState();
+  State<StatefulWidget> createState() => _GroupDetailEventsState();
 }
 
-class _GroupEventsContentState extends State<_GroupEventsContent>  implements NotificationsListener {
+class _GroupDetailEventsState extends State<_GroupDetailEventsContent>  implements NotificationsListener {
+
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
   int _allEventsCount = 0;
@@ -2589,7 +2454,7 @@ class _GroupEventsContentState extends State<_GroupEventsContent>  implements No
   }
 
   void _initUpdateListener() => widget.updateController?.stream.listen((command) {
-    if (command is String && command == GroupDetailPanel.notifyRefresh) {
+    if (command is String && command == _GroupDetailEventsContent.notifyEventsRefresh) {
       _loadEvents();
     }
   });
@@ -2602,6 +2467,244 @@ class _GroupEventsContentState extends State<_GroupEventsContent>  implements No
       _loadEvents();
     } else if (name == Events2.notifyUpdated) {
       _updateEventIfNeeded(param);
+    }
+  }
+}
+
+class _GroupDetailPostsContent extends StatefulWidget{
+  static const String notifyPostRefresh  = "edu.illinois.rokwire.group_detail.posts.refresh";
+  // static const String notifyPostRefreshWithDelta  = "edu.illinois.rokwire.group_detail.posts.refresh.with_delta";
+  static const String notifyPostRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.posts.refresh.with_scroll_to_last";
+
+  final Group? group;
+  final StreamController<dynamic>? updateController;
+
+  const _GroupDetailPostsContent({super.key, this.group, this.updateController});
+
+  @override
+  State<StatefulWidget> createState() => _GroupDetainPostsState();
+
+}
+
+class _GroupDetainPostsState extends State<_GroupDetailPostsContent> implements NotificationsListener {
+  List<Post>         _posts = <Post>[];
+  GlobalKey          _lastPostKey = GlobalKey();
+  bool?              _refreshingPosts;
+  bool?              _loadingPostsPage;
+  bool?              _hasMorePosts;
+  bool?              _scrollToLastPostAfterRefresh;
+
+  Group? get _group => widget.group;
+
+  String? get _groupId => _group?.id;
+
+  bool get _isMemberOrAdmin => _group?.currentMember?.isMemberOrAdmin ?? false;
+
+  @override
+  void initState() {
+    _initUpdateListener();
+    NotificationService().subscribe(this, [
+      Social.notifyPostCreated,
+      Social.notifyPostUpdated,
+      Social.notifyPostDeleted
+    ]);
+
+    _loadInitialPosts();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => _buildPosts();
+
+  Widget _buildPosts() {
+    List<Widget> postsContent = [];
+
+    if (CollectionUtils.isEmpty(_posts)) {
+      if (_isMemberOrAdmin) {
+        Column(children: <Widget>[
+          SectionSlantHeader(
+              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+              titleIconKey: 'posts',
+              // rightIconKey: _canCreatePost ? "plus-circle" : null,
+              // rightIconAction: _canCreatePost ? _onTapCreatePost : null,
+              // rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
+              children: postsContent)
+        ]);
+      } else {
+        return Container();
+      }
+    }
+
+    for (int i = 0; i <_posts.length ; i++) {
+      Post? post = _posts[i];
+      if (i > 0) {
+        postsContent.add(Container(height: 16));
+      }
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!));
+    }
+
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      postsContent.add(Container(padding: EdgeInsets.only(top: 16),
+          child: Semantics(label: title, button: true, excludeSemantics: true,
+              child: InkWell(onTap: _loadNextPostsPage,
+                  child: Container(height: 36,
+                    child: Align(alignment: Alignment.topCenter,
+                      child: (_loadingPostsPage == true) ?
+                      SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
+                      Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
+                    ),
+                  )
+              )
+          ))
+      );
+    }
+
+    return Column(children: <Widget>[
+      SectionSlantHeader(
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+          titleIconKey: 'posts',
+          // rightIconKey: _canCreatePost ? "plus-circle" : null,
+          // rightIconAction: _canCreatePost ? _onTapCreatePost : null,
+          // rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
+          children: postsContent)
+    ]);
+  }
+
+  //Logic
+  void _loadInitialPosts() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
+      setState(() {
+        // _progress++; //TBD notify if needed
+        _loadingPostsPage = true;
+      });
+      _loadPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            // _progress--; //TBD notify if needed
+            _loadingPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentPosts({int? delta}) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
+      int limit = _posts.length + (delta ?? 0);
+      _refreshingPosts = true;
+      Social().loadPosts(groupId: _groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? posts) {
+        _refreshingPosts = false;
+        if (mounted && (posts != null)) {
+          setState(() {
+            _posts = posts;
+            if (posts.length < limit) {
+              _hasMorePosts = false;
+            }
+          });
+          if (_scrollToLastPostAfterRefresh == true) {
+            _scheduleLastPostScroll();
+          }
+        }
+        _scrollToLastPostAfterRefresh = null;
+      });
+    }
+  }
+
+  void _loadNextPostsPage() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_loadingPostsPage != true)) {
+      setState(() {
+        _loadingPostsPage = true;
+      });
+      _loadPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _loadingPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadPostsPage() async {
+    List<Post>? postsPage = await Social().loadPosts(
+        groupId: _groupId,
+        type: PostType.post,
+        status: PostStatus.active,
+        offset: _posts.length,
+        limit: _GroupDetailPanelState._postsPageSize,
+        sortBy: SocialSortBy.date_created);
+    if (postsPage != null) {
+      _posts.addAll(postsPage);
+      if (postsPage.length < _GroupDetailPanelState._postsPageSize) {
+        _hasMorePosts = false;
+      }
+    }
+  }
+
+  void _scheduleLastPostScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToLastPost();
+    });
+  }
+
+  void _scrollToLastPost() {
+    _scrollTo(_lastPostKey);
+  }
+
+  void _scrollTo(GlobalKey? key) {
+    if(key != null) {
+      BuildContext? currentContext = key.currentContext;
+      if (currentContext != null) {
+        Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
+      }
+    }
+  }
+
+  //Update Listeners
+  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
+    if (command is String && command == GroupDetailPanel.notifyRefresh) {
+      _refreshCurrentPosts();
+    } else if(command is String && command == _GroupDetailPostsContent.notifyPostRefresh) {
+      _refreshCurrentPosts();
+    }  else if(command is String && command == _GroupDetailPostsContent.notifyPostRefreshWithScrollToLast) {
+      _scrollToLastPostAfterRefresh = true;
+      if (_refreshingPosts != true) {
+        _refreshCurrentPosts();
+      }
+    }
+    // else if(command is Map<String, dynamic> && command.containsKey(_GroupDetailPostsContent.notifyPostRefreshWithDelta)){
+    //   dynamic data = command[_GroupDetailPostsContent.notifyPostRefreshWithDelta];//consider passing map with named params
+    //   int delta = (data is int) ? data : 0;
+    //     _refreshCurrentPosts(delta: delta);
+    // }
+  });
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Social.notifyPostCreated) {
+      Post? post = param is Post ? param : null;
+      if(post?.isPost == true){
+        _refreshCurrentPosts(delta: 1);
+      }
+    }
+    else if (name == Social.notifyPostUpdated) {
+      Post? post = param is Post ? param : null;
+      if(post?.isPost == true){
+        _refreshCurrentPosts();
+      }
+    }
+    else if (name == Social.notifyPostDeleted) {
+      Post? post = param is Post ? param : null;
+      if(post?.isPost == true) {
+        _refreshCurrentPosts(delta: -1);
+      }
     }
   }
 }
