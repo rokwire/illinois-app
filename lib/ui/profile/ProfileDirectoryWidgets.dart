@@ -83,9 +83,10 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryProfilePhoto(_photoUrl,
+            DirectoryProfilePhoto(
+              photoUrl: _photoUrl,
               imageSize: _photoImageSize,
-              headers: _photoAuthHeaders,
+              photoUrlHeaders: _photoAuthHeaders,
               borderSize: 12,
             )
           ),
@@ -196,37 +197,51 @@ void _launchUrl(String? url) {
 class DirectoryProfilePhoto extends StatelessWidget {
 
   final String? photoUrl;
+  final Map<String, String>? photoUrlHeaders;
+  final Uint8List? photoData;
   final double imageSize;
   final double borderSize;
-  final Map<String, String>? headers;
 
-  DirectoryProfilePhoto(this.photoUrl, { super.key, required this.imageSize, this.borderSize = 0, this.headers });
+  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.borderSize = 0, required this.imageSize });
 
   @override
-  Widget build(BuildContext context) => (photoUrl?.isNotEmpty == true) ?
-    Container(
-      width: imageSize + borderSize, height: imageSize + borderSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      ),
-      child: Center(
-        child: Container(
-          width: imageSize, height: imageSize,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Styles().colors.background,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(photoUrl ?? '',
-                headers: headers
-              )
-            ),
+  Widget build(BuildContext context) {
+    ImageProvider<Object>? decorationImage = _decorationImage;
+    return (decorationImage != null) ?
+      Container(
+        width: imageSize + borderSize, height: imageSize + borderSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        ),
+        child: Center(
+          child: Container(
+            width: imageSize, height: imageSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Styles().colors.background,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: decorationImage
+              ),
+            )
           )
-        )
-      ),
-    ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+        ),
+      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+  }
+
+    ImageProvider<Object>? get _decorationImage {
+      if (photoData != null) {
+        return Image.memory(photoData ?? Uint8List(0)).image;
+      }
+      else if (photoUrl != null) {
+        return NetworkImage(photoUrl ?? '', headers: photoUrlHeaders);
+      }
+      else {
+        return null;
+      }
+    } 
 }
 
 class DirectoryProfilePhotoUtils {
@@ -250,8 +265,9 @@ class DirectoryProfilePhotoUtils {
 
 class DirectoryPronunciationButton extends StatefulWidget {
   final String? url;
+  final Uint8List? data;
 
-  DirectoryPronunciationButton({super.key, this.url});
+  DirectoryPronunciationButton({super.key, this.url, this.data});
 
   @override
   State<StatefulWidget> createState() => _DirectoryPronunciationButtonState();
@@ -313,10 +329,17 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
           _initializingAudioPlayer = true;
         });
 
-        AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
+        Uint8List? audioData = widget.data;
+        if (audioData == null) {
+          AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
+          audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+        }
 
         if (mounted) {
-          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+          setState(() {
+            _initializingAudioPlayer = false;
+          });
+
           if (audioData != null) {
             _audioPlayer = AudioPlayer();
 
@@ -336,7 +359,6 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
             if (mounted) {
               if ((duration != null) && (duration.inMilliseconds > 0)) {
                 setState(() {
-                  _initializingAudioPlayer = false;
                   _audioPlayer?.play();
                 });
               }

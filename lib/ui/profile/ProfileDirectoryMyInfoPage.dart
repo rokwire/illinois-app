@@ -1,6 +1,8 @@
 
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryMyInfoEditPage.dart';
@@ -10,6 +12,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -38,6 +41,8 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
+  Uint8List? _photoImageData;
+  Uint8List? _pronunciationData;
   String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
 
   bool _loading = false;
@@ -49,7 +54,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       ProfileDirectoryAccountsPage.notifyEditInfo,
     ]);
     _editing = widget.editParam ?? false;
-    _loadProfileAndPrivacy();
+    _loadInitialContent();
     super.initState();
   }
 
@@ -78,6 +83,8 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
+          pronunciationData: _pronunciationData,
+          photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
           onFinishEdit: _onFinishEditInfo,
       );
@@ -87,6 +94,8 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         contentType: widget.contentType,
         profile: _profile,
         privacy: _privacy,
+        pronunciationData: _pronunciationData,
+        photoImageData: _photoImageData,
         photoImageToken: _photoImageToken,
         onEditInfo: _onEditInfo,
       );
@@ -101,25 +110,80 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     )
   );
 
-  Future<void> _loadProfileAndPrivacy() async {
+  Future<void> _loadInitialContent() async {
     setState(() {
       _loading = true;
     });
     List<dynamic> results = await Future.wait([
       Auth2().loadUserProfile(),
       Auth2().loadUserPrivacy(),
+      Content().loadUserPhoto(type: UserProfileImageType.medium),
+      Content().loadUserNamePronunciation(),
     ]);
     if (mounted) {
       Auth2UserProfile? profile = JsonUtils.cast<Auth2UserProfile>(ListUtils.entry(results, 0));
       Auth2UserPrivacy? privacy = JsonUtils.cast<Auth2UserPrivacy>(ListUtils.entry(results, 1));
+      Uint8List? photoData = JsonUtils.listUint8Value(ListUtils.entry(results, 2));
+      Uint8List? pronunciationData = JsonUtils.listUint8Value(ListUtils.entry(results, 3));
+
+      Auth2UserProfile? updatedProfile = await _syncUserProfile(profile,
+        hasContentUserPhoto: (photoData != null),
+        hasContentUserNamePronunciation: (pronunciationData != null),
+      );
+      if (updatedProfile != null) {
+        profile = updatedProfile;
+      }
+
       setState(() {
         //TMP: Added some sample data
         _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,);
         _privacy = privacy;
-
+        _photoImageData = photoData;
+        _pronunciationData = pronunciationData;
         _loading = false;
       });
     }
+  }
+
+  Future<Auth2UserProfile?> _syncUserProfile(Auth2UserProfile? profile, { bool? hasContentUserPhoto, bool? hasContentUserNamePronunciation }) async {
+    if (profile != null) {
+
+      Set<Auth2UserProfileScope> updateProfileScope = <Auth2UserProfileScope>{};
+
+      String? profilePhotoUrl = profile.photoUrl;
+      if (hasContentUserPhoto != null) {
+        bool profileHasUserPhoto = StringUtils.isNotEmpty(profilePhotoUrl);
+        if (profileHasUserPhoto != hasContentUserPhoto) {
+          profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : "";
+          updateProfileScope.add(Auth2UserProfileScope.photoUrl);
+        }
+      }
+
+      String? profilePronunciationUrl = profile.pronunciationUrl;
+      if (hasContentUserNamePronunciation != null) {
+        bool profileHasPronunciationUrl = StringUtils.isNotEmpty(profilePronunciationUrl);
+        if (profileHasPronunciationUrl != hasContentUserNamePronunciation) {
+          profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationUrl(accountId: Auth2().accountId) : "";
+          updateProfileScope.add(Auth2UserProfileScope.pronunciationUrl);
+        }
+      }
+
+      if (updateProfileScope.isNotEmpty) {
+        Auth2UserProfile updatedProfile = Auth2UserProfile.fromOther(profile,
+          override: Auth2UserProfile(
+            photoUrl: profilePhotoUrl,
+            pronunciationUrl: profilePronunciationUrl,
+          ),
+          scope: updateProfileScope);
+
+        bool updateResult = await Auth2().saveUserProfile(updatedProfile);
+        if (updateResult == true) {
+          return updatedProfile;
+        }
+      }
+    }
+
+    return null;
   }
 
   void _onEditInfo() {
@@ -128,7 +192,11 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     });
   }
 
-  void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, String? photoImageToken }) {
+  void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy,
+    Uint8List? pronunciationData,
+    Uint8List? photoImageData,
+    String? photoImageToken
+  }) {
     setStateIfMounted((){
       if (profile != null) {
         _profile = profile;
@@ -138,8 +206,16 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         _privacy = privacy;
       }
 
-      if (photoImageToken != null) {
+      if ((_photoImageToken != photoImageToken) && (photoImageToken != null)) {
         _photoImageToken = photoImageToken;
+      }
+
+      if (!DeepCollectionEquality().equals(_photoImageData, photoImageData)) {
+        _photoImageData = photoImageData;
+      }
+
+      if (!DeepCollectionEquality().equals(_pronunciationData, pronunciationData)) {
+        _pronunciationData = pronunciationData;
       }
 
       _editing = false;

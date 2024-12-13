@@ -426,7 +426,6 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
         AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
-          Log.d(result.data ?? "");
           _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
@@ -434,7 +433,6 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
         }
       } else {
         AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
-        Log.d("No File to save");
       }
     }catch(e){
       Log.e(e.toString());

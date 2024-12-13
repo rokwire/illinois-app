@@ -52,7 +52,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
-  Map<String, dynamic> _filters = <String, dynamic>{};
+  Map<String, dynamic> _filterAttributes = <String, dynamic>{};
 
   @override
   void initState() {
@@ -281,13 +281,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
         scope: Auh2Directory.attributesScope,
         contentAttributes: directoryAttributes,
-        selection: _filters,
+        selection: _filterAttributes,
         sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {
           setState(() {
-            _filters = selection;
+            _filterAttributes = selection;
           });
           _load();
         }
@@ -298,10 +298,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   ContentAttributes? get _directoryAttributes {
     ContentAttributes? directoryAttributes = Auth2().directoryAttributes;
     if (directoryAttributes != null) {
-      ContentAttribute? groupsAttribute = _groupsAttribute;
-      if (groupsAttribute != null) {
+      ContentAttribute? groupAttribute = _groupAttribute;
+      if (groupAttribute != null) {
         directoryAttributes = ContentAttributes.fromOther(directoryAttributes);
-        directoryAttributes?.attributes?.add(groupsAttribute);
+        directoryAttributes?.attributes?.add(groupAttribute);
       }
       return directoryAttributes;
     }
@@ -310,13 +310,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
   }
 
-  static const String _groupsAttributeId = 'groups';
+  static const String _groupAttributeId = 'group';
 
-  ContentAttribute? get _groupsAttribute {
+  ContentAttribute? get _groupAttribute {
     List<Group>? userGroups = Groups().userGroups;
     return ((userGroups != null) && userGroups.isNotEmpty) ?
       ContentAttribute(
-        id: _groupsAttributeId,
+        id: _groupAttributeId,
         title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
         emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
         semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
@@ -388,7 +388,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(_searchText),
-        limit: limit
+        attriutes: _filterAttributes,
+        limit: limit,
       );
 
       setStateIfMounted(() {
@@ -417,6 +418,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(_searchText),
+        attriutes: _filterAttributes,
         offset: _accountsCount,
         limit: _pageLength
       );
