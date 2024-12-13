@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+//import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/service/Config.dart';
 import 'dart:convert';
 
 import '../../model/StudentCourse.dart';
@@ -18,34 +20,33 @@ String kExamplePage = '''
   <body>
   ''';
 
-class WebViewApp extends StatefulWidget {
+class DisplayFloorPlanPanel extends StatefulWidget {
   final Building? building;
-  const WebViewApp({super.key, this.building});
+  const DisplayFloorPlanPanel({super.key, this.building});
 
   @override
-  State<WebViewApp> createState() => _WebViewAppState();
+  State<DisplayFloorPlanPanel> createState() => _DisplayFloorPlanPanelState();
 }
 
-class _WebViewAppState extends State<WebViewApp> {
-  final Color bottom_nav_bg_color = Colors.white;
-  final Color bottom_nav_text_color = Color(0xFF13294B);
-  late final WebViewController controller;
+class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
+  late final WebViewController _controller;
   Building? _building;
-  int floorIndex = 0;
-  String htmlWithFloorPlan = '';
-  String urlBase = 'https://api-dev.rokwire.illinois.edu/gateway/api/wayfinding/floorplan?';
-  String currentFloorCode = '';
+  String _htmlWithFloorPlan = '';
+  String _urlBase = '${Config().gatewayUrl}/wayfinding/floorplan?';
+  String _currentFloorCode = '';
 
-  List<String>? buildingFloorList = [];
+  List<String>? _buildingFloorList = [];
 
   @override
   void initState() {
     super.initState();
-    controller = WebViewController();
-    _building = widget.building!;
-    buildingFloorList = _building?.floors;
-    currentFloorCode = buildingFloorList![0];
-    loadFloorPlan(currentFloorCode);
+    _controller = WebViewController();
+    if(widget.building != null) {
+      _building = widget.building;
+      _buildingFloorList = _building?.floors;
+      _currentFloorCode = _buildingFloorList![0];
+      loadFloorPlan(_currentFloorCode);
+    }
   }
 
   Future<String> fetchFloorPlanData(String url) async {
@@ -66,15 +67,15 @@ class _WebViewAppState extends State<WebViewApp> {
   }
 
   Future<void> loadFloorPlan(String floorCode) async {
-    String url = '${urlBase}bldgid=${_building?.number}&floor=$floorCode';
+    String url = '${_urlBase}bldgid=${_building?.number}&floor=$floorCode';
     String floorPlanSvg = await fetchFloorPlanData(url);
     setState(() {
       if (floorPlanSvg == 'Empty SVG data') {
-        htmlWithFloorPlan = '<html><body>No floor plan available</body></html>';
+        _htmlWithFloorPlan = '<html lang=""><body>No floor plan available</body></html>';
       } else {
-        htmlWithFloorPlan = '$kExamplePage$floorPlanSvg</body></html>';
+        _htmlWithFloorPlan = '$kExamplePage$floorPlanSvg</body></html>';
       }
-      controller.loadHtmlString(htmlWithFloorPlan);
+      _controller.loadHtmlString(_htmlWithFloorPlan);
     });
   }
 
@@ -82,17 +83,17 @@ class _WebViewAppState extends State<WebViewApp> {
     if (floorCode != null) {
       loadFloorPlan(floorCode);
       setState(() {
-        currentFloorCode = floorCode;
+        _currentFloorCode = floorCode;
       });
     }
   }
 
   void viewNextFloor(int direction) {
-    int currentIndex = buildingFloorList!.indexOf(currentFloorCode);
-    int newIndex = (currentIndex + direction).clamp(0, buildingFloorList!.length - 1);
+    int currentIndex = _buildingFloorList!.indexOf(_currentFloorCode);
+    int newIndex = (currentIndex + direction).clamp(0, _buildingFloorList!.length - 1);
 
     if (newIndex != currentIndex) {
-      changeActiveFloor(buildingFloorList![newIndex]);
+      changeActiveFloor(_buildingFloorList![newIndex]);
     }
   }
 
@@ -102,19 +103,19 @@ class _WebViewAppState extends State<WebViewApp> {
       appBar: HeaderBar(title: ' ${_building?.name}'),
       body: Stack(
         children: [
-          WebViewWidget(controller: controller),
-          buildHeader(),
+          WebViewWidget(controller: _controller),
+          buildFooter(),
         ],
       ),
     );
   }
 
-  Widget buildHeader() {
+  Widget buildFooter() {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Semantics(
         child: Container(
-          color: bottom_nav_bg_color,
+          color: Styles().colors.textColorPrimary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -122,11 +123,11 @@ class _WebViewAppState extends State<WebViewApp> {
                 padding: EdgeInsets.all(10.0),
                 child: GestureDetector(
                   onTap: () => viewNextFloor(-1),
-                  child: buildingFloorList != null
+                  child: _buildingFloorList != null
                       ? Styles().images.getImage('chevron-left-bold') ?? Container()
                       : Container(
                     foregroundDecoration: BoxDecoration(
-                      color: Colors.grey,
+                      color: Styles().colors.mediumGray,
                       backgroundBlendMode: BlendMode.saturation,
                     ),
                     child: Styles().images.getImage('chevron-left-bold') ?? Container(),
@@ -135,14 +136,14 @@ class _WebViewAppState extends State<WebViewApp> {
               ),
               Flexible(
                 child: FractionallySizedBox(
-                  widthFactor: 0.5, // Adjust this factor to control the space
+                  widthFactor: 0.5, // Adjust this factor to control the space between the navigation arrows
                 ),
               ),
-              if (buildingFloorList != null)
+              if (_buildingFloorList != null)
                 Semantics(
                   container: true,
                   button: true,
-                  child: buildAccountDropDown('Floor $currentFloorCode'),
+                  child: buildAccountDropDown('Floor $_currentFloorCode'),
                 ),
               Flexible(
                 child: FractionallySizedBox(
@@ -153,11 +154,11 @@ class _WebViewAppState extends State<WebViewApp> {
                 padding: EdgeInsets.all(10.0),
                 child: GestureDetector(
                   onTap: () => viewNextFloor(1),
-                  child: buildingFloorList != null
+                  child: _buildingFloorList != null
                       ? Styles().images.getImage('chevron-right-bold') ?? Container()
                       : Container(
                     foregroundDecoration: BoxDecoration(
-                      color: Colors.grey,
+                      color: Styles().colors.mediumGray,
                       backgroundBlendMode: BlendMode.saturation,
                     ),
                     child: Styles().images.getImage('chevron-right-bold') ?? Container(),
@@ -172,7 +173,7 @@ class _WebViewAppState extends State<WebViewApp> {
   }
 
   List<DropdownMenuItem<String>> buildDropDownItems() {
-    return buildingFloorList!.map((floorLetters) {
+    return _buildingFloorList!.map((floorLetters) {
       return DropdownMenuItem<String>(
         value: floorLetters,
         child: Semantics(
@@ -180,8 +181,10 @@ class _WebViewAppState extends State<WebViewApp> {
           hint: "Double tap to select floor",
           button: false,
           excludeSemantics: true,
-          child: Center( // Center the text
+          child: Center(
             child: Text(
+              //"panel.display_floor_plan_panel.floor": "Floor {{letterCode}}"
+              // Localization().getStringEx('panel.display_floor_plan_panel.floor', ' Floor $letterCodeMacro')
               'Floor $floorLetters',
               style: Styles().textStyles.getTextStyle("widget.button.title.medium"),
             ),
@@ -204,23 +207,17 @@ class _WebViewAppState extends State<WebViewApp> {
             child: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
           ),
           isExpanded: false,
-          style: TextStyle(
-            color: bottom_nav_text_color,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),
           hint: Text(
             currentFloor,
-            style: TextStyle(
-              color: bottom_nav_text_color,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),
           ),
-          dropdownColor: Colors.white, // Set the dropdown menu's background color to white
+          dropdownColor: Styles().colors.white, //dropdown menu background
           items: buildDropDownItems(),
           onChanged: changeActiveFloor,
         ),
       ),
     );
   }
-
 }
+
