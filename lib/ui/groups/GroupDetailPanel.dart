@@ -15,6 +15,8 @@
  */
 
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -75,6 +77,8 @@ enum _DetailTab { Events, Posts, Messages, Polls, About }
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
 
+  static const String notifyRefresh  = "edu.illinois.rokwire.group_detail.refresh";
+
   final Group? group;
   final String? groupIdentifier;
   final String? groupPostId;
@@ -113,9 +117,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   int                _progress = 0;
   bool               _confirmationLoading = false;
 
-  List<Event2>?      _groupEvents;
-  bool               _updatingEvents = false;
-  int                _allEventsCount = 0;
+  StreamController _updateController = StreamController.broadcast();
 
   List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
@@ -269,16 +271,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
+    _initUpdateListener();
 
     _postId = widget.groupPostId;
     _loadGroup(loadEvents: true);
-
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateController.close();
     super.dispose();
   }
 
@@ -310,7 +313,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _loadPolls();
       }
       if (loadEvents) {
-        _loadEvents();
+        // _loadEvents(); //TBD
+        _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       _decreaseProgress();
     }
@@ -322,7 +326,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         setState(() {
           _group = group;
           if (refreshEvents) {
-            _refreshEvents();
+            // _refreshEvents();
+            _updateController.add(GroupDetailPanel.notifyRefresh);
           }
           _refreshGroupAdmins();
         });
@@ -332,35 +337,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _refreshPolls();
       }
     });
-  }
-
-  void _loadEvents() {
-    setStateIfMounted(() {
-      _updatingEvents = true;
-    });
-    Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
-      setStateIfMounted(() {
-        _allEventsCount = eventsResult?.totalCount ?? 0;
-        _groupEvents = eventsResult?.events;
-        _updatingEvents = false;
-      });
-    });
-  }
-
-  void _refreshEvents() {
-    Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
-      if (eventsResult != null) {
-        setStateIfMounted(() {
-          _allEventsCount = eventsResult.totalCount ?? 0;
-          _groupEvents = eventsResult.events;
-        });
-      }
-    });
-  }
-
-  void _clearEvents() {
-    _allEventsCount = 0;
-    _groupEvents = null;
   }
 
   // Posts & Direct Messages
@@ -756,17 +732,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     );
   }
 
-  // NotificationsListener
+  // Update Listener
+  _initUpdateListener()=>
+  _updateController.stream.listen((command) { //TBD Implement if needed
+    if(command is String && command == "toast"){       //TBD remove its a test
+      AppToast.showMessage("Test Message: Events were loaded successfully and the parent knows it");
+    }
+  });
 
+  // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
     if (name == Groups.notifyUserMembershipUpdated) {
       setStateIfMounted(() {});
     }
-    else if (name == Groups.notifyGroupEventsUpdated) {
-      _clearEvents();
-      _loadEvents();
-    }
+    // else if (name == Groups.notifyGroupEventsUpdated) {
+    //   _clearEvents();
+    //   _loadEvents();
+    // }
     else if (name == Groups.notifyGroupStatsUpdated) {
       _updateGroupStats();
     }
@@ -793,9 +776,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if (name == Events2.notifyUpdated) {
-      _updateEventIfNeeded(param);
-    }
+    // else if (name == Events2.notifyUpdated) {
+    //   _updateEventIfNeeded(param);
+    // }
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
     } 
@@ -864,7 +847,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_isMemberOrAdmin) {
       content.add(_buildTabs());
       if (_currentTab != _DetailTab.About) {
-        content.add(_buildEvents());
+        content.add(_GroupEventsContent(group: _group, updateController: _updateController));
         content.add(_buildPosts());
         content.add(_buildScheduledPosts());
         content.add(_buildMessages());
@@ -880,8 +863,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildAbout());
       content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
-      if (_isPublic && CollectionUtils.isNotEmpty(_groupEvents)) {
-        content.add(_buildEvents());
+      if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD
+        content.add(_GroupEventsContent(group: _group, updateController: _updateController));
       }
       content.add(_buildResearchProjectMembershipRequest());
     }
@@ -1162,54 +1145,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
       // Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))  //Moved to options TBD remove
     ]));
-  }
-
-  Widget _buildEvents() {
-    List<Widget> content = [];
-
-//    if (_isAdmin) {
-//      content.add(_buildAdminEventOptions());
-//    }
-
-    if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (Event2 groupEvent in _groupEvents!) {
-        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: _group, onTap: () => _onTapEvent(groupEvent))));
-      }
-
-      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
-        RoundedButton(
-          label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-          backgroundColor: Styles().colors.white,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          borderColor: Styles().colors.fillColorSecondary,
-          borderWidth: 2,
-          contentWeight: 0.5,
-          onTap: () {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
-          })
-        )
-      );
-    }
-
-    return Stack(children: [
-      Column(children: <Widget>[
-        SectionSlantHeader(
-            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
-            titleIconKey: 'calendar',
-            // rightIconKey: _canAddEvent ? "plus-circle" : null,
-            // rightIconAction: _canAddEvent ? _onTapEventOptions : null,
-            // rightIconLabel: _canAddEvent ? Localization().getStringEx("panel.group_detail.button.create_event.title", "Create Event") : null,
-            children: content)
-      ]),
-      _updatingEvents
-          ? Center(child:
-              Container(padding: EdgeInsets.symmetric(vertical: 50), child:
-                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)),
-              ),
-            )
-          : Container()
-    ]);
   }
 
   Widget _buildPosts() {
@@ -1934,12 +1869,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         });
   }
 
-  void _onTapEvent(Event2 event) {
-    Analytics().logSelect(target: 'Group Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute( builder: (context) => (event.hasGame == true) ?
-      AthleticsGameDetailPanel(game: event.game, event: event, group: _group) :
-      Event2DetailPanel(event: event, group: _group)));
-  }
   //Moved to options TBD remove
   // void _onTapEventOptions() {
   //   Analytics().logSelect(target: "Event options", attributes: _group?.analyticsAttributes);
@@ -2342,17 +2271,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  void _updateEventIfNeeded(dynamic event) {
-    if ((event is Event2) && (event.id != null) && mounted) {
-      int? index = Event2.indexInList(_groupEvents, id: event.id);
-      if (index != null) {
-        setState(() {
-          _groupEvents?[index] = event;
-        });
-      }
-    }
-  }
-
   Future<void> _onPullToRefresh() async {
     if (Connectivity().isOffline) {
       // Do not try to refresh group if the device is offline
@@ -2370,10 +2288,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
       _refreshGroupAdmins();
       _refreshGroupStats();
-      _refreshEvents();
+      //_refreshEvents();
       _refreshCurrentPosts();
       _refreshCurrentScheduledPosts();
       _refreshCurrentMessages();
+      _updateController.add(GroupDetailPanel.notifyRefresh);
     }
   }
 
@@ -2543,3 +2462,146 @@ class GroupEventSelector2 extends Event2Selector2 {
   }
 }
 
+class _GroupEventsContent extends StatefulWidget {
+  final Group? group;
+  final StreamController<dynamic>? updateController;
+
+  const _GroupEventsContent({super.key, this.updateController, this.group});
+
+  String? get groupId => group?.id;
+
+  @override
+  State<StatefulWidget> createState() => _GroupEventsContentState();
+}
+
+class _GroupEventsContentState extends State<_GroupEventsContent>  implements NotificationsListener {
+  List<Event2>? _groupEvents;
+  bool _updatingEvents = false;
+  int _allEventsCount = 0;
+
+  @override
+  void initState() {
+    _initUpdateListener();
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupEventsUpdated,
+      Events2.notifyUpdated
+    ]);
+    _loadEvents(showProgress: true);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => _buildEvents();
+
+  //UI
+  Widget _buildEvents() {
+    List<Widget> content = [];
+
+    if (CollectionUtils.isNotEmpty(_groupEvents)) {
+      for (Event2 groupEvent in _groupEvents!) {
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16),
+            child: Event2Card(groupEvent, group: widget.group,
+                onTap: () => _onTapEvent(groupEvent))));
+      }
+
+      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
+        RoundedButton(
+            label: Localization().getStringEx(
+                "panel.group_detail.button.all_events.title", 'See all events'),
+            textStyle: Styles().textStyles.getTextStyle(
+                "widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            borderColor: Styles().colors.fillColorSecondary,
+            borderWidth: 2,
+            contentWeight: 0.5,
+            onTap: () {
+              Navigator.push(context, CupertinoPageRoute(
+                  builder: (context) => GroupAllEventsPanel(group: widget.group)));
+            })
+        )
+      );
+    }
+
+    return Stack(children: [
+      Column(children: <Widget>[
+        SectionSlantHeader(
+            title: Localization().getStringEx(
+                "panel.group_detail.label.upcoming_events", 'Upcoming Events') +
+                ' ($_allEventsCount)',
+            titleIconKey: 'calendar',
+            children: content)
+      ]),
+      _updatingEvents
+          ? Center(
+        child: Container(padding: EdgeInsets.symmetric(vertical: 50), child:
+        CircularProgressIndicator(strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color?>(
+                Styles().colors.fillColorSecondary)),),)
+          : Container()
+    ]);
+  }
+
+  //Tap
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Group Event: ${event.name}');
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => (event.hasGame == true) ?
+    AthleticsGameDetailPanel(game: event.game, event: event, group: widget.group) :
+    Event2DetailPanel(event: event, group: widget.group)));
+  }
+
+  //Logic
+  void _loadEvents({bool showProgress = false}) {
+    if (showProgress)
+      setStateIfMounted(() => _updatingEvents = true);
+
+    Events2().loadGroupEvents(groupId: widget.groupId, limit: 3)
+        .then((Events2ListResult? eventsResult) {
+          setStateIfMounted(() {
+            _allEventsCount = eventsResult?.totalCount ?? 0;
+            _groupEvents = eventsResult?.events;
+            if (showProgress)
+              _updatingEvents = false;
+          });
+        });
+  }
+
+  void _clearEvents() {
+    _allEventsCount = 0;
+    _groupEvents = null;
+  }
+
+  void _updateEventIfNeeded(dynamic event) {
+    if ((event is Event2) && (event.id != null) && mounted) {
+      int? index = Event2.indexInList(_groupEvents, id: event.id);
+      if (index != null) {
+        setState(() {
+          _groupEvents?[index] = event;
+        });
+      }
+    }
+  }
+
+  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
+    if (command is String && command == GroupDetailPanel.notifyRefresh) {
+      _loadEvents();
+    }
+  });
+
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Groups.notifyGroupEventsUpdated) {
+      _clearEvents();
+      _loadEvents();
+    } else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
+  }
+}
