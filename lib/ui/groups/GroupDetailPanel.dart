@@ -97,6 +97,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
+  static List<_DetailTab> get visibleTabs => [_DetailTab.Events, _DetailTab.Posts, _DetailTab.Messages, _DetailTab.Polls]; //About is not included
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
@@ -1102,7 +1103,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildTabs() {
     List<Widget> tabs = [];
-    for (_DetailTab tab in _DetailTab.values) {
+    for (_DetailTab tab in GroupDetailPanel.visibleTabs) {
       String title;
       switch (tab) {
         case _DetailTab.Events:
