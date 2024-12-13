@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Control wallet items visibility from app config settings [#4509](https://github.com/rokwire/illinois-app/issues/4509).
+- Sync photo / pronunciation URLs to user profile [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Directory texts fixes/cleanup [#4402](https://github.com/rokwire/illinois-app/issues/4402).
 ### Fixed
 - Fixed "view-dark" image resource.
  
