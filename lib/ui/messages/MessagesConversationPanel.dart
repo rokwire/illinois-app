@@ -67,7 +67,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     Post(
         body: "Great\n\nI think I might need some Neom U app tweaks tomorrow. I have a call early Thursday\n\nWe can discuss tomorrow",
         creator: Creator(accountId: "john", name: "John Paul"),
-        dateCreatedUtc: DateTime(2024, 7, 10, 18, 30)
+        dateCreatedUtc: DateTime(2024, 8, 10, 18, 30)
     ),
   ];
 
@@ -202,9 +202,19 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     // TODO: Dynamically show date dividers based on message dates.
     if (_messages.isNotEmpty) {
-      contentList.add(_buildMessageCard(_messages[0]));
-      contentList.add(_buildDateDivider("July 10, 2024"));
-      for (int i = 1; i < _messages.length; i++) {
+      DateTime? lastDate;
+      for (int i = 0; i < _messages.length; i++) {
+        DateTime? msgDate = _messages[i].dateCreatedUtc;
+        if (msgDate != null) {
+          // Format the message date to a readable form (e.g., "July 10, 2024")
+          String msgDateString = AppDateTime().formatDateTime(msgDate, format: 'MMMM dd, yyyy') ?? '';
+          // If this is the first message or the day changed since the last message, add a date divider
+          if ((lastDate == null) ||
+              (lastDate.year != msgDate.year || lastDate.month != msgDate.month || lastDate.day != msgDate.day)) {
+            contentList.add(_buildDateDivider(msgDateString));
+            lastDate = msgDate;
+          }
+        }
         contentList.add(_buildMessageCard(_messages[i]));
       }
     }
