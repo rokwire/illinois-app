@@ -198,7 +198,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    // TODO: Dynamically show date dividers based on message dates.
     if (_messages.isNotEmpty) {
       DateTime? lastDate;
       for (int i = 0; i < _messages.length; i++) {
