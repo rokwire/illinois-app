@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Explore.dart';
@@ -689,9 +688,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Analytics().logSelect(target: "Add Image");
     Event2CreatePanel.hideKeyboard(context);
     GroupAddImageWidget.show(context: context, url: _imageUrl).then((ImagesResult? updateResult) {
-      if (updateResult?.succeeded == true && (_imageUrl != updateResult?.stringData)) {
+      if (updateResult?.succeeded == true && (_imageUrl != updateResult?.imageUrl)) {
         setStateIfMounted(() {
-          _imageUrl = updateResult?.stringData;
+          _imageUrl = updateResult?.imageUrl;
         });
       }
     });

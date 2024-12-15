@@ -129,7 +129,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         AudioResult? result = await Content().loadUserNamePronunciation();
 
         if (mounted) {
-          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
           if (audioData != null) {
             _audioPlayer = AudioPlayer();
 
@@ -198,7 +198,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
       setStateIfMounted(() { _editActivity = true; });
 
       AudioResult? audioResult = await Content().loadUserNamePronunciation();
-      audioData = (audioResult?.resultType == AudioResultType.succeeded) ? audioResult?.data : null;
+      audioData = (audioResult?.resultType == AudioResultType.succeeded) ? audioResult?.audioData : null;
 
       setStateIfMounted(() { _editActivity = false; });
     }

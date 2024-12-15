@@ -332,7 +332,7 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
         Uint8List? audioData = widget.data;
         if (audioData == null) {
           AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
-          audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+          audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
         }
 
         if (mounted) {

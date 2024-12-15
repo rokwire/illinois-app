@@ -221,7 +221,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             setState(() {
               _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId) ?? '';
               _photoImageToken = DirectoryProfilePhotoUtils.newToken;
-              _photoImageData = imageUploadResult.data;
+              _photoImageData = imageUploadResult.imageData;
             });
           }
           else if (imageUploadResult.resultType == ImagesResultType.error) {
@@ -413,7 +413,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         if (result?.resultType == AudioResultType.succeeded) {
           setState(() {
             _pronunciationText = Content().getUserNamePronunciationUrl(accountId: Auth2().accountId);
-            _pronunciationData = result?.data;
+            _pronunciationData = result?.audioData;
           });
         }
       });
@@ -458,7 +458,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
           Uint8List? audioData = _pronunciationData;
           if (audioData == null) {
             AudioResult? result = await Content().loadUserNamePronunciation();
-            audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+            audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
           }
 
           if (mounted) {
