@@ -43,7 +43,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   // TODO: Replace 'current-user' logic with actual Auth2().accountId logic when available
   final String currentUserId = "current-user";
 
-  // Fake test messages to mirror the design shown in the screenshot
+  // Fake test messages to mirror the design
   // TODO: Once APIs are ready, load these from the backend.
   List<Post> _messages = [
     Post(
@@ -52,8 +52,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         // TODO: Add dateCreatedUtc for formatting date/time. For now, use static date.
         dateCreatedUtc: DateTime(2024, 7, 10, 10, 0)
     ),
-    // Date divider for July 10, 2024
-    // TODO: Implement logic to show date dividers dynamically.
     Post(
         body: "Are you joining the call?",
         creator: Creator(accountId: "john", name: "John Paul"),
@@ -206,9 +204,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       for (int i = 0; i < _messages.length; i++) {
         DateTime? msgDate = _messages[i].dateCreatedUtc;
         if (msgDate != null) {
-          // Format the message date to a readable form (e.g., "July 10, 2024")
+
           String msgDateString = AppDateTime().formatDateTime(msgDate, format: 'MMMM dd, yyyy') ?? '';
-          // If this is the first message or the day changed since the last message, add a date divider
+
           if ((lastDate == null) ||
               (lastDate.year != msgDate.year || lastDate.month != msgDate.month || lastDate.day != msgDate.day)) {
             contentList.add(_buildDateDivider(msgDateString));
@@ -245,7 +243,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Styles().colors.white, // White background card
+        color: Styles().colors.white,
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
       ),
@@ -538,7 +536,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   static List<String>? buildContentCodes() {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    // TODO: If we need custom sorting or filtering, implement here.
+    // codes?.sort((String code1, String code2) {
+    //   String title1 = _BrowseSection.title(sectionId: code1);
+    //   String title2 = _BrowseSection.title(sectionId: code2);
+    //   return title1.toLowerCase().compareTo(title2.toLowerCase());
+    // });
     return codes;
   }
 }
