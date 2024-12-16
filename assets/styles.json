@@ -976,7 +976,7 @@
     "star-dark": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "fillColorPrimary", "size": 19},
     "history-dark": {"src": "images/blue.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 16, "todo": "size"},
     "history-disabled-dark": {"src": "images/blue-off.png", "type": "flutter.asset", "size": 16, "todo": "size, color?"},
-    "view-dark": {"src": "images/view-only-blue.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18, "todo": "size"},
+    "view-dark": {"src": "0xf06e", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 18},
     "location-dark": {"src": "images/location-sharing-blue.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 16, "todo": "size"},
     "location-disabled-dark": {"src": "images/location-sharing-blue-off.png", "type": "flutter.asset", "size": 16, "todo": "size, color?"},
     "sliders-dark": {"src": "images/personalization-blue.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 16, "todo": "size"},

@@ -20,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -558,7 +557,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, ImagesResult.succeed(url));
+      Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
     } else {
       //we need to process it
       setState(() {
@@ -629,7 +628,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
   void _onTapClear() {
     Analytics().logSelect(target: "Clear");
-    Navigator.pop(context, ImagesResult.succeed(null));
+    Navigator.pop(context, ImagesResult.succeed());
   }
 
 
@@ -2096,11 +2095,11 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl).then((result) => result);
 
     if(result?.succeeded == true) {
-      widget.onImageChanged?.call(result?.stringData);
+      widget.onImageChanged?.call(result?.imageUrl);
       // setStateIfMounted(() {
       //   _imageUrl = result?.stringData;
       // });
-      Log.d("Image Url: ${result?.stringData}");
+      Log.d("Image Url: ${result?.imageUrl}");
     }
   }
 }
@@ -2632,8 +2631,8 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _loadImage() {
     if (StringUtils.isNotEmpty(widget.userId)) {
       _setImageLoading(true);
-      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((imageBytes) {
-        _imageBytes = imageBytes;
+      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+        _imageBytes = imageResult?.imageData;
         _setImageLoading(false);
       });
     }
