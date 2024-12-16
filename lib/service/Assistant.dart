@@ -152,6 +152,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     await Future.wait([
       _loadMessages(provider: AssistantProvider.uiuc),
       _loadMessages(provider: AssistantProvider.google),
+      _loadMessages(provider: AssistantProvider.azure),
     ]);
   }
 

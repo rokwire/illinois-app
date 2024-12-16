@@ -4309,6 +4309,7 @@
 
     "model.assistant.provider.uiuc.label": "Illinois",
     "model.assistant.provider.google.label": "Google",
+    "model.assistant.provider.azure.label": "Azure",
     "model.assistant.provider.unknown.label": "Unknown",
 
     "logic.date_time.greeting.morning": "Good morning",
