@@ -17,13 +17,18 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+enum DirectoryDisplayMode { browse, select }
+
 class DirectoryAccountCard extends StatefulWidget {
   final Auth2PublicAccount account;
+  final DirectoryDisplayMode displayMode;
   final String? photoImageToken;
   final bool expanded;
   final void Function()? onToggleExpanded;
+  final bool selected;
+  final void Function(bool)? onToggleSelected;
 
-  DirectoryAccountCard(this.account, { super.key, this.photoImageToken, this.expanded = false, this.onToggleExpanded });
+  DirectoryAccountCard(this.account, this.displayMode, { super.key, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountCardState();
@@ -43,6 +48,11 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
   Widget get _expandedHeading =>
     InkWell(onTap: widget.onToggleExpanded, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (widget.displayMode == DirectoryDisplayMode.select)
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: _cardSelectionContent,
+          ),
         Expanded(child:
           _expandedHeadingLeftContent
         ),
@@ -51,6 +61,26 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
         ),
       ],),
     );
+
+  Widget get _cardSelectionContent => Padding(
+    padding: const EdgeInsets.only(right: 8.0),
+    child: SizedBox(
+      height: 24.0,
+      width: 24.0,
+      child: Checkbox(
+        checkColor: Styles().colors.surface,
+        activeColor: Styles().colors.fillColorPrimary,
+        value: widget.selected,
+        visualDensity: VisualDensity.compact,
+        side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+        onChanged: (bool? value) {
+          if (value != null) {
+            widget.onToggleSelected?.call(value);
+          }
+        },
+      ),
+    ),
+  );
 
   bool get _hasPronunciation => (widget.account.profile?.pronunciationUrl?.isNotEmpty == true);
 
@@ -106,6 +136,8 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
     InkWell(onTap: widget.onToggleExpanded, child:
       Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
         Row(children: [
+          if (widget.displayMode == DirectoryDisplayMode.select)
+            _cardSelectionContent,
           Expanded(child:
             RichText(textAlign: TextAlign.left, text:
               TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: _nameSpans),

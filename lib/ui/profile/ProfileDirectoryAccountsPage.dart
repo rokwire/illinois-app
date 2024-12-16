@@ -27,8 +27,10 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
+  final Map<String, bool>? selectedAccountIds;
+  final void Function(bool selected, Auth2PublicAccount account)? onToggleAccountSelection;
   
-  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile});
+  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile, this.selectedAccountIds, this.onToggleAccountSelection});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
@@ -98,7 +100,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[
-      _editDescription,
+      if (widget.onEditProfile != null)
+        _editDescription,
       _searchBarWidget,
     ];
     if (_loadingProgress) {
@@ -124,6 +127,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       String? directoryIndex;
       for (Auth2PublicAccount account in accounts) {
         String? accountDirectoryIndex = account.directoryKey;
+        DirectoryDisplayMode displayMode = widget.selectedAccountIds != null ? DirectoryDisplayMode.select : DirectoryDisplayMode.browse;
         if ((accountDirectoryIndex != null) && (directoryIndex != accountDirectoryIndex)) {
           if (contentList.isNotEmpty) {
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -131,10 +135,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           contentList.add(_sectionHeading(directoryIndex = accountDirectoryIndex));
         }
         contentList.add(_sectionSplitter);
-        contentList.add(DirectoryAccountCard(account,
+        contentList.add(DirectoryAccountCard(account, displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
+          selected: widget.selectedAccountIds?[account.id] == true,
+          onToggleSelected: (value) => _onToggleAccountSelected(value, account),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -154,6 +160,11 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     setState(() {
       _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
     });
+  }
+
+  void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
+    Analytics().logSelect(target: 'Select', source: account.id);
+    widget.onToggleAccountSelection?.call(value, account);
   }
 
   Widget _sectionHeading(String dirEntry) =>
