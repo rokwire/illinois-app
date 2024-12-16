@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Cleaned up Image & Audio Result data dispatch [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- New Azure Assistant provider [#4519](https://github.com/rokwire/illinois-app/issues/4519).
 
 ## [6.1.26] - 2024-12-13
 ### Changed
