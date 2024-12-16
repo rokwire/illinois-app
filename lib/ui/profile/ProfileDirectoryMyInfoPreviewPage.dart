@@ -91,7 +91,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     _publicProfileContent : _privateProfileContent;
 
   String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(type: UserProfileImageType.defaultType, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
+    Content().getUserPhotoUrl(type: UserProfileImageType.medium, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 

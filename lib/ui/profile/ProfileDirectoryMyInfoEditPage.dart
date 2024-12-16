@@ -158,7 +158,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     // Edit: Photo
 
     String? get _photoImageUrl => StringUtils.isNotEmpty(_photoText) ?
-      Content().getUserPhotoUrl(type: UserProfileImageType.defaultType, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)) : null;
+      Content().getUserPhotoUrl(type: UserProfileImageType.medium, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)) : null;
 
     double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
@@ -219,7 +219,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         if (mounted && (imageUploadResult is ImagesResult)) {
           if (imageUploadResult.resultType == ImagesResultType.succeeded) {
             setState(() {
-              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId) ?? '';
+              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
               _photoImageToken = DirectoryProfilePhotoUtils.newToken;
               _photoImageData = imageUploadResult.imageData;
             });

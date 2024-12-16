@@ -154,7 +154,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       if (hasContentUserPhoto != null) {
         bool profileHasUserPhoto = StringUtils.isNotEmpty(profilePhotoUrl);
         if (profileHasUserPhoto != hasContentUserPhoto) {
-          profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : "";
+          profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) : "";
           updateProfileScope.add(Auth2UserProfileScope.photoUrl);
         }
       }
