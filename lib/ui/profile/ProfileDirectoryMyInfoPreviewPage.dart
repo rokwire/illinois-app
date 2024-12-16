@@ -25,11 +25,11 @@ class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
-  final Uint8List? pronunciationData;
+  final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationData, this.onEditInfo });
+  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData, this.onEditInfo });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPreviewPageState();
@@ -145,7 +145,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
           Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
       if (_profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton(url: _profile?.pronunciationUrl, data: widget.pronunciationData,),
+        DirectoryPronunciationButton(url: _profile?.pronunciationUrl, data: widget.pronunciationAudioData,),
     ],),
   );
 

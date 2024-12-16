@@ -26,12 +26,12 @@ class ProfileDirectoryMyInfoEditPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
-  final Uint8List? pronunciationData;
+  final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
-  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
+  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
-  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.pronunciationData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
+  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.pronunciationAudioData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoEditPageState();
@@ -41,7 +41,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
   late bool _directoryVisibility;
   late Auth2UserProfileFieldsVisibility _profileVisibility;
-  late Uint8List? _pronunciationData;
+  late Uint8List? _pronunciationAudioData;
   late Uint8List? _photoImageData;
   late String? _photoImageToken;
 
@@ -67,7 +67,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     _directoryVisibility = (widget.privacy?.public == true);
 
-    _pronunciationData = widget.pronunciationData;
+    _pronunciationAudioData = widget.pronunciationAudioData;
     _photoImageData = widget.photoImageData;
     _photoImageToken = widget.photoImageToken;
 
@@ -413,7 +413,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         if (result?.resultType == AudioResultType.succeeded) {
           setState(() {
             _pronunciationText = Content().getUserNamePronunciationUrl(accountId: Auth2().accountId);
-            _pronunciationData = result?.audioData;
+            _pronunciationAudioData = result?.audioData;
           });
         }
       });
@@ -433,7 +433,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
                 setState(() {
                   _clearingUserPronunciation = false;
                   _pronunciationText = null;
-                  _pronunciationData = null;
+                  _pronunciationAudioData = null;
                 });
               }
               else {
@@ -455,7 +455,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             _initializingAudioPlayer = true;
           });
 
-          Uint8List? audioData = _pronunciationData;
+          Uint8List? audioData = _pronunciationAudioData;
           if (audioData == null) {
             AudioResult? result = await Content().loadUserNamePronunciation();
             audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
@@ -761,7 +761,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         widget.onFinishEdit?.call(
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
-          pronunciationData: _pronunciationData,
+          pronunciationAudioData: _pronunciationAudioData,
         );
       }
     }
@@ -816,9 +816,9 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             widget.onFinishEdit?.call(
               profile: (profileResult == true) ? profile : null,
               privacy: (privacyResult == true) ? privacy : null,
+              pronunciationAudioData: _pronunciationAudioData,
               photoImageData: _photoImageData,
               photoImageToken: _photoImageToken,
-              pronunciationData: _pronunciationData,
             );
           }
           else {
@@ -828,9 +828,9 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       }
       else {
         widget.onFinishEdit?.call(
+          pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
-          pronunciationData: _pronunciationData,
         );
       }
     }
