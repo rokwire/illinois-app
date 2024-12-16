@@ -3194,16 +3194,38 @@
     "panel.inbox.label.muted.hide": "Hide Muted",
     "panel.inbox.mark_as_read.failed.msg": "Failed to mark all messages as read.",
 
-    "panel.messages.new.header.title": "Send To",
-    "panel.messages.new.tab.recent.label": "Recent",
-    "panel.messages.new.tab.all.label": "All Users",
-
     "widget.inbox_message_card.selected.hint": "Selected",
     "widget.inbox_message_card.unselected.hint": "Not Selected",
     "widget.inbox_message_card.status.muted": "Muted",
     "widget.inbox_message_card.status.hint": "status: %s ,for: ",
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
+
+    "panel.messages.mark_all_read.label": "Mark all as read",
+    "panel.messages.label.time.any": "Any Time",
+    "panel.messages.label.time.today": "Today",
+    "panel.messages.label.time.yesterday": "Yesterday",
+    "panel.messages.label.time.this_week": "This week",
+    "panel.messages.label.time.last_week": "Last week",
+    "panel.messages.label.time.this_month": "This month",
+    "panel.messages.label.time.last_month": "Last month",
+    "panel.messages.label.muted.show": "Show Muted",
+    "panel.messages.label.muted.hide": "Hide Muted",
+    "panel.messages.label.content.empty": "No conversations",
+    "panel.messages.button.new.title": "New Message",
+    "panel.messages.button.new.hint": "",
+    "panel.messages.mark_as_read.failed.msg": "Failed to mark all conversations as read.",
+
+    "panel.messages.new.header.title": "Send To",
+    "panel.messages.new.tab.recent.label": "Recent",
+    "panel.messages.new.tab.all.label": "All Users",
+
+    "widget.conversation_card.selected.hint": "Selected",
+    "widget.conversation_card.unselected.hint": "Not Selected",
+    "widget.conversation_card.status.muted": "Muted",
+    "widget.conversation_card.status.hint": "status: %s ,for: ",
+    "widget.conversation_card.subject.hint": "Subject: %s",
+    "widget.conversation_card.body.hint": "Message: %s",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 

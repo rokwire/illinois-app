@@ -1912,6 +1912,8 @@
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Perfil",
 
+    "panel.settings.messages.header.messages.label": "Mensajes",
+
     "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
     "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
@@ -3190,6 +3192,32 @@
     "widget.inbox_message_card.status.hint": "sestado: %s ,para:",
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
+
+    "panel.messages.mark_all_read.label": "Marcar todo como leido",
+    "panel.messages.label.time.any": "Cualquier momento",
+    "panel.messages.label.time.today": "Hoy dia",
+    "panel.messages.label.time.yesterday": "El dia de ayer",
+    "panel.messages.label.time.this_week": "Esta semana",
+    "panel.messages.label.time.last_week": "La semana pasada",
+    "panel.messages.label.time.this_month": "Este mes",
+    "panel.messages.label.time.last_month": "El mes pasado",
+    "panel.messages.label.muted.show": "Mostrar silenciado",
+    "panel.messages.label.muted.hide": "Ocultar silenciado",
+    "panel.messages.label.content.empty": "Sin conversaciones",
+    "panel.messages.button.new.title": "Nuevo mensaje",
+    "panel.messages.button.new.hint": "",
+    "panel.messages.mark_as_read.failed.msg": "Error al marcar todas las conversaciones como leídas",
+
+    "panel.messages.new.header.title": "Enviar a",
+    "panel.messages.new.tab.recent.label": "Reciente",
+    "panel.messages.new.tab.all.label": "Todos los usuarios",
+
+    "widget.conversation_card.selected.hint": "Seleccionada",
+    "widget.conversation_card.unselected.hint": "No seleccionada",
+    "widget.conversation_card.status.muted": "Apagada",
+    "widget.conversation_card.status.hint": "sestado: %s ,para:",
+    "widget.conversation_card.subject.hint": "Asignaturas",
+    "widget.conversation_card.body.hint": "Cuerpo: %s",
 
     "panel.guide_list.label.highlights.heading": "Guía del Campus",
 

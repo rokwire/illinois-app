@@ -1899,6 +1899,8 @@
 	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
 	"panel.settings.profile.header.profile.label": "个人资料",
 
+	"panel.settings.messages.header.messages.label": "留言",
+
 	"panel.settings.notifications.content.notifications.all.label": "所有通知",
 	"panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
@@ -3175,6 +3177,32 @@
 	"widget.inbox_message_card.status.hint": "狀態：%s，用於：",
 	"widget.inbox_message_card.subject.hint": "主題：%s",
 	"widget.inbox_message_card.body.hint": "身體：%s",
+
+	"panel.messages.mark_all_read.label": "標記為已讀",
+	"panel.messages.label.time.any": "任何時間",
+	"panel.messages.label.time.today": "今天",
+	"panel.messages.label.time.yesterday": "昨天",
+	"panel.messages.label.time.this_week": "本星期",
+	"panel.messages.label.time.last_week": "上個星期",
+	"panel.messages.label.time.this_month": "這個月",
+	"panel.messages.label.time.last_month": "上個月",
+	"panel.messages.label.muted.show": "顯示靜音",
+	"panel.messages.label.muted.hide": "隱藏靜音",
+	"panel.messages.label.content.empty": "沒有對話",
+	"panel.messages.button.new.title": "新訊息",
+	"panel.messages.button.new.hint": "",
+	"panel.messages.mark_as_read.failed.msg": "無法將所有對話標記為已讀",
+
+	"panel.messages.new.header.title": "發送至",
+	"panel.messages.new.tab.recent.label": "最近的",
+	"panel.messages.new.tab.all.label": "所有用戶",
+
+	"widget.conversation_card.selected.hint": "已選",
+	"widget.conversation_card.unselected.hint": "未選中的",
+	"widget.conversation_card.status.muted": "靜音",
+	"widget.conversation_card.status.hint": "狀態：%s，用於：",
+	"widget.conversation_card.subject.hint": "主題：%s",
+	"widget.conversation_card.body.hint": "身體：%s",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
 

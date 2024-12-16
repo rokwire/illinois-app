@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -26,11 +29,11 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
-import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -73,35 +76,35 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
 
 class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProviderStateMixin implements NotificationsListener {
   final List<_FilterEntry> _mutedValues = [
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.hide", "Hide Muted"), value: false), // Show only not muted messages
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted conversations
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.hide", "Hide Muted"), value: false), // Show only not muted conversations
   ];
 
   final List<_FilterEntry> _times = [
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.any", "Any Time"), value: null),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.today", "Today"), value: _TimeFilter.Today),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.yesterday", "Yesterday"), value: _TimeFilter.Yesterday),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.this_week", "This week"), value: _TimeFilter.ThisWeek),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.last_week", "Last week"), value: _TimeFilter.LastWeek),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.this_month", "This month"), value: _TimeFilter.ThisMonth),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.last_month", "Last Month"), value: _TimeFilter.LastMonth),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.any", "Any Time"), value: null),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.today", "Today"), value: _TimeFilter.Today),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.yesterday", "Yesterday"), value: _TimeFilter.Yesterday),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.this_week", "This week"), value: _TimeFilter.ThisWeek),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.last_week", "Last week"), value: _TimeFilter.LastWeek),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.this_month", "This month"), value: _TimeFilter.ThisMonth),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.last_month", "Last Month"), value: _TimeFilter.LastMonth),
   ];
 
-  final int _messagesPageSize = 8;
+  final int _conversationsPageSize = 20;
 
-  String? _selectedCategory;
+  // String? _selectedCategory;
   _TimeFilter? _selectedTime;
   bool? _selectedMutedValue;
   _FilterType? _selectedFilter;
-  bool? _hasMoreMessages;
+  bool? _hasMoreConversations;
 
   bool? _loading, _loadingMore, _processingOption;
-  List<InboxMessage> _messages = <InboxMessage>[];
-  List<dynamic>? _contentList;
+  List<Conversation> _conversations = <Conversation>[];
+  // List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
 
   bool _isEditMode = false;
-  Set<String> _selectedMessageIds = Set<String>();
+  Set<String> _selectedConversationIds = Set<String>();
 
   bool _loadingMarkAllAsRead = false;
 
@@ -109,13 +112,12 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Inbox.notifyInboxUserInfoChanged,
-      Inbox.notifyInboxMessageRead
+
     ]);
 
     _scrollController.addListener(_scrollListener);
     _selectedMutedValue = false;
-    // _loadInitialContent();
+    _loadInitialContent();
   }
 
   @override
@@ -127,15 +129,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if(name == Inbox.notifyInboxUserInfoChanged){
-      if(mounted){
-        setState(() {
-          //refresh
-        });
-      }
-    } else if (name == Inbox.notifyInboxMessageRead) {
-      // _refreshContent();
-    }
+
   }
 
   @override
@@ -168,30 +162,33 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   Widget _buildPage(BuildContext context) {
-    return Container(
-      color: Styles().colors.background,
-      child: Stack(children: [
-        Visibility(visible: (_loading != true), child:
-          Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())
-        ),
-        Visibility(visible: (_loading == true), child:
-          Align(alignment: Alignment.center, child:
-            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-          )
-        ),
-        Visibility(visible: (_selectedFilter != null), child:
-          Stack(children:<Widget>[
-            _buildDisabledContentLayer(),
-            _buildFilterValues(),
-          ]),
-        ),
-      ]),
+    return RefreshIndicator(
+      onRefresh: _onPullToRefresh,
+      child: Container(
+        color: Styles().colors.background,
+        child: Stack(children: [
+          Visibility(visible: (_loading != true), child:
+            Padding(padding: EdgeInsets.only(top: 12), child: _buildConversationsContent())
+          ),
+          Visibility(visible: (_loading == true), child:
+            Align(alignment: Alignment.center, child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+            )
+          ),
+          Visibility(visible: (_selectedFilter != null), child:
+            Stack(children:<Widget>[
+              _buildDisabledContentLayer(),
+              _buildFilterValues(),
+            ]),
+          ),
+        ]),
+      ),
     );
   }
 
-  Widget _buildMessagesContent() {
-    if ((_contentList != null) && (0 < _contentList!.length)) {
-      int count = _contentList!.length + ((_loadingMore == true) ? 1 : 0);
+  Widget _buildConversationsContent() {
+    if (_conversations.isNotEmpty) {
+      int count = _conversations.length + ((_loadingMore == true) ? 1 : 0);
       return ListView.separated(
           separatorBuilder: (context, index) => Container(height: 16),
           itemCount: count,
@@ -201,77 +198,93 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.messaages.label.content.empty', 'No messages'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.regular.thin')),
+        Text(Localization().getStringEx('panel.messages.label.content.empty', 'No conversations'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.regular.thin')),
         Expanded(child: Container(), flex: 2),
         //TODO: remove this button later
         RibbonButton(
           backgroundColor: Styles().colors.fillColorPrimary,
           label: "Go To Conversations Panel",
           textColor: Styles().colors.surface,
-          onTap: _onTapConversation,
+          onTap: () => _onTapConversation(Conversation()),
         )
       ]);
     }
   }
 
   Widget _buildListEntry(BuildContext context, int index) {
-    dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
-    if (entry is InboxMessage) {
-      return InboxMessageCard(
-          message: entry,
-          selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
-          onTap: () => _onTapMessage(entry));
+    if ((0 <= index) && (index < _conversations.length)) {
+      Conversation entry = _conversations[index];
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ConversationCard(
+          conversation: entry,
+          selected: (_isEditMode == true) ? _selectedConversationIds.contains(entry.id) : null,
+          onTap: () => _onTapConversation(entry),
+        ),
+      );
     }
-    else if (entry is String) {
-      Widget heading = _buildListHeading(text: entry);
-      return index > 0 ? Padding(padding: const EdgeInsets.only(top: 8), child: heading) : heading;
-    }
-    else {
-      return _buildListLoadingIndicator();
-    }
+    return Container();
+
+    // dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
+    // if (entry is Conversation) {
+    //   return Padding(
+    //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    //     child: ConversationCard(
+    //         conversation: entry,
+    //         selected: (_isEditMode == true) ? _selectedConversationIds.contains(entry.id) : null,
+    //         onTap: () => _onTapConversation(entry)),
+    //   );
+    // }
+    // else if (entry is String) {
+    //   Widget heading = _buildListHeading(text: entry);
+    //   return index > 0 ? Padding(padding: const EdgeInsets.only(top: 8), child: heading) : heading;
+    // }
+    // else {
+    //   return _buildListLoadingIndicator();
+    // }
   }
 
-  Widget _buildListHeading({String? text}) {
-    return Container(color: Styles().colors.fillColorSecondary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-    Semantics(header: true, child:
-    Text(text ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),)
-    )
-    );
-  }
+  // Widget _buildListHeading({String? text}) {
+  //   return Container(color: Styles().colors.fillColorSecondary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+  //     Semantics(header: true, child:
+  //       Text(text ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),)
+  //     )
+  //   );
+  // }
 
-  Widget _buildListLoadingIndicator() {
-    return Container(padding: EdgeInsets.all(6), child:
-    Align(alignment: Alignment.center, child:
-    SizedBox(width: 24, height: 24, child:
-    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
-  }
+  // Widget _buildListLoadingIndicator() {
+  //   return Container(padding: EdgeInsets.all(6), child:
+  //   Align(alignment: Alignment.center, child:
+  //   SizedBox(width: 24, height: 24, child:
+  //   CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
+  // }
 
-  void _onTapMessage(InboxMessage message) {
+  void _onTapConversation(Conversation conversation) {
     if (_isEditMode == true) {
-      _handleSelectionTap(message);
+      _handleSelectionTap(conversation);
     } else {
-      _handleRedirectTap(message);
+      _handleRedirectTap(conversation);
     }
   }
 
-  void _handleSelectionTap(InboxMessage message) {
-    Analytics().logSelect(target: message.subject);
+  void _handleSelectionTap(Conversation conversation) {
+    Analytics().logSelect(target: conversation.id);
     setState(() {
-      if (message.messageId != null) {
-        if (_selectedMessageIds.contains(message.messageId)) {
-          _selectedMessageIds.remove(message.messageId);
+      if (conversation.id != null) {
+        if (_selectedConversationIds.contains(conversation.id)) {
+          _selectedConversationIds.remove(conversation.id);
           AppSemantics.announceMessage(context, "Deselected");
         } else {
-          _selectedMessageIds.add(message.messageId!);
+          _selectedConversationIds.add(conversation.id!);
           AppSemantics.announceMessage(context, "Selected");
         }
       }
     });
   }
 
-  void _handleRedirectTap(InboxMessage message) {
-    Analytics().logSelect(target: message.subject);
-    // MessagesHomePanel.launchMessageDetail(message);
+  void _handleRedirectTap(Conversation conversation) {
+    Analytics().logSelect(target: conversation.id);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel()));
   }
 
   // Banner
@@ -322,7 +335,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   Widget _buildReadAllButton() {
     return Semantics(container: true, child: Container(
         child: UnderlinedButton(
-            title: Localization().getStringEx("panel.inbox.mark_all_read.label", "Mark all as read"),
+            title: Localization().getStringEx("panel.messages.mark_all_read.label", "Mark all as read"),
             // titleStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),
             padding: EdgeInsets.symmetric(vertical: 8),
             progress: _loadingMarkAllAsRead,
@@ -367,11 +380,11 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   Widget _buildDisabledContentLayer() {
     return Padding(padding: EdgeInsets.only(top: 12), child:
-    BlockSemantics(child:
-    GestureDetector(onTap: (){ _onFilter(null); }, child:
-    Container(color: Color(0x99000000))
-    ),
-    ),
+      BlockSemantics(child:
+        GestureDetector(onTap: (){ _onFilter(null); }, child:
+          Container(color: Color(0x99000000))
+        ),
+      ),
     );
   }
 
@@ -412,17 +425,17 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   List<String> _buildTimeDates() {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
-    Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
+    Map<_TimeFilter, _DateTimeInterval> intervals = _getTimeFilterIntervals();
 
     List<String> timeDates = <String>[];
     for (_FilterEntry timeEntry in _times) {
       String? timeDate;
-      _DateInterval? interval = intervals[timeEntry.value];
+      _DateTimeInterval? interval = intervals[timeEntry.value];
       if (interval != null) {
-        DateTime startDate = interval.startDate!;
-        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: 'MM/dd', ignoreTimeZone: true);
+        DateTime startDate = interval.fromTime!;
+        String? startStr = AppDateTime().formatDateTime(interval.fromTime, format: 'MM/dd', ignoreTimeZone: true);
 
-        DateTime endDate = interval.endDate ?? today;
+        DateTime endDate = interval.toTime ?? today;
         if (1 < endDate.difference(startDate).inDays) {
           String? endStr = AppDateTime().formatDateTime(endDate, format: 'MM/dd', ignoreTimeZone: true);
           timeDate = "$startStr - $endStr";
@@ -437,15 +450,15 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     return timeDates;
   }
 
-  static Map<_TimeFilter, _DateInterval> _getTimeFilterIntervals() {
+  static Map<_TimeFilter, _DateTimeInterval> _getTimeFilterIntervals() {
     DateTime now = DateTime.now();
     return {
-      _TimeFilter.Today:     _DateInterval(startDate: DateTime(now.year, now.month, now.day)),
-      _TimeFilter.Yesterday: _DateInterval(startDate: DateTime(now.year, now.month, now.day - 1), endDate: DateTime(now.year, now.month, now.day)),
-      _TimeFilter.ThisWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
-      _TimeFilter.LastWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1 - 7), endDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
-      _TimeFilter.ThisMonth: _DateInterval(startDate: DateTime(now.year, now.month, 1)),
-      _TimeFilter.LastMonth: _DateInterval(startDate: DateTime(now.year, now.month - 1, 1), endDate: DateTime(now.year, now.month, 0)),
+      _TimeFilter.Today:     _DateTimeInterval(fromTime: DateTime(now.year, now.month, now.day)),
+      _TimeFilter.Yesterday: _DateTimeInterval(fromTime: DateTime(now.year, now.month, now.day - 1), toTime: DateTime(now.year, now.month, now.day)),
+      _TimeFilter.ThisWeek:  _DateTimeInterval(fromTime: DateTime(now.year, now.month, now.day - now.weekday + 1)),
+      _TimeFilter.LastWeek:  _DateTimeInterval(fromTime: DateTime(now.year, now.month, now.day - now.weekday + 1 - 7), toTime: DateTime(now.year, now.month, now.day - now.weekday + 1)),
+      _TimeFilter.ThisMonth: _DateTimeInterval(fromTime: DateTime(now.year, now.month, 1)),
+      _TimeFilter.LastMonth: _DateTimeInterval(fromTime: DateTime(now.year, now.month - 1, 1), toTime: DateTime(now.year, now.month, 0)),
     };
   }
 
@@ -460,7 +473,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       _selectedFilter = null;
     });
 
-    // _loadInitialContent();
+    _loadInitialContent();
   }
 
   // Header bar
@@ -469,7 +482,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     List<Widget> contentList = <Widget>[];
     if (_isEditMode == true) {
       contentList.addAll(<Widget>[
-        _isAllMessagesSelected ? _buildDeselectAllButton() : _buildSelectAllButton(),
+        _isAllConversationsSelected ? _buildDeselectAllButton() : _buildSelectAllButton(),
         _buildDoneButton()
       ]);
     }
@@ -477,7 +490,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       contentList.add(_buildEditButton());
     }
 
-    if ((_isEditMode == true) && _isAnyMessageSelected) {
+    if ((_isEditMode == true) && _isAnyConversationSelected) {
       contentList.insert(0, _buildOptionsButton());
     }
 
@@ -511,17 +524,16 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     return SizedBox(
       width: 168,
       child: RibbonButton(
-          textWidget: Text(Localization().getStringEx('panel.messages.new.title', 'New Message'),
+          textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
             style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
           ),
-          label: Localization().getStringEx('panel.messages.new.title', 'New Message'),
-          hint: Localization().getStringEx('panel.messages.new.hint', ''),
+          label: Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
+          hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
           backgroundColor: Styles().colors.fillColorPrimary,
           leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
           rightIconKey: null,
           borderRadius: BorderRadius.all(Radius.circular(8)),
           onTap: _onTapNewMessage,
-        // onTap: _onNewMessage,
       ),
     );
   }
@@ -548,9 +560,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   Widget _buildOptions(BuildContext context) {
-    String headingText = (_selectedMessageIds.length == 1) ?
-    '1 Message Selected' :
-    '${_selectedMessageIds.length} Messages Selected';
+    String headingText = (_selectedConversationIds.length == 1) ?
+    '1 Conversation Selected' :
+    '${_selectedConversationIds.length} Conversations Selected';
 
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -649,7 +661,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Analytics().logSelect(target: "Edit");
     setState(() {
       _isEditMode = true;
-      _selectedMessageIds.clear();
+      _selectedConversationIds.clear();
     });
   }
 
@@ -657,16 +669,16 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Analytics().logSelect(target: "Done");
     setState(() {
       _isEditMode = false;
-      _selectedMessageIds.clear();
+      _selectedConversationIds.clear();
     });
   }
 
   void _onSelectAll() {
     Analytics().logSelect(target: "Select All");
     setState(() {
-      for (InboxMessage message in _messages) {
-        if (message.messageId != null) {
-          _selectedMessageIds.add(message.messageId!);
+      for (Conversation conversation in _conversations) {
+        if (conversation.id != null) {
+          _selectedConversationIds.add(conversation.id!);
         }
       }
     });
@@ -675,7 +687,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   void _onDeselectAll() {
     Analytics().logSelect(target: "Deselect All");
     setState(() {
-      _selectedMessageIds.clear();
+      _selectedConversationIds.clear();
     });
   }
 
@@ -693,9 +705,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Analytics().logSelect(target: "Delete");
     Navigator.pop(context);
 
-    String message = (_selectedMessageIds.length == 1) ?
-    'Delete 1 message?' :
-    'Delete ${_selectedMessageIds.length} messages?';
+    String message = (_selectedConversationIds.length == 1) ?
+    'Delete 1 conversation?' :
+    'Delete ${_selectedConversationIds.length} conversations?';
     showDialog(context: context, builder: (context) => _buildConfirmationDialog(context,
         title: 'Delete',
         message: message,
@@ -707,26 +719,27 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _onDeleteConfirm(BuildContext context) {
     Navigator.pop(context);
-    setState(() {
-      _processingOption = true;
-    });
-    Inbox().deleteMessages(_selectedMessageIds).then((bool result) {
-      if (mounted) {
-        setState(() {
-          _processingOption = false;
-          if (result == true) {
-            _selectedMessageIds.clear();
-            _isEditMode = false;
-          }
-        });
-        if (result == true) {
-          // _refreshContent();
-        }
-        else {
-          AppAlert.showDialogResult(this.context, "Failed to delete message(s).");
-        }
-      }
-    });
+    //TODO: what does deleting a conversation mean?
+    // setState(() {
+    //   _processingOption = true;
+    // });
+    // Inbox().deleteMessages(_selectedConversationIds).then((bool result) {
+    //   if (mounted) {
+    //     setState(() {
+    //       _processingOption = false;
+    //       if (result == true) {
+    //         _selectedConversationIds.clear();
+    //         _isEditMode = false;
+    //       }
+    //     });
+    //     if (result == true) {
+    //       // _refreshContent();
+    //     }
+    //     else {
+    //       AppAlert.showDialogResult(this.context, "Failed to delete conversation(s).");
+    //     }
+    //   }
+    // });
   }
 
   void _onCancelConfirmation({String? message, String? selection}) {
@@ -739,36 +752,36 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel()));
   }
 
-  void _onTapConversation() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel()));
-  }
+  Future<void> _refreshContent() async{
+    setStateIfMounted(() {
+      _loading = true;
+    });
 
-  /*
-  Future<void> _refreshMessages() async{
-    int limit = max(_messages.length, _messagesPageSize);
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage>? messages = await Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    int limit = max(_conversations.length, _conversationsPageSize);
+    _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    List<Conversation>? conversations = await Social().loadConversations(muted: _selectedMutedValue, offset: 0, limit: limit, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
     if (mounted) {
       setState(() {
-        if (messages != null) {
-          _messages = messages;
-          _hasMoreMessages = (_messagesPageSize <= messages.length);
+        if (conversations != null) {
+          _conversations = conversations;
+          _hasMoreConversations = (_conversationsPageSize <= conversations.length);
         }
         else {
-          _messages.clear();
-          _hasMoreMessages = null;
+          _conversations.clear();
+          _hasMoreConversations = null;
         }
-        _contentList = _buildContentList();
+        // _contentList = _buildContentList();
+        _loading = false;
       });
     }
   }
 
   Future<void> _onPullToRefresh() async {
-    _refreshMessages();
+    _refreshContent();
   }
-  */
 
   void _onTapMarkAllAsRead() {
+    //TODO: implement once set up on Social BB
     return;
     // Analytics().logSelect(target: "Mark All As Read");
     // _setMarkAllAsReadLoading(true);
@@ -777,47 +790,46 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     //     _loadInitialContent();
     //   } else {
     //     AppAlert.showMessage(
-    //         context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
+    //         context, Localization().getStringEx('panel.messages.mark_as_read.failed.msg', 'Failed to mark all conversations as read'));
     //   }
     //   _setMarkAllAsReadLoading(false);
     // });
   }
 
-  void _setMarkAllAsReadLoading(bool loading) {
-    setStateIfMounted(() {
-      _loadingMarkAllAsRead = loading;
-    });
+  // void _setMarkAllAsReadLoading(bool loading) {
+  //   setStateIfMounted(() {
+  //     _loadingMarkAllAsRead = loading;
+  //   });
+  // }
+
+  bool get _isAllConversationsSelected {
+    return _selectedConversationIds.length == _conversations.length;
   }
 
-  bool get _isAllMessagesSelected {
-    return _selectedMessageIds.length == _messages.length;
-  }
-
-  bool get _isAnyMessageSelected {
-    return 0 < _selectedMessageIds.length;
+  bool get _isAnyConversationSelected {
+    return 0 < _selectedConversationIds.length;
   }
 
   // Content
 
-  /*
   void _loadInitialContent() {
     setState(() {
       _loading = true;
     });
 
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    Social().loadConversations(muted: _selectedMutedValue, offset: 0, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime).then((List<Conversation>? conversations) {
       if (mounted) {
         setState(() {
-          if (messages != null) {
-            _messages = messages;
-            _hasMoreMessages = (_messagesPageSize <= messages.length);
+          if (conversations != null) {
+            _conversations = conversations;
+            _hasMoreConversations = (_conversationsPageSize <= conversations.length);
           }
           else {
-            _messages.clear();
-            _hasMoreMessages = null;
+            _conversations.clear();
+            _hasMoreConversations = null;
           }
-          _contentList = _buildContentList();
+          // _contentList = _buildContentList();
           _loading = false;
         });
       }
@@ -829,14 +841,14 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       _loadingMore = true;
     });
 
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    Social().loadConversations(muted: _selectedMutedValue, offset: _conversations.length, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime).then((List<Conversation>? conversations) {
       if (mounted) {
         setState(() {
-          if (messages != null) {
-            _messages.addAll(messages);
-            _hasMoreMessages = (_messagesPageSize <= messages.length);
-            _contentList = _buildContentList();
+          if (conversations != null) {
+            _conversations.addAll(conversations);
+            _hasMoreConversations = (_conversationsPageSize <= conversations.length);
+            // _contentList = _buildContentList();
           }
           _loadingMore = false;
         });
@@ -844,83 +856,59 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     });
   }
 
-  void _refreshContent({int? messagesCount}) {
-    setStateIfMounted(() {
-      _loading = true;
-    });
+  // List<dynamic> _buildContentList() {
+  //   Map<_TimeFilter, _DateTimeInterval> intervals = _getTimeFilterIntervals();
+  //   Map<_TimeFilter, List<Conversation>> timesMap = Map<_TimeFilter, List<Conversation>>();
+  //   List<Conversation>? otherList;
+  //   for (Conversation? conversation in _conversations) {
+  //     _TimeFilter? timeFilter = _filterTypeFromDate(conversation!.dateCreatedUtc?.toLocal(), intervals: intervals);
+  //     if (timeFilter != null) {
+  //       List<Conversation>? timeList = timesMap[timeFilter];
+  //       if (timeList == null) {
+  //         timesMap[timeFilter] = timeList = <Conversation>[];
+  //       }
+  //       timeList.add(conversation);
+  //     }
+  //     else {
+  //       if (otherList == null) {
+  //         otherList = <Conversation>[];
+  //       }
+  //       otherList.add(conversation);
+  //     }
+  //   }
+  //
+  //   List<dynamic> contentList = <dynamic>[];
+  //   for (_FilterEntry timeEntry in _times) {
+  //     _TimeFilter? timeFilter = timeEntry.value;
+  //     List<Conversation>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
+  //     if (timeList != null) {
+  //       contentList.add(timeEntry.name!.toUpperCase());
+  //       contentList.addAll(timeList);
+  //     }
+  //   }
+  //
+  //   if (otherList != null) {
+  //     contentList.add(_FilterEntry.entryInList(_times, null)?.name?.toUpperCase() ?? '');
+  //     contentList.addAll(otherList);
+  //   }
+  //
+  //   return contentList;
+  // }
 
-    int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
-      setStateIfMounted(() {
-        if (messages != null) {
-            _messages = messages;
-            _hasMoreMessages = (_messagesPageSize <= messages.length);
-          }
-          else {
-            _messages.clear();
-            _hasMoreMessages = null;
-          }
-          _contentList = _buildContentList();
-          _loading = false;
-      });
-    });
-  }
-  */
-
-  List<dynamic> _buildContentList() {
-    Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
-    Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
-    List<InboxMessage>? otherList;
-    for (InboxMessage? message in _messages) {
-      _TimeFilter? timeFilter = _filterTypeFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
-      if (timeFilter != null) {
-        List<InboxMessage>? timeList = timesMap[timeFilter];
-        if (timeList == null) {
-          timesMap[timeFilter] = timeList = <InboxMessage>[];
-        }
-        timeList.add(message);
-      }
-      else {
-        if (otherList == null) {
-          otherList = <InboxMessage>[];
-        }
-        otherList.add(message);
-      }
-    }
-
-    List<dynamic> contentList = <dynamic>[];
-    for (_FilterEntry timeEntry in _times) {
-      _TimeFilter? timeFilter = timeEntry.value;
-      List<InboxMessage>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
-      if (timeList != null) {
-        contentList.add(timeEntry.name!.toUpperCase());
-        contentList.addAll(timeList);
-      }
-    }
-
-    if (otherList != null) {
-      contentList.add(_FilterEntry.entryInList(_times, null)?.name?.toUpperCase() ?? '');
-      contentList.addAll(otherList);
-    }
-
-    return contentList;
-  }
-
-  _TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<_TimeFilter, _DateInterval>? intervals }) {
-    for (_FilterEntry timeEntry in _times) {
-      _TimeFilter? timeFilter = timeEntry.value;
-      _DateInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
-      if ((timeInterval != null) && (timeInterval.contains(dateTime))) {
-        return timeFilter;
-      }
-    }
-    return null;
-  }
+  // _TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<_TimeFilter, _DateTimeInterval>? intervals }) {
+  //   for (_FilterEntry timeEntry in _times) {
+  //     _TimeFilter? timeFilter = timeEntry.value;
+  //     _DateTimeInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
+  //     if ((timeInterval != null) && (timeInterval.contains(dateTime))) {
+  //       return timeFilter;
+  //     }
+  //   }
+  //   return null;
+  // }
 
   void _scrollListener() {
-    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
-      // _loadMoreContent();
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreConversations != false) && (_loadingMore != true) && (_loading != true)) {
+      _loadMoreContent();
     }
   }
 
@@ -966,20 +954,20 @@ class _FilterEntry {
   }
 }
 
-class _DateInterval {
-  final DateTime? startDate;
-  final DateTime? endDate;
+class _DateTimeInterval {
+  final DateTime? fromTime;
+  final DateTime? toTime;
 
-  _DateInterval({this.startDate, this.endDate});
+  _DateTimeInterval({this.fromTime, this.toTime});
 
   bool contains(DateTime? dateTime) {
     if (dateTime == null) {
       return false;
     }
-    else if ((startDate != null) && startDate!.isAfter(dateTime)) {
+    else if ((fromTime != null) && fromTime!.isAfter(dateTime)) {
       return false;
     }
-    else if ((endDate != null) && endDate!.isBefore(dateTime)) {
+    else if ((toTime != null) && toTime!.isBefore(dateTime)) {
       return false;
     }
     else {
@@ -996,20 +984,20 @@ enum _FilterType {
   Muted, Time
 }
 
-class InboxMessageCard extends StatefulWidget {
-  final InboxMessage? message;
+class ConversationCard extends StatefulWidget {
+  final Conversation? conversation;
   final bool? selected;
   final void Function()? onTap;
 
-  InboxMessageCard({this.message, this.selected, this.onTap });
+  ConversationCard({this.conversation, this.selected, this.onTap });
 
   @override
-  _InboxMessageCardState createState() {
-    return _InboxMessageCardState();
+  _ConversationCardState createState() {
+    return _ConversationCardState();
   }
 }
 
-class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
+class _ConversationCardState extends State<ConversationCard> implements NotificationsListener {
 
   @override
   void initState() {
@@ -1037,13 +1025,9 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
-    String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
+    // String mutedStatus = Localization().getStringEx('widget.conversation_card.status.muted', 'Muted');
     return Container(
-        decoration: BoxDecoration(
-            color: Styles().colors.surface,
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors.background.withAlpha(48), spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
-        ),
+        color: Styles().colors.surface,
         clipBehavior: Clip.none,
         child: Stack(children: [
           InkWell(onTap: widget.onTap, child:
@@ -1051,7 +1035,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
               Row(children: <Widget>[
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
-                    Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected') : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected'), child:
+                    Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.conversation_card.selected.hint', 'Selected') : Localization().getStringEx('widget.conversation_card.unselected.hint', 'Not Selected'), child:
                       Styles().images.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
                     )
                   ),
@@ -1059,38 +1043,56 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
 
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-
-                    StringUtils.isNotEmpty(widget.message?.subject) ?
-                    Padding(padding: EdgeInsets.only(bottom: 4), child:
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Expanded(child:
-                        Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"))
-                      ),
-                      (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
-                      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
-                      Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))
-                      )) : Container()
-                    ])
-                    ) : Container(),
-
-                    StringUtils.isNotEmpty(widget.message?.body) ?
-                    Padding(padding: EdgeInsets.only(bottom: 6), child:
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 8),
+                          child: Styles().images.getImage((widget.conversation?.isGroupConversation ?? false) ? 'messages-group-dark-blue' : 'person-circle-dark-blue') ?? Container(),
+                        ),
+                        Expanded(
+                          child: Text(StringUtils.ensureNotEmpty(widget.conversation?.membersString),
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,  //TODO: allow multiple lines?
+                              style: Styles().textStyles.getTextStyle('widget.card.title.small')
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: _buildDisplayDateWidget,
+                        ),
+                      ],
+                    ),
+                    Container(height: 16.0),
+                    StringUtils.isNotEmpty(widget.conversation?.info?.lastMessage?.message) ?
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
-                      )])) : Container(),
+                        Text(widget.conversation?.info?.lastMessage?.message ?? '',
+                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.info?.lastMessage?.message ?? '']),
+                          style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
+                        )
+                      )]) : Container(),
 
                     // Row(children: [
                     //   Expanded(child:
-                    //     Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular"))
+                    //     Text(widget.conversation?.displayInfo ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular"))
                     //   )]),
                   ])
                 ),
               ],)
             ),
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4),
         ],)
     );
+  }
+
+  Widget get _buildDisplayDateWidget {
+    String displayDateTime = StringUtils.ensureNotEmpty(widget.conversation?.displayDateTime);
+    bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
+    return Semantics(child: Text(noSuffix ? displayDateTime : "$displayDateTime ago",
+        semanticsLabel: "Updated ${widget.conversation?.displayDateTime ?? ""} ago",
+        textAlign: TextAlign.right,
+        style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')));
   }
 }
