@@ -777,61 +777,63 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     void _onSaveEdit() async {
       Analytics().logSelect(target: 'Save Edit');
 
-      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        public: _directoryVisibility,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
-            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
-      );
+      if (_saving == false) {
+        Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+        Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+          public: _directoryVisibility,
+          fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+              profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+          )
+        );
 
-      List<Future> futures = [];
+        List<Future> futures = [];
 
-      int? profileIndex = (widget.profile != profile) ? futures.length : null;
-      if (profileIndex != null) {
-        futures.add(Auth2().saveUserProfile(profile));
-      }
+        int? profileIndex = (widget.profile != profile) ? futures.length : null;
+        if (profileIndex != null) {
+          futures.add(Auth2().saveUserProfile(profile));
+        }
 
-      int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
-      if (privacyIndex != null) {
-        futures.add(Auth2().saveUserPrivacy(privacy));
-      }
+        int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
+        if (privacyIndex != null) {
+          futures.add(Auth2().saveUserPrivacy(privacy));
+        }
 
-      if (0 < futures.length) {
-        setState(() {
-          _saving = true;
-        });
-
-        List<dynamic> results = await Future.wait(futures);
-
-        if (mounted) {
-          bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
-          bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
-
+        if (0 < futures.length) {
           setState(() {
-            _saving = false;
+            _saving = true;
           });
 
-          if ((profileResult ?? true) && (privacyResult ?? true)) {
-            widget.onFinishEdit?.call(
-              profile: (profileResult == true) ? profile : null,
-              privacy: (privacyResult == true) ? privacy : null,
-              pronunciationAudioData: _pronunciationAudioData,
-              photoImageData: _photoImageData,
-              photoImageToken: _photoImageToken,
-            );
-          }
-          else {
-            AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.save.failed.text', 'Failed to update profile and privacy settings.'));
+          List<dynamic> results = await Future.wait(futures);
+
+          if (mounted) {
+            bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
+            bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+
+            setState(() {
+              _saving = false;
+            });
+
+            if ((profileResult ?? true) && (privacyResult ?? true)) {
+              widget.onFinishEdit?.call(
+                profile: (profileResult == true) ? profile : null,
+                privacy: (privacyResult == true) ? privacy : null,
+                pronunciationAudioData: _pronunciationAudioData,
+                photoImageData: _photoImageData,
+                photoImageToken: _photoImageToken,
+              );
+            }
+            else {
+              AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.save.failed.text', 'Failed to update profile and privacy settings.'));
+            }
           }
         }
-      }
-      else {
-        widget.onFinishEdit?.call(
-          pronunciationAudioData: _pronunciationAudioData,
-          photoImageData: _photoImageData,
-          photoImageToken: _photoImageToken,
-        );
+        else {
+          widget.onFinishEdit?.call(
+            pronunciationAudioData: _pronunciationAudioData,
+            photoImageData: _photoImageData,
+            photoImageToken: _photoImageToken,
+          );
+        }
       }
     }
 
