@@ -733,6 +733,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     void _onCancelEdit() async {
       Analytics().logSelect(target: 'Cancel Edit');
+      FocusScope.of(context).unfocus();
 
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
@@ -745,19 +746,22 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       String? prompt;
       if (widget.profile != profile) {
         prompt = (widget.privacy != privacy) ?
-          Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.profile_and_privacy.prompt.text', 'Lose your profile and privacy settings updates?') :
-          Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.profile.prompt.text', 'Lose your profile settings updates?');
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.save.profile_and_privacy.prompt.text', 'Save your profile and privacy settings changes?') :
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.save.profile.prompt.text', 'Save your profile settings changes?');
       }
       else if (widget.privacy != privacy) {
-        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.privacy.prompt.text', 'Lose your privacy settings updates?');
+        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
       }
 
-      bool canFinish = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
+      bool shouldSave = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
         message: prompt,
         positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
         negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No')
-      ) : true;
-      if (canFinish) {
+      ) : false;
+      if (shouldSave) {
+        _onSaveEdit();
+      }
+      else {
         widget.onFinishEdit?.call(
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
@@ -776,6 +780,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     void _onSaveEdit() async {
       Analytics().logSelect(target: 'Save Edit');
+      FocusScope.of(context).unfocus();
 
       if (_saving == false) {
         Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
