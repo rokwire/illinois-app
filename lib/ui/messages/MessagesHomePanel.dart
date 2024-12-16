@@ -1065,19 +1065,14 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                       ],
                     ),
                     Container(height: 16.0),
-                    StringUtils.isNotEmpty(widget.conversation?.info?.lastMessage?.message) ?
+                    StringUtils.isNotEmpty(widget.conversation?.lastMessage) ?
                     Row(children: [
                       Expanded(child:
-                        Text(widget.conversation?.info?.lastMessage?.message ?? '',
-                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.info?.lastMessage?.message ?? '']),
+                        Text(widget.conversation?.lastMessage ?? '',
+                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
                           style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
                         )
                       )]) : Container(),
-
-                    // Row(children: [
-                    //   Expanded(child:
-                    //     Text(widget.conversation?.displayInfo ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular"))
-                    //   )]),
                   ])
                 ),
               ],)
