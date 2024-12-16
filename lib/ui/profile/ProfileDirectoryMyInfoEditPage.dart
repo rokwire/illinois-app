@@ -26,12 +26,12 @@ class ProfileDirectoryMyInfoEditPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
-  final Uint8List? pronunciationData;
+  final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
-  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
+  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
-  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.pronunciationData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
+  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.pronunciationAudioData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoEditPageState();
@@ -41,7 +41,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
   late bool _directoryVisibility;
   late Auth2UserProfileFieldsVisibility _profileVisibility;
-  late Uint8List? _pronunciationData;
+  late Uint8List? _pronunciationAudioData;
   late Uint8List? _photoImageData;
   late String? _photoImageToken;
 
@@ -67,7 +67,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     _directoryVisibility = (widget.privacy?.public == true);
 
-    _pronunciationData = widget.pronunciationData;
+    _pronunciationAudioData = widget.pronunciationAudioData;
     _photoImageData = widget.photoImageData;
     _photoImageToken = widget.photoImageToken;
 
@@ -158,7 +158,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     // Edit: Photo
 
     String? get _photoImageUrl => StringUtils.isNotEmpty(_photoText) ?
-      Content().getUserPhotoUrl(type: UserProfileImageType.defaultType, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)) : null;
+      Content().getUserPhotoUrl(type: UserProfileImageType.medium, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)) : null;
 
     double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
@@ -219,7 +219,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         if (mounted && (imageUploadResult is ImagesResult)) {
           if (imageUploadResult.resultType == ImagesResultType.succeeded) {
             setState(() {
-              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId) ?? '';
+              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
               _photoImageToken = DirectoryProfilePhotoUtils.newToken;
               _photoImageData = imageUploadResult.imageData;
             });
@@ -413,7 +413,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
         if (result?.resultType == AudioResultType.succeeded) {
           setState(() {
             _pronunciationText = Content().getUserNamePronunciationUrl(accountId: Auth2().accountId);
-            _pronunciationData = result?.audioData;
+            _pronunciationAudioData = result?.audioData;
           });
         }
       });
@@ -433,7 +433,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
                 setState(() {
                   _clearingUserPronunciation = false;
                   _pronunciationText = null;
-                  _pronunciationData = null;
+                  _pronunciationAudioData = null;
                 });
               }
               else {
@@ -455,7 +455,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             _initializingAudioPlayer = true;
           });
 
-          Uint8List? audioData = _pronunciationData;
+          Uint8List? audioData = _pronunciationAudioData;
           if (audioData == null) {
             AudioResult? result = await Content().loadUserNamePronunciation();
             audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
@@ -733,6 +733,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     void _onCancelEdit() async {
       Analytics().logSelect(target: 'Cancel Edit');
+      FocusScope.of(context).unfocus();
 
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
@@ -745,23 +746,26 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       String? prompt;
       if (widget.profile != profile) {
         prompt = (widget.privacy != privacy) ?
-          Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.profile_and_privacy.prompt.text', 'Lose your profile and privacy settings updates?') :
-          Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.profile.prompt.text', 'Lose your profile settings updates?');
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.save.profile_and_privacy.prompt.text', 'Save your profile and privacy settings changes?') :
+          Localization().getStringEx('panel.profile.directory.my_info.cancel.save.profile.prompt.text', 'Save your profile settings changes?');
       }
       else if (widget.privacy != privacy) {
-        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.lose.privacy.prompt.text', 'Lose your privacy settings updates?');
+        prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
       }
 
-      bool canFinish = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
+      bool shouldSave = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
         message: prompt,
         positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
         negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No')
-      ) : true;
-      if (canFinish) {
+      ) : false;
+      if (shouldSave) {
+        _onSaveEdit();
+      }
+      else {
         widget.onFinishEdit?.call(
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
-          pronunciationData: _pronunciationData,
+          pronunciationAudioData: _pronunciationAudioData,
         );
       }
     }
@@ -776,62 +780,65 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     void _onSaveEdit() async {
       Analytics().logSelect(target: 'Save Edit');
+      FocusScope.of(context).unfocus();
 
-      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        public: _directoryVisibility,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
-            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
-      );
+      if (_saving == false) {
+        Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+        Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+          public: _directoryVisibility,
+          fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+              profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+          )
+        );
 
-      List<Future> futures = [];
+        List<Future> futures = [];
 
-      int? profileIndex = (widget.profile != profile) ? futures.length : null;
-      if (profileIndex != null) {
-        futures.add(Auth2().saveUserProfile(profile));
-      }
+        int? profileIndex = (widget.profile != profile) ? futures.length : null;
+        if (profileIndex != null) {
+          futures.add(Auth2().saveUserProfile(profile));
+        }
 
-      int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
-      if (privacyIndex != null) {
-        futures.add(Auth2().saveUserPrivacy(privacy));
-      }
+        int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
+        if (privacyIndex != null) {
+          futures.add(Auth2().saveUserPrivacy(privacy));
+        }
 
-      if (0 < futures.length) {
-        setState(() {
-          _saving = true;
-        });
-
-        List<dynamic> results = await Future.wait(futures);
-
-        if (mounted) {
-          bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
-          bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
-
+        if (0 < futures.length) {
           setState(() {
-            _saving = false;
+            _saving = true;
           });
 
-          if ((profileResult ?? true) && (privacyResult ?? true)) {
-            widget.onFinishEdit?.call(
-              profile: (profileResult == true) ? profile : null,
-              privacy: (privacyResult == true) ? privacy : null,
-              photoImageData: _photoImageData,
-              photoImageToken: _photoImageToken,
-              pronunciationData: _pronunciationData,
-            );
-          }
-          else {
-            AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.save.failed.text', 'Failed to update profile and privacy settings.'));
+          List<dynamic> results = await Future.wait(futures);
+
+          if (mounted) {
+            bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
+            bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+
+            setState(() {
+              _saving = false;
+            });
+
+            if ((profileResult ?? true) && (privacyResult ?? true)) {
+              widget.onFinishEdit?.call(
+                profile: (profileResult == true) ? profile : null,
+                privacy: (privacyResult == true) ? privacy : null,
+                pronunciationAudioData: _pronunciationAudioData,
+                photoImageData: _photoImageData,
+                photoImageToken: _photoImageToken,
+              );
+            }
+            else {
+              AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.save.failed.text', 'Failed to update profile and privacy settings.'));
+            }
           }
         }
-      }
-      else {
-        widget.onFinishEdit?.call(
-          photoImageData: _photoImageData,
-          photoImageToken: _photoImageToken,
-          pronunciationData: _pronunciationData,
-        );
+        else {
+          widget.onFinishEdit?.call(
+            pronunciationAudioData: _pronunciationAudioData,
+            photoImageData: _photoImageData,
+            photoImageToken: _photoImageToken,
+          );
+        }
       }
     }
 
