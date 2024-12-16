@@ -47,7 +47,9 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Future<void> initService() async {
-    _loadAllMessages();
+    if (Auth2().isLoggedIn) {
+      _loadAllMessages();
+    }
     _initFaqs();
   }
 
@@ -59,7 +61,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Content()]);
+    return Set.from([Auth2(), Content()]);
   }
 
   // NotificationsListener
@@ -69,7 +71,11 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      _loadAllMessages();
+      if (Auth2().isLoggedIn) {
+        _loadAllMessages();
+      } else {
+        _clearAllMessages();
+      }
     }
   }
 
@@ -117,6 +123,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
             content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
                 'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
             user: false));
+  }
+
+  void _clearAllMessages() {
+    for (AssistantProvider provider in AssistantProvider.values) {
+      if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
+        _displayMessages[provider]!.clear();
+      }
+    }
   }
 
   void addMessage({required AssistantProvider provider, required Message message}) {
