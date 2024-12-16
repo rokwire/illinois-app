@@ -5,9 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Cleaned up Image & Audio Result data dispatch [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- New Azure Assistant provider [#4519](https://github.com/rokwire/illinois-app/issues/4519).
+
+## [6.1.26] - 2024-12-13
 ### Changed
 - Control wallet items visibility from app config settings [#4509](https://github.com/rokwire/illinois-app/issues/4509).
-
+- Sync photo / pronunciation URLs to user profile [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Directory texts fixes/cleanup [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Fixed
+- Fixed "view-dark" image resource.
+ 
 ## [6.1.25] - 2024-12-09
 ### Added
 - Added Directory section in Browse [#4402](https://github.com/rokwire/illinois-app/issues/4402).

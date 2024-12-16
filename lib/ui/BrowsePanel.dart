@@ -391,16 +391,14 @@ class _BrowseSection extends StatelessWidget {
   String get _title => title(sectionId: sectionId);
   String get _description => description(sectionId: sectionId);
 
-  static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
-  static String get _appTitleMacro => '{{app_title}}';
+  static String title({required String sectionId}) =>
+    AppTextUtils.appBrandString('panel.browse.section.$sectionId.title', defaultTitle(sectionId: sectionId));
 
-  static String title({required String sectionId}) {
-    return Localization().getString('panel.browse.section.$sectionId.title')?.replaceAll(_appTitleMacro, appTitle) ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
-  }
+  static String defaultTitle({required String sectionId}) =>
+    StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
-  static String description({required String sectionId}) {
-    return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll(_appTitleMacro, appTitle) ?? '';
-  }
+  static String description({required String sectionId}) =>
+      AppTextUtils.appBrandString('panel.browse.section.$sectionId.description', '');
 
   void _onTapExpand() {
     if (_hasBrowseContent && (onExpand != null)) {
