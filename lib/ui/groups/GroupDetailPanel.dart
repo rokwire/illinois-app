@@ -48,6 +48,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -366,10 +367,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onGroupPostUpdated(Post? post) {
-      if (post?.isPost == true) {
-        // _refreshCurrentPosts();
-      }
-      else if (post?.isMessage == true) {
+      // if (post?.isPost == true) {
+      //   // _refreshCurrentPosts();
+      // }
+      // else
+        if (post?.isMessage == true) {
         _refreshCurrentMessages();
       }
       //For both post and messages
@@ -642,7 +644,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
       )
     ] : null;
-    
+
     return Scaffold(
       appBar: HeaderBar(
         title: barTitle,
@@ -768,29 +770,39 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _buildImageHeader(),
       _buildGroupInfo()
     ];
-    if (_isMemberOrAdmin) {
+    // if (_isMemberOrAdmin) {
+    //   content.add(_buildTabs());
+    //   if (_currentTab == _DetailTab.About) {
+    //     content.add(_buildAbout());
+    //     content.add(_buildPrivacyDescription());
+    //     content.add(_buildAdmins());
+    //   } else if (_currentTab == _DetailTab.Events) {
+    //    content.add(_GroupDetailEventsContent(
+    //        group: _group, updateController: _updateController));
+    //   } else if (_currentTab == _DetailTab.Posts) {
+    //    content.add(_GroupDetailPostsContent(group: _group, updateController: _updateController,));
+    //   } else {
+    //       content.add(_buildScheduledPosts());
+    //       content.add(_buildMessages());
+    //       content.add(_buildPolls());
+    //   }
+    // }
+    // else {
+    //   content.add(_buildAbout());
+    //   content.add(_buildPrivacyDescription());
+    //   content.add(_buildAdmins());
+    //   if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD
+    //     content.add(_GroupDetailEventsContent(group: _group, updateController: _updateController));
+    //   }
+    //   content.add(_buildResearchProjectMembershipRequest());
+    // }
+    if(_isMemberOrAdmin) {
       content.add(_buildTabs());
-      if (_currentTab == _DetailTab.About) {
-        content.add(_buildAbout());
-        content.add(_buildPrivacyDescription());
-        content.add(_buildAdmins());
-      } else if (_currentTab == _DetailTab.Events) {
-       content.add(_GroupDetailEventsContent(
-           group: _group, updateController: _updateController));
-      } else if (_currentTab == _DetailTab.Posts) {
-       content.add(_GroupDetailPostsContent(group: _group, updateController: _updateController,));
-      } else {
-          content.add(_buildScheduledPosts());
-          content.add(_buildMessages());
-          content.add(_buildPolls());
-      }
-    }
-    else {
-      content.add(_buildAbout());
-      content.add(_buildPrivacyDescription());
-      content.add(_buildAdmins());
+      content.add(_buildTabBarContent());
+    } else {
+      content.addAll(_buildDefaultContent());
       if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD
-        content.add(_GroupDetailEventsContent(group: _group, updateController: _updateController));
+          content.add(_GroupDetailEventsContent(group: _group, updateController: _updateController));
       }
       content.add(_buildResearchProjectMembershipRequest());
     }
@@ -804,6 +816,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _buildMembershipRequest(),
       _buildCancelMembershipRequest(),
     ],);
+  }
+
+  List<Widget> _buildDefaultContent(){
+    List<Widget> content = [];
+    content.add(_buildAbout());
+    content.add(_buildPrivacyDescription());
+    content.add(_buildAdmins());
+
+    return content;
   }
 
   Widget _buildImageHeader(){
@@ -1071,6 +1092,54 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
       // Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))  //Moved to options TBD remove
     ]));
+  }
+
+  Widget _buildTabBarContent(){
+    List<Widget> children = [];
+    if(CollectionUtils.isNotEmpty(GroupDetailPanel.visibleTabs)){
+      for (_DetailTab tab in GroupDetailPanel.visibleTabs){
+        children.add(_buildPageFromType(tab));
+      }
+    }
+
+      return IndexedStack(
+        index: GroupDetailPanel.visibleTabs.indexOf(_currentTab),
+        children: children
+      );
+              // TabBarView(controller: _tabController,
+              //   physics: NeverScrollableScrollPhysics(),
+              //   children: [
+              //     ListView(shrinkWrap: true, children: [_GroupDetailEventsContent(group: _group, updateController: _updateController)],),
+              //     ListView(shrinkWrap: true, children: [_GroupDetailPostsContent(group: _group, updateController: _updateController,)])
+              //   ]);
+      // Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      //   Visibility(visible: _currentTab == _DetailTab.Events,
+      //       child: _GroupDetailEventsContent(group: _group, updateController: _updateController)),
+      //   Visibility(visible: _currentTab == _DetailTab.Posts,
+      //   child:_GroupDetailPostsContent(group: _group, updateController: _updateController,)),
+      //   Visibility(visible: _currentTab == _DetailTab.Posts,
+      //   child:_buildScheduledPosts()), //TBD
+      //   Visibility(visible: _currentTab == _DetailTab.Messages,
+      //   child:_buildMessages()), //TBD
+      //   Visibility(visible: _currentTab == _DetailTab.Polls,
+      //   child:_buildPolls())
+      // ]);
+  }
+
+  Widget _buildPageFromType(_DetailTab data){
+    switch(data){
+      case _DetailTab.Events:
+        return _GroupDetailEventsContent(group: _group, updateController: _updateController);
+      case _DetailTab.Posts:
+        return _GroupDetailPostsContent(group: _group, updateController: _updateController,);
+      case _DetailTab.Messages:
+        return _buildMessages(); //TBD
+      case _DetailTab.Polls:
+       return _buildPolls(); //TBD
+
+      default: Container();
+    }
+    return Container();
   }
 
   Widget _buildScheduledPosts() {
@@ -2165,6 +2234,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _refreshCurrentScheduledPosts();
       _refreshCurrentMessages();
       _updateController.add(GroupDetailPanel.notifyRefresh);
+      _updateController.add(_GroupDetailEventsContent.notifyEventsRefresh);
     }
   }
 
@@ -2324,13 +2394,13 @@ class GroupEventSelector2 extends Event2Selector2 {
   }
 }
 
-class _GroupDetailEventsContent extends StatefulWidget {
+class _GroupDetailEventsContent extends StatefulWidget{
   static const String notifyEventsRefresh  = "edu.illinois.rokwire.group_detail.events.refresh";
 
   final Group? group;
   final StreamController<dynamic>? updateController;
 
-  const _GroupDetailEventsContent({super.key, this.updateController, this.group});
+  const _GroupDetailEventsContent({this.updateController, this.group});
 
   String? get groupId => group?.id;
 
@@ -2338,7 +2408,7 @@ class _GroupDetailEventsContent extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupDetailEventsState();
 }
 
-class _GroupDetailEventsState extends State<_GroupDetailEventsContent>  implements NotificationsListener {
+class _GroupDetailEventsState extends State<_GroupDetailEventsContent> implements NotificationsListener {
 
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
@@ -2346,6 +2416,7 @@ class _GroupDetailEventsState extends State<_GroupDetailEventsContent>  implemen
 
   @override
   void initState() {
+    Log.d("_GroupDetailEventsState.initState");
     _initUpdateListener();
     NotificationService().subscribe(this, [
       Groups.notifyGroupEventsUpdated,
@@ -2357,12 +2428,16 @@ class _GroupDetailEventsState extends State<_GroupDetailEventsContent>  implemen
 
   @override
   void dispose() {
+    Log.d("_GroupDetailEventsState.dispose");
     NotificationService().unsubscribe(this);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => _buildEvents();
+  Widget build(BuildContext context) {
+    Log.d("_GroupDetailEventsState.build");
+    return _buildEvents();
+  }
 
   //UI
   Widget _buildEvents() {
@@ -2479,7 +2554,7 @@ class _GroupDetailPostsContent extends StatefulWidget{
   final Group? group;
   final StreamController<dynamic>? updateController;
 
-  const _GroupDetailPostsContent({super.key, this.group, this.updateController});
+  const _GroupDetailPostsContent({this.group, this.updateController});
 
   @override
   State<StatefulWidget> createState() => _GroupDetainPostsState();
@@ -2520,7 +2595,9 @@ class _GroupDetainPostsState extends State<_GroupDetailPostsContent> implements 
   }
 
   @override
-  Widget build(BuildContext context) => _buildPosts();
+  Widget build(BuildContext context){
+    return _buildPosts();
+  }
 
   Widget _buildPosts() {
     List<Widget> postsContent = [];
