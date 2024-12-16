@@ -127,7 +127,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         AudioResult? result = await Content().loadUserNamePronunciation();
 
         if (mounted) {
-          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
           if (audioData != null) {
             _audioPlayer = AudioPlayer();
 
@@ -196,7 +196,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
       setStateIfMounted(() { _editActivity = true; });
 
       AudioResult? audioResult = await Content().loadUserNamePronunciation();
-      audioData = (audioResult?.resultType == AudioResultType.succeeded) ? audioResult?.data : null;
+      audioData = (audioResult?.resultType == AudioResultType.succeeded) ? audioResult?.audioData : null;
 
       setStateIfMounted(() { _editActivity = false; });
     }
@@ -424,7 +424,6 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
         AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
-          Log.d(result.data ?? "");
           _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
@@ -432,7 +431,6 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
         }
       } else {
         AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
-        Log.d("No File to save");
       }
     }catch(e){
       Log.e(e.toString());
