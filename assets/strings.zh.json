@@ -312,6 +312,8 @@
 	"panel.browse.section.research_projects.description": "Discover and participate in research projects.",
 	"panel.browse.section.laundry.title": "洗衣房",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
+	"panel.browse.section.messages.title": "留言",
+	"panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
 	"panel.browse.section.mtd.title": "MTD 巴士",
 	"panel.browse.section.mtd.description": "查看 MTD 巴士站位置、路线和实时动态。",
 	"panel.browse.section.inbox.title": "通知",
@@ -396,6 +398,8 @@
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣房",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣房",
+
+	"panel.browse.entry.messages.messages.title": "留言",
 
 	"panel.browse.entry.mtd.laundry.all_mtd_stops": "所有巴士站",
 	"panel.browse.entry.mtd.my_mtd_stops.title": "我的巴士站",
@@ -3194,9 +3198,14 @@
 	"panel.messages.button.new.hint": "",
 	"panel.messages.mark_as_read.failed.msg": "無法將所有對話標記為已讀",
 
-	"panel.messages.new.header.title": "發送至",
-	"panel.messages.new.tab.recent.label": "最近的",
-	"panel.messages.new.tab.all.label": "所有用戶",
+	"panel.messages.directory.header.title": "發送至",
+	"panel.messages.directory.tab.recent.label": "最近的",
+	"panel.messages.directory.tab.all.label": "所有用戶",
+	"panel.messages.directory.button.continue.label": "繼續",
+	"panel.messages.directory.button.continue.failed.msg": "無法與所選成員建立對話",
+	"panel.messages.directory.conversations.search.field.label": "SEARCH FIELD",
+	"panel.messages.directory.conversations.failed.text": "無法載入最近的對話",
+	"panel.messages.directory.conversations.empty.text": "沒有最近的對話",
 
 	"widget.conversation_card.selected.hint": "已選",
 	"widget.conversation_card.unselected.hint": "未選中的",

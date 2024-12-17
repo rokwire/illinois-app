@@ -41,6 +41,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   void initState() {
     widget.scrollController?.addListener(_scrollListener);
     _conversations = widget.recentConversations;
+    _sortConversationsByMemberNames();
     super.initState();
   }
 
@@ -128,28 +129,28 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
       Padding(padding: const EdgeInsets.only(bottom: 16), child:
         Row(children: [
           Expanded(child:
-          Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
-          Row(children: <Widget>[
-            Expanded(child:
-            _searchTextWidget
-            ),
-            _searchImageButton('close',
-              label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-              hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-              rightPadding: _searchImageButtonHorzPadding / 2,
-              onTap: _onTapClear,
-            ),
-            _searchImageButton('search',
-              label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-              hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-              leftPadding: _searchImageButtonHorzPadding / 2,
-              onTap: _onTapSearch,
-            ),
-          ],)
-          )
+            Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+              Row(children: <Widget>[
+                Expanded(child:
+                _searchTextWidget
+                ),
+                _searchImageButton('close',
+                  label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+                  hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+                  rightPadding: _searchImageButtonHorzPadding / 2,
+                  onTap: _onTapClear,
+                ),
+                _searchImageButton('search',
+                  label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+                  hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+                  leftPadding: _searchImageButtonHorzPadding / 2,
+                  onTap: _onTapSearch,
+                ),
+              ],)
+            )
           ),
           Padding(padding: EdgeInsets.only(left: 6), child:
-          _filtersButton
+            _filtersButton
           ),
         ],),
       );
@@ -252,6 +253,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
         _loadingProgress = false;
         if (conversations != null) {
           _conversations = List.from(conversations);
+          _sortConversationsByMemberNames();
           _canExtend = (conversations.length >= widget.conversationPageSize);
         }
         else if (!silent) {
@@ -280,6 +282,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
             }
             else {
               _conversations = List.from(conversations);
+              _sortConversationsByMemberNames();
             }
 
             _canExtend = (conversations.length >= widget.conversationPageSize);
@@ -312,6 +315,14 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
       _searchFocusNode.unfocus();
       _load();
     }
+  }
+
+  void _sortConversationsByMemberNames() {
+    _conversations?.sort((Conversation conv1, Conversation conv2) {
+      String key1 = conv1.directoryKey ?? '';
+      String key2 = conv2.directoryKey ?? '';
+      return key1.compareGit4143To(key2);
+    });
   }
 }
 
@@ -402,7 +413,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         _addNameSpan(nameSpans, names.last, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'));
       }
       content.add(Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: const EdgeInsets.only(bottom: 16.0),
         child: RichText(
           textAlign: TextAlign.left,
           text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: nameSpans),
@@ -410,7 +421,10 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         ),
       ));
     }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: content,);
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: content,),
+    );
   }
 
   List<TextSpan> get _nameSpans {
@@ -425,12 +439,10 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         }
         _addNameSpan(nameSpans, names.last, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'));
       }
-      if (spans.isEmpty) {
-        spans.addAll(nameSpans);
+      if (spans.isNotEmpty) {
         spans.add(TextSpan(text: ', '));
-      } else {
-        spans.addAll(nameSpans);
       }
+      spans.addAll(nameSpans);
     }
     return spans;
   }
@@ -446,5 +458,5 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
 }
 
 extension _ConversationUtils on Conversation {
-  String? get directoryKey => (membersString?.isNotEmpty == true) ? membersString?.substring(0, 1).toUpperCase() : null;
+  String? get directoryKey => (members?.isNotEmpty == true) ? members!.first.name?.split(" ").last.substring(0, 1).toUpperCase() : null;
 }
