@@ -340,7 +340,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   List<Widget> _buildHeaderActions() {
     return <Widget>[
       _buildHeaderPersonalInfoButton(),
-      _buildHeaderMessagesButton(),
       _buildHeaderNotificationsButton(),
       _buildHeaderSettingsButton()
     ];
@@ -352,17 +351,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       InkWell(onTap: () => _onTapSettings(), child:
         Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
           Styles().images.getImage('settings-white', excludeFromSemantics: true),
-        )
-      )
-    );
-  }
-
-  Widget _buildHeaderMessagesButton() {
-    //TODO: add unread messages count using Social BB (see notifications button below)
-    return Semantics(label: Localization().getStringEx('headerbar.messages.title', 'Messages'), hint: Localization().getStringEx('headerbar.messages.hint', ''), button: true, excludeSemantics: true, child:
-      InkWell(onTap: _onTapMessages, child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
-          Styles().images.getImage('messages-white', excludeFromSemantics: true),
         )
       )
     );

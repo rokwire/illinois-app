@@ -17,13 +17,18 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+enum DirectoryDisplayMode { browse, select }
+
 class DirectoryAccountCard extends StatefulWidget {
   final Auth2PublicAccount account;
+  final DirectoryDisplayMode displayMode;
   final String? photoImageToken;
   final bool expanded;
   final void Function()? onToggleExpanded;
+  final bool selected;
+  final void Function(bool)? onToggleSelected;
 
-  DirectoryAccountCard(this.account, { super.key, this.photoImageToken, this.expanded = false, this.onToggleExpanded });
+  DirectoryAccountCard(this.account, this.displayMode, { super.key, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountCardState();
@@ -43,6 +48,11 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
   Widget get _expandedHeading =>
     InkWell(onTap: widget.onToggleExpanded, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (widget.displayMode == DirectoryDisplayMode.select)
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: _cardSelectionContent,
+          ),
         Expanded(child:
           _expandedHeadingLeftContent
         ),
@@ -51,6 +61,26 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
         ),
       ],),
     );
+
+  Widget get _cardSelectionContent => Padding(
+    padding: const EdgeInsets.only(right: 8.0),
+    child: SizedBox(
+      height: 24.0,
+      width: 24.0,
+      child: Checkbox(
+        checkColor: Styles().colors.surface,
+        activeColor: Styles().colors.fillColorPrimary,
+        value: widget.selected,
+        visualDensity: VisualDensity.compact,
+        side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+        onChanged: (bool? value) {
+          if (value != null) {
+            widget.onToggleSelected?.call(value);
+          }
+        },
+      ),
+    ),
+  );
 
   bool get _hasPronunciation => (widget.account.profile?.pronunciationUrl?.isNotEmpty == true);
 
@@ -83,9 +113,10 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryProfilePhoto(_photoUrl,
+            DirectoryProfilePhoto(
+              photoUrl: _photoUrl,
               imageSize: _photoImageSize,
-              headers: _photoAuthHeaders,
+              photoUrlHeaders: _photoAuthHeaders,
               borderSize: 12,
             )
           ),
@@ -105,6 +136,8 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
     InkWell(onTap: widget.onToggleExpanded, child:
       Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
         Row(children: [
+          if (widget.displayMode == DirectoryDisplayMode.select)
+            _cardSelectionContent,
           Expanded(child:
             RichText(textAlign: TextAlign.left, text:
               TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: _nameSpans),
@@ -196,37 +229,51 @@ void _launchUrl(String? url) {
 class DirectoryProfilePhoto extends StatelessWidget {
 
   final String? photoUrl;
+  final Map<String, String>? photoUrlHeaders;
+  final Uint8List? photoData;
   final double imageSize;
   final double borderSize;
-  final Map<String, String>? headers;
 
-  DirectoryProfilePhoto(this.photoUrl, { super.key, required this.imageSize, this.borderSize = 0, this.headers });
+  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.borderSize = 0, required this.imageSize });
 
   @override
-  Widget build(BuildContext context) => (photoUrl?.isNotEmpty == true) ?
-    Container(
-      width: imageSize + borderSize, height: imageSize + borderSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      ),
-      child: Center(
-        child: Container(
-          width: imageSize, height: imageSize,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Styles().colors.background,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(photoUrl ?? '',
-                headers: headers
-              )
-            ),
+  Widget build(BuildContext context) {
+    ImageProvider<Object>? decorationImage = _decorationImage;
+    return (decorationImage != null) ?
+      Container(
+        width: imageSize + borderSize, height: imageSize + borderSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        ),
+        child: Center(
+          child: Container(
+            width: imageSize, height: imageSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Styles().colors.background,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: decorationImage
+              ),
+            )
           )
-        )
-      ),
-    ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+        ),
+      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+  }
+
+    ImageProvider<Object>? get _decorationImage {
+      if (photoData != null) {
+        return Image.memory(photoData ?? Uint8List(0)).image;
+      }
+      else if (photoUrl != null) {
+        return NetworkImage(photoUrl ?? '', headers: photoUrlHeaders);
+      }
+      else {
+        return null;
+      }
+    } 
 }
 
 class DirectoryProfilePhotoUtils {
@@ -250,8 +297,9 @@ class DirectoryProfilePhotoUtils {
 
 class DirectoryPronunciationButton extends StatefulWidget {
   final String? url;
+  final Uint8List? data;
 
-  DirectoryPronunciationButton({super.key, this.url});
+  DirectoryPronunciationButton({super.key, this.url, this.data});
 
   @override
   State<StatefulWidget> createState() => _DirectoryPronunciationButtonState();
@@ -313,10 +361,17 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
           _initializingAudioPlayer = true;
         });
 
-        AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
+        Uint8List? audioData = widget.data;
+        if (audioData == null) {
+          AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
+          audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
+        }
 
         if (mounted) {
-          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.data : null;
+          setState(() {
+            _initializingAudioPlayer = false;
+          });
+
           if (audioData != null) {
             _audioPlayer = AudioPlayer();
 
@@ -336,7 +391,6 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
             if (mounted) {
               if ((duration != null) && (duration.inMilliseconds > 0)) {
                 setState(() {
-                  _initializingAudioPlayer = false;
                   _audioPlayer?.play();
                 });
               }

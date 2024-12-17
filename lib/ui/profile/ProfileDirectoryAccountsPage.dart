@@ -27,8 +27,10 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
+  final Map<String, bool>? selectedAccountIds;
+  final void Function(bool selected, Auth2PublicAccount account)? onToggleAccountSelection;
   
-  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile});
+  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile, this.selectedAccountIds, this.onToggleAccountSelection});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
@@ -52,7 +54,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
-  Map<String, dynamic> _filters = <String, dynamic>{};
+  Map<String, dynamic> _filterAttributes = <String, dynamic>{};
 
   @override
   void initState() {
@@ -98,7 +100,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[
-      _editDescription,
+      if (widget.onEditProfile != null)
+        _editDescription,
       _searchBarWidget,
     ];
     if (_loadingProgress) {
@@ -124,6 +127,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       String? directoryIndex;
       for (Auth2PublicAccount account in accounts) {
         String? accountDirectoryIndex = account.directoryKey;
+        DirectoryDisplayMode displayMode = widget.selectedAccountIds != null ? DirectoryDisplayMode.select : DirectoryDisplayMode.browse;
         if ((accountDirectoryIndex != null) && (directoryIndex != accountDirectoryIndex)) {
           if (contentList.isNotEmpty) {
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -131,10 +135,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           contentList.add(_sectionHeading(directoryIndex = accountDirectoryIndex));
         }
         contentList.add(_sectionSplitter);
-        contentList.add(DirectoryAccountCard(account,
+        contentList.add(DirectoryAccountCard(account, displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
+          selected: widget.selectedAccountIds?[account.id] == true,
+          onToggleSelected: (value) => _onToggleAccountSelected(value, account),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -154,6 +160,11 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     setState(() {
       _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
     });
+  }
+
+  void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
+    Analytics().logSelect(target: 'Select', source: account.id);
+    widget.onToggleAccountSelection?.call(value, account);
   }
 
   Widget _sectionHeading(String dirEntry) =>
@@ -281,13 +292,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
         scope: Auh2Directory.attributesScope,
         contentAttributes: directoryAttributes,
-        selection: _filters,
+        selection: _filterAttributes,
         sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {
           setState(() {
-            _filters = selection;
+            _filterAttributes = selection;
           });
           _load();
         }
@@ -298,10 +309,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   ContentAttributes? get _directoryAttributes {
     ContentAttributes? directoryAttributes = Auth2().directoryAttributes;
     if (directoryAttributes != null) {
-      ContentAttribute? groupsAttribute = _groupsAttribute;
-      if (groupsAttribute != null) {
+      ContentAttribute? groupAttribute = _groupAttribute;
+      if (groupAttribute != null) {
         directoryAttributes = ContentAttributes.fromOther(directoryAttributes);
-        directoryAttributes?.attributes?.add(groupsAttribute);
+        directoryAttributes?.attributes?.add(groupAttribute);
       }
       return directoryAttributes;
     }
@@ -310,13 +321,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
   }
 
-  static const String _groupsAttributeId = 'groups';
+  static const String _groupAttributeId = 'group';
 
-  ContentAttribute? get _groupsAttribute {
+  ContentAttribute? get _groupAttribute {
     List<Group>? userGroups = Groups().userGroups;
     return ((userGroups != null) && userGroups.isNotEmpty) ?
       ContentAttribute(
-        id: _groupsAttributeId,
+        id: _groupAttributeId,
         title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
         emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
         semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
@@ -388,7 +399,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(_searchText),
-        limit: limit
+        attriutes: _filterAttributes,
+        limit: limit,
       );
 
       setStateIfMounted(() {
@@ -417,6 +429,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(_searchText),
+        attriutes: _filterAttributes,
         offset: _accountsCount,
         limit: _pageLength
       );

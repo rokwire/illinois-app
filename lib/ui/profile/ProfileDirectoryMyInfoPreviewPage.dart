@@ -1,4 +1,6 @@
 
+import 'dart:typed_data';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,9 +25,11 @@ class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
   final MyProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
+  final Uint8List? pronunciationAudioData;
+  final Uint8List? photoImageData;
   final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageToken, this.onEditInfo });
+  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData, this.onEditInfo });
 
   @override
   State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPreviewPageState();
@@ -86,8 +90,8 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   Widget get _profileContent => _directoryVisibility ?
     _publicProfileContent : _privateProfileContent;
 
-  String? get _photoUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(type: UserProfileImageType.defaultType, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
+  String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
+    Content().getUserPhotoUrl(type: UserProfileImageType.medium, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
 
@@ -104,7 +108,12 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
           ),
         ),
         Center(child:
-          DirectoryProfilePhoto(_photoUrl, imageSize: _photoImageSize, headers: _photoAuthHeaders,),
+          DirectoryProfilePhoto(
+            photoUrl: _photoImageUrl,
+            photoUrlHeaders: _photoAuthHeaders,
+            photoData: widget.photoImageData,
+            imageSize: _photoImageSize,
+          ),
         )
       ]),
     );
@@ -136,7 +145,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
           Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
       if (_profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton(url: _profile?.pronunciationUrl,),
+        DirectoryPronunciationButton(url: _profile?.pronunciationUrl, data: widget.pronunciationAudioData,),
     ],),
   );
 

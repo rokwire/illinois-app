@@ -297,8 +297,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
       });
     } else {
       _hideLoader();
-      ImagesResult result = (_imageBytes != null) ?  ImagesResult.succeed(_imageBytes) : ImagesResult.error(ImagesErrorType.contentNotSupplied, "'No file bytes.'");
-      Navigator.pop(this.context,result);
+      ImagesResult result = (_imageBytes != null) ?  ImagesResult.succeed(imageData: _imageBytes) : ImagesResult.error(ImagesErrorType.contentNotSupplied, "'No file bytes.'");
+      Navigator.pop(this.context, result);
     }
   }
 

@@ -30,6 +30,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
@@ -391,16 +392,14 @@ class _BrowseSection extends StatelessWidget {
   String get _title => title(sectionId: sectionId);
   String get _description => description(sectionId: sectionId);
 
-  static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
-  static String get _appTitleMacro => '{{app_title}}';
+  static String title({required String sectionId}) =>
+    AppTextUtils.appBrandString('panel.browse.section.$sectionId.title', defaultTitle(sectionId: sectionId));
 
-  static String title({required String sectionId}) {
-    return Localization().getString('panel.browse.section.$sectionId.title')?.replaceAll(_appTitleMacro, appTitle) ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
-  }
+  static String defaultTitle({required String sectionId}) =>
+    StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
-  static String description({required String sectionId}) {
-    return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll(_appTitleMacro, appTitle) ?? '';
-  }
+  static String description({required String sectionId}) =>
+      AppTextUtils.appBrandString('panel.browse.section.$sectionId.description', '');
 
   void _onTapExpand() {
     if (_hasBrowseContent && (onExpand != null)) {
@@ -602,8 +601,10 @@ class _BrowseEntry extends StatelessWidget {
       case "safer.my_mckinley":              _onTapMyMcKinley(context); break;
       case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
-      case "laundry.laundry":                 _onTapLaundry(context); break;
-      case "laundry.my_laundry":              _onTapMyLaundry(context); break;
+      case "laundry.laundry":                _onTapLaundry(context); break;
+      case "laundry.my_laundry":             _onTapMyLaundry(context); break;
+
+      case "messages.messages":              _onTapMessages(context); break;
 
       case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
@@ -885,6 +886,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapLaundry(BuildContext context) {
     Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
+  void _onTapMessages(BuildContext context) {
+    Analytics().logSelect(target: "Messages");
+    MessagesHomePanel.present(context);
   }
 
   void _onTapMTDStops(BuildContext context) {
