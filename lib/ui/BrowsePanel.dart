@@ -616,7 +616,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "directory.app_directory":        _onTapAppDirectory(context); break;
+      case "directory.user_directory":       _onTapUserDirectory(context); break;
 
       case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
@@ -875,8 +875,8 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  void _onTapAppDirectory(BuildContext context) {
-    Analytics().logSelect(target: "Illinois App Directory");
+  void _onTapUserDirectory(BuildContext context) {
+    Analytics().logSelect(target: "User Directory");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ProfileDirectoryAccountsPanel(DirectoryAccounts.appDirectory); } ));
   }
 
