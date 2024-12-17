@@ -115,14 +115,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   List<Member>?      _groupAdmins;
 
   _DetailTab         _currentTab = _DetailTab.Events;
+  PageController? _pageController;
+  TabController?  _tabController;
 
   int                _progress = 0;
   bool               _confirmationLoading = false;
 
   StreamController _updateController = StreamController.broadcast();
-
-  PageController? _pageController;
-  TabController?  _tabController;
 
   List<Post>         _scheduledPosts = <Post>[];
   GlobalKey          _lastScheduledPostKey = GlobalKey();
@@ -139,10 +138,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   bool?              _scrollToLastMessageAfterRefresh;
 
   DateTime?          _pausedDateTime;
-
-  GlobalKey          _pollsKey = GlobalKey();
-  List<Poll>?        _groupPolls;
-  bool               _pollsLoading = false;
 
 //bool               _memberAttendLoading = false;
   bool               _researchProjectConsent = false;
@@ -424,7 +419,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         // _loadInitialPosts();
         _loadInitialScheduledPosts();
         _loadInitialMessages();
-        _loadPolls();
+        // _loadPolls();
         _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       if (loadEvents) {
@@ -450,7 +445,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         // _refreshCurrentPosts();
         _refreshCurrentScheduledPosts();
         _refreshCurrentMessages();
-        _refreshPolls();
+        // _refreshPolls();
       }
     });
   }
@@ -653,27 +648,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
   }
 
-  Future<void> _loadPolls() async {
-    if (StringUtils.isNotEmpty(_groupId) && _group!.currentUserIsMemberOrAdmin) {
-      _setPollsLoading(true);
-      Polls().getGroupPolls(groupIds: {_groupId!})!.then((result) {
-        _groupPolls = (result != null) ? result.polls : null;
-        _setPollsLoading(false);
-      });
-    }
-  }
-
-  void _refreshPolls() {
-    _loadPolls();
-  }
-
-  void _setPollsLoading(bool loading) {
-    _pollsLoading = loading;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   void _loadGroupStats() {
     _increaseProgress();
     Groups().loadGroupStats(widget.groupId).then((stats) {
@@ -779,14 +753,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     else if (name == Social.notifyPostDeleted) { //TBD remove to child
       _onGroupPostDeleted(param is Post ? param : null);
     }
-    else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
-      _refreshPolls();
-    } 
-    else if (name == Polls.notifyVoteChanged
-            || name == Polls.notifyResultsChanged 
-            || name == Polls.notifyStatusChanged) {
-      _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
-    } 
+    // else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
+    //   _refreshPolls();
+    // }
+    // else if (name == Polls.notifyVoteChanged
+    //         || name == Polls.notifyResultsChanged
+    //         || name == Polls.notifyStatusChanged) {
+    //   _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
+    // }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
@@ -1050,42 +1024,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
       }
-      bool isSelected = (_currentTab == tab);
 
-      // if (0 < tabs.length) {
-      //   tabs.add(Padding(
-      //     padding: EdgeInsets.only(left: 6),
-      //     child: Container(),
-      //   ));
-      // }
-
-      // Widget tabWidget = RoundedButton(
-      //     label: title,
-      //     textStyle: isSelected ? Styles().textStyles.getTextStyle("widget.colourful_button.title.accent") : Styles().textStyles.getTextStyle("widget.button.title.medium.thin"),
-      //     backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.background,
-      //     contentWeight: 0.0,
-      //     borderColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-      //     borderWidth: 1,
-      //     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-      //     onTap: () => _onTab(tab));
       Tab tabWidget = Tab(
           text: title,
           height: 35,
-          // child: Container(color: Colors.amber, padding: EdgeInsets.symmetric(horizontal: 16), child:
-          //   Text(title),)
       );
-
       tabs.add(tabWidget);
     }
 
     if(_tabController == null || _tabController!.length != tabs.length){
       _tabController = TabController(length: tabs.length, vsync: this);
     }
+
     return Container(color: Colors.white, child: TabBar(
         tabs: tabs,
         indicatorColor: Color(0xffF15C22),
         controller: _tabController,
-        // isScrollable: true,
         onTap:(index) => _onTab(_tabAtIndex(index) ),
         indicatorSize: TabBarIndicatorSize.tab,
         // indicatorPadding: EdgeInsets.zero,
@@ -1147,7 +1101,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Messages:
         return _buildMessages(); //TBD
       case _DetailTab.Polls:
-        return _buildPolls(); //TBD
+        return _GroupPollsContent(group: _group,  updateController: _updateController);
 
       default: Container();
     }
@@ -1246,51 +1200,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
             // rightIconAction: _canCreateMessage ? _onTapCreatePost : null,
             // rightIconLabel: _canCreateMessage ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
             children: messagesContent)
-      ]);
-    }
-
-    Widget _buildPolls() {
-      List<Widget> pollsContentList = [];
-
-      if (CollectionUtils.isNotEmpty(_groupPolls)) {
-        for (Poll? groupPoll in _groupPolls!) {
-          if (groupPoll != null) {
-            pollsContentList.add(Container(height: 10));
-            pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
-          }
-        }
-
-        if (_groupPolls!.length >= 5) {
-          pollsContentList.add(Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: RoundedButton(
-                  label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: Styles().colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                  borderColor: Styles().colors.fillColorSecondary,
-                  borderWidth: 2,
-                  contentWeight: 0.5,
-                  onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
-        }
-      }
-
-      return Stack(key: _pollsKey, children: [
-        Column(children: <Widget>[
-          SectionSlantHeader(
-              title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
-              titleIconKey: 'polls',
-              // rightIconKey: _canCreatePoll? 'plus-circle' : null,
-              // rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
-              // rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,
-              children: pollsContentList)
-        ]),
-        _pollsLoading
-            ? Center(
-            child: Container(
-                padding: EdgeInsets.symmetric(vertical: 50),
-                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
-            : Container()
       ]);
     }
 
@@ -2151,18 +2060,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
     }
 
-    void _onPollUpdated(String? pollId) {
-      if(pollId!= null && _groupPolls!=null
-          && _groupPolls?.firstWhere((element) => pollId == element.pollId) != null) { //This is Group poll
-
-        Poll? poll = Polls().getPoll(pollId: pollId);
-        if (poll != null) {
-          setState(() {
-            _updatePollInList(poll);
-          });
-        }
-      }
-    }
 
     Future<void> _onPullToRefresh() async {
       if (Connectivity().isOffline) {
@@ -2210,16 +2107,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       _scrollTo(_lastMessageKey);
     }
 
-    void _schedulePollsScroll() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToPolls();
-      });
-    }
-
-    void _scrollToPolls() {
-      _scrollTo(_pollsKey);
-    }
-
     void _scrollTo(GlobalKey? key) {
       if(key != null) {
         BuildContext? currentContext = key.currentContext;
@@ -2240,17 +2127,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       _progress--;
       if (mounted) {
         setState(() {});
-      }
-    }
-
-    //Util
-    void _updatePollInList(Poll? poll) {
-      if ((poll != null) && (_groupPolls != null)) {
-        for (int index = 0; index < _groupPolls!.length; index++) {
-          if (_groupPolls![index].pollId == poll.pollId) {
-            _groupPolls![index] = poll;
-          }
-        }
       }
     }
 }
@@ -2732,6 +2608,156 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       Post? post = param is Post ? param : null;
       if(post?.isPost == true) {
         _refreshCurrentPosts(delta: -1);
+      }
+    }
+  }
+}
+
+class _GroupPollsContent extends StatefulWidget {
+  final Group? group;
+  final StreamController<dynamic>? updateController;
+
+  const _GroupPollsContent({this.group, this.updateController});
+
+  @override
+  _GroupPollsState createState() => _GroupPollsState();
+
+}
+
+class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAliveClientMixin<_GroupPollsContent>
+    implements NotificationsListener {
+  GlobalKey          _pollsKey = GlobalKey();
+  List<Poll>?        _groupPolls;
+  bool               _pollsLoading = false;
+
+  Group? get _group => widget.group;
+
+  String? get _groupId => _group?.id;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Polls.notifyCreated,
+      Polls.notifyDeleted,
+      Polls.notifyStatusChanged,
+      Polls.notifyVoteChanged,
+      Polls.notifyResultsChanged,
+    ]);
+    _initUpdateListener();
+    _loadPolls();
+    super.initState();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  Widget build(BuildContext context) {
+    super.build(context);
+    return _buildPolls();
+  }
+
+  Widget _buildPolls() {
+    List<Widget> pollsContentList = [];
+
+    if (CollectionUtils.isNotEmpty(_groupPolls)) {
+      for (Poll? groupPoll in _groupPolls!) {
+        if (groupPoll != null) {
+          pollsContentList.add(Container(height: 10));
+          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
+        }
+      }
+
+      if (_groupPolls!.length >= 5) {
+        pollsContentList.add(Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: RoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                backgroundColor: Styles().colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                borderColor: Styles().colors.fillColorSecondary,
+                borderWidth: 2,
+                contentWeight: 0.5,
+                onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
+      }
+    }
+
+    return Stack(key: _pollsKey, children: [
+      Column(children: <Widget>[
+        SectionSlantHeader(
+            title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
+            titleIconKey: 'polls',
+            children: pollsContentList)
+      ]),
+      _pollsLoading
+          ? Center(
+          child: Container(
+              padding: EdgeInsets.symmetric(vertical: 50),
+              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
+          : Container()
+    ]);
+  }
+
+  Future<void> _loadPolls() async {
+    if (StringUtils.isNotEmpty(_groupId) && _group!.currentUserIsMemberOrAdmin) {
+      _setPollsLoading(true);
+      Polls().getGroupPolls(groupIds: {_groupId!})!.then((result) {
+        _groupPolls = (result != null) ? result.polls : null;
+        _setPollsLoading(false);
+      });
+    }
+  }
+
+  void _refreshPolls() {
+    _loadPolls();
+  }
+
+  void _onPollUpdated(String? pollId) {
+    if(pollId!= null && _groupPolls!=null
+        && _groupPolls?.firstWhere((element) => pollId == element.pollId) != null) { //This is Group poll
+
+      Poll? poll = Polls().getPoll(pollId: pollId);
+      if (poll != null) {
+        setState(() {
+          _updatePollInList(poll);
+        });
+      }
+    }
+  }
+
+  void _setPollsLoading(bool loading) {
+    _pollsLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  //Update Listeners
+  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
+    if (command is String && command == GroupDetailPanel.notifyRefresh) {
+      _refreshPolls();
+    }
+
+  });
+
+  @override
+  void onNotification(String name, param) {
+    if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
+      _refreshPolls();
+    } else if(name == Polls.notifyVoteChanged
+        || name == Polls.notifyResultsChanged
+        || name == Polls.notifyStatusChanged) {
+      _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
+    }
+  }
+
+  //Util
+  void _updatePollInList(Poll? poll) {
+    if ((poll != null) && (_groupPolls != null)) {
+      for (int index = 0; index < _groupPolls!.length; index++) {
+        if (_groupPolls![index].pollId == poll.pollId) {
+          _groupPolls![index] = poll;
+        }
       }
     }
   }
