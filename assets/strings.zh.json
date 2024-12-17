@@ -1233,6 +1233,10 @@
 	"panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
 	"panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
 
+	"panel.display_floor_plan_panel.footer": "楼层",
+	"panel.display_floor_plan_panel.footer.menu_item": "楼层",
+	"panel.display_floor_plan_panel.footer.hint": "双击选择楼层",
+
 	"panel.search_building.header.title": "Search",
 	"panel.search_building.result.error.label": "Failed to search buildings",
 	"panel.search_building.result.empty.label": "No buildings found.",
