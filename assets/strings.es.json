@@ -122,6 +122,7 @@
     "generic.app.feature.skills_self_evaluation": "Assessments",
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
+    "generic.app.feature.messages": "Messages",
 
     "generic.time.now": "ahora",
     "generic.time.minutes": "minutos",
@@ -312,6 +313,8 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
+    "panel.browse.section.messages.title": "Mensajes",
+    "panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
     "panel.browse.section.mtd.title": "Autobuses MTD",
     "panel.browse.section.mtd.description": "Vea las ubicaciones, las rutas y la disponibilidad de las paradas de autobús de MTD.",
     "panel.browse.section.inbox.title": "Notificaciones",
@@ -396,6 +399,8 @@
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
     "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
+
+    "panel.browse.entry.messages.messages.title": "Mensajes",
 
     "panel.browse.entry.mtd.all_mtd_stops.title": "Todas las paradas de autobús",
     "panel.browse.entry.mtd.my_mtd_stops.title": "Mis paradas de autobús",
@@ -3191,6 +3196,38 @@
     "widget.inbox_message_card.status.hint": "sestado: %s ,para:",
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
+
+    "panel.messages.header.messages.label": "Mensajes",
+    "panel.messages.mark_all_read.label": "Marcar todo como leido",
+    "panel.messages.label.time.any": "Cualquier momento",
+    "panel.messages.label.time.today": "Hoy dia",
+    "panel.messages.label.time.yesterday": "El dia de ayer",
+    "panel.messages.label.time.this_week": "Esta semana",
+    "panel.messages.label.time.last_week": "La semana pasada",
+    "panel.messages.label.time.this_month": "Este mes",
+    "panel.messages.label.time.last_month": "El mes pasado",
+    "panel.messages.label.muted.show": "Mostrar silenciado",
+    "panel.messages.label.muted.hide": "Ocultar silenciado",
+    "panel.messages.label.content.empty": "Sin conversaciones",
+    "panel.messages.button.new.title": "Nuevo mensaje",
+    "panel.messages.button.new.hint": "",
+    "panel.messages.mark_as_read.failed.msg": "Error al marcar todas las conversaciones como leídas",
+
+    "panel.messages.directory.header.title": "Enviar a",
+    "panel.messages.directory.tab.recent.label": "Reciente",
+    "panel.messages.directory.tab.all.label": "Todos los usuarios",
+    "panel.messages.directory.button.continue.label": "Continuar",
+    "panel.messages.directory.button.continue.failed.msg": "No se pudo crear una conversación con los miembros seleccionados",
+    "panel.messages.directory.conversations.search.field.label": "SEARCH FIELD",
+    "panel.messages.directory.conversations.failed.text": "No se pudieron cargar las conversaciones recientes",
+    "panel.messages.directory.conversations.empty.text": "No hay conversaciones recientes",
+
+    "widget.conversation_card.selected.hint": "Seleccionada",
+    "widget.conversation_card.unselected.hint": "No seleccionada",
+    "widget.conversation_card.status.muted": "Apagada",
+    "widget.conversation_card.status.hint": "sestado: %s ,para:",
+    "widget.conversation_card.subject.hint": "Asignaturas",
+    "widget.conversation_card.body.hint": "Cuerpo: %s",
 
     "panel.guide_list.label.highlights.heading": "Guía del Campus",
 

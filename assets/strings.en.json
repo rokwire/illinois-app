@@ -123,6 +123,7 @@
     "generic.app.feature.skills_self_evaluation": "Assessments",
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
+    "generic.app.feature.messages": "Messages",
 
     "generic.time.now": "now",
     "generic.time.minutes": "minutes",
@@ -314,6 +315,8 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Laundry",
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
+    "panel.browse.section.messages.title": "Messages",
+    "panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
     "panel.browse.section.inbox.title": "Notifications",
@@ -398,6 +401,8 @@
 
     "panel.browse.entry.laundry.laundry.title": "Laundry",
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
+
+    "panel.browse.entry.messages.messages.title": "Messages",
 
     "panel.browse.entry.mtd.all_mtd_stops.title": "All Bus Stops",
     "panel.browse.entry.mtd.my_mtd_stops.title": "My Bus Stops",
@@ -3199,6 +3204,38 @@
     "widget.inbox_message_card.status.hint": "status: %s ,for: ",
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
+
+    "panel.messages.header.messages.label": "Messages",
+    "panel.messages.mark_all_read.label": "Mark all as read",
+    "panel.messages.label.time.any": "Any Time",
+    "panel.messages.label.time.today": "Today",
+    "panel.messages.label.time.yesterday": "Yesterday",
+    "panel.messages.label.time.this_week": "This week",
+    "panel.messages.label.time.last_week": "Last week",
+    "panel.messages.label.time.this_month": "This month",
+    "panel.messages.label.time.last_month": "Last month",
+    "panel.messages.label.muted.show": "Show Muted",
+    "panel.messages.label.muted.hide": "Hide Muted",
+    "panel.messages.label.content.empty": "No conversations",
+    "panel.messages.button.new.title": "New Message",
+    "panel.messages.button.new.hint": "",
+    "panel.messages.mark_as_read.failed.msg": "Failed to mark all conversations as read.",
+
+    "panel.messages.directory.header.title": "Send To",
+    "panel.messages.directory.tab.recent.label": "Recent",
+    "panel.messages.directory.tab.all.label": "All Users",
+    "panel.messages.directory.button.continue.label": "Continue",
+    "panel.messages.directory.button.continue.failed.msg": "Failed to create a conversation with the selected members",
+    "panel.messages.directory.conversations.search.field.label": "SEARCH FIELD",
+    "panel.messages.directory.conversations.failed.text": "Failed to load recent conversations",
+    "panel.messages.directory.conversations.empty.text": "There are no recent conversations",
+
+    "widget.conversation_card.selected.hint": "Selected",
+    "widget.conversation_card.unselected.hint": "Not Selected",
+    "widget.conversation_card.status.muted": "Muted",
+    "widget.conversation_card.status.hint": "status: %s ,for: ",
+    "widget.conversation_card.subject.hint": "Subject: %s",
+    "widget.conversation_card.body.hint": "Message: %s",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
