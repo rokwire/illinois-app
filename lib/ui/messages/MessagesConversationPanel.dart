@@ -105,7 +105,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _scrollToBottomIfNeeded();
 
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.messages.home.header.title", "Messages"), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: widget.conversation.membersString, leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -250,7 +250,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Attach"), enabled: true,
         child: IconButton(
             splashRadius: 24,
-            icon: Styles().images.getImage('image') ?? Container(),
+            icon: Styles().images.getImage('plus') ?? Container(),  //TODO: placeholder icon - @manav2modi replace this icon with yours
             onPressed: () {
               _submitMessage(_inputController.text);
             }
