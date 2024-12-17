@@ -1895,11 +1895,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     void _onTab(_DetailTab tab) {
       Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
       if (_currentTab != tab) {
-        setState(() {
-          _currentTab = tab;
-        });
+        // setState(() {
+        //   _currentTab = tab;
+        // });
 
-        _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: 500), curve: Curves.linear).then((_){
+        _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: 200), curve: Curves.linear).then((_){
           switch (_currentTab) {
             case _DetailTab.Posts:
             // if (CollectionUtils.isNotEmpty(_posts)) { //TBD check if needed
@@ -1912,7 +1912,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               }
               break;
             case _DetailTab.Polls:
-              _schedulePollsScroll();
+              // _schedulePollsScroll(); //TBD consider
               break;
             default:
               break;
@@ -2614,7 +2614,8 @@ class _GroupDetailPostsContent extends StatefulWidget{
 
 }
 
-class _GroupDetainPostsState extends State<_GroupDetailPostsContent> implements NotificationsListener {
+class _GroupDetainPostsState extends State<_GroupDetailPostsContent> with AutomaticKeepAliveClientMixin<_GroupDetailPostsContent>
+    implements NotificationsListener {
   List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
@@ -2647,8 +2648,11 @@ class _GroupDetainPostsState extends State<_GroupDetailPostsContent> implements 
     super.dispose();
   }
 
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context){
+    super.build(context);
     return _buildPosts();
   }
 
