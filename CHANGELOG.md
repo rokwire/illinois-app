@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add Messages UI [#4498](https://github.com/rokwire/illinois-app/issues/4498).
+### Changed
+- Use "User Directory" term instead of "Illinois App Directory" everywhere [#4523](https://github.com/rokwire/illinois-app/issues/4523).
 
 ## [6.1.27] - 2024-12-16
 ### Fixed

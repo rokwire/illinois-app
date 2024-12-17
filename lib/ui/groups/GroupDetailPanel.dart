@@ -1142,6 +1142,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Container();
   }
 
+  // ignore: unused_element
   Widget _buildScheduledPosts() {
     List<Widget> scheduledPostsContent = [];
 
