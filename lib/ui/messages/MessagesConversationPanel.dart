@@ -17,7 +17,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class MessagesConversationPanel extends StatefulWidget {
   final bool? unread;
   final void Function()? onTapBanner;
-  MessagesConversationPanel({Key? key, this.unread, this.onTapBanner}) : super(key: key);
+  final Conversation conversation;
+  MessagesConversationPanel({Key? key, required this.conversation, this.unread, this.onTapBanner}) : super(key: key);
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }

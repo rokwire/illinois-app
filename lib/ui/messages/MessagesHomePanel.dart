@@ -284,7 +284,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _handleRedirectTap(Conversation conversation) {
     Analytics().logSelect(target: conversation.id);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
   }
 
   // Banner
@@ -749,7 +749,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _onTapNewMessage() {
     Analytics().logSelect(target: "Messages Directory");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel(recentConversations: _conversations, conversationPageSize: _conversationsPageSize,)));
   }
 
   Future<void> _refreshContent() async{
