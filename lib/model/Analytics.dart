@@ -170,6 +170,7 @@ class AnalyticsFeature {
     AppHelp,
     Buildings,
     MTD,
+    Messages,
     News,
     Polls,
     Laundry,

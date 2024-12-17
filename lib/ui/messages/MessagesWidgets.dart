@@ -12,18 +12,18 @@ class RecentConversationsPage extends StatefulWidget {
   final ScrollController? scrollController;
   final List<Conversation> recentConversations;
   final int conversationPageSize;
-  final Map<String, List<String>>? selectedConversationIds;
-  final void Function(bool selected, Conversation conversation)? onToggleConversationSelection;
+  final void Function()? onSelectedConversationChanged;
 
-  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.selectedConversationIds, this.onToggleConversationSelection});
+  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.onSelectedConversationChanged });
 
   @override
   State<StatefulWidget> createState() => RecentConversationsPageState();
 }
 
-class RecentConversationsPageState extends State<RecentConversationsPage> {
+class RecentConversationsPageState extends State<RecentConversationsPage> with AutomaticKeepAliveClientMixin {
 
   List<Conversation>? _conversations;
+  late Map<String, Conversation> _conversationsMap;
   String _searchText = '';
   bool _loading = false;
   bool _loadingProgress = false;
@@ -31,6 +31,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   bool _canExtend = false;
 
   String? _expandedConversationId;
+  final Set<String> _selectedIds = <String>{};
 
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -41,6 +42,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   void initState() {
     widget.scrollController?.addListener(_scrollListener);
     _conversations = widget.recentConversations;
+    _conversationsMap = _buildConversationsMap(widget.recentConversations);
     _sortConversationsByMemberNames();
     super.initState();
   }
@@ -55,7 +57,12 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     List<Widget> contentList = <Widget>[
       _searchBarWidget,
     ];
@@ -79,25 +86,13 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
 
     List<Conversation>? conversations = _conversations;
     if ((conversations != null) && conversations.isNotEmpty) {
-      String? directoryIndex;
       for (Conversation conversation in conversations) {
-        String? conversationDirectoryIndex = conversation.directoryKey;
-        if ((conversationDirectoryIndex != null) && (directoryIndex != conversationDirectoryIndex)) {
-          if (contentList.isNotEmpty) {
-            contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
-          }
-          contentList.add(_sectionHeading(directoryIndex = conversationDirectoryIndex));
-        }
-        contentList.add(_sectionSplitter);
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
           onToggleExpanded: () => _onToggleConversationExpanded(conversation),
-          selected: CollectionUtils.isNotEmpty(widget.selectedConversationIds?[conversation.id]),
+          selected: _selectedIds.contains(conversation.id),
           onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
         ));
-      }
-      if (contentList.isNotEmpty) {
-        contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
       }
     }
 
@@ -117,13 +112,38 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
 
   void _onToggleConversationSelected(bool value, Conversation conversation) {
     Analytics().logSelect(target: 'Select', source: conversation.id);
-    widget.onToggleConversationSelection?.call(value, conversation);
+    if (StringUtils.isNotEmpty(conversation.id) && mounted) {
+      setState(() {
+        if (value) {
+          _selectedIds.add(conversation.id!);
+        }
+        else {
+          _selectedIds.remove(conversation.id);
+        }
+      });
+      widget.onSelectedConversationChanged?.call();
+    }
   }
 
-  Widget _sectionHeading(String dirEntry) =>
-      Padding(padding: EdgeInsets.zero, child:
-      Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
-      );
+  Set<String> get selectedConversationIds =>
+    _selectedIds;
+
+  Set<String> get selectedAccountIds {
+    Set<String> selectedIds = <String>{};
+    for (String conversationId in _selectedIds) {
+      List<String>? memberIds = _conversationsMap[conversationId]?.memberIds;
+      if (memberIds != null) {
+        selectedIds.addAll(memberIds);
+      }
+    }
+    return selectedIds;
+  }
+
+  void clearSelectedIds() {
+    setStateIfMounted(() {
+      _selectedIds.clear();
+    });
+  }
 
   Widget get _searchBarWidget =>
       Padding(padding: const EdgeInsets.only(bottom: 16), child:
@@ -206,8 +226,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
     //TODO
   }
 
-  Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
-
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
@@ -253,11 +271,13 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
         _loadingProgress = false;
         if (conversations != null) {
           _conversations = List.from(conversations);
+          _conversationsMap = _buildConversationsMap(conversations);
           _sortConversationsByMemberNames();
           _canExtend = (conversations.length >= widget.conversationPageSize);
         }
         else if (!silent) {
           _conversations = null;
+          _conversationsMap.clear();
           _canExtend = false;
         }
       });
@@ -279,9 +299,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
           if (conversations != null) {
             if (_conversations != null) {
               _conversations?.addAll(conversations);
+              _conversationsMap.addAll(_buildConversationsMap(conversations));
             }
             else {
               _conversations = List.from(conversations);
+              _conversationsMap = _buildConversationsMap(conversations);
               _sortConversationsByMemberNames();
             }
 
@@ -294,6 +316,18 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   }
 
   int get _conversationsCount => _conversations?.length ?? 0;
+
+  static Map<String, Conversation> _buildConversationsMap(List<Conversation>? conversations) {
+    Map<String, Conversation> map = <String, Conversation>{};
+    if (conversations != null) {
+      for (Conversation conversation in conversations) {
+        if (StringUtils.isNotEmpty(conversation.id)) {
+          map[conversation.id!] = conversation;
+        }
+      }
+    }
+    return map;
+  }
 
   void _onTapClear() {
     Analytics().logSelect(target: 'Search Clear');
@@ -318,10 +352,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   }
 
   void _sortConversationsByMemberNames() {
+    DateTime now = DateTime.now();
     _conversations?.sort((Conversation conv1, Conversation conv2) {
-      String key1 = conv1.directoryKey ?? '';
-      String key2 = conv2.directoryKey ?? '';
-      return key1.compareGit4143To(key2);
+      DateTime time1 = conv1.lastActivityTimeUtc ?? now;
+      DateTime time2 = conv2.lastActivityTimeUtc ?? now;
+      return time2.compareTo(time1);  // reverse chronological
     });
   }
 }
@@ -346,58 +381,61 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       widget.expanded ? _expandedContent : _collapsedContent;
 
   Widget get _expandedContent =>
-      InkWell(onTap: widget.onToggleExpanded, child:
+    InkWell(onTap: widget.onToggleExpanded, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: _cardSelectionContent,
-        ),
+        _cardSelectionContent(padding: const EdgeInsets.only(top: 12, bottom: 12, right: 8)),
         Expanded(child:
           _expandedMembersContent
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12), child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
           Styles().images.getImage('chevron2-up',)
         ),
       ],),
       );
 
-  Widget get _cardSelectionContent => Padding(
-    padding: const EdgeInsets.only(right: 8.0),
-    child: SizedBox(
-      height: 24.0,
-      width: 24.0,
-      child: Checkbox(
-        checkColor: Styles().colors.surface,
-        activeColor: Styles().colors.fillColorPrimary,
-        value: widget.selected,
-        visualDensity: VisualDensity.compact,
-        side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
-        onChanged: (bool? value) {
-          if (value != null) {
-            widget.onToggleSelected?.call(value);
-          }
-        },
+  Widget _cardSelectionContent({ EdgeInsetsGeometry padding = EdgeInsets.zero }) =>
+    InkWell(onTap: _onSelect, child:
+      Padding(padding: padding, child:
+        SizedBox(height: 24.0, width: 24.0, child:
+          Checkbox(
+            checkColor: Styles().colors.surface,
+            activeColor: Styles().colors.fillColorPrimary,
+            value: widget.selected,
+            visualDensity: VisualDensity.compact,
+            side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+            onChanged: _onToggleSelected,
+          ),
+        ),
       ),
-    ),
-  );
+    );
+
+  void _onSelect() =>
+    _onToggleSelected(!widget.selected);
+
+  void _onToggleSelected(bool? value) {
+    if (value != null) {
+      widget.onToggleSelected?.call(value);
+    }
+  }
 
   Widget get _collapsedContent =>
       InkWell(onTap: widget.onToggleExpanded, child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-          Row(children: [
-            _cardSelectionContent,
-            Expanded(child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _cardSelectionContent(padding: EdgeInsets.only(top: 12, bottom: 12, right: 8)),
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               RichText(
                 textAlign: TextAlign.left,
                 text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: _nameSpans),
                 overflow: TextOverflow.ellipsis,
-              )
+                maxLines: 2,
+              ),
             ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
-              Styles().images.getImage('chevron2-down',)
-            )
-          ],)
-        ),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+            Styles().images.getImage('chevron2-down',)
+          )
+        ],)
       );
 
   Widget get _expandedMembersContent {
@@ -412,18 +450,16 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         }
         _addNameSpan(nameSpans, names.last, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'));
       }
-      content.add(Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: RichText(
+      content.add(Padding(padding: const EdgeInsets.only(bottom: 12.0), child:
+        RichText(
           textAlign: TextAlign.left,
           text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: nameSpans),
           overflow: TextOverflow.ellipsis,
         ),
       ));
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: content,),
+    return Padding(padding: const EdgeInsets.only(top: 12.0), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: content,),
     );
   }
 
@@ -455,8 +491,4 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       spans.add(TextSpan(text: name ?? '', style: style));
     }
   }
-}
-
-extension _ConversationUtils on Conversation {
-  String? get directoryKey => (members?.isNotEmpty == true) ? members!.first.name?.split(" ").last.substring(0, 1).toUpperCase() : null;
 }

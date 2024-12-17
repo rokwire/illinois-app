@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/RadioPlayer.dart';
-import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -378,14 +377,14 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
         CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
-          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 8), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
                 DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
               )
             )
           ) :
-          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
             Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
           ),
       )
@@ -414,14 +413,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     }
     else {
       SettingsHomeContentPanel.present(context);
-    }
-  }
-
-  void _onTapMessages() {
-    String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != MessagesHomePanel.routeName) {
-      Analytics().logSelect(target: "Messages");
-      MessagesHomePanel.present(context);
     }
   }
 

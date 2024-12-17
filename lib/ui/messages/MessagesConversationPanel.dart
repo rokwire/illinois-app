@@ -81,18 +81,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     super.dispose();
   }
 
+  // AutomaticKeepAliveClientMixin
   @override
   bool get wantKeepAlive => true;
 
+  // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
-      setStateIfMounted(() {});
+      setStateIfMounted((){});
     } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {
-      setStateIfMounted(() {});
+      setStateIfMounted((){});
     } else if (name == SpeechToText.notifyError) {
       setState(() {
         _listening = false;
@@ -134,7 +136,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _scrollToBottomIfNeeded();
 
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('', 'To ${_getConversationTitle()}'), leading: RootHeaderBarLeading.Back),
+      appBar: RootHeaderBar(title: widget.conversation.membersString, leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),

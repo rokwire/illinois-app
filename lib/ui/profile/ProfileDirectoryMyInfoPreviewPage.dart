@@ -82,8 +82,8 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   String get _desriptionText {
     switch (widget.contentType) {
-      case MyProfileInfo.myConnectionsInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.connections.preview.description.text', 'Preview of how your profile displays for your ${AppTextUtils.appTitleMacro} Connections.');
-      case MyProfileInfo.myDirectoryInfo: return AppTextUtils.appTitleString('panel.profile.directory.my_info.directory.preview.description.text', 'Preview of how your profile displays in the directory.');
+      case MyProfileInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.my_info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
+      case MyProfileInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.my_info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
     }
   }
 
@@ -170,7 +170,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   Widget get _privateProfileDescriptionContent {
     final String linkEditMacro = "{{link.edit}}";
-    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.description.text', 'To make your account visible in the ${AppTextUtils.appTitleMacro} App Directory, $linkEditMacro your privacy settings and set your Directory Visibility to Public.');
+    String messageTemplate = Localization().getStringEx('panel.profile.directory.my_info.directory_visibility.private.description.text', 'To make your account visible in the User Directory, $linkEditMacro your privacy settings and set your Directory Visibility to Public.');
     List<String> messages = messageTemplate.split(linkEditMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
@@ -185,14 +185,6 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
       TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.regular"), children: spanList)
     );
   }
-  //AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.description.text!', 'Choose "{{button_title}}" to change this setting and make your account available in the ${AppTextUtils.appTitleMacro} App Directory.').
-  //    replaceAll('{{button_title}}', _editInfoButtonTitle);
-
-  //Text(_privateProfileDescription, style: Styles().textStyles.getTextStyle('widget.detail.regular')),
-
-  //String get _privateProfileDescription =>
-  //  AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.description.text', 'Your Directory Visibility is set to Private.\n\nChoose "{{button_title}}" to change this setting and make your account available in the ${AppTextUtils.appTitleMacro} App Directory.').
-  //    replaceAll('{{button_title}}', _editInfoButtonTitle);
 
   Widget get _commandBar {
     switch (widget.contentType) {

@@ -22,7 +22,7 @@ import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
@@ -40,11 +40,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
-  final void Function()? onTapBanner;
-
   static final String routeName = 'messages_home_content_panel';
 
-  MessagesHomePanel._({Key? key, this.onTapBanner}) : super(key: key);
+  MessagesHomePanel._({Key? key}) : super(key: key);
 
   @override
   _MessagesHomePanelState createState() => _MessagesHomePanelState();
@@ -53,7 +51,10 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Messages;
 
   static void present(BuildContext context) {
-    if (ModalRoute.of(context)?.settings.name != routeName) {
+    if (!Auth2().isLoggedIn) {
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.messages', 'Messages'));
+    }
+    else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
@@ -139,7 +140,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.messages.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+              Text(Localization().getStringEx('panel.messages.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
             ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
@@ -152,7 +153,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         ],),
       ),
       Container(color: Styles().colors.surfaceAccent, height: 1,),
-      _buildBanner(),
+      // _buildBanner(),
       _buildAdditionalButtons(),
       _buildFilters(),
       Expanded(child:
@@ -200,13 +201,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         Expanded(child: Container(), flex: 1),
         Text(Localization().getStringEx('panel.messages.label.content.empty', 'No conversations'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.regular.thin')),
         Expanded(child: Container(), flex: 2),
-        //TODO: remove this button later
-        RibbonButton(
-          backgroundColor: Styles().colors.fillColorPrimary,
-          label: "Go To Conversations Panel",
-          textColor: Styles().colors.surface,
-          onTap: () => _onTapConversation(Conversation()),
-        )
       ]);
     }
   }
@@ -288,6 +282,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   // Banner
+  /*
   Widget _buildBanner(){ //TBD localize
     return
       Visibility(
@@ -315,6 +310,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
               )
           ));
   }
+  */
 
   //Buttons
   Widget _buildAdditionalButtons() {
@@ -912,6 +908,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     }
   }
 
+  /*
   bool get _showBanner{
     return FirebaseMessaging().notificationsPaused ?? false;
   }
@@ -924,6 +921,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       // SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
     }
   }
+  */
 
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
