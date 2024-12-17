@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use "User Directory" term instead of "Illinois App Directory" everywhere [#4523](https://github.com/rokwire/illinois-app/issues/4523).
 - Automatically expand single entry sections in Home panel [#4527](https://github.com/rokwire/illinois-app/issues/4527).
+- Preserve scroll positions when switching Favorites & Sections tabs in HomePanel [#4529](https://github.com/rokwire/illinois-app/issues/4529).
 
 ## [6.1.27] - 2024-12-16
 ### Fixed
