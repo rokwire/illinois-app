@@ -36,7 +36,7 @@
 			"browse.laundry": ["laundry", "my_laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_safety_resources", "campus_guide", "my_campus_guide"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
-			"browse.directory": ["app_directory"],
+			"browse.directory": ["user_directory"],
 			"browse.events": ["event_feed", "my_events"],
 			"browse.feeds": ["twitter", "daily_illini"],
 			"browse.groups": ["all_groups", "my_groups"],

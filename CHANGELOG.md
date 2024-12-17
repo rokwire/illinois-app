@@ -5,10 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Use "User Directory" term instead of "Illinois App Directory" everywhere [#4523](https://github.com/rokwire/illinois-app/issues/4523).
+
+## [6.1.27] - 2024-12-16
 ### Fixed
 - Cleaned up Image & Audio Result data dispatch [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Fixed name pronunciation processing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
 ### Added
 - New Azure Assistant provider [#4519](https://github.com/rokwire/illinois-app/issues/4519).
+### Changed
+- Standardized return type of loadUserPhoto and loadUserNamePronunciation [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Various fixes and improvements in Directory Profiles [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
 
 ## [6.1.26] - 2024-12-13
 ### Changed

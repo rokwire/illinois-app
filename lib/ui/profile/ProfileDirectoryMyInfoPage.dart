@@ -42,7 +42,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
   Uint8List? _photoImageData;
-  Uint8List? _pronunciationData;
+  Uint8List? _pronunciationAudioData;
   String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
 
   bool _loading = false;
@@ -83,7 +83,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
-          pronunciationData: _pronunciationData,
+          pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
           onFinishEdit: _onFinishEditInfo,
@@ -94,7 +94,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         contentType: widget.contentType,
         profile: _profile,
         privacy: _privacy,
-        pronunciationData: _pronunciationData,
+        pronunciationAudioData: _pronunciationAudioData,
         photoImageData: _photoImageData,
         photoImageToken: _photoImageToken,
         onEditInfo: _onEditInfo,
@@ -123,12 +123,12 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
     if (mounted) {
       Auth2UserProfile? profile = JsonUtils.cast<Auth2UserProfile>(ListUtils.entry(results, 0));
       Auth2UserPrivacy? privacy = JsonUtils.cast<Auth2UserPrivacy>(ListUtils.entry(results, 1));
-      Uint8List? photoData = JsonUtils.listUint8Value(ListUtils.entry(results, 2));
-      Uint8List? pronunciationData = JsonUtils.listUint8Value(ListUtils.entry(results, 3));
+      ImagesResult? photoResult = JsonUtils.cast<ImagesResult>(ListUtils.entry(results, 2));
+      AudioResult? pronunciationResult = JsonUtils.cast<AudioResult>(ListUtils.entry(results, 3));
 
       Auth2UserProfile? updatedProfile = await _syncUserProfile(profile,
-        hasContentUserPhoto: (photoData != null),
-        hasContentUserNamePronunciation: (pronunciationData != null),
+        hasContentUserPhoto: photoResult?.succeeded == true,
+        hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
       );
       if (updatedProfile != null) {
         profile = updatedProfile;
@@ -138,8 +138,8 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         //TMP: Added some sample data
         _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,);
         _privacy = privacy;
-        _photoImageData = photoData;
-        _pronunciationData = pronunciationData;
+        _photoImageData = photoResult?.imageData;
+        _pronunciationAudioData = pronunciationResult?.audioData;
         _loading = false;
       });
     }
@@ -154,7 +154,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       if (hasContentUserPhoto != null) {
         bool profileHasUserPhoto = StringUtils.isNotEmpty(profilePhotoUrl);
         if (profileHasUserPhoto != hasContentUserPhoto) {
-          profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : "";
+          profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) : "";
           updateProfileScope.add(Auth2UserProfileScope.photoUrl);
         }
       }
@@ -193,7 +193,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
   }
 
   void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy,
-    Uint8List? pronunciationData,
+    Uint8List? pronunciationAudioData,
     Uint8List? photoImageData,
     String? photoImageToken
   }) {
@@ -214,8 +214,8 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
         _photoImageData = photoImageData;
       }
 
-      if (!DeepCollectionEquality().equals(_pronunciationData, pronunciationData)) {
-        _pronunciationData = pronunciationData;
+      if (!DeepCollectionEquality().equals(_pronunciationAudioData, pronunciationAudioData)) {
+        _pronunciationAudioData = pronunciationAudioData;
       }
 
       _editing = false;

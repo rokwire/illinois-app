@@ -381,8 +381,17 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   Future<void> _refreshProfilePicture() async {
-    Uint8List? profilePicture = StringUtils.isNotEmpty(Auth2().account?.id) && StringUtils.isNotEmpty(Auth2().account?.profile?.photoUrl) ?
-      await Content().loadUserPhoto(type: UserProfileImageType.small) : null;
+    Uint8List? profilePicture = _profilePicture;
+    if (StringUtils.isNotEmpty(Auth2().account?.id) && StringUtils.isNotEmpty(Auth2().account?.profile?.photoUrl)) {
+      ImagesResult? result = await Content().loadUserPhoto(type: UserProfileImageType.small);
+      if ((result != null) && (result.resultType == ImagesResultType.succeeded)) {
+        profilePicture = result.imageData;
+      }
+    }
+    else {
+      profilePicture = null;
+    }
+
     if (!listEquals(_profilePicture, profilePicture)) {
       _profilePicture = profilePicture;
       await _saveProfilePictureToCache(profilePicture);

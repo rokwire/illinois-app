@@ -2631,8 +2631,8 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _loadImage() {
     if (StringUtils.isNotEmpty(widget.userId)) {
       _setImageLoading(true);
-      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((imageBytes) {
-        _imageBytes = imageBytes;
+      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+        _imageBytes = imageResult?.imageData;
         _setImageLoading(false);
       });
     }
