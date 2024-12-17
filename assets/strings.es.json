@@ -2278,6 +2278,8 @@
     "panel.profile.directory.tab.accounts.connections.title": "My Connections",
     "panel.profile.directory.tab.accounts.directory.title": "User Directory",
 
+    "panel.profile.directory.accounts.message.signed_out": "To view User Directory, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.profile.directory.accounts.message.signed_out.link.login": "sign in",
     "panel.profile.directory.accounts.connections.empty.text": "You do not have any Connections. Your connections will appear after you swap info with another {{app_university_long_name}} student or employee.",
     "panel.profile.directory.accounts.directory.empty.text": "The User Directory is empty.",
     "panel.profile.directory.accounts.connections.failed.text": "Failed to load Connections content.",
