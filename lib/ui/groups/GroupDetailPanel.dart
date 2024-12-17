@@ -108,6 +108,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
   static final int          _postsPageSize = 8;
+  static final int          _animationDurationInMilliSeconds = 200;
 
   Group?             _group;
   GroupStats?        _groupStats;
@@ -1115,7 +1116,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           ExpandablePageView(
             children: pages,
             controller: _pageController,
-            onPageChanged: (int index) => _tabController?.animateTo(index)/*setStateIfMounted(() => _currentTab = _tabAtIndex(index)*/
+            onPageChanged: (int index) => _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds))/*setStateIfMounted(() => _currentTab = _tabAtIndex(index)*/
           )
         )
       );
@@ -1814,11 +1815,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     void _onTab(_DetailTab tab) {
       Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
       if (_currentTab != tab) {
-        setState(() {
+        // setState(() {
           _currentTab = tab;
-        });
+        // });
 
-        _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: 200), curve: Curves.linear).then((_){
+        _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear).then((_){
           switch (_currentTab) {
             case _DetailTab.Posts:
             // if (CollectionUtils.isNotEmpty(_posts)) { //TBD check if needed
