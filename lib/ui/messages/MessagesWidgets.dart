@@ -328,12 +328,9 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       widget.expanded ? _expandedContent : _collapsedContent;
 
   Widget get _expandedContent =>
-      InkWell(onTap: widget.onToggleExpanded, child:
+    InkWell(onTap: widget.onToggleExpanded, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: _cardSelectionContent,
-        ),
+        _cardSelectionContent(padding: const EdgeInsets.only(top: 12, bottom: 12, right: 8)),
         Expanded(child:
           _expandedMembersContent
         ),
@@ -343,44 +340,49 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       ],),
       );
 
-  Widget get _cardSelectionContent => Padding(
-    padding: const EdgeInsets.only(right: 8.0),
-    child: SizedBox(
-      height: 24.0,
-      width: 24.0,
-      child: Checkbox(
-        checkColor: Styles().colors.surface,
-        activeColor: Styles().colors.fillColorPrimary,
-        value: widget.selected,
-        visualDensity: VisualDensity.compact,
-        side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
-        onChanged: (bool? value) {
-          if (value != null) {
-            widget.onToggleSelected?.call(value);
-          }
-        },
+  Widget _cardSelectionContent({ EdgeInsetsGeometry padding = EdgeInsets.zero }) =>
+    InkWell(onTap: _onSelect, child:
+      Padding(padding: padding, child:
+        SizedBox(height: 24.0, width: 24.0, child:
+          Checkbox(
+            checkColor: Styles().colors.surface,
+            activeColor: Styles().colors.fillColorPrimary,
+            value: widget.selected,
+            visualDensity: VisualDensity.compact,
+            side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+            onChanged: _onToggleSelected,
+          ),
+        ),
       ),
-    ),
-  );
+    );
+
+  void _onSelect() =>
+    _onToggleSelected(!widget.selected);
+
+  void _onToggleSelected(bool? value) {
+    if (value != null) {
+      widget.onToggleSelected?.call(value);
+    }
+  }
 
   Widget get _collapsedContent =>
       InkWell(onTap: widget.onToggleExpanded, child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-          Row(children: [
-            _cardSelectionContent,
-            Expanded(child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _cardSelectionContent(padding: EdgeInsets.only(top: 12, bottom: 12, right: 8)),
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               RichText(
                 textAlign: TextAlign.left,
                 text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: _nameSpans),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-              )
+              ),
             ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
-              Styles().images.getImage('chevron2-down',)
-            )
-          ],)
-        ),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+            Styles().images.getImage('chevron2-down',)
+          )
+        ],)
       );
 
   Widget get _expandedMembersContent {
@@ -395,18 +397,16 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         }
         _addNameSpan(nameSpans, names.last, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'));
       }
-      content.add(Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: RichText(
+      content.add(Padding(padding: const EdgeInsets.only(bottom: 12.0), child:
+        RichText(
           textAlign: TextAlign.left,
           text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: nameSpans),
           overflow: TextOverflow.ellipsis,
         ),
       ));
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: content,),
+    return Padding(padding: const EdgeInsets.only(top: 12.0), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: content,),
     );
   }
 

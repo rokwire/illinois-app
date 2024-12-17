@@ -49,10 +49,7 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
     InkWell(onTap: widget.onToggleExpanded, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (widget.displayMode == DirectoryDisplayMode.select)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: _cardSelectionContent,
-          ),
+          _cardSelectionContent(padding: EdgeInsets.only(top: 12, right: 8)),
         Expanded(child:
           _expandedHeadingLeftContent
         ),
@@ -62,25 +59,30 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
       ],),
     );
 
-  Widget get _cardSelectionContent => Padding(
-    padding: const EdgeInsets.only(right: 8.0),
-    child: SizedBox(
-      height: 24.0,
-      width: 24.0,
-      child: Checkbox(
-        checkColor: Styles().colors.surface,
-        activeColor: Styles().colors.fillColorPrimary,
-        value: widget.selected,
-        visualDensity: VisualDensity.compact,
-        side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
-        onChanged: (bool? value) {
-          if (value != null) {
-            widget.onToggleSelected?.call(value);
-          }
-        },
+  Widget _cardSelectionContent({ EdgeInsetsGeometry padding = EdgeInsets.zero }) =>
+    InkWell(onTap: _onSelect, child:
+      Padding(padding: padding, child:
+        SizedBox(height: 24.0, width: 24.0, child:
+          Checkbox(
+          checkColor: Styles().colors.surface,
+          activeColor: Styles().colors.fillColorPrimary,
+          value: widget.selected,
+          visualDensity: VisualDensity.compact,
+          side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+          onChanged: _onToggleSelected,
+        ),
       ),
     ),
   );
+
+  void _onSelect() =>
+    _onToggleSelected(!widget.selected);
+
+  void _onToggleSelected(bool? value) {
+    if (value != null) {
+      widget.onToggleSelected?.call(value);
+    }
+  }
 
   bool get _hasPronunciation => (widget.account.profile?.pronunciationUrl?.isNotEmpty == true);
 
@@ -134,20 +136,20 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
 
   Widget get _collapsedContent =>
     InkWell(onTap: widget.onToggleExpanded, child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-        Row(children: [
-          if (widget.displayMode == DirectoryDisplayMode.select)
-            _cardSelectionContent,
-          Expanded(child:
+      Row(children: [
+        if (widget.displayMode == DirectoryDisplayMode.select)
+          _cardSelectionContent(padding: EdgeInsets.only(top: 12, bottom: 12, right: 8)),
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             RichText(textAlign: TextAlign.left, text:
               TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: _nameSpans),
             )
           ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
-            Styles().images.getImage('chevron2-down',)
-          )
-        ],)
-     ),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+          Styles().images.getImage('chevron2-down',)
+        ),
+      ],),
     );
 
   List<TextSpan> get _nameSpans {
