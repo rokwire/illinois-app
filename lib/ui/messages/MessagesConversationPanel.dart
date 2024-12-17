@@ -131,30 +131,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return Scaffold(
       // TODO: Adjust header bar to match design. The screenshot shows "To Mallory Simonds"
       // TODO: Possibly add icons (envelope, bell, gear) as seen in the screenshot's top bar.
-      appBar: AppBar(
-        backgroundColor: Styles().colors.background,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Styles().colors.textColorPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text("To Mallory Simonds",
-            style: Styles().textStyles.getTextStyle('widget.title.large')), // TODO: Update style to match the Figma if needed
-        actions: [
-          IconButton(
-              icon: Icon(Icons.mail, color: Styles().colors.fillColorSecondary, size: 20,),
-              onPressed: () {} // TODO: Implement action
-          ),
-          IconButton(
-              icon: Icon(Icons.notifications, color: Styles().colors.fillColorSecondary, size: 20,),
-              onPressed: () {} // TODO: Implement action
-          ),
-          IconButton(
-              icon: Icon(Icons.settings, color: Styles().colors.fillColorSecondary, size: 20,),
-              onPressed: () {} // TODO: Implement action
-          ),
-        ],
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'To Mallory Simonds'), leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -244,8 +221,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Styles().colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
       ),
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -253,7 +228,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           Row(
             children: [
               // TODO: Replace placeholder avatar with actual avatar if available
-              Icon(Icons.account_circle, color: Styles().colors.fillColorPrimary, size: 24),
+              Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
               SizedBox(width: 8),
               Expanded(
                   child: Text(
@@ -332,10 +307,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                                 cursorColor: Styles().colors.textColorPrimary,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-                                    fillColor: Styles().colors.surface, // TODO: Confirm chat input field BG color with final design
+                                    fillColor: Styles().colors.surface,
                                     focusColor: Styles().colors.surface,
                                     hoverColor: Styles().colors.surface,
-                                    hintText: "Message Mallory Simonds", // Matches design placeholder
+                                    hintText: "Message Mallory Simonds",
                                     hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
                                 ),
                                 style: Styles().textStyles.getTextStyle('widget.title.regular') // TODO: Update style if needed
