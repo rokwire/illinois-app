@@ -618,6 +618,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   GlobalKey _browseKey = GlobalKey();
   GlobalKey _favoritesKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
+  Map<HomeContentType, double> contentScrollPositions = <HomeContentType, double>{};
 
   @override
   void initState() {
@@ -729,8 +730,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   void _updateContentType(HomeContentType? contentType) {
     if (mounted && (contentType != null) && (contentType != _contentType)) {
+      contentScrollPositions[_contentType] = _scrollController.offset;
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.jumpTo(contentScrollPositions[contentType] ?? 0);
       });
       Analytics().logPageWidget(_contentWidget);
     }
