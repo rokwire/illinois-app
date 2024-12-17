@@ -9,6 +9,7 @@ import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -27,14 +28,16 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
+  final Set<String>? selectedAccountIds;
+  final void Function(bool selected, Auth2PublicAccount account)? onToggleAccountSelection;
   
-  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile});
+  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile, this.selectedAccountIds, this.onToggleAccountSelection});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
 }
 
-class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
+class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
   String _searchText = '';
@@ -60,6 +63,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       illinois.Auth2.notifyProfilePictureChanged,
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
+      Auth2.notifyLoginChanged,
     ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
@@ -85,7 +89,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         });
       }
     }
-    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged)) {
+    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
         setState((){
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
@@ -96,9 +100,18 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+    return Auth2().isLoggedIn ? _pageContent : _loggedOutContent;
+  }
+
+  Widget get _pageContent {
     List<Widget> contentList = <Widget>[
-      _editDescription,
+      if (widget.onEditProfile != null)
+        _editDescription,
       _searchBarWidget,
     ];
     if (_loadingProgress) {
@@ -124,6 +137,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       String? directoryIndex;
       for (Auth2PublicAccount account in accounts) {
         String? accountDirectoryIndex = account.directoryKey;
+        DirectoryDisplayMode displayMode = widget.selectedAccountIds != null ? DirectoryDisplayMode.select : DirectoryDisplayMode.browse;
         if ((accountDirectoryIndex != null) && (directoryIndex != accountDirectoryIndex)) {
           if (contentList.isNotEmpty) {
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -131,10 +145,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           contentList.add(_sectionHeading(directoryIndex = accountDirectoryIndex));
         }
         contentList.add(_sectionSplitter);
-        contentList.add(DirectoryAccountCard(account,
+        contentList.add(DirectoryAccountCard(account, displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
+          selected: widget.selectedAccountIds?.contains(account.id) == true,
+          onToggleSelected: (value) => _onToggleAccountSelected(value, account),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -154,6 +170,11 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     setState(() {
       _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
     });
+  }
+
+  void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
+    Analytics().logSelect(target: 'Select', source: account.id);
+    widget.onToggleAccountSelection?.call(value, account);
   }
 
   Widget _sectionHeading(String dirEntry) =>
@@ -187,7 +208,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   String get _editDescriptionTemplate {
     switch(widget.contentType) {
       case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the Connections.');
-      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
     }
   }
 
@@ -360,14 +381,14 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   String get _emptyText {
     switch (widget.contentType) {
       case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.empty.text', 'You do not have any Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
-      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.empty.text', 'The User Directory is empty.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.empty.text', 'The User Directory is empty.');
     }
   }
 
   String get _failedText {
     switch (widget.contentType) {
       case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
-      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
     }
   }
 
@@ -466,6 +487,28 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
   }
 
+  // Signed out
+  Widget get _loggedOutContent {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx('panel.profile.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapSignIn() => ProfileHomePanel.present(context, content: ProfileContent.login, );
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
