@@ -118,7 +118,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     return Stack(children: [
       Semantics(label: "tout", image: true, excludeSemantics: true, child:
-        ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '', loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '', fit: BoxFit.cover, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ?
