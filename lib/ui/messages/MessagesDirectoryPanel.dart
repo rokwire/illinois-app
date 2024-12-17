@@ -138,7 +138,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     );
 
   Widget get _allUsersContent =>
-    ProfileDirectoryAccountsPage(DirectoryAccounts.appDirectory,
+    ProfileDirectoryAccountsPage(DirectoryAccounts.userDirectory,
       key: _allUsersPageKey,
       scrollController: _scrollController,
       selectedAccountIds: _selectedAccountIds,

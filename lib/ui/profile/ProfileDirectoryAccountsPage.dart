@@ -202,7 +202,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   String get _editDescriptionTemplate {
     switch(widget.contentType) {
       case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the Connections.');
-      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
     }
   }
 
@@ -375,14 +375,14 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   String get _emptyText {
     switch (widget.contentType) {
       case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.empty.text', 'You do not have any Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
-      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.empty.text', 'The User Directory is empty.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.empty.text', 'The User Directory is empty.');
     }
   }
 
   String get _failedText {
     switch (widget.contentType) {
       case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
-      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
     }
   }
 
