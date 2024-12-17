@@ -9,6 +9,7 @@ import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -62,6 +63,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       illinois.Auth2.notifyProfilePictureChanged,
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
+      Auth2.notifyLoginChanged,
     ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
@@ -87,7 +89,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         });
       }
     }
-    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged)) {
+    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
         setState((){
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
@@ -103,6 +105,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    return Auth2().isLoggedIn ? _pageContent : _loggedOutContent;
+  }
+
+  Widget get _pageContent {
     List<Widget> contentList = <Widget>[
       if (widget.onEditProfile != null)
         _editDescription,
@@ -481,6 +487,28 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
   }
 
+  // Signed out
+  Widget get _loggedOutContent {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx('panel.profile.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapSignIn() => ProfileHomePanel.present(context, content: ProfileContent.login, );
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
