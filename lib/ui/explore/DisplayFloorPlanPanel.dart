@@ -30,22 +30,22 @@ class DisplayFloorPlanPanel extends StatefulWidget {
 
 class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   late final WebViewController _controller;
-  Building? _building;
   String _htmlWithFloorPlan = '';
   String _urlBase = '${Config().gatewayUrl}/wayfinding/floorplan?';
   String _currentFloorCode = '';
-
-  List<String>? _buildingFloorList = [];
 
   @override
   void initState() {
     super.initState();
     _controller = WebViewController();
-    if(widget.building != null) {
-      _building = widget.building;
-      _buildingFloorList = _building?.floors;
-      _currentFloorCode = _buildingFloorList![0];
-      loadFloorPlan(_currentFloorCode);
+
+    // Initialize only if building is provided
+    if (widget.building != null) {
+      List<String>? floors = widget.building?.floors;
+      if (floors != null && floors.isNotEmpty) {
+        _currentFloorCode = floors.first; // Set to the first floor code
+        loadFloorPlan(_currentFloorCode);
+      }
     }
   }
 
@@ -67,8 +67,9 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   }
 
   Future<void> loadFloorPlan(String floorCode) async {
-    String url = '${_urlBase}bldgid=${_building?.number}&floor=$floorCode';
+    String url = '${_urlBase}bldgid=${widget.building?.number}&floor=$floorCode';
     String floorPlanSvg = await fetchFloorPlanData(url);
+    if (!mounted) return; // Ensure widget is still mounted
     setState(() {
       if (floorPlanSvg == 'Empty SVG data') {
         _htmlWithFloorPlan = '<html lang=""><body>No floor plan available</body></html>';
@@ -78,6 +79,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       _controller.loadHtmlString(_htmlWithFloorPlan);
     });
   }
+
 
   void changeActiveFloor(String? floorCode) {
     if (floorCode != null) {
@@ -89,18 +91,21 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   }
 
   void viewNextFloor(int direction) {
-    int currentIndex = _buildingFloorList!.indexOf(_currentFloorCode);
-    int newIndex = (currentIndex + direction).clamp(0, _buildingFloorList!.length - 1);
+    List<String>? floors = widget.building?.floors;
+    if (floors != null && floors.isNotEmpty) {
+      int currentIndex = floors.indexOf(_currentFloorCode);
+      int newIndex = (currentIndex + direction).clamp(0, floors.length - 1);
 
-    if (newIndex != currentIndex) {
-      changeActiveFloor(_buildingFloorList![newIndex]);
+      if (newIndex != currentIndex) {
+        changeActiveFloor(floors[newIndex]);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: ' ${_building?.name}'),
+      appBar: HeaderBar(title: ' ${widget.building?.name ?? ''}'),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
@@ -111,6 +116,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   }
 
   Widget buildFooter() {
+    List<String>? floors = widget.building?.floors;
     return Align(
       alignment: Alignment.bottomCenter,
       child: Semantics(
@@ -123,7 +129,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
                 padding: EdgeInsets.all(10.0),
                 child: GestureDetector(
                   onTap: () => viewNextFloor(-1),
-                  child: _buildingFloorList != null
+                  child: floors != null
                       ? Styles().images.getImage('chevron-left-bold') ?? Container()
                       : Container(
                     foregroundDecoration: BoxDecoration(
@@ -134,29 +140,21 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
                   ),
                 ),
               ),
-              Flexible(
-                child: FractionallySizedBox(
-                  widthFactor: 0.5, // Adjust this factor to control the space between the navigation arrows
-                ),
-              ),
-              if (_buildingFloorList != null)
+              Flexible(child: FractionallySizedBox(widthFactor: 0.5)),
+              if (floors != null)
                 Semantics(
                   container: true,
                   button: true,
                   child: buildAccountDropDown(
-                      '${Localization().getStringEx('panel.display_floor_plan_panel.buildFooter', 'Floor')} $_currentFloorCode'
+                    '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $_currentFloorCode',
                   ),
                 ),
-              Flexible(
-                child: FractionallySizedBox(
-                  widthFactor: 0.5, // Use the same factor for symmetry
-                ),
-              ),
+              Flexible(child: FractionallySizedBox(widthFactor: 0.5)),
               Padding(
                 padding: EdgeInsets.all(10.0),
                 child: GestureDetector(
                   onTap: () => viewNextFloor(1),
-                  child: _buildingFloorList != null
+                  child: floors != null
                       ? Styles().images.getImage('chevron-right-bold') ?? Container()
                       : Container(
                     foregroundDecoration: BoxDecoration(
@@ -175,44 +173,54 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   }
 
   List<DropdownMenuItem<String>> buildDropDownItems() {
-    return _buildingFloorList!.map((floorLetters) {
+    List<String>? floors = widget.building?.floors;
+    return floors?.map((floorLetters) {
       return DropdownMenuItem<String>(
         value: floorLetters,
         child: Semantics(
-          label: '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $floorLetters',
-          hint: '${Localization().getStringEx('panel.display_floor_plan_panel.footer.hint', 'Double tap to select floor')}',
+          label:
+          '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $floorLetters',
+          hint:
+          '${Localization().getStringEx('panel.display_floor_plan_panel.footer.hint', 'Double tap to select floor')}',
           button: false,
           excludeSemantics: true,
           child: Center(
             child: Text(
               '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $floorLetters',
-              style: Styles().textStyles.getTextStyle("widget.button.title.medium"),
+              style:
+              Styles().textStyles.getTextStyle("widget.button.title.medium"),
             ),
           ),
         ),
       );
-    }).toList();
+    }).toList() ??
+        [];
   }
 
   Widget buildAccountDropDown(String currentFloor) {
     return Semantics(
       label: currentFloor,
-      hint: '${Localization().getStringEx('panel.display_floor_plan_panel.footer.hint', 'Double tap to select floor')}',
+      hint:
+      '${Localization().getStringEx('panel.display_floor_plan_panel.footer.hint', 'Double tap to select floor')}',
       button: true,
       container: true,
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           icon: Padding(
             padding: EdgeInsets.only(left: 4),
-            child: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+            child:
+            Styles().images.getImage('chevron-down', excludeFromSemantics: true),
           ),
           isExpanded: false,
-          style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),
+          style:
+          Styles().textStyles.getTextStyle('widget.title.regular.fat'),
           hint: Text(
             currentFloor,
-            style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),
+            style:
+            Styles().textStyles.getTextStyle('widget.title.regular.fat'),
           ),
-          dropdownColor: Styles().colors.white, //dropdown menu background
+          dropdownColor:
+          Styles().colors.white, // Dropdown menu background
           items: buildDropDownItems(),
           onChanged: changeActiveFloor,
         ),
@@ -220,4 +228,5 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     );
   }
 }
+
 
