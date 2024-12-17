@@ -28,7 +28,7 @@ class DirectoryAccountCard extends StatefulWidget {
   final bool selected;
   final void Function(bool)? onToggleSelected;
 
-  DirectoryAccountCard(this.account, this.displayMode, { super.key, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
+  DirectoryAccountCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountCardState();
