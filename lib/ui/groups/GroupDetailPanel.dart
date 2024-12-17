@@ -312,7 +312,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
       if (loadEvents) {
         // _loadEvents(); //TBD
-        _updateController.add(_GroupDetailEventsContent.notifyEventsRefresh);
+        _updateController.add(_GroupEventsContent.notifyEventsRefresh);
       }
       _decreaseProgress();
     }
@@ -325,7 +325,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _group = group;
           if (refreshEvents) {
             // _refreshEvents();
-            _updateController.add(_GroupDetailEventsContent.notifyEventsRefresh);
+            _updateController.add(_GroupEventsContent.notifyEventsRefresh);
           }
           _refreshGroupAdmins();
         });
@@ -807,7 +807,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     } else {
       content.addAll(_buildDefaultContent());
       if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD
-          content.add(_GroupDetailEventsContent(group: _group, updateController: _updateController));
+          content.add(_GroupEventsContent(group: _group, updateController: _updateController));
       }
       content.add(_buildResearchProjectMembershipRequest());
     }
@@ -1174,9 +1174,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Widget _buildPageFromType(_DetailTab data){
       switch(data){
         case _DetailTab.Events:
-          return _GroupDetailEventsContent(group: _group, updateController: _updateController);
+          return _GroupEventsContent(group: _group, updateController: _updateController);
         case _DetailTab.Posts:
-          return _GroupDetailPostsContent(group: _group, updateController: _updateController,);
+          return _GroupPostsContent(group: _group, updateController: _updateController,);
         case _DetailTab.Messages:
           return _buildMessages(); //TBD
         case _DetailTab.Polls:
@@ -2225,7 +2225,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               }
             }
             else if (result.isPost) {
-              _updateController.add(_GroupDetailPostsContent.notifyPostRefreshWithScrollToLast);
+              _updateController.add(_GroupPostsContent.notifyPostRefreshWithScrollToLast);
               // _scrollToLastPostAfterRefresh = true;
               // if (_refreshingPosts != true) {
               //   _refreshCurrentPosts();
@@ -2281,7 +2281,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _refreshCurrentScheduledPosts();
         _refreshCurrentMessages();
         _updateController.add(GroupDetailPanel.notifyRefresh);
-        _updateController.add(_GroupDetailEventsContent.notifyEventsRefresh);
+        _updateController.add(_GroupEventsContent.notifyEventsRefresh);
       }
     }
 
@@ -2442,21 +2442,21 @@ class GroupEventSelector2 extends Event2Selector2 {
   }
 }
 
-class _GroupDetailEventsContent extends StatefulWidget{
+class _GroupEventsContent extends StatefulWidget{
   static const String notifyEventsRefresh  = "edu.illinois.rokwire.group_detail.events.refresh";
 
   final Group? group;
   final StreamController<dynamic>? updateController;
 
-  const _GroupDetailEventsContent({this.updateController, this.group});
+  const _GroupEventsContent({this.updateController, this.group});
 
   String? get groupId => group?.id;
 
   @override
-  State<StatefulWidget> createState() => _GroupDetailEventsState();
+  State<StatefulWidget> createState() => _GroupEventsState();
 }
 
-class _GroupDetailEventsState extends State<_GroupDetailEventsContent> with AutomaticKeepAliveClientMixin<_GroupDetailEventsContent> implements NotificationsListener {
+class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAliveClientMixin<_GroupEventsContent> implements NotificationsListener {
 
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
@@ -2582,7 +2582,7 @@ class _GroupDetailEventsState extends State<_GroupDetailEventsContent> with Auto
   }
 
   void _initUpdateListener() => widget.updateController?.stream.listen((command) {
-    if (command is String && command == _GroupDetailEventsContent.notifyEventsRefresh) {
+    if (command is String && command == _GroupEventsContent.notifyEventsRefresh) {
       _loadEvents();
     }
   });
@@ -2599,7 +2599,7 @@ class _GroupDetailEventsState extends State<_GroupDetailEventsContent> with Auto
   }
 }
 
-class _GroupDetailPostsContent extends StatefulWidget{
+class _GroupPostsContent extends StatefulWidget{
   // static const String notifyPostRefresh  = "edu.illinois.rokwire.group_detail.posts.refresh";
   // static const String notifyPostRefreshWithDelta  = "edu.illinois.rokwire.group_detail.posts.refresh.with_delta";
   static const String notifyPostRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.posts.refresh.with_scroll_to_last";
@@ -2607,14 +2607,14 @@ class _GroupDetailPostsContent extends StatefulWidget{
   final Group? group;
   final StreamController<dynamic>? updateController;
 
-  const _GroupDetailPostsContent({this.group, this.updateController});
+  const _GroupPostsContent({this.group, this.updateController});
 
   @override
-  State<StatefulWidget> createState() => _GroupDetainPostsState();
+  State<StatefulWidget> createState() => _GroupPostsState();
 
 }
 
-class _GroupDetainPostsState extends State<_GroupDetailPostsContent> with AutomaticKeepAliveClientMixin<_GroupDetailPostsContent>
+class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
     implements NotificationsListener {
   List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
@@ -2807,7 +2807,7 @@ class _GroupDetainPostsState extends State<_GroupDetailPostsContent> with Automa
       _refreshCurrentPosts();
     // } else if(command is String && command == _GroupDetailPostsContent.notifyPostRefresh) {
     //   _refreshCurrentPosts();
-    }  else if(command is String && command == _GroupDetailPostsContent.notifyPostRefreshWithScrollToLast) {
+    }  else if(command is String && command == _GroupPostsContent.notifyPostRefreshWithScrollToLast) {
       _scrollToLastPostAfterRefresh = true;
       if (_refreshingPosts != true) {
         _refreshCurrentPosts();
