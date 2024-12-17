@@ -41,7 +41,8 @@ class MessagesDirectoryPanel extends StatefulWidget {
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with TickerProviderStateMixin {
   final GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
   final GlobalKey<ProfileDirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _recentScrollController = ScrollController();
+  final ScrollController _allUsersScrollController = ScrollController();
   late TabController _tabController;
   int _selectedTab = 0;
   Set<String> _selectedAccountIds = {};
@@ -64,7 +65,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   void dispose() {
     _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
-    _scrollController.dispose();
+    _recentScrollController.dispose();
+    _allUsersScrollController.dispose();
 
     super.dispose();
   }
@@ -88,19 +90,19 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
           controller: _tabController,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            _buildContinueButtonOverlay(_recentContent),
-            _buildContinueButtonOverlay(_allUsersContent),
+            _buildContinueButtonOverlay(_recentContent, scrollController: _recentScrollController),
+            _buildContinueButtonOverlay(_allUsersContent, scrollController: _allUsersScrollController),
           ],
         ),
       ),
     ],);
   }
 
-  Widget _buildContinueButtonOverlay(Widget content) {
+  Widget _buildContinueButtonOverlay(Widget content, { ScrollController? scrollController }) {
     return RefreshIndicator(onRefresh: _onRefresh, child:
       Stack(
           children: [
-            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+            SingleChildScrollView(controller: scrollController, physics: AlwaysScrollableScrollPhysics(), child:
               Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: _hasSelectedAccounts ? 64 : 24,),
                 child: content,
@@ -132,7 +134,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       key: _recentPageKey,
       recentConversations: widget.recentConversations,
       conversationPageSize: widget.conversationPageSize,
-      scrollController: _scrollController,
+      scrollController: _recentScrollController,
       selectedConversationIds: _selectedConversationIds,
       onToggleConversationSelection: _onToggleConversationSelected
     );
@@ -140,7 +142,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   Widget get _allUsersContent =>
     ProfileDirectoryAccountsPage(DirectoryAccounts.userDirectory,
       key: _allUsersPageKey,
-      scrollController: _scrollController,
+      scrollController: _allUsersScrollController,
       selectedAccountIds: _selectedAccountIds,
       onToggleAccountSelection: _onToggleAccountSelected,
     );
