@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -12,6 +13,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -41,34 +43,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _loadingResponse = false;
   bool _loading = false;
 
-  // TODO: Replace 'current-user' logic with actual Auth2().accountId logic when available
-  final String currentUserId = "current-user";
+  // Use the actual Auth2 accountId instead of a placeholder.
+  String? get currentUserId => Auth2().accountId;
 
-  // Fake test messages to mirror the design
-  // TODO: Once APIs are ready, load these from the backend.
-  List<Post> _messages = [
-    Post(
-        body: "Message here. No subject line necessary. Right to the point. This message could be as long as needed to be and wouldn’t need to get cut off unless it was over 500 characters.",
-        creator: Creator(accountId: "mallory", name: "Mallory Simonds"),
-        // TODO: Add dateCreatedUtc for formatting date/time. For now, use static date.
-        dateCreatedUtc: DateTime(2024, 7, 10, 10, 0)
-    ),
-    Post(
-        body: "Are you joining the call?",
-        creator: Creator(accountId: "john", name: "John Paul"),
-        dateCreatedUtc: DateTime(2024, 7, 10, 18, 12)
-    ),
-    Post(
-        body: "Hey, JP! I just finished up the changes we discussed on Friday. I'm looking into Surveys now to see how we could improve them, but let me know if you think there's something else I should focus on.",
-        creator: Creator(accountId: "mallory", name: "Mallory Simonds"),
-        dateCreatedUtc: DateTime(2024, 7, 10, 18, 14)
-    ),
-    Post(
-        body: "Great\n\nI think I might need some Neom U app tweaks tomorrow. I have a call early Thursday\n\nWe can discuss tomorrow",
-        creator: Creator(accountId: "john", name: "John Paul"),
-        dateCreatedUtc: DateTime(2024, 8, 10, 18, 30)
-    ),
-  ];
+  // Messages loaded from the backend
+  List<Message> _messages = [];
 
   @override
   void initState() {
@@ -85,9 +64,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     _contentCodes = buildContentCodes();
 
-    if (CollectionUtils.isNotEmpty(_messages)) {
-      _shouldScrollToBottom = true;
-    }
+    // Load messages from the backend
+    _loadMessages();
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -122,6 +100,33 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
+  Future<void> _loadMessages() async {
+    if (widget.conversation.id == null) {
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+
+    // Use the Social API to load conversation messages
+    List<Message>? loadedMessages = await Social().loadConversationMessages(
+      conversationId: widget.conversation.id!,
+      limit: 100,
+      offset: 0,
+    );
+
+    setState(() {
+      _loading = false;
+      if (loadedMessages != null) {
+        _messages = loadedMessages;
+        _shouldScrollToBottom = true;
+      } else {
+        // If null, could indicate a failure to load messages
+        _messages = [];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -129,13 +134,22 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _scrollToBottomIfNeeded();
 
     return Scaffold(
-      // TODO: Adjust header bar to match design. The screenshot shows "To Mallory Simonds"
-      // TODO: Possibly add icons (envelope, bell, gear) as seen in the screenshot's top bar.
-      appBar: RootHeaderBar(title: Localization().getStringEx('', 'To Mallory Simonds'), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'To ${_getConversationTitle()}'), leading: RootHeaderBarLeading.Back),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
+  }
+
+  String _getConversationTitle() {
+    // If it's a one-on-one conversation, show the other member's name
+    // If group, show something else. For now, if multiple members, just show first.
+    if (widget.conversation.members?.length == 1) {
+      return widget.conversation.members?.first.name ?? 'Unknown';
+    } else {
+      // For group conversations, you could customize the title further
+      return widget.conversation.membersString ?? 'Group Conversation';
+    }
   }
 
   Widget _buildContent() {
@@ -156,6 +170,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             ),
             Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
           ])
+              : _loading
+              ? Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
               : Center(
               child: Text('No message history', style: Styles().textStyles.getTextStyle('widget.message.light.medium'))
           )
@@ -166,7 +182,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           right: 0,
           child: Container(
               key: _chatBarKey,
-              color: Styles().colors.background, // TODO: Update chat bar background color if needed.
+              color: Styles().colors.background,
               child: SafeArea(child: _buildChatBar())
           )
       )
@@ -179,11 +195,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (_messages.isNotEmpty) {
       DateTime? lastDate;
       for (int i = 0; i < _messages.length; i++) {
-        DateTime? msgDate = _messages[i].dateCreatedUtc;
+        DateTime? msgDate = _messages[i].dateSentUtc;
         if (msgDate != null) {
-
           String msgDateString = AppDateTime().formatDateTime(msgDate, format: 'MMMM dd, yyyy') ?? '';
-
           if ((lastDate == null) ||
               (lastDate.year != msgDate.year || lastDate.month != msgDate.month || lastDate.day != msgDate.day)) {
             contentList.add(_buildDateDivider(msgDateString));
@@ -214,8 +228,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  Widget _buildMessageCard(Post message) {
-    bool fromUser = (message.creator?.accountId == currentUserId);
+  Widget _buildMessageCard(Message message) {
+    bool fromUser = (message.sender?.accountId == currentUserId);
 
     return Container(
       margin: EdgeInsets.only(bottom: 16),
@@ -227,27 +241,25 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
             children: [
-              // TODO: Replace placeholder avatar with actual avatar if available
+              // Placeholder avatar icon
               Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
               SizedBox(width: 8),
               Expanded(
                   child: Text(
-                      "${message.creator?.name ?? 'Unknown'}",
+                      "${message.sender?.name ?? 'Unknown'}",
                       style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
                   )
               ),
-              // TODO: Format time based on dateCreatedUtc if needed:
-              (message.dateCreatedUtc != null) ?
-              Text(AppDateTime().formatDateTime(message.dateCreatedUtc, format: 'h:mm a') ?? '',
+              (message.dateSentUtc != null) ?
+              Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
                   style: Styles().textStyles.getTextStyle('widget.description.small')
               )
                   : Container(),
             ],
           ),
           SizedBox(height: 8),
-          // Message body text
           Text(
-              message.body ?? '',
+              message.message ?? '',
               style: Styles().textStyles.getTextStyle('widget.card.title.small')
           ),
         ]),
@@ -255,7 +267,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  //TODO: Check if this is something we want
   Widget _buildTypingChatBubble() {
     return Align(
         alignment: AlignmentDirectional.centerStart,
@@ -266,7 +277,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                 width: 100,
                 height: 50,
                 child: Material(
-                    color: Styles().colors.blueAccent, // TODO: Check if typing indicator bubble should match user color or another color
+                    color: Styles().colors.blueAccent,
                     borderRadius: BorderRadius.circular(16.0),
                     child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -310,10 +321,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                                     fillColor: Styles().colors.surface,
                                     focusColor: Styles().colors.surface,
                                     hoverColor: Styles().colors.surface,
-                                    hintText: "Message Mallory Simonds",
+                                    hintText: "Message ${_getConversationTitle()}",
                                     hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
                                 ),
-                                style: Styles().textStyles.getTextStyle('widget.title.regular') // TODO: Update style if needed
+                                style: Styles().textStyles.getTextStyle('widget.title.regular')
                             )
                         ),
                         Align(
@@ -386,30 +397,32 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text)) {
+    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && currentUserId != null) {
       FocusScope.of(context).requestFocus(FocusNode());
       if (_loadingResponse) {
         return;
       }
 
       setState(() {
-        // TODO: Create message via Social BB API once ready.
-        _inputController.text = '';
         _loadingResponse = true;
         _shouldScrollToBottom = true;
         _shouldSemanticFocusToLastBubble = true;
       });
 
-      // TODO: After sending the message via API, await response and add the new message to _messages.
-      await Future.delayed(Duration(seconds: 1));
+      // Send message via API
+      Message? newMessage = await Social().createConversationMessage(
+        conversationId: widget.conversation.id!,
+        message: _inputController.text,
+      );
+
+      // Clear input after sending
+      _inputController.text = '';
+
       setState(() {
-        // For now, just add the user's message to the list:
-        _messages.add(Post(
-            body: message,
-            creator: Creator(accountId: currentUserId, name: "Me"),
-            dateCreatedUtc: DateTime.now()
-        ));
         _loadingResponse = false;
+        if (newMessage != null) {
+          _messages.add(newMessage);
+        }
       });
     }
   }
@@ -461,7 +474,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     setStateIfMounted(() {
       _shouldScrollToBottom = true;
       if (visible) {
-        // We want to keep the semantics focus on the textField when keyboard is visible
         _shouldSemanticFocusToLastBubble = false;
       }
     });
@@ -497,12 +509,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Future<bool> get _checkKeyboardVisible async {
     final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
-    // Check if the position of the keyboard is still changing
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
 
     if (position == secondPosition) {
-      // Animation is finished
       return position > 0;
     } else {
       return _checkKeyboardVisible; // Check again
@@ -511,11 +521,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   static List<String>? buildContentCodes() {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    // codes?.sort((String code1, String code2) {
-    //   String title1 = _BrowseSection.title(sectionId: code1);
-    //   String title2 = _BrowseSection.title(sectionId: code2);
-    //   return title1.toLowerCase().compareTo(title2.toLowerCase());
-    // });
     return codes;
   }
 }
