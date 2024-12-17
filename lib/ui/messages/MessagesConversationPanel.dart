@@ -352,7 +352,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             enabled: true,
             child: IconButton(
                 splashRadius: 24,
-                icon: Styles().images.getImage('plus-circle', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
+                icon: Styles().images.getImage('image-placeholder', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
                 onPressed: () {
                   // TODO: Implement attachment picker once ready
                 }
