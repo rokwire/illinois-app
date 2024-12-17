@@ -6,13 +6,12 @@ import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class RecentConversationsPage extends StatefulWidget {
   final ScrollController? scrollController;
   final List<Conversation> recentConversations;
   final int conversationPageSize;
-  final Map<String, List<String>>? selectedConversationIds;
+  final Set<String>? selectedConversationIds;
   final void Function(bool selected, Conversation conversation)? onToggleConversationSelection;
 
   RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.selectedConversationIds, this.onToggleConversationSelection});
@@ -83,7 +82,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
           onToggleExpanded: () => _onToggleConversationExpanded(conversation),
-          selected: CollectionUtils.isNotEmpty(widget.selectedConversationIds?[conversation.id]),
+          selected: widget.selectedConversationIds?.contains(conversation.id) == true,
           onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
         ));
       }

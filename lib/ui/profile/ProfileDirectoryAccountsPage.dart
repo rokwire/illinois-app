@@ -27,7 +27,7 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final Map<String, bool>? selectedAccountIds;
+  final Set<String>? selectedAccountIds;
   final void Function(bool selected, Auth2PublicAccount account)? onToggleAccountSelection;
   
   ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile, this.selectedAccountIds, this.onToggleAccountSelection});
@@ -139,7 +139,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
-          selected: widget.selectedAccountIds?[account.id] == true,
+          selected: widget.selectedAccountIds?.contains(account.id) == true,
           onToggleSelected: (value) => _onToggleAccountSelected(value, account),
         ));
       }

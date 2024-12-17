@@ -17,12 +17,25 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class MessagesDirectoryPanel extends StatefulWidget {
   final List<Conversation> recentConversations;
+  final Map<String, Conversation> recentConversationsMap;
   final int conversationPageSize;
   final bool? unread;
   final void Function()? onTapBanner;
-  MessagesDirectoryPanel({Key? key, required this.recentConversations, required this.conversationPageSize, this.unread, this.onTapBanner}) : super(key: key);
+  MessagesDirectoryPanel({Key? key, required this.recentConversations, required this.conversationPageSize, this.unread, this.onTapBanner}) :
+    recentConversationsMap = _buildMap(recentConversations),
+    super(key: key);
 
   _MessagesDirectoryPanelState createState() => _MessagesDirectoryPanelState();
+
+  static Map<String, Conversation> _buildMap(List<Conversation> conversations) {
+    Map<String, Conversation> conversationsMap = <String, Conversation>{};
+    for (Conversation conversation in conversations) {
+      if (conversation.id != null) {
+        conversationsMap[conversation.id ?? ''] = conversation;
+      }
+    }
+    return conversationsMap;
+  }
 }
 
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with TickerProviderStateMixin {
@@ -31,8 +44,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   int _selectedTab = 0;
-  Map<String, bool> _selectedAccountIds = {};
-  Map<String, List<String>> _selectedConversationIds = {};
+  Set<String> _selectedAccountIds = {};
+  Set<String> _selectedConversationIds = {};
 
   final List<String> _tabNames = [
     Localization().getStringEx('panel.messages.directory.tab.recent.label', 'Recent'),
@@ -89,11 +102,11 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
           children: [
             SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
               Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: _isAccountSelected ? 64 : 24,),
+                padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: _hasSelectedAccounts ? 64 : 24,),
                 child: content,
               )
             ),
-            if (_isAccountSelected)
+            if (_hasSelectedAccounts)
               Column(
                 children: [
                   Expanded(child: Container()),
@@ -115,35 +128,49 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   }
 
   Widget get _recentContent =>
-      RecentConversationsPage(key: _recentPageKey, recentConversations: widget.recentConversations, conversationPageSize: widget.conversationPageSize, scrollController: _scrollController,
-          selectedConversationIds: _selectedConversationIds, onToggleConversationSelection: _onToggleConversationSelected);
+    RecentConversationsPage(
+      key: _recentPageKey,
+      recentConversations: widget.recentConversations,
+      conversationPageSize: widget.conversationPageSize,
+      scrollController: _scrollController,
+      selectedConversationIds: _selectedConversationIds,
+      onToggleConversationSelection: _onToggleConversationSelected
+    );
 
   Widget get _allUsersContent =>
-      ProfileDirectoryAccountsPage(DirectoryAccounts.appDirectory, key: _allUsersPageKey, scrollController: _scrollController, selectedAccountIds: _selectedAccountIds, onToggleAccountSelection: _onToggleAccountSelected,);
+      ProfileDirectoryAccountsPage(DirectoryAccounts.appDirectory,
+        key: _allUsersPageKey,
+        scrollController: _scrollController,
+        selectedAccountIds: _selectedAccountIds,
+        onToggleAccountSelection: _onToggleAccountSelected,
+      );
 
   Future<void> _onTapCreateConversation() async {
     // do not need to check for existing conversation with selected members because Social BB handles it
-    List<String> memberIds = [];
+    Set<String> memberIds = {};
     if (_selectedTab == 0) {
       // recent
-      _selectedConversationIds.forEach((conversationId, members) {
-        memberIds.addAll(members);
-      });
+      for (String conversationId in _selectedConversationIds) {
+        List<String>? conversationMemberIds = widget.recentConversationsMap[conversationId]?.memberIds;
+        if (conversationMemberIds != null) {
+          memberIds.addAll(conversationMemberIds);
+        }
+      }
     } else {
       // all users
-      _selectedAccountIds.forEach((accountId, selected) {
-        if (selected) {
-          memberIds.add(accountId);
-        }
-      });
+      memberIds.addAll(_selectedAccountIds);
     }
-    Conversation? conversation = await Social().createConversation(memberIds: memberIds);
-    if (conversation != null) {
-      _selectedAccountIds.clear();
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.messages.directory.button.continue.failed.msg', 'Failed to create a conversation with the selected members.'));
+
+    if (memberIds.isNotEmpty) {
+      Conversation? conversation = await Social().createConversation(memberIds: memberIds.toList());
+      if (conversation != null) {
+        _selectedAccountIds.clear();
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.messages.directory.button.continue.failed.msg', 'Failed to create a conversation with the selected members.'));
+      }
     }
+
   }
 
   void _onTabChanged({bool manual = true}) {
@@ -157,7 +184,12 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
     setState(() {
       if (StringUtils.isNotEmpty(account.id)) {
-        _selectedAccountIds[account.id!] = value;
+        if (value) {
+          _selectedAccountIds.add(account.id!);
+        }
+        else {
+          _selectedAccountIds.remove(account.id!);
+        }
       }
     });
   }
@@ -165,14 +197,20 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   void _onToggleConversationSelected(bool value, Conversation conversation) {
     setState(() {
       if (StringUtils.isNotEmpty(conversation.id)) {
-        _selectedConversationIds[conversation.id!] = conversation.memberIds ?? [];
+        if (value) {
+          _selectedConversationIds.add(conversation.id!);
+        }
+        else {
+          _selectedConversationIds.remove(conversation.id);
+        }
       }
     });
   }
 
   Future<void> _onRefresh() async => _selectedTab == 0 ? _recentPageKey.currentState?.refresh() : _allUsersPageKey.currentState?.refresh();
 
-  bool get _isAccountSelected => _selectedAccountIds.containsValue(true);
+  bool get _hasSelectedAccounts => (_selectedTab == 0) ? _selectedConversationIds.isNotEmpty : _selectedAccountIds.isNotEmpty;
+
 }
 
 enum MessagesDirectoryContentType { recent, all }
