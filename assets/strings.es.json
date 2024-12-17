@@ -1233,6 +1233,10 @@
     "panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
     "panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
 
+    "panel.display_floor_plan_panel.footer": "Planta",
+    "panel.display_floor_plan_panel.footer.menu_item": "Planta",
+    "panel.display_floor_plan_panel.footer.hint": "Doble toque para seleccionar planta",
+
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
     "panel.search_building.result.empty.label": "No buildings found.",
