@@ -79,25 +79,13 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
 
     List<Conversation>? conversations = _conversations;
     if ((conversations != null) && conversations.isNotEmpty) {
-      String? directoryIndex;
       for (Conversation conversation in conversations) {
-        String? conversationDirectoryIndex = conversation.directoryKey;
-        if ((conversationDirectoryIndex != null) && (directoryIndex != conversationDirectoryIndex)) {
-          if (contentList.isNotEmpty) {
-            contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
-          }
-          contentList.add(_sectionHeading(directoryIndex = conversationDirectoryIndex));
-        }
-        contentList.add(_sectionSplitter);
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
           onToggleExpanded: () => _onToggleConversationExpanded(conversation),
           selected: CollectionUtils.isNotEmpty(widget.selectedConversationIds?[conversation.id]),
           onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
         ));
-      }
-      if (contentList.isNotEmpty) {
-        contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
       }
     }
 
@@ -119,11 +107,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
     Analytics().logSelect(target: 'Select', source: conversation.id);
     widget.onToggleConversationSelection?.call(value, conversation);
   }
-
-  Widget _sectionHeading(String dirEntry) =>
-      Padding(padding: EdgeInsets.zero, child:
-      Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
-      );
 
   Widget get _searchBarWidget =>
       Padding(padding: const EdgeInsets.only(bottom: 16), child:
@@ -205,8 +188,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
     Analytics().logSelect(target: 'Filters');
     //TODO
   }
-
-  Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
     Align(alignment: Alignment.center, child:
@@ -318,10 +299,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   }
 
   void _sortConversationsByMemberNames() {
+    DateTime now = DateTime.now();
     _conversations?.sort((Conversation conv1, Conversation conv2) {
-      String key1 = conv1.directoryKey ?? '';
-      String key2 = conv2.directoryKey ?? '';
-      return key1.compareGit4143To(key2);
+      DateTime time1 = conv1.lastActivityTimeUtc ?? now;
+      DateTime time2 = conv2.lastActivityTimeUtc ?? now;
+      return time2.compareTo(time1);  // reverse chronological
     });
   }
 }
@@ -355,7 +337,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         Expanded(child:
           _expandedMembersContent
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12), child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
           Styles().images.getImage('chevron2-up',)
         ),
       ],),
@@ -391,6 +373,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
                 textAlign: TextAlign.left,
                 text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular'), children: _nameSpans),
                 overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               )
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
@@ -455,8 +438,4 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       spans.add(TextSpan(text: name ?? '', style: style));
     }
   }
-}
-
-extension _ConversationUtils on Conversation {
-  String? get directoryKey => (members?.isNotEmpty == true) ? members!.first.name?.split(" ").last.substring(0, 1).toUpperCase() : null;
 }
