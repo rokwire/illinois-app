@@ -171,6 +171,17 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
     ]);
 
     _contentCodes = buildContentCodes();
+
+    // #4527 Auto-expand single item sections
+    if (_contentCodes != null) {
+      for (String code in _contentCodes!) {
+        List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
+        if (entryCodes?.length == 1) {
+          _expandedCodes.add(code);
+        }
+      }
+    }
+
     super.initState();
   }
 
