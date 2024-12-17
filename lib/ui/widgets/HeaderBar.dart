@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/RadioPlayer.dart';
-import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -414,14 +413,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     }
     else {
       SettingsHomeContentPanel.present(context);
-    }
-  }
-
-  void _onTapMessages() {
-    String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != MessagesHomePanel.routeName) {
-      Analytics().logSelect(target: "Messages");
-      MessagesHomePanel.present(context);
     }
   }
 
