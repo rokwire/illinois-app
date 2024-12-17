@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-//import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
 import 'dart:convert';
 
@@ -143,7 +143,9 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
                 Semantics(
                   container: true,
                   button: true,
-                  child: buildAccountDropDown('Floor $_currentFloorCode'),
+                  child: buildAccountDropDown(
+                      '${Localization().getStringEx('panel.display_floor_plan_panel.buildFooter', 'Floor')} $_currentFloorCode'
+                  ),
                 ),
               Flexible(
                 child: FractionallySizedBox(
@@ -177,15 +179,13 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       return DropdownMenuItem<String>(
         value: floorLetters,
         child: Semantics(
-          label: 'Floor $floorLetters',
-          hint: "Double tap to select floor",
+          label: '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $floorLetters',
+          hint: '${Localization().getStringEx('panel.display_floor_plan_panel.footer.hint', 'Double tap to select floor')}',
           button: false,
           excludeSemantics: true,
           child: Center(
             child: Text(
-              //"panel.display_floor_plan_panel.floor": "Floor {{letterCode}}"
-              // Localization().getStringEx('panel.display_floor_plan_panel.floor', ' Floor $letterCodeMacro')
-              'Floor $floorLetters',
+              '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $floorLetters',
               style: Styles().textStyles.getTextStyle("widget.button.title.medium"),
             ),
           ),
@@ -197,7 +197,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   Widget buildAccountDropDown(String currentFloor) {
     return Semantics(
       label: currentFloor,
-      hint: "Double tap to select floor",
+      hint: '${Localization().getStringEx('panel.display_floor_plan_panel.footer.hint', 'Double tap to select floor')}',
       button: true,
       container: true,
       child: DropdownButtonHideUnderline(
