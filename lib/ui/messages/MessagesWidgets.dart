@@ -20,7 +20,7 @@ class RecentConversationsPage extends StatefulWidget {
   State<StatefulWidget> createState() => RecentConversationsPageState();
 }
 
-class RecentConversationsPageState extends State<RecentConversationsPage> {
+class RecentConversationsPageState extends State<RecentConversationsPage> with AutomaticKeepAliveClientMixin {
 
   List<Conversation>? _conversations;
   String _searchText = '';
@@ -54,7 +54,12 @@ class RecentConversationsPageState extends State<RecentConversationsPage> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     List<Widget> contentList = <Widget>[
       _searchBarWidget,
     ];

@@ -36,7 +36,7 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
 }
 
-class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
+class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
   String _searchText = '';
@@ -98,7 +98,11 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     List<Widget> contentList = <Widget>[
       if (widget.onEditProfile != null)
         _editDescription,

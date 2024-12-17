@@ -138,12 +138,12 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     );
 
   Widget get _allUsersContent =>
-      ProfileDirectoryAccountsPage(DirectoryAccounts.appDirectory,
-        key: _allUsersPageKey,
-        scrollController: _scrollController,
-        selectedAccountIds: _selectedAccountIds,
-        onToggleAccountSelection: _onToggleAccountSelected,
-      );
+    ProfileDirectoryAccountsPage(DirectoryAccounts.appDirectory,
+      key: _allUsersPageKey,
+      scrollController: _scrollController,
+      selectedAccountIds: _selectedAccountIds,
+      onToggleAccountSelection: _onToggleAccountSelected,
+    );
 
   Future<void> _onTapCreateConversation() async {
     // do not need to check for existing conversation with selected members because Social BB handles it
