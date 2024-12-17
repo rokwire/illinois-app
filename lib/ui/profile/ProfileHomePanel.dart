@@ -315,11 +315,10 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   }
 
   String? _getContentItemName(ProfileContent? contentItem) {
-    final String appTitleMacro = '{{app_title}}';
     switch (contentItem) {
       case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
       case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
-      case ProfileContent.directory: return Localization().getStringEx('panel.settings.profile.content.directory.label', 'My Info & $appTitleMacro App Directory').replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
+      case ProfileContent.directory: return Localization().getStringEx('panel.settings.profile.content.directory.label', 'My Info & User Directory');
       case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
       default: return null;
     }

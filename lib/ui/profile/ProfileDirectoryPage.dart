@@ -263,7 +263,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   // Signed out
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = AppTextUtils.appTitleString('panel.profile.directory.message.signed_out', 'To view "My Info & ${AppTextUtils.appTitleMacro} App Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = Localization().getStringEx('panel.profile.directory.message.signed_out', 'To view "My Info & User Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
@@ -291,7 +291,7 @@ extension _TabExt on ProfileDirectoryTab {
   String titleEx({String? language}) {
     switch(this) {
       case ProfileDirectoryTab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case ProfileDirectoryTab.accounts: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
+      case ProfileDirectoryTab.accounts: return Localization().getStringEx('panel.profile.directory.tab.accounts.title', 'User Directory', language: language);
     }
   }
 
@@ -319,8 +319,8 @@ extension DirectoryConnectionsExt on DirectoryAccounts {
 
   String titleEx({String? language}) {
     switch(this) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.connections.title', 'My ${AppTextUtils.appTitleMacro} Connections', language: language);
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory', language: language);
+      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.tab.accounts.connections.title', 'My Connections', language: language);
+      case DirectoryAccounts.appDirectory: return Localization().getStringEx('panel.profile.directory.tab.accounts.directory.title', 'User Directory', language: language);
     }
   }
 
