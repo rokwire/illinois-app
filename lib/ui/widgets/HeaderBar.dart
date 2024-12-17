@@ -377,14 +377,14 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
         CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
-          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 8), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
                 DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
               )
             )
           ) :
-          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
             Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
           ),
       )
