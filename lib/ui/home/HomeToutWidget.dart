@@ -116,21 +116,32 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   Widget _buildImageWidget(String imageUrl) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Stack(children: [
-      Semantics(label: "tout", image: true, excludeSemantics: true, child:
-        ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '', fit: BoxFit.cover, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-        double imageWidth = MediaQuery.of(context).size.width;
-        double imageHeight = imageWidth * 810 / 1080;
-        return (loadingProgress != null) ?
-          Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
-            Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white))
-            )
-          ) :
-          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
-            Container(color: Styles().colors.fillColorPrimary, child: child)
-          );
-      }))),
+      Semantics(
+          label: "tout",
+          image: true,
+          excludeSemantics: true,
+          child: ModalImageHolder(
+              child: SizedBox(
+                  width: screenWidth,
+                  height: screenHeight,
+                  child: Image.network(imageUrl, semanticLabel: '', fit: BoxFit.cover, alignment: Alignment.center,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    double imageWidth = screenWidth;
+                    double imageHeight = imageWidth * 810 / 1080;
+                    return (loadingProgress != null)
+                        ? Container(
+                            color: Styles().colors.fillColorPrimary,
+                            width: imageWidth,
+                            height: imageHeight,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white))))
+                        : AspectRatio(
+                            aspectRatio: (1080.0 / 810.0), child: Container(color: Styles().colors.fillColorPrimary, child: child));
+                  })))),
       Align(alignment: Alignment.topCenter, child:
         CustomPaint(painter: TrianglePainter(
             painterColor: Styles().colors.fillColorSecondaryTransparent05,
