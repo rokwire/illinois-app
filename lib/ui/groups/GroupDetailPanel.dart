@@ -2434,9 +2434,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
           SectionSlantHeader(
               title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
               titleIconKey: 'posts',
-              // rightIconKey: _canCreatePost ? "plus-circle" : null,
-              // rightIconAction: _canCreatePost ? _onTapCreatePost : null,
-              // rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
               children: postsContent)
         ]);
       } else {
@@ -2469,14 +2466,18 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       );
     }
 
-    return Column(children: <Widget>[
-      SectionSlantHeader(
-          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-          titleIconKey: 'posts',
-          // rightIconKey: _canCreatePost ? "plus-circle" : null,
-          // rightIconAction: _canCreatePost ? _onTapCreatePost : null,
-          // rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
-          children: postsContent)
+    return Stack(children: [
+      Column(children: <Widget>[
+        SectionSlantHeader(
+        title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+        titleIconKey: 'posts',
+        children: postsContent)]),
+      _loadingPostsPage == true
+        ? Center(
+        child: Container(
+            padding: EdgeInsets.symmetric(vertical: 50),
+            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
+        : Container()
     ]);
   }
 
@@ -2570,7 +2571,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       }
     }
   }
-
+  
   //Update Listeners
   void _initUpdateListener() => widget.updateController?.stream.listen((command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
