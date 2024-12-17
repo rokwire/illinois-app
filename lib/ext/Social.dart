@@ -20,6 +20,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 
 extension PostExt on Post {
   PostType get type =>
@@ -48,6 +49,7 @@ extension PostExt on Post {
 
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
+  bool get createdByUser => creatorId == Auth2().accountId;
 }
 
 extension CommentExt on Comment {
@@ -64,4 +66,36 @@ extension ReactionExt on Reaction {
   String? get engagerName => engager?.name;
   String? get engagerId => engager?.accountId;
   bool get isCurrentUserReacted => (Auth2().accountId == engagerId);
+}
+
+extension ConversationExt on Conversation {
+  String? get displayDateTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastActivityTimeUtc);
+    if (deviceDateTime != null) {
+      DateTime now = DateTime.now();
+      if (deviceDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(deviceDateTime);
+        if (difference.inSeconds < 60) {
+          return Localization().getStringEx("generic.time.now", "now");
+        }
+        else if (difference.inMinutes < 60) {
+          return "${difference.inMinutes} ${difference.inMinutes > 1 ? Localization().getStringEx("generic.time.minutes", "minutes") : Localization().getStringEx("generic.time.minute", "minute")}";
+        }
+        else if (difference.inHours < 24) {
+          return "${difference.inHours} ${difference.inHours > 1 ? Localization().getStringEx("generic.time.hours", "hours") : Localization().getStringEx("generic.time.hour", "hour")}";
+        }
+        else if (difference.inDays < 30) {
+          return "${difference.inDays} ${difference.inDays > 1 ? Localization().getStringEx("generic.time.days", "days") : Localization().getStringEx("generic.time.day", "day")}";
+        }
+        else {
+          int differenceInMonths = difference.inDays ~/ 30;
+          if (differenceInMonths < 12) {
+            return "$differenceInMonths ${differenceInMonths > 1 ? Localization().getStringEx("generic.time.months", "months") : Localization().getStringEx("generic.time.month", "month")}";
+          }
+        }
+      }
+      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+    }
+    return null;
+  }
 }

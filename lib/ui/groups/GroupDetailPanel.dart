@@ -1108,8 +1108,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return Container();
   }
 
-    Widget _buildScheduledPosts() {
-      List<Widget> scheduledPostsContent = [];
+  Widget _buildScheduledPosts() {
+    List<Widget> scheduledPostsContent = [];
 
       if (CollectionUtils.isEmpty(_scheduledPosts)) {
         return Container();

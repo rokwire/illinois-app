@@ -30,6 +30,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
@@ -170,6 +171,17 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
     ]);
 
     _contentCodes = buildContentCodes();
+
+    // #4527 Auto-expand single item sections
+    if (_contentCodes != null) {
+      for (String code in _contentCodes!) {
+        List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
+        if (entryCodes?.length == 1) {
+          _expandedCodes.add(code);
+        }
+      }
+    }
+
     super.initState();
   }
 
@@ -600,8 +612,10 @@ class _BrowseEntry extends StatelessWidget {
       case "safer.my_mckinley":              _onTapMyMcKinley(context); break;
       case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
-      case "laundry.laundry":                 _onTapLaundry(context); break;
-      case "laundry.my_laundry":              _onTapMyLaundry(context); break;
+      case "laundry.laundry":                _onTapLaundry(context); break;
+      case "laundry.my_laundry":             _onTapMyLaundry(context); break;
+
+      case "messages.messages":              _onTapMessages(context); break;
 
       case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
@@ -616,7 +630,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "directory.app_directory":        _onTapAppDirectory(context); break;
+      case "directory.user_directory":       _onTapUserDirectory(context); break;
 
       case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
@@ -875,14 +889,19 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  void _onTapAppDirectory(BuildContext context) {
-    Analytics().logSelect(target: "Illinois App Directory");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ProfileDirectoryAccountsPanel(DirectoryAccounts.appDirectory); } ));
+  void _onTapUserDirectory(BuildContext context) {
+    Analytics().logSelect(target: "User Directory");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ProfileDirectoryAccountsPanel(DirectoryAccounts.userDirectory); } ));
   }
 
   void _onTapLaundry(BuildContext context) {
     Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
+  void _onTapMessages(BuildContext context) {
+    Analytics().logSelect(target: "Messages");
+    MessagesHomePanel.present(context);
   }
 
   void _onTapMTDStops(BuildContext context) {

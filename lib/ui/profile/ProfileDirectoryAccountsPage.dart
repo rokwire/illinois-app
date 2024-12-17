@@ -9,6 +9,7 @@ import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -25,16 +26,18 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   static const String notifyEditInfo  = "edu.illinois.rokwire.profile.directory.accounts.edit";
 
   final DirectoryAccounts contentType;
+  final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
-  
-  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile});
+  final void Function()? onSelectedAccountsChanged;
+
+  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController, this.onEditProfile, this.onSelectedAccountsChanged});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
 }
 
-class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> implements NotificationsListener  {
+class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
   String _searchText = '';
@@ -53,6 +56,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   final FocusNode _searchFocusNode = FocusNode();
 
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
+  final Set<String> _selectedIds = <String>{};
 
   @override
   void initState() {
@@ -60,6 +64,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       illinois.Auth2.notifyProfilePictureChanged,
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
+      Auth2.notifyLoginChanged,
     ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
@@ -85,7 +90,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         });
       }
     }
-    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged)) {
+    else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
         setState((){
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
@@ -96,9 +101,18 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+    return Auth2().isLoggedIn ? _pageContent : _loggedOutContent;
+  }
+
+  Widget get _pageContent {
     List<Widget> contentList = <Widget>[
-      _editDescription,
+      if (widget.onEditProfile != null)
+        _editDescription,
       _searchBarWidget,
     ];
     if (_loadingProgress) {
@@ -132,9 +146,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         }
         contentList.add(_sectionSplitter);
         contentList.add(DirectoryAccountCard(account,
+          displayMode: widget.displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
+          selected: _selectedIds.contains(account.id),
+          onToggleSelected: (value) => _onToggleAccountSelected(value, account),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -153,6 +170,29 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     Analytics().logSelect(target: 'Expand', source: profile.id);
     setState(() {
       _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
+    });
+  }
+
+  void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
+    Analytics().logSelect(target: 'Select', source: account.id);
+    if (StringUtils.isNotEmpty(account.id) && mounted) {
+      setState(() {
+        if (value) {
+          _selectedIds.add(account.id!);
+        }
+        else {
+          _selectedIds.remove(account.id!);
+        }
+      });
+      widget.onSelectedAccountsChanged?.call();
+    }
+  }
+
+  Set<String> get selectedAccountIds => _selectedIds;
+
+  void clearSelectedIds() {
+    setStateIfMounted(() {
+      _selectedIds.clear();
     });
   }
 
@@ -186,8 +226,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
   String get _editDescriptionTemplate {
     switch(widget.contentType) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the ${AppTextUtils.appTitleMacro} Connections.');
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the ${AppTextUtils.appTitleMacro} App Directory.');
+      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the Connections.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
     }
   }
 
@@ -277,8 +317,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     ContentAttributes? directoryAttributes = _directoryAttributes;
     if (directoryAttributes != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'App Directory Filters'),
-        description: AppTextUtils.appTitleString('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the ${AppTextUtils.appTitleMacro} App Directory.'),
+        title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'Directory Filters'),
+        description: Localization().getStringEx('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
         scope: Auh2Directory.attributesScope,
         contentAttributes: directoryAttributes,
         selection: _filterAttributes,
@@ -359,15 +399,15 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
   String get _emptyText {
     switch (widget.contentType) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.empty.text', 'You do not have any ${AppTextUtils.appTitleMacro} Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.empty.text', 'The ${AppTextUtils.appTitleMacro} App Directory is empty.');
+      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.empty.text', 'You do not have any Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.empty.text', 'The User Directory is empty.');
     }
   }
 
   String get _failedText {
     switch (widget.contentType) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.accounts.connections.failed.text', 'Failed to load ${AppTextUtils.appTitleMacro} Connections content.');
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.accounts.directory.failed.text', 'Failed to load ${AppTextUtils.appTitleMacro} App Directory content.');
+      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
     }
   }
 
@@ -466,6 +506,28 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
   }
 
+  // Signed out
+  Widget get _loggedOutContent {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx('panel.profile.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapSignIn() => ProfileHomePanel.present(context, content: ProfileContent.login, );
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {

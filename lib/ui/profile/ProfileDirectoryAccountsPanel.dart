@@ -6,7 +6,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ProfileDirectoryAccountsPanel extends StatefulWidget {
@@ -40,8 +40,8 @@ class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccounts
 
   String get _appTitle {
     switch(widget.contentType) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.connections.title', 'My ${AppTextUtils.appTitleMacro} Connections');
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory');
+      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.tab.accounts.connections.title', 'My Connections');
+      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.tab.accounts.directory.title', 'User Directory');
     }
   }
 
