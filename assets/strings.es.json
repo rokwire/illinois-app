@@ -1918,8 +1918,6 @@
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Perfil",
 
-    "panel.settings.messages.header.messages.label": "Mensajes",
-
     "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
     "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
@@ -3199,6 +3197,7 @@
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
 
+    "panel.messages.header.messages.label": "Mensajes",
     "panel.messages.mark_all_read.label": "Marcar todo como leido",
     "panel.messages.label.time.any": "Cualquier momento",
     "panel.messages.label.time.today": "Hoy dia",

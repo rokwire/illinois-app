@@ -140,7 +140,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.messages.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+              Text(Localization().getStringEx('panel.messages.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
             ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:

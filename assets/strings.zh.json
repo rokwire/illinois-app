@@ -1905,8 +1905,6 @@
 	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
 	"panel.settings.profile.header.profile.label": "个人资料",
 
-	"panel.settings.messages.header.messages.label": "留言",
-
 	"panel.settings.notifications.content.notifications.all.label": "所有通知",
 	"panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
@@ -3184,6 +3182,7 @@
 	"widget.inbox_message_card.subject.hint": "主題：%s",
 	"widget.inbox_message_card.body.hint": "身體：%s",
 
+	"panel.messages.header.messages.label": "留言",
 	"panel.messages.mark_all_read.label": "標記為已讀",
 	"panel.messages.label.time.any": "任何時間",
 	"panel.messages.label.time.today": "今天",

@@ -1920,8 +1920,6 @@
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Profile",
 
-    "panel.settings.messages.header.messages.label": "Messages",
-
     "panel.settings.notifications.content.notifications.all.label": "All Notifications",
     "panel.settings.notifications.content.notifications.unread.label": "Unread Notifications",
     "panel.settings.notifications.content.preferences.label": "My Notification Preferences",
@@ -3207,6 +3205,7 @@
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
 
+    "panel.messages.header.messages.label": "Messages",
     "panel.messages.mark_all_read.label": "Mark all as read",
     "panel.messages.label.time.any": "Any Time",
     "panel.messages.label.time.today": "Today",
