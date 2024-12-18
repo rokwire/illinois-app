@@ -15,10 +15,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
-  final bool? unread;
-  final void Function()? onTapBanner;
   final Conversation conversation;
-  MessagesConversationPanel({Key? key, required this.conversation, this.unread, this.onTapBanner}) : super(key: key);
+  MessagesConversationPanel({Key? key, required this.conversation}) : super(key: key);
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
@@ -31,7 +29,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
   late ScrollController _scrollController;
-  static double? _scrollPosition;
   bool _shouldScrollToBottom = false;
 
   bool _listening = false;
@@ -47,26 +44,24 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   @override
   void initState() {
-    super.initState();
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
       SpeechToText.notifyError,
     ]);
-    _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
-    _scrollController.addListener(_scrollListener);
+    _scrollController = ScrollController();
 
     // Load messages from the backend
     _loadMessages();
 
     WidgetsBinding.instance.addObserver(this);
+    super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _inputController.dispose();
     _inputFieldFocus.dispose();
@@ -499,10 +494,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         }
       });
     }
-  }
-
-  void _scrollListener() {
-    _scrollPosition = _scrollController.position.pixels;
   }
 
   double get _chatBarHeight {
