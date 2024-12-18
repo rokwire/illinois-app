@@ -113,7 +113,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-
+      Social.notifyConversationsUpdated
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -130,7 +130,11 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-
+    if (name == Social.notifyConversationsUpdated) {
+      if (mounted) {
+        _loadInitialContent();
+      }
+    }
   }
 
   @override
@@ -760,6 +764,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       setState(() {
         if (conversations != null) {
           _conversations = conversations;
+          Conversation.sortListByLastActivityTime(_conversations);
           _hasMoreConversations = (_conversationsPageSize <= conversations.length);
         }
         else {
@@ -819,6 +824,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         setState(() {
           if (conversations != null) {
             _conversations = conversations;
+            Conversation.sortListByLastActivityTime(_conversations);
             _hasMoreConversations = (_conversationsPageSize <= conversations.length);
           }
           else {

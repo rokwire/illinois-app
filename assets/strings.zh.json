@@ -3201,6 +3201,7 @@
 	"panel.messages.mark_as_read.failed.msg": "無法將所有對話標記為已讀",
 
 	"panel.messages.directory.header.title": "發送至",
+	"panel.messages.directory.header.message": "你想發給誰？",
 	"panel.messages.directory.tab.recent.label": "最近的",
 	"panel.messages.directory.tab.all.label": "所有用戶",
 	"panel.messages.directory.button.continue.label": "繼續",

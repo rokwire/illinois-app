@@ -21,6 +21,7 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 extension PostExt on Post {
   PostType get type =>
@@ -66,6 +67,11 @@ extension ReactionExt on Reaction {
   String? get engagerName => engager?.name;
   String? get engagerId => engager?.accountId;
   bool get isCurrentUserReacted => (Auth2().accountId == engagerId);
+}
+
+extension MessageExt on Message {
+  DateTime? get dateSentLocal =>  AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
+  String? get dateSentLocalString => DateTimeUtils.localDateTimeToString(dateSentLocal, format: 'MMMM dd, yyyy');
 }
 
 extension ConversationExt on Conversation {
