@@ -39,6 +39,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   bool _listening = false;
   bool _loading = false;
+  bool _submitting = false;
   bool _messageOptionsExpanded = false;
 
   // Use the actual Auth2 accountId instead of a placeholder.
@@ -320,13 +321,19 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         child: Semantics(
             label: Localization().getStringEx('', "Send"),
             enabled: true,
-            child: IconButton(
+            child: _submitting ?
+              Padding(padding: EdgeInsets.all(16), child:
+                SizedBox(width: 18, height: 18, child:
+                    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+                )
+              ) :
+              IconButton(
                 splashRadius: 24,
                 icon: Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
                 onPressed: () {
                   _submitMessage(_inputController.text);
                 }
-            )
+              )
         )
     );
   }
@@ -425,10 +432,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && currentUserId != null) {
+    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && currentUserId != null && _submitting == false) {
       FocusScope.of(context).requestFocus(FocusNode());
 
       setState(() {
+        _submitting = true;
         _shouldScrollToBottom = true;
       });
 
@@ -438,12 +446,18 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         message: _inputController.text,
       );
 
-      // Clear input after sending
-      _inputController.text = '';
+      if (mounted) {
+        // Clear input after sending
+        _inputController.text = '';
 
-      // load the new messages
-      if (CollectionUtils.isNotEmpty(newMessages)) {
-        _loadMessages();
+        setState(() {
+          _submitting = false;
+        });
+
+        // load the new messages
+        if (CollectionUtils.isNotEmpty(newMessages)) {
+          _loadMessages();
+        }
       }
     }
   }
