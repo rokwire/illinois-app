@@ -40,7 +40,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _messageOptionsExpanded = false;
 
   // Use the actual Auth2 accountId instead of a placeholder.
-  String? get currentUserId => Auth2().accountId;
+  String? get _currentUserId => Auth2().accountId;
 
   // Messages loaded from the backend
   List<Message> _messages = [];
@@ -423,7 +423,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && currentUserId != null && _submitting == false) {
+    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && _currentUserId != null && _submitting == false) {
       FocusScope.of(context).requestFocus(FocusNode());
 
       setState(() {
