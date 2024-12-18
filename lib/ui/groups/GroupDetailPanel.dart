@@ -278,16 +278,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
 
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
-    List<Widget>? barActions = (_hasOptions) ? <Widget>[
-      Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
-      )
-    ] : null;
 
     return Scaffold(
       appBar: HeaderBar(
           title: barTitle,
-          actions: barActions
       ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
