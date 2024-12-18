@@ -304,7 +304,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildReadAllButton(),
+          // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
           Spacer(),
           _buildNewMessageButton(),
         ],
@@ -312,15 +312,15 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     );
   }
 
-  Widget _buildReadAllButton() {
-    return Semantics(container: true, child: Container(
-        child: UnderlinedButton(
-            title: Localization().getStringEx("panel.messages.mark_all_read.label", "Mark all as read"),
-            // titleStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),
-            padding: EdgeInsets.symmetric(vertical: 8),
-            progress: _loadingMarkAllAsRead,
-            onTap: _onTapMarkAllAsRead)));
-  }
+  // Widget _buildReadAllButton() {
+  //   return Semantics(container: true, child: Container(
+  //       child: UnderlinedButton(
+  //           title: Localization().getStringEx("panel.messages.mark_all_read.label", "Mark all as read"),
+  //           // titleStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),
+  //           padding: EdgeInsets.symmetric(vertical: 8),
+  //           progress: _loadingMarkAllAsRead,
+  //           onTap: _onTapMarkAllAsRead)));
+  // }
 
   // Filters
   Widget _buildFilters() {
