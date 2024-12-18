@@ -67,9 +67,27 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   }
 
   Widget _buildContent() {
-    List<Widget> tabs = _tabNames.map((e) => Tab(text: e)).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      TabBar(tabs: tabs, controller: _tabController, isScrollable: false, onTap: (index){_onTabChanged();}),
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          Localization().getStringEx('panel.messages.directory.header.message', 'Who do you want to send to?'),
+          style: Styles().textStyles.getTextStyle('widget.title.large.fat')
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: TabBar(
+          tabs: tabs,
+          controller: _tabController,
+          isScrollable: false,
+          indicatorColor: Styles().colors.fillColorSecondary,
+          indicatorSize: TabBarIndicatorSize.tab,
+          onTap: (index) {
+            _onTabChanged();
+          }
+        ),
+      ),
       Expanded(
         child: TabBarView(
           controller: _tabController,
@@ -81,6 +99,19 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
         ),
       ),
     ],);
+  }
+
+  List<Widget> get tabs {
+    List<Widget> tabs = <Widget>[];
+    for (int index = 0; index < _tabNames.length; index++) {
+      tabs.add(Tab(child:
+        Text(_tabNames[index], style: (_selectedTab == index) ?
+          Styles().textStyles.getTextStyle('widget.title.regular.fat') :
+          Styles().textStyles.getTextStyle('widget.title.regular.medium_fat')
+        )
+      ));
+    }
+    return tabs;
   }
 
   Widget _buildContinueButtonOverlay(Widget content, { ScrollController? scrollController }) {
