@@ -6,15 +6,15 @@ import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class RecentConversationsPage extends StatefulWidget {
   final ScrollController? scrollController;
   final List<Conversation> recentConversations;
   final int conversationPageSize;
-  final Set<String>? selectedConversationIds;
-  final void Function(bool selected, Conversation conversation)? onToggleConversationSelection;
+  final void Function()? onSelectedConversationChanged;
 
-  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.selectedConversationIds, this.onToggleConversationSelection});
+  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.onSelectedConversationChanged });
 
   @override
   State<StatefulWidget> createState() => RecentConversationsPageState();
@@ -23,6 +23,7 @@ class RecentConversationsPage extends StatefulWidget {
 class RecentConversationsPageState extends State<RecentConversationsPage> with AutomaticKeepAliveClientMixin {
 
   List<Conversation>? _conversations;
+  late Map<String, Conversation> _conversationsMap;
   String _searchText = '';
   bool _loading = false;
   bool _loadingProgress = false;
@@ -30,6 +31,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   bool _canExtend = false;
 
   String? _expandedConversationId;
+  final Set<String> _selectedIds = <String>{};
 
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -40,6 +42,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   void initState() {
     widget.scrollController?.addListener(_scrollListener);
     _conversations = widget.recentConversations;
+    _conversationsMap = _buildConversationsMap(widget.recentConversations);
     _sortConversationsByMemberNames();
     super.initState();
   }
@@ -87,7 +90,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
           onToggleExpanded: () => _onToggleConversationExpanded(conversation),
-          selected: widget.selectedConversationIds?.contains(conversation.id) == true,
+          selected: _selectedIds.contains(conversation.id),
           onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
         ));
       }
@@ -109,7 +112,37 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
 
   void _onToggleConversationSelected(bool value, Conversation conversation) {
     Analytics().logSelect(target: 'Select', source: conversation.id);
-    widget.onToggleConversationSelection?.call(value, conversation);
+    if (StringUtils.isNotEmpty(conversation.id) && mounted) {
+      setState(() {
+        if (value) {
+          _selectedIds.add(conversation.id!);
+        }
+        else {
+          _selectedIds.remove(conversation.id);
+        }
+      });
+      widget.onSelectedConversationChanged?.call();
+    }
+  }
+
+  Set<String> get selectedConversationIds =>
+    _selectedIds;
+
+  Set<String> get selectedAccountIds {
+    Set<String> selectedIds = <String>{};
+    for (String conversationId in _selectedIds) {
+      List<String>? memberIds = _conversationsMap[conversationId]?.memberIds;
+      if (memberIds != null) {
+        selectedIds.addAll(memberIds);
+      }
+    }
+    return selectedIds;
+  }
+
+  void clearSelectedIds() {
+    setStateIfMounted(() {
+      _selectedIds.clear();
+    });
   }
 
   Widget get _searchBarWidget =>
@@ -238,11 +271,13 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         _loadingProgress = false;
         if (conversations != null) {
           _conversations = List.from(conversations);
+          _conversationsMap = _buildConversationsMap(conversations);
           _sortConversationsByMemberNames();
           _canExtend = (conversations.length >= widget.conversationPageSize);
         }
         else if (!silent) {
           _conversations = null;
+          _conversationsMap.clear();
           _canExtend = false;
         }
       });
@@ -264,9 +299,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
           if (conversations != null) {
             if (_conversations != null) {
               _conversations?.addAll(conversations);
+              _conversationsMap.addAll(_buildConversationsMap(conversations));
             }
             else {
               _conversations = List.from(conversations);
+              _conversationsMap = _buildConversationsMap(conversations);
               _sortConversationsByMemberNames();
             }
 
@@ -279,6 +316,18 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   }
 
   int get _conversationsCount => _conversations?.length ?? 0;
+
+  static Map<String, Conversation> _buildConversationsMap(List<Conversation>? conversations) {
+    Map<String, Conversation> map = <String, Conversation>{};
+    if (conversations != null) {
+      for (Conversation conversation in conversations) {
+        if (StringUtils.isNotEmpty(conversation.id)) {
+          map[conversation.id!] = conversation;
+        }
+      }
+    }
+    return map;
+  }
 
   void _onTapClear() {
     Analytics().logSelect(target: 'Search Clear');

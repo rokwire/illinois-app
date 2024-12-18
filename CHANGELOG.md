@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.28] - 2024-12-17
 ### Added
 - Add Messages UI [#4498](https://github.com/rokwire/illinois-app/issues/4498).
 ### Changed
@@ -12,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatically expand single entry sections in Home panel [#4527](https://github.com/rokwire/illinois-app/issues/4527).
 - Preserve scroll positions when switching Favorites & Sections tabs in HomePanel [#4529](https://github.com/rokwire/illinois-app/issues/4529).
 - Do not show user directory content for anonymous users [#4531](https://github.com/rokwire/illinois-app/issues/4531).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
 
 ## [6.1.27] - 2024-12-16
 ### Fixed

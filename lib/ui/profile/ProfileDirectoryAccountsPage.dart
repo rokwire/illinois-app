@@ -26,12 +26,12 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   static const String notifyEditInfo  = "edu.illinois.rokwire.profile.directory.accounts.edit";
 
   final DirectoryAccounts contentType;
+  final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final Set<String>? selectedAccountIds;
-  final void Function(bool selected, Auth2PublicAccount account)? onToggleAccountSelection;
-  
-  ProfileDirectoryAccountsPage(this.contentType, {super.key, this.scrollController, this.onEditProfile, this.selectedAccountIds, this.onToggleAccountSelection});
+  final void Function()? onSelectedAccountsChanged;
+
+  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController, this.onEditProfile, this.onSelectedAccountsChanged});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
@@ -56,6 +56,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   final FocusNode _searchFocusNode = FocusNode();
 
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
+  final Set<String> _selectedIds = <String>{};
 
   @override
   void initState() {
@@ -137,7 +138,6 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       String? directoryIndex;
       for (Auth2PublicAccount account in accounts) {
         String? accountDirectoryIndex = account.directoryKey;
-        DirectoryDisplayMode displayMode = widget.selectedAccountIds != null ? DirectoryDisplayMode.select : DirectoryDisplayMode.browse;
         if ((accountDirectoryIndex != null) && (directoryIndex != accountDirectoryIndex)) {
           if (contentList.isNotEmpty) {
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -145,11 +145,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           contentList.add(_sectionHeading(directoryIndex = accountDirectoryIndex));
         }
         contentList.add(_sectionSplitter);
-        contentList.add(DirectoryAccountCard(account, displayMode,
+        contentList.add(DirectoryAccountCard(account,
+          displayMode: widget.displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
-          selected: widget.selectedAccountIds?.contains(account.id) == true,
+          selected: _selectedIds.contains(account.id),
           onToggleSelected: (value) => _onToggleAccountSelected(value, account),
         ));
       }
@@ -174,7 +175,25 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
   void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
     Analytics().logSelect(target: 'Select', source: account.id);
-    widget.onToggleAccountSelection?.call(value, account);
+    if (StringUtils.isNotEmpty(account.id) && mounted) {
+      setState(() {
+        if (value) {
+          _selectedIds.add(account.id!);
+        }
+        else {
+          _selectedIds.remove(account.id!);
+        }
+      });
+      widget.onSelectedAccountsChanged?.call();
+    }
+  }
+
+  Set<String> get selectedAccountIds => _selectedIds;
+
+  void clearSelectedIds() {
+    setStateIfMounted(() {
+      _selectedIds.clear();
+    });
   }
 
   Widget _sectionHeading(String dirEntry) =>
