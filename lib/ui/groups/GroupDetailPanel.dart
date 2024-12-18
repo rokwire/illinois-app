@@ -820,720 +820,720 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return Container();
   }
 
-    Widget _buildAbout() {
-      List<Widget> contentList = <Widget>[];
+  Widget _buildAbout() {
+    List<Widget> contentList = <Widget>[];
 
-      if (!_isResearchProject) {
-        contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
-        Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
-        );
-      }
-
-      if (StringUtils.isNotEmpty(_group?.description)) {
-        contentList.add(ExpandableText(_group?.description ?? '',
-          textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
-          trimLinesCount: 4,
-          readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
-        );
-      }
-
-      if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
-        contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
-        ExpandableText(_group?.researchConsentDetails ?? '',
-          textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
-          trimLinesCount: 12,
-          readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
-          footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
-        ),
-        ),);
-      }
-
-      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    if (!_isResearchProject) {
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
+      Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
       );
     }
 
-    Widget _buildPrivacyDescription() {
-      String? title, description;
-      if (_group?.privacy == GroupPrivacy.private) {
-        title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
-        description = Localization().getStringEx("panel.group_detail.label.description.private", '\u2022 This group is only visible to members.\n\u2022 Anyone can search for the group with the exact name.\n\u2022 Only admins can see members.\n\u2022 Only members can see posts and group events.\n\u2022 All users can see group events if they are marked public.\n\u2022 All users can see admins.');
-      }
-      else if (_group?.privacy == GroupPrivacy.public) {
-        title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');
-        description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
-      }
-
-      return (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(description) && !_isResearchProject) ?
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(padding: EdgeInsets.only(bottom: 4), child:
-          Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
-          Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.regular'), ),
-        ],),) :
-      Container(width: 0, height: 0);
-    }
-
-    Widget _buildWebsiteLinkCommand() {
-      return RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-          rightIconKey: 'external-link',
-          leftIconKey: 'web',
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: _onWebsite
+    if (StringUtils.isNotEmpty(_group?.description)) {
+      contentList.add(ExpandableText(_group?.description ?? '',
+        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+        trimLinesCount: 4,
+        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
       );
     }
 
-    List<Widget> _buildAttributes() {
-      List<Widget> attributesList = <Widget>[];
-      Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-      ContentAttributes? contentAttributes = Groups().contentAttributes;
-      List<ContentAttribute>? attributes = contentAttributes?.attributes;
-      if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
-        for (ContentAttribute attribute in attributes) {
-          if (Groups().isContentAttributeEnabled(attribute)) {
-            List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
-            if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-              attributesList.add(Row(children: [
-                Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-                Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
-                ),
-                Expanded(child:
-                Text(displayAttributeValues.join(', '), maxLines: 1, style:
-                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
-                ),
-                ),
-              ],),);
-            }
-          }
-        }
-      }
-      return attributesList;
-    }
-
-    Widget _buildWebsiteLinkButton() {
-      return RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-          rightIconKey: 'external-link',
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          onTap: _onWebsite
-      );
-    }
-
-    Widget _buildBadgeWidget() {
-      Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-        Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-          Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
-        ),
-      );
-      return _hasIconOptionButtons ? Row(children: <Widget>[
-        badgeWidget,
-        Expanded(child: Container(),),
-        _buildIconButtons
-      ]) : badgeWidget;
-    }
-
-    Widget _buildTitleWidget() {
-      Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),);
-      return _hasIconOptionButtons ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Expanded(child:
-          Padding(padding: EdgeInsets.only(top: 8), child:
-            titleWidget
-          )
-        ),
-        _buildIconButtons
-      ]) : titleWidget;
-    }
-
-    Widget get _buildIconButtons =>
-        Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
-          ...?_buildPolicyIconButton(),
-          ...?_buildCreateIconButton(),
-          ...?_buildSettingsIconButton()
-        ]);
-
-    List<Widget>? _buildPolicyIconButton() => _showPolicyIcon ? <Widget>[
-      Semantics(button: true, excludeSemantics: true,
-        label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
-        hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
-        child: InkWell(onTap: _onPolicy, child:
-        Padding(padding: EdgeInsets.all(8), child:
-        Styles().images.getImage('info', excludeFromSemantics: true)
-        ),
-        ),
-      )] : null;
-
-    List<Widget>? _buildSettingsIconButton() => _hasOptions ? <Widget>[
-      Semantics(button: true, excludeSemantics: true,
-        label: Localization().getStringEx('', 'Settings'),
-        hint: Localization().getStringEx('', ''),
-        child: InkWell(onTap: _onGroupOptionsTap, child:
-          Padding(padding: EdgeInsets.all(8), child:
-          Styles().images.getImage('more', excludeFromSemantics: true)
-          ),
-        ),
-      )] : null;
-
-    List<Widget>? _buildCreateIconButton() => _hasCreateOptions ? <Widget>[
-      Semantics(button: true, excludeSemantics: true,
-        label: Localization().getStringEx('', 'Create'),
-        hint: Localization().getStringEx('', ''),
-        child: InkWell(onTap: _onCreateOptionsTap, child:
-        Padding(padding: EdgeInsets.all(8), child:
-        Styles().images.getImage('plus-circle', excludeFromSemantics: true)
-        ),
-        ),
-      )] : null;
-
-    Widget _buildAdmins() {
-      if (CollectionUtils.isEmpty(_groupAdmins)) {
-        return Container();
-      }
-
-      List<Widget> content = [];
-      content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
-      for (Member? officer in _groupAdmins!) {
-        if (1 < content.length) {
-          content.add(Padding(padding: EdgeInsets.only(left: 8), child: Container()));
-        }
-        content.add(_OfficerCard(groupMember: officer));
-      }
-      content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
-
-      String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
-
-      return Stack(children: [
-        Container(
-            height: 112,
-            color: Styles().colors.backgroundVariant,
-            child: Column(children: [
-              Container(height: 80),
-              Container(height: 32, child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container()))
-            ])),
-        Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Text(headingText,
-                      style:   Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
-              SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
-            ]))
-      ]);
-    }
-
-    Widget _buildMembershipRequest() {
-      if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
-        return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
-        Padding(padding: EdgeInsets.all(16), child:
-        RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            borderColor: Styles().colors.fillColorSecondary,
-            borderWidth: 2,
-            onTap:() { _onMembershipRequest();  }
-        ),
-        ),
-        );
-      }
-      else {
-        return Container();
-      }
-    }
-
-    Widget _buildResearchProjectMembershipRequest() {
-      if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject == true)) {
-        bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
-        bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
-        return Padding(padding: EdgeInsets.only(top: 16), child:
-          Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: showConsent ? 1 : 0))), child:
-            Column(children: [
-                Visibility(visible: showConsent, child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    InkWell(onTap: _onResearchProjectConsent, child:
-                      Padding(padding: EdgeInsets.all(16), child:
-                        Styles().images.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
-                      ),
-                    ),
-                    Expanded(child:
-                      Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
-                        Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
-                      ),
-                    ),
-                  ]),
-                ),
-                Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
-                  RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
-                      textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-                      backgroundColor: Styles().colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                      borderWidth: 2,
-                      onTap:() { _onMembershipRequest();  }
-                  ),
-                ),
-            ],),
-          ),
-        );
-      }
-      else {
-        return Container();
-      }
-    }
-
-    void _onResearchProjectConsent() {
-      setState(() {
-        _researchProjectConsent = !_researchProjectConsent;
-      });
-    }
-
-    Widget _buildCancelMembershipRequest() {
-      if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
-        return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
-        Padding(padding: EdgeInsets.all(16), child:
-        RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            borderColor: Styles().colors.fillColorSecondary,
-            borderWidth: 2,
-            progress: _confirmationLoading,
-            onTap:() { _onCancelMembershipRequest();  }
-        ),
-        )
-        );
-      }
-      else {
-        return Container();
-      }
-
-    }
-
-    Widget _buildConfirmationDialog({String? confirmationTextMsg,
-
-      String? positiveButtonLabel,
-      int positiveButtonFlex = 1,
-      Function? onPositiveTap,
-
-      String? negativeButtonLabel,
-      int negativeButtonFlex = 1,
-
-      int leftAreaFlex = 0,
-    }) {
-      return Dialog(
-          backgroundColor: Styles().colors.fillColorPrimary,
-          child: StatefulBuilder(builder: (context, setStateEx) {
-            return Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 26),
-                      child: Text(confirmationTextMsg!,
-                          textAlign: TextAlign.left, style:  Styles().textStyles.getTextStyle('widget.dialog.message.medium'))),
-                  Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                    Expanded(flex: leftAreaFlex, child: Container()),
-                    Expanded(flex: negativeButtonFlex, child: RoundedButton(
-                        label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large"),
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        onTap: () {
-                          Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
-                          Navigator.pop(context);
-                        }),),
-                    Container(width: 16),
-                    Expanded(flex: positiveButtonFlex, child: RoundedButton(
-                      label: positiveButtonLabel ?? '',
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors.white,
-                      backgroundColor: Styles().colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      progress: _confirmationLoading,
-                      onTap: () {
-                        Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
-                        onPositiveTap!();
-                      },
-                    ),),
-                  ])
-                ]));
-          }));
-    }
-
-
-//OnTap
-    void _onGroupOptionsTap() {
-      Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
-      int membersCount = _groupStats?.activeMembersCount ?? 0;
-      String? confirmMsg = (membersCount > 1)
-          ? sprintf(Localization().getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"), [membersCount])
-          : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
-
-      showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          isScrollControlled: true,
-          isDismissible: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-          builder: (context) {
-            return Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Container(
-                    height: 24,
-                  ),
-                  Visibility(
-                      visible: _canAboutSettings,
-                      child: RibbonButton(
-                          leftIconKey: "info",
-                          label: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
-                          onTap: () {
-                            Navigator.pop(context);
-                            setStateIfMounted(()=> _currentTab = _DetailTab.About);
-                          })),
-                  Visibility(
-                      visible: _canEditGroup,
-                      child: RibbonButton(
-                          leftIconKey: "settings",
-                          label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("_panel.group_detail.button.group.edit.title", "Group admin settings"),//TBD localize
-                          onTap: () {
-                            Navigator.pop(context);
-                            _onTapSettings();
-                          })),
-                  Visibility(
-                      visible: _canNotificationSettings,
-                      child: RibbonButton(
-                          leftIconKey: "reminder",
-                          label: Localization().getStringEx("panel.group_detail.button.group.notifications.title", "Notification Preferences"),//TBD localize
-                          onTap: () {
-                            Navigator.pop(context);
-                            _onTapNotifications();
-                          })),
-                  Visibility(
-                      visible: _canShareSettings, //TBD do we restrict sharing?
-                      child: RibbonButton(
-                          leftIconKey: "share-nodes",
-                          label: Localization().getStringEx("panel.group_detail.button.group.share.title", "Share group"),//TBD localize
-                          onTap: () {
-                            Navigator.pop(context);
-                            _onTapShare();
-                          })),
-                  Visibility(
-                      visible: _canLeaveGroup,
-                      child: RibbonButton(
-                          leftIconKey: "trash",
-                          label: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
-                          onTap: () {
-                            Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
-                            showDialog(
-                                context: context,
-                                builder: (context) => _buildConfirmationDialog(
-                                    confirmationTextMsg: _isResearchProject ?
-                                    "Are you sure you want to leave this project?" :
-                                    Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
-                                    positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
-                                    onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
-                          })),
-                  Visibility(
-                      visible: _canDeleteGroup,
-                      child: RibbonButton(
-                          leftIconKey: "trash",
-                          label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
-                          onTap: () {
-                            Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
-                            showDialog(
-                                context: context,
-                                builder: (context) => _buildConfirmationDialog(
-                                    confirmationTextMsg: confirmMsg,
-                                    positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                                    negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
-                                    onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
-                          })),
-                  Visibility(visible: _canReportAbuse, child: RibbonButton(
-                    leftIconKey: "report",
-                    label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-                    onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
-                  )),
-                ]));
-          });
-    }
-
-    void _onCreateOptionsTap() {
-      Analytics().logSelect(target: 'Group Create Options', attributes: _group?.analyticsAttributes);
-
-      showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          isScrollControlled: true,
-          isDismissible: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-          builder: (context) {
-            return Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Container(
-                    height: 24,
-                  ),
-                  Visibility(
-                      visible: _canCreatePost,
-                      child: RibbonButton(
-                          leftIconKey: "plus-circle",
-                          label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            _onTapCreatePost();
-                          })),
-                  Visibility(
-                      visible: _canCreateMessage,
-                      child: RibbonButton(
-                          leftIconKey: "plus-circle",
-                          label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            _onTapCreatePost();
-                          })),
-                  Visibility(
-                      visible: _canAddEvent,
-                      child: RibbonButton(
-                          leftIconKey: "plus-circle",
-                          label: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
-                          onTap: (){
-                            Navigator.pop(context);
-                            _onTapCreateEvent();
-                          })),
-                  Visibility(
-                      visible: _canAddEvent,
-                      child: RibbonButton(
-                          leftIconKey: "plus-circle",
-                          label: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
-                          onTap: (){
-                            Navigator.pop(context);
-                            _onTapBrowseEvents();
-                          })),
-                  Visibility(
-                      visible: _canCreatePoll,
-                      child: RibbonButton(
-                          leftIconKey: "plus-circle",
-                          label: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
-                          onTap: (){
-                            Navigator.pop(context);
-                            _onTapCreatePoll();
-                          })),
-                ]));
-          });
-    }
-
-    void _onTab(_DetailTab? tab) {
-      Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
-      if (tab != null && _currentTab != tab) {
-          _currentTab = tab;
-
-        _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
-      }
-    }
-
-    void _onTapLeaveDialog() {
-      _leaveGroup().then((value) => Navigator.pop(context));
-    }
-
-    void _onTapDeleteDialog() {
-      _deleteGroup().then((succeeded) {
-        Navigator.of(context).pop(); // Pop dialog
-        if ((succeeded == true)) {
-          Navigator.of(context).pop(); // Pop to previous panel
-        } else {
-          AppAlert.showDialogResult(context, _isResearchProject ? 'Failed to delete project.' : Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
-        }
-      });
-    }
-
-    void _onWebsite() {
-      Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
-      UrlUtils.launchExternal(_group?.webURL);
-    }
-
-    void _onPolicy () {
-      Analytics().logSelect(target: 'Policy');
-      showDialog(context: context, builder: (_) =>  InfoPopup(
-        backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
-        padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-        border: Border.all(color: Styles().colors.textSurface, width: 1),
-        alignment: Alignment.center,
-        infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-        infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
-        closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+    if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+      ExpandableText(_group?.researchConsentDetails ?? '',
+        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+        trimLinesCount: 12,
+        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+        footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
+      ),
       ),);
     }
 
-    void _onTapMembers(){
-      Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    );
+  }
+
+  Widget _buildPrivacyDescription() {
+    String? title, description;
+    if (_group?.privacy == GroupPrivacy.private) {
+      title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.private", '\u2022 This group is only visible to members.\n\u2022 Anyone can search for the group with the exact name.\n\u2022 Only admins can see members.\n\u2022 Only members can see posts and group events.\n\u2022 All users can see group events if they are marked public.\n\u2022 All users can see admins.');
+    }
+    else if (_group?.privacy == GroupPrivacy.public) {
+      title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
     }
 
-    void _onTapSettings(){
-      Analytics().logSelect(target: "Group Settings", attributes: _group?.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,))).then((exit){
-        if(exit == true){
-          Navigator.of(context).pop();
+    return (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(description) && !_isResearchProject) ?
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(padding: EdgeInsets.only(bottom: 4), child:
+        Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
+        Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.regular'), ),
+      ],),) :
+    Container(width: 0, height: 0);
+  }
+
+  Widget _buildWebsiteLinkCommand() {
+    return RibbonButton(
+        label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
+        rightIconKey: 'external-link',
+        leftIconKey: 'web',
+        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+        onTap: _onWebsite
+    );
+  }
+
+  List<Widget> _buildAttributes() {
+    List<Widget> attributesList = <Widget>[];
+    Map<String, dynamic>? groupAttributes = widget.group?.attributes;
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        if (Groups().isContentAttributeEnabled(attribute)) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            attributesList.add(Row(children: [
+              Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+              ),
+              Expanded(child:
+              Text(displayAttributeValues.join(', '), maxLines: 1, style:
+              Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+              ),
+              ),
+            ],),);
+          }
         }
       }
+    }
+    return attributesList;
+  }
+
+  Widget _buildWebsiteLinkButton() {
+    return RibbonButton(
+        label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+        rightIconKey: 'external-link',
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        onTap: _onWebsite
+    );
+  }
+
+  Widget _buildBadgeWidget() {
+    Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
+      ),
+    );
+    return _hasIconOptionButtons ? Row(children: <Widget>[
+      badgeWidget,
+      Expanded(child: Container(),),
+      _buildIconButtons
+    ]) : badgeWidget;
+  }
+
+  Widget _buildTitleWidget() {
+    Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),);
+    return _hasIconOptionButtons ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(top: 8), child:
+          titleWidget
+        )
+      ),
+      _buildIconButtons
+    ]) : titleWidget;
+  }
+
+  Widget get _buildIconButtons =>
+      Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
+        ...?_buildPolicyIconButton(),
+        ...?_buildCreateIconButton(),
+        ...?_buildSettingsIconButton()
+      ]);
+
+  List<Widget>? _buildPolicyIconButton() => _showPolicyIcon ? <Widget>[
+    Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+      child: InkWell(onTap: _onPolicy, child:
+      Padding(padding: EdgeInsets.all(8), child:
+      Styles().images.getImage('info', excludeFromSemantics: true)
+      ),
+      ),
+    )] : null;
+
+  List<Widget>? _buildSettingsIconButton() => _hasOptions ? <Widget>[
+    Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('', 'Settings'),
+      hint: Localization().getStringEx('', ''),
+      child: InkWell(onTap: _onGroupOptionsTap, child:
+        Padding(padding: EdgeInsets.all(8), child:
+        Styles().images.getImage('more', excludeFromSemantics: true)
+        ),
+      ),
+    )] : null;
+
+  List<Widget>? _buildCreateIconButton() => _hasCreateOptions ? <Widget>[
+    Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('', 'Create'),
+      hint: Localization().getStringEx('', ''),
+      child: InkWell(onTap: _onCreateOptionsTap, child:
+      Padding(padding: EdgeInsets.all(8), child:
+      Styles().images.getImage('plus-circle', excludeFromSemantics: true)
+      ),
+      ),
+    )] : null;
+
+  Widget _buildAdmins() {
+    if (CollectionUtils.isEmpty(_groupAdmins)) {
+      return Container();
+    }
+
+    List<Widget> content = [];
+    content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
+    for (Member? officer in _groupAdmins!) {
+      if (1 < content.length) {
+        content.add(Padding(padding: EdgeInsets.only(left: 8), child: Container()));
+      }
+      content.add(_OfficerCard(groupMember: officer));
+    }
+    content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
+
+    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+
+    return Stack(children: [
+      Container(
+          height: 112,
+          color: Styles().colors.backgroundVariant,
+          child: Column(children: [
+            Container(height: 80),
+            Container(height: 32, child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container()))
+          ])),
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                child: Text(headingText,
+                    style:   Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
+          ]))
+    ]);
+  }
+
+  Widget _buildMembershipRequest() {
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      Padding(padding: EdgeInsets.all(16), child:
+      RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+          backgroundColor: Styles().colors.white,
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+          borderColor: Styles().colors.fillColorSecondary,
+          borderWidth: 2,
+          onTap:() { _onMembershipRequest();  }
+      ),
+      ),
       );
     }
+    else {
+      return Container();
+    }
+  }
 
-    void _onTapShare() {
-      Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromGroup(_group)));
+  Widget _buildResearchProjectMembershipRequest() {
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject == true)) {
+      bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
+      bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+      return Padding(padding: EdgeInsets.only(top: 16), child:
+        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: showConsent ? 1 : 0))), child:
+          Column(children: [
+              Visibility(visible: showConsent, child:
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  InkWell(onTap: _onResearchProjectConsent, child:
+                    Padding(padding: EdgeInsets.all(16), child:
+                      Styles().images.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
+                    ),
+                  ),
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
+                      Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                    ),
+                  ),
+                ]),
+              ),
+              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
+                RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
+                    textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
+                    backgroundColor: Styles().colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                    borderWidth: 2,
+                    onTap:() { _onMembershipRequest();  }
+                ),
+              ),
+          ],),
+        ),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  void _onResearchProjectConsent() {
+    setState(() {
+      _researchProjectConsent = !_researchProjectConsent;
+    });
+  }
+
+  Widget _buildCancelMembershipRequest() {
+    if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      Padding(padding: EdgeInsets.all(16), child:
+      RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+          backgroundColor: Styles().colors.white,
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+          borderColor: Styles().colors.fillColorSecondary,
+          borderWidth: 2,
+          progress: _confirmationLoading,
+          onTap:() { _onCancelMembershipRequest();  }
+      ),
+      )
+      );
+    }
+    else {
+      return Container();
     }
 
-    void _onTapNotifications() {
-      Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _groupId, memberId: _group?.currentMember?.id)));
+  }
+
+  Widget _buildConfirmationDialog({String? confirmationTextMsg,
+
+    String? positiveButtonLabel,
+    int positiveButtonFlex = 1,
+    Function? onPositiveTap,
+
+    String? negativeButtonLabel,
+    int negativeButtonFlex = 1,
+
+    int leftAreaFlex = 0,
+  }) {
+    return Dialog(
+        backgroundColor: Styles().colors.fillColorPrimary,
+        child: StatefulBuilder(builder: (context, setStateEx) {
+          return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(confirmationTextMsg!,
+                        textAlign: TextAlign.left, style:  Styles().textStyles.getTextStyle('widget.dialog.message.medium'))),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                  Expanded(flex: leftAreaFlex, child: Container()),
+                  Expanded(flex: negativeButtonFlex, child: RoundedButton(
+                      label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large"),
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
+                        Navigator.pop(context);
+                      }),),
+                  Container(width: 16),
+                  Expanded(flex: positiveButtonFlex, child: RoundedButton(
+                    label: positiveButtonLabel ?? '',
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                    borderColor: Styles().colors.white,
+                    backgroundColor: Styles().colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    progress: _confirmationLoading,
+                    onTap: () {
+                      Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                      onPositiveTap!();
+                    },
+                  ),),
+                ])
+              ]));
+        }));
+  }
+
+
+//OnTap
+  void _onGroupOptionsTap() {
+    Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
+    int membersCount = _groupStats?.activeMembersCount ?? 0;
+    String? confirmMsg = (membersCount > 1)
+        ? sprintf(Localization().getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"), [membersCount])
+        : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 24,
+                ),
+                Visibility(
+                    visible: _canAboutSettings,
+                    child: RibbonButton(
+                        leftIconKey: "info",
+                        label: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
+                        onTap: () {
+                          Navigator.pop(context);
+                          setStateIfMounted(()=> _currentTab = _DetailTab.About);
+                        })),
+                Visibility(
+                    visible: _canEditGroup,
+                    child: RibbonButton(
+                        leftIconKey: "settings",
+                        label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("_panel.group_detail.button.group.edit.title", "Group admin settings"),//TBD localize
+                        onTap: () {
+                          Navigator.pop(context);
+                          _onTapSettings();
+                        })),
+                Visibility(
+                    visible: _canNotificationSettings,
+                    child: RibbonButton(
+                        leftIconKey: "reminder",
+                        label: Localization().getStringEx("panel.group_detail.button.group.notifications.title", "Notification Preferences"),//TBD localize
+                        onTap: () {
+                          Navigator.pop(context);
+                          _onTapNotifications();
+                        })),
+                Visibility(
+                    visible: _canShareSettings, //TBD do we restrict sharing?
+                    child: RibbonButton(
+                        leftIconKey: "share-nodes",
+                        label: Localization().getStringEx("panel.group_detail.button.group.share.title", "Share group"),//TBD localize
+                        onTap: () {
+                          Navigator.pop(context);
+                          _onTapShare();
+                        })),
+                Visibility(
+                    visible: _canLeaveGroup,
+                    child: RibbonButton(
+                        leftIconKey: "trash",
+                        label: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
+                        onTap: () {
+                          Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
+                          showDialog(
+                              context: context,
+                              builder: (context) => _buildConfirmationDialog(
+                                  confirmationTextMsg: _isResearchProject ?
+                                  "Are you sure you want to leave this project?" :
+                                  Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+                                  positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
+                                  onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
+                        })),
+                Visibility(
+                    visible: _canDeleteGroup,
+                    child: RibbonButton(
+                        leftIconKey: "trash",
+                        label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
+                        onTap: () {
+                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
+                          showDialog(
+                              context: context,
+                              builder: (context) => _buildConfirmationDialog(
+                                  confirmationTextMsg: confirmMsg,
+                                  positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                                  negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+                                  onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
+                        })),
+                Visibility(visible: _canReportAbuse, child: RibbonButton(
+                  leftIconKey: "report",
+                  label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
+                )),
+              ]));
+        });
+  }
+
+  void _onCreateOptionsTap() {
+    Analytics().logSelect(target: 'Group Create Options', attributes: _group?.analyticsAttributes);
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 24,
+                ),
+                Visibility(
+                    visible: _canCreatePost,
+                    child: RibbonButton(
+                        leftIconKey: "plus-circle",
+                        label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost();
+                        })),
+                Visibility(
+                    visible: _canCreateMessage,
+                    child: RibbonButton(
+                        leftIconKey: "plus-circle",
+                        label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost();
+                        })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        leftIconKey: "plus-circle",
+                        label: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreateEvent();
+                        })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        leftIconKey: "plus-circle",
+                        label: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapBrowseEvents();
+                        })),
+                Visibility(
+                    visible: _canCreatePoll,
+                    child: RibbonButton(
+                        leftIconKey: "plus-circle",
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreatePoll();
+                        })),
+              ]));
+        });
+  }
+
+  void _onTab(_DetailTab? tab) {
+    Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
+    if (tab != null && _currentTab != tab) {
+        _currentTab = tab;
+
+      _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
     }
+  }
 
-    void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
-      if (!_canReportAbuse) {
-        debugPrint('Missing group id - user is not allowed to report abuse.');
-        return;
-      }
-      String? analyticsTarget;
-      if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
-        analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
-      }
-      else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
-        analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
-      }
-      else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
-        analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
-      }
-      Analytics().logSelect(target: analyticsTarget);
+  void _onTapLeaveDialog() {
+    _leaveGroup().then((value) => Navigator.pop(context));
+  }
 
-      Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _groupId!)));
-    }
-
-    void _onMembershipRequest() {
-      String target;
-      if (_group?.researchProject != true) {
-        target = "Request to join";
-      }
-      else if (CollectionUtils.isEmpty(_group?.questions)) {
-        target = "Request to participate";
-      }
-      else {
-        target = "Continue";
-      }
-      Analytics().logSelect(target: target, attributes: _group?.analyticsAttributes);
-
-      if (CollectionUtils.isNotEmpty(_group?.questions)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+  void _onTapDeleteDialog() {
+    _deleteGroup().then((succeeded) {
+      Navigator.of(context).pop(); // Pop dialog
+      if ((succeeded == true)) {
+        Navigator.of(context).pop(); // Pop to previous panel
       } else {
-        _requestMembership();
+        AppAlert.showDialogResult(context, _isResearchProject ? 'Failed to delete project.' : Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
+      }
+    });
+  }
+
+  void _onWebsite() {
+    Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
+    UrlUtils.launchExternal(_group?.webURL);
+  }
+
+  void _onPolicy () {
+    Analytics().logSelect(target: 'Policy');
+    showDialog(context: context, builder: (_) =>  InfoPopup(
+      backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
+      padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
+      border: Border.all(color: Styles().colors.textSurface, width: 1),
+      alignment: Alignment.center,
+      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
+      infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
+      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+    ),);
+  }
+
+  void _onTapMembers(){
+    Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
+  }
+
+  void _onTapSettings(){
+    Analytics().logSelect(target: "Group Settings", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,))).then((exit){
+      if(exit == true){
+        Navigator.of(context).pop();
       }
     }
+    );
+  }
 
-    void _requestMembership() {
-      _increaseProgress();
-      Groups().requestMembership(_group, null).then((succeeded) {
-        _decreaseProgress();
-        if (!succeeded) {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.alert.request_failed.msg", 'Failed to send request.'));
+  void _onTapShare() {
+    Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromGroup(_group)));
+  }
+
+  void _onTapNotifications() {
+    Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _groupId, memberId: _group?.currentMember?.id)));
+  }
+
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
+    if (!_canReportAbuse) {
+      debugPrint('Missing group id - user is not allowed to report abuse.');
+      return;
+    }
+    String? analyticsTarget;
+    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+    }
+    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    Analytics().logSelect(target: analyticsTarget);
+
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _groupId!)));
+  }
+
+  void _onMembershipRequest() {
+    String target;
+    if (_group?.researchProject != true) {
+      target = "Request to join";
+    }
+    else if (CollectionUtils.isEmpty(_group?.questions)) {
+      target = "Request to participate";
+    }
+    else {
+      target = "Continue";
+    }
+    Analytics().logSelect(target: target, attributes: _group?.analyticsAttributes);
+
+    if (CollectionUtils.isNotEmpty(_group?.questions)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+    } else {
+      _requestMembership();
+    }
+  }
+
+  void _requestMembership() {
+    _increaseProgress();
+    Groups().requestMembership(_group, null).then((succeeded) {
+      _decreaseProgress();
+      if (!succeeded) {
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.alert.request_failed.msg", 'Failed to send request.'));
+      }
+    });
+  }
+
+  void _onCancelMembershipRequest() {
+    Analytics().logSelect(target: "Cancel membership request", attributes: _group?.analyticsAttributes);
+    showDialog(
+        context: context,
+        builder: (context) => _buildConfirmationDialog(
+            confirmationTextMsg: _isResearchProject ?
+            "Are you sure you want to cancel your request to join this project?" :
+            Localization().getStringEx("panel.group_detail.label.confirm.cancel", "Are you sure you want to cancel your request to join this group?"),
+            positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title", "Cancel request"),
+            positiveButtonFlex: 2,
+            onPositiveTap: _onTapCancelMembershipDialog));
+  }
+
+  void _onTapCancelMembershipDialog() {
+    _cancelMembershipRequest();
+    Navigator.pop(context);
+  }
+
+  void _onTapCreateEvent(){
+    Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
+    if (_group != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(targetGroups: [_group!],)));
+    }
+  }
+
+  void _onTapBrowseEvents(){
+    Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
+    if (_group != null) {
+      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!), analyticsFeature: widget.analyticsFeature);
+    }
+  }
+
+  void _onTapCreatePost() {
+    Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
+    if (_group != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
+        if (result is Post) {
+          if(result.isScheduled){
+            _updateController.add(_GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast);
+          }
+          else if (result.isPost) {
+            _updateController.add(_GroupPostsContent.notifyPostRefreshWithScrollToLast);
+          }
+          else if (result.isMessage) {
+            _updateController.add(_GroupMessagesContent.notifyMessagesRefreshWithScrollToLast);
+          }
         }
       });
     }
+  }
 
-    void _onCancelMembershipRequest() {
-      Analytics().logSelect(target: "Cancel membership request", attributes: _group?.analyticsAttributes);
-      showDialog(
-          context: context,
-          builder: (context) => _buildConfirmationDialog(
-              confirmationTextMsg: _isResearchProject ?
-              "Are you sure you want to cancel your request to join this project?" :
-              Localization().getStringEx("panel.group_detail.label.confirm.cancel", "Are you sure you want to cancel your request to join this group?"),
-              positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title", "Cancel request"),
-              positiveButtonFlex: 2,
-              onPositiveTap: _onTapCancelMembershipDialog));
+  void _onTapCreatePoll() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
+  }
+
+  Future<void> _onPullToRefresh() async {
+    if (Connectivity().isOffline) {
+      // Do not try to refresh group if the device is offline
+      return;
     }
-
-    void _onTapCancelMembershipDialog() {
-      _cancelMembershipRequest();
-      Navigator.pop(context);
+    if ((_group?.syncAuthmanAllowed == true) && (_group?.attendanceGroup == true)) {
+      await Groups().syncAuthmanGroup(group: _group!);
     }
-
-    void _onTapCreateEvent(){
-      Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-      if (_group != null) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(targetGroups: [_group!],)));
-      }
-    }
-
-    void _onTapBrowseEvents(){
-      Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-      if (_group != null) {
-        Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!), analyticsFeature: widget.analyticsFeature);
-      }
-    }
-
-    void _onTapCreatePost() {
-      Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
-      if (_group != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
-          if (result is Post) {
-            if(result.isScheduled){
-              _updateController.add(_GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast);
-            }
-            else if (result.isPost) {
-              _updateController.add(_GroupPostsContent.notifyPostRefreshWithScrollToLast);
-            }
-            else if (result.isMessage) {
-              _updateController.add(_GroupMessagesContent.notifyMessagesRefreshWithScrollToLast);
-            }
-          }
+    Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
+    if ((group != null)) {
+      if(mounted) {
+        setState(() {
+          _group = group;
         });
       }
+      _trimForbiddenTabs();
+      _refreshGroupAdmins();
+      _refreshGroupStats();
+      _updateController.add(GroupDetailPanel.notifyRefresh);
+      _updateController.add(_GroupEventsContent.notifyEventsRefresh);
     }
+  }
 
-    void _onTapCreatePoll() {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
+  void _increaseProgress() {
+    _progress++;
+    if (mounted) {
+      setState(() {});
     }
+  }
 
-    Future<void> _onPullToRefresh() async {
-      if (Connectivity().isOffline) {
-        // Do not try to refresh group if the device is offline
-        return;
-      }
-      if ((_group?.syncAuthmanAllowed == true) && (_group?.attendanceGroup == true)) {
-        await Groups().syncAuthmanGroup(group: _group!);
-      }
-      Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
-      if ((group != null)) {
-        if(mounted) {
-          setState(() {
-            _group = group;
-          });
-        }
-        _trimForbiddenTabs();
-        _refreshGroupAdmins();
-        _refreshGroupStats();
-        _updateController.add(GroupDetailPanel.notifyRefresh);
-        _updateController.add(_GroupEventsContent.notifyEventsRefresh);
-      }
+  void _decreaseProgress() {
+    _progress--;
+    if (mounted) {
+      setState(() {});
     }
-
-    void _increaseProgress() {
-      _progress++;
-      if (mounted) {
-        setState(() {});
-      }
-    }
-
-    void _decreaseProgress() {
-      _progress--;
-      if (mounted) {
-        setState(() {});
-      }
-    }
+  }
 }
 
 class _OfficerCard extends StatelessWidget {
