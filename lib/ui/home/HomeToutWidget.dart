@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -118,6 +119,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    double imageWidth = screenWidth;
+    double imageHeight = max((screenHeight / 3.0), 300); //imageWidth * 810 / 1080;
     return Stack(children: [
       Semantics(
           label: "tout",
@@ -125,12 +128,10 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
           excludeSemantics: true,
           child: ModalImageHolder(
               child: SizedBox(
-                  width: screenWidth,
-                  height: screenHeight,
+                  width: imageWidth,
+                  height: imageHeight,
                   child: Image.network(imageUrl, semanticLabel: '', fit: BoxFit.cover, alignment: Alignment.center,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                    double imageWidth = screenWidth;
-                    double imageHeight = imageWidth * 810 / 1080;
                     return (loadingProgress != null)
                         ? Container(
                             color: Styles().colors.fillColorPrimary,
