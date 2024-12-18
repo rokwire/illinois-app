@@ -1,75 +1,67 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
-  final bool? unread;
-  final void Function()? onTapBanner;
   final Conversation conversation;
-  MessagesConversationPanel({Key? key, required this.conversation, this.unread, this.onTapBanner}) : super(key: key);
+  MessagesConversationPanel({Key? key, required this.conversation}) : super(key: key);
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
-  with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
-  List<String>? _contentCodes;
+    with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
   late ScrollController _scrollController;
-  static double? _scrollPosition;
   bool _shouldScrollToBottom = false;
-  bool _shouldSemanticFocusToLastBubble = false;
 
   bool _listening = false;
-  bool _loadingResponse = false;
   bool _loading = false;
-  
-  List<Post> _messages = [];
+  bool _submitting = false;
+  bool _messageOptionsExpanded = false;
+
+  // Use the actual Auth2 accountId instead of a placeholder.
+  String? get _currentUserId => Auth2().accountId;
+
+  // Messages loaded from the backend
+  List<Message> _messages = [];
 
   @override
   void initState() {
-    super.initState();
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
       SpeechToText.notifyError,
     ]);
-    _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
-    _scrollController.addListener(_scrollListener);
+    _scrollController = ScrollController();
 
-    _contentCodes = buildContentCodes();
-    
-    //TODO: insert some test messages into _messages for now - use Social() service to get these messages later
-
-    if (CollectionUtils.isNotEmpty(_messages)) {
-      _shouldScrollToBottom = true;
-    }
+    // Load messages from the backend
+    _loadMessages();
 
     WidgetsBinding.instance.addObserver(this);
+    super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _inputController.dispose();
     _inputFieldFocus.dispose();
@@ -84,10 +76,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateContentCodes();
-      setStateIfMounted((){});
-    } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+    if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {
       setStateIfMounted((){});
@@ -112,121 +101,169 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
+  String _getConversationTitle() {
+    // If it's a one-on-one conversation, show the other member's name
+    // If group, show something else. For now, if multiple members, just show first.
+    if (widget.conversation.members?.length == 1) {
+      return widget.conversation.members?.first.name ?? 'Unknown';
+    } else {
+      // For group conversations, you could customize the title further
+      return widget.conversation.membersString ?? 'Group Conversation';
+    }
+  }
+
   Widget _buildContent() {
     return Stack(children: [
-      Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: _messages.isNotEmpty ?
-        Stack(alignment: Alignment.center, children: [
-          SingleChildScrollView(
-              controller: _scrollController,
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Padding(padding: EdgeInsets.all(16), child:
-                Semantics(/*liveRegion: true, */child:
-                  Column(children: _buildContentList())
-                )
+      RefreshIndicator(
+        onRefresh: _onPullToRefresh,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom),
+          child: _messages.isNotEmpty ? Stack(alignment: Alignment.center, children: [
+            Column(children: [
+              Expanded(
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 16, right: 16, top:16,),
+                        child: Semantics(
+                            child: Column(children: _buildContentList())
+                        )
+                    )
+                ),
               )
-          ),
-          Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
-        ]) : Center(child: Text('No message history', style: Styles().textStyles.getTextStyle('widget.message.light.medium')))),
-      Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.background, child: SafeArea(child: _buildChatBar())))
+            ],),
+            Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+          ])
+              : _loading
+              ? Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+              : Center(
+              child: Text('No message history', style: Styles().textStyles.getTextStyle('widget.message.light.medium'))
+          )
+        )
+      ),
+      Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+              key: _chatBarKey,
+              color: Styles().colors.background,
+              child: SafeArea(child: _buildChatBar())
+          )
+      )
     ]);
   }
 
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    for (Post message in _messages) {
-      contentList.add(Padding(padding: EdgeInsets.only(bottom: 16),
-          child: _buildChatBubble(message)));
+    if (_messages.isNotEmpty) {
+      DateTime? lastDate;
+      for (Message message in _messages) {
+        DateTime? msgDate = message.dateSentLocal;
+        if (msgDate != null) {
+          if ((lastDate == null) ||
+              (lastDate.year != msgDate.year || lastDate.month != msgDate.month || lastDate.day != msgDate.day)) {
+            contentList.add(_buildDateDivider(message.dateSentLocalString ?? ''));
+            lastDate = msgDate;
+          }
+        }
+        contentList.add(_buildMessageCard(message));
+      }
     }
 
-    if (_loadingResponse) {
-      contentList.add(_buildTypingChatBubble());
-    }
     contentList.add(Container(key: _lastContentItemKey, height: 0));
     return contentList;
   }
 
-  Widget _buildChatBubble(Post message) {
-    EdgeInsets bubblePadding = message.createdByUser ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-          padding: bubblePadding,
-          child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: message.createdByUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-              children: [
-                Flexible(
-                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == _messages.lastOrNull),
-                        child: Material(
-                            color: message.createdByUser
-                                ? Styles().colors.blueAccent
-                                : Styles().colors.surface,
-                            borderRadius: BorderRadius.circular(16.0),
-                            child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(message.body ?? '',
-                                    style: message.createdByUser
-                                        ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
-                                        : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'),
-                                    textAlign: TextAlign.start)
-                                )
-                            )
-                        )
-                    )
-              ])),
-    ]);
+  Widget _buildDateDivider(String dateText) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Center(
+            child: Text(
+                dateText,
+                style: Styles().textStyles.getTextStyle('widget.description.small')
+            )
+        )
+    );
   }
 
-  Widget _buildTypingChatBubble() {
-    return Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Semantics(focused: true, label: "Loading", child: SizedBox(
-            width: 100,
-            height: 50,
-            child: Material(
-                color: Styles().colors.blueAccent,
-                borderRadius: BorderRadius.circular(16.0),
-                child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TypingIndicator(
-                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
+  Widget _buildMessageCard(Message message) {
+    // bool fromUser = (message.sender?.accountId == currentUserId);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Styles().colors.white,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            children: [
+              // Placeholder avatar icon
+              Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
+              SizedBox(width: 8),
+              Expanded(
+                  child: Text(
+                      "${message.sender?.name ?? 'Unknown'}",
+                      style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
+                  )
+              ),
+              (message.dateSentUtc != null) ?
+              Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
+                  style: Styles().textStyles.getTextStyle('widget.description.small')
+              )
+                  : Container(),
+            ],
+          ),
+          SizedBox(height: 8),
+          Text(
+              message.message ?? '',
+              style: Styles().textStyles.getTextStyle('widget.card.title.small')
+          ),
+        ]),
+      ),
+    );
   }
 
   Widget _buildChatBar() {
-    return Semantics(container: true,
+    return Semantics(
+        container: true,
         child: Material(
             color: Styles().colors.background,
             child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(mainAxisSize: MainAxisSize.max, children: [
-                  _buildAttachImage(),
+                  _buildMessageOptionsWidget(),
                   Expanded(
-                      child:
-                      Stack(children: [
-                        Semantics(container: true, child: TextField(
-                            key: _inputFieldKey,
-                            enabled: true,
-                            controller: _inputController,
-                            minLines: 1,
-                            textCapitalization: TextCapitalization.sentences,
-                            textInputAction: TextInputAction.send,
-                            focusNode: _inputFieldFocus,
-                            onSubmitted: _submitMessage,
-                            onChanged: (_) => setStateIfMounted((){}),
-                            cursorColor: Styles().colors.textColorPrimary,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-                              fillColor: Styles().colors.surface,
-                              focusColor: Styles().colors.surface,
-                              hoverColor: Styles().colors.surface,
-                            ),
-                            style: Styles().textStyles.getTextStyle('widget.title.regular')
-                        )),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _buildSpeechToTextImage(),
-                        )
-                      ],)
+                      child: Semantics(
+                          container: true,
+                          child: TextField(
+                              key: _inputFieldKey,
+                              enabled: true,
+                              controller: _inputController,
+                              minLines: 1,
+                              maxLines: 5,
+                              textCapitalization: TextCapitalization.sentences,
+                              textInputAction: TextInputAction.send,
+                              focusNode: _inputFieldFocus,
+                              onTap: _onTapChatBar,
+                              onSubmitted: _submitMessage,
+                              onChanged: (_) => setStateIfMounted(() {}),
+                              cursorColor: Styles().colors.fillColorPrimary,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                                  fillColor: Styles().colors.surface,
+                                  focusColor: Styles().colors.surface,
+                                  hoverColor: Styles().colors.surface,
+                                  hintText: "Message ${_getConversationTitle()}",
+                                  hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                              ),
+                              style: Styles().textStyles.getTextStyle('widget.title.regular')
+                          )
+                      ),
                   ),
                   _buildSendImage(),
                 ])
@@ -235,66 +272,180 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
+  Widget _buildMessageOptionsWidget() {
+    return _messageOptionsExpanded ? Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildAttachImage(),
+        _buildSpeechToTextImage(),
+        _buildMessageOptionsImage(),
+      ],
+    ) : _buildMessageOptionsImage();
+  }
+
+  Widget _buildMessageOptionsImage() {
+    return MergeSemantics(
+        child: Semantics(
+            label: Localization().getStringEx('', "Options"),
+            enabled: true,
+            child: IconButton(
+                splashRadius: 24,
+                icon: Styles().images.getImage(_messageOptionsExpanded ? 'chevron-left-bold' : 'chevron-right-bold') ??
+                    Icon(_messageOptionsExpanded ? Icons.chevron_left : Icons.chevron_right, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
+                onPressed: () {
+                  setState(() {
+                    _messageOptionsExpanded = !_messageOptionsExpanded;
+                  });
+                }
+            )
+        )
+    );
+  }
+
   Widget _buildSendImage() {
-    return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: true,
-        child: IconButton(
-            splashRadius: 24,
-            icon: Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: "",),
-            onPressed: () {
-              _submitMessage(_inputController.text);
-            }
-        )));
+    return MergeSemantics(
+        child: Semantics(
+            label: Localization().getStringEx('', "Send"),
+            enabled: true,
+            child: _submitting ?
+              Padding(padding: EdgeInsets.all(16), child:
+                SizedBox(width: 16, height: 16, child:
+                    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+                )
+              ) :
+              IconButton(
+                splashRadius: 24,
+                icon: Styles().images.getImage('paper-plane-top') ?? Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
+                onPressed: () {
+                  _submitMessage(_inputController.text);
+                }
+              )
+        )
+    );
   }
 
   Widget _buildAttachImage() {
-    return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Attach"), enabled: true,
-        child: IconButton(
-            splashRadius: 24,
-            icon: Styles().images.getImage('plus') ?? Container(),  //TODO: placeholder icon - @manav2modi replace this icon with yours
-            onPressed: () {
-              _submitMessage(_inputController.text);
-            }
-        )));
+    return MergeSemantics(
+        child: Semantics(
+            label: Localization().getStringEx('', "Attach"),
+            enabled: true,
+            child: IconButton(
+                splashRadius: 24,
+                icon: Styles().images.getImage('image-placeholder', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
+                onPressed: () {
+                  // TODO: Implement attachment picker once ready
+                }
+            )
+        )
+    );
   }
 
   Widget _buildSpeechToTextImage() {
     return Visibility(
         visible: SpeechToText().isEnabled,
-        child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
-            child:IconButton(
-                splashRadius: 24,
-                icon: _listening ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop",) : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone",),
-                onPressed: () {
-                  if (_listening) {
-                    _stopListening();
-                  } else {
-                    _startListening();
-                  }
-                }
+        child: MergeSemantics(
+            child: Semantics(
+                label: Localization().getStringEx('', "Speech to text"),
+                child: IconButton(
+                    splashRadius: 24,
+                    icon: _listening
+                        ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop")
+                        : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone"),
+                    onPressed: () {
+                      if (_listening) {
+                        _stopListening();
+                      } else {
+                        _startListening();
+                      }
+                    }
+                )
             )
-        ))
+        )
     );
   }
 
-  Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text)) {
-      FocusScope.of(context).requestFocus(FocusNode());
-      if (_loadingResponse) {
-        return;
+  Future<void> _loadMessages() async {
+    if (widget.conversation.id == null) {
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+
+    // Use the Social API to load conversation messages
+    List<Message>? loadedMessages = await Social().loadConversationMessages(
+      conversationId: widget.conversation.id!,
+      limit: 100,
+      offset: 0,
+    );
+
+
+    setStateIfMounted(() {
+      _loading = false;
+      if (loadedMessages != null) {
+        _messages = loadedMessages;
+        if (widget.conversation.isGroupConversation) {
+          _removeDuplicateMessagesByGlobalId();
+        }
+        Message.sortListByDateSent(_messages);
+        _shouldScrollToBottom = true;
+      } else {
+        // If null, could indicate a failure to load messages
+        _messages = [];
       }
+    });
+  }
+
+  void _removeDuplicateMessagesByGlobalId() {
+    Set<String> globalIds = {};
+    List<Message> messages = [];
+    for (Message message in _messages) {
+      if (message.globalId != null && !globalIds.contains(message.globalId)) {
+        messages.add(message);
+        globalIds.add(message.globalId!);
+      }
+    }
+    _messages = messages;
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _loadMessages();
+  }
+
+  void _onTapChatBar() {
+    setState(() {
+      _messageOptionsExpanded = false;
+    });
+  }
+
+  Future<void> _submitMessage(String message) async {
+    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && _currentUserId != null && _submitting == false) {
+      FocusScope.of(context).requestFocus(FocusNode());
 
       setState(() {
-        //TODO: create message on Social BB
-        // if (message.isNotEmpty) {
-        //   Social().addMessage(Post(content: message, user: true, displayName: Auth2().fullName ?? '', dateCreated: DateTime.now()));
-        // }
-        _inputController.text = '';
-        _loadingResponse = true;
+        _submitting = true;
         _shouldScrollToBottom = true;
-        _shouldSemanticFocusToLastBubble = true;
       });
 
-      //TODO: send message to Social BB
+      // Send message via API
+      List<Message>? newMessages = await Social().createConversationMessage(
+        conversationId: widget.conversation.id!,
+        message: _inputController.text,
+      );
+
+      if (mounted) {
+        // Clear input after sending
+        _inputController.text = '';
+
+        setState(() {
+          _submitting = false;
+        });
+
+        // load the new messages
+        if (CollectionUtils.isNotEmpty(newMessages)) {
+          _loadMessages();
+        }
+      }
     }
   }
 
@@ -307,7 +458,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _stopListening() async {
     await SpeechToText().stopListening();
-    setState(() {
+    setStateIfMounted(() {
       _listening = false;
     });
   }
@@ -321,22 +472,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
   }
 
-  void _updateContentCodes() {
-    List<String>? contentCodes = buildContentCodes();
-    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
-      if (mounted) {
-        setState(() {
-          _contentCodes = contentCodes;
-        });
-      } else {
-        _contentCodes = contentCodes;
-      }
-    }
-  }
-
   @override
   void didChangeMetrics() {
-    _checkKeyboardVisible.then((visible){
+    _checkKeyboardVisible.then((visible) {
       _onKeyboardVisibilityChanged(visible);
     });
   }
@@ -344,9 +482,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   void _onKeyboardVisibilityChanged(bool visible) {
     setStateIfMounted(() {
       _shouldScrollToBottom = true;
-      if(visible) {
-        _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
-      }
     });
   }
 
@@ -362,42 +497,24 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  void _scrollListener() {
-    _scrollPosition = _scrollController.position.pixels;
-  }
-
-  double get _chatBarPaddingBottom => _keyboardHeight;
-
-  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
-
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
     double? chatBarHeight = ((chatBarRenderBox is RenderBox) && chatBarRenderBox.hasSize) ? chatBarRenderBox.size.height : null;
     return chatBarHeight ?? 0;
   }
 
-  double get _scrollContentPaddingBottom => _keyboardHeight + _chatBarHeight;
+  double get _scrollContentPaddingBottom => _chatBarHeight;
 
   Future<bool> get _checkKeyboardVisible async {
     final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
-    //Check if the position of the keyboard is still changing
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
 
-    if(position == secondPosition){ //Animation is finished
+    if (position == secondPosition) {
       return position > 0;
     } else {
-      return _checkKeyboardVisible; //Check again
+      return _checkKeyboardVisible; // Check again
     }
   }
 
-  static List<String>? buildContentCodes() {
-    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    // codes?.sort((String code1, String code2) {
-    //   String title1 = _BrowseSection.title(sectionId: code1);
-    //   String title2 = _BrowseSection.title(sectionId: code2);
-    //   return title1.toLowerCase().compareTo(title2.toLowerCase());
-    // });
-    return codes;
-  }
 }

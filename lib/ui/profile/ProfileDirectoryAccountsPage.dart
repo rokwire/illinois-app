@@ -19,6 +19,7 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -65,6 +66,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
       Auth2.notifyLoginChanged,
+      if (widget.displayMode == DirectoryDisplayMode.select)
+        Social.notifyConversationsUpdated,
     ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
@@ -96,6 +99,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
         });
         refresh();
+      }
+    }
+    else if (name == Social.notifyConversationsUpdated) {
+      if ((widget.displayMode == DirectoryDisplayMode.select) && mounted) {
+        setState(() {
+          _selectedIds.clear();
+        });
       }
     }
   }
