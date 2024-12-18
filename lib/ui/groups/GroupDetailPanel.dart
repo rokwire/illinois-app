@@ -248,7 +248,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     ]);
     _postId = widget.groupPostId;
     _visibleTabs = GroupDetailPanel.defaultTabs;
-    
+
     _loadGroup(loadEvents: true);
     super.initState();
   }
@@ -790,7 +790,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       );
   }
 
-  //Utils tbd move down
   int _indexOfTab(_DetailTab tab) => _visibleTabs?.indexOf(tab) ?? 0;
   
   _DetailTab? _tabAtIndex(int index) {
@@ -921,18 +920,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           onTap: _onWebsite
       );
-      /*return RoundedButton(
-      label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
-      hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-      backgroundColor: Colors.white,
-      borderColor: Styles().colors.fillColorSecondary,
-      rightIcon: Image.asset('images/external-link.png'),
-      textColor: Styles().colors.fillColorPrimary,
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-      fontFamily: Styles().fontFamilies.bold,
-      fontSize: 16,
-      onTap: _onWebsite
-    );*/
     }
 
     Widget _buildBadgeWidget() {
@@ -1425,143 +1412,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
       Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _groupId!)));
     }
-
-    /*void _onTapTakeAttendance() {
-    if (_memberAttendLoading) {
-      return;
-    }
-    Analytics().logSelect(target: "Take Attendance", attributes: _group?.analyticsAttributes);
-    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary)!,
-            Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
-        .then((scanResult) {
-      _onAttendanceScanFinished(scanResult);
-    });
-  }
-
-  void _onAttendanceScanFinished(String? scanResult) {
-    if (scanResult == '-1') {
-      // The user hit "Cancel button"
-      return;
-    }
-    String? uin = _extractUin(scanResult);
-    // There is no uin in the scanned QRcode
-    if (uin == null) {
-      AppAlert.showDialogResult(
-          context,
-          Localization()
-              .getStringEx('panel.group_detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
-      return;
-    }
-    _loadAttendedMemberByUin(uin: uin);
-  }
-
-  void _attendMember({required Member member}) {
-    _setMemberAttendLoading(true);
-    Groups().memberAttended(group: _group!, member: member).then((success) {
-      _setMemberAttendLoading(false);
-      String msg = success
-          ? Localization().getStringEx('panel.group_detail.attendance.member.succeeded.msg', 'Successfully tagged member as attended.')
-          : Localization()
-              .getStringEx('panel.group_detail.attendance.member.failed.msg', 'Failed to tag member as attended. Please try again.');
-      AppAlert.showDialogResult(context, msg);
-    });
-  }
-
-  String? _getAttendedDateTimeFormatted({required Member member}) {
-    DateTime? attendedUniTime = AppDateTime().getUniLocalTimeFromUtcTime(member.dateAttendedUtc);
-    String? dateTimeFormatted = AppDateTime().formatDateTime(attendedUniTime, format: 'yyyy/MM/dd h:mm');
-    return dateTimeFormatted;
-  }*/
-
-    ///
-    /// Returns UIN number from string (uin or megTrack2), null - otherwise
-    ///
-    /*String? _extractUin(String? stringToCheck) {
-    if (StringUtils.isEmpty(stringToCheck)) {
-      return stringToCheck;
-    }
-    int stringSymbolsCount = stringToCheck!.length;
-    final int uinNumbersCount = 9;
-    final int megTrack2SymbolsCount = 28;
-    // Validate UIN in format 'XXXXXXXXX'
-    if (stringSymbolsCount == uinNumbersCount) {
-      RegExp uinRegEx = RegExp('[0-9]{$uinNumbersCount}');
-      bool uinMatch = uinRegEx.hasMatch(stringToCheck);
-      return uinMatch ? stringToCheck : null;
-    }
-    // Validate megTrack2 in format 'AAAAXXXXXXXXXAAA=AAAAAAAAAAA' where 'XXXXXXXXX' is the UIN
-    else if (stringSymbolsCount == megTrack2SymbolsCount) {
-      RegExp megTrack2RegEx = RegExp('[0-9]{4}[0-9]{$uinNumbersCount}[0-9]{3}=[0-9]{11}');
-      bool megTrackMatch = megTrack2RegEx.hasMatch(stringToCheck);
-      if (megTrackMatch) {
-        String uin = stringToCheck.substring(4, 13);
-        return uin;
-      } else {
-        return null;
-      }
-    }
-    return null;
-  }
-
-  void _loadAttendedMemberByUin({required String uin}) {
-    Groups().loadMembers(groupId: widget.groupId).then((members) {
-      Member? member;
-      if (CollectionUtils.isNotEmpty(members)) {
-        for (Member groupMember in members!) {
-          if (groupMember.isMemberOrAdmin && (groupMember.externalId == uin)) {
-            member = groupMember;
-            break;
-          }
-        }
-      }
-      _onAttendedMemberLoaded(uin: uin, member: member);
-    });
-  }
-
-  void _onAttendedMemberLoaded({required String uin, Member? member}) {
-    if (member != null) {
-      // The member already attended.
-      if (_checkMemberAttended(member: member)) {
-        AppAlert.showDialogResult(
-            context,
-            sprintf(
-                Localization()
-                    .getStringEx('panel.group_detail.attendance.member.attended.msg.format', 'Student with UIN "%s" already attended on "%s"'),
-                [uin, _getAttendedDateTimeFormatted(member: member)]));
-      }
-      // Attend the member to the group
-      else {
-        _attendMember(member: member);
-      }
-    } else {
-      // Do not allow a student to attend to authman group which one is not member of.
-      if (_group?.authManEnabled == true) {
-        AppAlert.showDialogResult(context,
-          sprintf(Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg', 'Student with UIN "%s" is not a member of this group and is not allowed to attend.'), [uin]));
-      }
-      // Create new member and attend to non-authman group
-      else {
-        member = Member();
-        member.status = GroupMemberStatus.member;
-        member.externalId = uin;
-        _attendMember(member: member);
-      }
-    }
-  }*/
-
-    ///
-    /// Returns true if member has already attended, false - otherwise
-    ///
-    /*bool _checkMemberAttended({required Member member}) {
-    return (member.dateAttendedUtc != null);
-  }
-
-  void _setMemberAttendLoading(bool loading) {
-    _memberAttendLoading = loading;
-    if (mounted) {
-      setState(() {});
-    }
-  }*/
 
     void _onMembershipRequest() {
       String target;
