@@ -7,7 +7,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -37,11 +36,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   late ScrollController _scrollController;
   static double? _scrollPosition;
   bool _shouldScrollToBottom = false;
-  bool _shouldSemanticFocusToLastBubble = false;
 
   bool _listening = false;
-  bool _loadingResponse = false;
   bool _loading = false;
+  bool _messageOptionsExpanded = false;
 
   // Use the actual Auth2 accountId instead of a placeholder.
   String? get currentUserId => Auth2().accountId;
@@ -102,33 +100,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  Future<void> _loadMessages() async {
-    if (widget.conversation.id == null) {
-      return;
-    }
-    setState(() {
-      _loading = true;
-    });
-
-    // Use the Social API to load conversation messages
-    List<Message>? loadedMessages = await Social().loadConversationMessages(
-      conversationId: widget.conversation.id!,
-      limit: 100,
-      offset: 0,
-    );
-
-    setState(() {
-      _loading = false;
-      if (loadedMessages != null) {
-        _messages = loadedMessages;
-        _shouldScrollToBottom = true;
-      } else {
-        // If null, could indicate a failure to load messages
-        _messages = [];
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -156,20 +127,25 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildContent() {
     return Stack(children: [
-      Padding(
+      RefreshIndicator(
+        onRefresh: _onPullToRefresh,
+        child: Padding(
           padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom),
-          child: _messages.isNotEmpty
-              ? Stack(alignment: Alignment.center, children: [
-            SingleChildScrollView(
-                controller: _scrollController,
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Semantics(
-                        child: Column(children: _buildContentList())
+          child: _messages.isNotEmpty ? Stack(alignment: Alignment.center, children: [
+            Column(children: [
+              Expanded(
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 16, right: 16, top:16,),
+                        child: Semantics(
+                            child: Column(children: _buildContentList())
+                        )
                     )
-                )
-            ),
+                ),
+              )
+            ],),
             Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
           ])
               : _loading
@@ -177,9 +153,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               : Center(
               child: Text('No message history', style: Styles().textStyles.getTextStyle('widget.message.light.medium'))
           )
+        )
       ),
       Positioned(
-          bottom: _chatBarPaddingBottom,
+          bottom: 0,
           left: 0,
           right: 0,
           child: Container(
@@ -196,22 +173,17 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     if (_messages.isNotEmpty) {
       DateTime? lastDate;
-      for (int i = 0; i < _messages.length; i++) {
-        DateTime? msgDate = _messages[i].dateSentUtc;
+      for (Message message in _messages) {
+        DateTime? msgDate = message.dateSentLocal;
         if (msgDate != null) {
-          String msgDateString = AppDateTime().formatDateTime(msgDate, format: 'MMMM dd, yyyy') ?? '';
           if ((lastDate == null) ||
               (lastDate.year != msgDate.year || lastDate.month != msgDate.month || lastDate.day != msgDate.day)) {
-            contentList.add(_buildDateDivider(msgDateString));
+            contentList.add(_buildDateDivider(message.dateSentLocalString ?? ''));
             lastDate = msgDate;
           }
         }
-        contentList.add(_buildMessageCard(_messages[i]));
+        contentList.add(_buildMessageCard(message));
       }
-    }
-
-    if (_loadingResponse) {
-      contentList.add(_buildTypingChatBubble());
     }
 
     contentList.add(Container(key: _lastContentItemKey, height: 0));
@@ -231,7 +203,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildMessageCard(Message message) {
-    bool fromUser = (message.sender?.accountId == currentUserId);
+    // bool fromUser = (message.sender?.accountId == currentUserId);
 
     return Container(
       margin: EdgeInsets.only(bottom: 16),
@@ -269,31 +241,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  Widget _buildTypingChatBubble() {
-    return Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Semantics(
-            focused: true,
-            label: "Loading",
-            child: SizedBox(
-                width: 100,
-                height: 50,
-                child: Material(
-                    color: Styles().colors.blueAccent,
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: TypingIndicator(
-                            flashingCircleBrightColor: Styles().colors.surface,
-                            flashingCircleDarkColor: Styles().colors.blueAccent
-                        )
-                    )
-                )
-            )
-        )
-    );
-  }
-
   Widget _buildChatBar() {
     return Semantics(
         container: true,
@@ -302,41 +249,67 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(mainAxisSize: MainAxisSize.max, children: [
-                  _buildAttachImage(),
+                  _buildMessageOptionsWidget(),
                   Expanded(
-                      child: Stack(children: [
-                        Semantics(
-                            container: true,
-                            child: TextField(
-                                key: _inputFieldKey,
-                                enabled: true,
-                                controller: _inputController,
-                                minLines: 1,
-                                textCapitalization: TextCapitalization.sentences,
-                                textInputAction: TextInputAction.send,
-                                focusNode: _inputFieldFocus,
-                                onSubmitted: _submitMessage,
-                                onChanged: (_) => setStateIfMounted(() {}),
-                                cursorColor: Styles().colors.textColorPrimary,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-                                    fillColor: Styles().colors.surface,
-                                    focusColor: Styles().colors.surface,
-                                    hoverColor: Styles().colors.surface,
-                                    hintText: "Message ${_getConversationTitle()}",
-                                    hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
-                                ),
-                                style: Styles().textStyles.getTextStyle('widget.title.regular')
-                            )
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _buildSpeechToTextImage(),
-                        )
-                      ])
+                      child: Semantics(
+                          container: true,
+                          child: TextField(
+                              key: _inputFieldKey,
+                              enabled: true,
+                              controller: _inputController,
+                              minLines: 1,
+                              maxLines: 5,
+                              textCapitalization: TextCapitalization.sentences,
+                              textInputAction: TextInputAction.send,
+                              focusNode: _inputFieldFocus,
+                              onTap: _onTapChatBar,
+                              onSubmitted: _submitMessage,
+                              onChanged: (_) => setStateIfMounted(() {}),
+                              cursorColor: Styles().colors.fillColorPrimary,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                                  fillColor: Styles().colors.surface,
+                                  focusColor: Styles().colors.surface,
+                                  hoverColor: Styles().colors.surface,
+                                  hintText: "Message ${_getConversationTitle()}",
+                                  hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                              ),
+                              style: Styles().textStyles.getTextStyle('widget.title.regular')
+                          )
+                      ),
                   ),
                   _buildSendImage(),
                 ])
+            )
+        )
+    );
+  }
+
+  Widget _buildMessageOptionsWidget() {
+    return _messageOptionsExpanded ? Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildAttachImage(),
+        _buildSpeechToTextImage(),
+        _buildMessageOptionsImage(),
+      ],
+    ) : _buildMessageOptionsImage();
+  }
+
+  Widget _buildMessageOptionsImage() {
+    return MergeSemantics(
+        child: Semantics(
+            label: Localization().getStringEx('', "Options"),
+            enabled: true,
+            child: IconButton(
+                splashRadius: 24,
+                icon: Styles().images.getImage(_messageOptionsExpanded ? 'chevron-left-bold' : 'chevron-right-bold') ??
+                    Icon(_messageOptionsExpanded ? Icons.chevron_left : Icons.chevron_right, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
+                onPressed: () {
+                  setState(() {
+                    _messageOptionsExpanded = !_messageOptionsExpanded;
+                  });
+                }
             )
         )
     );
@@ -398,21 +371,69 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
+  Future<void> _loadMessages() async {
+    if (widget.conversation.id == null) {
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+
+    // Use the Social API to load conversation messages
+    List<Message>? loadedMessages = await Social().loadConversationMessages(
+      conversationId: widget.conversation.id!,
+      limit: 100,
+      offset: 0,
+    );
+
+    setState(() {
+      _loading = false;
+      if (loadedMessages != null) {
+        _messages = loadedMessages;
+        if (widget.conversation.isGroupConversation) {
+          _removeDuplicateMessagesByGlobalId();
+        }
+        Message.sortListByDateSent(_messages);
+        _shouldScrollToBottom = true;
+      } else {
+        // If null, could indicate a failure to load messages
+        _messages = [];
+      }
+    });
+  }
+
+  void _removeDuplicateMessagesByGlobalId() {
+    Set<String> globalIds = {};
+    List<Message> messages = [];
+    for (Message message in _messages) {
+      if (message.globalId != null && !globalIds.contains(message.globalId)) {
+        messages.add(message);
+        globalIds.add(message.globalId!);
+      }
+    }
+    _messages = messages;
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _loadMessages();
+  }
+
+  void _onTapChatBar() {
+    setState(() {
+      _messageOptionsExpanded = false;
+    });
+  }
+
   Future<void> _submitMessage(String message) async {
     if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && currentUserId != null) {
       FocusScope.of(context).requestFocus(FocusNode());
-      if (_loadingResponse) {
-        return;
-      }
 
       setState(() {
-        _loadingResponse = true;
         _shouldScrollToBottom = true;
-        _shouldSemanticFocusToLastBubble = true;
       });
 
       // Send message via API
-      Message? newMessage = await Social().createConversationMessage(
+      List<Message>? newMessages = await Social().createConversationMessage(
         conversationId: widget.conversation.id!,
         message: _inputController.text,
       );
@@ -420,12 +441,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       // Clear input after sending
       _inputController.text = '';
 
-      setState(() {
-        _loadingResponse = false;
-        if (newMessage != null) {
-          _messages.add(newMessage);
-        }
-      });
+      // load the new messages
+      if (CollectionUtils.isNotEmpty(newMessages)) {
+        _loadMessages();
+      }
     }
   }
 
@@ -475,9 +494,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   void _onKeyboardVisibilityChanged(bool visible) {
     setStateIfMounted(() {
       _shouldScrollToBottom = true;
-      if (visible) {
-        _shouldSemanticFocusToLastBubble = false;
-      }
     });
   }
 
@@ -497,17 +513,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _scrollPosition = _scrollController.position.pixels;
   }
 
-  double get _chatBarPaddingBottom => _keyboardHeight;
-
-  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
-
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
     double? chatBarHeight = ((chatBarRenderBox is RenderBox) && chatBarRenderBox.hasSize) ? chatBarRenderBox.size.height : null;
     return chatBarHeight ?? 0;
   }
 
-  double get _scrollContentPaddingBottom => _keyboardHeight + _chatBarHeight;
+  double get _scrollContentPaddingBottom => _chatBarHeight;
 
   Future<bool> get _checkKeyboardVisible async {
     final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);

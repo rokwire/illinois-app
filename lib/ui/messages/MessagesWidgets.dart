@@ -4,6 +4,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -20,7 +21,7 @@ class RecentConversationsPage extends StatefulWidget {
   State<StatefulWidget> createState() => RecentConversationsPageState();
 }
 
-class RecentConversationsPageState extends State<RecentConversationsPage> with AutomaticKeepAliveClientMixin {
+class RecentConversationsPageState extends State<RecentConversationsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener {
 
   List<Conversation>? _conversations;
   late Map<String, Conversation> _conversationsMap;
@@ -40,24 +41,37 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Social.notifyConversationsUpdated
+    ]);
+
     widget.scrollController?.addListener(_scrollListener);
     _conversations = widget.recentConversations;
     _conversationsMap = _buildConversationsMap(widget.recentConversations);
-    _sortConversationsByMemberNames();
+    Conversation.sortListByLastActivityTime(_conversations!);
     super.initState();
   }
-
 
   @override
   void dispose() {
     widget.scrollController?.removeListener(_scrollListener);
     _searchTextController.dispose();
     _searchFocusNode.dispose();
+    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Social.notifyConversationsUpdated) {
+      _selectedIds.clear();
+      _load();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +286,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         if (conversations != null) {
           _conversations = List.from(conversations);
           _conversationsMap = _buildConversationsMap(conversations);
-          _sortConversationsByMemberNames();
+          Conversation.sortListByLastActivityTime(_conversations!);
           _canExtend = (conversations.length >= widget.conversationPageSize);
         }
         else if (!silent) {
@@ -304,8 +318,8 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
             else {
               _conversations = List.from(conversations);
               _conversationsMap = _buildConversationsMap(conversations);
-              _sortConversationsByMemberNames();
             }
+            Conversation.sortListByLastActivityTime(_conversations!);
 
             _canExtend = (conversations.length >= widget.conversationPageSize);
           }
@@ -349,15 +363,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       _searchFocusNode.unfocus();
       _load();
     }
-  }
-
-  void _sortConversationsByMemberNames() {
-    DateTime now = DateTime.now();
-    _conversations?.sort((Conversation conv1, Conversation conv2) {
-      DateTime time1 = conv1.lastActivityTimeUtc ?? now;
-      DateTime time2 = conv2.lastActivityTimeUtc ?? now;
-      return time2.compareTo(time1);  // reverse chronological
-    });
   }
 }
 
