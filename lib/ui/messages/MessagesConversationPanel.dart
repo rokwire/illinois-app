@@ -1,9 +1,7 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -27,7 +25,6 @@ class MessagesConversationPanel extends StatefulWidget {
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
-  List<String>? _contentCodes;
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
@@ -52,7 +49,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
@@ -60,8 +56,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
-
-    _contentCodes = buildContentCodes();
 
     // Load messages from the backend
     _loadMessages();
@@ -87,10 +81,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateContentCodes();
-      setStateIfMounted((){});
-    } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+    if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {
       setStateIfMounted((){});
@@ -485,19 +476,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
   }
 
-  void _updateContentCodes() {
-    List<String>? contentCodes = buildContentCodes();
-    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
-      if (mounted) {
-        setState(() {
-          _contentCodes = contentCodes;
-        });
-      } else {
-        _contentCodes = contentCodes;
-      }
-    }
-  }
-
   @override
   void didChangeMetrics() {
     _checkKeyboardVisible.then((visible) {
@@ -547,8 +525,4 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  static List<String>? buildContentCodes() {
-    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    return codes;
-  }
 }
