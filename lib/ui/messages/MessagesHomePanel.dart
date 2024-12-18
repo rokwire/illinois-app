@@ -25,7 +25,6 @@ import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -105,7 +104,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   bool _isEditMode = false;
   Set<String> _selectedConversationIds = Set<String>();
 
-  bool _loadingMarkAllAsRead = false;
+  // bool _loadingMarkAllAsRead = false;
 
   @override
   void initState() {
@@ -736,21 +735,21 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     _loadContent();
   }
 
-  void _onTapMarkAllAsRead() {
-    //TODO: implement once set up on Social BB
-    return;
-    // Analytics().logSelect(target: "Mark All As Read");
-    // _setMarkAllAsReadLoading(true);
-    // Inbox().markAllMessagesAsRead().then((succeeded) {
-    //   if (succeeded) {
-    //     _loadInitialContent();
-    //   } else {
-    //     AppAlert.showMessage(
-    //         context, Localization().getStringEx('panel.messages.mark_as_read.failed.msg', 'Failed to mark all conversations as read'));
-    //   }
-    //   _setMarkAllAsReadLoading(false);
-    // });
-  }
+  //TODO: implement once set up on Social BB
+  // void _onTapMarkAllAsRead() {
+  //   return;
+  //   Analytics().logSelect(target: "Mark All As Read");
+  //   _setMarkAllAsReadLoading(true);
+  //   Inbox().markAllMessagesAsRead().then((succeeded) {
+  //     if (succeeded) {
+  //       _loadInitialContent();
+  //     } else {
+  //       AppAlert.showMessage(
+  //           context, Localization().getStringEx('panel.messages.mark_as_read.failed.msg', 'Failed to mark all conversations as read'));
+  //     }
+  //     _setMarkAllAsReadLoading(false);
+  //   });
+  // }
 
   // void _setMarkAllAsReadLoading(bool loading) {
   //   setStateIfMounted(() {
