@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -74,7 +73,7 @@ import 'package:sprintf/sprintf.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, Posts, Messages, Polls, About }
+enum _DetailTab {Events, Posts, Scheduled, Messages, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -103,39 +102,30 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
-  static List<_DetailTab> get visibleTabs => [_DetailTab.Events, _DetailTab.Posts, _DetailTab.Messages, _DetailTab.Polls]; //About is not included
+  static List<_DetailTab> get visibleTabs => [_DetailTab.Events, _DetailTab.Posts, _DetailTab.Messages, _DetailTab.Polls, _DetailTab.Scheduled]; //TBD extract from Groups BB
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
   static final int          _postsPageSize = 8;
   static final int          _animationDurationInMilliSeconds = 200;
 
-  Group?             _group;
+  Group?                _group;
   GroupStats?        _groupStats;
-  List<Member>?      _groupAdmins;
+  List<Member>?   _groupAdmins;
+  String?                 _postId;
 
   _DetailTab         _currentTab = _DetailTab.Events;
   PageController? _pageController;
   TabController?  _tabController;
-
-  int                _progress = 0;
-  bool               _confirmationLoading = false;
-
   StreamController _updateController = StreamController.broadcast();
 
-  List<Post>         _scheduledPosts = <Post>[];
-  GlobalKey          _lastScheduledPostKey = GlobalKey();
-  bool?              _refreshingScheduledPosts;
-  bool?              _loadingScheduledPostsPage;
-  bool?              _hasMoreScheduledPosts;
-  bool?              _scrollToLastScheduledPostsAfterRefresh;
+  bool               _confirmationLoading = false;
 
-  DateTime?          _pausedDateTime;
-
-//bool               _memberAttendLoading = false;
   bool               _researchProjectConsent = false;
 
-  String?            _postId;
+  int                _progress = 0;
+
+  DateTime?          _pausedDateTime;
 
   String? get _groupId => _group?.id;
 
@@ -187,7 +177,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   bool get _canShareSettings =>StringUtils.isNotEmpty(_groupId);  // Even non members can share the group.
 
   bool get _canReportAbuse => StringUtils.isNotEmpty(_groupId);  // Even non members car report the group. Allow reporting abuse only to existing groups
-
 
   bool get _canDeleteGroup {
     if (_isAdmin) {
@@ -254,16 +243,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
-      // Social.notifyPostCreated,
-      // Social.notifyPostUpdated,
-      // Social.notifyPostDeleted,
-      // Polls.notifyCreated,
-      // Polls.notifyDeleted,
-      // Polls.notifyStatusChanged,
-      // Polls.notifyVoteChanged,
-      // Polls.notifyResultsChanged,
-      // Events2.notifyUpdated,
-      // Groups.notifyGroupEventsUpdated,
     ]);
     _initUpdateListener();
 
@@ -401,18 +380,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (group != null) {
         _group = group;
         if (_isResearchProject && _isMember) {
-          _currentTab = _DetailTab.About;
+          _currentTab = _DetailTab.About; //TBD
         }
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
-        // _loadInitialPosts();
-        _loadInitialScheduledPosts();
-        // _loadInitialMessages();
-        // _loadPolls();
         _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       if (loadEvents) {
-        // _loadEvents(); //TBD
         _updateController.add(_GroupEventsContent.notifyEventsRefresh);
       }
       _decreaseProgress();
@@ -424,22 +398,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
-          if (refreshEvents) {
-            // _refreshEvents();
-            _updateController.add(_GroupEventsContent.notifyEventsRefresh);
-          }
           _refreshGroupAdmins();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
-        // _refreshCurrentPosts();
-        _refreshCurrentScheduledPosts();
-        // _refreshCurrentMessages();
-        // _refreshPolls();
+        if(refreshEvents)
+          _updateController.add(_GroupEventsContent.notifyEventsRefresh);
       }
     });
   }
-
-  // Posts & Direct Messages
 
   ///
   /// Loads group post by id (if exists) and redirects to Post detail panel
@@ -454,120 +420,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
         }
       });
-    }
-  }
-
-  void _onGroupPostCreated(Post? post) {
-      // if (post?.isPost == true) {
-      //   //_refreshCurrentPosts(delta: 1);
-      //   _updateController.add({_GroupDetailPostsContent.notifyPostRefreshWithDelta : 1});
-      // } else
-      //   if (post?.isMessage == true) {
-      //   _refreshCurrentMessages(delta: 1);
-      // }
-      //For both post and messages
-      if(post?.isScheduled == true) {
-        _refreshCurrentScheduledPosts(delta: 1);
-      }
-  }
-
-  void _onGroupPostUpdated(Post? post) {
-      // if (post?.isPost == true) {
-      //   // _refreshCurrentPosts();
-      // }
-      // else
-      //   if (post?.isMessage == true) {
-      //   _refreshCurrentMessages();
-      // }
-      //For both post and messages
-      if(post?.isScheduled == true){
-        _refreshCurrentScheduledPosts();
-      }
-  }
-
-  void _onGroupPostDeleted(Post? post) {
-      if (post?.isPost == true) {
-        // _refreshCurrentPosts(delta: -1);
-        // _updateController.add({_GroupDetailPostsContent.notifyPostRefreshWithDelta : -1});
-      }
-      // else if (post?.isMessage == true) {
-      //   _refreshCurrentMessages(delta: -1);
-      // }
-      //For both post and messages
-      if(post?.isScheduled == true){
-        _refreshCurrentScheduledPosts();
-      }
-  }
-
-  // Scheduled Posts
-
-  void _loadInitialScheduledPosts() {
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
-      setState(() {
-        _progress++;
-        _loadingScheduledPostsPage = true;
-      });
-      _loadScheduledPostsPage().then((_) {
-        if (mounted) {
-          setState(() {
-            _progress--;
-            _loadingScheduledPostsPage = false;
-          });
-        }
-      });
-    }
-  }
-
-  void _refreshCurrentScheduledPosts({int? delta}) {
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingScheduledPosts != true)) {
-      int limit = _scheduledPosts.length + (delta ?? 0);
-      _refreshingScheduledPosts = true;
-      Social().loadPosts(groupId: widget.groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc, status: PostStatus.draft).then((List<Post>? scheduledPost) {
-        _refreshingScheduledPosts = false;
-        if (mounted && (scheduledPost != null)) {
-          setState(() {
-            _scheduledPosts = scheduledPost;
-            if (scheduledPost.length < limit) {
-              _hasMoreScheduledPosts = false;
-            }
-          });
-          if (_scrollToLastScheduledPostsAfterRefresh == true) {
-            _scheduleLastScheduledPostScroll();
-          }
-        }
-        _scrollToLastScheduledPostsAfterRefresh = null;
-      });
-    }
-  }
-
-  void _loadNextScheduledPostsPage() {
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_loadingScheduledPostsPage != true)) {
-      setState(() {
-        _loadingScheduledPostsPage = true;
-      });
-      _loadScheduledPostsPage().then((_) {
-        if (mounted) {
-          setState(() {
-            _loadingScheduledPostsPage = false;
-          });
-        }
-      });
-    }
-  }
-
-  Future<void> _loadScheduledPostsPage() async {
-    List<Post>? scheduledPostsPage = await Social().loadPosts(
-        groupId: widget.groupId,
-        type: PostType.post,
-        offset: _scheduledPosts.length,
-        limit: _postsPageSize,
-        status: PostStatus.draft,
-        sortBy: SocialSortBy.activation_date);
-    if (scheduledPostsPage != null) {
-      _scheduledPosts.addAll(scheduledPostsPage);
-      if (scheduledPostsPage.length < _postsPageSize) {
-        _hasMoreScheduledPosts = false;
-      }
     }
   }
 
@@ -657,39 +509,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     if (name == Groups.notifyUserMembershipUpdated) {
       setStateIfMounted(() {});
     }
-    // else if (name == Groups.notifyGroupEventsUpdated) {
-    //   _clearEvents();
-    //   _loadEvents();
-    // }
     else if (name == Groups.notifyGroupStatsUpdated) {
       _updateGroupStats();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
-    } 
-    else if (name == Social.notifyPostCreated) { //TBD remove to child
-      _onGroupPostCreated(param is Post ? param : null);
     }
-    else if (name == Social.notifyPostUpdated) { //TBD remove to child
-      _onGroupPostUpdated(param is Post ? param : null);
-    }
-    else if (name == Social.notifyPostDeleted) { //TBD remove to child
-      _onGroupPostDeleted(param is Post ? param : null);
-    }
-    // else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
-    //   _refreshPolls();
-    // }
-    // else if (name == Polls.notifyVoteChanged
-    //         || name == Polls.notifyResultsChanged
-    //         || name == Polls.notifyStatusChanged) {
-    //   _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
-    // }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    // else if (name == Events2.notifyUpdated) {
-    //   _updateEventIfNeeded(param);
-    // }
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
     } 
@@ -946,6 +774,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         case _DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
+        case _DetailTab.Scheduled:
+          title = Localization().getStringEx("", 'Scheduled'); //localize
+          break;
       }
 
       Tab tabWidget = Tab(
@@ -963,10 +794,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         tabs: tabs,
         indicatorColor: Color(0xffF15C22),
         controller: _tabController,
-        onTap:(index) => _onTab(_tabAtIndex(index) ),
+        onTap:(index) => _onTab(_tabAtIndex(index)),
         indicatorSize: TabBarIndicatorSize.tab,
         // indicatorPadding: EdgeInsets.zero,
-        // labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
+        labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
         labelStyle: TextStyle(fontSize: 16.0, height: 1.0),
         indicatorWeight: 4,
         tabAlignment: TabAlignment.fill,
@@ -1017,59 +848,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Events:
         return _GroupEventsContent(group: _group, updateController: _updateController);
       case _DetailTab.Posts:
-        return Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [
-            _GroupPostsContent(group: _group, updateController: _updateController),
-            _buildScheduledPosts(),
-          ],);
+        return _GroupPostsContent(group: _group, updateController: _updateController);
       case _DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController); //TBD
+        return _GroupMessagesContent(group: _group, updateController: _updateController);
       case _DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController);
+      case _DetailTab.Scheduled:
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController);
 
       default: Container();
     }
     return Container();
   }
-
-  Widget _buildScheduledPosts() {
-    List<Widget> scheduledPostsContent = [];
-
-      if (CollectionUtils.isEmpty(_scheduledPosts)) {
-        return Container();
-      }
-
-      for (int i = 0; i <_scheduledPosts.length ; i++) {
-        Post? post = _scheduledPosts[i];
-        if (i > 0) {
-          scheduledPostsContent.add(Container(height: 16));
-        }
-        scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group!));
-      }
-
-      if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {
-        String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
-        scheduledPostsContent.add(Container(padding: EdgeInsets.only(top: 16),
-            child: Semantics(label: title, button: true, excludeSemantics: true,
-                child: InkWell(onTap: _loadNextScheduledPostsPage,
-                    child: Container(height: 36,
-                      child: Align(alignment: Alignment.topCenter,
-                        child: (_loadingScheduledPostsPage == true) ?
-                        SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
-                        Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
-                      ),
-                    )
-                )
-            ))
-        );
-      }
-
-      return Column(children: <Widget>[
-        SectionSlantHeader(
-            title: Localization().getStringEx("panel.group_detail.label.scheduled_posts", 'Scheduled Posts'),
-            titleIconKey: 'posts',
-            children: scheduledPostsContent)
-      ]);
-    }
 
     Widget _buildAbout() {
       List<Widget> contentList = <Widget>[];
@@ -1187,9 +977,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     Widget _buildBadgeWidget() {
       Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-      Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-      Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
-      ),
+        Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+          Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
+        ),
       );
       return _hasIconOptionButtons ? Row(children: <Widget>[
         badgeWidget,
@@ -1202,9 +992,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),);
       return _hasIconOptionButtons ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Expanded(child:
-        Padding(padding: EdgeInsets.only(top: 8), child:
-        titleWidget
-        )
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            titleWidget
+          )
         ),
         _buildIconButtons
       ]) : titleWidget;
@@ -1312,34 +1102,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
         bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
         return Padding(padding: EdgeInsets.only(top: 16), child:
-        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: showConsent ? 1 : 0))), child:
-        Column(children: [
-          Visibility(visible: showConsent, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            InkWell(onTap: _onResearchProjectConsent, child:
-            Padding(padding: EdgeInsets.all(16), child:
-            Styles().images.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
-            ),
-            ),
-            Expanded(child:
-            Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
-            Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
-            ),
-            ),
-          ]),
+          Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: showConsent ? 1 : 0))), child:
+            Column(children: [
+                Visibility(visible: showConsent, child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    InkWell(onTap: _onResearchProjectConsent, child:
+                      Padding(padding: EdgeInsets.all(16), child:
+                        Styles().images.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
+                      ),
+                    ),
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
+                        Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                      ),
+                    ),
+                  ]),
+                ),
+                Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
+                  RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
+                      textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
+                      backgroundColor: Styles().colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                      borderWidth: 2,
+                      onTap:() { _onMembershipRequest();  }
+                  ),
+                ),
+            ],),
           ),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
-          RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
-              textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-              backgroundColor: Styles().colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-              borderWidth: 2,
-              onTap:() { _onMembershipRequest();  }
-          ),
-          ),
-        ],),
-        ),
         );
       }
       else {
@@ -1901,10 +1691,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
           if (result is Post) {
             if(result.isScheduled){ //Post and messages can be both scheduled, so check for scheduled first
-              _scrollToLastScheduledPostsAfterRefresh = true;
-              if (_refreshingScheduledPosts != true) {
-                _refreshCurrentScheduledPosts();
-              }
+              _updateController.add(_GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast);
+              // _scrollToLastScheduledPostsAfterRefresh = true;
+              // if (_refreshingScheduledPosts != true) {
+              //   _refreshCurrentScheduledPosts();
+              // }
             }
             else if (result.isPost) {
               _updateController.add(_GroupPostsContent.notifyPostRefreshWithScrollToLast);
@@ -1949,30 +1740,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         _refreshGroupStats();
         //_refreshEvents();
         // _refreshCurrentPosts();
-        _refreshCurrentScheduledPosts();
+        // _refreshCurrentScheduledPosts();
         // _refreshCurrentMessages();
         _updateController.add(GroupDetailPanel.notifyRefresh);
         _updateController.add(_GroupEventsContent.notifyEventsRefresh);
-      }
-    }
-
-    void _scheduleLastScheduledPostScroll() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToLastScheduledPost();
-      });
-    }
-
-    void _scrollToLastScheduledPost() {
-      _scrollTo(_lastScheduledPostKey);
-    }
-
-
-    void _scrollTo(GlobalKey? key) {
-      if(key != null) {
-        BuildContext? currentContext = key.currentContext;
-        if (currentContext != null) {
-          Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
-        }
       }
     }
 
@@ -2844,3 +2615,233 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
     }
   }
 }
+
+class _GroupScheduledPostsContent extends StatefulWidget {
+  static const String notifyPostsRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.scheduled_posts.refresh.with_scroll_to_last";
+
+  final Group? group;
+  final StreamController<dynamic>? updateController;
+
+  const _GroupScheduledPostsContent({this.group, this.updateController});
+
+  @override
+  State<StatefulWidget> createState() => _GroupScheduledPostsState();
+}
+
+class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with AutomaticKeepAliveClientMixin<_GroupScheduledPostsContent>
+    implements NotificationsListener {
+  List<Post> _scheduledPosts = <Post>[];
+  GlobalKey _lastScheduledPostKey = GlobalKey();
+  bool? _refreshingScheduledPosts;
+  bool? _loadingScheduledPostsPage;
+  bool? _hasMoreScheduledPosts;
+  bool? _scrollToLastScheduledPostsAfterRefresh;
+
+  Group? get _group => widget.group;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Social.notifyPostCreated,
+      Social.notifyPostUpdated,
+      Social.notifyPostDeleted
+    ]);
+    _initUpdateListener();
+    _loadInitialScheduledPosts();
+    super.initState();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return _buildScheduledPosts();
+  }
+
+  Widget _buildScheduledPosts() {
+    List<Widget> scheduledPostsContent = [];
+
+    if (CollectionUtils.isEmpty(_scheduledPosts)) {
+      return Container();
+    }
+
+    for (int i = 0; i < _scheduledPosts.length; i++) {
+      Post? post = _scheduledPosts[i];
+      if (i > 0) {
+        scheduledPostsContent.add(Container(height: 16));
+      }
+      scheduledPostsContent.add(GroupPostCard(
+          key: (i == 0) ? _lastScheduledPostKey : null,
+          post: post,
+          group: _group!));
+    }
+
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin &&
+        (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {
+      String title = Localization().getStringEx(
+          'panel.group_detail.button.show_older.title', 'Show older');
+      scheduledPostsContent.add(Container(padding: EdgeInsets.only(top: 16),
+          child: Semantics(label: title, button: true, excludeSemantics: true,
+              child: InkWell(onTap: _loadNextScheduledPostsPage,
+                  child: Container(height: 36,
+                    child: Align(alignment: Alignment.topCenter,
+                      child: (_loadingScheduledPostsPage == true) ?
+                      SizedBox(height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color?>(
+                                Styles().colors.fillColorPrimary),)) :
+                      Text(title, style: Styles().textStyles.getTextStyle(
+                          'panel.group.button.show_older.title'),),
+                    ),
+                  )
+              )
+          ))
+      );
+    }
+
+    return Column(children: <Widget>[
+      SectionSlantHeader(
+          title: Localization().getStringEx(
+              "panel.group_detail.label.scheduled_posts", 'Scheduled Posts'),
+          titleIconKey: 'posts',
+          children: scheduledPostsContent)
+    ]);
+  }
+
+  void _loadInitialScheduledPosts() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
+      setState(() {
+        // _progress++;
+        _loadingScheduledPostsPage = true;
+      });
+      _loadScheduledPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            // _progress--;
+            _loadingScheduledPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentScheduledPosts({int? delta}) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin &&
+        (_refreshingScheduledPosts != true)) {
+      int limit = _scheduledPosts.length + (delta ?? 0);
+      _refreshingScheduledPosts = true;
+      Social().loadPosts(groupId: _group?.id,
+          type: PostType.post,
+          offset: 0,
+          limit: limit,
+          order: SocialSortOrder.desc,
+          status: PostStatus.draft).then((List<Post>? scheduledPost) {
+        _refreshingScheduledPosts = false;
+        if (mounted && (scheduledPost != null)) {
+          setState(() {
+            _scheduledPosts = scheduledPost;
+            if (scheduledPost.length < limit) {
+              _hasMoreScheduledPosts = false;
+            }
+          });
+          if (_scrollToLastScheduledPostsAfterRefresh == true) {
+            _scheduleLastScheduledPostScroll();
+          }
+        }
+        _scrollToLastScheduledPostsAfterRefresh = null;
+      });
+    }
+  }
+
+  void _loadNextScheduledPostsPage() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin &&
+        (_loadingScheduledPostsPage != true)) {
+      setState(() {
+        _loadingScheduledPostsPage = true;
+      });
+      _loadScheduledPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _loadingScheduledPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadScheduledPostsPage() async {
+    List<Post>? scheduledPostsPage = await Social().loadPosts(
+        groupId: _group?.id,
+        type: PostType.post,
+        offset: _scheduledPosts.length,
+        limit: _GroupDetailPanelState._postsPageSize,
+        status: PostStatus.draft,
+        sortBy: SocialSortBy.activation_date);
+    if (scheduledPostsPage != null) {
+      _scheduledPosts.addAll(scheduledPostsPage);
+      if (scheduledPostsPage.length < _GroupDetailPanelState._postsPageSize) {
+        _hasMoreScheduledPosts = false;
+      }
+    }
+  }
+
+  //Scroll
+  void _scheduleLastScheduledPostScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToLastScheduledPost();
+    });
+  }
+
+  void _scrollToLastScheduledPost() {
+    _scrollTo(_lastScheduledPostKey);
+  }
+
+  void _scrollTo(GlobalKey? key) {
+    if(key != null) {
+      BuildContext? currentContext = key.currentContext;
+      if (currentContext != null) {
+        Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
+      }
+    }
+  }
+
+  //Update Listeners
+  void _initUpdateListener() =>
+      widget.updateController?.stream.listen((command) {
+        if (command is String && command == GroupDetailPanel.notifyRefresh) {
+          _refreshCurrentScheduledPosts();
+        } else if (command is String && command ==
+            _GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast) {
+          _scrollToLastScheduledPostsAfterRefresh = true;
+          if (_refreshingScheduledPosts != true) {
+            _refreshCurrentScheduledPosts();
+          }
+        }
+      });
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Social.notifyPostCreated) {
+      Post? message = param is Post ? param : null;
+      if (message?.isScheduled == true) {
+        _refreshCurrentScheduledPosts(delta: 1);
+      }
+    }
+    else if (name == Social.notifyPostUpdated) {
+      Post? message = param is Post ? param : null;
+      if (message?.isScheduled == true) {
+        _refreshCurrentScheduledPosts();
+      }
+    }
+    else if (name == Social.notifyPostDeleted) {
+      Post? message = param is Post ? param : null;
+      if (message?.isScheduled == true) {
+        _refreshCurrentScheduledPosts(delta: -1);
+      }
+    }
+  }
+}
+
