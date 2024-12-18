@@ -67,7 +67,6 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   }
 
   Widget _buildContent() {
-    List<Widget> tabs = _tabNames.map((e) => Tab(child: Text(e, style: Styles().textStyles.getTextStyle('widget.title.regular')))).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,7 +81,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
           tabs: tabs,
           controller: _tabController,
           isScrollable: false,
-          indicatorColor: Styles().colors.fillColorPrimary,
+          indicatorColor: Styles().colors.fillColorSecondary,
           indicatorSize: TabBarIndicatorSize.tab,
           onTap: (index) {
             _onTabChanged();
@@ -100,6 +99,19 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
         ),
       ),
     ],);
+  }
+
+  List<Widget> get tabs {
+    List<Widget> tabs = <Widget>[];
+    for (int index = 0; index < _tabNames.length; index++) {
+      tabs.add(Tab(child:
+        Text(_tabNames[index], style: (_selectedTab == index) ?
+          Styles().textStyles.getTextStyle('widget.title.regular.fat') :
+          Styles().textStyles.getTextStyle('widget.title.regular.medium_fat')
+        )
+      ));
+    }
+    return tabs;
   }
 
   Widget _buildContinueButtonOverlay(Widget content, { ScrollController? scrollController }) {
