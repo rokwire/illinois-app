@@ -42,7 +42,8 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Social.notifyConversationsUpdated
+      Social.notifyConversationsUpdated,
+      Social.notifyMessageSent,
     ]);
 
     widget.scrollController?.addListener(_scrollListener);
@@ -72,6 +73,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         setState(() {
           _selectedIds.clear();
         });
+        _load();
+      }
+    }
+    else if (name == Social.notifyMessageSent) {
+      if (mounted) {
         _load();
       }
     }
