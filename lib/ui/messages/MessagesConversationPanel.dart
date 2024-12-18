@@ -289,7 +289,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return _messageOptionsExpanded ? Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildAttachImage(),
+        //_buildAttachImage(),
         _buildSpeechToTextImage(),
         _buildMessageOptionsImage(),
       ],
