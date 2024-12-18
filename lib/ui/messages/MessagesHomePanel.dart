@@ -131,7 +131,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   @override
   void onNotification(String name, dynamic param) {
     if (name == Social.notifyConversationsUpdated) {
-      _loadInitialContent();
+      if (mounted) {
+        _loadInitialContent();
+      }
     }
   }
 

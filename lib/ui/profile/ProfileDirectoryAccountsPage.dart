@@ -66,7 +66,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
       Auth2.notifyLoginChanged,
-      Social.notifyConversationsUpdated,
+      if (widget.displayMode == DirectoryDisplayMode.select)
+        Social.notifyConversationsUpdated,
     ]);
     widget.scrollController?.addListener(_scrollListener);
     _load();
@@ -100,8 +101,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         refresh();
       }
     }
-    else if (name == Social.notifyConversationsUpdated && widget.displayMode == DirectoryDisplayMode.select) {
-      _selectedIds.clear();
+    else if (name == Social.notifyConversationsUpdated) {
+      if ((widget.displayMode == DirectoryDisplayMode.select) && mounted) {
+        setState(() {
+          _selectedIds.clear();
+        });
+      }
     }
   }
 

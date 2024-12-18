@@ -68,8 +68,12 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   @override
   void onNotification(String name, dynamic param) {
     if (name == Social.notifyConversationsUpdated) {
-      _selectedIds.clear();
-      _load();
+      if (mounted) {
+        setState(() {
+          _selectedIds.clear();
+        });
+        _load();
+      }
     }
   }
 
