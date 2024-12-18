@@ -118,7 +118,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   TabController?  _tabController;
   StreamController _updateController = StreamController.broadcast();
 
-  List<_DetailTab>? _visibleTabs;
+  List<_DetailTab>? _tabs;
   _DetailTab         _currentTab = _DetailTab.Events;
 
   bool               _confirmationLoading = false;
@@ -205,6 +205,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
   }
 
+  bool get _canManageMembers => _isAdmin;
+
   bool get _isResearchProject {
     return (_group?.researchProject == true);
   }
@@ -247,7 +249,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupStatsUpdated,
     ]);
     _postId = widget.groupPostId;
-    _visibleTabs = GroupDetailPanel.defaultTabs;
+    _tabs = GroupDetailPanel.defaultTabs;
 
     _loadGroup(loadEvents: true);
     super.initState();
@@ -412,8 +414,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   }
 
   void _trimForbiddenTabs(){
-    if(CollectionUtils.isNotEmpty(_visibleTabs)){ //Remove Tabs which are forbidden
-      _visibleTabs?.removeWhere((_DetailTab tab) =>
+    if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
+      _tabs?.removeWhere((_DetailTab tab) =>
           (tab == _DetailTab.Scheduled && _canShowScheduled == false));
     }
   }
@@ -623,16 +625,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     List<Widget> commands = [];
     if (_isMemberOrAdmin) {
-      if (_isAdmin) {
-        commands.add(RibbonButton(
-          label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
-          hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
-          leftIconKey: 'person-circle',
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: _onTapMembers,
-        ));
-        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
-      }
       if (CollectionUtils.isNotEmpty(commands)) {
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
       }
@@ -714,11 +706,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   }
 
   Widget _buildTabs() {
-    if(CollectionUtils.isEmpty(_visibleTabs))
+    if(CollectionUtils.isEmpty(_tabs))
       return Container();
 
     List<Widget> tabs = [];
-    for (_DetailTab tab in _visibleTabs!) {
+    for (_DetailTab tab in _tabs!) {
       String title;
       switch (tab) {
         case _DetailTab.Events:
@@ -768,8 +760,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Widget _buildViewPager(){
     List<Widget> pages = [];
-    if(CollectionUtils.isNotEmpty(_visibleTabs)){
-      for (_DetailTab tab in _visibleTabs!){
+    if(CollectionUtils.isNotEmpty(_tabs)){
+      for (_DetailTab tab in _tabs!){
         pages.add(_buildPageFromTab(tab));
       }
     }
@@ -790,11 +782,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       );
   }
 
-  int _indexOfTab(_DetailTab tab) => _visibleTabs?.indexOf(tab) ?? 0;
+  int _indexOfTab(_DetailTab tab) => _tabs?.indexOf(tab) ?? 0;
   
   _DetailTab? _tabAtIndex(int index) {
     try {
-      return _visibleTabs?.elementAt(index);
+      return _tabs?.elementAt(index);
     } catch (e) {
       Log.d(e.toString());
     }
@@ -1203,6 +1195,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                           Navigator.pop(context);
                           _onTapSettings();
                         })),
+                Visibility(
+                    visible: _canManageMembers,
+                    child: RibbonButton(
+                        leftIconKey: "person-circle",
+                        label: _isResearchProject ? 'Manage participants' : Localization().getStringEx("", "Manage members"),
+                        onTap: _onTapMembers)),
                 Visibility(
                     visible: _canNotificationSettings,
                     child: RibbonButton(
