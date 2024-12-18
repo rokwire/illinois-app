@@ -379,7 +379,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       offset: 0,
     );
 
-    setState(() {
+
+    setStateIfMounted(() {
       _loading = false;
       if (loadedMessages != null) {
         _messages = loadedMessages;
@@ -457,7 +458,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _stopListening() async {
     await SpeechToText().stopListening();
-    setState(() {
+    setStateIfMounted(() {
       _listening = false;
     });
   }
