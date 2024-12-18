@@ -3224,6 +3224,7 @@
     "panel.messages.mark_as_read.failed.msg": "Failed to mark all conversations as read.",
 
     "panel.messages.directory.header.title": "Send To",
+    "panel.messages.directory.header.message": "Who do you want to send to?",
     "panel.messages.directory.tab.recent.label": "Recent",
     "panel.messages.directory.tab.all.label": "All Users",
     "panel.messages.directory.button.continue.label": "Continue",
