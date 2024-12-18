@@ -323,13 +323,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             enabled: true,
             child: _submitting ?
               Padding(padding: EdgeInsets.all(16), child:
-                SizedBox(width: 18, height: 18, child:
+                SizedBox(width: 16, height: 16, child:
                     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
                 )
               ) :
               IconButton(
                 splashRadius: 24,
-                icon: Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
+                icon: Styles().images.getImage('paper-plane-top') ?? Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
                 onPressed: () {
                   _submitMessage(_inputController.text);
                 }
