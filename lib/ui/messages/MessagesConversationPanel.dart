@@ -28,11 +28,12 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final GlobalKey _lastContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
-  late ScrollController _scrollController;
+  ScrollController _scrollController = ScrollController();
   bool _shouldScrollToBottom = false;
 
   bool _listening = false;
   bool _loading = false;
+  bool _loadingMore = false;
   bool _submitting = false;
   bool _messageOptionsExpanded = false;
 
@@ -41,6 +42,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   // Messages loaded from the backend
   List<Message> _messages = [];
+  Set<String> _globalIds = {};
+  bool _hasMoreMessages = false;
+  final int _messagesPageSize = 100;
 
   @override
   void initState() {
@@ -50,7 +54,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Styles.notifyChanged,
       SpeechToText.notifyError,
     ]);
-    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
 
     // Load messages from the backend
     _loadMessages();
@@ -91,7 +95,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget build(BuildContext context) {
     super.build(context);
 
-    _scrollToBottomIfNeeded();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottomIfNeeded();
+    });
 
     return Scaffold(
       appBar: RootHeaderBar(title: widget.conversation.membersString, leading: RootHeaderBarLeading.Back,),
@@ -158,6 +164,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
+    if (_loadingMore) {
+      contentList.add(_buildLoadingMoreIndicator());
+    }
+
     if (_messages.isNotEmpty) {
       DateTime? lastDate;
       for (Message message in _messages) {
@@ -177,6 +187,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return contentList;
   }
 
+  Widget _buildLoadingMoreIndicator() {
+    return Container(padding: EdgeInsets.all(6), child:
+      Align(alignment: Alignment.center, child:
+        SizedBox(width: 24, height: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),
+        ),
+      ),
+    ),);
+  }
+
   Widget _buildDateDivider(String dateText) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -190,8 +210,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildMessageCard(Message message) {
-    // bool fromUser = (message.sender?.accountId == currentUserId);
-
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -368,41 +386,70 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (widget.conversation.id == null) {
       return;
     }
-    setState(() {
+    setStateIfMounted(() {
       _loading = true;
     });
 
     // Use the Social API to load conversation messages
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: widget.conversation.id!,
-      limit: 100,
+      limit: _messagesPageSize,
       offset: 0,
     );
-
 
     setStateIfMounted(() {
       _loading = false;
       if (loadedMessages != null) {
+        Message.sortListByDateSent(loadedMessages);
         _messages = loadedMessages;
+        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
         if (widget.conversation.isGroupConversation) {
           _removeDuplicateMessagesByGlobalId();
         }
-        Message.sortListByDateSent(_messages);
         _shouldScrollToBottom = true;
       } else {
         // If null, could indicate a failure to load messages
         _messages = [];
+        _hasMoreMessages = false;
+      }
+    });
+  }
+
+  void _loadMoreMessages() async {
+    if (widget.conversation.id == null) {
+      return;
+    }
+    setStateIfMounted(() {
+      _loadingMore = true;
+    });
+
+    // Use the Social API to load conversation messages
+    List<Message>? loadedMessages = await Social().loadConversationMessages(
+      conversationId: widget.conversation.id!,
+      limit: _messagesPageSize,
+      offset: _messages.length,
+    );
+
+    setStateIfMounted(() {
+      _loadingMore = false;
+      if (loadedMessages != null) {
+        Message.sortListByDateSent(loadedMessages);
+        _messages.addAll(loadedMessages);
+        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
+        if (widget.conversation.isGroupConversation) {
+          _removeDuplicateMessagesByGlobalId();
+        }
+        _shouldScrollToBottom = false;
       }
     });
   }
 
   void _removeDuplicateMessagesByGlobalId() {
-    Set<String> globalIds = {};
     List<Message> messages = [];
     for (Message message in _messages) {
-      if (message.globalId != null && !globalIds.contains(message.globalId)) {
+      if (message.globalId != null && !_globalIds.contains(message.globalId)) {
         messages.add(message);
-        globalIds.add(message.globalId!);
+        _globalIds.add(message.globalId!);
       }
     }
     _messages = messages;
@@ -487,13 +534,15 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _scrollToBottomIfNeeded() {
     BuildContext? handleContext = _lastContentItemKey.currentContext;
-    if (handleContext != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_shouldScrollToBottom) {
-          Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
-          _shouldScrollToBottom = false;
-        }
-      });
+    if (handleContext != null && _shouldScrollToBottom) {
+      Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
+      _shouldScrollToBottom = false;
+    }
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset <= _scrollController.position.minScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
+      _loadMoreMessages();
     }
   }
 
