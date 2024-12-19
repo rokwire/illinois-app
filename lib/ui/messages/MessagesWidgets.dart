@@ -1,8 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.directory.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -10,12 +17,16 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class RecentConversationsPage extends StatefulWidget {
+  final ConversationsSearchController searchController;
+  final String? initialSearch;
   final ScrollController? scrollController;
   final List<Conversation> recentConversations;
   final int conversationPageSize;
-  final void Function()? onSelectedConversationChanged;
+  final void Function(bool, Conversation)? onConversationSelectionChanged;
+  final Set<String>? selectedAccountIds;
 
-  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.onSelectedConversationChanged });
+  RecentConversationsPage({super.key, required this.searchController, required this.recentConversations, required this.conversationPageSize,
+    this.initialSearch, this.scrollController, this.onConversationSelectionChanged, this.selectedAccountIds });
 
   @override
   State<StatefulWidget> createState() => RecentConversationsPageState();
@@ -25,26 +36,26 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
 
   List<Conversation>? _conversations;
   late Map<String, Conversation> _conversationsMap;
-  String _searchText = '';
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
   bool _canExtend = false;
 
   String? _expandedConversationId;
-  final Set<String> _selectedIds = <String>{};
-
-  final TextEditingController _searchTextController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
+  Set<String> _selectedIds = <String>{};
+  String? _searchText;
 
   // Map<String, dynamic> _filterAttributes = <String, dynamic>{};
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Social.notifyConversationsUpdated
+      Social.notifyConversationsUpdated,
+      Social.notifyMessageSent,
     ]);
 
+    widget.searchController.onUpdateSearchText = _onSearchConversations;
+    _searchText = widget.initialSearch;
     widget.scrollController?.addListener(_scrollListener);
     _conversations = widget.recentConversations;
     _conversationsMap = _buildConversationsMap(widget.recentConversations);
@@ -55,8 +66,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   @override
   void dispose() {
     widget.scrollController?.removeListener(_scrollListener);
-    _searchTextController.dispose();
-    _searchFocusNode.dispose();
     NotificationService().unsubscribe(this);
     super.dispose();
   }
@@ -75,15 +84,24 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         _load();
       }
     }
+    else if (name == Social.notifyMessageSent) {
+      if (mounted) {
+        _load();
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant RecentConversationsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _selectedIds = widget.selectedAccountIds ?? {};
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    List<Widget> contentList = <Widget>[
-      _searchBarWidget,
-    ];
+    List<Widget> contentList = <Widget>[];
     if (_loadingProgress) {
       contentList.add(_loadingContent);
     }
@@ -107,9 +125,9 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       for (Conversation conversation in conversations) {
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
-          onToggleExpanded: () => _onToggleConversationExpanded(conversation),
-          selected: _selectedIds.contains(conversation.id),
-          onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
+          onToggleExpanded: conversation.isGroupConversation ? () => _onToggleConversationExpanded(conversation) : null,
+          selected: ListUtils.contains(_selectedIds, conversation.memberIds, checkAll: true) ?? false, // conversation must contain all selected account IDs to be selected
+          onToggleSelected: (value) => widget.onConversationSelectionChanged?.call(value, conversation),
         ));
       }
     }
@@ -121,6 +139,18 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
+  void onConversationsTabChanged(String searchText, Map<String, dynamic> _) {
+    widget.searchController.onUpdateSearchText = _onSearchConversations;
+    _onSearchConversations(searchText);
+  }
+
+  void _onSearchConversations(String searchText) {
+    if (_searchText != searchText) {
+      _searchText = searchText;
+      _load();
+    }
+  }
+
   void _onToggleConversationExpanded(Conversation conversation) {
     Analytics().logSelect(target: 'Expand', source: conversation.id);
     setState(() {
@@ -128,70 +158,174 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     });
   }
 
-  void _onToggleConversationSelected(bool value, Conversation conversation) {
-    Analytics().logSelect(target: 'Select', source: conversation.id);
-    if (StringUtils.isNotEmpty(conversation.id) && mounted) {
-      setState(() {
-        if (value) {
-          _selectedIds.add(conversation.id!);
+  Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+    Align(alignment: Alignment.center, child:
+      SizedBox(width: 24, height: 24, child:
+        DirectoryProgressWidget()
+      ),
+    ),
+  );
+
+
+  Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+      )
+    )
+  );
+
+  Widget _messageContent(String message) => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
+    Center(child:
+      Text(message, style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), textAlign: TextAlign.center,)
+    )
+  );
+
+  void _scrollListener() {
+    ScrollController? scrollController = widget.scrollController;
+    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend && !_loading && !_extending) {
+      _extend();
+    }
+  }
+
+  Future<void> _load({ bool silent = false }) async {
+    if (!_loading) {
+      setStateIfMounted(() {
+        _loading = true;
+        _loadingProgress = !silent;
+        _extending = false;
+      });
+
+      //TODO: add time intervals to filter
+      List<Conversation>? conversations = await Social().loadConversations(offset: 0, limit: widget.conversationPageSize, name: _searchText);
+      setStateIfMounted(() {
+        _loading = false;
+        _loadingProgress = false;
+        if (conversations != null) {
+          _conversations = List.from(conversations);
+          _conversationsMap = _buildConversationsMap(conversations);
+          Conversation.sortListByLastActivityTime(_conversations!);
+          _canExtend = (conversations.length >= widget.conversationPageSize);
         }
-        else {
-          _selectedIds.remove(conversation.id);
+        else if (!silent) {
+          _conversations = null;
+          _conversationsMap.clear();
+          _canExtend = false;
         }
       });
-      widget.onSelectedConversationChanged?.call();
     }
   }
 
-  Set<String> get selectedConversationIds =>
-    _selectedIds;
+  Future<void> refresh() => _load(silent: true);
 
-  Set<String> get selectedAccountIds {
-    Set<String> selectedIds = <String>{};
-    for (String conversationId in _selectedIds) {
-      List<String>? memberIds = _conversationsMap[conversationId]?.memberIds;
-      if (memberIds != null) {
-        selectedIds.addAll(memberIds);
+  Future<void> _extend() async {
+    if (!_loading && !_extending) {
+      setStateIfMounted(() {
+        _extending = true;
+      });
+
+      //TODO: add time intervals to filter
+      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize, name: _searchText);
+      if (mounted && _extending && !_loading) {
+        setState(() {
+          if (conversations != null) {
+            if (_conversations != null) {
+              _conversations?.addAll(conversations);
+              _conversationsMap.addAll(_buildConversationsMap(conversations));
+            }
+            else {
+              _conversations = List.from(conversations);
+              _conversationsMap = _buildConversationsMap(conversations);
+            }
+            Conversation.sortListByLastActivityTime(_conversations!);
+
+            _canExtend = (conversations.length >= widget.conversationPageSize);
+          }
+          _extending = false;
+        });
       }
     }
-    return selectedIds;
   }
 
-  void clearSelectedIds() {
-    setStateIfMounted(() {
-      _selectedIds.clear();
-    });
+  int get _conversationsCount => _conversations?.length ?? 0;
+
+  static Map<String, Conversation> _buildConversationsMap(List<Conversation>? conversations) {
+    Map<String, Conversation> map = <String, Conversation>{};
+    if (conversations != null) {
+      for (Conversation conversation in conversations) {
+        if (StringUtils.isNotEmpty(conversation.id)) {
+          map[conversation.id!] = conversation;
+        }
+      }
+    }
+    return map;
+  }
+}
+
+class ConversationsSearchController {
+  Function(String)? onUpdateSearchText;
+  Function(Map<String, dynamic>)? onUpdateFilterAttributes;
+
+  ConversationsSearchController({ this.onUpdateSearchText, this.onUpdateFilterAttributes });
+}
+
+class ConversationsSearchBar extends StatefulWidget {
+  final ConversationsSearchController searchController;
+  final bool showFilters;
+
+  ConversationsSearchBar({ super.key, required this.searchController, this.showFilters = true });
+
+  @override
+  State<StatefulWidget> createState() => ConversationSearchBarState();
+}
+
+class ConversationSearchBarState extends State<ConversationsSearchBar> {
+
+  String _searchText = '';
+  final TextEditingController _searchTextController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  Map<String, dynamic> _filterAttributes = <String, dynamic>{};
+
+  @override
+  void dispose() {
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
+
+    super.dispose();
   }
 
-  Widget get _searchBarWidget =>
-      Padding(padding: const EdgeInsets.only(bottom: 16), child:
-        Row(children: [
-          Expanded(child:
-            Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
-              Row(children: <Widget>[
-                Expanded(child:
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: const EdgeInsets.only(bottom: 16), child:
+      Row(children: [
+        Expanded(child:
+          Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+            Row(children: <Widget>[
+              Expanded(child:
                 _searchTextWidget
-                ),
-                _searchImageButton('close',
-                  label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-                  hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-                  rightPadding: _searchImageButtonHorzPadding / 2,
-                  onTap: _onTapClear,
-                ),
-                _searchImageButton('search',
-                  label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-                  hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-                  leftPadding: _searchImageButtonHorzPadding / 2,
-                  onTap: _onTapSearch,
-                ),
-              ],)
-            )
-          ),
+              ),
+              _searchImageButton('close',
+                label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+                hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+                rightPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapClear,
+              ),
+              _searchImageButton('search',
+                label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+                hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+                leftPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapSearch,
+              ),
+            ],)
+          )
+        ),
+        if (widget.showFilters)
           Padding(padding: EdgeInsets.only(left: 6), child:
-            _filtersButton
+          _filtersButton
           ),
-        ],),
-      );
+      ],),
+    );
+  }
 
   Widget get _searchTextWidget =>
       Semantics(
@@ -241,110 +375,60 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
 
   void _onFilter() {
     Analytics().logSelect(target: 'Filters');
-    //TODO
-  }
-
-  Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-    Align(alignment: Alignment.center, child:
-      SizedBox(width: 24, height: 24, child:
-        DirectoryProgressWidget()
-      ),
-    ),
-  );
-
-
-  Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
-    Center(child:
-      SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
-      )
-    )
-  );
-
-  Widget _messageContent(String message) => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
-    Center(child:
-      Text(message, style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), textAlign: TextAlign.center,)
-    )
-  );
-
-  void _scrollListener() {
-    ScrollController? scrollController = widget.scrollController;
-    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend && !_loading && !_extending) {
-      _extend();
-    }
-  }
-
-  Future<void> _load({ bool silent = false }) async {
-    if (!_loading) {
-      setStateIfMounted(() {
-        _loading = true;
-        _loadingProgress = !silent;
-        _extending = false;
-      });
-
-      //TODO: add time intervals to filter
-      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize);
-      setStateIfMounted(() {
-        _loading = false;
-        _loadingProgress = false;
-        if (conversations != null) {
-          _conversations = List.from(conversations);
-          _conversationsMap = _buildConversationsMap(conversations);
-          Conversation.sortListByLastActivityTime(_conversations!);
-          _canExtend = (conversations.length >= widget.conversationPageSize);
-        }
-        else if (!silent) {
-          _conversations = null;
-          _conversationsMap.clear();
-          _canExtend = false;
+    ContentAttributes? directoryAttributes = _directoryAttributes;
+    if (directoryAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'Directory Filters'),
+        description: Localization().getStringEx('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
+        scope: Auh2Directory.attributesScope,
+        contentAttributes: directoryAttributes,
+        selection: _filterAttributes,
+        sortType: ContentAttributesSortType.alphabetical,
+        filtersMode: true,
+      ))).then((selection) {
+        if ((selection != null) && mounted) {
+          setState(() {
+            _filterAttributes = selection;
+          });
+          widget.searchController.onUpdateFilterAttributes?.call(_filterAttributes);
         }
       });
     }
   }
 
-  Future<void> refresh() => _load(silent: true);
-
-  Future<void> _extend() async {
-    if (!_loading && !_extending) {
-      setStateIfMounted(() {
-        _extending = true;
-      });
-
-      //TODO: add time intervals to filter
-      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize);
-      if (mounted && _extending && !_loading) {
-        setState(() {
-          if (conversations != null) {
-            if (_conversations != null) {
-              _conversations?.addAll(conversations);
-              _conversationsMap.addAll(_buildConversationsMap(conversations));
-            }
-            else {
-              _conversations = List.from(conversations);
-              _conversationsMap = _buildConversationsMap(conversations);
-            }
-            Conversation.sortListByLastActivityTime(_conversations!);
-
-            _canExtend = (conversations.length >= widget.conversationPageSize);
-          }
-          _extending = false;
-        });
+  ContentAttributes? get _directoryAttributes {
+    ContentAttributes? directoryAttributes = Auth2().directoryAttributes;
+    if (directoryAttributes != null) {
+      ContentAttribute? groupAttribute = _groupAttribute;
+      if (groupAttribute != null) {
+        directoryAttributes = ContentAttributes.fromOther(directoryAttributes);
+        directoryAttributes?.attributes?.add(groupAttribute);
       }
+      return directoryAttributes;
+    }
+    else {
+      return null;
     }
   }
 
-  int get _conversationsCount => _conversations?.length ?? 0;
+  static const String _groupAttributeId = 'group';
 
-  static Map<String, Conversation> _buildConversationsMap(List<Conversation>? conversations) {
-    Map<String, Conversation> map = <String, Conversation>{};
-    if (conversations != null) {
-      for (Conversation conversation in conversations) {
-        if (StringUtils.isNotEmpty(conversation.id)) {
-          map[conversation.id!] = conversation;
-        }
-      }
-    }
-    return map;
+  ContentAttribute? get _groupAttribute {
+    List<Group>? userGroups = Groups().userGroups;
+    return ((userGroups != null) && userGroups.isNotEmpty) ?
+    ContentAttribute(
+        id: _groupAttributeId,
+        title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
+        emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
+        semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
+        widget: ContentAttributeWidget.dropdown,
+        scope: <String>{ Auh2Directory.attributesScope },
+        requirements: null,
+        values: List.from(userGroups.map<ContentAttributeValue>((Group group) => ContentAttributeValue(
+          label: group.title,
+          value: group.id,
+        )))
+    ) : null;
   }
 
   void _onTapClear() {
@@ -354,7 +438,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         _searchTextController.text = _searchText = '';
       });
       _searchFocusNode.unfocus();
-      _load();
+      widget.searchController.onUpdateSearchText?.call(_searchText);
     }
   }
 
@@ -365,9 +449,12 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
         _searchText = _searchTextController.text;
       });
       _searchFocusNode.unfocus();
-      _load();
+      widget.searchController.onUpdateSearchText?.call(_searchText);
     }
   }
+
+  String get searchText => _searchText;
+  Map<String, dynamic> get filterAttributes => _filterAttributes;
 }
 
 class RecentConversationCard extends StatefulWidget {
@@ -396,11 +483,12 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         Expanded(child:
           _expandedMembersContent
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
-          Styles().images.getImage('chevron2-up',)
-        ),
+        if (widget.onToggleExpanded != null)
+          Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
+            Styles().images.getImage('chevron2-up',)
+          ),
       ],),
-      );
+    );
 
   Widget _cardSelectionContent({ EdgeInsetsGeometry padding = EdgeInsets.zero }) =>
     InkWell(onTap: _onSelect, child:
@@ -441,9 +529,10 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
               ),
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
-            Styles().images.getImage('chevron2-down',)
-          )
+          if (widget.onToggleExpanded != null)
+            Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+              Styles().images.getImage('chevron2-down',)
+            )
         ],)
       );
 

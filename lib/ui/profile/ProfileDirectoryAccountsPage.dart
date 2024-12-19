@@ -1,12 +1,14 @@
 
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/messages/MessagesWidgets.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -19,7 +21,6 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -29,10 +30,14 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
+  final ConversationsSearchController? searchController;
+  final String? initialSearch;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final void Function()? onSelectedAccountsChanged;
+  final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
+  final Set<String>? selectedAccountIds;
 
-  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController, this.onEditProfile, this.onSelectedAccountsChanged});
+  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
+    this.searchController, this.initialSearch, this.onEditProfile, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
@@ -41,7 +46,7 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
 class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
-  String _searchText = '';
+  late String _searchText;
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
@@ -53,11 +58,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
 
-  final TextEditingController _searchTextController = TextEditingController();
+  late TextEditingController _searchTextController;
   final FocusNode _searchFocusNode = FocusNode();
 
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
-  final Set<String> _selectedIds = <String>{};
 
   @override
   void initState() {
@@ -66,10 +70,15 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
       Auth2.notifyLoginChanged,
-      if (widget.displayMode == DirectoryDisplayMode.select)
-        Social.notifyConversationsUpdated,
     ]);
+
     widget.scrollController?.addListener(_scrollListener);
+
+    widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
+    widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
+
+    _searchTextController = TextEditingController(text: _searchText = widget.initialSearch ?? '');
+
     _load();
     super.initState();
   }
@@ -95,17 +104,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
     else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
-        setState((){
+        setState(() {
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
         });
         refresh();
-      }
-    }
-    else if (name == Social.notifyConversationsUpdated) {
-      if ((widget.displayMode == DirectoryDisplayMode.select) && mounted) {
-        setState(() {
-          _selectedIds.clear();
-        });
       }
     }
   }
@@ -123,7 +125,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     List<Widget> contentList = <Widget>[
       if (widget.onEditProfile != null)
         _editDescription,
-      _searchBarWidget,
+      if (widget.displayMode == DirectoryDisplayMode.browse)
+        _searchBarWidget,
     ];
     if (_loadingProgress) {
       contentList.add(_loadingContent);
@@ -160,8 +163,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
-          selected: _selectedIds.contains(account.id),
-          onToggleSelected: (value) => _onToggleAccountSelected(value, account),
+          selected: widget.selectedAccountIds?.contains(account.id) == true,
+          onToggleSelected: (value) => _onToggleAccountSelected(account, value),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -176,34 +179,16 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
-  void _onToggleAccountExpanded(Auth2PublicAccount profile) {
-    Analytics().logSelect(target: 'Expand', source: profile.id);
+  void _onToggleAccountExpanded(Auth2PublicAccount account) {
+    Analytics().logSelect(target: 'Expand', source: account.id);
     setState(() {
-      _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
+      _expandedAccountId = (_expandedAccountId != account.id) ? account.id : null;
     });
   }
 
-  void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
-    Analytics().logSelect(target: 'Select', source: account.id);
-    if (StringUtils.isNotEmpty(account.id) && mounted) {
-      setState(() {
-        if (value) {
-          _selectedIds.add(account.id!);
-        }
-        else {
-          _selectedIds.remove(account.id!);
-        }
-      });
-      widget.onSelectedAccountsChanged?.call();
-    }
-  }
-
-  Set<String> get selectedAccountIds => _selectedIds;
-
-  void clearSelectedIds() {
-    setStateIfMounted(() {
-      _selectedIds.clear();
-    });
+  void _onToggleAccountSelected(Auth2PublicAccount account, bool value) {
+    Analytics().logSelect(target: value ? 'Select' : 'Unselect', source: account.id);
+    widget.onAccountSelectionChanged?.call(account, value);
   }
 
   Widget _sectionHeading(String dirEntry) =>
@@ -512,6 +497,31 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         _searchText = _searchTextController.text;
       });
       _searchFocusNode.unfocus();
+      _load();
+    }
+  }
+
+  void onConversationsTabChanged(String searchText, Map<String, dynamic> filterAttributes) {
+    widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
+    widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
+
+    if (_searchText != searchText || !DeepCollectionEquality().equals(_filterAttributes, filterAttributes)) {
+      _searchText = searchText;
+      _filterAttributes = filterAttributes;
+      _load();
+    }
+  }
+
+  void _onControllerSearchConversations(String searchText) {
+    if (_searchText != searchText) {
+      _searchText = searchText;
+      _load();
+    }
+  }
+
+  void _onControllerFilterAttributesChanged(Map<String, dynamic> filterAttributes) {
+    if (!DeepCollectionEquality().equals(_filterAttributes, filterAttributes)) {
+      _filterAttributes = filterAttributes;
       _load();
     }
   }

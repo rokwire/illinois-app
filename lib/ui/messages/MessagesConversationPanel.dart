@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -8,6 +9,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -28,19 +30,23 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final GlobalKey _lastContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
-  late ScrollController _scrollController;
+  ScrollController _scrollController = ScrollController();
   bool _shouldScrollToBottom = false;
+  Map<String, Uint8List?> _userPhotosCache = {};
 
   bool _listening = false;
   bool _loading = false;
+  bool _loadingMore = false;
   bool _submitting = false;
-  bool _messageOptionsExpanded = false;
 
   // Use the actual Auth2 accountId instead of a placeholder.
   String? get _currentUserId => Auth2().accountId;
 
   // Messages loaded from the backend
   List<Message> _messages = [];
+  Set<String> _globalIds = {};
+  bool _hasMoreMessages = false;
+  final int _messagesPageSize = 100;
 
   @override
   void initState() {
@@ -50,7 +56,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Styles.notifyChanged,
       SpeechToText.notifyError,
     ]);
-    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
 
     // Load messages from the backend
     _loadMessages();
@@ -91,7 +97,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget build(BuildContext context) {
     super.build(context);
 
-    _scrollToBottomIfNeeded();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottomIfNeeded();
+    });
 
     return Scaffold(
       appBar: RootHeaderBar(title: widget.conversation.membersString, leading: RootHeaderBarLeading.Back,),
@@ -158,6 +166,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
+    if (_loadingMore) {
+      contentList.add(_buildLoadingMoreIndicator());
+    }
+
     if (_messages.isNotEmpty) {
       DateTime? lastDate;
       for (Message message in _messages) {
@@ -177,6 +189,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return contentList;
   }
 
+  Widget _buildLoadingMoreIndicator() {
+    return Container(padding: EdgeInsets.all(6), child:
+      Align(alignment: Alignment.center, child:
+        SizedBox(width: 24, height: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),
+        ),
+      ),
+    ),);
+  }
+
   Widget _buildDateDivider(String dateText) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -190,45 +212,131 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildMessageCard(Message message) {
-    // bool fromUser = (message.sender?.accountId == currentUserId);
+    String? senderId = message.sender?.accountId;
+    bool isCurrentUser = (senderId == _currentUserId);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Styles().colors.white,
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(
-            children: [
-              // Placeholder avatar icon
-              Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
-              SizedBox(width: 8),
-              Expanded(
-                  child: Text(
-                      "${message.sender?.name ?? 'Unknown'}",
-                      style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
-                  )
+    return FutureBuilder<Widget>(
+      future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
+      builder: (context, snapshot) {
+        Widget avatar = snapshot.data ??
+            (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+
+        return Container(
+          margin: EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Styles().colors.white,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                children: [
+                  avatar,
+                  SizedBox(width: 8),
+                  Expanded(
+                      child: Text(
+                          "${message.sender?.name ?? 'Unknown'}",
+                          style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
+                      )
+                  ),
+                  if (message.dateSentUtc != null)
+                    Text(
+                        AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
+                        style: Styles().textStyles.getTextStyle('widget.description.small')
+                    ),
+                ],
               ),
-              (message.dateSentUtc != null) ?
-              Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                  style: Styles().textStyles.getTextStyle('widget.description.small')
-              )
-                  : Container(),
-            ],
+              SizedBox(height: 8),
+              Text(
+                  message.message ?? '',
+                  style: Styles().textStyles.getTextStyle('widget.card.title.small')
+              ),
+            ]),
           ),
-          SizedBox(height: 8),
-          Text(
-              message.message ?? '',
-              style: Styles().textStyles.getTextStyle('widget.card.title.small')
-          ),
-        ]),
-      ),
+        );
+      },
     );
   }
 
+  Future<Widget> _buildAvatarWidget({required bool isCurrentUser, String? senderId}) async {
+    if (isCurrentUser) {
+      // Current user's avatar
+      Uint8List? profilePicture = Auth2().profilePicture;
+      if (profilePicture != null) {
+        return Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: Image.memory(profilePicture).image,
+            ),
+          ),
+        );
+      } else {
+        return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+      }
+    } else {
+      // Other user's avatar
+      if (senderId == null) {
+        return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+      }
+
+      // Check cache first
+      if (_userPhotosCache.containsKey(senderId)) {
+        Uint8List? cachedData = _userPhotosCache[senderId];
+        if (cachedData != null) {
+          return Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: Image.memory(cachedData).image,
+              ),
+            ),
+          );
+        } else {
+          // Cached as null means we tried before and got no image
+          return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+        }
+      }
+
+      // Load image from server
+      ImagesResult? result = await Content().loadUserPhoto(
+        type: UserProfileImageType.small,
+        accountId: senderId,
+      );
+
+      Uint8List? imageData = result?.imageData;
+      _userPhotosCache[senderId] = imageData; // Cache result (null if none)
+
+      if (imageData != null) {
+        return Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: Image.memory(imageData).image,
+            ),
+          ),
+        );
+      } else {
+        return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+      }
+    }
+  }
+
   Widget _buildChatBar() {
+    bool enabled = true; // Always enabled for now, but you can adjust if needed
+
     return Semantics(
         container: true,
         child: Material(
@@ -236,173 +344,144 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(mainAxisSize: MainAxisSize.max, children: [
-                  _buildMessageOptionsWidget(),
+                  //_buildMessageOptionsWidget(),
+                  SizedBox(width: 32,), //TODO: add image picker handling
                   Expanded(
-                      child: Semantics(
-                          container: true,
-                          child: TextField(
-                              key: _inputFieldKey,
-                              enabled: true,
-                              controller: _inputController,
-                              minLines: 1,
-                              maxLines: 5,
-                              textCapitalization: TextCapitalization.sentences,
-                              textInputAction: TextInputAction.send,
-                              focusNode: _inputFieldFocus,
-                              onTap: _onTapChatBar,
-                              onSubmitted: _submitMessage,
-                              onChanged: (_) => setStateIfMounted(() {}),
-                              cursorColor: Styles().colors.fillColorPrimary,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
-                                  fillColor: Styles().colors.surface,
-                                  focusColor: Styles().colors.surface,
-                                  hoverColor: Styles().colors.surface,
-                                  hintText: "Message ${_getConversationTitle()}",
-                                  hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
-                              ),
-                              style: Styles().textStyles.getTextStyle('widget.title.regular')
-                          )
-                      ),
+                    child: Semantics(
+                        container: true,
+                        child: TextField(
+                            key: _inputFieldKey,
+                            enabled: enabled,
+                            controller: _inputController,
+                            minLines: 1,
+                            maxLines: 5,
+                            textCapitalization: TextCapitalization.sentences,
+                            textInputAction: TextInputAction.send,
+                            focusNode: _inputFieldFocus,
+                            onSubmitted: _submitMessage,
+                            onChanged: (_) => setStateIfMounted(() {}),
+                            cursorColor: Styles().colors.fillColorPrimary,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                                fillColor: Styles().colors.surface,
+                                focusColor: Styles().colors.surface,
+                                hoverColor: Styles().colors.surface,
+                                hintText: "Message ${_getConversationTitle()}",
+                                hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                            ),
+                            style: Styles().textStyles.getTextStyle('widget.title.regular')
+                        )
+                    ),
                   ),
-                  _buildSendImage(),
+                  _buildSendImage(enabled),
                 ])
             )
         )
     );
   }
 
-  Widget _buildMessageOptionsWidget() {
-    return _messageOptionsExpanded ? Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildAttachImage(),
-        _buildSpeechToTextImage(),
-        _buildMessageOptionsImage(),
-      ],
-    ) : _buildMessageOptionsImage();
-  }
-
-  Widget _buildMessageOptionsImage() {
-    return MergeSemantics(
-        child: Semantics(
-            label: Localization().getStringEx('', "Options"),
-            enabled: true,
-            child: IconButton(
-                splashRadius: 24,
-                icon: Styles().images.getImage(_messageOptionsExpanded ? 'chevron-left-bold' : 'chevron-right-bold') ??
-                    Icon(_messageOptionsExpanded ? Icons.chevron_left : Icons.chevron_right, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
-                onPressed: () {
-                  setState(() {
-                    _messageOptionsExpanded = !_messageOptionsExpanded;
-                  });
-                }
-            )
-        )
-    );
-  }
-
-  Widget _buildSendImage() {
-    return MergeSemantics(
-        child: Semantics(
-            label: Localization().getStringEx('', "Send"),
-            enabled: true,
-            child: _submitting ?
-              Padding(padding: EdgeInsets.all(16), child:
-                SizedBox(width: 16, height: 16, child:
-                    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
-                )
-              ) :
-              IconButton(
-                splashRadius: 24,
-                icon: Styles().images.getImage('paper-plane-top') ?? Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
-                onPressed: () {
-                  _submitMessage(_inputController.text);
-                }
-              )
-        )
-    );
-  }
-
-  Widget _buildAttachImage() {
-    return MergeSemantics(
-        child: Semantics(
-            label: Localization().getStringEx('', "Attach"),
-            enabled: true,
-            child: IconButton(
-                splashRadius: 24,
-                icon: Styles().images.getImage('image-placeholder', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
-                onPressed: () {
-                  // TODO: Implement attachment picker once ready
-                }
-            )
-        )
-    );
-  }
-
-  Widget _buildSpeechToTextImage() {
-    return Visibility(
-        visible: SpeechToText().isEnabled,
-        child: MergeSemantics(
-            child: Semantics(
-                label: Localization().getStringEx('', "Speech to text"),
-                child: IconButton(
-                    splashRadius: 24,
-                    icon: _listening
-                        ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop")
-                        : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone"),
-                    onPressed: () {
-                      if (_listening) {
-                        _stopListening();
-                      } else {
-                        _startListening();
-                      }
+  Widget _buildSendImage(bool enabled) {
+    if (StringUtils.isNotEmpty(_inputController.text)) {
+      // Show send button if there's text
+      return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
+          child: IconButton(
+              splashRadius: 24,
+              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: ""),
+              onPressed: enabled
+                  ? () {
+                _submitMessage(_inputController.text);
+              }
+                  : null)));
+    } else {
+      // Show microphone if no text and speech-to-text is enabled
+      return Visibility(
+          visible: enabled && SpeechToText().isEnabled,
+          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
+              child: IconButton(
+                  splashRadius: 24,
+                  icon: _listening
+                      ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop")
+                      : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone"),
+                  onPressed: enabled
+                      ? () {
+                    if (_listening) {
+                      _stopListening();
+                    } else {
+                      _startListening();
                     }
-                )
-            )
-        )
-    );
+                  }
+                      : null))));
+    }
   }
 
   Future<void> _loadMessages() async {
     if (widget.conversation.id == null) {
       return;
     }
-    setState(() {
+    setStateIfMounted(() {
       _loading = true;
     });
 
     // Use the Social API to load conversation messages
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: widget.conversation.id!,
-      limit: 100,
+      limit: _messagesPageSize,
       offset: 0,
     );
-
 
     setStateIfMounted(() {
       _loading = false;
       if (loadedMessages != null) {
+        Message.sortListByDateSent(loadedMessages);
         _messages = loadedMessages;
+        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
         if (widget.conversation.isGroupConversation) {
           _removeDuplicateMessagesByGlobalId();
         }
-        Message.sortListByDateSent(_messages);
         _shouldScrollToBottom = true;
       } else {
         // If null, could indicate a failure to load messages
         _messages = [];
+        _hasMoreMessages = false;
+      }
+    });
+  }
+
+  void _loadMoreMessages() async {
+    if (widget.conversation.id == null) {
+      return;
+    }
+    setStateIfMounted(() {
+      _loadingMore = true;
+    });
+
+    // Use the Social API to load conversation messages
+    List<Message>? loadedMessages = await Social().loadConversationMessages(
+      conversationId: widget.conversation.id!,
+      limit: _messagesPageSize,
+      offset: _messages.length,
+    );
+
+    setStateIfMounted(() {
+      _loadingMore = false;
+      if (loadedMessages != null) {
+        Message.sortListByDateSent(loadedMessages);
+        _messages.addAll(loadedMessages);
+        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
+        if (widget.conversation.isGroupConversation) {
+          _removeDuplicateMessagesByGlobalId();
+        }
+        _shouldScrollToBottom = false;
       }
     });
   }
 
   void _removeDuplicateMessagesByGlobalId() {
-    Set<String> globalIds = {};
     List<Message> messages = [];
     for (Message message in _messages) {
-      if (message.globalId != null && !globalIds.contains(message.globalId)) {
+      if (message.globalId != null && !_globalIds.contains(message.globalId)) {
         messages.add(message);
-        globalIds.add(message.globalId!);
+        _globalIds.add(message.globalId!);
       }
     }
     _messages = messages;
@@ -412,39 +491,60 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _loadMessages();
   }
 
-  void _onTapChatBar() {
-    setState(() {
-      _messageOptionsExpanded = false;
-    });
-  }
-
   Future<void> _submitMessage(String message) async {
     if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && _currentUserId != null && _submitting == false) {
       FocusScope.of(context).requestFocus(FocusNode());
 
+      String messageText = _inputController.text.trim();
+      _inputController.text = '';
+
+      // Create a temporary message and add it immediately
+      Message tempMessage = Message(
+        sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
+        message: messageText,
+        dateSentUtc: DateTime.now().toUtc(),
+      );
+
       setState(() {
         _submitting = true;
+        _messages.add(tempMessage);
+        Message.sortListByDateSent(_messages);
         _shouldScrollToBottom = true;
       });
 
-      // Send message via API
-      List<Message>? newMessages = await Social().createConversationMessage(
-        conversationId: widget.conversation.id!,
-        message: _inputController.text,
-      );
+      try {
+        // Send to the backend
+        List<Message>? newMessages = await Social().createConversationMessage(
+          conversationId: widget.conversation.id!,
+          message: messageText,
+        );
 
-      if (mounted) {
-        // Clear input after sending
-        _inputController.text = '';
-
+        if (newMessages != null && newMessages.isNotEmpty) {
+          Message serverMessage = newMessages.first;
+          // Update the temporary message with the server's message if needed
+          int index = _messages.indexOf(tempMessage);
+          if (index >= 0) {
+            _inputController.text = '';
+            setState(() {
+              _submitting = false;
+              _messages[index] = serverMessage;
+              Message.sortListByDateSent(_messages);
+            });
+          }
+        } else {
+          _messages.remove(tempMessage);
+          setState(() {
+            _submitting = false;
+          });
+          AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
+        }
+      } catch (e) {
+        // On error, remove the temporary message
+        _messages.remove(tempMessage);
         setState(() {
           _submitting = false;
         });
-
-        // load the new messages
-        if (CollectionUtils.isNotEmpty(newMessages)) {
-          _loadMessages();
-        }
+        AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
       }
     }
   }
@@ -487,13 +587,15 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _scrollToBottomIfNeeded() {
     BuildContext? handleContext = _lastContentItemKey.currentContext;
-    if (handleContext != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_shouldScrollToBottom) {
-          Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
-          _shouldScrollToBottom = false;
-        }
-      });
+    if (handleContext != null && _shouldScrollToBottom) {
+      Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
+      _shouldScrollToBottom = false;
+    }
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset <= _scrollController.position.minScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
+      _loadMoreMessages();
     }
   }
 
