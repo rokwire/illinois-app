@@ -185,7 +185,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
       _audioPlayer?.dispose();
       _audioPlayer = null;
     });
-    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.playback.failed.text', 'Failed to play audio stream.'));
+    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }
 
   void _onRecordNamePronouncement(){

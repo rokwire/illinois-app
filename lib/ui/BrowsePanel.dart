@@ -30,8 +30,9 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsPanel.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -52,7 +53,6 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
@@ -891,7 +891,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapUserDirectory(BuildContext context) {
     Analytics().logSelect(target: "User Directory");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ProfileDirectoryAccountsPanel(DirectoryAccounts.userDirectory); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(DirectoryAccounts.directory); } ));
   }
 
   void _onTapLaundry(BuildContext context) {

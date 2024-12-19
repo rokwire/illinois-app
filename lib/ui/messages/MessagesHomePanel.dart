@@ -23,7 +23,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -160,7 +160,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       _buildFilters(),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ProfileDirectoryFilterBar(
+        child: DirectoryFilterBar(
           key: ValueKey(_searchText),
           searchText: _searchText,
           onSearchText: _onSearchText,

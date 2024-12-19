@@ -435,7 +435,7 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
       _audioPlayer?.dispose();
       _audioPlayer = null;
     });
-    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.playback.failed.text', 'Failed to play audio stream.'));
+    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }
 }
 
@@ -461,23 +461,23 @@ class DirectoryProfileCard extends StatelessWidget {
   );
 }
 
-class ProfileDirectoryFilterBar extends StatefulWidget {
+class DirectoryFilterBar extends StatefulWidget {
   final String? searchText;
   final void Function(String)? onSearchText;
 
   final Map<String, dynamic>? filterAttributes;
   final void Function(Map<String, dynamic>)? onFilterAttributes;
 
-  ProfileDirectoryFilterBar({ super.key,
+  DirectoryFilterBar({ super.key,
     this.searchText, this.onSearchText,
     this.filterAttributes, this.onFilterAttributes,
   });
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryFilterBarState();
+  State<StatefulWidget> createState() => _DirectoryFilterBarState();
 }
 
-class _ProfileDirectoryFilterBarState extends State<ProfileDirectoryFilterBar> {
+class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
@@ -532,7 +532,7 @@ class _ProfileDirectoryFilterBarState extends State<ProfileDirectoryFilterBar> {
 
       Widget get _searchTextField =>
         Semantics(
-          label: Localization().getStringEx('panel.profile.directory.accounts.search.field.label', 'SEARCH FIELD'),
+          label: Localization().getStringEx('panel.directory.accounts.search.field.label', 'SEARCH FIELD'),
           hint: null,
           textField: true,
           excludeSemantics: true,
@@ -581,8 +581,8 @@ class _ProfileDirectoryFilterBarState extends State<ProfileDirectoryFilterBar> {
       ContentAttributes? directoryAttributes = _directoryAttributes;
       if (directoryAttributes != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-          title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'Directory Filters'),
-          description: Localization().getStringEx('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
+          title: Localization().getStringEx('panel.directory.accounts.filters.header.title', 'Directory Filters'),
+          description: Localization().getStringEx('panel.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
           scope: Auh2Directory.attributesScope,
           contentAttributes: directoryAttributes,
           selection: widget.filterAttributes,
@@ -618,9 +618,9 @@ class _ProfileDirectoryFilterBarState extends State<ProfileDirectoryFilterBar> {
       return ((userGroups != null) && userGroups.isNotEmpty) ?
         ContentAttribute(
           id: _groupAttributeId,
-          title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
-          emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
-          semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
+          title: Localization().getStringEx('panel.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
+          emptyHint: Localization().getStringEx('panel.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
+          semanticsHint: Localization().getStringEx('panel.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
           widget: ContentAttributeWidget.dropdown,
           scope: <String>{ Auh2Directory.attributesScope },
           requirements: null,
@@ -648,14 +648,14 @@ class _ProfileDirectoryFilterBarState extends State<ProfileDirectoryFilterBar> {
     }
 }
 
-class ProfileDirectoryFilter {
+class DirectoryFilter {
   final String? searchText;
   final Map<String, dynamic>? attributes;
 
-  ProfileDirectoryFilter({ this.searchText, this.attributes });
+  DirectoryFilter({ this.searchText, this.attributes });
 
-  factory ProfileDirectoryFilter.fromOther(ProfileDirectoryFilter other, {String? searchText, Map<String, dynamic>? attributes}) =>
-    ProfileDirectoryFilter(
+  factory DirectoryFilter.fromOther(DirectoryFilter other, {String? searchText, Map<String, dynamic>? attributes}) =>
+    DirectoryFilter(
       searchText: searchText ?? other.searchText,
       attributes: attributes ?? other.attributes,
     );
@@ -664,7 +664,7 @@ class ProfileDirectoryFilter {
 
   @override
   bool operator==(Object other) =>
-    (other is ProfileDirectoryFilter) &&
+    (other is DirectoryFilter) &&
     (searchText == other.searchText) &&
     (const DeepCollectionEquality().equals(attributes, other.attributes));
 

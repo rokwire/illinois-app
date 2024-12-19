@@ -6,9 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -22,8 +22,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ProfileDirectoryMyInfoEditPage extends StatefulWidget {
-  final MyProfileInfo contentType;
+class ProfileInfoEditPage extends StatefulWidget {
+  final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
   final Uint8List? pronunciationAudioData;
@@ -31,13 +31,13 @@ class ProfileDirectoryMyInfoEditPage extends StatefulWidget {
   final String? photoImageToken;
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
-  ProfileDirectoryMyInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.pronunciationAudioData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
+  ProfileInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.pronunciationAudioData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryMyInfoEditPageState();
+  State<StatefulWidget> createState() => _ProfileInfoEditPageState();
 }
 
-class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoEditPage> with WidgetsBindingObserver {
+class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver {
 
   late bool _directoryVisibility;
   late Auth2UserProfileFieldsVisibility _profileVisibility;
@@ -150,8 +150,8 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
 
     String get _desriptionText {
       switch (widget.contentType) {
-        case MyProfileInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.my_info.connections.edit.description.text', 'Choose how your profile displays for your Connections.');
-        case MyProfileInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.my_info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.');
+        case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.edit.description.text', 'Choose how your profile displays for your Connections.');
+        case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.');
       }
     }
 
@@ -202,8 +202,8 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
           builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
-              RibbonButton(label: Localization().getStringEx('panel.profile.directory.my_info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
-              RibbonButton(label: Localization().getStringEx('panel.profile.directory.my_info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
+              RibbonButton(label: Localization().getStringEx('panel.profile.info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
+              RibbonButton(label: Localization().getStringEx('panel.profile.info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
             ])
           ),
         );
@@ -303,7 +303,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     // Edit: Directory Visibility
 
   Widget get _directoryVisibilitySection => _fieldSection(
-      headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.directory_visibility.text', 'Directory Visibility'),
+      headingTitle: Localization().getStringEx('panel.profile.info.title.directory_visibility.text', 'Directory Visibility'),
       fieldControl: _directoryVisibilityControl,
     );
 
@@ -336,12 +336,12 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     }
 
   String get _directoryVisibilityTitle => _directoryVisibility ?
-    Localization().getStringEx('panel.profile.directory.my_info.edit.directory_visibility.public.title.text', 'Public') :
-    Localization().getStringEx('panel.profile.directory.my_info.edit.directory_visibility.private.title.text', 'Private');
+    Localization().getStringEx('panel.profile.info.edit.directory_visibility.public.title.text', 'Public') :
+    Localization().getStringEx('panel.profile.info.edit.directory_visibility.private.title.text', 'Private');
 
   String get _directoryVisibilityDescription => _directoryVisibility ?
-    Localization().getStringEx('panel.profile.directory.my_info.edit.directory_visibility.public.description.text', 'Anyone on or off the User Directory can view your account') :
-    Localization().getStringEx('panel.profile.directory.my_info.edit.directory_visibility.private.description.text', 'Your account is available only to you');
+    Localization().getStringEx('panel.profile.info.edit.directory_visibility.public.description.text', 'Anyone on or off the User Directory can view your account') :
+    Localization().getStringEx('panel.profile.info.edit.directory_visibility.private.description.text', 'Your account is available only to you');
 
   Widget? get _directoryVisibilityIcon =>
     _directoryVisibility ? _publicIcon : _privateIcon;
@@ -349,7 +349,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
   // Edit: Pronunciation
 
   Widget get _pronunciationSection => _fieldSection(
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronunciation.text', 'Name Pronunciation'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
   );
 
@@ -368,7 +368,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
   ],);
 
   String _pronunciationCreateText({String? language}) =>
-    Localization().getStringEx('panel.profile.directory.my_info.command.link.pronunciation.text', 'Add name pronunciation and how you prefer to be addressed (Ex: "Please call me Dr. Last Name, First Name or Nickname")', language: language);
+    Localization().getStringEx('panel.profile.info.command.link.pronunciation.text', 'Add name pronunciation and how you prefer to be addressed (Ex: "Please call me Dr. Last Name, First Name or Nickname")', language: language);
 
   Widget get _pronunciationEditBar => Row(children: [
     Wrap( spacing: 6, runSpacing: 6, children: [
@@ -520,51 +520,51 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
       _audioPlayer?.dispose();
       _audioPlayer = null;
     });
-    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.playback.failed.text', 'Failed to play audio stream.'));
+    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }
 
   // Edit: Other Sections
 
   Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.pronouns.text', 'Pronouns'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
   );
 
   Widget get _titleSection => _textFieldSection(_ProfileField.title,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.title.text', 'Title'),
-    headingHint: Localization().getStringEx('panel.profile.directory.my_info.title.title.hint', '(Ex: Professional/Extracurricular Role)')
+    headingTitle: Localization().getStringEx('panel.profile.info.title.title.text', 'Title'),
+    headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)')
   );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.college.text', 'College'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
     enabled: false,
   );
 
   Widget get _departmentSection => _textFieldSection(_ProfileField.department,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.department.text', 'Department'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
     enabled: false,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.major.text', 'Major'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
     enabled: false,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.email.text', 'Email Address'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
     enabled: false, public: true,
   );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.email2.text', 'Alternate Email Address'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
   );
 
   Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.phone.text', 'Phone Number'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.phone.text', 'Phone Number'),
   );
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
-    headingTitle: Localization().getStringEx('panel.profile.directory.my_info.title.website.text', 'Website URL'),
-    headingHint: Localization().getStringEx('panel.profile.directory.my_info.title.website.hinr', '(Ex: Linkedin)'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
+    headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
   );
 
   Widget _textFieldSection(_ProfileField field, {
@@ -746,11 +746,11 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
     String? prompt;
     if (widget.profile != profile) {
       prompt = (widget.privacy != privacy) ?
-        Localization().getStringEx('panel.profile.directory.my_info.cancel.save.profile_and_privacy.prompt.text', 'Save your profile and privacy settings changes?') :
-        Localization().getStringEx('panel.profile.directory.my_info.cancel.save.profile.prompt.text', 'Save your profile settings changes?');
+        Localization().getStringEx('panel.profile.info.cancel.save.profile_and_privacy.prompt.text', 'Save your profile and privacy settings changes?') :
+        Localization().getStringEx('panel.profile.info.cancel.save.profile.prompt.text', 'Save your profile settings changes?');
     }
     else if (widget.privacy != privacy) {
-      prompt = Localization().getStringEx('panel.profile.directory.my_info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
+      prompt = Localization().getStringEx('panel.profile.info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
     }
 
     bool shouldSave = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
@@ -828,7 +828,7 @@ class _ProfileDirectoryMyInfoEditPageState extends ProfileDirectoryMyInfoBasePag
             );
           }
           else {
-            AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.directory.my_info.save.failed.text', 'Failed to update profile and privacy settings.'));
+            AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.save.failed.text', 'Failed to update profile and privacy settings.'));
           }
         }
       }
