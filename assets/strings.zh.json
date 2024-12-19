@@ -301,7 +301,7 @@
 	"panel.browse.section.campus_guide.description": "了解更多關於校園生活的信息。",
 	"panel.browse.section.dinings.title": "校园餐饮",
 	"panel.browse.section.dinings.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
-	"panel.browse.section.directory.title": "Directory",
+	"panel.browse.section.directory.title": "User Directory",
 	"panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
 	"panel.browse.section.events.title": "活動",
 	"panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
