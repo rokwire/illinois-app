@@ -329,6 +329,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildChatBar() {
+    bool enabled = true; // Always enabled for now, but you can adjust if needed
+
     return Semantics(
         container: true,
         child: Material(
@@ -336,41 +338,77 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(mainAxisSize: MainAxisSize.max, children: [
-                  _buildMessageOptionsWidget(),
+                  //_buildMessageOptionsWidget(),
+                  SizedBox(width: 32,), //TODO: add image picker handling
                   Expanded(
-                      child: Semantics(
-                          container: true,
-                          child: TextField(
-                              key: _inputFieldKey,
-                              enabled: true,
-                              controller: _inputController,
-                              minLines: 1,
-                              maxLines: 5,
-                              textCapitalization: TextCapitalization.sentences,
-                              textInputAction: TextInputAction.send,
-                              focusNode: _inputFieldFocus,
-                              onTap: _onTapChatBar,
-                              onSubmitted: _submitMessage,
-                              onChanged: (_) => setStateIfMounted(() {}),
-                              cursorColor: Styles().colors.fillColorPrimary,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
-                                  fillColor: Styles().colors.surface,
-                                  focusColor: Styles().colors.surface,
-                                  hoverColor: Styles().colors.surface,
-                                  hintText: "Message ${_getConversationTitle()}",
-                                  hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
-                              ),
-                              style: Styles().textStyles.getTextStyle('widget.title.regular')
-                          )
-                      ),
+                    child: Semantics(
+                        container: true,
+                        child: TextField(
+                            key: _inputFieldKey,
+                            enabled: enabled,
+                            controller: _inputController,
+                            minLines: 1,
+                            maxLines: 5,
+                            textCapitalization: TextCapitalization.sentences,
+                            textInputAction: TextInputAction.send,
+                            focusNode: _inputFieldFocus,
+                            onTap: _onTapChatBar,
+                            onSubmitted: _submitMessage,
+                            onChanged: (_) => setStateIfMounted(() {}),
+                            cursorColor: Styles().colors.fillColorPrimary,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                                fillColor: Styles().colors.surface,
+                                focusColor: Styles().colors.surface,
+                                hoverColor: Styles().colors.surface,
+                                hintText: "Message ${_getConversationTitle()}",
+                                hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                            ),
+                            style: Styles().textStyles.getTextStyle('widget.title.regular')
+                        )
+                    ),
                   ),
-                  _buildSendImage(),
+                  _buildSendImage(enabled),
                 ])
             )
         )
     );
   }
+
+  Widget _buildSendImage(bool enabled) {
+    if (StringUtils.isNotEmpty(_inputController.text)) {
+      // Show send button if there's text
+      return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
+          child: IconButton(
+              splashRadius: 24,
+              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: ""),
+              onPressed: enabled
+                  ? () {
+                _submitMessage(_inputController.text);
+              }
+                  : null)));
+    } else {
+      // Show microphone if no text and speech-to-text is enabled
+      return Visibility(
+          visible: enabled && SpeechToText().isEnabled,
+          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
+              child: IconButton(
+                  splashRadius: 24,
+                  icon: _listening
+                      ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop")
+                      : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone"),
+                  onPressed: enabled
+                      ? () {
+                    if (_listening) {
+                      _stopListening();
+                    } else {
+                      _startListening();
+                    }
+                  }
+                      : null))));
+    }
+  }
+
 
   Widget _buildMessageOptionsWidget() {
     return _messageOptionsExpanded ? Row(
@@ -396,22 +434,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   setState(() {
                     _messageOptionsExpanded = !_messageOptionsExpanded;
                   });
-                }
-            )
-        )
-    );
-  }
-
-  Widget _buildSendImage() {
-    return MergeSemantics(
-        child: Semantics(
-            label: Localization().getStringEx('', "Send"),
-            enabled: true,
-            child: IconButton(
-                splashRadius: 24,
-                icon: Icon(Icons.send, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
-                onPressed: () {
-                  _submitMessage(_inputController.text);
                 }
             )
         )
