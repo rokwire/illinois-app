@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -34,10 +33,11 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final ConversationsSearchController? searchController;
   final String? initialSearch;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final void Function()? onSelectedAccountsChanged;
+  final void Function(bool, Auth2PublicAccount)? onAccountSelectionChanged;
+  final Set<String>? selectedAccountIds;
 
   ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
-    this.searchController, this.initialSearch, this.onEditProfile, this.onSelectedAccountsChanged});
+    this.searchController, this.initialSearch, this.onEditProfile, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
@@ -62,7 +62,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   final FocusNode _searchFocusNode = FocusNode();
 
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
-  final Set<String> _selectedIds = <String>{};
+  Set<String> _selectedIds = {};
 
   @override
   void initState() {
@@ -71,13 +71,12 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       Auth2.notifyProfileChanged,
       Auth2.notifyPrivacyChanged,
       Auth2.notifyLoginChanged,
-      if (widget.displayMode == DirectoryDisplayMode.select)
-        Social.notifyConversationsUpdated,
     ]);
     widget.scrollController?.addListener(_scrollListener);
     widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
     widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
     _searchText = widget.initialSearch ?? '';
+    _selectedIds = widget.selectedAccountIds ?? {};
 
     _load();
     super.initState();
@@ -104,23 +103,22 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     }
     else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
-        setState((){
+        setState(() {
           _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
         });
         refresh();
-      }
-    }
-    else if (name == Social.notifyConversationsUpdated) {
-      if ((widget.displayMode == DirectoryDisplayMode.select) && mounted) {
-        setState(() {
-          _selectedIds.clear();
-        });
       }
     }
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void didUpdateWidget(covariant ProfileDirectoryAccountsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _selectedIds = widget.selectedAccountIds ?? {};
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +169,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
           selected: _selectedIds.contains(account.id),
-          onToggleSelected: (value) => _onToggleAccountSelected(value, account),
+          onToggleSelected: (value) => widget.onAccountSelectionChanged?.call(value, account),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -190,29 +188,6 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     Analytics().logSelect(target: 'Expand', source: profile.id);
     setState(() {
       _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
-    });
-  }
-
-  void _onToggleAccountSelected(bool value, Auth2PublicAccount account) {
-    Analytics().logSelect(target: 'Select', source: account.id);
-    if (StringUtils.isNotEmpty(account.id) && mounted) {
-      setState(() {
-        if (value) {
-          _selectedIds.add(account.id!);
-        }
-        else {
-          _selectedIds.remove(account.id!);
-        }
-      });
-      widget.onSelectedAccountsChanged?.call();
-    }
-  }
-
-  Set<String> get selectedAccountIds => _selectedIds;
-
-  void clearSelectedIds() {
-    setStateIfMounted(() {
-      _selectedIds.clear();
     });
   }
 

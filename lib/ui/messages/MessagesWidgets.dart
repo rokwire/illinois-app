@@ -22,10 +22,11 @@ class RecentConversationsPage extends StatefulWidget {
   final ScrollController? scrollController;
   final List<Conversation> recentConversations;
   final int conversationPageSize;
-  final void Function()? onSelectedConversationChanged;
+  final void Function(bool, Conversation)? onConversationSelectionChanged;
+  final Set<String>? selectedAccountIds;
 
   RecentConversationsPage({super.key, required this.searchController, required this.recentConversations, required this.conversationPageSize,
-    this.initialSearch, this.scrollController, this.onSelectedConversationChanged });
+    this.initialSearch, this.scrollController, this.onConversationSelectionChanged, this.selectedAccountIds });
 
   @override
   State<StatefulWidget> createState() => RecentConversationsPageState();
@@ -41,7 +42,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   bool _canExtend = false;
 
   String? _expandedConversationId;
-  final Set<String> _selectedIds = <String>{};
+  Set<String> _selectedIds = <String>{};
   String? _searchText;
 
   // Map<String, dynamic> _filterAttributes = <String, dynamic>{};
@@ -91,6 +92,12 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   }
 
   @override
+  void didUpdateWidget(covariant RecentConversationsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _selectedIds = widget.selectedAccountIds ?? {};
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
 
@@ -118,9 +125,9 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       for (Conversation conversation in conversations) {
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
-          onToggleExpanded: () => _onToggleConversationExpanded(conversation),
-          selected: _selectedIds.contains(conversation.id),
-          onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
+          onToggleExpanded: conversation.isGroupConversation ? () => _onToggleConversationExpanded(conversation) : null,
+          selected: ListUtils.contains(_selectedIds, conversation.memberIds, checkAll: true) ?? false, // conversation must contain all selected account IDs to be selected
+          onToggleSelected: (value) => widget.onConversationSelectionChanged?.call(value, conversation),
         ));
       }
     }
@@ -148,41 +155,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     Analytics().logSelect(target: 'Expand', source: conversation.id);
     setState(() {
       _expandedConversationId = (_expandedConversationId != conversation.id) ? conversation.id : null;
-    });
-  }
-
-  void _onToggleConversationSelected(bool value, Conversation conversation) {
-    Analytics().logSelect(target: 'Select', source: conversation.id);
-    if (StringUtils.isNotEmpty(conversation.id) && mounted) {
-      setState(() {
-        if (value) {
-          _selectedIds.add(conversation.id!);
-        }
-        else {
-          _selectedIds.remove(conversation.id);
-        }
-      });
-      widget.onSelectedConversationChanged?.call();
-    }
-  }
-
-  Set<String> get selectedConversationIds =>
-    _selectedIds;
-
-  Set<String> get selectedAccountIds {
-    Set<String> selectedIds = <String>{};
-    for (String conversationId in _selectedIds) {
-      List<String>? memberIds = _conversationsMap[conversationId]?.memberIds;
-      if (memberIds != null) {
-        selectedIds.addAll(memberIds);
-      }
-    }
-    return selectedIds;
-  }
-
-  void clearSelectedIds() {
-    setStateIfMounted(() {
-      _selectedIds.clear();
     });
   }
 
@@ -511,11 +483,12 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         Expanded(child:
           _expandedMembersContent
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
-          Styles().images.getImage('chevron2-up',)
-        ),
+        if (widget.onToggleExpanded != null)
+          Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
+            Styles().images.getImage('chevron2-up',)
+          ),
       ],),
-      );
+    );
 
   Widget _cardSelectionContent({ EdgeInsetsGeometry padding = EdgeInsets.zero }) =>
     InkWell(onTap: _onSelect, child:
@@ -556,9 +529,10 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
               ),
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
-            Styles().images.getImage('chevron2-down',)
-          )
+          if (widget.onToggleExpanded != null)
+            Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+              Styles().images.getImage('chevron2-down',)
+            )
         ],)
       );
 

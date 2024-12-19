@@ -8,6 +8,7 @@ import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -32,6 +33,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   final ScrollController _recentScrollController = ScrollController();
   final ConversationsSearchController _searchController = ConversationsSearchController();
   final ScrollController _allUsersScrollController = ScrollController();
+
   late TabController _tabController;
   int _selectedTab = 0;
 
@@ -39,6 +41,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     Localization().getStringEx('panel.messages.directory.tab.recent.label', 'Recent'),
     Localization().getStringEx('panel.messages.directory.tab.all.label', 'All Users'),
   ];
+
+  final Set<String> _selectedAccountIds = <String>{};
 
   @override
   void initState() {
@@ -159,7 +163,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       recentConversations: widget.recentConversations,
       conversationPageSize: widget.conversationPageSize,
       scrollController: _recentScrollController,
-      onSelectedConversationChanged: _onSelectedConversationChanged,
+      onConversationSelectionChanged: _onConversationSelectionChanged,
+      selectedAccountIds: _selectedAccountIds,
     );
 
   Widget get _allUsersContent =>
@@ -169,25 +174,17 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       scrollController: _allUsersScrollController,
       searchController: _searchController,
       initialSearch: searchText,
-      onSelectedAccountsChanged: _onSelectedAccountsChanged,
+      onAccountSelectionChanged: _onAccountSelectionChanged,
+      selectedAccountIds: _selectedAccountIds,
     );
 
   Future<void> _onTapCreateConversation() async {
     // do not need to check for existing conversation with selected members because Social BB handles it
-    Set<String>? memberIds = (_selectedTab == 0) ?
-      _recentPageKey.currentState?.selectedAccountIds :
-      _allUsersPageKey.currentState?.selectedAccountIds;
-
-    if ((memberIds != null) && memberIds.isNotEmpty) {
-      Conversation? conversation = await Social().createConversation(memberIds: memberIds.toList());
+    if (_hasSelectedAccounts) {
+      Conversation? conversation = await Social().createConversation(memberIds: _selectedAccountIds.toList());
       if (mounted) {
         if (conversation != null) {
-          if (_selectedTab == 0) {
-            _allUsersPageKey.currentState?.clearSelectedIds();
-          }
-          else {
-            _recentPageKey.currentState?.clearSelectedIds();
-          }
+          clearSelectedIds();
           Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
         } else {
           AppAlert.showDialogResult(context, Localization().getStringEx('panel.messages.directory.button.continue.failed.msg', 'Failed to create a conversation with the selected members.'));
@@ -210,20 +207,38 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     }
   }
 
-  void _onSelectedAccountsChanged() {
-    setStateIfMounted(() {});
+  void _onAccountSelectionChanged(bool value, Auth2PublicAccount account) {
+    if (account.id?.isNotEmpty ?? false) {
+      setStateIfMounted(() {
+        if (value) {
+          _selectedAccountIds.add(account.id!);
+        } else {
+          _selectedAccountIds.remove(account.id);
+        }
+      });
+    }
   }
 
-  void _onSelectedConversationChanged() {
-    setStateIfMounted(() {});
+  void _onConversationSelectionChanged(bool value, Conversation conversation) {
+    setStateIfMounted(() {
+      if (value) {
+        _selectedAccountIds.addAll(conversation.memberIds ?? []);
+      } else {
+        _selectedAccountIds.removeAll(conversation.memberIds ?? []);
+      }
+    });
+  }
+
+  void clearSelectedIds() {
+    setStateIfMounted(() {
+      _selectedAccountIds.clear();
+    });
   }
 
   Future<void> _onRefresh() async => (_selectedTab == 0) ?
     _recentPageKey.currentState?.refresh() : _allUsersPageKey.currentState?.refresh();
 
-  bool get _hasSelectedAccounts => (_selectedTab == 0) ?
-    (_recentPageKey.currentState?.selectedConversationIds.isNotEmpty == true) :
-    (_allUsersPageKey.currentState?.selectedAccountIds.isNotEmpty == true);
+  bool get _hasSelectedAccounts => _selectedAccountIds.isNotEmpty;
 
   String get searchText => _searchBarKey.currentState?.searchText ?? '';
   Map<String, dynamic> get filterAttributes => _searchBarKey.currentState?.filterAttributes ?? {};
