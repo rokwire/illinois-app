@@ -2,16 +2,23 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -454,3 +461,216 @@ class DirectoryProfileCard extends StatelessWidget {
   );
 }
 
+class ProfileDirectoryFilterBar extends StatefulWidget {
+  final String? searchText;
+  final void Function(String)? onSearchText;
+
+  final Map<String, dynamic>? filterAttributes;
+  final void Function(Map<String, dynamic>)? onFilterAttributes;
+
+  ProfileDirectoryFilterBar({ super.key,
+    this.searchText, this.onSearchText,
+    this.filterAttributes, this.onFilterAttributes,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _ProfileDirectoryFilterBarState();
+}
+
+class _ProfileDirectoryFilterBarState extends State<ProfileDirectoryFilterBar> {
+  final TextEditingController _searchTextController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    _searchTextController.text = widget.searchText ?? '';
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Padding(padding: const EdgeInsets.only(bottom: 16), child:
+        Row(children: [
+          if (widget.searchText != null)
+            Expanded(child:
+              _searchTextWidget,
+            ),
+          if (widget.filterAttributes != null)
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              _filtersButton
+            ),
+        ],),
+      );
+
+      Widget get _searchTextWidget =>
+        Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+          Row(children: <Widget>[
+            Expanded(child:
+              _searchTextField
+            ),
+            _searchImageButton('close',
+              label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+              hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+              rightPadding: _searchImageButtonHorzPadding / 2,
+              onTap: _onTapClear,
+            ),
+            _searchImageButton('search',
+              label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+              hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+              leftPadding: _searchImageButtonHorzPadding / 2,
+              onTap: _onTapSearch,
+            ),
+          ],)
+        );
+
+      Widget get _searchTextField =>
+        Semantics(
+          label: Localization().getStringEx('panel.profile.directory.accounts.search.field.label', 'SEARCH FIELD'),
+          hint: null,
+          textField: true,
+          excludeSemantics: true,
+          value: _searchTextController.text,
+          child: TextField(
+            controller: _searchTextController,
+            focusNode: _searchFocusNode,
+            decoration: InputDecoration(border: InputBorder.none,),
+            style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
+            cursorColor: Styles().colors.fillColorSecondary,
+            keyboardType: TextInputType.text,
+            autocorrect: false,
+            autofocus: false,
+            maxLines: 1,
+            onSubmitted: (_) => _onTapSearch(),
+        )
+      );
+
+    Decoration get _searchBarDecoration => BoxDecoration(
+      color: Styles().colors.white,
+      border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+      borderRadius: BorderRadius.circular(12),
+    );
+
+    Widget _searchImageButton(String image, { String? label, String? hint, double leftPadding = _searchImageButtonHorzPadding, double rightPadding = _searchImageButtonHorzPadding, void Function()? onTap }) =>
+      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+        InkWell(onTap: onTap, child:
+          Padding(padding: EdgeInsets.only(left: leftPadding, right: rightPadding, top: _searchImageButtonVertPadding, bottom: _searchImageButtonVertPadding), child:
+            Styles().images.getImage(image, excludeFromSemantics: true),
+          ),
+        ),
+      );
+
+    static const double _searchImageButtonHorzPadding = 16;
+    static const double _searchImageButtonVertPadding = 12;
+
+    Widget get _filtersButton =>
+      InkWell(onTap: _onFilter, child:
+        Container(decoration: _searchBarDecoration, padding: EdgeInsets.symmetric(vertical: 14, horizontal: 14), child:
+          Styles().images.getImage('filters') ?? SizedBox(width: 18, height: 18,),
+        ),
+      );
+
+    void _onFilter() {
+      Analytics().logSelect(target: 'Filters');
+      ContentAttributes? directoryAttributes = _directoryAttributes;
+      if (directoryAttributes != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+          title: Localization().getStringEx('panel.profile.directory.accounts.filters.header.title', 'Directory Filters'),
+          description: Localization().getStringEx('panel.profile.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
+          scope: Auh2Directory.attributesScope,
+          contentAttributes: directoryAttributes,
+          selection: widget.filterAttributes,
+          sortType: ContentAttributesSortType.alphabetical,
+          filtersMode: true,
+        ))).then((selection) {
+          if ((selection != null) && mounted) {
+            widget.onFilterAttributes?.call(selection);
+          }
+        });
+      }
+    }
+
+    ContentAttributes? get _directoryAttributes {
+      ContentAttributes? directoryAttributes = Auth2().directoryAttributes;
+      if (directoryAttributes != null) {
+        ContentAttribute? groupAttribute = _groupAttribute;
+        if (groupAttribute != null) {
+          directoryAttributes = ContentAttributes.fromOther(directoryAttributes);
+          directoryAttributes?.attributes?.add(groupAttribute);
+        }
+        return directoryAttributes;
+      }
+      else {
+        return null;
+      }
+    }
+
+    static const String _groupAttributeId = 'group';
+
+    ContentAttribute? get _groupAttribute {
+      List<Group>? userGroups = Groups().userGroups;
+      return ((userGroups != null) && userGroups.isNotEmpty) ?
+        ContentAttribute(
+          id: _groupAttributeId,
+          title: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'My Groups'),
+          emptyHint: Localization().getStringEx('panel.profile.directory.accounts.attributes.event_type.hint.empty', 'Select groups'),
+          semanticsHint: Localization().getStringEx('panel.profile.directory.accounts.home.attributes.event_type.hint.semantics', 'Double type to show groups.'),
+          widget: ContentAttributeWidget.dropdown,
+          scope: <String>{ Auh2Directory.attributesScope },
+          requirements: null,
+          values: List.from(userGroups.map<ContentAttributeValue>((Group group) => ContentAttributeValue(
+            label: group.title,
+            value: group.id,
+          )))
+        ) : null;
+    }
+
+    void _onTapClear() {
+      Analytics().logSelect(target: 'Search Clear');
+      if (widget.searchText?.isNotEmpty == true) {
+        _searchFocusNode.unfocus();
+        widget.onSearchText?.call('');
+      }
+    }
+
+    void _onTapSearch() {
+      Analytics().logSelect(target: 'Search Text');
+      if (widget.searchText != _searchTextController.text) {
+        _searchFocusNode.unfocus();
+        widget.onSearchText?.call(_searchTextController.text);
+      }
+    }
+}
+
+class ProfileDirectoryFilter {
+  final String? searchText;
+  final Map<String, dynamic>? attributes;
+
+  ProfileDirectoryFilter({ this.searchText, this.attributes });
+
+  factory ProfileDirectoryFilter.fromOther(ProfileDirectoryFilter other, {String? searchText, Map<String, dynamic>? attributes}) =>
+    ProfileDirectoryFilter(
+      searchText: searchText ?? other.searchText,
+      attributes: attributes ?? other.attributes,
+    );
+
+  // Equality
+
+  @override
+  bool operator==(Object other) =>
+    (other is ProfileDirectoryFilter) &&
+    (searchText == other.searchText) &&
+    (const DeepCollectionEquality().equals(attributes, other.attributes));
+
+  @override
+  int get hashCode =>
+    (searchText?.hashCode ?? 0) ^
+    (const DeepCollectionEquality().hash(attributes));
+
+}
