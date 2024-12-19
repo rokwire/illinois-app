@@ -504,6 +504,12 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         }
         Message.sortListByDateSent(_messages);
         _shouldScrollToBottom = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          }
+        });
+
       } else {
         // If null, could indicate a failure to load messages
         _messages = [];
