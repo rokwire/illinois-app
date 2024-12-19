@@ -1615,6 +1615,8 @@ class _GroupEventsContent extends StatefulWidget{
 
   const _GroupEventsContent({this.updateController, this.group});
 
+  String get _emptyText => Localization().getStringEx("", "No group events");
+
   String? get groupId => group?.id;
 
   @override
@@ -1688,14 +1690,12 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
     }
 
     return Stack(children: [
-      Column(children: <Widget>[
-        SectionSlantHeader(
-            title: Localization().getStringEx(
-                "panel.group_detail.label.upcoming_events", 'Upcoming Events') +
-                ' ($_allEventsCount)',
-            titleIconKey: 'calendar',
-            children: content)
-      ]),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+        Column(children: <Widget>[
+          Visibility(visible: CollectionUtils.isEmpty(_groupEvents) && _updatingEvents == false,
+              child: _buildEmptyContent()),
+          ...content
+        ])),
       _updatingEvents
           ? Center(
         child: Container(padding: EdgeInsets.symmetric(vertical: 50), child:
@@ -1705,6 +1705,10 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
           : Container()
     ]);
   }
+
+  Widget _buildEmptyContent() => Container(height: 100,
+      child: Center(
+        child: Text(widget._emptyText),));
 
   //Tap
   void _onTapEvent(Event2 event) {
@@ -1777,6 +1781,7 @@ class _GroupPostsContent extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
 
+  String get _emptyText => Localization().getStringEx("", "No group posts");
 }
 
 class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
@@ -1863,11 +1868,11 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
 
     return Stack(children: [
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
       Column(children: <Widget>[
-        SectionSlantHeader(
-        title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-        titleIconKey: 'posts',
-        children: postsContent)]),
+        Visibility(visible: CollectionUtils.isEmpty(_posts) && _loadingPostsPage == false,
+            child: _buildEmptyContent()),
+        ...postsContent])),
       _loadingPostsPage == true
         ? Center(
         child: Container(
@@ -1876,6 +1881,10 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         : Container()
     ]);
   }
+
+  Widget _buildEmptyContent() => Container(height: 100,
+      child: Center(
+        child: Text(widget._emptyText),));
 
   //Logic
   void _loadInitialPosts() {
@@ -2018,6 +2027,8 @@ class _GroupPollsContent extends StatefulWidget {
 
   @override
   _GroupPollsState createState() => _GroupPollsState();
+
+  String get _emptyText => Localization().getStringEx("", "No group polls");
 }
 
 class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAliveClientMixin<_GroupPollsContent>
@@ -2079,12 +2090,12 @@ class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAlive
     }
 
     return Stack(key: _pollsKey, children: [
-      Column(children: <Widget>[
-        SectionSlantHeader(
-            title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
-            titleIconKey: 'polls',
-            children: pollsContentList)
-      ]),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+        Column(children: <Widget>[
+          Visibility(visible: CollectionUtils.isEmpty(_groupPolls) && _pollsLoading == false,
+              child: _buildEmptyContent()),
+          ...pollsContentList
+        ])),
       _pollsLoading
           ? Center(
           child: Container(
@@ -2093,6 +2104,10 @@ class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAlive
           : Container()
     ]);
   }
+
+  Widget _buildEmptyContent() => Container(height: 100,
+      child: Center(
+        child: Text(widget._emptyText),));
 
   Future<void> _loadPolls() async {
     if (StringUtils.isNotEmpty(_groupId) && _group!.currentUserIsMemberOrAdmin) {
@@ -2166,6 +2181,8 @@ class _GroupMessagesContent extends StatefulWidget {
 
   const _GroupMessagesContent({this.group, this.updateController});
 
+  String get _emptyText => Localization().getStringEx("", "No messages");
+
   @override
   State<StatefulWidget> createState() => _GroupMessagesState();
 }
@@ -2204,34 +2221,18 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
 
   Widget _buildMessages() {
     List<Widget> messagesContent = [];
-
-    if (CollectionUtils.isEmpty(_messages)) {
-      if (_group?.currentUserIsMemberOrAdmin == true) {
-        return  Stack(children: [
-          Column(children: <Widget>[
-            SectionSlantHeader(
-                title: Localization().getStringEx("panel.group_detail.label.messages", 'Direct Messages'),
-                titleIconKey: 'posts',
-                children: messagesContent)
-          ]),
-          _loadingMessagesPage == true
-          ? Center(
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 50),
-              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
-          : Container()
-        ]);
-      } else {
-        return Container();
+    
+    if(CollectionUtils.isNotEmpty(_messages)) {
+      for (int i = 0; i < _messages.length; i++) {
+        Post? message = _messages[i];
+        if (i > 0) {
+          messagesContent.add(Container(height: 16));
+        }
+        messagesContent.add(GroupPostCard(
+            key: (i == 0) ? _lastMessageKey : null,
+            post: message,
+            group: _group!));
       }
-    }
-
-    for (int i = 0; i <_messages.length ; i++) {
-      Post? message = _messages[i];
-      if (i > 0) {
-        messagesContent.add(Container(height: 16));
-      }
-      messagesContent.add(GroupPostCard(key: (i == 0) ? _lastMessageKey : null, post: message, group: _group!));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreMessages != false) && (0 < _messages.length)) {
@@ -2251,16 +2252,25 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
       );
     }
 
-    return Column(children: <Widget>[
-      SectionSlantHeader(
-          title: Localization().getStringEx("panel.group_detail.label.messages", 'Direct Messages'),
-          titleIconKey: 'posts',
-          // rightIconKey: _canCreateMessage ? "plus-circle" : null,
-          // rightIconAction: _canCreateMessage ? _onTapCreatePost : null,
-          // rightIconLabel: _canCreateMessage ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
-          children: messagesContent)
+    return Stack(children: [
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+      Column(children: <Widget>[
+        Visibility(visible: CollectionUtils.isEmpty(_messages) && _loadingMessagesPage == false,
+            child: _buildEmptyContent()),
+        ...messagesContent,
+      ])),
+      _loadingMessagesPage == true
+          ? Center(
+          child: Container(
+              padding: EdgeInsets.symmetric(vertical: 50),
+              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
+          : Container()
     ]);
   }
+  
+  Widget _buildEmptyContent() => Container(height: 100,
+      child: Center(
+        child: Text(widget._emptyText),));
 
   void _loadInitialMessages() {
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
@@ -2391,6 +2401,8 @@ class _GroupScheduledPostsContent extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _GroupScheduledPostsState();
+
+  String get _emptyText => Localization().getStringEx("", "No scheduled posts");
 }
 
 class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with AutomaticKeepAliveClientMixin<_GroupScheduledPostsContent>
@@ -2403,6 +2415,8 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
   bool? _scrollToLastScheduledPostsAfterRefresh;
 
   Group? get _group => widget.group;
+
+  bool get _isEmpty => CollectionUtils.isEmpty(_scheduledPosts);
 
   @override
   void initState() {
@@ -2466,13 +2480,12 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
     }
 
     return Stack(children: [
-      Column(children: <Widget>[
-        SectionSlantHeader(
-            title: Localization().getStringEx(
-                "panel.group_detail.label.scheduled_posts", 'Scheduled Posts'),
-            titleIconKey: 'posts',
-            children: scheduledPostsContent)
-      ]),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+        Column(children: <Widget>[
+          Visibility(visible: _isEmpty && _loadingScheduledPostsPage == false,
+              child: _buildEmptyContent()),
+           ...scheduledPostsContent,
+      ])),
       _loadingScheduledPostsPage == true
           ? Center(
           child: Container(
@@ -2481,6 +2494,10 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
           : Container()
     ]);
   }
+
+  Widget _buildEmptyContent() => Container(height: 100, 
+      child: Center(
+        child: Text(widget._emptyText),));
 
   void _loadInitialScheduledPosts() {
     Log.d("_GroupScheduledPostsState._loadInitialScheduledPosts");
