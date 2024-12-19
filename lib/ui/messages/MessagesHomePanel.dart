@@ -89,7 +89,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   final int _conversationsPageSize = 20;
 
-  // String? _selectedCategory;
   _TimeFilter? _selectedTime;
   bool? _selectedMutedValue;
   _FilterType? _selectedFilter;
@@ -97,11 +96,14 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   bool? _loading, _loadingMore, _processingOption;
   List<Conversation> _conversations = <Conversation>[];
-  // List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
 
   bool _isEditMode = false;
   Set<String> _selectedConversationIds = Set<String>();
+
+  String _searchText = '';
+  final TextEditingController _searchTextController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   // bool _loadingMarkAllAsRead = false;
 
@@ -121,6 +123,8 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   @override
   void dispose() {
     super.dispose();
+    _searchTextController.dispose();
+    _searchFocusNode.dispose();
     NotificationService().unsubscribe(this);
   }
 
@@ -157,6 +161,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       // _buildBanner(),
       _buildAdditionalButtons(),
       _buildFilters(),
+      _searchBarWidget,
       Expanded(child:
         _buildPage(context),
       )
@@ -427,6 +432,72 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
     return timeDates;
   }
+
+  Widget get _searchBarWidget =>
+    Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child:
+      Row(children: [
+        Expanded(child:
+          Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+            Row(children: <Widget>[
+              Expanded(child:
+                _searchTextWidget
+              ),
+              _searchImageButton('close',
+                label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+                hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+                rightPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapClear,
+              ),
+              _searchImageButton('search',
+                label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+                hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+                leftPadding: _searchImageButtonHorzPadding / 2,
+                onTap: _onTapSearch,
+              ),
+            ],)
+          )
+        ),
+      ],),
+    );
+
+  Widget get _searchTextWidget =>
+      Semantics(
+          label: Localization().getStringEx('panel.messages.directory.conversations.search.field.label', 'SEARCH FIELD'),
+          hint: null,
+          textField: true,
+          excludeSemantics: true,
+          value: _searchTextController.text,
+          child: TextField(
+            controller: _searchTextController,
+            focusNode: _searchFocusNode,
+            decoration: InputDecoration(border: InputBorder.none,),
+            style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
+            cursorColor: Styles().colors.fillColorSecondary,
+            keyboardType: TextInputType.text,
+            autocorrect: false,
+            autofocus: false,
+            maxLines: 1,
+            onSubmitted: (_) => _onTapSearch(),
+          )
+      );
+
+  Decoration get _searchBarDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+    borderRadius: BorderRadius.circular(12),
+  );
+
+  Widget _searchImageButton(String image, { String? label, String? hint, double leftPadding = _searchImageButtonHorzPadding, double rightPadding = _searchImageButtonHorzPadding, void Function()? onTap }) =>
+    Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+      InkWell(onTap: onTap, child:
+        Padding(padding: EdgeInsets.only(left: leftPadding, right: rightPadding, top: _searchImageButtonVertPadding, bottom: _searchImageButtonVertPadding), child:
+          Styles().images.getImage(image, excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  static const double _searchImageButtonHorzPadding = 16;
+  static const double _searchImageButtonVertPadding = 12;
 
   static Map<_TimeFilter, _DateTimeInterval> _getTimeFilterIntervals() {
     DateTime now = DateTime.now();
@@ -789,6 +860,28 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel(recentConversations: _conversations, conversationPageSize: _conversationsPageSize,)));
   }
 
+  void _onTapClear() {
+    Analytics().logSelect(target: 'Search Clear');
+    if (_searchText.isNotEmpty) {
+      setState(() {
+        _searchTextController.text = _searchText = '';
+      });
+      _searchFocusNode.unfocus();
+      _loadContent();
+    }
+  }
+
+  void _onTapSearch() {
+    Analytics().logSelect(target: 'Search Text');
+    if (_searchText != _searchTextController.text) {
+      setState(() {
+        _searchText = _searchTextController.text;
+      });
+      _searchFocusNode.unfocus();
+      _loadContent();
+    }
+  }
+
   Future<void> _onPullToRefresh() async {
     _loadContent();
   }
@@ -831,7 +924,14 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<Conversation>? conversations = await Social().loadConversations(mute: _selectedMutedValue, offset: 0, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
+    List<Conversation>? conversations = await Social().loadConversations(
+      mute: _selectedMutedValue,
+      offset: 0,
+      limit: _conversationsPageSize,
+      name: _searchText.isNotEmpty ? _searchText : null,
+      fromTime: selectedTimeInterval?.fromTime,
+      toTime: selectedTimeInterval?.toTime
+    );
     if (mounted) {
       setState(() {
         if (conversations != null) {
@@ -855,7 +955,14 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<Conversation>? conversations = await Social().loadConversations(mute: _selectedMutedValue, offset: _conversations.length, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
+    List<Conversation>? conversations = await Social().loadConversations(
+      mute: _selectedMutedValue,
+      offset: _conversations.length,
+      limit: _conversationsPageSize,
+      name: _searchText.isNotEmpty ? _searchText : null,
+      fromTime: selectedTimeInterval?.fromTime,
+      toTime: selectedTimeInterval?.toTime
+    );
     setStateIfMounted(() {
       if (conversations != null) {
         _conversations.addAll(conversations);
