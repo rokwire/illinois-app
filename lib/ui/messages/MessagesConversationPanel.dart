@@ -1,6 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/SpeechToText.dart';
@@ -38,7 +38,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _loading = false;
   bool _loadingMore = false;
   bool _submitting = false;
-  bool _messageOptionsExpanded = false;
 
   // Use the actual Auth2 accountId instead of a placeholder.
   String? get _currentUserId => Auth2().accountId;
@@ -214,7 +213,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
-    bool isCurrentUser = (senderId == currentUserId);
+    bool isCurrentUser = (senderId == _currentUserId);
 
     return FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
@@ -359,7 +358,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                             textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.send,
                             focusNode: _inputFieldFocus,
-                            onTap: _onTapChatBar,
                             onSubmitted: _submitMessage,
                             onChanged: (_) => setStateIfMounted(() {}),
                             cursorColor: Styles().colors.fillColorPrimary,
@@ -414,77 +412,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   }
                       : null))));
     }
-  }
-
-
-  Widget _buildMessageOptionsWidget() {
-    return _messageOptionsExpanded ? Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        //_buildAttachImage(),
-        _buildSpeechToTextImage(),
-        _buildMessageOptionsImage(),
-      ],
-    ) : _buildMessageOptionsImage();
-  }
-
-  Widget _buildMessageOptionsImage() {
-    return MergeSemantics(
-        child: Semantics(
-            label: Localization().getStringEx('', "Options"),
-            enabled: true,
-            child: IconButton(
-                splashRadius: 24,
-                icon: Styles().images.getImage(_messageOptionsExpanded ? 'chevron-left-bold' : 'chevron-right-bold') ??
-                    Icon(_messageOptionsExpanded ? Icons.chevron_left : Icons.chevron_right, color: Styles().colors.fillColorSecondary, semanticLabel: ""),
-                onPressed: () {
-                  setState(() {
-                    _messageOptionsExpanded = !_messageOptionsExpanded;
-                  });
-                }
-            )
-        )
-    );
-  }
-
-  Widget _buildAttachImage() {
-    return MergeSemantics(
-        child: Semantics(
-            label: Localization().getStringEx('', "Attach"),
-            enabled: true,
-            child: IconButton(
-                splashRadius: 24,
-                icon: Styles().images.getImage('image-placeholder', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
-                onPressed: () {
-                  // TODO: Implement attachment picker once ready
-                }
-            )
-        )
-    );
-  }
-
-  Widget _buildSpeechToTextImage() {
-    return Visibility(
-        visible: SpeechToText().isEnabled,
-        child: MergeSemantics(
-            child: Semantics(
-                label: Localization().getStringEx('', "Speech to text"),
-                child: IconButton(
-                    splashRadius: 24,
-                    icon: _listening
-                        ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop")
-                        : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone"),
-                    onPressed: () {
-                      if (_listening) {
-                        _stopListening();
-                      } else {
-                        _startListening();
-                      }
-                    }
-                )
-            )
-        )
-    );
   }
 
   Future<void> _loadMessages() async {
@@ -564,12 +491,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     _loadMessages();
   }
 
-  void _onTapChatBar() {
-    setState(() {
-      _messageOptionsExpanded = false;
-    });
-  }
-
   Future<void> _submitMessage(String message) async {
     if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && _currentUserId != null && _submitting == false) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -579,7 +500,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
       // Create a temporary message and add it immediately
       Message tempMessage = Message(
-        sender: ConversationMember(accountId: currentUserId, name: Auth2().fullName ?? 'You'),
+        sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
         message: messageText,
         dateSentUtc: DateTime.now().toUtc(),
       );
