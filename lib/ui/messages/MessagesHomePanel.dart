@@ -173,38 +173,40 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   Widget _buildPage(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _onPullToRefresh,
-      child: Container(
-        color: Styles().colors.background,
-        child: Stack(children: [
-          Visibility(visible: (_loading != true), child:
-            Padding(padding: EdgeInsets.only(top: 12), child: _buildConversationsContent())
-          ),
-          Visibility(visible: (_loading == true), child:
-            Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-            )
-          ),
-          Visibility(visible: (_selectedFilter != null), child:
-            Stack(children:<Widget>[
-              _buildDisabledContentLayer(),
-              _buildFilterValues(),
-            ]),
-          ),
-        ]),
-      ),
+    return Container(
+      color: Styles().colors.background,
+      child: Stack(children: [
+        Visibility(visible: (_loading != true), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child: _buildConversationsContent())
+        ),
+        Visibility(visible: (_loading == true), child:
+          Align(alignment: Alignment.center, child:
+            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+          )
+        ),
+        Visibility(visible: (_selectedFilter != null), child:
+          Stack(children:<Widget>[
+            _buildDisabledContentLayer(),
+            _buildFilterValues(),
+          ]),
+        ),
+      ]),
     );
   }
 
   Widget _buildConversationsContent() {
     if (_conversations.isNotEmpty) {
       int count = _conversations.length + ((_loadingMore == true) ? 1 : 0);
-      return ListView.separated(
-          separatorBuilder: (context, index) => Container(height: 16),
-          itemCount: count,
-          itemBuilder: _buildListEntry,
-          controller: _scrollController);
+      return RefreshIndicator(
+        onRefresh: _onPullToRefresh,
+        child: ListView.separated(
+            separatorBuilder: (context, index) => Container(height: 16),
+            itemCount: count,
+            itemBuilder: _buildListEntry,
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+        ),
+      );
     }
     else {
       return Column(children: <Widget>[
