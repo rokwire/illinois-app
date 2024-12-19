@@ -10,12 +10,16 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class RecentConversationsPage extends StatefulWidget {
+  final String? searchText;
   final ScrollController? scrollController;
   final List<Conversation> recentConversations;
   final int conversationPageSize;
-  final void Function()? onSelectedConversationChanged;
+  final void Function(bool, Conversation)? onConversationSelectionChanged;
+  final Set<String>? selectedAccountIds;
 
-  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize, this.scrollController, this.onSelectedConversationChanged });
+  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize,
+    this.searchText, this.scrollController,
+    this.onConversationSelectionChanged, this.selectedAccountIds });
 
   @override
   State<StatefulWidget> createState() => RecentConversationsPageState();
@@ -25,24 +29,19 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
 
   List<Conversation>? _conversations;
   late Map<String, Conversation> _conversationsMap;
-  String _searchText = '';
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
   bool _canExtend = false;
 
   String? _expandedConversationId;
-  final Set<String> _selectedIds = <String>{};
-
-  final TextEditingController _searchTextController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
 
   // Map<String, dynamic> _filterAttributes = <String, dynamic>{};
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Social.notifyConversationsUpdated
+      Social.notifyMessageSent,
     ]);
 
     widget.scrollController?.addListener(_scrollListener);
@@ -54,10 +53,8 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
 
   @override
   void dispose() {
-    widget.scrollController?.removeListener(_scrollListener);
-    _searchTextController.dispose();
-    _searchFocusNode.dispose();
     NotificationService().unsubscribe(this);
+    widget.scrollController?.removeListener(_scrollListener);
     super.dispose();
   }
 
@@ -67,11 +64,8 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Social.notifyConversationsUpdated) {
+    if (name == Social.notifyMessageSent) {
       if (mounted) {
-        setState(() {
-          _selectedIds.clear();
-        });
         _load();
       }
     }
@@ -81,22 +75,18 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   Widget build(BuildContext context) {
     super.build(context);
 
-    List<Widget> contentList = <Widget>[
-      _searchBarWidget,
-    ];
     if (_loadingProgress) {
-      contentList.add(_loadingContent);
+      return _loadingContent;
     }
     else if (_conversations == null) {
-      contentList.add(_messageContent(Localization().getStringEx('panel.messages.directory.conversations.failed.text', 'Failed to load recent conversations.')));
+      return _messageContent(Localization().getStringEx('panel.messages.directory.conversations.failed.text', 'Failed to load recent conversations.'));
     }
     else if (_conversations?.isEmpty == true) {
-      contentList.add(_messageContent(Localization().getStringEx('panel.messages.directory.conversations.empty.text', 'There are no recent conversations.')));
+      return _messageContent(Localization().getStringEx('panel.messages.directory.conversations.empty.text', 'There are no recent conversations.'));
     }
     else {
-      contentList.add(_conversationsContent);
+      return _conversationsContent;
     }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
   Widget get _conversationsContent {
@@ -107,9 +97,9 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       for (Conversation conversation in conversations) {
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
-          onToggleExpanded: () => _onToggleConversationExpanded(conversation),
-          selected: _selectedIds.contains(conversation.id),
-          onToggleSelected: (value) => _onToggleConversationSelected(value, conversation),
+          onToggleExpanded: conversation.isGroupConversation ? () => _onToggleConversationExpanded(conversation) : null,
+          selected: ListUtils.contains(widget.selectedAccountIds, conversation.memberIds, checkAll: true) ?? false, // conversation must contain all selected account IDs to be selected
+          onToggleSelected: (value) => widget.onConversationSelectionChanged?.call(value, conversation),
         ));
       }
     }
@@ -126,122 +116,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     setState(() {
       _expandedConversationId = (_expandedConversationId != conversation.id) ? conversation.id : null;
     });
-  }
-
-  void _onToggleConversationSelected(bool value, Conversation conversation) {
-    Analytics().logSelect(target: 'Select', source: conversation.id);
-    if (StringUtils.isNotEmpty(conversation.id) && mounted) {
-      setState(() {
-        if (value) {
-          _selectedIds.add(conversation.id!);
-        }
-        else {
-          _selectedIds.remove(conversation.id);
-        }
-      });
-      widget.onSelectedConversationChanged?.call();
-    }
-  }
-
-  Set<String> get selectedConversationIds =>
-    _selectedIds;
-
-  Set<String> get selectedAccountIds {
-    Set<String> selectedIds = <String>{};
-    for (String conversationId in _selectedIds) {
-      List<String>? memberIds = _conversationsMap[conversationId]?.memberIds;
-      if (memberIds != null) {
-        selectedIds.addAll(memberIds);
-      }
-    }
-    return selectedIds;
-  }
-
-  void clearSelectedIds() {
-    setStateIfMounted(() {
-      _selectedIds.clear();
-    });
-  }
-
-  Widget get _searchBarWidget =>
-      Padding(padding: const EdgeInsets.only(bottom: 16), child:
-        Row(children: [
-          Expanded(child:
-            Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
-              Row(children: <Widget>[
-                Expanded(child:
-                _searchTextWidget
-                ),
-                _searchImageButton('close',
-                  label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-                  hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-                  rightPadding: _searchImageButtonHorzPadding / 2,
-                  onTap: _onTapClear,
-                ),
-                _searchImageButton('search',
-                  label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-                  hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-                  leftPadding: _searchImageButtonHorzPadding / 2,
-                  onTap: _onTapSearch,
-                ),
-              ],)
-            )
-          ),
-          Padding(padding: EdgeInsets.only(left: 6), child:
-            _filtersButton
-          ),
-        ],),
-      );
-
-  Widget get _searchTextWidget =>
-      Semantics(
-          label: Localization().getStringEx('panel.messages.directory.conversations.search.field.label', 'SEARCH FIELD'),
-          hint: null,
-          textField: true,
-          excludeSemantics: true,
-          value: _searchTextController.text,
-          child: TextField(
-            controller: _searchTextController,
-            focusNode: _searchFocusNode,
-            decoration: InputDecoration(border: InputBorder.none,),
-            style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
-            cursorColor: Styles().colors.fillColorSecondary,
-            keyboardType: TextInputType.text,
-            autocorrect: false,
-            autofocus: false,
-            maxLines: 1,
-            onSubmitted: (_) => _onTapSearch(),
-          )
-      );
-
-  Decoration get _searchBarDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
-    borderRadius: BorderRadius.circular(12),
-  );
-
-  Widget _searchImageButton(String image, { String? label, String? hint, double leftPadding = _searchImageButtonHorzPadding, double rightPadding = _searchImageButtonHorzPadding, void Function()? onTap }) =>
-      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
-        InkWell(onTap: onTap, child:
-          Padding(padding: EdgeInsets.only(left: leftPadding, right: rightPadding, top: _searchImageButtonVertPadding, bottom: _searchImageButtonVertPadding), child:
-            Styles().images.getImage(image, excludeFromSemantics: true),
-          ),
-        ),
-      );
-
-  static const double _searchImageButtonHorzPadding = 16;
-  static const double _searchImageButtonVertPadding = 12;
-
-  Widget get _filtersButton =>
-      InkWell(onTap: _onFilter, child:
-        Container(decoration: _searchBarDecoration, padding: EdgeInsets.symmetric(vertical: 14, horizontal: 14), child:
-          Styles().images.getImage('filters') ?? SizedBox(width: 18, height: 18,),
-        ),
-      );
-
-  void _onFilter() {
-    Analytics().logSelect(target: 'Filters');
-    //TODO
   }
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
@@ -283,7 +157,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       });
 
       //TODO: add time intervals to filter
-      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize);
+      List<Conversation>? conversations = await Social().loadConversations(offset: 0, limit: widget.conversationPageSize, name: widget.searchText);
       setStateIfMounted(() {
         _loading = false;
         _loadingProgress = false;
@@ -311,7 +185,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       });
 
       //TODO: add time intervals to filter
-      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize);
+      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize, name: widget.searchText);
       if (mounted && _extending && !_loading) {
         setState(() {
           if (conversations != null) {
@@ -346,28 +220,6 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     }
     return map;
   }
-
-  void _onTapClear() {
-    Analytics().logSelect(target: 'Search Clear');
-    if (_searchText.isNotEmpty) {
-      setState(() {
-        _searchTextController.text = _searchText = '';
-      });
-      _searchFocusNode.unfocus();
-      _load();
-    }
-  }
-
-  void _onTapSearch() {
-    Analytics().logSelect(target: 'Search Text');
-    if (_searchText != _searchTextController.text) {
-      setState(() {
-        _searchText = _searchTextController.text;
-      });
-      _searchFocusNode.unfocus();
-      _load();
-    }
-  }
 }
 
 class RecentConversationCard extends StatefulWidget {
@@ -396,11 +248,12 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         Expanded(child:
           _expandedMembersContent
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
-          Styles().images.getImage('chevron2-up',)
-        ),
+        if (widget.onToggleExpanded != null)
+          Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
+            Styles().images.getImage('chevron2-up',)
+          ),
       ],),
-      );
+    );
 
   Widget _cardSelectionContent({ EdgeInsetsGeometry padding = EdgeInsets.zero }) =>
     InkWell(onTap: _onSelect, child:
@@ -441,9 +294,10 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
               ),
             ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
-            Styles().images.getImage('chevron2-down',)
-          )
+          if (widget.onToggleExpanded != null)
+            Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+              Styles().images.getImage('chevron2-down',)
+            )
         ],)
       );
 

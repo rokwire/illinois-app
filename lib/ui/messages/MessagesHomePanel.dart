@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
@@ -25,9 +23,9 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -35,7 +33,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -93,7 +90,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   final int _conversationsPageSize = 20;
 
-  // String? _selectedCategory;
   _TimeFilter? _selectedTime;
   bool? _selectedMutedValue;
   _FilterType? _selectedFilter;
@@ -101,24 +97,26 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   bool? _loading, _loadingMore, _processingOption;
   List<Conversation> _conversations = <Conversation>[];
-  // List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
 
   bool _isEditMode = false;
   Set<String> _selectedConversationIds = Set<String>();
 
-  bool _loadingMarkAllAsRead = false;
+  String _searchText = '';
+
+  // bool _loadingMarkAllAsRead = false;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Social.notifyConversationsUpdated
+      Social.notifyConversationsUpdated,
+      Social.notifyMessageSent,
     ]);
 
     _scrollController.addListener(_scrollListener);
     _selectedMutedValue = false;
-    _loadInitialContent();
+    _loadContent();
   }
 
   @override
@@ -130,9 +128,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Social.notifyConversationsUpdated) {
+    if (name == Social.notifyConversationsUpdated || name == Social.notifyMessageSent) {
       if (mounted) {
-        _loadInitialContent();
+        _loadContent();
       }
     }
   }
@@ -160,6 +158,14 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       // _buildBanner(),
       _buildAdditionalButtons(),
       _buildFilters(),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ProfileDirectoryFilterBar(
+          key: ValueKey(_searchText),
+          searchText: _searchText,
+          onSearchText: _onSearchText,
+        ),
+      ),
       Expanded(child:
         _buildPage(context),
       )
@@ -221,41 +227,22 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         ),
       );
     }
+    else if (index == _conversations.length) {
+      // loading more conversations
+      return _buildListLoadingIndicator();
+    }
     return Container();
-
-    // dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
-    // if (entry is Conversation) {
-    //   return Padding(
-    //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    //     child: ConversationCard(
-    //         conversation: entry,
-    //         selected: (_isEditMode == true) ? _selectedConversationIds.contains(entry.id) : null,
-    //         onTap: () => _onTapConversation(entry)),
-    //   );
-    // }
-    // else if (entry is String) {
-    //   Widget heading = _buildListHeading(text: entry);
-    //   return index > 0 ? Padding(padding: const EdgeInsets.only(top: 8), child: heading) : heading;
-    // }
-    // else {
-    //   return _buildListLoadingIndicator();
-    // }
   }
 
-  // Widget _buildListHeading({String? text}) {
-  //   return Container(color: Styles().colors.fillColorSecondary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-  //     Semantics(header: true, child:
-  //       Text(text ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),)
-  //     )
-  //   );
-  // }
-
-  // Widget _buildListLoadingIndicator() {
-  //   return Container(padding: EdgeInsets.all(6), child:
-  //   Align(alignment: Alignment.center, child:
-  //   SizedBox(width: 24, height: 24, child:
-  //   CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
-  // }
+  Widget _buildListLoadingIndicator() {
+    return Container(padding: EdgeInsets.all(6), child:
+      Align(alignment: Alignment.center, child:
+        SizedBox(width: 24, height: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),
+        ),
+      ),
+    ),);
+  }
 
   void _onTapConversation(Conversation conversation) {
     if (_isEditMode == true) {
@@ -324,23 +311,23 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildReadAllButton(),
+          // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
           Spacer(),
-          _buildNewMessageButton(),
+          Flexible(flex: 1, child: _buildNewMessageButton()),
         ],
       ),
     );
   }
 
-  Widget _buildReadAllButton() {
-    return Semantics(container: true, child: Container(
-        child: UnderlinedButton(
-            title: Localization().getStringEx("panel.messages.mark_all_read.label", "Mark all as read"),
-            // titleStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),
-            padding: EdgeInsets.symmetric(vertical: 8),
-            progress: _loadingMarkAllAsRead,
-            onTap: _onTapMarkAllAsRead)));
-  }
+  // Widget _buildReadAllButton() {
+  //   return Semantics(container: true, child: Container(
+  //       child: UnderlinedButton(
+  //           title: Localization().getStringEx("panel.messages.mark_all_read.label", "Mark all as read"),
+  //           // titleStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),
+  //           padding: EdgeInsets.symmetric(vertical: 8),
+  //           progress: _loadingMarkAllAsRead,
+  //           onTap: _onTapMarkAllAsRead)));
+  // }
 
   // Filters
   Widget _buildFilters() {
@@ -464,16 +451,29 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _onFilterValue(_FilterType? filterType, _FilterEntry filterEntry) {
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
+    bool shouldLoadContent = false;
     setState(() {
       switch(filterType) {
-        case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
-        case _FilterType.Time: _selectedTime = filterEntry.value; break;
+        case _FilterType.Muted:
+          if (_selectedMutedValue != filterEntry.value) {
+            _selectedMutedValue = filterEntry.value;
+            shouldLoadContent = true;
+          }
+          break;
+        case _FilterType.Time:
+          if (_selectedTime != filterEntry.value) {
+            _selectedTime = filterEntry.value;
+            shouldLoadContent = true;
+          }
+          break;
         default: break;
       }
       _selectedFilter = null;
     });
 
-    _loadInitialContent();
+    if (shouldLoadContent) {
+      _loadContent();
+    }
   }
 
   // Header bar
@@ -521,20 +521,18 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   Widget _buildNewMessageButton() {
-    return SizedBox(
-      width: 168,
-      child: RibbonButton(
-          textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
-            style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
-          ),
-          label: Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
-          hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
-          backgroundColor: Styles().colors.fillColorPrimary,
-          leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
-          rightIconKey: null,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          onTap: _onTapNewMessage,
-      ),
+    return RibbonButton(
+        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
+          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
+        backgroundColor: Styles().colors.fillColorPrimary,
+        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
+        rightIconKey: null,
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        onTap: _onTapNewMessage,
     );
   }
 
@@ -567,39 +565,70 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Padding(padding: EdgeInsets.only(bottom: 16), child:
-      Row(children:<Widget>[Expanded(child:
-      Text(headingText, style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"),)
-      )]),
+        Row(children:<Widget>[Expanded(child:
+          Text(headingText, style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"),)
+        )]),
       ),
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
-      InkWell(onTap: () => _onDelete(context), child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-      Row(children:<Widget>[
-        Padding(padding: EdgeInsets.only(right: 8), child:
-        Styles().images.getImage('trash')
-        ),
-        Expanded(child:
-        Text("Delete", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
-        ),
-      ]),
-      )
+      InkWell(onTap: () => _onToggleMute(mute: true), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Row(children:<Widget>[
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images.getImage('notification-off')
+            ),
+            Expanded(child:
+              Text("Mute", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+            ),
+          ]),
+        )
       ),
+
+      Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
+
+      InkWell(onTap: () => _onToggleMute(mute: false), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Row(children:<Widget>[
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images.getImage('notification-orange')
+            ),
+            Expanded(child:
+              Text("Unmute", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+            ),
+          ]),
+        )
+      ),
+
+      // Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
+
+      //TODO: what does deleting a conversation mean?
+      // InkWell(onTap: () => _onDelete(context), child:
+      //   Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+      //     Row(children:<Widget>[
+      //       Padding(padding: EdgeInsets.only(right: 8), child:
+      //         Styles().images.getImage('trash')
+      //       ),
+      //       Expanded(child:
+      //         Text("Delete", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+      //       ),
+      //     ]),
+      //   )
+      // ),
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
       InkWell(onTap: () => _onCancelOptions(context), child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-      Row(children:<Widget>[
-        Padding(padding: EdgeInsets.only(right: 8), child:
-        Styles().images.getImage('close-circle', excludeFromSemantics: true)
-        ),
-        Expanded(child:
-        Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
-        ),
-      ]),
-      )
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Row(children:<Widget>[
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images.getImage('close-circle', excludeFromSemantics: true)
+            ),
+            Expanded(child:
+              Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+            ),
+          ]),
+        )
       ),
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
@@ -607,6 +636,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     );
   }
 
+  /*
   Widget _buildConfirmationDialog(BuildContext context, {String? title, String? message, String? positiveButtonTitle, String? negativeButtonTitle, void Function()? onPositive}) {
     return StatefulBuilder(builder: (context, setState) {
       return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
@@ -656,6 +686,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       ); },
     );
   }
+  */
 
   void _onEdit() {
     Analytics().logSelect(target: "Edit");
@@ -701,6 +732,21 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Navigator.pop(context);
   }
 
+  void _onToggleMute({required bool mute}) {
+    Analytics().logSelect(target: mute ? "Mute" : "Unmute");
+
+    //TODO: bulk update conversation API on Social BB?
+    for (String conversationId in _selectedConversationIds) {
+      Social().updateConverstion(conversationId: conversationId, mute: mute);
+    }
+
+    setState(() {
+      _selectedConversationIds.clear();
+    });
+    Navigator.pop(context);
+  }
+
+  /*
   void _onDelete(BuildContext context) {
     Analytics().logSelect(target: "Delete");
     Navigator.pop(context);
@@ -719,83 +765,67 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _onDeleteConfirm(BuildContext context) {
     Navigator.pop(context);
-    //TODO: what does deleting a conversation mean?
-    // setState(() {
-    //   _processingOption = true;
-    // });
-    // Inbox().deleteMessages(_selectedConversationIds).then((bool result) {
-    //   if (mounted) {
-    //     setState(() {
-    //       _processingOption = false;
-    //       if (result == true) {
-    //         _selectedConversationIds.clear();
-    //         _isEditMode = false;
-    //       }
-    //     });
-    //     if (result == true) {
-    //       // _refreshContent();
-    //     }
-    //     else {
-    //       AppAlert.showDialogResult(this.context, "Failed to delete conversation(s).");
-    //     }
-    //   }
-    // });
+    setState(() {
+      _processingOption = true;
+    });
+    Inbox().deleteMessages(_selectedConversationIds).then((bool result) {
+      if (mounted) {
+        setState(() {
+          _processingOption = false;
+          if (result == true) {
+            _selectedConversationIds.clear();
+            _isEditMode = false;
+          }
+        });
+        if (result == true) {
+          // _refreshContent();
+        }
+        else {
+          AppAlert.showDialogResult(this.context, "Failed to delete conversation(s).");
+        }
+      }
+    });
   }
 
   void _onCancelConfirmation({String? message, String? selection}) {
     Analytics().logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
   }
+  */
 
   void _onTapNewMessage() {
     Analytics().logSelect(target: "Messages Directory");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel(recentConversations: _conversations, conversationPageSize: _conversationsPageSize,)));
   }
 
-  Future<void> _refreshContent() async{
-    setStateIfMounted(() {
-      _loading = true;
-    });
-
-    int limit = max(_conversations.length, _conversationsPageSize);
-    _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<Conversation>? conversations = await Social().loadConversations(muted: _selectedMutedValue, offset: 0, limit: limit, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
+  void _onSearchText(String searchText) {
     if (mounted) {
       setState(() {
-        if (conversations != null) {
-          _conversations = conversations;
-          Conversation.sortListByLastActivityTime(_conversations);
-          _hasMoreConversations = (_conversationsPageSize <= conversations.length);
-        }
-        else {
-          _conversations.clear();
-          _hasMoreConversations = null;
-        }
-        // _contentList = _buildContentList();
-        _loading = false;
+        _searchText = searchText;
       });
+      _loadContent();
     }
   }
 
   Future<void> _onPullToRefresh() async {
-    _refreshContent();
+    _loadContent();
   }
 
-  void _onTapMarkAllAsRead() {
-    //TODO: implement once set up on Social BB
-    return;
-    // Analytics().logSelect(target: "Mark All As Read");
-    // _setMarkAllAsReadLoading(true);
-    // Inbox().markAllMessagesAsRead().then((succeeded) {
-    //   if (succeeded) {
-    //     _loadInitialContent();
-    //   } else {
-    //     AppAlert.showMessage(
-    //         context, Localization().getStringEx('panel.messages.mark_as_read.failed.msg', 'Failed to mark all conversations as read'));
-    //   }
-    //   _setMarkAllAsReadLoading(false);
-    // });
-  }
+  //TODO: implement once set up on Social BB
+  // void _onTapMarkAllAsRead() {
+  //   return;
+  //   Analytics().logSelect(target: "Mark All As Read");
+  //   _setMarkAllAsReadLoading(true);
+  //   Inbox().markAllMessagesAsRead().then((succeeded) {
+  //     if (succeeded) {
+  //       _loadInitialContent();
+  //     } else {
+  //       AppAlert.showMessage(
+  //           context, Localization().getStringEx('panel.messages.mark_as_read.failed.msg', 'Failed to mark all conversations as read'));
+  //     }
+  //     _setMarkAllAsReadLoading(false);
+  //   });
+  // }
 
   // void _setMarkAllAsReadLoading(bool loading) {
   //   setStateIfMounted(() {
@@ -813,100 +843,60 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   // Content
 
-  void _loadInitialContent() {
-    setState(() {
+  Future<void> _loadContent() async{
+    setStateIfMounted(() {
       _loading = true;
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Social().loadConversations(muted: _selectedMutedValue, offset: 0, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime).then((List<Conversation>? conversations) {
-      if (mounted) {
-        setState(() {
-          if (conversations != null) {
-            _conversations = conversations;
-            Conversation.sortListByLastActivityTime(_conversations);
-            _hasMoreConversations = (_conversationsPageSize <= conversations.length);
-          }
-          else {
-            _conversations.clear();
-            _hasMoreConversations = null;
-          }
-          // _contentList = _buildContentList();
-          _loading = false;
-        });
-      }
-    });
+    List<Conversation>? conversations = await Social().loadConversations(
+      mute: _selectedMutedValue,
+      offset: 0,
+      limit: _conversationsPageSize,
+      name: _searchText,
+      fromTime: selectedTimeInterval?.fromTime,
+      toTime: selectedTimeInterval?.toTime
+    );
+    if (mounted) {
+      setState(() {
+        if (conversations != null) {
+          _conversations = conversations;
+          Conversation.sortListByLastActivityTime(_conversations);
+          _hasMoreConversations = (_conversationsPageSize <= conversations.length);
+        }
+        else {
+          _conversations.clear();
+          _hasMoreConversations = null;
+        }
+        // _contentList = _buildContentList();
+        _loading = false;
+      });
+    }
   }
 
-  void _loadMoreContent() {
+  Future<void> _loadMoreContent() async {
     setState(() {
       _loadingMore = true;
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Social().loadConversations(muted: _selectedMutedValue, offset: _conversations.length, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime).then((List<Conversation>? conversations) {
-      if (mounted) {
-        setState(() {
-          if (conversations != null) {
-            _conversations.addAll(conversations);
-            _hasMoreConversations = (_conversationsPageSize <= conversations.length);
-            // _contentList = _buildContentList();
-          }
-          _loadingMore = false;
-        });
+    List<Conversation>? conversations = await Social().loadConversations(
+      mute: _selectedMutedValue,
+      offset: _conversations.length,
+      limit: _conversationsPageSize,
+      name: _searchText,
+      fromTime: selectedTimeInterval?.fromTime,
+      toTime: selectedTimeInterval?.toTime
+    );
+    setStateIfMounted(() {
+      if (conversations != null) {
+        _conversations.addAll(conversations);
+        _hasMoreConversations = (_conversationsPageSize <= conversations.length);
+        // _contentList = _buildContentList();
       }
+      _loadingMore = false;
     });
   }
-
-  // List<dynamic> _buildContentList() {
-  //   Map<_TimeFilter, _DateTimeInterval> intervals = _getTimeFilterIntervals();
-  //   Map<_TimeFilter, List<Conversation>> timesMap = Map<_TimeFilter, List<Conversation>>();
-  //   List<Conversation>? otherList;
-  //   for (Conversation? conversation in _conversations) {
-  //     _TimeFilter? timeFilter = _filterTypeFromDate(conversation!.dateCreatedUtc?.toLocal(), intervals: intervals);
-  //     if (timeFilter != null) {
-  //       List<Conversation>? timeList = timesMap[timeFilter];
-  //       if (timeList == null) {
-  //         timesMap[timeFilter] = timeList = <Conversation>[];
-  //       }
-  //       timeList.add(conversation);
-  //     }
-  //     else {
-  //       if (otherList == null) {
-  //         otherList = <Conversation>[];
-  //       }
-  //       otherList.add(conversation);
-  //     }
-  //   }
-  //
-  //   List<dynamic> contentList = <dynamic>[];
-  //   for (_FilterEntry timeEntry in _times) {
-  //     _TimeFilter? timeFilter = timeEntry.value;
-  //     List<Conversation>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
-  //     if (timeList != null) {
-  //       contentList.add(timeEntry.name!.toUpperCase());
-  //       contentList.addAll(timeList);
-  //     }
-  //   }
-  //
-  //   if (otherList != null) {
-  //     contentList.add(_FilterEntry.entryInList(_times, null)?.name?.toUpperCase() ?? '');
-  //     contentList.addAll(otherList);
-  //   }
-  //
-  //   return contentList;
-  // }
-
-  // _TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<_TimeFilter, _DateTimeInterval>? intervals }) {
-  //   for (_FilterEntry timeEntry in _times) {
-  //     _TimeFilter? timeFilter = timeEntry.value;
-  //     _DateTimeInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
-  //     if ((timeInterval != null) && (timeInterval.contains(dateTime))) {
-  //       return timeFilter;
-  //     }
-  //   }
-  //   return null;
-  // }
 
   void _scrollListener() {
     if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreConversations != false) && (_loadingMore != true) && (_loading != true)) {
