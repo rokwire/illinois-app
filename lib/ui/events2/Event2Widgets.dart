@@ -1,6 +1,9 @@
 
+import 'dart:math';
+
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
@@ -420,13 +423,21 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   bool get _canDeleteGroupEvent => _isGroupAdmin;
   bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
-  Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
-    Container(decoration: _imageHeadingDecoration, child:
-      AspectRatio(aspectRatio: 2.5, child:
-        Image.network(_event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
-      ),
-    )
-  );
+  Widget get _imageHeadingWidget {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double preferredWidth = screenWidth / 4.0;
+    double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
+    print('TESTIMAGE: events: screenWidth: $screenWidth');
+    print('TESTIMAGE: events: preferredWidth: $preferredWidth');
+    print('TESTIMAGE: events: imageWidth: $imageWidth');
+    return Visibility(
+        visible: _hasImage,
+        child: Container(
+          decoration: _imageHeadingDecoration,
+          child: Image.network(_event.imageUrl ?? '', width: imageWidth,
+                  fit: BoxFit.cover, headers: (kIsWeb ? null : Config().networkAuthHeaders), excludeFromSemantics: true),
+        ));
+  }
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
     border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),

@@ -15,7 +15,9 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/DailyIllini.dart';
@@ -236,7 +238,7 @@ class _MainStoryWidget extends _StoryWidget {
         children: [
           ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-                child: _buildImage()
+                child: _buildImage(context)
           ),
           InkWell(
             onTap: _onTap,
@@ -261,9 +263,15 @@ class _MainStoryWidget extends _StoryWidget {
     ));
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double preferredWidth = screenWidth / 3.0;
+    double? imageWidth = kIsWeb ? max(preferredWidth, 600) : null;
+    print('TESTIMAGE: daily Illini: screenWidth: $screenWidth');
+    print('TESTIMAGE: daily Illini: preferredWidth: $preferredWidth');
+    print('TESTIMAGE: daily Illini: imageWidth: $imageWidth');
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, width: imageWidth, loadingBuilder: (context, child, loadingProgress) {
       if (loadingProgress == null) {
         return child;
       }
