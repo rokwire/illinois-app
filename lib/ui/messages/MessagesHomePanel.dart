@@ -32,7 +32,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -305,7 +304,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         children: [
           // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
           Spacer(),
-          _buildNewMessageButton(),
+          Flexible(flex: 1, child: _buildNewMessageButton()),
         ],
       ),
     );
@@ -443,16 +442,29 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _onFilterValue(_FilterType? filterType, _FilterEntry filterEntry) {
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
+    bool shouldLoadContent = false;
     setState(() {
       switch(filterType) {
-        case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
-        case _FilterType.Time: _selectedTime = filterEntry.value; break;
+        case _FilterType.Muted:
+          if (_selectedMutedValue != filterEntry.value) {
+            _selectedMutedValue = filterEntry.value;
+            shouldLoadContent = true;
+          }
+          break;
+        case _FilterType.Time:
+          if (_selectedTime != filterEntry.value) {
+            _selectedTime = filterEntry.value;
+            shouldLoadContent = true;
+          }
+          break;
         default: break;
       }
       _selectedFilter = null;
     });
 
-    _loadContent();
+    if (shouldLoadContent) {
+      _loadContent();
+    }
   }
 
   // Header bar
@@ -500,20 +512,18 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   Widget _buildNewMessageButton() {
-    return SizedBox(
-      width: 168,
-      child: RibbonButton(
-          textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
-            style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
-          ),
-          label: Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
-          hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
-          backgroundColor: Styles().colors.fillColorPrimary,
-          leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
-          rightIconKey: null,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          onTap: _onTapNewMessage,
-      ),
+    return RibbonButton(
+        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
+          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
+        backgroundColor: Styles().colors.fillColorPrimary,
+        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
+        rightIconKey: null,
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        onTap: _onTapNewMessage,
     );
   }
 
@@ -546,39 +556,70 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Padding(padding: EdgeInsets.only(bottom: 16), child:
-      Row(children:<Widget>[Expanded(child:
-      Text(headingText, style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"),)
-      )]),
+        Row(children:<Widget>[Expanded(child:
+          Text(headingText, style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"),)
+        )]),
       ),
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
-      InkWell(onTap: () => _onDelete(context), child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-      Row(children:<Widget>[
-        Padding(padding: EdgeInsets.only(right: 8), child:
-        Styles().images.getImage('trash')
-        ),
-        Expanded(child:
-        Text("Delete", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
-        ),
-      ]),
-      )
+      InkWell(onTap: () => _onToggleMute(mute: true), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Row(children:<Widget>[
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images.getImage('notification-off')
+            ),
+            Expanded(child:
+              Text("Mute", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+            ),
+          ]),
+        )
       ),
+
+      Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
+
+      InkWell(onTap: () => _onToggleMute(mute: false), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Row(children:<Widget>[
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images.getImage('notification-orange')
+            ),
+            Expanded(child:
+              Text("Unmute", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+            ),
+          ]),
+        )
+      ),
+
+      // Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
+
+      //TODO: what does deleting a conversation mean?
+      // InkWell(onTap: () => _onDelete(context), child:
+      //   Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+      //     Row(children:<Widget>[
+      //       Padding(padding: EdgeInsets.only(right: 8), child:
+      //         Styles().images.getImage('trash')
+      //       ),
+      //       Expanded(child:
+      //         Text("Delete", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+      //       ),
+      //     ]),
+      //   )
+      // ),
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
       InkWell(onTap: () => _onCancelOptions(context), child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-      Row(children:<Widget>[
-        Padding(padding: EdgeInsets.only(right: 8), child:
-        Styles().images.getImage('close-circle', excludeFromSemantics: true)
-        ),
-        Expanded(child:
-        Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
-        ),
-      ]),
-      )
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Row(children:<Widget>[
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images.getImage('close-circle', excludeFromSemantics: true)
+            ),
+            Expanded(child:
+              Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
+            ),
+          ]),
+        )
       ),
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
@@ -586,6 +627,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     );
   }
 
+  /*
   Widget _buildConfirmationDialog(BuildContext context, {String? title, String? message, String? positiveButtonTitle, String? negativeButtonTitle, void Function()? onPositive}) {
     return StatefulBuilder(builder: (context, setState) {
       return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
@@ -635,6 +677,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       ); },
     );
   }
+  */
 
   void _onEdit() {
     Analytics().logSelect(target: "Edit");
@@ -680,6 +723,21 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Navigator.pop(context);
   }
 
+  void _onToggleMute({required bool mute}) {
+    Analytics().logSelect(target: mute ? "Mute" : "Unmute");
+
+    //TODO: bulk update conversation API on Social BB?
+    for (String conversationId in _selectedConversationIds) {
+      Social().updateConverstion(conversationId: conversationId, mute: mute);
+    }
+
+    setState(() {
+      _selectedConversationIds.clear();
+    });
+    Navigator.pop(context);
+  }
+
+  /*
   void _onDelete(BuildContext context) {
     Analytics().logSelect(target: "Delete");
     Navigator.pop(context);
@@ -698,33 +756,33 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   void _onDeleteConfirm(BuildContext context) {
     Navigator.pop(context);
-    //TODO: what does deleting a conversation mean?
-    // setState(() {
-    //   _processingOption = true;
-    // });
-    // Inbox().deleteMessages(_selectedConversationIds).then((bool result) {
-    //   if (mounted) {
-    //     setState(() {
-    //       _processingOption = false;
-    //       if (result == true) {
-    //         _selectedConversationIds.clear();
-    //         _isEditMode = false;
-    //       }
-    //     });
-    //     if (result == true) {
-    //       // _refreshContent();
-    //     }
-    //     else {
-    //       AppAlert.showDialogResult(this.context, "Failed to delete conversation(s).");
-    //     }
-    //   }
-    // });
+    setState(() {
+      _processingOption = true;
+    });
+    Inbox().deleteMessages(_selectedConversationIds).then((bool result) {
+      if (mounted) {
+        setState(() {
+          _processingOption = false;
+          if (result == true) {
+            _selectedConversationIds.clear();
+            _isEditMode = false;
+          }
+        });
+        if (result == true) {
+          // _refreshContent();
+        }
+        else {
+          AppAlert.showDialogResult(this.context, "Failed to delete conversation(s).");
+        }
+      }
+    });
   }
 
   void _onCancelConfirmation({String? message, String? selection}) {
     Analytics().logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
   }
+  */
 
   void _onTapNewMessage() {
     Analytics().logSelect(target: "Messages Directory");
@@ -773,7 +831,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<Conversation>? conversations = await Social().loadConversations(muted: _selectedMutedValue, offset: 0, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
+    List<Conversation>? conversations = await Social().loadConversations(mute: _selectedMutedValue, offset: 0, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
     if (mounted) {
       setState(() {
         if (conversations != null) {
@@ -797,7 +855,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<Conversation>? conversations = await Social().loadConversations(muted: _selectedMutedValue, offset: _conversations.length, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
+    List<Conversation>? conversations = await Social().loadConversations(mute: _selectedMutedValue, offset: _conversations.length, limit: _conversationsPageSize, fromTime: selectedTimeInterval?.fromTime, toTime: selectedTimeInterval?.toTime);
     setStateIfMounted(() {
       if (conversations != null) {
         _conversations.addAll(conversations);
