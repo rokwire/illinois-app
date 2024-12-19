@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesWidgets.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsList.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -30,7 +29,7 @@ class MessagesDirectoryPanel extends StatefulWidget {
 
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with TickerProviderStateMixin implements NotificationsListener {
   final GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
-  GlobalKey<ProfileDirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
+  GlobalKey<DirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
   final ScrollController _recentScrollController = ScrollController();
   final ScrollController _allUsersScrollController = ScrollController();
 
@@ -194,7 +193,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     );
 
   Widget get _allUsersContent =>
-    ProfileDirectoryAccountsList(DirectoryAccounts.userDirectory,
+    DirectoryAccountsList(DirectoryAccounts.directory,
       key: _allUsersPageKey,
       displayMode: DirectoryDisplayMode.select,
       scrollController: _allUsersScrollController,
@@ -207,8 +206,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   // Search & Filters
 
   Widget get _searchBarWidget =>
-    ProfileDirectoryFilterBar(
-      key: ValueKey(ProfileDirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
+    DirectoryFilterBar(
+      key: ValueKey(DirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
       searchText: _searchText,
       onSearchText: _onSearchText,
       filterAttributes: (_selectedTab != 0) ? _filterAttributes : null,

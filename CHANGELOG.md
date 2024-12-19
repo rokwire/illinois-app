@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Message Conversation UI Updates and Bug Fixes (in progress) [#4536](https://github.com/rokwire/illinois-app/issues/4536)
 - GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- Directory Accounts support moved to standalone project location [#4540](https://github.com/rokwire/illinois-app/issues/4540).
 
 ## [6.1.29] - 2024-12-18
 ### Changed

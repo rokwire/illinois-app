@@ -3,34 +3,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsList.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class ProfileDirectoryAccountsPage extends StatefulWidget {
-  static const String notifyEditInfo  = "edu.illinois.rokwire.profile.directory.accounts.edit";
+class DirectoryAccountsPage extends StatefulWidget {
+  static const String notifyEditInfo  = "edu.illinois.rokwire.directory.accounts.edit";
 
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
 
-  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.onEditProfile});
+  DirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.onEditProfile});
 
   @override
-  State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
+  State<StatefulWidget> createState() => DirectoryAccountsPageState();
 }
 
-class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> {
-
+class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
-  GlobalKey<ProfileDirectoryAccountsListState> _accountsListKey = GlobalKey();
+  GlobalKey<DirectoryAccountsListState> _accountsListKey = GlobalKey();
 
   @override
   void initState() {
@@ -56,7 +54,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       _accountsListWidget,
     ]);
 
-  Widget get _accountsListWidget => ProfileDirectoryAccountsList(widget.contentType,
+  Widget get _accountsListWidget => DirectoryAccountsList(widget.contentType,
     key: _accountsListKey,
     displayMode: DirectoryDisplayMode.browse,
     scrollController: widget.scrollController,
@@ -73,7 +71,7 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(
-        text: Localization().getStringEx('panel.profile.directory.accounts.command.edit.info.text', 'Edit your information'),
+        text: Localization().getStringEx('panel.directory.accounts.command.edit.info.text', 'Edit your information'),
         style : Styles().textStyles.getTextStyleEx("widget.detail.small.fat.underline", color: Styles().colors.fillColorSecondary),
         recognizer: TapGestureRecognizer()..onTap = _onTapEditInfo, )
       );
@@ -89,8 +87,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
   String get _editDescriptionTemplate {
     switch(widget.contentType) {
-      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the Connections.');
-      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
+      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.edit.info.description', '$_linkEditMacro that shows up in the Connections.');
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.edit.info.description', '$_linkEditMacro that shows up in the User Directory.');
     }
   }
 
@@ -100,8 +98,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   }
 
   Widget get _searchBarWidget =>
-    ProfileDirectoryFilterBar(
-      key: ValueKey(ProfileDirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
+    DirectoryFilterBar(
+      key: ValueKey(DirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
       searchText: _searchText,
       onSearchText: _onSearchText,
       filterAttributes: _filterAttributes,
@@ -126,13 +124,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
         recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
       spanList.add(TextSpan(text: messages[index]));
     }

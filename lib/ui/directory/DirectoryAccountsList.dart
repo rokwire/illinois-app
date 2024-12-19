@@ -4,8 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -15,7 +14,9 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ProfileDirectoryAccountsList extends StatefulWidget {
+enum DirectoryAccounts { connections, directory }
+
+class DirectoryAccountsList extends StatefulWidget {
   final DirectoryAccounts contentType;
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
@@ -24,14 +25,14 @@ class ProfileDirectoryAccountsList extends StatefulWidget {
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
 
-  ProfileDirectoryAccountsList(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
+  DirectoryAccountsList(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
     this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
-  State<StatefulWidget> createState() => ProfileDirectoryAccountsListState();
+  State<StatefulWidget> createState() => DirectoryAccountsListState();
 }
 
-class ProfileDirectoryAccountsListState extends State<ProfileDirectoryAccountsList> with AutomaticKeepAliveClientMixin<ProfileDirectoryAccountsList> implements NotificationsListener  {
+class DirectoryAccountsListState extends State<DirectoryAccountsList> with AutomaticKeepAliveClientMixin<DirectoryAccountsList> implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
   bool _loading = false;
@@ -186,15 +187,15 @@ class ProfileDirectoryAccountsListState extends State<ProfileDirectoryAccountsLi
 
   String get _emptyText {
     switch (widget.contentType) {
-      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.empty.text', 'You do not have any Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
-      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.empty.text', 'The User Directory is empty.');
+      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.empty.text', 'You do not have any Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.empty.text', 'The User Directory is empty.');
     }
   }
 
   String get _failedText {
     switch (widget.contentType) {
-      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
-      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
+      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
     }
   }
 
