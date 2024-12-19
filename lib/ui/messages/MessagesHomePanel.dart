@@ -1054,10 +1054,12 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                               style: Styles().textStyles.getTextStyle('widget.card.title.small')
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: _buildDisplayDateWidget,
-                        ),
+                        if (widget.conversation?.mute == true)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Styles().images.getImage('notification-off'),
+                          ),
+                        _buildDisplayDateWidget,
                       ],
                     ),
                     Container(height: 16.0),
