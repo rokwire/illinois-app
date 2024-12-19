@@ -16,7 +16,9 @@
 
 
 import 'dart:collection';
+import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -161,8 +163,10 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       String? imageUrl = news.imageUrl;
       late Widget card;
       if (StringUtils.isNotEmpty(imageUrl)) {
+        double? imageWidth = kIsWeb ? max(MediaQuery.of(context).size.width / 3.0, 500) : null;
         card = ImageSlantHeader(
             imageUrl: news.imageUrl,
+            imageWidth: imageWidth,
             slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
             slantImageKey: 'slant-dark',
             child: _buildAthleticsNewsCard(news));
