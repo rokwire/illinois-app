@@ -427,9 +427,6 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     double screenWidth = MediaQuery.of(context).size.width;
     double preferredWidth = screenWidth / 4.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
-    print('TESTIMAGE: events: screenWidth: $screenWidth');
-    print('TESTIMAGE: events: preferredWidth: $preferredWidth');
-    print('TESTIMAGE: events: imageWidth: $imageWidth');
     return Visibility(
         visible: _hasImage,
         child: Container(

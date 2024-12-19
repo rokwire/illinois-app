@@ -267,9 +267,6 @@ class _MainStoryWidget extends _StoryWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double preferredWidth = screenWidth / 3.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 600) : null;
-    print('TESTIMAGE: daily Illini: screenWidth: $screenWidth');
-    print('TESTIMAGE: daily Illini: preferredWidth: $preferredWidth');
-    print('TESTIMAGE: daily Illini: imageWidth: $imageWidth');
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
         ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, width: imageWidth, loadingBuilder: (context, child, loadingProgress) {
       if (loadingProgress == null) {
