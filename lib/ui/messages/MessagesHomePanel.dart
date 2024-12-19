@@ -23,7 +23,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
-import 'package:illinois/ui/messages/MessagesWidgets.dart';
+import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -102,8 +102,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   bool _isEditMode = false;
   Set<String> _selectedConversationIds = Set<String>();
 
-  String? _searchText;
-  late final ConversationsSearchController _searchController;
+  String _searchText = '';
 
   // bool _loadingMarkAllAsRead = false;
 
@@ -115,7 +114,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       Social.notifyMessageSent,
     ]);
 
-    _searchController = ConversationsSearchController(onUpdateSearchText: _onSearchConversations);
     _scrollController.addListener(_scrollListener);
     _selectedMutedValue = false;
     _loadContent();
@@ -162,7 +160,11 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       _buildFilters(),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ConversationsSearchBar(searchController: _searchController, showFilters: false,),
+        child: ProfileDirectoryFilterBar(
+          key: ValueKey(_searchText),
+          searchText: _searchText,
+          onSearchText: _onSearchText,
+        ),
       ),
       Expanded(child:
         _buildPage(context),
@@ -796,9 +798,13 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel(recentConversations: _conversations, conversationPageSize: _conversationsPageSize,)));
   }
 
-  void _onSearchConversations(String searchText) {
-    _searchText = searchText;
-    _loadContent();
+  void _onSearchText(String searchText) {
+    if (mounted) {
+      setState(() {
+        _searchText = searchText;
+      });
+      _loadContent();
+    }
   }
 
   Future<void> _onPullToRefresh() async {
