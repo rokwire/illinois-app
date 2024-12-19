@@ -1631,7 +1631,6 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
 
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
-  int _allEventsCount = 0;
 
   @override
   void initState() {
@@ -1730,7 +1729,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
     Events2().loadGroupEvents(groupId: widget.groupId, limit: 3)
         .then((Events2ListResult? eventsResult) {
           setStateIfMounted(() {
-            _allEventsCount = eventsResult?.totalCount ?? 0;
+            // _allEventsCount = eventsResult?.totalCount ?? 0;
             _groupEvents = eventsResult?.events;
             if (showProgress)
               _updatingEvents = false;
@@ -1739,7 +1738,6 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
   }
 
   void _clearEvents() {
-    _allEventsCount = 0;
     _groupEvents = null;
   }
 
