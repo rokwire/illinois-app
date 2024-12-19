@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -10,6 +11,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -36,6 +38,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   late ScrollController _scrollController;
   static double? _scrollPosition;
   bool _shouldScrollToBottom = false;
+  Map<String, Uint8List?> _userPhotosCache = {};
 
   bool _listening = false;
   bool _loading = false;
@@ -203,42 +206,126 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildMessageCard(Message message) {
-    // bool fromUser = (message.sender?.accountId == currentUserId);
+    String? senderId = message.sender?.accountId;
+    bool isCurrentUser = (senderId == currentUserId);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Styles().colors.white,
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(
-            children: [
-              // Placeholder avatar icon
-              Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container(),
-              SizedBox(width: 8),
-              Expanded(
-                  child: Text(
-                      "${message.sender?.name ?? 'Unknown'}",
-                      style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
-                  )
+    return FutureBuilder<Widget>(
+      future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
+      builder: (context, snapshot) {
+        Widget avatar = snapshot.data ??
+            (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+
+        return Container(
+          margin: EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Styles().colors.white,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                children: [
+                  avatar,
+                  SizedBox(width: 8),
+                  Expanded(
+                      child: Text(
+                          "${message.sender?.name ?? 'Unknown'}",
+                          style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
+                      )
+                  ),
+                  if (message.dateSentUtc != null)
+                    Text(
+                        AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
+                        style: Styles().textStyles.getTextStyle('widget.description.small')
+                    ),
+                ],
               ),
-              (message.dateSentUtc != null) ?
-              Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                  style: Styles().textStyles.getTextStyle('widget.description.small')
-              )
-                  : Container(),
-            ],
+              SizedBox(height: 8),
+              Text(
+                  message.message ?? '',
+                  style: Styles().textStyles.getTextStyle('widget.card.title.small')
+              ),
+            ]),
           ),
-          SizedBox(height: 8),
-          Text(
-              message.message ?? '',
-              style: Styles().textStyles.getTextStyle('widget.card.title.small')
-          ),
-        ]),
-      ),
+        );
+      },
     );
+  }
+
+  Future<Widget> _buildAvatarWidget({required bool isCurrentUser, String? senderId}) async {
+    if (isCurrentUser) {
+      // Current user's avatar
+      Uint8List? profilePicture = Auth2().profilePicture;
+      if (profilePicture != null) {
+        return Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: Image.memory(profilePicture).image,
+            ),
+          ),
+        );
+      } else {
+        return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+      }
+    } else {
+      // Other user's avatar
+      if (senderId == null) {
+        return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+      }
+
+      // Check cache first
+      if (_userPhotosCache.containsKey(senderId)) {
+        Uint8List? cachedData = _userPhotosCache[senderId];
+        if (cachedData != null) {
+          return Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: Image.memory(cachedData).image,
+              ),
+            ),
+          );
+        } else {
+          // Cached as null means we tried before and got no image
+          return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+        }
+      }
+
+      // Load image from server
+      ImagesResult? result = await Content().loadUserPhoto(
+        type: UserProfileImageType.small,
+        accountId: senderId,
+      );
+
+      Uint8List? imageData = result?.imageData;
+      _userPhotosCache[senderId] = imageData; // Cache result (null if none)
+
+      if (imageData != null) {
+        return Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: Image.memory(imageData).image,
+            ),
+          ),
+        );
+      } else {
+        return Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container();
+      }
+    }
   }
 
   Widget _buildChatBar() {
