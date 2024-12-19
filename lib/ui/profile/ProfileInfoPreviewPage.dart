@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -21,21 +21,21 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ProfileDirectoryMyInfoPreviewPage extends StatefulWidget {
-  final MyProfileInfo contentType;
+class ProfileInfoPreviewPage extends StatefulWidget {
+  final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileDirectoryMyInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData, this.onEditInfo });
+  ProfileInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData, this.onEditInfo });
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPreviewPageState();
+  State<StatefulWidget> createState() => _ProfileInfoPreviewPageState();
 }
 
-class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPreviewPage> {
+class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
   bool _preparingDeleteAccount = false;
@@ -82,8 +82,8 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   String get _desriptionText {
     switch (widget.contentType) {
-      case MyProfileInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.my_info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
-      case MyProfileInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.my_info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
+      case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
+      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
     }
   }
 
@@ -166,17 +166,17 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     );
 
   String get _privateProfileTitle =>
-    AppTextUtils.appTitleString('panel.profile.directory.my_info.directory_visibility.private.title.text', 'Your Directory Visibility is set to Private');
+    AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.title.text', 'Your Directory Visibility is set to Private');
 
   Widget get _privateProfileDescriptionContent {
     final String linkEditMacro = "{{link.edit}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.directory.my_info.directory_visibility.private.description.text', 'To make your account visible in the User Directory, $linkEditMacro your privacy settings and set your Directory Visibility to Public.');
+    String messageTemplate = Localization().getStringEx('panel.profile.info.directory_visibility.private.description.text', 'To make your account visible in the User Directory, $linkEditMacro your privacy settings and set your Directory Visibility to Public.');
     List<String> messages = messageTemplate.split(linkEditMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.my_info.directory_visibility.private.link.edit', "edit"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.info.directory_visibility.private.link.edit', "edit"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
         recognizer: TapGestureRecognizer()..onTap = _onEditInfo, ));
       spanList.add(TextSpan(text: messages[index]));
     }
@@ -188,8 +188,8 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   Widget get _commandBar {
     switch (widget.contentType) {
-      case MyProfileInfo.myConnectionsInfo: return _myConnectionsInfoCommandBar;
-      case MyProfileInfo.myDirectoryInfo: return _myDirectoryInfoCommandBar;
+      case ProfileInfo.connectionsInfo: return _myConnectionsInfoCommandBar;
+      case ProfileInfo.directoryInfo: return _myDirectoryInfoCommandBar;
     }
   }
 
@@ -213,7 +213,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   );
 
   String get _editInfoButtonTitle =>
-    Localization().getStringEx('panel.profile.directory.my_info.command.button.edit.text', 'Edit My Info');
+    Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info');
 
   void _onEditInfo() {
     Analytics().logSelect(target: 'Edit My Info');
@@ -221,7 +221,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   }
 
   Widget get _swapInfoButton => RoundedButton(
-    label: Localization().getStringEx('panel.profile.directory.my_info.command.button.swap.text', 'Swap Info'),
+    label: Localization().getStringEx('panel.profile.info.command.button.swap.text', 'Swap Info'),
     fontFamily: Styles().fontFamilies.bold, fontSize: 16,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onSwapInfo,
@@ -238,7 +238,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
     ),
     Expanded(child:
       LinkButton(
-        title: AppTextUtils.appTitleString('panel.profile.directory.my_info.command.link.share.text', 'Share my info outside the ${AppTextUtils.appTitleMacro} app'),
+        title: AppTextUtils.appTitleString('panel.profile.info.command.link.share.text', 'Share my info outside the ${AppTextUtils.appTitleMacro} app'),
         textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
         textAlign: TextAlign.left,
         padding: EdgeInsets.symmetric(vertical: 16),
@@ -252,7 +252,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
   }
 
   Widget get _signOutButton => LinkButton(
-    title: Localization().getStringEx('panel.profile.directory.my_info.command.link.sign_out.text', 'Sign Out'),
+    title: Localization().getStringEx('panel.profile.info.command.link.sign_out.text', 'Sign Out'),
     textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
     onTap: _onSignOut,
   );
@@ -268,7 +268,7 @@ class _ProfileDirectoryMyInfoPreviewPageState extends ProfileDirectoryMyInfoBase
 
   Widget get _deleteAccountButton => Stack(children: [
     LinkButton(
-      title: AppTextUtils.appTitleString('panel.profile.directory.my_info.command.link.delete_account.text', 'Delete My ${AppTextUtils.appTitleMacro} App Account'),
+      title: AppTextUtils.appTitleString('panel.profile.info.command.link.delete_account.text', 'Delete My ${AppTextUtils.appTitleMacro} App Account'),
       textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       onTap: _onDeleteAccount,

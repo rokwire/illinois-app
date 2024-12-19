@@ -5,9 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.30] - 2024-12-19
 ### Changed
 - Message Conversation UI Updates and Bug Fixes (in progress) [#4536](https://github.com/rokwire/illinois-app/issues/4536)
 - GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- Directory Accounts support moved to standalone project location [#4540](https://github.com/rokwire/illinois-app/issues/4540).
+- Rename "Directory" section to "User Directory" [#4542](https://github.com/rokwire/illinois-app/issues/4542).
+- Single item browse section entry opens straightly the entry [#4542](https://github.com/rokwire/illinois-app/issues/4542).
 
 ## [6.1.29] - 2024-12-18
 ### Changed

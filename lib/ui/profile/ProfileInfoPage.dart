@@ -4,11 +4,11 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryMyInfoEditPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPreviewPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -17,19 +17,16 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-////////////////////////////////////////
-// ProfileDirectoryMyInfoPage
-
-class ProfileDirectoryMyInfoPage extends StatefulWidget {
+class ProfileInfoPage extends StatefulWidget {
   static const String editParamKey = 'edu.illinois.rokwire.profile.directory.info.edit';
 
-  final MyProfileInfo contentType;
+  final ProfileInfo contentType;
   final Map<String, dynamic>? params;
 
-  ProfileDirectoryMyInfoPage({super.key, required this.contentType, this.params});
+  ProfileInfoPage({super.key, required this.contentType, this.params});
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryMyInfoPageState();
+  State<StatefulWidget> createState() => _ProfileInfoPageState();
 
   bool? get editParam {
     dynamic edit = (params != null) ? params![editParamKey] : null;
@@ -37,7 +34,7 @@ class ProfileDirectoryMyInfoPage extends StatefulWidget {
   }
 }
 
-class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileDirectoryMyInfoPage> implements NotificationsListener {
+class _ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPage> implements NotificationsListener {
 
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
@@ -51,7 +48,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      ProfileDirectoryAccountsPage.notifyEditInfo,
+      DirectoryAccountsPage.notifyEditInfo,
     ]);
     _editing = widget.editParam ?? false;
     _loadInitialContent();
@@ -66,7 +63,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
 
   @override
   void onNotification(String name, param) {
-    if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+    if (name == DirectoryAccountsPage.notifyEditInfo) {
       setStateIfMounted((){
         _editing = true;
       });
@@ -79,7 +76,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       return _loadingContent;
     }
     else if (_editing) {
-      return ProfileDirectoryMyInfoEditPage(
+      return ProfileInfoEditPage(
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
@@ -90,7 +87,7 @@ class _ProfileDirectoryMyInfoPageState extends ProfileDirectoryMyInfoBasePageSta
       );
     }
     else {
-      return ProfileDirectoryMyInfoPreviewPage(
+      return ProfileInfoPreviewPage(
         contentType: widget.contentType,
         profile: _profile,
         privacy: _privacy,
@@ -238,20 +235,20 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
   static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
 
-  Auth2FieldVisibility positiveVisibility(MyProfileInfo contentType) {
+  Auth2FieldVisibility positiveVisibility(ProfileInfo contentType) {
     switch(contentType) {
-      case MyProfileInfo.myDirectoryInfo: return _directoryPositiveVisibility;
-      case MyProfileInfo.myConnectionsInfo: return _connectionsPositiveVisibility;
+      case ProfileInfo.directoryInfo: return _directoryPositiveVisibility;
+      case ProfileInfo.connectionsInfo: return _connectionsPositiveVisibility;
     }
   }
 
   static const Set<Auth2FieldVisibility> _directoryPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility };
   static const Set<Auth2FieldVisibility> _connectionsPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility, _connectionsPositiveVisibility };
 
-  Set<Auth2FieldVisibility> permittedVisibility(MyProfileInfo contentType) {
+  Set<Auth2FieldVisibility> permittedVisibility(ProfileInfo contentType) {
     switch(contentType) {
-      case MyProfileInfo.myDirectoryInfo: return _directoryPermittedVisibility;
-      case MyProfileInfo.myConnectionsInfo: return _connectionsPermittedVisibility;
+      case ProfileInfo.directoryInfo: return _directoryPermittedVisibility;
+      case ProfileInfo.connectionsInfo: return _connectionsPermittedVisibility;
     }
   }
 

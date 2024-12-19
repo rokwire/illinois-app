@@ -2,26 +2,27 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class ProfileDirectoryPage extends StatefulWidget {
+class ProfileInfoAndDirectoryPage extends StatefulWidget {
   static const String notifySignIn = "edu.illinois.rokwire.profile.sign_in";
 
-  static const String tabParamKey = 'edu.illinois.rokwire.profile.directory.tab';
+  static const String tabParamKey = 'edu.illinois.rokwire.profile.info_and_directory.tab';
 
   final ScrollController? scrollController;
   final Map<String, dynamic>? params;
 
-  ProfileDirectoryPage({super.key, this.scrollController, this.params});
+  ProfileInfoAndDirectoryPage({super.key, this.scrollController, this.params});
 
   @override
-  _ProfileDirectoryPageState createState() => _ProfileDirectoryPageState();
+  _ProfileInfoAndDirectoryPageState createState() => _ProfileInfoAndDirectoryPageState();
 
   ProfileDirectoryTab? get tabParam {
     dynamic tab = (params != null) ? params![tabParamKey] : null;
@@ -29,11 +30,10 @@ class ProfileDirectoryPage extends StatefulWidget {
   }
 }
 
-enum ProfileDirectoryTab { myInfo, accounts }
-enum MyProfileInfo { myConnectionsInfo, myDirectoryInfo }
-enum DirectoryAccounts { myConnections, userDirectory }
+enum ProfileDirectoryTab { info, directory }
+enum ProfileInfo { connectionsInfo, directoryInfo }
 
-class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements NotificationsListener {
+class _ProfileInfoAndDirectoryPageState extends State<ProfileInfoAndDirectoryPage> implements NotificationsListener {
 
   late ProfileDirectoryTab _selectedTab;
 
@@ -46,7 +46,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
-      ProfileDirectoryAccountsPage.notifyEditInfo,
+      DirectoryAccountsPage.notifyEditInfo,
     ]);
 
     _selectedTab = widget.tabParam ?? ProfileDirectoryTab.values.first;
@@ -68,9 +68,9 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted();
     }
-    else if (name == ProfileDirectoryAccountsPage.notifyEditInfo) {
+    else if (name == DirectoryAccountsPage.notifyEditInfo) {
       setStateIfMounted((){
-        _selectedTab = ProfileDirectoryTab.myInfo;
+        _selectedTab = ProfileDirectoryTab.info;
       });
     }
   }
@@ -88,18 +88,18 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   Widget get _pageContent =>
     Column(children: [
       _tabsWidget,
-      Visibility(visible: (_selectedTab == ProfileDirectoryTab.myInfo), maintainState: true, child:
-        _tabPage(ProfileDirectoryTab.myInfo)
+      Visibility(visible: (_selectedTab == ProfileDirectoryTab.info), maintainState: true, child:
+        _tabPage(ProfileDirectoryTab.info)
       ),
-      Visibility(visible: (_selectedTab == ProfileDirectoryTab.accounts), maintainState: true, child:
-        _tabPage(ProfileDirectoryTab.accounts)
+      Visibility(visible: (_selectedTab == ProfileDirectoryTab.directory), maintainState: true, child:
+        _tabPage(ProfileDirectoryTab.directory)
       ),
     ],);
 
   Widget _tabPage(ProfileDirectoryTab tab) {
     switch(tab) {
-      case ProfileDirectoryTab.myInfo: return _myInfoTabPage;
-      case ProfileDirectoryTab.accounts: return _connectionsTabPage;
+      case ProfileDirectoryTab.info: return _myInfoTabPage;
+      case ProfileDirectoryTab.directory: return _connectionsTabPage;
     }
   }
 
@@ -113,7 +113,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
         //),
         //Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
-          ProfileDirectoryMyInfoPage(contentType: MyProfileInfo.myDirectoryInfo, params: widget.params,)
+          ProfileInfoPage(contentType: ProfileInfo.directoryInfo, params: widget.params,)
         //),
 
       ],),
@@ -129,13 +129,13 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
           //ProfileDirectoryConnectionsPage(contentType: DirectoryConnections.myConnections,)
         //),
         //Visibility(visible: (_selectedConnectionsTab == DirectoryConnections.userDirectory), maintainState: true, child:
-          ProfileDirectoryAccountsPage(DirectoryAccounts.userDirectory, scrollController: widget.scrollController, onEditProfile: _onEditProfile,)
+          DirectoryAccountsPage(DirectoryAccounts.directory, scrollController: widget.scrollController, onEditProfile: _onEditProfile,)
         //),
       ],),
     );
 
   void _onEditProfile(DirectoryAccounts contentType) =>
-    NotificationService().notify(ProfileDirectoryAccountsPage.notifyEditInfo, contentType.profileInfo);
+    NotificationService().notify(DirectoryAccountsPage.notifyEditInfo, contentType.profileInfo);
 
   // Tabs widget
 
@@ -263,13 +263,13 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
   // Signed out
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.directory.message.signed_out', 'To view "My Info & User Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = Localization().getStringEx('panel.profile.info_and_directory.message.signed_out', 'To view "My Info & User Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.directory.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
         recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
       spanList.add(TextSpan(text: messages[index]));
     }
@@ -281,7 +281,7 @@ class _ProfileDirectoryPageState extends State<ProfileDirectoryPage> implements 
     );
   }
 
-  void _onTapSignIn() => NotificationService().notify(ProfileDirectoryPage.notifySignIn);
+  void _onTapSignIn() => NotificationService().notify(ProfileInfoAndDirectoryPage.notifySignIn);
 }
 
 extension _TabExt on ProfileDirectoryTab {
@@ -290,8 +290,8 @@ extension _TabExt on ProfileDirectoryTab {
 
   String titleEx({String? language}) {
     switch(this) {
-      case ProfileDirectoryTab.myInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.title', 'My Info', language: language);
-      case ProfileDirectoryTab.accounts: return Localization().getStringEx('panel.profile.directory.tab.accounts.title', 'User Directory', language: language);
+      case ProfileDirectoryTab.info: return Localization().getStringEx('panel.profile.info_and_directory.tab.my_info.title', 'My Info', language: language);
+      case ProfileDirectoryTab.directory: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.title', 'User Directory', language: language);
     }
   }
 
@@ -303,13 +303,13 @@ extension _TabExt on ProfileDirectoryTab {
   }*/
 }
 
-extension MyDirectoryInfoExt on MyProfileInfo {
+extension MyDirectoryInfoExt on ProfileInfo {
   String get title => titleEx();
 
   String titleEx({String? language}) {
     switch(this) {
-      case MyProfileInfo.myConnectionsInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.connections.title', 'My Connections Info', language: language);
-      case MyProfileInfo.myDirectoryInfo: return Localization().getStringEx('panel.profile.directory.tab.my_info.directory.title', 'My Directory Info', language: language);
+      case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info_and_directory.tab.my_info.connections.title', 'My Connections Info', language: language);
+      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info_and_directory.tab.my_info.directory.title', 'My Directory Info', language: language);
     }
   }
 }
@@ -319,15 +319,15 @@ extension DirectoryAccountsExt on DirectoryAccounts {
 
   String titleEx({String? language}) {
     switch(this) {
-      case DirectoryAccounts.myConnections: return Localization().getStringEx('panel.profile.directory.tab.accounts.connections.title', 'My Connections', language: language);
-      case DirectoryAccounts.userDirectory: return Localization().getStringEx('panel.profile.directory.tab.accounts.directory.title', 'User Directory', language: language);
+      case DirectoryAccounts.connections: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.connections.title', 'My Connections', language: language);
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'User Directory', language: language);
     }
   }
 
-  MyProfileInfo get profileInfo {
+  ProfileInfo get profileInfo {
     switch(this) {
-      case DirectoryAccounts.myConnections: return MyProfileInfo.myConnectionsInfo;
-      case DirectoryAccounts.userDirectory: return MyProfileInfo.myDirectoryInfo;
+      case DirectoryAccounts.connections: return ProfileInfo.connectionsInfo;
+      case DirectoryAccounts.directory: return ProfileInfo.directoryInfo;
     }
   }
 
