@@ -738,7 +738,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       _tabController = TabController(length: tabs.length, vsync: this);
     }
 
-    return Container(color: Colors.white, child: TabBar(
+    return Container(color: Colors.white, child:
+      TabBar(
         tabs: tabs,
         indicatorColor: Color(0xffF15C22),
         controller: _tabController,
@@ -770,7 +771,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           ExpandablePageView(
             children: pages,
             controller: _pageController,
-            onPageChanged: (int index) => _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds))/*setStateIfMounted(() => _currentTab = _tabAtIndex(index)*/
+            onPageChanged: (int index){
+              _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds));
+              _currentTab = _tabAtIndex(index) ?? _currentTab;
+            }
           )
         )
       );
@@ -1320,7 +1324,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   void _onTab(_DetailTab? tab) {
     Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
-    if (tab != null && _currentTab != tab) {
+    if (tab != null /*&& _currentTab != tab*/) {
         _currentTab = tab;
 
       _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
