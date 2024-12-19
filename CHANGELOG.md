@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Message Conversation UI Updates and Bug Fixes [#4536](https://github.com/rokwire/illinois-app/issues/4536)
+
 ## [6.1.29] - 2024-12-18
 - GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
 
