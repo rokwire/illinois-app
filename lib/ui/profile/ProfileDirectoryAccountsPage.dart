@@ -1,12 +1,14 @@
 
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/messages/MessagesWidgets.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileDirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -29,10 +31,13 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final DirectoryAccounts contentType;
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
+  final ConversationsSearchController? searchController;
+  final String? initialSearch;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
   final void Function()? onSelectedAccountsChanged;
 
-  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController, this.onEditProfile, this.onSelectedAccountsChanged});
+  ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
+    this.searchController, this.initialSearch, this.onEditProfile, this.onSelectedAccountsChanged});
 
   @override
   State<StatefulWidget> createState() => ProfileDirectoryAccountsPageState();
@@ -70,6 +75,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         Social.notifyConversationsUpdated,
     ]);
     widget.scrollController?.addListener(_scrollListener);
+    widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
+    widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
+    _searchText = widget.initialSearch ?? '';
+
     _load();
     super.initState();
   }
@@ -123,7 +132,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     List<Widget> contentList = <Widget>[
       if (widget.onEditProfile != null)
         _editDescription,
-      _searchBarWidget,
+      if (widget.displayMode == DirectoryDisplayMode.browse)
+        _searchBarWidget,
     ];
     if (_loadingProgress) {
       contentList.add(_loadingContent);
@@ -512,6 +522,31 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
         _searchText = _searchTextController.text;
       });
       _searchFocusNode.unfocus();
+      _load();
+    }
+  }
+
+  void onConversationsTabChanged(String searchText, Map<String, dynamic> filterAttributes) {
+    widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
+    widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
+
+    if (_searchText != searchText || !DeepCollectionEquality().equals(_filterAttributes, filterAttributes)) {
+      _searchText = searchText;
+      _filterAttributes = filterAttributes;
+      _load();
+    }
+  }
+
+  void _onControllerSearchConversations(String searchText) {
+    if (_searchText != searchText) {
+      _searchText = searchText;
+      _load();
+    }
+  }
+
+  void _onControllerFilterAttributesChanged(Map<String, dynamic> filterAttributes) {
+    if (!DeepCollectionEquality().equals(_filterAttributes, filterAttributes)) {
+      _filterAttributes = filterAttributes;
       _load();
     }
   }

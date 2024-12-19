@@ -28,7 +28,9 @@ class MessagesDirectoryPanel extends StatefulWidget {
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with TickerProviderStateMixin {
   final GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
   final GlobalKey<ProfileDirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
+  final GlobalKey<ConversationSearchBarState> _searchBarKey = GlobalKey();
   final ScrollController _recentScrollController = ScrollController();
+  final ConversationsSearchController _searchController = ConversationsSearchController();
   final ScrollController _allUsersScrollController = ScrollController();
   late TabController _tabController;
   int _selectedTab = 0;
@@ -74,6 +76,10 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
           Localization().getStringEx('panel.messages.directory.header.message', 'Who do you want to send to?'),
           style: Styles().textStyles.getTextStyle('widget.title.large.fat')
         ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ConversationsSearchBar(key: _searchBarKey, searchController: _searchController, showFilters: _selectedTab != 0,),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -148,6 +154,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   Widget get _recentContent =>
     RecentConversationsPage(
       key: _recentPageKey,
+      searchController: _searchController,
+      initialSearch: searchText,
       recentConversations: widget.recentConversations,
       conversationPageSize: widget.conversationPageSize,
       scrollController: _recentScrollController,
@@ -159,6 +167,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       displayMode: DirectoryDisplayMode.select,
       key: _allUsersPageKey,
       scrollController: _allUsersScrollController,
+      searchController: _searchController,
+      initialSearch: searchText,
       onSelectedAccountsChanged: _onSelectedAccountsChanged,
     );
 
@@ -184,7 +194,6 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
         }
       }
     }
-
   }
 
   void _onTabChanged({bool manual = true}) {
@@ -192,6 +201,12 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       setState(() {
         _selectedTab = _tabController.index;
       });
+
+      if (_tabController.index == 0) {
+        _recentPageKey.currentState?.onConversationsTabChanged(searchText, filterAttributes);
+      } else {
+        _allUsersPageKey.currentState?.onConversationsTabChanged(searchText, filterAttributes);
+      }
     }
   }
 
@@ -210,6 +225,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     (_recentPageKey.currentState?.selectedConversationIds.isNotEmpty == true) :
     (_allUsersPageKey.currentState?.selectedAccountIds.isNotEmpty == true);
 
+  String get searchText => _searchBarKey.currentState?.searchText ?? '';
+  Map<String, dynamic> get filterAttributes => _searchBarKey.currentState?.filterAttributes ?? {};
 }
 
 enum MessagesDirectoryContentType { recent, all }
