@@ -46,7 +46,7 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
 class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener  {
 
   List<Auth2PublicAccount>? _accounts;
-  String _searchText = '';
+  late String _searchText;
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
@@ -71,11 +71,13 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
       Auth2.notifyPrivacyChanged,
       Auth2.notifyLoginChanged,
     ]);
+
     widget.scrollController?.addListener(_scrollListener);
+
     widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
     widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
 
-    _searchTextController = TextEditingController(text: widget.initialSearch);
+    _searchTextController = TextEditingController(text: _searchText = widget.initialSearch ?? '');
 
     _load();
     super.initState();
