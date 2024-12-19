@@ -177,12 +177,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (_messages.isNotEmpty) {
       DateTime? lastDate;
       for (Message message in _messages) {
-        DateTime? msgDate = message.dateSentLocal;
-        if (msgDate != null) {
+        DateTime? msgLocalDate = message.dateSentUtc?.toLocal();
+        if (msgLocalDate != null) {
           if ((lastDate == null) ||
-              (lastDate.year != msgDate.year || lastDate.month != msgDate.month || lastDate.day != msgDate.day)) {
-            contentList.add(_buildDateDivider(message.dateSentLocalString ?? ''));
-            lastDate = msgDate;
+              (lastDate.year != msgLocalDate.year || lastDate.month != msgLocalDate.month || lastDate.day != msgLocalDate.day)) {
+            String dateText = AppDateTime().formatDateTime(msgLocalDate, format: 'MMM dd, yyyy') ?? '';
+            contentList.add(_buildDateDivider(dateText));
+            lastDate = msgLocalDate;
           }
         }
         contentList.add(_buildMessageCard(message));
@@ -543,22 +544,49 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && currentUserId != null) {
       FocusScope.of(context).requestFocus(FocusNode());
 
+      String messageText = _inputController.text.trim();
+      _inputController.text = '';
+
+      // Create a temporary message and add it immediately
+      Message tempMessage = Message(
+        sender: ConversationMember(accountId: currentUserId, name: Auth2().fullName ?? 'You'),
+        message: messageText,
+        dateSentUtc: DateTime.now().toUtc(),
+      );
+
       setState(() {
+        _messages.add(tempMessage);
+        Message.sortListByDateSent(_messages);
         _shouldScrollToBottom = true;
       });
 
-      // Send message via API
-      List<Message>? newMessages = await Social().createConversationMessage(
-        conversationId: widget.conversation.id!,
-        message: _inputController.text,
-      );
+      try {
+        // Send to the backend
+        List<Message>? newMessages = await Social().createConversationMessage(
+          conversationId: widget.conversation.id!,
+          message: messageText,
+        );
 
-      // Clear input after sending
-      _inputController.text = '';
-
-      // load the new messages
-      if (CollectionUtils.isNotEmpty(newMessages)) {
-        _loadMessages();
+        if (newMessages != null && newMessages.isNotEmpty) {
+          Message serverMessage = newMessages.first;
+          // Update the temporary message with the server's message if needed
+          int index = _messages.indexOf(tempMessage);
+          if (index >= 0) {
+            setState(() {
+              _messages[index] = serverMessage;
+              Message.sortListByDateSent(_messages);
+            });
+          }
+        } else {
+          _messages.remove(tempMessage);
+          setState(() {});
+          AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
+        }
+      } catch (e) {
+        // On error, remove the temporary message
+        _messages.remove(tempMessage);
+        setState(() {});
+        AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
       }
     }
   }
