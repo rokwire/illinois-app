@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/mainImpl.dart';
@@ -238,10 +239,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
       Widget contentWidget;
       if (1 < pages.length) {
-        double pageHeight = MediaQuery.of(context).size.width - 16 * 2 + 5;
+        double pageHeight = kIsWeb ? 0.0 : (MediaQuery.of(context).size.width - 16 * 2 + 5);
+        BoxConstraints? boxConstraints = kIsWeb ? null : BoxConstraints(minHeight: pageHeight);
         
         contentWidget = Container(
-          constraints: BoxConstraints(minHeight: pageHeight),
+          constraints: boxConstraints,
           child: ExpandablePageView(key: _viewPagerKey, controller: _pageController, onPageChanged: _onPageChanged, children: pages, estimatedPageSize: pageHeight,)
         );
       }
