@@ -207,7 +207,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     }
   }
 
-  void _onAccountSelectionChanged(bool value, Auth2PublicAccount account) {
+  void _onAccountSelectionChanged(Auth2PublicAccount account, bool value) {
     if (account.id?.isNotEmpty ?? false) {
       setStateIfMounted(() {
         if (value) {

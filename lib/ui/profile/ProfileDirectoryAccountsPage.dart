@@ -33,7 +33,7 @@ class ProfileDirectoryAccountsPage extends StatefulWidget {
   final ConversationsSearchController? searchController;
   final String? initialSearch;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final void Function(bool, Auth2PublicAccount)? onAccountSelectionChanged;
+  final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
   final Set<String>? selectedAccountIds;
 
   ProfileDirectoryAccountsPage(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
@@ -58,11 +58,10 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
 
-  final TextEditingController _searchTextController = TextEditingController();
+  late TextEditingController _searchTextController;
   final FocusNode _searchFocusNode = FocusNode();
 
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
-  Set<String> _selectedIds = {};
 
   @override
   void initState() {
@@ -75,8 +74,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     widget.scrollController?.addListener(_scrollListener);
     widget.searchController?.onUpdateSearchText = _onControllerSearchConversations;
     widget.searchController?.onUpdateFilterAttributes = _onControllerFilterAttributesChanged;
-    _searchText = widget.initialSearch ?? '';
-    _selectedIds = widget.selectedAccountIds ?? {};
+
+    _searchTextController = TextEditingController(text: widget.initialSearch);
 
     _load();
     super.initState();
@@ -113,12 +112,6 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
 
   @override
   bool get wantKeepAlive => true;
-
-  @override
-  void didUpdateWidget(covariant ProfileDirectoryAccountsPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _selectedIds = widget.selectedAccountIds ?? {};
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,8 +161,8 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
-          selected: _selectedIds.contains(account.id),
-          onToggleSelected: (value) => widget.onAccountSelectionChanged?.call(value, account),
+          selected: widget.selectedAccountIds?.contains(account.id) == true,
+          onToggleSelected: (value) => _onToggleAccountSelected(account, value),
         ));
       }
       if (contentList.isNotEmpty) {
@@ -184,11 +177,16 @@ class ProfileDirectoryAccountsPageState extends State<ProfileDirectoryAccountsPa
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
-  void _onToggleAccountExpanded(Auth2PublicAccount profile) {
-    Analytics().logSelect(target: 'Expand', source: profile.id);
+  void _onToggleAccountExpanded(Auth2PublicAccount account) {
+    Analytics().logSelect(target: 'Expand', source: account.id);
     setState(() {
-      _expandedAccountId = (_expandedAccountId != profile.id) ? profile.id : null;
+      _expandedAccountId = (_expandedAccountId != account.id) ? account.id : null;
     });
+  }
+
+  void _onToggleAccountSelected(Auth2PublicAccount account, bool value) {
+    Analytics().logSelect(target: value ? 'Select' : 'Unselect', source: account.id);
+    widget.onAccountSelectionChanged?.call(account, value);
   }
 
   Widget _sectionHeading(String dirEntry) =>
