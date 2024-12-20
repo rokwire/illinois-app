@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Detect URL links in text body of conversation message card [#4547](https://github.com/rokwire/illinois-app/issues/4547).
 ### Fixed
 - Additional bug fixes for Messages [#4548](https://github.com/rokwire/illinois-app/issues/4548).
+### Added
+- Added social deep links support [#4551](https://github.com/rokwire/illinois-app/issues/4551).
 
 ## [6.1.30] - 2024-12-19
 ### Changed
