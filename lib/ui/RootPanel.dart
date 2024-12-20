@@ -43,6 +43,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -1098,7 +1099,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseConversationNotification(param) {
     if (param is Map<String, dynamic>) {
       String? conversationId = param["entity_id"];
-      _presentConversationPanel(conversationId: conversationId);
+      if (StringUtils.isNotEmpty(conversationId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId,)));;
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
+      }
     }
   }
 
@@ -1107,15 +1112,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
-    }
-  }
-
-  void _presentConversationPanel({String? conversationId}) {
-    //TODO: Load Conversation with ConversationID param
-    if (StringUtils.isNotEmpty(conversationId)) {
-      //Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => MessagesConversationPanel(conversation: conversationId,)));
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }
   }
 
