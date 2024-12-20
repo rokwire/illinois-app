@@ -46,7 +46,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   List<Message> _messages = [];
   Set<String> _globalIds = {};
   bool _hasMoreMessages = false;
-  final int _messagesPageSize = 100;
+  final int _messagesPageSize = 20;
 
   @override
   void initState() {
@@ -131,6 +131,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               Expanded(
                 child: SingleChildScrollView(
                     controller: _scrollController,
+                    reverse: true,
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top:16,),
@@ -466,7 +467,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       _loadingMore = false;
       if (loadedMessages != null) {
         Message.sortListByDateSent(loadedMessages);
-        _messages.addAll(loadedMessages);
+        List<Message> newMessages = loadedMessages;
+        newMessages.addAll(_messages);
+        _messages = newMessages;
         _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
         if (widget.conversation.isGroupConversation) {
           _removeDuplicateMessagesByGlobalId();
@@ -594,8 +597,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _scrollListener() {
-    if ((_scrollController.offset <= _scrollController.position.minScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
-      _loadMoreMessages();
+    if (_scrollController.position.atEdge) {
+      bool isAtTop = (_scrollController.position.pixels == _scrollController.position.maxScrollExtent);
+      if (isAtTop && _hasMoreMessages && !_loadingMore && !_loading) {
+        _loadMoreMessages();
+      }
     }
   }
 
