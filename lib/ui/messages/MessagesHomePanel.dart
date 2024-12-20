@@ -1064,6 +1064,8 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                       Expanded(child:
                         Text(widget.conversation?.lastMessage ?? '',
                           semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
                         )
                       )]) : Container(),
