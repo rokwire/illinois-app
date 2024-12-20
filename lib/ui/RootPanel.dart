@@ -43,6 +43,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -353,6 +354,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyConversationNotification) {
+      _onFirebaseConversationNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
@@ -1089,6 +1093,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? groupId = param["entity_id"];
       String? groupPostId = param["post_id"];
       _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId);
+    }
+  }
+
+  void _onFirebaseConversationNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? conversationId = param["entity_id"];
+      if (StringUtils.isNotEmpty(conversationId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId,)));;
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
+      }
     }
   }
 

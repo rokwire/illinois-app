@@ -28,7 +28,7 @@ class MessagesDirectoryPanel extends StatefulWidget {
 }
 
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with TickerProviderStateMixin implements NotificationsListener {
-  final GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
+  GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
   GlobalKey<DirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
   final ScrollController _recentScrollController = ScrollController();
   final ScrollController _allUsersScrollController = ScrollController();
@@ -43,6 +43,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
+  List<Conversation>? _recentConversations;
 
   final Set<String> _selectedAccountIds = <String>{};
 
@@ -55,6 +56,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
 
     _tabController = TabController(length: _tabNames.length, initialIndex: _selectedTab, vsync: this);
     _tabController.addListener(_onTabChanged);
+
+    _recentConversations = widget.recentConversations;
 
     super.initState();
   }
@@ -185,7 +188,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
     RecentConversationsPage(
       key: _recentPageKey,
       searchText: _searchText,
-      recentConversations: widget.recentConversations,
+      recentConversations: _recentConversations,
       conversationPageSize: widget.conversationPageSize,
       scrollController: _recentScrollController,
       onConversationSelectionChanged: _onConversationSelectionChanged,
@@ -217,6 +220,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
   void _onSearchText(String text) {
     setStateIfMounted((){
       _searchText = text;
+      _recentConversations = null;
+      _recentPageKey = GlobalKey();
       _allUsersPageKey = GlobalKey();
     });
   }

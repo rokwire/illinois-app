@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -12,12 +11,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class RecentConversationsPage extends StatefulWidget {
   final String? searchText;
   final ScrollController? scrollController;
-  final List<Conversation> recentConversations;
+  final List<Conversation>? recentConversations;
   final int conversationPageSize;
   final void Function(bool, Conversation)? onConversationSelectionChanged;
   final Set<String>? selectedAccountIds;
 
-  RecentConversationsPage({super.key, required this.recentConversations, required this.conversationPageSize,
+  RecentConversationsPage({super.key, this.recentConversations, required this.conversationPageSize,
     this.searchText, this.scrollController,
     this.onConversationSelectionChanged, this.selectedAccountIds });
 
@@ -45,9 +44,13 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     ]);
 
     widget.scrollController?.addListener(_scrollListener);
-    _conversations = widget.recentConversations;
-    _conversationsMap = _buildConversationsMap(widget.recentConversations);
-    Conversation.sortListByLastActivityTime(_conversations!);
+    if (widget.recentConversations != null) {
+      _conversations = widget.recentConversations;
+      _conversationsMap = _buildConversationsMap(widget.recentConversations);
+      Conversation.sortListByLastActivityTime(_conversations!);
+    } else {
+      _load();
+    }
     super.initState();
   }
 
@@ -97,7 +100,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
       for (Conversation conversation in conversations) {
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
-          onToggleExpanded: conversation.isGroupConversation ? () => _onToggleConversationExpanded(conversation) : null,
+          // onToggleExpanded: conversation.isGroupConversation ? () => _onToggleConversationExpanded(conversation) : null, //TODO: should group conversations be expandable to show all names?
           selected: ListUtils.contains(widget.selectedAccountIds, conversation.memberIds, checkAll: true) ?? false, // conversation must contain all selected account IDs to be selected
           onToggleSelected: (value) => widget.onConversationSelectionChanged?.call(value, conversation),
         ));
@@ -111,12 +114,12 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
-  void _onToggleConversationExpanded(Conversation conversation) {
-    Analytics().logSelect(target: 'Expand', source: conversation.id);
-    setState(() {
-      _expandedConversationId = (_expandedConversationId != conversation.id) ? conversation.id : null;
-    });
-  }
+  // void _onToggleConversationExpanded(Conversation conversation) {
+  //   Analytics().logSelect(target: 'Expand', source: conversation.id);
+  //   setState(() {
+  //     _expandedConversationId = (_expandedConversationId != conversation.id) ? conversation.id : null;
+  //   });
+  // }
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
     Align(alignment: Alignment.center, child:
@@ -242,7 +245,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       widget.expanded ? _expandedContent : _collapsedContent;
 
   Widget get _expandedContent =>
-    InkWell(onTap: widget.onToggleExpanded, child:
+    InkWell(onTap: _onSelect, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _cardSelectionContent(padding: const EdgeInsets.only(top: 12, bottom: 12, right: 8)),
         Expanded(child:
@@ -281,7 +284,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
   }
 
   Widget get _collapsedContent =>
-      InkWell(onTap: widget.onToggleExpanded, child:
+      InkWell(onTap: _onSelect, child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _cardSelectionContent(padding: EdgeInsets.only(top: 12, bottom: 12, right: 8)),
           Expanded(child:

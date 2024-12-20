@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show only first line of the last message in ConversationCard [#4545](https://github.com/rokwire/illinois-app/issues/4545).
-
+### Fixed
+- [BUG] Additional bug fixes for Messages [#4548](https://github.com/rokwire/illinois-app/issues/4548).
 ## [6.1.30] - 2024-12-19
 ### Changed
 - Message Conversation UI Updates and Bug Fixes (in progress) [#4536](https://github.com/rokwire/illinois-app/issues/4536)
