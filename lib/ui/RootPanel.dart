@@ -354,6 +354,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
     }
+    else if (name == FirebaseMessaging.notifyConversationNotification) {
+      _onFirebaseConversationNotification(param);
+    }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
     }
@@ -1092,11 +1095,27 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseConversationNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? conversationId = param["entity_id"];
+      _presentConversationPanel(conversationId: conversationId);
+    }
+  }
+
   void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
     if (StringUtils.isNotEmpty(groupId)) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+    }
+  }
+
+  void _presentConversationPanel({String? conversationId}) {
+    //TODO: Load Conversation with ConversationID param
+    if (StringUtils.isNotEmpty(conversationId)) {
+      //Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => MessagesConversationPanel(conversation: conversationId,)));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }
   }
 
