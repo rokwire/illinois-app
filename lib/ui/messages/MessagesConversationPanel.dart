@@ -1,14 +1,18 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:link_text/link_text.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -17,6 +21,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
@@ -254,20 +259,37 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   if (message.dateSentUtc != null)
                     Text(
                         AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                        style: Styles().textStyles.getTextStyle('widget.description.small')
+                        style: Styles().textStyles.getTextStyle('widget.description.small'),
                     ),
                 ],
               ),
               SizedBox(height: 8),
-              Text(
-                  message.message ?? '',
-                  style: Styles().textStyles.getTextStyle('widget.card.title.small')
+              //Text(message.message ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.small')),
+              LinkText(message.message ?? '',
+                textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                onLinkTap: _onTapLink,
               ),
             ]),
           ),
         );
       },
     );
+  }
+
+  void _onTapLink(String url) {
+    Analytics().logSelect(target: url);
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        }
+      }
+    }
   }
 
   Future<Widget> _buildAvatarWidget({required bool isCurrentUser, String? senderId}) async {
