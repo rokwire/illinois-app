@@ -83,6 +83,7 @@ import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widget_builders/actions.dart';
@@ -206,6 +207,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
+      Social.notifySocialDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
@@ -305,6 +307,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
+    }
+    else if (name == Social.notifySocialDetail) {
+      _onSocialDetail(param);
     }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
@@ -857,6 +862,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _presentGroupDetailPanel(groupId: groupId);
   }
 
+  Future<void> _onSocialDetail(Map<String, dynamic>? content) async {
+    String? conversationId = (content != null) ? JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
+    _presentSocialDetailPanel(conversationId: conversationId);
+  }
+
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
     String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) ?? JsonUtils.stringValue(content['entity_id']) : null;
     if (StringUtils.isNotEmpty(appointmentId)) {
@@ -1096,22 +1106,25 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseConversationNotification(param) {
-    if (param is Map<String, dynamic>) {
-      String? conversationId = param["entity_id"];
-      if (StringUtils.isNotEmpty(conversationId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId,)));;
-      } else {
-        AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
-      }
-    }
-  }
-
   void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
     if (StringUtils.isNotEmpty(groupId)) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+    }
+  }
+
+  void _onFirebaseConversationNotification(param) {
+    if (param is Map<String, dynamic>) {
+      _presentSocialDetailPanel(conversationId: JsonUtils.stringValue(param["entity_id"]));
+    }
+  }
+
+  void _presentSocialDetailPanel({String? conversationId}) {
+    if (StringUtils.isNotEmpty(conversationId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId,)));;
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }
   }
 
