@@ -1,12 +1,18 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:link_text/link_text.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -15,22 +21,25 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
-  final Conversation conversation;
-  MessagesConversationPanel({Key? key, required this.conversation}) : super(key: key);
+  final Conversation? conversation;
+  final String? conversationId;
+  MessagesConversationPanel({Key? key, this.conversation, this.conversationId}) : super(key: key);
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
-  TextEditingController _inputController = TextEditingController();
+  final TextEditingController _inputController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
-  ScrollController _scrollController = ScrollController();
+
   bool _shouldScrollToBottom = false;
   Map<String, Uint8List?> _userPhotosCache = {};
 
@@ -41,12 +50,15 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   // Use the actual Auth2 accountId instead of a placeholder.
   String? get _currentUserId => Auth2().accountId;
+  String? get _conversationId => widget.conversationId ?? widget.conversation?.id;
 
-  // Messages loaded from the backend
+  // Conversation and Messages loaded from the backend
+  Conversation? _conversation;
   List<Message> _messages = [];
-  Set<String> _globalIds = {};
   bool _hasMoreMessages = false;
-  final int _messagesPageSize = 100;
+  final int _messagesPageSize = 20;
+
+  final Set<String> _globalIds = {};
 
   @override
   void initState() {
@@ -56,22 +68,27 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Styles.notifyChanged,
       SpeechToText.notifyError,
     ]);
+    WidgetsBinding.instance.addObserver(this);
+
     _scrollController.addListener(_scrollListener);
 
-    // Load messages from the backend
-    _loadMessages();
+    if (widget.conversation != null) {
+      _conversation = widget.conversation;
+    }
 
-    WidgetsBinding.instance.addObserver(this);
+    // Load conversation (if needed) and messages from the backend
+    _initConversationAndMessages();
+
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     _inputController.dispose();
     _inputFieldFocus.dispose();
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -102,7 +119,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
 
     return Scaffold(
-      appBar: RootHeaderBar(title: widget.conversation.membersString, leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: _conversation?.membersString, leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -112,11 +129,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   String _getConversationTitle() {
     // If it's a one-on-one conversation, show the other member's name
     // If group, show something else. For now, if multiple members, just show first.
-    if (widget.conversation.members?.length == 1) {
-      return widget.conversation.members?.first.name ?? 'Unknown';
+    if (_conversation?.members?.length == 1) {
+      return _conversation?.members?.first.name ?? 'Unknown';
     } else {
       // For group conversations, you could customize the title further
-      return widget.conversation.membersString ?? 'Group Conversation';
+      return _conversation?.membersString ?? 'Group Conversation';
     }
   }
 
@@ -131,6 +148,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               Expanded(
                 child: SingleChildScrollView(
                     controller: _scrollController,
+                    reverse: true,
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top:16,),
@@ -145,8 +163,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           ])
               : _loading
               ? Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
-              : Center(
-              child: Text('No message history', style: Styles().textStyles.getTextStyle('widget.message.light.medium'))
+              : Center(child: Text((_conversation != null) ? 'No message history' : 'Failed to load conversation', style: Styles().textStyles.getTextStyle('widget.message.light.medium'))
           )
         )
       ),
@@ -242,20 +259,37 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   if (message.dateSentUtc != null)
                     Text(
                         AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                        style: Styles().textStyles.getTextStyle('widget.description.small')
+                        style: Styles().textStyles.getTextStyle('widget.description.small'),
                     ),
                 ],
               ),
               SizedBox(height: 8),
-              Text(
-                  message.message ?? '',
-                  style: Styles().textStyles.getTextStyle('widget.card.title.small')
+              //Text(message.message ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.small')),
+              LinkText(message.message ?? '',
+                textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                onLinkTap: _onTapLink,
               ),
             ]),
           ),
         );
       },
     );
+  }
+
+  void _onTapLink(String url) {
+    Analytics().logSelect(target: url);
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        }
+      }
+    }
   }
 
   Future<Widget> _buildAvatarWidget({required bool isCurrentUser, String? senderId}) async {
@@ -414,41 +448,78 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  Future<void> _loadMessages() async {
-    if (widget.conversation.id == null) {
+  Future<void> _initConversationAndMessages() async {
+    if (_conversationId == null) {
       return;
     }
     setStateIfMounted(() {
       _loading = true;
     });
 
+    List<Future> futures = [];
+
+    if (_conversation == null) {
+      futures.add(Social().loadConversation(_conversationId!));
+    }
+    futures.add(Social().loadConversationMessages(
+      conversationId: _conversationId!,
+      offset: 0,
+      limit: _messagesPageSize,
+    ));
+
+    List<dynamic> results = await Future.wait(futures);
+
+    if (mounted) {
+      Conversation? conversation = (1 < results.length) ? results.first : null;
+      List<Message>? messages = results.isNotEmpty ? results.last : null;
+      setState(() {
+        _loading = false;
+        if (conversation != null) {
+          _conversation = conversation;
+        }
+        if (messages != null) {
+          Message.sortListByDateSent(messages);
+          _messages = (_conversation?.isGroupConversation == true) ?
+            _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
+          _hasMoreMessages = (_messagesPageSize <= messages.length);
+          _shouldScrollToBottom = true;
+        }
+      });
+    }
+  }
+
+  Future<void> _refreshMessages() async {
+    if (_conversationId == null) {
+      return;
+    }
+
     // Use the Social API to load conversation messages
     List<Message>? loadedMessages = await Social().loadConversationMessages(
-      conversationId: widget.conversation.id!,
-      limit: _messagesPageSize,
+      conversationId: _conversationId!,
+      limit: max(_messages.length, _messagesPageSize),
       offset: 0,
     );
 
     setStateIfMounted(() {
-      _loading = false;
       if (loadedMessages != null) {
         Message.sortListByDateSent(loadedMessages);
-        _messages = loadedMessages;
+        _globalIds.clear();
+        _messages = (_conversation?.isGroupConversation == true) ?
+          _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
         _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        if (widget.conversation.isGroupConversation) {
-          _removeDuplicateMessagesByGlobalId();
-        }
         _shouldScrollToBottom = true;
       } else {
         // If null, could indicate a failure to load messages
-        _messages = [];
-        _hasMoreMessages = false;
+        // If null, silently ignore the error
+        // _messages = [];
+        // _hasMoreMessages = false;
+        // _globalIds.clear();
       }
     });
   }
 
   void _loadMoreMessages() async {
-    if (widget.conversation.id == null) {
+    if (_conversationId == null) {
       return;
     }
     setStateIfMounted(() {
@@ -457,7 +528,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     // Use the Social API to load conversation messages
     List<Message>? loadedMessages = await Social().loadConversationMessages(
-      conversationId: widget.conversation.id!,
+      conversationId: _conversationId!,
       limit: _messagesPageSize,
       offset: _messages.length,
     );
@@ -466,33 +537,32 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       _loadingMore = false;
       if (loadedMessages != null) {
         Message.sortListByDateSent(loadedMessages);
-        _messages.addAll(loadedMessages);
+        List<Message> newMessages = (_conversation?.isGroupConversation == true) ?
+          _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
+        newMessages.addAll(_messages);
+        _messages = newMessages;
         _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        if (widget.conversation.isGroupConversation) {
-          _removeDuplicateMessagesByGlobalId();
-        }
         _shouldScrollToBottom = false;
       }
     });
   }
 
-  void _removeDuplicateMessagesByGlobalId() {
+  static List<Message> _removeDuplicateMessagesByGlobalId(List<Message> source, Set<String> globalIds) {
     List<Message> messages = [];
-    for (Message message in _messages) {
-      if (message.globalId != null && !_globalIds.contains(message.globalId)) {
+    for (Message message in source) {
+      if (message.globalId != null && !globalIds.contains(message.globalId)) {
         messages.add(message);
-        _globalIds.add(message.globalId!);
+        globalIds.add(message.globalId!);
       }
     }
-    _messages = messages;
+    return messages;
   }
 
-  Future<void> _onPullToRefresh() async {
-    _loadMessages();
-  }
+  Future<void> _onPullToRefresh() async =>
+    _refreshMessages();
 
   Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text) && widget.conversation.id != null && _currentUserId != null && _submitting == false) {
+    if (StringUtils.isNotEmpty(_inputController.text) && _conversationId != null && _currentUserId != null && _submitting == false) {
       FocusScope.of(context).requestFocus(FocusNode());
 
       String messageText = _inputController.text.trim();
@@ -515,7 +585,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       try {
         // Send to the backend
         List<Message>? newMessages = await Social().createConversationMessage(
-          conversationId: widget.conversation.id!,
+          conversationId: _conversationId!,
           message: messageText,
         );
 
@@ -594,8 +664,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _scrollListener() {
-    if ((_scrollController.offset <= _scrollController.position.minScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
-      _loadMoreMessages();
+    if (_scrollController.position.atEdge) {
+      bool isAtTop = (_scrollController.position.pixels == _scrollController.position.maxScrollExtent);
+      if (isAtTop && _hasMoreMessages && !_loadingMore && !_loading) {
+        _loadMoreMessages();
+      }
     }
   }
 

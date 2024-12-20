@@ -173,38 +173,40 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   }
 
   Widget _buildPage(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _onPullToRefresh,
-      child: Container(
-        color: Styles().colors.background,
-        child: Stack(children: [
-          Visibility(visible: (_loading != true), child:
-            Padding(padding: EdgeInsets.only(top: 12), child: _buildConversationsContent())
-          ),
-          Visibility(visible: (_loading == true), child:
-            Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-            )
-          ),
-          Visibility(visible: (_selectedFilter != null), child:
-            Stack(children:<Widget>[
-              _buildDisabledContentLayer(),
-              _buildFilterValues(),
-            ]),
-          ),
-        ]),
-      ),
+    return Container(
+      color: Styles().colors.background,
+      child: Stack(children: [
+        Visibility(visible: (_loading != true), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child: _buildConversationsContent())
+        ),
+        Visibility(visible: (_loading == true), child:
+          Align(alignment: Alignment.center, child:
+            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+          )
+        ),
+        Visibility(visible: (_selectedFilter != null), child:
+          Stack(children:<Widget>[
+            _buildDisabledContentLayer(),
+            _buildFilterValues(),
+          ]),
+        ),
+      ]),
     );
   }
 
   Widget _buildConversationsContent() {
     if (_conversations.isNotEmpty) {
       int count = _conversations.length + ((_loadingMore == true) ? 1 : 0);
-      return ListView.separated(
-          separatorBuilder: (context, index) => Container(height: 16),
-          itemCount: count,
-          itemBuilder: _buildListEntry,
-          controller: _scrollController);
+      return RefreshIndicator(
+        onRefresh: _onPullToRefresh,
+        child: ListView.separated(
+            separatorBuilder: (context, index) => Container(height: 16),
+            itemCount: count,
+            itemBuilder: _buildListEntry,
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+        ),
+      );
     }
     else {
       return Column(children: <Widget>[
@@ -1052,10 +1054,12 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                               style: Styles().textStyles.getTextStyle('widget.card.title.small')
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: _buildDisplayDateWidget,
-                        ),
+                        if (widget.conversation?.mute == true)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Styles().images.getImage('notification-off'),
+                          ),
+                        _buildDisplayDateWidget,
                       ],
                     ),
                     Container(height: 16.0),
@@ -1064,6 +1068,8 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                       Expanded(child:
                         Text(widget.conversation?.lastMessage ?? '',
                           semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
                         )
                       )]) : Container(),
