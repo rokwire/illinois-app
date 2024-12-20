@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.31] - 2024-12-20
 ### Changed
 - Show only first line of the last message in ConversationCard [#4545](https://github.com/rokwire/illinois-app/issues/4545).
 - Detect URL links in text body of conversation message card [#4547](https://github.com/rokwire/illinois-app/issues/4547).
