@@ -234,52 +234,6 @@ TextStyle? groupMemberStatusToTextStyle(GroupMemberStatus? value) {
   return null;
 }
 
-extension GroupPostExt on GroupPost {
-
-  GroupPostType get type => (members?.isNotEmpty == true) ? GroupPostType.message : GroupPostType.post;
-  bool get isPost => (type == GroupPostType.post);
-  bool get isMessage => (type == GroupPostType.message);
-  bool get isScheduled => dateScheduledUtc?.isAfter(DateTime.now()) == true;
-
-  String? get displayDateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    if (deviceDateTime != null) {
-      DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
-        if (difference.inSeconds < 60) {
-          return "now";
-        }
-        else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes} ${difference.inMinutes > 1 ? Localization().getStringEx("generic.time.minutes", "minutes") : Localization().getStringEx("generic.time.minute", "minute")}";
-        }
-        else if (difference.inHours < 24) {
-          return "${difference.inHours} ${difference.inHours > 1 ? Localization().getStringEx("generic.time.hours", "hours") : Localization().getStringEx("generic.time.hour", "hour")}";
-        }
-        else if (difference.inDays < 30) {
-          return "${difference.inDays} ${difference.inDays > 1 ? Localization().getStringEx("generic.time.days", "days") : Localization().getStringEx("generic.time.day", "day")}";
-        }
-        else {
-          int differenceInMonths = difference.inDays ~/ 30;
-          if (differenceInMonths < 12) {
-            return "$differenceInMonths ${differenceInMonths > 1 ? Localization().getStringEx("generic.time.months", "months") : Localization().getStringEx("generic.time.month", "month")}";
-          }
-        }
-      }
-      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
-    }
-    return null;
-  }
-
-  String? get displayScheduledTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateScheduledUtc);
-    if(deviceDateTime != null){
-      return DateFormat("MMM dd, HH:mm").format(deviceDateTime);
-    }
-    return null;
-  }
-}
-
 extension GroupSettingsExt on GroupSettings{
   static GroupSettings initialDefaultSettings({Group? group}){
       //Set Default values to true

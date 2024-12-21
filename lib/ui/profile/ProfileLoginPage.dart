@@ -179,7 +179,10 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   void _onConnectNetIdClicked() {
     Analytics().logSelect(target: "Connect netId");
-    if (_connectingNetId != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
@@ -194,12 +197,14 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   void _onPhoneOrEmailLoginClicked() {
     Analytics().logSelect(target: "Phone or Email Login");
-    if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: () {
-        _popToMe();
-      },),),);
-    } else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+    else if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: _popToMe),),);
     }
   }
 
@@ -435,49 +440,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     } else if (Auth2().isPasskeyLoggedIn) {
       Analytics().logSelect(target: "Disconnect passkey");
     }
-    showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
-  }
-
-  Widget _buildLogoutDialog(BuildContext context) {
-    return Dialog(
-      backgroundColor: Styles().colors.background,
-      child: Padding(padding: EdgeInsets.all(18), child:
-        Container(
-          constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
-          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Text(Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles.getTextStyle("widget.title.light.extra_large"),
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-              Text(Localization().getStringEx("panel.settings.home.logout.message", _promptEn), textAlign: TextAlign.left,
-                style: Styles().textStyles.getTextStyle("widget.message.light.medium")
-              ),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-              TextButton(onPressed: _onConfirmLogout, child:
-                Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))
-              ),
-              TextButton(onPressed: _onRejectLogout, child:
-                Text(Localization().getStringEx("panel.settings.home.logout.no", "No"))
-              )
-            ],),
-          ],),
-        ),
-      ),
-    );
-  }
-
-  static const String _promptEn = 'Are you sure you want to sign out?';
-
-  void _onConfirmLogout() {
-    Analytics().logAlert(text: _promptEn, selection: "Yes");
-    Navigator.pop(context);
-    Auth2().logout();
-  }
-
-  void _onRejectLogout() {
-    Analytics().logAlert(text: _promptEn, selection: "No");
-    Navigator.pop(context);
+    showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
+      if (result == true) {
+        Auth2().logout();
+      }
+    });
   }
 
   // Linked
@@ -678,15 +645,19 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   void _onLinkNetIdClicked() {
     Analytics().logSelect(target: "Link Illinois NetID");
-    if (Connectivity().isNotOffline) {
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
+    }
+    else if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else {
       SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
         message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
         continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) => _onLinkNetIdReloginConfirmed(progressController),
       );
-    } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
     }
   }
 
@@ -729,15 +700,19 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode mode) {
     Analytics().logSelect(target: "Link ${settingsLoginPhoneOrEmailModeToString(mode)}");
 
-    if (Connectivity().isNotOffline) {
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+    else if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else {
       SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
         message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
         continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController) => _onLinkPhoneOrEmailReloginConfirmed(mode, progressController),
       );
-    } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
@@ -857,5 +832,47 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       return BorderRadius.zero;
     }
   }
+}
 
+class ProfilePromptLogoutWidget extends StatelessWidget {
+  ProfilePromptLogoutWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) => Dialog(child:
+    Padding(padding: EdgeInsets.all(18), child:
+      Container(
+        constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Text(AppTextUtils.appTitleString("panel.settings.home.logout.title", AppTextUtils.appTitleMacro),
+            style: Styles().textStyles.getTextStyle("widget.message.light.extra_large"),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
+            Text(_promptText(), textAlign: TextAlign.left,
+              style: Styles().textStyles.getTextStyle("widget.message.light.medium")
+            ),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+            TextButton(onPressed: () => _onTapYes(context), child:
+              Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))
+            ),
+            TextButton(onPressed: () => _onTapNo(context), child:
+              Text(Localization().getStringEx("panel.settings.home.logout.no", "No"))
+            )
+          ],),
+        ],),
+      ),
+    ),
+  );
+
+  String _promptText({String? language}) => Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?", language: 'en');
+
+  void _onTapYes(BuildContext context) {
+    Analytics().logAlert(text: _promptText(language: 'en'), selection: "Yes");
+    Navigator.pop(context, true);
+  }
+
+  void _onTapNo(BuildContext context) {
+    Analytics().logAlert(text: _promptText(language: 'en'), selection: "No");
+    Navigator.pop(context, false);
+  }
 }

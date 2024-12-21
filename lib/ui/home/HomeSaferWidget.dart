@@ -163,18 +163,23 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _buildingAccessOidcAuthenticate() {
-    if (mounted) {
-      setState(() { _buildingAccessAuthLoading = true; });
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
     }
-    Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-//    Future.delayed(Duration(milliseconds: 300), () {
-        if (mounted) {
-          NotificationService().notify(HomeSaferWidget.notifyNeedsVisiblity);
-          setState(() { _buildingAccessAuthLoading = false; });
-          _buildingAccessOidcDidAuthenticate(result);
-        }
-//    });
-    });
+    else {
+      if (mounted) {
+        setState(() { _buildingAccessAuthLoading = true; });
+      }
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+  //    Future.delayed(Duration(milliseconds: 300), () {
+          if (mounted) {
+            NotificationService().notify(HomeSaferWidget.notifyNeedsVisiblity);
+            setState(() { _buildingAccessAuthLoading = false; });
+            _buildingAccessOidcDidAuthenticate(result);
+          }
+  //    });
+      });
+    }
   }
 
   void _buildingAccessOidcDidAuthenticate(Auth2OidcAuthenticateResult? result) {

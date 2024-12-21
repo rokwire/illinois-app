@@ -651,7 +651,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   //bool get _sendEnabled => (_originLocation != null) && (_destinationLocation != null);
 
   void _onTapSend() async {
-    Analytics().logSelect(target: 'Start with a Text');
+    Analytics().logSelect(target: 'Start with a Text', feature: AnalyticsFeature.Safety);
     if (_sendProgress != true) {
       if (_originLocation == null) {
         ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.origin.title', 'Please select your current location.'));

@@ -93,6 +93,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
     ExploreMapType.MyLocations:         AnalyticsFeature.MapMyLocations,
     ExploreMapType.MentalHealth:        AnalyticsFeature.MapMentalHealth,
     ExploreMapType.StateFarmWayfinding: AnalyticsFeature.MapStateFarm,
+    ExploreMapType.StoriedSites:        AnalyticsFeature.StoriedSites,
   };
 
   final Map<String, dynamic> params = <String, dynamic>{};
@@ -199,6 +200,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   bool _filtersDropdownVisible = false;
   
   List<Explore>? _explores;
+  List<Explore>? _filteredExplores;
   bool _exploreProgress = false;
   Future<List<Explore>?>? _exploreTask;
 
@@ -231,6 +233,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Future<Set<Marker>?>? _buildMarkersTask;
   Explore? _pinnedMapExplore;
   dynamic _selectedMapExplore;
+  Explore? _selectedStoriedSiteExplore;
   AnimationController? _mapExploreBarAnimationController;
   
   String? _loadingMapStopIdRoutes;
@@ -378,7 +381,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.debugMapThresholdDistanceKey) {
-        _buildMapContentData(_explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: _lastMarkersUpdateZoom, showProgress: true);
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: _lastMarkersUpdateZoom, showProgress: true);
       }
       else if (param == Storage.debugMapShowLevelsKey) {
         setStateIfMounted(() { });
@@ -470,10 +473,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             ExploreStoriedSightsBottomSheet(
               key: _storiedSightsKey,
               places: _explores?.whereType<Place>().toList() ?? [],
-              onPlaceSelected: (Place place) {
-                _centerMapOnExplore(place);
-                _selectMapExplore(place);
-              },
+              onPlaceSelected: _onStoriedSitesPlaceSelected,
+              onFilteredPlacesChanged: _onStoriedSitesFilteredPlacesChanged,
+              onBackPressed: _onStoriedSitesBackPressed,
             ),
           _buildExploreTypesDropDownContainer(),
         ]),
@@ -504,7 +506,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildMapContent() {
     return Stack(children: [
       _buildMapView(),
-      _buildMapExploreBar(),
+      if (_selectedMapType != ExploreMapType.StoriedSites)
+        _buildMapExploreBar(),
       Visibility(visible: _markersProgress, child:
         Positioned.fill(child:
           Center(child:
@@ -577,7 +580,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _lastMarkersUpdateZoom = value;
       }
       else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: value, showProgress: true);
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: value, showProgress: true);
       }
     });
   }
@@ -585,10 +588,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onMapTap(LatLng coordinate) {
     debugPrint('ExploreMap tap' );
     MTDStop? mtdStop;
-    if (_selectedMapType == ExploreMapType.StoriedSites) {
-      _storiedSightsKey.currentState?.resetSelection();
-    }
-    else if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
+    if ((mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/)) != null) {
       _selectMapExplore(mtdStop);
     }
     else if (_selectedMapExplore != null) {
@@ -599,36 +599,96 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  // void _onMapPoiTap(PointOfInterest poi) {
-  //   debugPrint('ExploreMap POI tap' );
-  //   MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
-  //   if (mtdStop != null) {
-  //     _selectMapExplore(mtdStop);
-  //   }
-  //   else if (_selectedMapType == ExploreMapType.MyLocations) {
-  //     _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
-  //   }
-  //   else if (_selectedMapExplore != null) {
-  //     _selectMapExplore(null);
-  //   }
-  // }
+  void _onMapPoiTap(PointOfInterest poi) {
+    debugPrint('ExploreMap POI tap' );
+    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
+    if (mtdStop != null) {
+      _selectMapExplore(mtdStop);
+    }
+    else if (_selectedMapType == ExploreMapType.MyLocations) {
+      _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
+    }
+    else if (_selectedMapExplore != null) {
+      _selectMapExplore(null);
+    }
+  }
 
   void _onTapMarker(dynamic origin) {
     if (_selectedMapType == ExploreMapType.StoriedSites) {
-      if (origin is Place) {
-        _storiedSightsKey.currentState?.selectPlace(origin);
-      } else if (origin is List<Explore>) {
-        List<Place> places = origin.cast<Place>();
-        _storiedSightsKey.currentState?.selectPlaces(places);
-        _centerMapOnExplore(places);
-      }
-    } else {
+      _selectStoriedSiteExplore(origin);
+    }
+    else {
       _selectMapExplore(origin);
     }
   }
 
+  void _onStoriedSitesPlaceSelected(places_model.Place place) {
+    _centerMapOnExplore(place, zoom: false);
+    _selectMapExplore(place);
+  }
 
-  void _centerMapOnExplore(dynamic explore) {
+  void _onStoriedSitesFilteredPlacesChanged(List<places_model.Place>? filteredExplores) {
+    if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+      _mapController?.getZoomLevel().then((double value) {
+        _filteredExplores = (filteredExplores != null) ? List.from(filteredExplores) : null;
+        _buildMapContentData(_filteredExplores ?? _explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, showProgress: true, zoom: value);
+      });
+    }
+  }
+
+  void _onStoriedSitesBackPressed() {
+    _selectStoriedSiteExplore(null);
+  }
+
+  void _selectStoriedSiteExplore(dynamic explore) {
+    if (explore is Place) {
+      _storiedSightsKey.currentState?.selectPlace(explore);
+    }
+    else if (explore is List<Explore>) {
+      List<places_model.Place> places = explore.cast<places_model.Place>();
+      _storiedSightsKey.currentState?.selectPlaces(places);
+      _centerMapOnExplore(places);
+    }
+
+    _updateSelectedStoriedSiteMarker(explore is Explore ? explore : null);
+
+    _logAnalyticsSelect(explore);
+  }
+
+  Future<void> _updateSelectedStoriedSiteMarker(Explore? selectedStoriedSiteExplore) async {
+    Set<Marker>? targetMarkers = (_targetMarkers != null) ? Set<Marker>.from(_targetMarkers!) : null;
+    if ((targetMarkers != null) && (_selectedStoriedSiteExplore != selectedStoriedSiteExplore)) {
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
+
+      if (_selectedStoriedSiteExplore != null) {
+        Marker? selectedStoriedSiteMarker = targetMarkers.exploreMarker(_selectedStoriedSiteExplore);
+        Marker? selectedStoriedSiteMarkerUpd = await _createExploreMarker(_selectedStoriedSiteExplore, imageConfiguration: imageConfiguration);
+        if ((selectedStoriedSiteMarker != null) && (selectedStoriedSiteMarkerUpd != null)) {
+          targetMarkers.remove(selectedStoriedSiteMarker);
+          targetMarkers.add(selectedStoriedSiteMarkerUpd);
+        }
+      }
+
+      _selectedStoriedSiteExplore = selectedStoriedSiteExplore;
+
+      if (_selectedStoriedSiteExplore != null) {
+        Marker? selectedStoriedSiteMarker = targetMarkers.exploreMarker(_selectedStoriedSiteExplore);
+        Marker? selectedStoriedSiteMarkerUpd = await _createExploreMarker(_selectedStoriedSiteExplore, imageConfiguration: imageConfiguration, markerColor: Styles().colors.fillColorSecondary);
+        if ((selectedStoriedSiteMarker != null) && (selectedStoriedSiteMarkerUpd != null)) {
+          targetMarkers.remove(selectedStoriedSiteMarker);
+          targetMarkers.add(selectedStoriedSiteMarkerUpd);
+        }
+      }
+    }
+
+    if (!DeepCollectionEquality().equals(_targetMarkers, targetMarkers)) {
+      setStateIfMounted((){
+        _targetMarkers = targetMarkers;
+      });
+    }
+  }
+
+  void _centerMapOnExplore(dynamic explore, {bool zoom = true}) async {
     LatLng? targetPosition;
 
     if (explore is Explore) {
@@ -638,13 +698,26 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if (targetPosition != null && _mapController != null) {
-      CameraUpdate cameraUpdate = CameraUpdate.newLatLng(targetPosition);
-      _mapController!.moveCamera(cameraUpdate);
+      double currentZoom = await _mapController!.getZoomLevel();
+      double targetZoom = currentZoom;
+
+      if (zoom) {
+        targetZoom += 1;
+        if (targetZoom > 20) {
+          targetZoom = 20;
+        }
+      }
+
+      CameraUpdate cameraUpdate = zoom
+          ? CameraUpdate.newLatLngZoom(targetPosition, targetZoom)
+          : CameraUpdate.newLatLng(targetPosition); // Center without zoom
+
+      await _mapController!.moveCamera(cameraUpdate);
 
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
       double offset = 450 / devicePixelRatio;
 
-      _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
+      await _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
     }
   }
 
@@ -763,7 +836,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if ((launchTask != null) && !await launchTask) {
-      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
+      AppAlert.showTextMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));
     }
     
     // AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
@@ -818,6 +891,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     else {
       _pinMapExplore(null);
     }
+
     _logAnalyticsSelect(explore);
   }
 
@@ -1840,13 +1914,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (mounted && (exploreTask == _exploreTask)) {
         setState(() {
           _explores = explores;
+          _filteredExplores = null;
           _exploreTask = null;
           _exploreProgress = false;
           _mapKey = UniqueKey(); // force map rebuild
         });
         _selectMapExplore(null);
+        _selectStoriedSiteExplore(null);
         _displayContentPopups();
-     }
+      }
     }
   }
 
@@ -1859,6 +1935,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         if (mounted && (exploreTask == _exploreTask)) {
           setState(() {
             _explores = explores;
+            _filteredExplores = null;
             _exploreProgress = false;
             _exploreTask = null;
           });
@@ -2043,6 +2120,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         if (mounted) {
           setState(() {
             _explores = explores;
+            _filteredExplores = null;
           });
         }
       });
@@ -2108,7 +2186,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         thresoldDistance = 0;
         exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
-      
+
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
         Future<Set<Marker>> buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMarkerGroups, pinnedExplore: pinnedExplore);
         _buildMarkersTask = buildMarkersTask;
@@ -2289,7 +2367,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
 
-  Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
+  Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration, Color? markerColor }) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
       BitmapDescriptor? markerIcon;
@@ -2301,19 +2379,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markerAnchor = Offset(0.5, 0.5);
       }
       else {
-        Color? exploreColor = explore?.mapMarkerColor;
+        Color? exploreColor = markerColor ?? explore?.mapMarkerColor;
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
         markerAnchor = Offset(0.5, 1);
       }
       return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
         position: markerPosition,
         icon: markerIcon,
         anchor: markerAnchor,
         consumeTapEvents: true,
         onTap: () => _onTapMarker(explore),
         infoWindow: InfoWindow(
-          title:  explore?.mapMarkerTitle,
+          title: explore?.mapMarkerTitle,
           snippet: explore?.mapMarkerSnippet,
           anchor: markerAnchor)
       );
@@ -2539,3 +2617,14 @@ class ExploreFilter {
   }
 }
 
+extension _MapMarkersSet on Set<Marker> {
+
+  Marker? exploreMarker(Explore? explore) {
+    LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
+    String? markerId = (markerPosition != null) ? "${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}" : null;
+    return (markerId != null) ? markerById(MarkerId(markerId)) : null;
+  }
+
+  Marker? markerById(MarkerId markerId) =>
+    firstWhereOrNull((marker) => marker.markerId == markerId);
+}

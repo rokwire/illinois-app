@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -495,11 +496,13 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   void _loadUserProfilePicture() {
-    _setProfilePicProcessing(true);
-    Content().loadDefaultUserProfileImage().then((imageBytes) {
-      _profileImageBytes = imageBytes;
-      _setProfilePicProcessing(false);
-    });
+    if (StringUtils.isNotEmpty(Auth2().profile?.photoUrl)) {
+      _setProfilePicProcessing(true);
+      Content().loadUserPhoto(type: UserProfileImageType.defaultType).then((ImagesResult? imageResult) {
+        _profileImageBytes = imageResult?.imageData;
+        _setProfilePicProcessing(false);
+      });
+    }
   }
 
   void _setProfilePicProcessing(bool processing) {
@@ -548,40 +551,36 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
       setState(() { _isSaving = true; });
 
-      Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
-        if (mounted) {
-          if (userProfile != null) {
-            Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
-              firstName: firstName,
-              middleName: middleName,
-              lastName: lastName,
-            );
-            if (userProfile != updatedUserProfile) {
-              Auth2().saveAccountUserProfile(updatedUserProfile).then((bool result) {
-                if (mounted) {
-                  setState(() {
-                    _isSaving = false;
-                  });
-                  if (result == true) {
-                    Navigator.pop(context);
-                  } else {
-                    AppToast.showMessage("Unable to perform save");
-                  }
+    Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
+      if (mounted) {
+        if (userProfile != null) {
+          Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
+            override: Auth2UserProfile(firstName: firstName, middleName: middleName, lastName: lastName,),
+            scope: {Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,}
+          );
+          if (userProfile != updatedUserProfile) {
+            Auth2().saveUserProfile(updatedUserProfile).then((bool result) {
+              if (mounted) {
+                setState(() { _isSaving = false; });
+                if (result == true) {
+                  Navigator.pop(context);
+                } else {
+                  AppToast.showMessage("Unable to perform save");
                 }
-              });
-            }
-            else {
-              setState(() { _isSaving = false; });
-              Navigator.pop(context);
-            }
+              }
+            });
           }
           else {
             setState(() { _isSaving = false; });
-            AppToast.showMessage("Unable to perform save");
+            Navigator.pop(context);
           }
         }
-      });
-    }
+        else {
+          setState(() { _isSaving = false; });
+          AppToast.showMessage("Unable to perform save");
+        }
+      }
+    });
   }
 
   void _onTapProfilePicture() {
@@ -605,15 +604,21 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
               _setProfilePicProcessing(false);
               break;
             case ImagesResultType.error:
-              AppAlert.showDialogResult(
-                  context,
-                  Localization().getStringEx(
-                      'panel.profile_info.picture.upload.failed.msg',
-                      'Failed to upload profile picture. Please, try again later.'));
+              AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
               _setProfilePicProcessing(false);
               break;
             case ImagesResultType.succeeded:
-              _loadUserProfilePicture();
+              _updateProfilePicture(true).then((bool updateResult){
+                if (mounted) {
+                  if (updateResult) {
+                    _loadUserProfilePicture();
+                  }
+                  else {
+                    AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
+                    _setProfilePicProcessing(false);
+                  }
+                }
+              });
               break;
             default:
               break;
@@ -627,25 +632,44 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   void _deleteProfilePicture(){
     Analytics().logSelect(target: "Delete Profile Picture");
     _setProfilePicProcessing(true);
-    Content().deleteCurrentUserProfileImage().then((deleteImageResult) {
-      ImagesResultType? resultType = deleteImageResult.resultType;
-      switch (resultType) {
-        case ImagesResultType.error:
-          AppAlert.showDialogResult(
-              context,
-              Localization().getStringEx(
-                  'panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
-          _setProfilePicProcessing(false);
-          break;
-        case ImagesResultType.succeeded:
-          _profileImageBytes = null;
-          _setProfilePicProcessing(false);
-          break;
-        default:
-          _setProfilePicProcessing(false);
-          break;
+    Content().deleteUserPhoto().then((deleteImageResult) {
+      if (mounted) {
+        ImagesResultType? resultType = deleteImageResult.resultType;
+        switch (resultType) {
+          case ImagesResultType.error:
+            AppAlert.showDialogResult(context,Localization().getStringEx('panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+            _setProfilePicProcessing(false);
+            break;
+          case ImagesResultType.succeeded:
+            setState(() {
+              _profileImageBytes = null;
+            });
+            _updateProfilePicture(false).then((bool updateResult){
+              if (mounted) {
+                if (!updateResult) {
+                  AppAlert.showDialogResult(context,Localization().getStringEx('panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+                }
+                _setProfilePicProcessing(false);
+              }
+            });
+
+            break;
+          default:
+            _setProfilePicProcessing(false);
+            break;
+        }
       }
     });
+  }
+
+  Future<bool> _updateProfilePicture(bool hasPicture) async {
+    Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
+      override: Auth2UserProfile(
+        photoUrl: hasPicture ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : "",
+      ),
+      scope: { Auth2UserProfileScope.photoUrl }
+    );
+    return await Auth2().saveUserProfile(profile);
   }
 
   void _onTapDeletePicture() {
@@ -714,7 +738,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
   void _onTapDeleteData() async {
     final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
-    int userPostCount = await Groups().getUserPostCount();
+    int userPostCount = await Social().getUserPostsCount();
     bool contributeInGroups = userPostCount > 0;
 
     SettingsDialog.show(context,
@@ -733,8 +757,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
           progressController(loading: true);
-          if(selectedValues.contains(groupsSwitchTitle)){
+          if (selectedValues.contains(groupsSwitchTitle)) {
             Groups().deleteUserData();
+            Social().deleteUser();
           }
           _deleteUserData().then((_){
             progressController(loading: false);

@@ -152,7 +152,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     return Padding(padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")),
+          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny.fat")),
         ),
         Stack(children: <Widget>[
           Container(color: Styles().colors.surface,

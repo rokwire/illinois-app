@@ -20,29 +20,30 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:neom/ext/ImagesResult.dart';
 import 'package:neom/mainImpl.dart';
 import 'package:neom/model/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/groups/GroupMembersSelectionPanel.dart';
-import 'package:neom/ui/groups/GroupPostCreatePanel.dart';
-import 'package:neom/ui/groups/GroupPostReportAbuse.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
+import 'package:neom/ext/Social.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/groups/GroupDetailPanel.dart';
 import 'package:neom/ui/groups/GroupPostDetailPanel.dart';
@@ -77,7 +78,7 @@ class GroupSectionTitle extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: _semanticsLabel, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
-            TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.title.tiny"),
+            TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.title.tiny.fat"),
               children: [
                 TextSpan(text: (requiredMark == true) ?  " *" : "", style: requiredMarkTextStyle ?? Styles().textStyles.getTextStyle("widget.title.tiny.extra_fat"),
               )
@@ -556,7 +557,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, ImagesResult.succeed(url));
+      Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
     } else {
       //we need to process it
       setState(() {
@@ -627,7 +628,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
   void _onTapClear() {
     Analytics().logSelect(target: "Clear");
-    Navigator.pop(context, ImagesResult.succeed(null));
+    Navigator.pop(context, ImagesResult.succeed());
   }
 
 
@@ -669,7 +670,6 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
-  bool? _bussy;
 
   @override
   void initState() {
@@ -696,8 +696,8 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-        Stack(children: [
+      Padding(padding: widget.margin, child:
+        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildHeading(),
             Container(height: 6),
@@ -720,17 +720,8 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
             ])
             // : Container()
           ]),
-          Visibility(visible: (_bussy == true), child:
-            Positioned.fill(child:
-              Align(alignment: Alignment.center, child:
-                SizedBox(height: 24, width: 24, child:
-                  CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-                ),
-              ),
-            ),
-          ),
-        ],),
-      ))
+        )
+      )
     );
   }
 
@@ -988,39 +979,33 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
-    if (FlexUI().isAuthenticationAvailable) {
-      // if (Auth2().isOidcLoggedIn) {
-        Navigator.push(context, CupertinoPageRoute(
-          settings: RouteSettings(name: GroupDetailPanel.routeName),
-          builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature,)
-        ));
-      // }
-      // else {
-      //   setState(() { _bussy = true; });
-      //
-      //   Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-      //     if (mounted) {
-      //       setState(() { _bussy = null; });
-      //       if (result == Auth2OidcAuthenticateResult.succeeded) {
-      //         Navigator.push(context, CupertinoPageRoute(
-      //           settings: RouteSettings(name: GroupDetailPanel.routeName),
-      //             builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature)
-      //         ));
-      //       }
-      //     }
-      //   });
-      // }
+    // if (!Auth2().privacyMatch(4)) {
+    //   AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+    //     TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: _onDismissPopup)
+    //   ]);
+    // }
+    // else
+    if (!Auth2().isLoggedIn) {
+      AppAlert.showCustomDialog(context: context, contentWidget: _buildLoggedOutAlertWidget(), actions: [
+        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: _onDismissPopup)
+      ]);
     }
     else {
-      AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
-        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: () => _onDismissPrivacyAlert(context))
-      ]);
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(name: GroupDetailPanel.routeName),
+        builder: (context) => GroupDetailPanel(group: widget.group, analyticsFeature: widget.analyticsFeature,)
+      ));
     }
   }
 
+  Widget _buildLoggedOutAlertWidget() =>
+    Text(Localization().getStringEx('widget.group_card.login_na.msg', 'You need to be logged in to access specific groups. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.'), style:
+      Styles().textStyles.getTextStyle('widget.description.small.fat')
+    );
+
   Widget _buildPrivacyAlertWidget() {
     final String iconMacro = '{{privacy_level_icon}}';
-    String privacyMsg = Localization().getStringEx('panel.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view the list of groups.');
+    String privacyMsg = Localization().getStringEx('widget.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view the list of groups.');
     int iconMacroPosition = privacyMsg.indexOf(iconMacro);
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
@@ -1041,7 +1026,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     );
   }
 
-  void _onDismissPrivacyAlert(BuildContext context) {
+  void _onDismissPopup() {
     Analytics().logSelect(target: 'OK');
     Navigator.of(context).pop();
   }
@@ -1055,8 +1040,8 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 // GroupPostCard
 
 class GroupPostCard extends StatefulWidget {
-  final GroupPost? post;
-  final Group? group;
+  final Post? post;
+  final Group group;
   final List<Member>? allMembersAllowedToPost;
   final bool showImage;
   final bool isReply;
@@ -1079,10 +1064,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? memberName = widget.post?.member?.displayShortName;
+    String? creatorName = widget.post?.creatorName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
-    int visibleRepliesCount = getVisibleRepliesCount();
+    int visibleRepliesCount = _visibleRepliesCount;
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'reply')
@@ -1207,21 +1192,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
         ))
     ]));
 
-  String get _selectionMembersText {
-    if(CollectionUtils.isNotEmpty(widget.post?.members)){
-      return "Selected Members (${widget.post?.members?.length ?? 0})";
-    } else {
-      return "All Members (${widget.allMembersAllowedToPost?.length ?? 0})";
-    }
-  }
-
-      // Semantics(child: Container(
-      // padding: EdgeInsets.all(6),
-      // child: Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}",
-      //     semanticsLabel: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}",
-      //     textAlign: TextAlign.right,
-      //     style: Styles().textStyles.getTextStyle('widget.description.small.fat'))));
-
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
@@ -1248,9 +1218,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Visibility(visible: isReportAbuseVisible, child: RibbonButton(
-                  leftIconKey: "reply",
-                  label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
-                  onTap: _onTapReply
+                    leftIconKey: "reply",
+                    label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
+                    onTap: _onTapReply
                 )),
                 Visibility(visible: isReportAbuseVisible, child: RibbonButton(
                   leftIconKey: "comment",
@@ -1290,16 +1260,20 @@ class _GroupPostCardState extends State<GroupPostCard> {
     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
   }
 
-  int getVisibleRepliesCount() {
+  int get _visibleRepliesCount {
     int result = 0;
-    List<GroupPost>? replies = widget.post?.replies;
+    //TBD: DDGS - implement replies
+    // List<GroupPost>? replies = widget.post?.replies;
+    List<Comment>? replies = null;
     if (replies != null) {
-      bool? memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
-      for (GroupPost? reply in replies) {
-        if ((reply!.private != true) || (memberOrAdmin == true)) {
-          result++;
-        }
-      }
+      //TBD: DD - implement comments count
+      // bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
+      // for (Comment? reply in replies) {
+      //   if ((reply!.private != true) || (memberOrAdmin == true)) {
+      //     result++;
+      //   }
+      // }
+      result = replies.length;
     }
     return result;
   }
@@ -1309,8 +1283,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
 // GroupReplyCard
 
 class GroupReplyCard extends StatefulWidget {
-  final GroupPost? reply;
-  final GroupPost? post;
+  final Comment? reply;
+  final Post? post;
   final Group? group;
   final String? iconPath;
   final String? semanticsLabel;
@@ -1318,7 +1292,7 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onCardTap;
   final bool showRepliesCount;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1329,7 +1303,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    NotificationService().subscribe(this, Social.notifyPostsUpdated);
     super.initState();
   }
 
@@ -1341,11 +1315,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
-    int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
-    bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
-    String? repliesLabel = (visibleRepliesCount == 1)
-        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'reply')
-        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'replies');
     String? bodyText = StringUtils.ensureNotEmpty(widget.reply?.body);
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
@@ -1369,20 +1338,17 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 Semantics( child:
-                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
+                  Text(StringUtils.ensureNotEmpty(widget.reply?.creatorName),
                     style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")),
                 ),
                 Expanded(child: Container()),
                 Visibility(
                   visible: Config().showGroupPostReactions &&
                       (widget.group?.currentUserHasPermissionToSendReactions == true),
-                  child: GroupPostReaction(
-                    groupID: widget.group?.id,
-                    post: widget.reply,
-                    reaction: thumbsUpReaction,
-                    accountIDs: widget.reply?.reactions[thumbsUpReaction],
-                    selectedIconKey: 'thumbs-up',
-                    deselectedIconKey: 'thumbs-up-gray',
+                  child: GroupReaction(
+                    groupId: widget.group?.id,
+                    entityId: widget.reply?.id,
+                    reactionSource: SocialEntityType.comment,
                   ),
                 ),
                 Visibility(
@@ -1453,14 +1419,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                                 style: Styles().textStyles.getTextStyle('widget.description.small'))),)),
-                      Visibility(
-                        visible: isRepliesLabelVisible,
-                        child: Expanded(child: Container(
-                          child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
-                              textAlign: TextAlign.right,
-                              style: Styles().textStyles.getTextStyle('widget.description.small_underline')
-                        ))),
-                      ))
                 ],),)
             ])))));
   }
@@ -1472,12 +1430,12 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   void _onTapCard(){
     Analytics().logSelect(target: "Group reply");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply, hidePostOptions: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group!, focusedReply: widget.reply, hidePostOptions: true,)));
   }
 
   @override
   void onNotification(String name, param) {
-    if (name == Groups.notifyGroupPostsUpdated) {
+    if (name == Social.notifyPostsUpdated) {
       setStateIfMounted(() {});
     }
   }
@@ -1486,73 +1444,93 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 //////////////////////////////////////
 // GroupPostReaction
 
-const String thumbsUpReaction = "thumbs-up";
+class GroupReaction extends StatefulWidget {
+  final String? groupId;
+  final String? entityId;
+  final SocialEntityType reactionSource;
 
-class GroupPostReaction extends StatelessWidget {
-  final String? groupID;
-  final GroupPost? post;
-  final String reaction;
-  final List<String>? accountIDs;
-  final String selectedIconKey;
-  final String deselectedIconKey;
-  final TextStyle? textStyle;
-  final bool onTapEnabled;
-  final bool onLongPressEnabled;
+  GroupReaction({required this.groupId, this.entityId, required this.reactionSource});
 
-  GroupPostReaction({required this.groupID, required this.post, required this.reaction, this.accountIDs,
-    required this.selectedIconKey, required this.deselectedIconKey, this.textStyle, this.onTapEnabled = true, this.onLongPressEnabled = true});
+  @override
+  State<GroupReaction> createState() => _GroupReactionState();
+}
+
+class _GroupReactionState extends State<GroupReaction> {
+
+  List<Reaction>? _reactions;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReactions();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
-    return Semantics(button: true, label: reaction,
-        child: InkWell(
-            onTap: () => onTapEnabled ? _onTapReaction(groupID, post, reaction) : null,
-            onLongPress: () => onLongPressEnabled ? _onLongPressReactions(context, accountIDs, groupID): null,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Styles().images.getImage(selected ? selectedIconKey : deselectedIconKey, excludeFromSemantics: true) ?? Container(),
-                  Visibility(visible: accountIDs != null && accountIDs!.length > 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 6.0),
-                        child: Text('+${accountIDs?.length}',
-                            style: textStyle ?? Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")),
-                      ))
-                ])));
+    return Semantics(
+        button: true,
+        label: Localization().getStringEx('widget.group.card.reaction.thumbs_up.label', 'thumbs-up'),
+        child: Stack(alignment: Alignment.center, children: [
+          Visibility(
+              visible: _loading,
+              child: SizedBox.square(
+                  dimension: 16, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2))),
+          InkWell(
+              onTap: _onTapReaction,
+              onLongPress: _onLongPressReactions,
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
+                Styles().images.getImage(_isCurrentUserReacted ? 'thumbs-up-filled' : 'thumbs-up-outline-gray', excludeFromSemantics: true) ??
+                    Container(),
+                Visibility(
+                    visible: _hasReactions,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Text(_reactionsCountLabel, style: Styles().textStyles.getTextStyle("widget.button.title.small")),
+                    ))
+              ]))
+        ]));
   }
 
-  void _onTapReaction(String? groupId, GroupPost? post, String reaction) async {
-    bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
-    if (success) {
-      GroupPost? updatedPost = await Groups().loadGroupPost(groupId: groupId, postId: post?.id);
-      if (updatedPost != null) {
-        post?.reactions.clear();
-        post?.reactions.addAll(updatedPost.reactions);
-        NotificationService().notify(Groups.notifyGroupPostReactionsUpdated);
-      }
+  void _onTapReaction() {
+    Analytics().logSelect(target: 'Reaction');
+    if (!_hasEntityId) {
+      return;
     }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().react(entityId: widget.entityId!, source: widget.reactionSource).then((succeeded) {
+      if (succeeded) {
+        _loadReactions();
+      } else {
+        setStateIfMounted(() {
+          _loading = false;
+        });
+        AppAlert.showDialogResult(
+            context, Localization().getStringEx('widget.group.card.reaction.failed.msg', 'Failed to react. Please, try again.'));
+      }
+    });
   }
 
-  void _onLongPressReactions(BuildContext context, List<String>? accountIDs, String? groupID) async {
-    if (accountIDs == null || accountIDs.isEmpty || groupID == null || groupID.isEmpty) {
+  void _onLongPressReactions() {
+    if (!_hasReactions) {
       return;
     }
     Analytics().logSelect(target: 'Reactions List');
 
     List<Widget> reactions = [];
-    List<Member>? members = await Groups().loadMembers(groupId: groupID, userIds: accountIDs);
-    for (Member member in members ?? []) {
+    for (Reaction reaction in _reactions!) {
       reactions.add(Padding(
         padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Styles().images.getImage('thumbs-up', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
+            // Currently we have only likes
+            Styles().images.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
-            Text(member.displayShortName, style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+            Text(StringUtils.ensureNotEmpty(reaction.engagerName), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
           ],
         ),
       ));
@@ -1582,6 +1560,42 @@ class GroupPostReaction extends StatelessWidget {
           );
         });
   }
+
+  void _loadReactions() {
+    if (!_hasEntityId) {
+      return;
+    }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) {
+      setStateIfMounted(() {
+        _loading = false;
+        _reactions = result;
+      });
+    });
+  }
+
+  int get _reactionsCount => (_reactions?.length ?? 0);
+
+  bool get _hasReactions => (_reactionsCount > 0);
+
+  String get _reactionsCountLabel {
+    return _hasReactions ? _reactionsCount.toString() : '';
+  }
+
+  bool get _isCurrentUserReacted {
+    if (_hasReactions) {
+      for (Reaction reaction in _reactions!) {
+        if (reaction.isCurrentUserReacted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool get _hasEntityId => (widget.entityId != null);
 }
 
 typedef void OnBodyChangedListener(String text);
@@ -1842,12 +1856,11 @@ class GroupMembersSelectionWidget extends StatefulWidget{
   State<StatefulWidget> createState() => _GroupMembersSelectionState();
 
   //When we work with Update post the member stored in the post came with less populated fields and they do not match the == operator
-  static List<Member>? constructUpdatedMembersList({List<Member>? selection, List<Member>? upToDateMembers}){
-    if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(upToDateMembers)){
-      return upToDateMembers!.where((member) => selection!.any((outdatedMember) => outdatedMember.userId == member.userId)).toList();
+  static List<Member>? constructUpdatedMembersList({List<String>? selectedAccountIds, List<Member>? upToDateMembers}) {
+    if (CollectionUtils.isNotEmpty(selectedAccountIds) && CollectionUtils.isNotEmpty(upToDateMembers)) {
+      return upToDateMembers!.where((member) => selectedAccountIds!.any((memberAccountId) => memberAccountId == member.userId)).toList();
     }
-
-    return selection;
+    return null;
   }
 }
 
@@ -1999,9 +2012,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(data != null){
       switch (data.type){
         case GroupMemberSelectionDataType.Selection:
+          List<String>? selectedMemberAccountIds = MemberExt.extractUserIds(data.selection);
           _onSelectionChanged(data.requiresValidation?
               /*Trim Members which are no longer present*/
-            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: _allMembersAllowedToPost) :
+            GroupMembersSelectionWidget.constructUpdatedMembersList(selectedAccountIds: selectedMemberAccountIds, upToDateMembers: _allMembersAllowedToPost) :
               data.selection);
           break;
         case GroupMemberSelectionDataType.PerformNewSelection:
@@ -2043,11 +2057,12 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   void _loadAllMembersAllowedToPost() {
     Groups().loadMembersAllowedToPost(groupId: widget.groupId).then((members) {
       if (mounted && CollectionUtils.isNotEmpty(members)) {
+        List<String>? selectedAccountIds = MemberExt.extractUserIds(widget.selectedMembers);
         setState(() {
             _allMembersAllowedToPost = members;
             if((_allMembersAllowedToPost?.isNotEmpty ?? false) && (widget.selectedMembers?.isNotEmpty ?? false)){
               //If we have successfully loaded the group data -> refresh initial selection
-               _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selection: widget.selectedMembers)); //Notify Parent widget with the updated values
+               _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selectedAccountIds: selectedAccountIds)); //Notify Parent widget with the updated values
             }
         });
       }
@@ -2158,11 +2173,11 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl).then((result) => result);
 
     if(result?.succeeded == true) {
-      widget.onImageChanged?.call(result?.stringData);
+      widget.onImageChanged?.call(result?.imageUrl);
       // setStateIfMounted(() {
       //   _imageUrl = result?.stringData;
       // });
-      Log.d("Image Url: ${result?.stringData}");
+      Log.d("Image Url: ${result?.imageUrl}");
     }
   }
 }
@@ -2218,8 +2233,8 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _loadImage() {
     if (StringUtils.isNotEmpty(widget.userId)) {
       _setImageLoading(true);
-      Content().loadSmallUserProfileImage(accountId: widget.userId).then((imageBytes) {
-        _imageBytes = imageBytes;
+      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+        _imageBytes = imageResult?.imageData;
         _setImageLoading(false);
       });
     }
@@ -2228,14 +2243,9 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _onImageTap() {
     Analytics().logSelect(target: "Group Member Image");
     if (_imageBytes != null) {
-      String? imageUrl = Content().getUserProfileImage(accountId: widget.userId, type: UserProfileImageType.defaultType);
+      String? imageUrl = Content().getUserPhotoUrl(accountId: widget.userId, type: UserProfileImageType.defaultType);
       if (StringUtils.isNotEmpty(imageUrl)) {
-        Navigator.push(
-            context,
-            PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (context, _, __) =>
-                    ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
       }
     }
   }

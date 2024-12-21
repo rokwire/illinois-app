@@ -229,11 +229,10 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
               'panel.wellness.categories.manage.category.delete.no_selected_category.msg', 'There is no selected category to delete.'));
       return;
     }
-    AppAlert.showConfirmationDialog(
-        buildContext: context,
-        message: Localization().getStringEx(
-            'panel.wellness.categories.manage.category.delete.confirmation.msg', 'Are sure that you want to delete this category?'),
-        positiveCallback: () => _deleteCategory(_category!));
+    AppAlert.showConfirmationDialog(context,
+      message: Localization().getStringEx('panel.wellness.categories.manage.category.delete.confirmation.msg', 'Are sure that you want to delete this category?'),
+      positiveCallback: () => _deleteCategory(_category!)
+    );
   }
 
   void _deleteCategory(WellnessToDoCategory category) {

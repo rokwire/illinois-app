@@ -25,6 +25,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -279,14 +280,14 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ),
     _ProfileStoredDataWidget(
       key: _storedDataKeys[_StoredDataType.myGroupsStats] ??= GlobalKey(),
-      title: Localization().getStringEx('panel.profile.stored_data.my_groups_stats.title', "My Groups Stats"),
-      dataProvider: _provideMyGroupsStatsJson,
+      title: Localization().getStringEx('panel.profile.stored_data.my_social_stats.title', "My Social Stats"),
+      dataProvider: _provideMySocialStatsJson,
       updateController: _updateController,
     ),
   ];
 
   Future<String?> _provideMyGroupsJson() async             => _provideResponseData(await Groups().loadUserGroupsResponse());
-  Future<String?> _provideMyGroupsStatsJson() async        => _provideResponseData(await Groups().loadUserStatsResponse());
+  Future<String?> _provideMySocialStatsJson() async        => _provideResponseData(await Social().loadStatsResponse());
 
   // rokwire.illinois.edu/polls
 
@@ -443,7 +444,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ),
   ];
 
-  Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
+  Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadICardResponse());
 
   // housing.illinois.edu
 

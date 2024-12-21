@@ -24,6 +24,7 @@ import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TextTabBar.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/service/Analytics.dart';
@@ -266,6 +267,45 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     ]);
   }
 
+  Widget _buildContentTypesContainer() {
+    return Visibility(visible: _contentTypesVisible, child: Stack(children: [
+        GestureDetector(onTap: _changeContentTypesVisibility, child: Container(color: _dimmedBackgroundColor)),
+        _buildTypesValuesWidget()
+    ]));
+  }
+
+  Widget _buildTypesValuesWidget() {
+    List<Widget> typeWidgetList = <Widget>[];
+    typeWidgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
+      if ((_selectedContentType != type)) {
+        typeWidgetList.add(_buildContentItem(type));
+      }
+    }
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: typeWidgetList)));
+  }
+
+  Widget _buildContentItem(rokwire.GroupsContentType contentType) {
+    return RibbonButton(
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        rightIconKey: null,
+        label: _getContentLabel(contentType),
+        onTap: () => _onTapContentType(contentType));
+  }
+
+  Widget _buildGroupsContentSelection() {
+    return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+      backgroundColor: Styles().colors.white,
+      borderRadius: BorderRadius.all(Radius.circular(5)),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
+      label: _getContentLabel(_selectedContentType),
+      onTap: _changeContentTypesVisibility
+    ));
+  }
+
   Widget _buildFunctionalBar() {
     return Padding(padding: const EdgeInsets.only(left: 16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -380,26 +420,39 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   }
 
   Widget _buildCommandsBar() {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        Visibility(visible: _canCreateGroup, child:
-          InkWell(onTap: _onTapCreate, child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
-                Padding(padding: EdgeInsets.only(left: 4), child:
-                  Styles().images.getImage('plus-circle', excludeFromSemantics: true)
-                )
-              ])
-            ),
-          ),
+    const double defaultIconPadding = 14;
+    const double innerIconPadding = 8;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Visibility(
+          visible: _canCreateGroup,
+          child: IconButton(
+              padding:
+                  EdgeInsets.only(left: defaultIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: innerIconPadding),
+              constraints: BoxConstraints(),
+              style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              icon: Styles().images.getImage('plus-circle', excludeFromSemantics: true) ?? Container(),
+              onPressed: _onTapCreate),
         ),
-        Semantics(label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-          IconButton(icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(), onPressed: () {
-            Analytics().logSelect(target: "Search");
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-          },),
+        Semantics(
+          label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"),
+          child: IconButton(
+            padding:
+                EdgeInsets.only(left: innerIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: defaultIconPadding),
+            constraints: BoxConstraints(),
+            style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(),
+            onPressed: () {
+              Analytics().logSelect(target: "Search");
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+            },
+          ),
         )
-    ],);
+      ],
+    );
   }
 
   void _onFilterAttributes() {
@@ -425,33 +478,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   }
 
   Widget _buildMyGroupsContent(){
-    List<Group> myGroups = <Group>[], myPendingGroups = <Group>[];
-    _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
-
-    if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
-      return Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-          child: RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(
-                  style: Styles().textStyles.getTextStyle("widget.message.light.regular"),
-                  children:[
-                    TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
-                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-                        recognizer: TapGestureRecognizer()..onTap = () {
-                          Analytics().logSelect(target: "All Groups");
-                          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
-                        }, ),
-                      TextSpan(text:"."),
-              ]
-              ))
-      );
+    if (!Auth2().isLoggedIn) {
+      return _buildLoggedOutContent();
     }
     else {
-      return Column(children: [
-        _buildMyGroupsSection(myGroups),
-        _buildMyPendingGroupsSection(myPendingGroups),
-      ],);
+      List<Group> myGroups = <Group>[], myPendingGroups = <Group>[];
+      _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
+
+      if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
+        return _buildEmptyMyGroupsContent();
+      }
+      else {
+        return Column(children: [
+          _buildMyGroupsSection(myGroups),
+          _buildMyPendingGroupsSection(myPendingGroups),
+        ],);
+      }
     }
   }
 
@@ -465,7 +507,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
             GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
-              onImageTap: () { onTapImage(group); },
+              onImageTap: () { _onTapImage(group); },
               key: _getGroupKey(group),
             ),
           ));
@@ -548,12 +590,88 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     }
   }
 
+  Widget _buildLoggedOutContent() {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx("panel.groups_home.label.my_groups.logged_out", "You are not logged in. To access your groups, you need to $linkLoginMacro first.");
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "Login"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.light.regular"), children: spanList)
+      )
+    );
+  }
+
+  Widget _buildEmptyMyGroupsContent() {
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.light.regular"), children:[
+          TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
+          TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+            recognizer: TapGestureRecognizer()..onTap = _onSelectAllGroups, ),
+          TextSpan(text:"."),
+        ])
+      )
+    );
+  }
+
   Key? _getGroupKey(Group group) {
     if ((_newGroupId != null) && (_newGroupId == group.id)) {
       return _newGroupKey;
     }
     else {
       return null;
+    }
+  }
+
+  String _getContentLabel(rokwire.GroupsContentType? contentType) {
+    switch (contentType) {
+      case rokwire.GroupsContentType.all:
+        return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');
+      case rokwire.GroupsContentType.my:
+        return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
+      default:
+        return '';
+    }
+  }
+  
+  void _changeContentTypesVisibility() {
+    _contentTypesVisible = !_contentTypesVisible;
+    _updateState();
+  }
+
+  void _onTapContentType(rokwire.GroupsContentType contentType) {
+    Analytics().logSelect(target: _getContentLabel(contentType));
+    if (contentType == rokwire.GroupsContentType.all) {
+      _onSelectAllGroups();
+    }
+    else if (contentType == rokwire.GroupsContentType.my) {
+      _onSelectMyGroups();
+    }
+    _changeContentTypesVisibility();
+  }
+
+  void _onSelectAllGroups(){
+    if(_selectedContentType != rokwire.GroupsContentType.all){
+      setState(() {
+        _selectedContentType = rokwire.GroupsContentType.all;
+      });
+    }
+  }
+
+  void _onSelectMyGroups() {
+    if(_selectedContentType != rokwire.GroupsContentType.my){
+      setState(() {
+        _selectedContentType = rokwire.GroupsContentType.my;
+      });
     }
   }
 
@@ -567,12 +685,23 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     _reloadGroupsContent();
   }
 
-  void onTapImage(Group? group){
+  void _onTapImage(Group? group){
     Analytics().logSelect(target: "Image");
     if(group?.imageURL!=null){
       Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "Login");
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else {
+      Auth2().authenticateWithOidc();
+    }
+  }
+
 
   void _onTabChanged({bool manual = true}) {
     if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {

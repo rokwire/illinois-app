@@ -18,27 +18,32 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FlexUI.dart';
+import 'package:neom/ui/debug/DebugHomePanel.dart';
+import 'package:neom/ui/profile/ProfileInfoAndDirectoryPage.dart';
 import 'package:neom/ui/profile/ProfileDetailsPage.dart';
 import 'package:neom/ui/profile/ProfileLoginPage.dart';
 import 'package:neom/ui/profile/ProfileRolesPage.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { login, profile, who_are_you, }
+enum ProfileContent { login, profile, info_and_directory, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
 
   final ProfileContent? content;
+  final Map<String, dynamic>? contentParams;
 
-  ProfileHomePanel._({this.content});
+  ProfileHomePanel._({this.content, this.contentParams});
 
   @override
   _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, {ProfileContent? content}) {
+  static void present(BuildContext context, {ProfileContent? content, Map<String, dynamic>? contentParams}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -53,8 +58,8 @@ class ProfileHomePanel extends StatefulWidget {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return ProfileHomePanel._(content: content);
-        },
+          return ProfileHomePanel._(content: content, contentParams: contentParams,);
+        }
         useSafeArea: true,
       );
 
@@ -76,12 +81,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
+      ProfileInfoAndDirectoryPage.notifySignIn,
     ]);
 
     if (_isContentItemEnabled(widget.content)) {
@@ -105,9 +113,16 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   @override
   void onNotification(String name, param) {
-    if ((name == Auth2.notifyLoginChanged) ||
-        (name == FlexUI.notifyChanged)) {
+    if (name == Auth2.notifyLoginChanged) {
       _updateContentItemIfNeeded();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateContentItemIfNeeded();
+    }
+    else if (name == ProfileInfoAndDirectoryPage.notifySignIn) {
+      setStateIfMounted(() {
+        _selectedContent = _lastSelectedContent = ProfileContent.login;
+      });
     }
   }
   
@@ -167,7 +182,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return Column(key: _pageKey, children: <Widget>[
       Expanded(child:
         Container(color: Styles().colors.background, child:
-          SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
+          SingleChildScrollView(controller: _scrollController, physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
@@ -295,6 +310,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (_selectedContent) {
       case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
+      case ProfileContent.info_and_directory: return ProfileInfoAndDirectoryPage(scrollController: _scrollController, params: widget.contentParams,);
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
     }
@@ -304,6 +320,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (contentItem) {
       case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
       case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
+      case ProfileContent.info_and_directory: return Localization().getStringEx('panel.settings.profile.content.info_and_directory.label', 'My Info & User Directory');
       case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
       default: return null;
     }
@@ -313,8 +330,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (contentItem) {
       case ProfileContent.profile: return Auth2().isLoggedIn;
       case ProfileContent.who_are_you: return true;
-      case ProfileContent.login: return FlexUI().hasFeature('authentication');
-      default: return false;
+      case ProfileContent.info_and_directory: return true;
+      case ProfileContent.login: return true;
+      case null: return false;
     }
   }
 
@@ -328,7 +346,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   }
 
   void _updateContentItemIfNeeded() {
-    if ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent)) {
+    if (mounted && ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent))) {
       ProfileContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
       if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
         setState(() {

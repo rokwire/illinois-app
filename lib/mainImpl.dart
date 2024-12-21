@@ -47,6 +47,7 @@ import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
@@ -118,6 +119,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Events(),
       Events2(),
       Groups(),
+      Social(),
       // CheckList(CheckList.giesOnboarding),
       // CheckList(CheckList.uiucOnboarding),
       // Canvas(),
@@ -131,7 +133,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       // StudentCourses(),
       // Appointments(),
       // MTD(),
-      // SpeechToText(),
       // Assistant(),
       // MobileAccess(),
       // SkillsSelfEvaluation(),

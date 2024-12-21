@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Explore.dart';
-import 'package:neom/ext/ImagesResult.dart';
 import 'package:neom/ext/Survey.dart';
 import 'package:neom/mainImpl.dart';
 import 'package:neom/model/Explore.dart';
@@ -691,9 +690,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Analytics().logSelect(target: "Add Image");
     Event2CreatePanel.hideKeyboard(context);
     GroupAddImageWidget.show(context: context, url: _imageUrl).then((ImagesResult? updateResult) {
-      if (updateResult?.succeeded == true && (_imageUrl != updateResult?.stringData)) {
+      if (updateResult?.succeeded == true && (_imageUrl != updateResult?.imageUrl)) {
         setStateIfMounted(() {
-          _imageUrl = updateResult?.stringData;
+          _imageUrl = updateResult?.imageUrl;
         });
       }
     });
@@ -1770,7 +1769,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Widget _buildPublishedSection() =>  Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
 
-  Widget _buildPublishedToggle() => Semantics(toggled: _free, excludeSemantics: true, 
+  Widget _buildPublishedToggle() => Semantics(toggled: _published, excludeSemantics: true,
     label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
     hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
     child: ToggleRibbonButton(
@@ -2326,7 +2325,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       contacts: _contacts,
     );
   }
-
 }
 
 // _Event2Visibility

@@ -98,7 +98,14 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _HomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
+  String? get analyticsPageName =>
+    _contentWidget.runtimeType.toString();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    JsonUtils.cast<AnalyticsInfo>(_contentWidget)?.analyticsFeature;
+
+  Widget get _contentWidget => _HomePanelState()._buildContentWidget(initialContentType ?? _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites);
 
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
@@ -588,6 +595,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   GlobalKey _browseKey = GlobalKey();
   GlobalKey _favoritesKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
+  Map<HomeContentType, double> contentScrollPositions = <HomeContentType, double>{};
 
   @override
   void initState() {
@@ -608,7 +616,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     Analytics().logPageWidget(_contentWidget);
 
-    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
+    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI().defaultSourceContent['home.system']) ?? <String>{};
     _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
 
     super.initState();
@@ -699,8 +707,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   void _updateContentType(HomeContentType? contentType) {
     if (mounted && (contentType != null) && (contentType != _contentType)) {
+      contentScrollPositions[_contentType] = _scrollController.offset;
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.jumpTo(contentScrollPositions[contentType] ?? 0);
       });
       Analytics().logPageWidget(_contentWidget);
     }

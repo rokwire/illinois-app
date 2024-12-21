@@ -140,12 +140,12 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
     }
     String codesStringValue = _codesController.text.trim();
     if (StringUtils.isEmpty(codesStringValue)) {
-      AppAlert.showMessage(context, 'Please, type value for lock service codes.');
+      AppAlert.showTextMessage(context, 'Please, type value for lock service codes.');
       return;
     }
     List<String>? codesStringList = codesStringValue.split(_codeDelimiter);
     if (CollectionUtils.isEmpty(codesStringList)) {
-      AppAlert.showMessage(context, 'Please, fill valid comma separated integers.');
+      AppAlert.showTextMessage(context, 'Please, fill valid comma separated integers.');
       return;
     }
 
@@ -157,7 +157,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
     }
 
     if (CollectionUtils.isEmpty(lockServiceCodes)) {
-      AppAlert.showMessage(context, 'Please, fill valid comma separated integers.');
+      AppAlert.showTextMessage(context, 'Please, fill valid comma separated integers.');
       return;
     }
 
@@ -171,7 +171,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
       } else {
         msg = 'Failed to change lock service codes.';
       }
-      AppAlert.showMessage(context, msg);
+      AppAlert.showTextMessage(context, msg);
       setStateIfMounted(() {
         _loading = false;
       });

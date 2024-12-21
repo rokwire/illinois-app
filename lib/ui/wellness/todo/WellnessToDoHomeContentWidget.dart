@@ -501,7 +501,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _onTapCalendarInfo() {
     Analytics().logSelect(target: "Calendar Info", source: widget.runtimeType.toString());
-    AppAlert.showMessage(
+    AppAlert.showTextMessage(
         context,
         Localization()
             .getStringEx('panel.wellness.todo.items.calendar.info.msg', 'Tap on a dot to set a reminder or to edit item details.'));

@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/RadioPlayer.dart';
-import 'package:neom/ui/messages/MessagesHomePanel.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
@@ -275,7 +274,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     NotificationService().subscribe(this, [
       RadioPlayer.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
-      Auth2.notifyPictureChanged,
+      Auth2.notifyProfilePictureChanged,
     ]);
     super.initState();
   }
@@ -300,7 +299,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
         setState(() {});
       }
     }
-    else if (name == Auth2.notifyPictureChanged) {
+    else if (name == Auth2.notifyProfilePictureChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -376,17 +375,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     );
   }
 
-  Widget _buildHeaderMessagesButton() {
-    //TODO: add unread messages count using Social BB (see notifications button below)
-    return Semantics(label: Localization().getStringEx('headerbar.messages.title', 'Messages'), hint: Localization().getStringEx('headerbar.messages.hint', ''), button: true, excludeSemantics: true, child:
-      InkWell(onTap: _onTapMessages, child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
-          Styles().images.getImage('messages-header', excludeFromSemantics: true),
-        )
-      )
-    );
-  }
-
   Widget _buildHeaderNotificationsButton() {
     int unreadMsgsCount = Inbox().unreadMessagesCount;
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
@@ -408,11 +396,11 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
-        CollectionUtils.isNotEmpty(Auth2().authPicture) ?
+        CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
           Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
+                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
               )
             )
           ) :

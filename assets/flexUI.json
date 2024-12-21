@@ -25,13 +25,15 @@
 			"home.unread_notifications": ["inbox"],
 			"home.recent_polls": ["polls"],
 
-			"browse": ["groups", "messages", "surveys", "events", "polls"],
-			"browse.events": ["event_feed", "my_events"],
+			"browse": ["directory", "groups", "messages", "surveys", "events", "polls"],
+            "browse.directory": ["user_directory"],
+            "browse.events": ["event_feed", "my_events"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.surveys": ["public_surveys"],
 			"browse.polls": ["recent_polls"],
+            "browse.messages": ["messages"],
 
-            "assistant": ["uiuc_assistant", "google_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "all_assistants", "uiuc_faqs"],
 
 			"settings": ["favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
@@ -53,7 +55,7 @@
 			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth"],
 
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"new_student", "student", "assistant", "assistant_personalization"],
+				"new_student", "messages", "student", "assistant", "assistant_personalization"],
 
             "attributes": ["groups", "events"],
             "attributes.groups": ["rso"],
@@ -119,7 +121,8 @@
 				"features.location_services"      : 2,
 				"features.personalization"        : 3,
 				"features.notifications"          : 4,
-				"features.payment_information"    : 4,
+                "features.messages"          	  : 4,
+                "features.payment_information"    : 4,
 				"features.authentication"         : 4,
 				"features.sharing"                : 5
 			},
@@ -163,6 +166,7 @@
 			},
 			"platform":{
 				"assistant.google_assistant"              : { "environment":  "dev"},
+				"assistant.azure_assistant"               : { "environment":  "dev"},
 				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {
@@ -190,7 +194,16 @@
 				"wellness.podcast"                        : false,
 				"wellness_podcast"                        : false,
 				"campus_safety_resources"                 : false,
-				"student_courses"                         : "${config.settings.studentCoursesEnabled}"
+				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
+				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
+				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",
+				"add_illini_cash"                         : "${config.settings.wallet.addIlliniCashEnabled}",
+				"illini_id"                               : "${config.settings.wallet.illiniIdEnabled}",
+				"illini_id_card"                          : "${config.settings.wallet.illiniIdEnabled}",
+				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
+				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
+				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
+				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}"
 			}
 		}
 	},

@@ -1,3 +1,5 @@
+import 'package:geolocator/geolocator.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -191,6 +193,47 @@ class Link {
 }
 
 ///
+/// AssistantLocation
+///
+class AssistantLocation {
+  final double? latitude;
+  final double? longitude;
+
+  AssistantLocation({this.latitude, this.longitude});
+
+  static AssistantLocation? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: JsonUtils.doubleValue(json['latitude']), longitude: JsonUtils.doubleValue(json['longitude']));
+  }
+
+  static AssistantLocation? fromPosition(Position? position) {
+    if (position == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: position.latitude, longitude: position.longitude);
+  }
+
+  static AssistantLocation? fromExploreLocation(ExploreLocation? exploreLocation) {
+    if (exploreLocation == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: exploreLocation.latitude, longitude: exploreLocation.longitude);
+  }
+
+  Map<String, dynamic> toJson() => {'latitude': latitude, 'longitude': longitude};
+
+  ExploreLocation toExploreLocation() => ExploreLocation(latitude: latitude, longitude: longitude);
+
+  @override
+  bool operator ==(Object other) => (other is AssistantLocation) && (latitude == other.latitude) && (longitude == other.longitude);
+
+  @override
+  int get hashCode => (latitude?.hashCode ?? 0) ^ (longitude?.hashCode ?? 0);
+}
+
+///
 /// MessageFeedback
 ///
 enum MessageFeedback { good, bad }
@@ -198,7 +241,7 @@ enum MessageFeedback { good, bad }
 ///
 /// AssistantProvider
 ///
-enum AssistantProvider { uiuc, google }
+enum AssistantProvider { uiuc, google, azure }
 
 String? assistantProviderToKeyString(AssistantProvider? provider) {
   switch (provider) {
@@ -206,6 +249,8 @@ String? assistantProviderToKeyString(AssistantProvider? provider) {
       return 'uiuc';
     case AssistantProvider.google:
       return 'google';
+    case AssistantProvider.azure:
+      return 'azure';
     default:
       return null;
   }
@@ -217,6 +262,8 @@ String assistantProviderToDisplayString(AssistantProvider? provider) {
       return Localization().getStringEx('model.assistant.provider.uiuc.label', 'Illinois');
     case AssistantProvider.google:
       return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
+    case AssistantProvider.azure:
+      return Localization().getStringEx('model.assistant.provider.azure.label', 'Azure');
     default:
       return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
   }

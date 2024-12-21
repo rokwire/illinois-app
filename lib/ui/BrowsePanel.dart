@@ -13,6 +13,8 @@ import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/WebPanel.dart';
+import 'package:neom/ui/directory/DirectoryAccountsList.dart';
+import 'package:neom/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:neom/ui/events2/Event2HomePanel.dart';
 import 'package:neom/ui/groups/GroupsHomePanel.dart';
 import 'package:neom/ui/home/HomePanel.dart';
@@ -104,12 +106,14 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 ///////////////////////////
 // BrowseContentWidget
 
-class BrowseContentWidget extends StatefulWidget {
+class BrowseContentWidget extends StatefulWidget with AnalyticsInfo {
   BrowseContentWidget({super.key});
 
   @override
   State<StatefulWidget> createState() => _BrowseContentWidgetState();
 
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Browse;
 }
 
 class _BrowseContentWidgetState extends State<BrowseContentWidget> implements NotificationsListener {
@@ -126,6 +130,7 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
     ]);
 
     _contentCodes = buildContentCodes();
+
     super.initState();
   }
 
@@ -265,13 +270,14 @@ class _BrowseSection extends StatelessWidget {
   static String get appTitle => Localization().getStringEx('app.title', 'NEOM U');
   static String get _appTitleMacro => '{{app_title}}';
 
-  static String title({required String sectionId}) {
-    return Localization().getString('panel.browse.section.$sectionId.title')?.replaceAll(_appTitleMacro, appTitle) ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
-  }
+  static String title({required String sectionId}) =>
+      AppTextUtils.appBrandString('panel.browse.section.$sectionId.title', defaultTitle(sectionId: sectionId));
 
-  // static String description({required String sectionId}) {
-  //   return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll(_appTitleMacro, appTitle) ?? '';
-  // }
+  static String defaultTitle({required String sectionId}) =>
+      StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+
+  // static String description({required String sectionId}) =>
+  //     AppTextUtils.appBrandString('panel.browse.section.$sectionId.description', '');
 
   static List<String>? favoritesFromCode(String code) {
     return JsonUtils.listStringsValue(FlexUI()['browse.$code']);
@@ -373,6 +379,8 @@ class _BrowseSection extends StatelessWidget {
     switch(sectionId) {
       case "events":              _onTapEvents(context); break;
 
+      case "directory":       _onTapUserDirectory(context); break;
+
       case "feeds.twitter":                  _onTapTwitter(context); break;
       case "feeds.daily_illini":             _onTapDailyIllini(context); break;
 
@@ -386,7 +394,7 @@ class _BrowseSection extends StatelessWidget {
 
       case "surveys":         _onTapPublicSurveys(context); break;
 
-      case "messages":             _onTapMessagesDirectory(context); break;
+      case "messages":             _onTapMessages(context); break;
 
       case "wallet":        _onTapWallet(context); break;
 
@@ -436,10 +444,13 @@ class _BrowseSection extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
   }
 
-  void _onTapMessagesDirectory(BuildContext context) {
+  void _onTapUserDirectory(BuildContext context) {
+    Analytics().logSelect(target: "User Directory");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(DirectoryAccounts.directory); } ));
+  }
+
+  void _onTapMessages(BuildContext context) {
     Analytics().logSelect(target: "Messages");
-    //TODO: finish implementing MessagesDirectoryPanel
-    // Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesDirectoryPanel()));
     MessagesHomePanel.present(context);
   }
 

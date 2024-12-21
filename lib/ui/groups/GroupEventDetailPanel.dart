@@ -687,7 +687,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           header: true,
                           excludeSemantics: true,
                           child: Text(title,
-                            style: Styles().textStyles.getTextStyle("widget.title.tiny")
+                            style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")
                           ),
                         ),
                         Container(

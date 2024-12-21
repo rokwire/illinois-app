@@ -238,7 +238,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   void _onClearAll() {
     Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
-    AppAlert.showConfirmationDialog(buildContext: context,
+    AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
       positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
       negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
@@ -402,7 +402,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
 
   void _onClearAll() {
     Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
-    AppAlert.showConfirmationDialog(buildContext: context,
+    AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
       positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
       negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),

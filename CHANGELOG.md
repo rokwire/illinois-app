@@ -80,8 +80,117 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+
+## [6.1.31] - 2024-12-20
+### Changed
+- Show only first line of the last message in ConversationCard [#4545](https://github.com/rokwire/illinois-app/issues/4545).
+- Detect URL links in text body of conversation message card [#4547](https://github.com/rokwire/illinois-app/issues/4547).
+### Fixed
+- Additional bug fixes for Messages [#4548](https://github.com/rokwire/illinois-app/issues/4548).
+### Added
+- Added social deep links support [#4551](https://github.com/rokwire/illinois-app/issues/4551).
+
+## [6.1.30] - 2024-12-19
+### Changed
+- Message Conversation UI Updates and Bug Fixes (in progress) [#4536](https://github.com/rokwire/illinois-app/issues/4536)
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- Directory Accounts support moved to standalone project location [#4540](https://github.com/rokwire/illinois-app/issues/4540).
+- Rename "Directory" section to "User Directory" [#4542](https://github.com/rokwire/illinois-app/issues/4542).
+- Single item browse section entry opens straightly the entry [#4542](https://github.com/rokwire/illinois-app/issues/4542).
+
+## [6.1.29] - 2024-12-18
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.28] - 2024-12-17
+### Added
+- Add Messages UI [#4498](https://github.com/rokwire/illinois-app/issues/4498).
+### Changed
+- Use "User Directory" term instead of "Illinois App Directory" everywhere [#4523](https://github.com/rokwire/illinois-app/issues/4523).
+- Automatically expand single entry sections in Home panel [#4527](https://github.com/rokwire/illinois-app/issues/4527).
+- Preserve scroll positions when switching Favorites & Sections tabs in HomePanel [#4529](https://github.com/rokwire/illinois-app/issues/4529).
+- Do not show user directory content for anonymous users [#4531](https://github.com/rokwire/illinois-app/issues/4531).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.27] - 2024-12-16
+### Fixed
+- Cleaned up Image & Audio Result data dispatch [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Fixed name pronunciation processing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- New Azure Assistant provider [#4519](https://github.com/rokwire/illinois-app/issues/4519).
+### Changed
+- Standardized return type of loadUserPhoto and loadUserNamePronunciation [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Various fixes and improvements in Directory Profiles [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.26] - 2024-12-13
+### Changed
+- Control wallet items visibility from app config settings [#4509](https://github.com/rokwire/illinois-app/issues/4509).
+- Sync photo / pronunciation URLs to user profile [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Directory texts fixes/cleanup [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Fixed
+- Fixed "view-dark" image resource.
+ 
+## [6.1.25] - 2024-12-09
+### Added
+- Added Directory section in Browse [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.24] - 2024-12-06
+### Fixed
+- Fixed directory accounts list pagination [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Super event update/delete/create [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+### Changed
+- Updated Edit my Info control in directory accounts page [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- Added My Groups filter to directory accounts filters [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.23] - 2024-12-05
+### Fixed
+- Fixed photo image refresh in directory listing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- Added Filters and Edit Info in directory listing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.22] - 2024-12-04
+### Changed
+- Removed voice recording caching in Auth2, reworked profile picture caching and processing in Auth2 [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Minor UI updates in My Info & Connections profile page [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.21] - 2024-12-03
+### Added
+- Second round of InfoSwap (My Info & Illinois Connections) [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Event2SetupSuperEventPanel[#4478](https://github.com/rokwire/illinois-app/issues/4478).
+
+## [6.1.20] - 2024-12-02
+### Added
+- Modify and load Posts, Comments and Reactions using Social BB (task in progress) [#4474](https://github.com/rokwire/illinois-app/issues/4474).
+
+## [6.1.19] - 2024-11-26
+### Fixed
+- Fixed "widget.title.tiny" text style name.
+### Changed
+- "share" image definition renamed to "share-nodes" as the corresponding FA character is called.
+### Added
+- Use Social BB for Posts, Comments and Reactions (task in progress) [#4474](https://github.com/rokwire/illinois-app/issues/4474).
+- Acknowledge event.notification_settings field and APIs [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+- First preview of InfoSwap (My Info & Illinois Connections) [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+
+## [6.1.18] - 2024-11-14
+### Changed
+- Updated authorization not available message [#4103](https://github.com/rokwire/illinois-app/issues/4103).
+### Added
+- Set custom assistant location in Debug panel [#4472](https://github.com/rokwire/illinois-app/issues/4472).
+
+## [6.1.17] - 2024-11-12
+### Fixed
+- Fixed analytics feature that we send for "Start with a Text" button tap [#4447](https://github.com/rokwire/illinois-app/issues/4447).
+- Fixed Padding for BrowsePanel Sections content [#4411](https://github.com/rokwire/illinois-app/issues/4411).
+- Fixed Slant image size in AthleticsGameDetailHeading [#4394](https://github.com/rokwire/illinois-app/issues/4394).
 ### Changed
 - Allow event custom range filters in the past [#4450](https://github.com/rokwire/illinois-app/issues/4450).
+- Consistent Create and Search UX for Groups, Events, and Research [#4448](https://github.com/rokwire/illinois-app/issues/4448).
+- Keep login UI available when authorization is not available [#4103](https://github.com/rokwire/illinois-app/issues/4103).
+### Added
+- Send location when requesting assistant [#4464](https://github.com/rokwire/illinois-app/issues/4464).
 
 ## [6.1.16] - 2024-10-28
 ### Added
@@ -175,6 +284,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.57] - 2024-11-07
+## Added
+- Filter pins on map to match filters/search for storied sites [#4458](https://github.com/rokwire/illinois-app/issues/4458)
+- Add search to Bottomsheet [#4456](https://github.com/rokwire/illinois-app/issues/4456)
+
+## [6.0.56] - 2024-11-04
+### Fixed
+- Bug fixes on the stories sites bottomsheet [#4454](https://github.com/rokwire/illinois-app/issues/4454)
 
 ## [6.0.55] - 2024-10-24
 ### Fixed

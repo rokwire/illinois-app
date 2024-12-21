@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:neom/model/Assistant.dart';
 import 'package:neom/service/Assistant.dart';
 import 'package:neom/service/Auth2.dart';
@@ -23,10 +24,12 @@ import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/IlliniCash.dart';
 import 'package:neom/service/SpeechToText.dart';
+import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/widgets/TypingIndicator.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -67,6 +70,9 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
   Map<String, String>? _userContext;
 
+  LocationServicesStatus? _locationStatus;
+  AssistantLocation? _currentLocation;
+
   bool _loading = false;
 
   @override
@@ -77,10 +83,13 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
       SpeechToText.notifyError,
+      LocationServices.notifyStatusChanged,
+      LocationServices.notifyLocationChanged,
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
 
+    _loadLocationStatus();
     _onPullToRefresh();
 
     _userContext = _getUserContext();
@@ -118,6 +127,23 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       setState(() {
         _listening = false;
       });
+    } else if (name == LocationServices.notifyStatusChanged) {
+      if (param == null) {
+        _loadLocationStatus();
+      } else if (param is LocationServicesStatus) {
+        _locationStatus = param;
+        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
+          _loadLocationStatus();
+        } else {
+          _loadLocationIfAllowed();
+        }
+      }
+    } else if (name == LocationServices.notifyLocationChanged) {
+      if (_locationStatus == LocationServicesStatus.permissionAllowed) {
+        _currentLocation = _getLocation(param as Position);
+      } else {
+        _currentLocation = null;
+      }
     }
   }
 
@@ -687,7 +713,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     for (int i = 0; i < AssistantProvider.values.length; i++) {
       AssistantProvider provider = AssistantProvider.values[i];
       providerPositions.addAll({i: provider});
-      assistantFutures.add(Assistant().sendQuery(message, provider: provider, context: userContext));
+      assistantFutures.add(Assistant().sendQuery(message, provider: provider, location: _currentLocation, context: userContext));
     }
 
     List<dynamic> queryResults = await Future.wait(assistantFutures);
@@ -805,6 +831,45 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       }
     });
   }
+
+  void _loadLocationStatus() {
+    LocationServices().status.then((LocationServicesStatus? status) {
+      if (status == LocationServicesStatus.serviceDisabled) {
+        LocationServices().requestService().then((status) {
+          if (status == LocationServicesStatus.permissionNotDetermined) {
+            LocationServices().requestPermission().then((LocationServicesStatus? status) {
+              _onLocationStatus(status);
+            });
+          } else {
+            _onLocationStatus(status);
+          }
+        });
+      } else if (status == LocationServicesStatus.permissionNotDetermined) {
+        LocationServices().requestPermission().then((LocationServicesStatus? status) {
+          _onLocationStatus(status);
+        });
+      } else {
+        _onLocationStatus(status);
+      }
+    });
+  }
+
+  void _onLocationStatus(LocationServicesStatus? status) {
+    _locationStatus = status;
+    _loadLocationIfAllowed();
+  }
+
+  void _loadLocationIfAllowed() {
+    if (_locationStatus == LocationServicesStatus.permissionAllowed) {
+      LocationServices().location.then((position) {
+        _currentLocation = _getLocation(position);
+      });
+    } else {
+      _currentLocation = null;
+    }
+  }
+
+  AssistantLocation? _getLocation(Position? position) => Storage().debugAssistantLocation ?? AssistantLocation.fromPosition(position);
 
   Future<bool> get _checkKeyboardVisible async {
     final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);

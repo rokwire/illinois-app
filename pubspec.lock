@@ -1038,6 +1038,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  link_text:
+    dependency: "direct main"
+    description:
+      name: link_text
+      sha256: "6b63fa41907813446eb9da1c387a44de68491182d4e9068a06a595569528d107"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   list_counter:
     dependency: transitive
     description:

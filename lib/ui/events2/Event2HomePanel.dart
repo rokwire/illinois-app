@@ -103,7 +103,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       //     title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
       //     bgImageKey: 'event-filters-background',
       //     descriptionBuilder: _buildOnboardingDescription,
-      //     sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
+      //     sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.fat.highlight'),
       //     sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
       //     sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
       //     applyBuilder: _buildOnboardingApply,
@@ -575,7 +575,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
         _sortButton,
 
       ])),
-      Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
+      Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, verticalDirection: VerticalDirection.up, children: [
         // LinkButton(
         //   title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'),
         //   hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
@@ -717,7 +717,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
             ),
           ),
           Visibility(visible: _canShareFilters, child:
-            Event2ImageCommandButton(Styles().images.getImage('share'),
+            Event2ImageCommandButton(Styles().images.getImage('share-nodes'),
               label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
               hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
               contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),

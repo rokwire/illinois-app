@@ -25,6 +25,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:neom/ui/settings/SettingsVerifyIdentityPanel.dart';
@@ -295,7 +296,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
 
   void _onTapDeleteData() async{
     final String groupsSwitchTitle = "Please delete all my contributions.";
-    int userPostCount = await Groups().getUserPostCount();
+    int userPostCount = await Social().getUserPostsCount();
     bool contributeInGroups = userPostCount > 0;
 
     SettingsDialog.show(context,
@@ -315,6 +316,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
             progressController(loading: true);
             if(selectedValues.contains(groupsSwitchTitle)){
               Groups().deleteUserData();
+              Social().deleteUser();
             }
             _deleteUserData().then((_){
               progressController(loading: false);

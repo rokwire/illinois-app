@@ -168,6 +168,9 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,"");
     }
+    else if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
@@ -220,17 +223,14 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
 
   void _onTapPhoneOrEmailClicked(BuildContext context) {
     Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
-    if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(
-        settings: RouteSettings(),
-        builder: (context) => ProfileLoginPhoneOrEmailPanel(
-          onFinish: () {
-            _didLogin(context);
-          }
-        ),
-      ),);
-    } else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+    else if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: () => _didLogin(context)),),);
     }
   }
 

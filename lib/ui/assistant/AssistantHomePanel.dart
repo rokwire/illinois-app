@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { uiuc_conversation, google_conversation, all_assistants, faqs }
+enum AssistantContent { uiuc_conversation, google_conversation, azure_conversation, all_assistants, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -50,7 +50,7 @@ class AssistantHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isLoggedIn) {
-      AppAlert.showMessage(
+      AppAlert.showTextMessage(
           context,
           Localization().getStringEx('panel.assistant.logged_out.label',
               'To access the Illinois Assistant, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
@@ -231,7 +231,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   void _onTapClearAll() {
     Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
-    AppAlert.showConfirmationDialog(buildContext: context,
+    AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('panel.assistant.clear_all.confirm_prompt.text', 'Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.'),
       positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
       negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
@@ -294,6 +294,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantContent.uiuc_conversation;
       case 'google_assistant':
         return AssistantContent.google_conversation;
+      case 'azure_assistant':
+        return AssistantContent.azure_conversation;
       case 'all_assistants':
         return AssistantContent.all_assistants;
       case 'uiuc_faqs':
@@ -321,6 +323,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider,);
       case AssistantContent.google_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContent.azure_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.all_assistants:
         return AssistantProvidersConversationContentWidget();
       case AssistantContent.faqs:
@@ -336,6 +340,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return Localization().getStringEx('panel.assistant.content.conversation.label', 'Ask the Illinois Assistant');
       case AssistantContent.google_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
+      case AssistantContent.azure_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.azure.label', 'Ask the Azure Assistant');
       case AssistantContent.all_assistants:
         return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
       case AssistantContent.faqs:
@@ -347,6 +353,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   AssistantProvider get _selectedProvider {
     switch (_selectedContent) {
+      case AssistantContent.azure_conversation:
+        return AssistantProvider.azure;
       case AssistantContent.google_conversation:
         return AssistantProvider.google;
       case AssistantContent.uiuc_conversation:

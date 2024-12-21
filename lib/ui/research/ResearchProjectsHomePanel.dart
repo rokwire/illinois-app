@@ -168,22 +168,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
-    if (_canCreateResearchProject) {
-      contentList.add(RibbonButton(
-        backgroundColor: Styles().colors.surface,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
-        onTap: _onTapCreate
-      ),);
-    }
-    contentList.add(RibbonButton(
-      backgroundColor: Styles().colors.surface,
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-      label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
-      onTap: _onTapSearch
-    ),);
+
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
         Column(children: contentList)
@@ -238,8 +223,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   Widget _buildToolBar() {
     String createTitle = Localization().getStringEx("panel.research_projects.home.button.create.title", "Create");
     String searchTitle = Localization().getStringEx("panel.research_projects.home.button.search.title", "Search");
-    
-    return Row(children: [
+    const double defaultIconPadding = 10;
+    const double innerIconPadding = 8;
+
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Visibility(visible: false /*_selectedContentType == ResearchProjectsContentType.open*/, child:
         FilterSelector(
           padding: EdgeInsets.only(left: 16, top: 12, bottom: 12),
@@ -257,27 +244,24 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         ),
       ),
       Expanded(child: Container()),
-      Visibility(visible: false /*_canCreateResearchProject*/, child:
+      Visibility(visible: _canCreateResearchProject, child:
         Semantics(label: createTitle, button: true, child:
-          InkWell(onTap: _onTapCreate, child: 
-            Padding(padding: EdgeInsets.only(left: 0, right: 4, top: 12, bottom: 12), child:
-              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(createTitle, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")),
-                Padding(padding: EdgeInsets.only(left: 5), child:
-                  Styles().images.getImage('plus-circle')
-                )
-              ])
-            ),
-          ),
+          IconButton(
+            padding: EdgeInsets.only(left: defaultIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: innerIconPadding),
+            constraints: BoxConstraints(),
+            style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            icon: Styles().images.getImage('plus-circle', excludeFromSemantics: true) ?? Container(),
+            onPressed: _onTapCreate),
         ),
       ),
-      Visibility(visible: false, child:
+      Visibility(visible: true, child:
         Semantics(label: searchTitle, button: true, child:
-          InkWell(onTap: _onTapSearch, child: 
-            Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
-              Styles().images.getImage('search', excludeFromSemantics: true),
-            ),
-          ),
+          IconButton(
+            padding: EdgeInsets.only(left: innerIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: (defaultIconPadding + innerIconPadding)),
+            constraints: BoxConstraints(),
+            style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(),
+            onPressed: _onTapSearch),
         ),
       ),
     ],);

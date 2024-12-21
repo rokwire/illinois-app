@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ext/ImagesResult.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/groups/GroupAdvancedSettingsPanel.dart';
@@ -250,12 +249,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
     Analytics().logSelect(target: "Add Image");
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
-    if(result?.succeeded == true &&  _group!.imageURL != result?.stringData){
+    if (result?.succeeded == true &&  _group!.imageURL != result?.imageUrl) {
       setStateIfMounted(() {
-        _group!.imageURL = result?.stringData;
+        _group!.imageURL = result?.imageUrl;
       });
+      Log.d("Image Url: ${result?.imageUrl}]");
     }
-    Log.d("Image Url: ${result?.stringData}]");
   }
   //
   //Name

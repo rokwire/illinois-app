@@ -708,11 +708,10 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       return;
     }
 
-    AppAlert.showConfirmationDialog(
-        buildContext: context,
-        message: Localization()
-            .getStringEx('panel.wellness.todo.item.delete.confirmation.msg', 'Are sure that you want to delete this To-Do item?'),
-        positiveCallback: () => _deleteToDoItem());
+    AppAlert.showConfirmationDialog(context,
+      message: Localization().getStringEx('panel.wellness.todo.item.delete.confirmation.msg', 'Are sure that you want to delete this To-Do item?'),
+      positiveCallback: () => _deleteToDoItem()
+    );
   }
 
   void _deleteToDoItem() {

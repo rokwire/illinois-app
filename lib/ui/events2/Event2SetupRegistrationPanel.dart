@@ -525,7 +525,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     Analytics().logSelect(target: 'HeaderBar: Apply');
     String? errorText = _registrationDetailsErrorText;
     if (errorText != null) {
-      AppAlert.showMessage(context, errorText);
+      AppAlert.showTextMessage(context, errorText);
     }
     else {
       _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
@@ -537,7 +537,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     if (_isCreating) {
       String? errorText = _registrationDetailsErrorText;
       if (errorText != null) {
-        AppAlert.showMessage(context, errorText);
+        AppAlert.showTextMessage(context, errorText);
       }
       else {
         Navigator.of(context).pop(_buildRegistrationDetails());

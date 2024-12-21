@@ -182,16 +182,16 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
         Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
       ],),
 
-      (Auth2().authCard != null) ? _buildCardContent() : Container(),
+      (Auth2().iCard != null) ? _buildCardContent() : Container(),
     ],);
   }
 
   Widget _buildCardContent() {
     
     String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Expires');
-    String? expirationDate = Auth2().authCard?.expirationDate;
+    String? expirationDate = Auth2().iCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
-    String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your Illini ID") : (Auth2().authCard?.role ?? "");
+    String roleDisplayString = (Auth2().iCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your Illini ID") : (Auth2().iCard?.role ?? "");
 
     Widget? buildingAccessIcon;
     String? buildingAccessStatus;
@@ -200,7 +200,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
     double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
     bool hasQrCode = (0 < (_userQRCodeContent?.length ?? 0));
 
-    DateTime? expirationDateTimeUtc = Auth2().authCard?.expirationDateTimeUtc;
+    DateTime? expirationDateTimeUtc = Auth2().iCard?.expirationDateTimeUtc;
     bool cardExpired = (expirationDateTimeUtc != null) && DateTime.now().toUtc().isAfter(expirationDateTimeUtc);
     bool showQRCode = !cardExpired;
 
@@ -220,7 +220,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
       buildingAccessIcon = Container(height: (qrCodeImageSize / 2 - buildingAccessStatusHeight - 6));
       buildingAccessStatus = Localization().getString('widget.id_card.label.building_access.not_available', defaults: 'NOT\nAVAILABLE', language: 'en');
     }
-    bool hasBuildingAccess = _hasBuildingAccess && (0 < (Auth2().authCard?.uin?.length ?? 0));
+    bool hasBuildingAccess = _hasBuildingAccess && (0 < (Auth2().iCard?.uin?.length ?? 0));
 
     return Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 5 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
@@ -229,7 +229,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
 
       Container(height: 8,),
       
-      Text(Auth2().authCard?.fullName?.trim() ?? '', style:Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
+      Text(Auth2().iCard?.fullName?.trim() ?? '', style:Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
       Text(roleDisplayString, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.regular")),
       
       Container(height: 16,),
@@ -237,7 +237,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
         Visibility(visible: hasQrCode, child: Column(children: [
-          Text(Auth2().authCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+          Text(Auth2().iCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           showQRCode ?
             QrImageView(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
@@ -266,7 +266,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
       Semantics( container: true, child:
         Column(children: <Widget>[
           // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
-          Text(Auth2().authCard?.uin ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.extra_large")),
+          Text(Auth2().iCard?.uin ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.extra_large")),
         ],),
       ),
 
@@ -464,7 +464,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
   }
 
   Future<MemoryImage?> _loadAsyncPhotoImage() async{
-    Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
+    Uint8List? photoBytes = await  Auth2().iCard?.photoBytes;
     return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
@@ -474,8 +474,8 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
   }
 
   Future<bool?> _loadBuildingAccess() async {
-    if (_hasBuildingAccess && StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
-      String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
+    if (_hasBuildingAccess && StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().iCard?.uin)) {
+      String url = "${Config().padaapiUrl}/access/${Auth2().iCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
         'x-api-key': Config().padaapiApiKey!
@@ -518,7 +518,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
   }
 
   Future<bool> _checkNetIdStatus() async {
-    if (Auth2().authCard?.photoBase64?.isEmpty ?? true) {
+    if (Auth2().iCard?.photoBase64?.isEmpty ?? true) {
       await AppAlert.showDialogResult(context, Localization().getStringEx('panel.covid19_passport.message.missing_id_info', 'No Illini ID information found. You may have an expired Illini ID. Please contact the ID Center.'));
       return false;
     }
@@ -622,8 +622,8 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
   }
 
   String? get _userQRCodeContent {
-    String? qrCodeContent = Auth2().authCard!.magTrack2;
-    return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().authCard?.uin;
+    String? qrCodeContent = Auth2().iCard!.magTrack2;
+    return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().iCard?.uin;
   }
 
   bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
