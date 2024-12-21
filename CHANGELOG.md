@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - NEOM U
 
+## [0.5.0] = 2024-12-21
+### Added
+- User directory and messages
+
 ## [0.4.11] = 2024-11-06
 ### Fixed
 - Fix minor UI issues [#25](https://github.com/rokmetro/neom-app/issues/25)
