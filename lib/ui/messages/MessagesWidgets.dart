@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

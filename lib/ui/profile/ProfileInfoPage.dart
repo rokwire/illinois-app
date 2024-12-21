@@ -4,12 +4,12 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
-import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/ui/directory/DirectoryAccountsPage.dart';
+import 'package:neom/ui/profile/ProfileInfoEditPage.dart';
+import 'package:neom/ui/profile/ProfileInfoPreviewPage.dart';
+import 'package:neom/ui/profile/ProfileInfoAndDirectoryPage.dart';
+import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';

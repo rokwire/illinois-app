@@ -80,7 +80,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   Messages                       = AnalyticsFeature("Messages");
   static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
-  static const AnalyticsFeature   Messages                       = AnalyticsFeature("Messages");
   static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});
   static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
   static const AnalyticsFeature   Onboarding                     = AnalyticsFeature("Onboarding");

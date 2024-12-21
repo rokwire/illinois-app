@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-//import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/directory/DirectoryAccountsList.dart';
+import 'package:neom/ui/directory/DirectoryAccountsPage.dart';
+import 'package:neom/ui/profile/ProfileInfoPage.dart';
+import 'package:neom/ui/profile/ProfileInfoAndDirectoryPage.dart';
+import 'package:neom/ui/profile/ProfileHomePanel.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+//import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

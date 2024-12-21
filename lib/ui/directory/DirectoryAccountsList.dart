@@ -2,10 +2,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart' as illinois;
-import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Auth2.dart' as illinois;
+import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
