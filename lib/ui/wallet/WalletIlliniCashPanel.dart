@@ -300,7 +300,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
   Widget _buildBalanceTableRow() {
     if (_transactionsLoading) {
       return Padding(padding: EdgeInsets.only(top: 8), child:
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           Row(children: [
             Expanded(child:
               Center(child:
@@ -324,7 +324,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
         Localization().getStringEx('panel.settings.illini_cash.transactions.message.failed_transactions.hint', '');
       return Padding(padding: EdgeInsets.only(top: 8), child:
         Semantics(label: text, hint: hint, excludeSemantics: true, child:
-          Container(color: Styles().colors.white, child:
+          Container(color: Styles().colors.surface, child:
             Row(children: [
               Expanded(child:
                 Center(child:

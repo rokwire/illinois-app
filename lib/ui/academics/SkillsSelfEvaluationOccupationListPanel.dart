@@ -280,7 +280,7 @@ class OccupationListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: Card(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         child: InkWell(
           onTap: () {
             Navigator.push(

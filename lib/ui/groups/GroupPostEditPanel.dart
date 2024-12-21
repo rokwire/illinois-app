@@ -16,14 +16,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:neom/ext/Social.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -32,7 +35,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupPostEditPanel extends StatefulWidget with AnalyticsInfo {
-  final GroupPost? post;
+  final Post? post;
   final Group? group;
 
   GroupPostEditPanel({required this.group, this.post});
@@ -50,7 +53,7 @@ class GroupPostEditPanel extends StatefulWidget with AnalyticsInfo {
 class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
-  GroupPost? _post; //Main post {Data Presentation}
+  Post? _post; //Main post {Data Presentation}
   late PostDataModel? _mainPostUpdateData;//Main Post Edit
   List<Member>? _allMembersAllowedToPost;
 
@@ -65,10 +68,10 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyGroupPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
+    NotificationService().subscribe(this, [Social.notifyPostsUpdated]);
     _loadMembersAllowedToPost();
-    _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
-    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost), dateScheduled: _post?.dateScheduledUtc);
+    _post = widget.post ?? Post(); //If no post then prepare data for post creation
+    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost), dateScheduled: _post?.dateActivatedUtc);
   }
 
   @override
@@ -154,7 +157,7 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
                           padding: EdgeInsets.only(top: 4, right: _outerPadding),
                           child: Text(
                             StringUtils.ensureNotEmpty(
-                                _post?.member?.displayShortName ),
+                                _post?.creator?.name ),
                             style: Styles().textStyles.getTextStyle("widget.detail.large.thin"),
                           ))),
                   Semantics(
@@ -169,7 +172,7 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
                             style: Styles().textStyles.getTextStyle("widget.detail.medium"),))),
                   Container(height: 6,),
                   GroupMembersSelectionWidget(
-                    selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_mainPostUpdateData?.members), upToDateMembers: _allMembersAllowedToPost),
+                    selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost),
                     allMembers: _allMembersAllowedToPost,
                     groupId: widget.group?.id,
                     groupPrivacy: widget.group?.privacy,
@@ -179,10 +182,10 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
                       });
                     },),
                   Container(height: 6,),
-                  Visibility(visible: widget.post?.dateScheduledUtc != null, child:
+                  Visibility(visible: widget.post?.dateActivatedUtc != null, child:
                   GroupScheduleTimeWidget(
                     timeZone: null,//TBD pass timezone
-                    scheduleTime: widget.post?.dateScheduledUtc,
+                    scheduleTime: widget.post?.dateActivatedUtc,
                     enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
                     onDateChanged: (DateTime? dateTimeUtc){
                       setStateIfMounted(() {
@@ -209,7 +212,7 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
   void _onTapUpdateMainPost(){
     String? body = _mainPostUpdateData?.body;
     String? imageUrl = _mainPostUpdateData?.imageUrl ?? _post?.imageUrl;
-    List<Member>? toMembers = _mainPostUpdateData?.members;
+    // List<Member>? toMembers = _mainPostUpdateData?.members;
     if (StringUtils.isEmpty(body)) {
       String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -218,8 +221,8 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, dateScheduledUtc: _mainPostUpdateData?.dateScheduled, private: true);
-    Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
+    Post postToUpdate = Post(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, dateActivatedUtc: _mainPostUpdateData?.dateScheduled,);
+    Social().updatePost(post: postToUpdate).then((succeeded) {
       _setLoading(false);
       Navigator.of(context).pop();
     });
@@ -228,11 +231,11 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
   void _reloadPost() {
     //TODO: Can we optimize this to only load data for the relevant updated post(s)?
     _setLoading(true);
-    Groups().loadGroupPosts(widget.group?.id).then((posts) {
+    Social().loadPosts(groupId: widget.group?.id).then((posts) {
       if (CollectionUtils.isNotEmpty(posts)) {
         try {
           // GroupPost? post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null); //Remove to fix reload Error: type '() => Null' is not a subtype of type '(() => GroupPost)?' of 'orElse'
-          List<GroupPost?> nullablePosts = List.of(posts!);
+          List<Post?> nullablePosts = List.of(posts!);
           _post = nullablePosts.firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null);
         } catch (e) {
           print(e);
@@ -252,22 +255,23 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
   }
 
   //Utils
-  GroupPost? deepFindPost(List<GroupPost>? posts, String? id){
+  Post? deepFindPost(List<Post>? posts, String? id){
     if(CollectionUtils.isEmpty(posts) || StringUtils.isEmpty(id)){
       return null;
     }
 
-    GroupPost? result;
-    for(GroupPost post in posts!){
+    Post? result;
+    for(Post post in posts!){
       if(post.id == id){
         result = post;
         break;
-      } else {
-        result = deepFindPost(post.replies, id);
-        if(result!=null){
-          break;
-        }
       }
+      // else {
+      //   result = deepFindPost(post.replies, id);
+      //   if(result!=null){
+      //     break;
+      //   }
+      // }
     }
 
     return result;
@@ -276,10 +280,8 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
   // Notifications Listener
   @override
   void onNotification(String name, param) {
-    if (name == Groups.notifyGroupPostsUpdated) {
+    if (name == Social.notifyPostsUpdated) {
       _reloadPost();
-    } else if (name == Groups.notifyGroupPostReactionsUpdated) {
-      setStateIfMounted(() { });
     }
   }
 }

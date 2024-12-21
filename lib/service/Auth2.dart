@@ -222,9 +222,9 @@ class Auth2 extends rokwire.Auth2 {
 
   String get iCardFileName => _iCardFileName;
 
-  Future<File?> _getAuthCardCacheFile() async {
+  Future<File?> _getICardCacheFile() async {
     Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
-    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, authCardName) : null;
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, iCardFileName) : null;
     return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 

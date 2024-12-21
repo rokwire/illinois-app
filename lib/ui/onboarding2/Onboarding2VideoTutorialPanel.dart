@@ -174,7 +174,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             ]),
             Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Row(children: [
               Expanded(child: Stack(children: [
-                Align(alignment: (_isPortrait ? Alignment.center : Alignment.centerLeft), child: LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _buttonLabel, onTap: _onTapSkip, textColor: Styles().colors.white)),
+                Align(alignment: (_isPortrait ? Alignment.center : Alignment.centerLeft), child: LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _buttonLabel, onTap: _onTapSkip, textColor: Styles().colors.surface)),
                 Align(alignment: Alignment.centerRight, child: _buildCcButton())
               ]))
             ]))
@@ -230,7 +230,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors.surface : Styles().colors.disabledTextColorTwo), width: 2),
+                                color: (_ccEnabled ? Styles().colors.surface : Styles().colors.textDisabled), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',

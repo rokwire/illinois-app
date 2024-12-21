@@ -229,7 +229,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
 
   Decoration get _searchBarDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
+    border: Border(bottom: BorderSide(color: Styles().colors.textDisabled, width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(
@@ -395,8 +395,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   Decoration get _contentDescriptionDecoration => BoxDecoration(
     color: Styles().colors.surface,
     border: Border(
-      top: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
-      bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
+      top: BorderSide(color: Styles().colors.textDisabled, width: 1),
+      bottom: BorderSide(color: Styles().colors.textDisabled, width: 1),
     )
   );
 

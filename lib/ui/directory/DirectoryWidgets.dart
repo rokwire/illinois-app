@@ -193,6 +193,7 @@ class DirectoryProfileDetails extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) =>
+      //TODO: list all emails and phones or how to choose which?
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (profile?.college?.isNotEmpty == true)
           Text(profile?.college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
@@ -200,12 +201,12 @@ class DirectoryProfileDetails extends StatelessWidget {
           Text(profile?.department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
         if (profile?.major?.isNotEmpty == true)
           Text(profile?.major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-        if (profile?.email?.isNotEmpty == true)
-          _linkDetail(profile?.email ?? '', 'mailto:${email}'),
+        if (Auth2().emails.isNotEmpty)
+          _linkDetail(Auth2().emails.first, 'mailto:${email}'),
         if (profile?.email2?.isNotEmpty == true)
           _linkDetail(profile?.email2 ?? '', 'mailto:${email2}'),
-        if (profile?.phone?.isNotEmpty == true)
-          _linkDetail(profile?.phone ?? '', 'tel:${phone}'),
+        if (Auth2().phones.isNotEmpty == true)
+          _linkDetail(Auth2().phones.first, 'tel:${phone}'),
         if (profile?.website?.isNotEmpty == true)
           _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? ''),
       ],);
@@ -253,7 +254,7 @@ class DirectoryProfilePhoto extends StatelessWidget {
         width: imageSize + borderSize, height: imageSize + borderSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         ),
         child: Center(
@@ -454,7 +455,7 @@ class DirectoryProfileCard extends StatelessWidget {
     Container(decoration: cardDecoration, child: child);
 
   Decoration get cardDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(16)),
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
@@ -552,8 +553,8 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
       );
 
     Decoration get _searchBarDecoration => BoxDecoration(
-      color: Styles().colors.white,
-      border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+      color: Styles().colors.surface,
+      border: Border.all(color: Styles().colors.textDisabled, width: 1),
       borderRadius: BorderRadius.circular(12),
     );
 

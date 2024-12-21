@@ -284,7 +284,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 //             child: Container(
 //                 padding: EdgeInsets.symmetric(horizontal: 8),
 //                 decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-// //                height: 48,
+//                 height: 48,
 //                 child: TextField(
 //                   controller: _phoneController,
 //                   onChanged: (text) { setState(() {});},
@@ -551,36 +551,37 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
       setState(() { _isSaving = true; });
 
-    Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
-      if (mounted) {
-        if (userProfile != null) {
-          Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
-            override: Auth2UserProfile(firstName: firstName, middleName: middleName, lastName: lastName,),
-            scope: {Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,}
-          );
-          if (userProfile != updatedUserProfile) {
-            Auth2().saveUserProfile(updatedUserProfile).then((bool result) {
-              if (mounted) {
-                setState(() { _isSaving = false; });
-                if (result == true) {
-                  Navigator.pop(context);
-                } else {
-                  AppToast.showMessage("Unable to perform save");
+      Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
+        if (mounted) {
+          if (userProfile != null) {
+            Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
+              override: Auth2UserProfile(firstName: firstName, middleName: middleName, lastName: lastName,),
+              scope: {Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,}
+            );
+            if (userProfile != updatedUserProfile) {
+              Auth2().saveUserProfile(updatedUserProfile).then((bool result) {
+                if (mounted) {
+                  setState(() { _isSaving = false; });
+                  if (result == true) {
+                    Navigator.pop(context);
+                  } else {
+                    AppToast.showMessage("Unable to perform save");
+                  }
                 }
-              }
-            });
+              });
+            }
+            else {
+              setState(() { _isSaving = false; });
+              Navigator.pop(context);
+            }
           }
           else {
             setState(() { _isSaving = false; });
-            Navigator.pop(context);
+            AppToast.showMessage("Unable to perform save");
           }
         }
-        else {
-          setState(() { _isSaving = false; });
-          AppToast.showMessage("Unable to perform save");
-        }
-      }
-    });
+      });
+    }
   }
 
   void _onTapProfilePicture() {

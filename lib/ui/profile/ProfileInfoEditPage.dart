@@ -80,7 +80,7 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
       lastName: Auth2FieldVisibility.public,
-      email: Auth2FieldVisibility.public,
+      // email: Auth2FieldVisibility.public,
     );
 
     _fieldVisibilities.addAll(_profileVisibility.fieldsVisibility);
@@ -134,9 +134,9 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
           _collegeSection,
           _departmentSection,
           _majorSection,
-          _emailSection,
+          // _emailSection,
           _email2Section,
-          _phoneSection,
+          // _phoneSection,
           _websiteSection,
 
           Padding(padding: EdgeInsets.only(top: 24), child:
@@ -282,7 +282,7 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
           ),
           child: Padding(padding: EdgeInsets.all(12),
@@ -549,18 +549,18 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
     enabled: false,
   );
 
-  Widget get _emailSection => _textFieldSection(_ProfileField.email,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
-    enabled: false, public: true,
-  );
+  // Widget get _emailSection => _textFieldSection(_ProfileField.email,
+  //   headingTitle: Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
+  //   enabled: false, public: true,
+  // );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
   );
 
-  Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.phone.text', 'Phone Number'),
-  );
+  // Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
+  //   headingTitle: Localization().getStringEx('panel.profile.info.title.phone.text', 'Phone Number'),
+  // );
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
@@ -688,7 +688,7 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
   //Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
   Decoration get _controlDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8)),
   );
@@ -856,7 +856,7 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
 enum _ProfileField {
   pronouns,
   photoUrl, pronunciationUrl,
-  email, email2, phone, website,
+  email2, website,
   college, department, major, title,
 }
 
@@ -884,9 +884,9 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.photoUrl: return photoUrl;
       case _ProfileField.pronunciationUrl: return pronunciationUrl;
 
-      case _ProfileField.email: return email;
+      // case _ProfileField.email: return email;
       case _ProfileField.email2: return email2;
-      case _ProfileField.phone: return phone;
+      // case _ProfileField.phone: return phone;
       case _ProfileField.website: return website;
 
       case _ProfileField.college: return college;
@@ -904,8 +904,8 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         photoUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.photoUrl]?.text),
         pronunciationUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.pronunciationUrl]?.text),
 
-        email: StringUtils.ensureNotEmpty(fields[_ProfileField.email]?.text),
-        phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
+        // email: StringUtils.ensureNotEmpty(fields[_ProfileField.email]?.text),
+        // phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
         website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
 
         data: {
@@ -931,9 +931,9 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.photoUrl: photoUrl,
     _ProfileField.pronunciationUrl: pronunciationUrl,
 
-    _ProfileField.email: email,
+    // _ProfileField.email: email,
     _ProfileField.email2: email2,
-    _ProfileField.phone: phone,
+    // _ProfileField.phone: phone,
     _ProfileField.website: website,
 
     _ProfileField.college: college,
@@ -949,8 +949,8 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       photoUrl : fields?[_ProfileField.photoUrl],
       pronunciationUrl : fields?[_ProfileField.pronunciationUrl],
 
-      email : fields?[_ProfileField.email],
-      phone : fields?[_ProfileField.phone],
+      // email : fields?[_ProfileField.email],
+      // phone : fields?[_ProfileField.phone],
       website : fields?[_ProfileField.website],
 
       data: MapUtils.ensureEmpty({

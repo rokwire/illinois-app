@@ -33,7 +33,7 @@ class GiesCanvasCoursesListPanel extends StatelessWidget with AnalyticsInfo {
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.gies_canvas_courses.header.title', 'My Gies Canvas Courses')),
         body: _scaffoldContent,
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         bottomNavigationBar: uiuc.TabBar());
   }
 

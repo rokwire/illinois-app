@@ -65,8 +65,8 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
             RoundedButton(
                 label: "Register",
                 enabled: (_isRegistered == false),
-                textColor: (_isRegistered == false) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
-                borderColor: (_isRegistered == false) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                textColor: (_isRegistered == false) ? Styles().colors.fillColorPrimary : Styles().colors.textDisabled,
+                borderColor: (_isRegistered == false) ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled,
                 backgroundColor: Styles().colors.surface,
                 fontFamily: Styles().fontFamilies.bold,
                 contentWeight: 0.0,
@@ -77,8 +77,8 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
             RoundedButton(
                 label: "Unregister",
                 enabled: (_isRegistered == true),
-                textColor: (_isRegistered == true) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
-                borderColor: (_isRegistered == true) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                textColor: (_isRegistered == true) ? Styles().colors.fillColorPrimary : Styles().colors.textDisabled,
+                borderColor: (_isRegistered == true) ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled,
                 backgroundColor: Styles().colors.surface,
                 fontFamily: Styles().fontFamilies.bold,
                 contentWeight: 0.0,

@@ -200,8 +200,8 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       Row(children: <Widget>[
         Expanded(child: Container(),),
         RoundedButton(label: "Send Message",
-          textColor: Styles().colors.fillColorPrimary, // Styles().colors.disabledTextColor,
-          borderColor: Styles().colors.fillColorSecondary, // Styles().colors.disabledTextColor
+          textColor: Styles().colors.fillColorPrimary, // Styles().colors.textDisabled,
+          borderColor: Styles().colors.fillColorSecondary, // Styles().colors.textDisabled
           backgroundColor: Styles().colors.surface,
           fontFamily: Styles().fontFamilies.bold,
           contentWeight: 0.0,

@@ -797,7 +797,7 @@ class _HomeContentTab extends StatelessWidget {
     Semantics(label: "$_text tab", button: true,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
+        decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.surface, width: 3))),
         child: Center(child:
           Row(mainAxisSize: MainAxisSize.min, children: [
             _iconWidget,

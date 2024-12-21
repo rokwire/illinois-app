@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
@@ -267,8 +268,8 @@ class _BrowseSection extends StatelessWidget {
   String get _title => title(sectionId: sectionId);
   // String get _description => description(sectionId: sectionId);
 
-  static String get appTitle => Localization().getStringEx('app.title', 'NEOM U');
-  static String get _appTitleMacro => '{{app_title}}';
+  // static String get appTitle => Localization().getStringEx('app.title', 'NEOM U');
+  // static String get _appTitleMacro => '{{app_title}}';
 
   static String title({required String sectionId}) =>
       AppTextUtils.appBrandString('panel.browse.section.$sectionId.title', defaultTitle(sectionId: sectionId));
@@ -379,26 +380,26 @@ class _BrowseSection extends StatelessWidget {
     switch(sectionId) {
       case "events":              _onTapEvents(context); break;
 
-      case "directory":       _onTapUserDirectory(context); break;
+      case "directory":           _onTapUserDirectory(context); break;
 
-      case "feeds.twitter":                  _onTapTwitter(context); break;
-      case "feeds.daily_illini":             _onTapDailyIllini(context); break;
+      case "feeds.twitter":       _onTapTwitter(context); break;
+      case "feeds.daily_illini":  _onTapDailyIllini(context); break;
 
       case "groups":              _onTapGroups(context); break;
 
-      case "inbox":        _onTapNotifications(context); break;
+      case "inbox":               _onTapNotifications(context); break;
 
-      case "polls":             _onTapViewPolls(context); break;
+      case "polls":               _onTapViewPolls(context); break;
 
-      case "recent.recent_items":            _onTapRecentItems(context); break;
+      case "recent.recent_items": _onTapRecentItems(context); break;
 
-      case "surveys":         _onTapPublicSurveys(context); break;
+      case "surveys":             _onTapPublicSurveys(context); break;
 
-      case "messages":             _onTapMessages(context); break;
+      case "messages":            _onTapMessages(context); break;
 
-      case "wallet":        _onTapWallet(context); break;
+      case "wallet":              _onTapWallet(context); break;
 
-      case "wellness":       _onTapWellness(context); break;
+      case "wellness":            _onTapWellness(context); break;
     }
   }
 

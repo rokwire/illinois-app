@@ -46,7 +46,6 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
       lastName: Auth2FieldVisibility.public,
-      email: Auth2FieldVisibility.public,
     );
 
     _profile = Auth2UserProfile.fromFieldsVisibility(widget.profile, profileVisibility, permitted: _permittedVisibility);

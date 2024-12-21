@@ -130,7 +130,6 @@ class AppAlert {
         ],
       );
     },);
-  }
 
   static Future<bool> showConfirmationDialog(BuildContext context, {
       required String message,
@@ -539,7 +538,7 @@ class AppFile {
     if (pickedDirectory != null) {
       List<int> list = fileContent.codeUnits;
       Uint8List fileBytes = Uint8List.fromList(list);
-      final String? filePath = await FlutterFileDialog.saveFileToDirectory(
+      await FlutterFileDialog.saveFileToDirectory(
           directory: pickedDirectory, mimeType: mimeType, data: fileBytes, fileName: fileName, replace: true);
     } else {
       AppAlert.showDialogResult(context, 'Failed to save file - missing directory.');

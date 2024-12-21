@@ -105,7 +105,7 @@ extension FavoriteExt on Favorite {
     if (this is LaundryRoom) {
       switch((this as LaundryRoom).status) {
         case LaundryRoomStatus.online: return Styles().colors.fillColorPrimary;
-        case LaundryRoomStatus.offline: return Styles().colors.disabledTextColor;
+        case LaundryRoomStatus.offline: return Styles().colors.textDisabled;
         default: return null;
       }
     }

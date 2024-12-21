@@ -195,7 +195,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                           ? Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.disabled.hint", "")
                           : Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.hint", ""),
                       textStyle: _disabled ? Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant_two") : Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                      borderColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.fillColorSecondary,
+                      borderColor: _disabled ? Styles().colors.textDisabled : Styles().colors.fillColorSecondary,
                       backgroundColor: Styles().colors.fillColorPrimaryVariant,
                       progress: _updating,
                       onTap: () => _onSaveClicked()),

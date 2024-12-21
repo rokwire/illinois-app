@@ -101,7 +101,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.super_event.header.title', 'Super Event Settings'), actions: _headerBarActions,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
     );
   }
 

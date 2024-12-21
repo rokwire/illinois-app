@@ -89,7 +89,7 @@ class _HomeWelcomeVideoWidgetState extends State<HomeWelcomeVideoWidget> impleme
     return Visibility(visible: _visible ?? true, child:
       Container(color: Styles().colors.fillColorPrimary, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(height: 1, color: Styles().colors.disabledTextColor),
+          Container(height: 1, color: Styles().colors.textDisabled),
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
@@ -110,7 +110,7 @@ class _HomeWelcomeVideoWidgetState extends State<HomeWelcomeVideoWidget> impleme
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
             _buildVideoEntry()
           ),
-          Container(height: 1, color: Styles().colors.disabledTextColor),
+          Container(height: 1, color: Styles().colors.textDisabled),
         ],),
       )
     );

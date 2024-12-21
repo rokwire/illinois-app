@@ -355,7 +355,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   List<Widget> _buildHeaderActions() {
     return <Widget>[
       _buildHeaderPersonalInfoButton(),
-      _buildHeaderMessagesButton(),
       _buildHeaderNotificationsButton(),
       _buildHeaderSettingsButton()
     ];
@@ -368,7 +367,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       //    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
         InkWell(onTap: _onTapSettings, child:
           Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
-            Styles().images.getImage('settings-header', excludeFromSemantics: true),
+            Styles().images.getImage('settings-white', excludeFromSemantics: true),
           )
         )
       ),
@@ -382,7 +381,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       InkWell(onTap: _onTapNotifications, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-header', excludeFromSemantics: true))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-white', excludeFromSemantics: true))),
             Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child:
                 Text(unreadMsgsCount.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")))))
@@ -433,14 +432,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     }
     else {
       SettingsHomeContentPanel.present(context);
-    }
-  }
-
-  void _onTapMessages() {
-    String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != MessagesHomePanel.routeName) {
-      Analytics().logSelect(target: "Messages");
-      MessagesHomePanel.present(context);
     }
   }
 

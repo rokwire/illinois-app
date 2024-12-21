@@ -265,7 +265,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
 
       Semantics( container: true, child:
         Column(children: <Widget>[
-          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
+          // Text((0 < (Auth2().iCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
           Text(Auth2().iCard?.uin ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.extra_large")),
         ],),
       ),
@@ -317,7 +317,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
           child: Container(decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
-            image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth2().authCard?.photoBytes),),
+            image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth2().iCard?.photoBytes),),
           )),
         )
       ),
@@ -447,7 +447,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
               backgroundColor: Colors.white,
               enabled: _submitButtonEnabled,
               contentWeight: 0.0,
-              borderColor: _submitButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+              borderColor: _submitButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled,
               progress: _submittingDeviceRegistration,
               onTap: _onTapSubmitMobileAccessButton)),
       Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(

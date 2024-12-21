@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -265,45 +264,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
         ),
       ),
     ]);
-  }
-
-  Widget _buildContentTypesContainer() {
-    return Visibility(visible: _contentTypesVisible, child: Stack(children: [
-        GestureDetector(onTap: _changeContentTypesVisibility, child: Container(color: _dimmedBackgroundColor)),
-        _buildTypesValuesWidget()
-    ]));
-  }
-
-  Widget _buildTypesValuesWidget() {
-    List<Widget> typeWidgetList = <Widget>[];
-    typeWidgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
-      if ((_selectedContentType != type)) {
-        typeWidgetList.add(_buildContentItem(type));
-      }
-    }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: typeWidgetList)));
-  }
-
-  Widget _buildContentItem(rokwire.GroupsContentType contentType) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentLabel(contentType),
-        onTap: () => _onTapContentType(contentType));
-  }
-
-  Widget _buildGroupsContentSelection() {
-    return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
-      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors.white,
-      borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
-      label: _getContentLabel(_selectedContentType),
-      onTap: _changeContentTypesVisibility
-    ));
   }
 
   Widget _buildFunctionalBar() {
@@ -632,45 +592,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     }
   }
 
-  String _getContentLabel(rokwire.GroupsContentType? contentType) {
-    switch (contentType) {
-      case rokwire.GroupsContentType.all:
-        return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');
-      case rokwire.GroupsContentType.my:
-        return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
-      default:
-        return '';
-    }
-  }
-  
-  void _changeContentTypesVisibility() {
-    _contentTypesVisible = !_contentTypesVisible;
-    _updateState();
-  }
-
-  void _onTapContentType(rokwire.GroupsContentType contentType) {
-    Analytics().logSelect(target: _getContentLabel(contentType));
-    if (contentType == rokwire.GroupsContentType.all) {
-      _onSelectAllGroups();
-    }
-    else if (contentType == rokwire.GroupsContentType.my) {
-      _onSelectMyGroups();
-    }
-    _changeContentTypesVisibility();
-  }
-
   void _onSelectAllGroups(){
     if(_selectedContentType != rokwire.GroupsContentType.all){
       setState(() {
         _selectedContentType = rokwire.GroupsContentType.all;
-      });
-    }
-  }
-
-  void _onSelectMyGroups() {
-    if(_selectedContentType != rokwire.GroupsContentType.my){
-      setState(() {
-        _selectedContentType = rokwire.GroupsContentType.my;
       });
     }
   }

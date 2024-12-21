@@ -61,7 +61,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
           container: true,
           child: RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -117,7 +117,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
     for (SafetyContentType contentType in SafetyContentType.values) {
       if (_selectedContentType != contentType) {
         contentList.add(RibbonButton(
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: _safetyContentTypeToDisplayString(contentType),

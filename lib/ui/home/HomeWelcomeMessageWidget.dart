@@ -72,7 +72,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> imp
   Widget build(BuildContext context) => Visibility(visible: _isWidgetVisible, child:
     Container(color: Styles().colors.fillColorPrimary, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 1, color: Styles().colors.disabledTextColor),
+        Container(height: 1, color: Styles().colors.textDisabled),
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
@@ -94,7 +94,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> imp
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
           HomeFavoritesInstructionsMessageCard()
         ),
-        Container(height: 1, color: Styles().colors.disabledTextColor),
+        Container(height: 1, color: Styles().colors.textDisabled),
       ],),
     )
   );

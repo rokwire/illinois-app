@@ -128,36 +128,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   bool               _researchProjectConsent = false;
 
   int                _progress = 0;
-  bool               _confirmationLoading = false;
 
   List<Event2>?      _groupEvents;
-  bool               _updatingEvents = false;
-  int                _allEventsCount = 0;
 
   GlobalKey          _groupHeaderKey = GlobalKey();
   double?            _groupHeaderHeight;
-
-  List<GroupPost>    _posts = <GroupPost>[];
-  List<Member>?      _allMembersAllowedToPost;
-  GlobalKey          _lastPostKey = GlobalKey();
-  bool?              _refreshingPosts;
-  bool?              _loadingPostsPage;
-  bool?              _hasMorePosts;
-  bool?              _scrollToLastPostAfterRefresh;
-
-  List<GroupPost>    _scheduledPosts = <GroupPost>[];
-  GlobalKey          _lastScheduledPostKey = GlobalKey();
-  bool?              _refreshingScheduledPosts;
-  bool?              _loadingScheduledPostsPage;
-  bool?              _hasMoreScheduledPosts;
-  bool?              _scrollToLastScheduledPostsAfterRefresh;
-
-  List<GroupPost>    _messages = <GroupPost>[];
-  GlobalKey          _lastMessageKey = GlobalKey();
-  bool?              _refreshingMessages;
-  bool?              _loadingMessagesPage;
-  bool?              _hasMoreMessages;
-  bool?              _scrollToLastMessageAfterRefresh;
 
   DateTime?          _pausedDateTime;
 
@@ -369,14 +344,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _buildEvents()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildPosts(),
-            if (_isAdmin)
-              _buildScheduledPosts()
-          ],)),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _buildMessages()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _buildPolls()),
+          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupEventsContent()),
+          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupPostsContent()),
+          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupScheduledPostsContent()),
+          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupMessagesContent()),
+          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupPollsContent()),
           SingleChildScrollView(scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildAbout(), _buildPrivacyDescription(), _buildAdmins()],)),
         ],
       );
@@ -388,7 +360,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           _buildPrivacyDescription(),
           _buildAdmins(),
           if (_isPublic && CollectionUtils.isNotEmpty(_groupEvents))
-            _buildEvents(),
+            _GroupEventsContent(),
           _buildResearchProjectMembershipRequest(),
         ]),
       );
@@ -795,6 +767,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
+  /*
   Widget _buildTabs() {
     if(CollectionUtils.isEmpty(_tabs))
       return Container();
@@ -842,7 +815,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     //   SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
     //   Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))
     // ]));
-  }
+
     if(_tabController == null || _tabController!.length != tabs.length){
       _tabController = TabController(length: tabs.length, vsync: this);
     }
@@ -860,6 +833,38 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         indicatorWeight: 4,
         tabAlignment: TabAlignment.fill,
     ));
+  }
+  */
+
+  List<Widget> _buildTabs() {
+    List<Widget> tabs = [];
+    for (_DetailTab tab in _DetailTab.values) {
+      String title;
+      switch (tab) {
+        case _DetailTab.Events:
+          title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
+          break;
+        case _DetailTab.Posts:
+          title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+          break;
+        case _DetailTab.Messages:
+          title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
+          break;
+        case _DetailTab.Polls:
+          title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
+          break;
+        case _DetailTab.About:
+          title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
+          break;
+        case _DetailTab.Scheduled:
+          title = Localization().getStringEx("", 'Scheduled'); //localize
+          break;
+      }
+
+      tabs.add(TextTabButton(title: title));
+    }
+
+    return tabs;
   }
 
   Widget _buildViewPager(){
@@ -1191,7 +1196,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Widget _buildCancelMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
       Padding(padding: EdgeInsets.all(16), child:
       RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
@@ -1446,13 +1451,51 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         });
   }
 
-  void _onTab(_DetailTab? tab) {
-    Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
-    if (tab != null /*&& _currentTab != tab*/) {
-        _currentTab = tab;
+  // void _onTab(_DetailTab? tab) {
+  //   Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
+  //   if (tab != null /*&& _currentTab != tab*/) {
+  //       _currentTab = tab;
+  //
+  //     _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+  //   }
+  // }
 
-      _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+  void _onTabChanged(int index) {
+    _DetailTab tab = _DetailTab.values[_tabController.index];
+    Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
+    if (!_tabController.indexIsChanging && _currentTab.index != _tabController.index) {
+      setState(() {
+        _currentTab = tab;
+      });
+
+      // switch (_currentTab) {
+      //   case _DetailTab.Posts:
+      //     if (CollectionUtils.isNotEmpty(_posts)) {
+      //       _scheduleLastPostScroll();
+      //     }
+      //     break;
+      //   case _DetailTab.Messages:
+      //     if (CollectionUtils.isNotEmpty(_messages)) {
+      //       _scheduleLastMessageScroll();
+      //     }
+      //     break;
+      //   case _DetailTab.Polls:
+      //     _schedulePollsScroll();
+      //     break;
+      //   default:
+      //     break;
+      // }
     }
+  }
+
+  void _onTapLeave() {
+    Analytics().logSelect(target: "Leave Group", attributes: _group?.analyticsAttributes);
+    showDialog(
+        context: context,
+        builder: (context) => _buildConfirmationDialog(
+            confirmationTextMsg: _isResearchProject ? "Are you sure you want to leave this project?" : Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+            positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
+            onPositiveTap: _onTapLeaveDialog));
   }
 
   void _onTapLeaveDialog() {
@@ -1813,7 +1856,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
                 "panel.group_detail.button.all_events.title", 'See all events'),
             textStyle: Styles().textStyles.getTextStyle(
                 "widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
@@ -2206,7 +2249,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAlive
       for (Poll? groupPoll in _groupPolls!) {
         if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
+          pollsContentList.add(PollCard(poll: groupPoll, group: _group));
         }
       }
 
@@ -2216,7 +2259,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAlive
             child: RoundedButton(
                 label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors.fillColorSecondary,
                 borderWidth: 2,

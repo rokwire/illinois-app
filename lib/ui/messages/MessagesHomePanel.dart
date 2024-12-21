@@ -138,7 +138,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(color: Styles().colors.white, child:
+      Container(color: Styles().colors.surface, child:
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:

@@ -257,7 +257,7 @@ class _ProfileInfoAndDirectoryPageState extends State<ProfileInfoAndDirectoryPag
     null;
 
   Color? get _selectedSubTabColor =>
-    Styles().colors.white;
+    Styles().colors.surface;
    */
 
   // Signed out

@@ -83,7 +83,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
                 onTap: () => _onTapTeam(team),
                 child: Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors.disabledTextColor, width: 1), borderRadius: BorderRadius.circular(8)),
+                        border: Border.all(color: Styles().colors.textDisabled, width: 1), borderRadius: BorderRadius.circular(8)),
                     child: Padding(
                         padding: EdgeInsets.all(16),
                         child: Row(children: [

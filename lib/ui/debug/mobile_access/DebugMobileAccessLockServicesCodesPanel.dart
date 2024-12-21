@@ -59,8 +59,8 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                 RoundedButton(
                     label: "Change",
                     enabled: !_loading,
-                    textColor: (!_loading) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
-                    borderColor: (!_loading) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                    textColor: (!_loading) ? Styles().colors.fillColorPrimary : Styles().colors.textDisabled,
+                    borderColor: (!_loading) ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled,
                     backgroundColor: Styles().colors.surface,
                     fontFamily: Styles().fontFamilies.bold,
                     contentWeight: 0.0,

@@ -193,7 +193,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
             return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               child: Card(
-                color: Styles().colors.white,
+                color: Styles().colors.surface,
                 child: InkWell(
                   onTap: () => _showScoreDescription(section),
                   child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [

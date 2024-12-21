@@ -599,19 +599,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  void _onMapPoiTap(PointOfInterest poi) {
-    debugPrint('ExploreMap POI tap' );
-    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
-    if (mtdStop != null) {
-      _selectMapExplore(mtdStop);
-    }
-    else if (_selectedMapType == ExploreMapType.MyLocations) {
-      _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
-    }
-    else if (_selectedMapExplore != null) {
-      _selectMapExplore(null);
-    }
-  }
+  // void _onMapPoiTap(PointOfInterest poi) {
+  //   debugPrint('ExploreMap POI tap' );
+  //   MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
+  //   if (mtdStop != null) {
+  //     _selectMapExplore(mtdStop);
+  //   }
+  //   else if (_selectedMapType == ExploreMapType.MyLocations) {
+  //     _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
+  //   }
+  //   else if (_selectedMapExplore != null) {
+  //     _selectMapExplore(null);
+  //   }
+  // }
 
   void _onTapMarker(dynamic origin) {
     if (_selectedMapType == ExploreMapType.StoriedSites) {
@@ -622,12 +622,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  void _onStoriedSitesPlaceSelected(places_model.Place place) {
+  void _onStoriedSitesPlaceSelected(Place place) {
     _centerMapOnExplore(place, zoom: false);
     _selectMapExplore(place);
   }
 
-  void _onStoriedSitesFilteredPlacesChanged(List<places_model.Place>? filteredExplores) {
+  void _onStoriedSitesFilteredPlacesChanged(List<Place>? filteredExplores) {
     if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
       _mapController?.getZoomLevel().then((double value) {
         _filteredExplores = (filteredExplores != null) ? List.from(filteredExplores) : null;
@@ -645,7 +645,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _storiedSightsKey.currentState?.selectPlace(explore);
     }
     else if (explore is List<Explore>) {
-      List<places_model.Place> places = explore.cast<places_model.Place>();
+      List<Place> places = explore.cast<Place>();
       _storiedSightsKey.currentState?.selectPlaces(places);
       _centerMapOnExplore(places);
     }

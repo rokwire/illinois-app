@@ -18,14 +18,12 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FlexUI.dart';
-import 'package:neom/ui/debug/DebugHomePanel.dart';
 import 'package:neom/ui/profile/ProfileInfoAndDirectoryPage.dart';
 import 'package:neom/ui/profile/ProfileDetailsPage.dart';
 import 'package:neom/ui/profile/ProfileLoginPage.dart';
 import 'package:neom/ui/profile/ProfileRolesPage.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -59,7 +57,7 @@ class ProfileHomePanel extends StatefulWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
           return ProfileHomePanel._(content: content, contentParams: contentParams,);
-        }
+        },
         useSafeArea: true,
       );
 

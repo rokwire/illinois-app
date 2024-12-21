@@ -33,7 +33,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.admin_settings.header.title', 'Admin Settings')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
     );
   }
 

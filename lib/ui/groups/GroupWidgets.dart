@@ -22,27 +22,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/mainImpl.dart';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/groups/GroupMembersSelectionPanel.dart';
+import 'package:neom/ui/groups/GroupPostCreatePanel.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/ext/Social.dart';
-import 'package:rokwire_plugin/model/poll.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/groups/GroupDetailPanel.dart';
@@ -1089,15 +1088,15 @@ class _GroupPostCardState extends State<GroupPostCard> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          CollectionUtils.isNotEmpty(Auth2().authPicture) ?
+                          CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
                             Container(width: 20, height: 20, decoration:
                               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
+                                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
                               )
                             ) : Styles().images.getImage('person-circle-header') ?? Container(),
                           Padding(
                             padding: EdgeInsets.only(left: 8),
-                            child:Text(StringUtils.ensureNotEmpty(memberName),
+                            child:Text(StringUtils.ensureNotEmpty(creatorName),
                                 textAlign: TextAlign.left,
                                 style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')),
                           ),
@@ -1132,14 +1131,15 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     ],),
                     Container(height: 16.0),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      GroupPostReaction(
-                        groupID: widget.group?.id,
-                        post: widget.post,
-                        reaction: thumbsUpReaction,
-                        accountIDs: widget.post?.reactions[thumbsUpReaction],
-                        selectedIconKey: 'thumbs-up',
-                        deselectedIconKey: 'thumbs-up-gray',
-                      ),
+                      //TODO: fix reactions with Social service
+                      // GroupPostReaction(
+                      //   groupID: widget.group?.id,
+                      //   post: widget.post,
+                      //   reaction: thumbsUpReaction,
+                      //   accountIDs: widget.post?.reactions[thumbsUpReaction],
+                      //   selectedIconKey: 'thumbs-up',
+                      //   deselectedIconKey: 'thumbs-up-gray',
+                      // ),
                       _buildScheduledDateWidget,
                       Visibility(
                         visible: isRepliesLabelVisible,
@@ -1159,9 +1159,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
                       child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
                     ),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text('To: $_selectionMembersText',
-                        style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
-                      ),
+                      // Text('To: $_selectionMembersText',
+                      //   style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
+                      // ),
                       GestureDetector( onTap: () => _onTapPostOptions(), child:
                         Styles().images.getImage(widget.isReply ? 'ellipsis-alert' : 'report', excludeFromSemantics: true, color: Styles().colors.alert)
                       ),
@@ -1222,16 +1222,16 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                     onTap: _onTapReply
                 )),
-                Visibility(visible: isReportAbuseVisible, child: RibbonButton(
-                  leftIconKey: "comment",
-                  label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
-                )),
-                Visibility(visible: isReportAbuseVisible, child: RibbonButton(
-                  leftIconKey: "comment",
-                  label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
-                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
-                )),
+                // Visibility(visible: isReportAbuseVisible, child: RibbonButton(
+                //   leftIconKey: "comment",
+                //   label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                //   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
+                // )),
+                // Visibility(visible: isReportAbuseVisible, child: RibbonButton(
+                //   leftIconKey: "comment",
+                //   label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                //   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
+                // )),
               ],
             ),
           );
@@ -1244,21 +1244,21 @@ class _GroupPostCardState extends State<GroupPostCard> {
     });
   }
 
-  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, GroupPost? post}) {
-    String? analyticsTarget;
-    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
-      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
-    }
-    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
-      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
-    }
-    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
-      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
-    }
-    Analytics().logSelect(target: analyticsTarget);
-
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
-  }
+  // void _onTapReportAbuse({required GroupPostReportAbuseOptions options, Post? post}) {
+  //   String? analyticsTarget;
+  //   if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+  //     analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+  //   }
+  //   else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+  //     analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+  //   }
+  //   else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+  //     analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+  //   }
+  //   Analytics().logSelect(target: analyticsTarget);
+  //
+  //   Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
+  // }
 
   int get _visibleRepliesCount {
     int result = 0;
@@ -1319,7 +1319,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
-      // bodyText += ' <span style=color:${ColorUtils.toHex(Styles().colors.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <span style=color:${ColorUtils.toHex(Styles().colors.textDisabled  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
       // bodyText += ' <a>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</a>';
 
       // ' <span style=color:${ColorUtils.toHex(Styles().colors.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
@@ -1374,7 +1374,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                                   StringUtils.ensureNotEmpty(bodyText),
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
                                   textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small"),
-                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors.disabledTextColor)}: null //Not able to use Transparent colour, it's not parsed correctly
+                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors.textDisabled)}: null //Not able to use Transparent colour, it's not parsed correctly
                                   // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.blackTransparent018 ?? Colors.blue)} : null
                               )
                               // Html(
@@ -1548,7 +1548,7 @@ class _GroupReactionState extends State<GroupReaction> {
             height: MediaQuery.of(context).size.height / 2,
             child: Column(
               children: [
-                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors.disabledTextColor)),
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors.textDisabled)),
                 Container(height: 16),
                 Expanded(
                   child: ListView(

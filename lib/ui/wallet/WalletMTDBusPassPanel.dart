@@ -414,7 +414,7 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
     widget.backgroundColor;
 
   Color get _activeColor =>
-    _loadingActiveBusDetails ? Styles().colors.white : (_activeBusColor ?? Styles().colors.fillColorSecondary);
+    _loadingActiveBusDetails ? Styles().colors.surface : (_activeBusColor ?? Styles().colors.fillColorSecondary);
 
   String? get _busNumber {
     return StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');

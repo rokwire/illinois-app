@@ -168,7 +168,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
 
   @override
   Widget build(BuildContext context) =>
-    Scaffold(backgroundColor: Styles().colors.white, body:
+    Scaffold(backgroundColor: Styles().colors.surface, body:
       Column(children: [
         Row(children: [
           Expanded(child:
@@ -202,7 +202,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   Widget get _panelContent {
 
     Widget? pageWidget = _contentPage;
-    Color backColor = (pageWidget is WalletHomeContentWidget) ? (pageWidget as WalletHomeContentWidget).backgroundColor  : Styles().colors.white;
+    Color backColor = (pageWidget is WalletHomeContentWidget) ? (pageWidget as WalletHomeContentWidget).backgroundColor  : Styles().colors.surface;
 
     return Column(children: <Widget>[
       Expanded(child:
@@ -214,7 +214,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                   RibbonButton(
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                    backgroundColor: Styles().colors.white,
+                    backgroundColor: Styles().colors.surface,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -269,7 +269,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     for (WalletContentType contentType in _contentTypes) {
       if (_selectedContentType != contentType) {
         contentList.add(RibbonButton(
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: _walletContentTypeToDisplayString(contentType),
@@ -376,5 +376,5 @@ extension _StorageWalletExt on Storage {
 }
 
 class WalletHomeContentWidget {
-  Color get backgroundColor => Styles().colors.white;
+  Color get backgroundColor => Styles().colors.surface;
 }

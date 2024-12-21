@@ -81,7 +81,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   Widget _buildPanelContent() =>
     SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           _buildSearchBar(),
         ),
         _buildResultContent()
@@ -109,8 +109,8 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   );
 
   Decoration get _searchBarDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
+    color: Styles().colors.surface,
+    border: Border(bottom: BorderSide(color: Styles().colors.textDisabled, width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(

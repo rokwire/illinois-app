@@ -378,8 +378,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                       RoundedButton(
                         label: Localization().getStringEx("", "No"),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors.surface,
+                        backgroundColor: Styles().colors.surface,
                         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         contentWeight: 0.0,
                         onTap: (){
@@ -391,8 +391,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                       RoundedButton(
                         label: Localization().getStringEx("", "Yes"),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors.surface,
+                        backgroundColor: Styles().colors.surface,
                         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         contentWeight: 0.0,
                         progress: _deletingGroup,

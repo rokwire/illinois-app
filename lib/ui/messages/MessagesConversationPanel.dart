@@ -241,7 +241,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         return Container(
           margin: EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
           ),
           child: Padding(
             padding: EdgeInsets.all(16),
@@ -420,7 +420,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
           child: IconButton(
               splashRadius: 24,
-              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: ""),
+              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled, semanticLabel: ""),
               onPressed: enabled
                   ? () {
                 _submitMessage(_inputController.text);

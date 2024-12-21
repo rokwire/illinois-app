@@ -56,7 +56,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
   Widget _buildMachineHeaderSection() {
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.disabledTextColor,
+            color: Styles().colors.textDisabled,
             boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
         child: Padding(
             padding: EdgeInsets.all(20),

@@ -303,7 +303,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
   Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction>? transactionList) {
     if (loadingFlag) {
       return Padding(padding: EdgeInsets.only(top: 8), child:
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           Row(children: [
             Expanded(child:
               Center(child:
@@ -327,7 +327,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
         Localization().getStringEx('panel.settings.meal_plan.transactions.message.failed_transactions.hint', '');
       return Padding(padding: EdgeInsets.only(top: 8), child:
         Semantics(label: text, hint: hint, excludeSemantics: true, child:
-          Container(color: Styles().colors.white, child:
+          Container(color: Styles().colors.surface, child:
             Row(children: [
               Expanded(child:
                 Center(child:

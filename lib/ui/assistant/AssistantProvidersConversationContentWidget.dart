@@ -456,7 +456,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
           child: IconButton(
               splashRadius: 24,
-              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
+              icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled, semanticLabel: "",),
               onPressed: enabled
                   ? () {
                 _submitMessage(message: _inputController.text);

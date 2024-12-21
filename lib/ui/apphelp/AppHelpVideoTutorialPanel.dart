@@ -200,7 +200,7 @@ class _AppHelpVideoTutorialPanelState extends State<AppHelpVideoTutorialPanel> {
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors.surface : Styles().colors.disabledTextColorTwo), width: 2),
+                                color: (_ccEnabled ? Styles().colors.surface : Styles().colors.textDisabled), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',

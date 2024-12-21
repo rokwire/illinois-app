@@ -404,7 +404,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
                     onTap: () => _onTapTeamsFilter(context),
                     child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+                            border: Border.all(color: Styles().colors.textDisabled, width: 1),
                             borderRadius: BorderRadius.circular(16)),
                         child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
