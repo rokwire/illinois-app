@@ -75,6 +75,19 @@ class Gateway with Service implements NotificationsListener {
     return null;
   }
 
+  Future<Map<String, dynamic>?> fetchFloorPlanData(String buildingId, {String? floorId}) async {
+    if (StringUtils.isNotEmpty(Config().gatewayUrl) && buildingId.isNotEmpty) {
+      String requestUrl = UrlUtils.buildWithQueryParameters("${Config().gatewayUrl}/wayfinding/floorplan", {
+        'bldgid': buildingId,
+        if (floorId != null) 'floor': floorId,
+      });
+      Response? response = await Network().get(requestUrl, auth: Auth2(), headers: externalAuthorizationHeader);
+      return (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+    }
+    return null;
+  }
+
+
   Future<List<Building>?> searchBuildings({required String text}) async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
       String requestUrl = UrlUtils.buildWithQueryParameters("${Config().gatewayUrl}/wayfinding/searchbuildings", {
