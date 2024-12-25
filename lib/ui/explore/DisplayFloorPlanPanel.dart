@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:illinois/service/Auth2.dart';
-import 'package:rokwire_plugin/service/network.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
-import 'dart:convert';
 
 import '../../model/StudentCourse.dart';
 
@@ -39,7 +36,6 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     super.initState();
     _controller = WebViewController();
 
-    // Initialize only if building is provided
     if (widget.building != null) {
       List<String>? floors = widget.building?.floors;
       if (floors != null && floors.isNotEmpty) {
@@ -49,26 +45,14 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     }
   }
 
-  Future<String> fetchFloorPlanData(String url) async {
-    http.Response? response = await Network().get(url, auth: Auth2());
-    if (response?.statusCode == 200) {
-      try {
-        var jsonResponseBody = jsonDecode(response!.body);
-        if (jsonResponseBody['svg'] is String && jsonResponseBody['svg'].isEmpty) {
-          return 'Empty SVG data';
-        }
-        return jsonResponseBody['svg'];
-      } catch (_) {
-        return '${response?.statusCode}';
-      }
-    } else {
-      return '${response?.statusCode} error, could not get plan for this floor';
-    }
-  }
-
   Future<void> loadFloorPlan(String floorCode) async {
-    String url = '${_urlBase}bldgid=${widget.building?.number}&floor=$floorCode';
-    String floorPlanSvg = await fetchFloorPlanData(url);
+    Map<String, dynamic>? floorPlanData = await Gateway().fetchFloorPlanData(
+      widget.building?.number ?? '',
+      floorId: floorCode,
+    );
+
+    String floorPlanSvg = floorPlanData?['svg'] ?? 'Empty SVG data';
+
     if (!mounted) return; // Ensure widget is still mounted
     setState(() {
       if (floorPlanSvg == 'Empty SVG data') {
@@ -79,6 +63,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       _controller.loadHtmlString(_htmlWithFloorPlan);
     });
   }
+
 
 
   void changeActiveFloor(String? floorCode) {
@@ -228,5 +213,3 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     );
   }
 }
-
-
