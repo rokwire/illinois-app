@@ -4,7 +4,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Config.dart';
 
 import '../../model/StudentCourse.dart';
 
@@ -100,7 +99,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             Center(
-              child: CircularProgressIndicator(), // Progress indicator
+              child: CircularProgressIndicator(),
             ),
           buildFooter(),
         ],
