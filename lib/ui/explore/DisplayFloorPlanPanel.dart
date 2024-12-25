@@ -28,7 +28,6 @@ class DisplayFloorPlanPanel extends StatefulWidget {
 class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   late final WebViewController _controller;
   String _htmlWithFloorPlan = '';
-  String _urlBase = '${Config().gatewayUrl}/wayfinding/floorplan?';
   String _currentFloorCode = '';
 
   @override
@@ -36,6 +35,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     super.initState();
     _controller = WebViewController();
 
+    // Initialize only if building is provided
     if (widget.building != null) {
       List<String>? floors = widget.building?.floors;
       if (floors != null && floors.isNotEmpty) {
@@ -51,11 +51,11 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       floorId: floorCode,
     );
 
-    String floorPlanSvg = floorPlanData?['svg'] ?? 'Empty SVG data';
+    String? floorPlanSvg = floorPlanData?['svg'] ?? null;
 
     if (!mounted) return; // Ensure widget is still mounted
     setState(() {
-      if (floorPlanSvg == 'Empty SVG data') {
+      if (floorPlanSvg == null) {
         _htmlWithFloorPlan = '<html lang=""><body>No floor plan available</body></html>';
       } else {
         _htmlWithFloorPlan = '$kExamplePage$floorPlanSvg</body></html>';
@@ -63,8 +63,6 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       _controller.loadHtmlString(_htmlWithFloorPlan);
     });
   }
-
-
 
   void changeActiveFloor(String? floorCode) {
     if (floorCode != null) {
@@ -213,3 +211,5 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     );
   }
 }
+
+
