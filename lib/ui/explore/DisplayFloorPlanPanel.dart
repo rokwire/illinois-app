@@ -29,6 +29,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   late final WebViewController _controller;
   String _htmlWithFloorPlan = '';
   String _currentFloorCode = '';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -46,6 +47,10 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   }
 
   Future<void> loadFloorPlan(String floorCode) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     Map<String, dynamic>? floorPlanData = await Gateway().fetchFloorPlanData(
       widget.building?.number ?? '',
       floorId: floorCode,
@@ -55,6 +60,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
 
     if (!mounted) return; // Ensure widget is still mounted
     setState(() {
+      _isLoading = false;
       if (floorPlanSvg == null) {
         _htmlWithFloorPlan = '<html lang=""><body>No floor plan available</body></html>';
       } else {
@@ -92,6 +98,10 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(), // Progress indicator
+            ),
           buildFooter(),
         ],
       ),
