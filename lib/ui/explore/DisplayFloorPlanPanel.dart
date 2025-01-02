@@ -201,7 +201,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
           icon: Padding(
             padding: EdgeInsets.only(left: 4),
             child:
-            Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+            Styles().images.getImage('chevron-down-dark-blue', excludeFromSemantics: true),
           ),
           isExpanded: false,
           style:
