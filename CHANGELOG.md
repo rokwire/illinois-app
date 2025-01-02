@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Implemented Wellness category pages deep linking [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+- Updated wellness resources content [#4504](https://github.com/rokwire/illinois-app/issues/4504).
 
 ## [6.1.31] - 2024-12-20
 ### Changed
