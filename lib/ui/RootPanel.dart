@@ -30,6 +30,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -217,6 +218,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
+      Wellness.notifyCategorySelect,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -322,6 +324,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideList) {
       _onGuideList(param);
+    }
+    else if (name == Wellness.notifyCategorySelect) {
+      _onWellnessCategorySelect(param);
     }
     else if (name == Canvas.notifyCanvasEventDetail) {
       _onCanvasEventDetail(param);
@@ -913,6 +918,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
           setState(() {}); // Force the postFrameCallback invokation.
         }
       }
+    }
+  }
+
+  Future<void> _onWellnessCategorySelect(Map<String, dynamic>? content) async {
+    String? categoryCode = (content != null) ? JsonUtils.stringValue(content['id']) : null;
+    WellnessContent? category = WellnessContentImpl.fromString(categoryCode);
+    if (category != null) {
+      _onFirebaseWellnessNotification(category);
     }
   }
 
