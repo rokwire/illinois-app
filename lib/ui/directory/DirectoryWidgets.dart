@@ -148,7 +148,7 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
     ],);
 
   Widget  get _messageButton => _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress);
-  Widget? get _messageIcon => Styles().images.getImage('edit', weight: 'regular', size: 20, color: Styles().colors.fillColorPrimary);
+  Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.fillColorPrimary);
 
   void _onMessage() {
     Analytics().logSelect(target: 'Message User');
