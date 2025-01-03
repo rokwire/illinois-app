@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
@@ -15,11 +16,13 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,6 +45,8 @@ class DirectoryAccountCard extends StatefulWidget {
 }
 
 class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
+
+  bool _messageProgress = false;
 
   @override
   Widget build(BuildContext context) =>
@@ -115,23 +120,73 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
   Widget get _expandedBody =>
     Padding(padding: EdgeInsets.only(bottom: 16), child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Expanded(child:
+        Expanded(flex: 60, child:
           Padding(padding: EdgeInsets.only(top: 12), child:
-          DirectoryProfileDetails(widget.account.profile),
+            DirectoryProfileDetails(widget.account.profile),
           ),
         ),
-        Expanded(child:
+        Expanded(flex: 40, child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryProfilePhoto(
-              photoUrl: _photoUrl,
-              imageSize: _photoImageSize,
-              photoUrlHeaders: _photoAuthHeaders,
-              borderSize: 12,
-            )
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              DirectoryProfilePhoto(
+                photoUrl: _photoUrl,
+                imageSize: _photoImageSize,
+                photoUrlHeaders: _photoAuthHeaders,
+                borderSize: 12,
+              ),
+              _expandedCommandsBar,
+            ],),
           ),
         ),
         //Container(width: 32,),
       ],),
+    );
+
+  Widget get _expandedCommandsBar =>
+    Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
+      _messageButton,
+    ],);
+
+  Widget  get _messageButton => _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress);
+  Widget? get _messageIcon => Styles().images.getImage('edit', weight: 'regular', size: 20, color: Styles().colors.fillColorPrimary);
+
+  void _onMessage() {
+    Analytics().logSelect(target: 'Message User');
+    String? accountId = widget.account.id;
+    if (accountId != null) {
+      setState(() {
+        _messageProgress = true;
+      });
+      Social().createConversation(memberIds: [accountId]).then((Conversation? conversation){
+        if (mounted) {
+          setState(() {
+            _messageProgress = false;
+          });
+          if (conversation != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
+          } else {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.messages.directory.button.continue.failed.msg', 'Failed to create a conversation with the selected members.'));
+          }
+        }
+      });
+    }
+  }
+
+  Widget _iconButton({Widget? icon, void Function()? onTap, bool progress = false }) =>
+    progress ? _iconButtonProgress : _iconButtonImpl(icon: icon, onTap: onTap);
+
+  Widget _iconButtonImpl({Widget? icon, void Function()? onTap }) =>
+    InkWell(onTap: onTap, child:
+      Padding(padding: EdgeInsets.all(6), child:
+        icon,
+      )
+    );
+
+  Widget get _iconButtonProgress =>
+    Padding(padding: EdgeInsets.all(8), child:
+      SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary,),
+      )
     );
 
   String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
