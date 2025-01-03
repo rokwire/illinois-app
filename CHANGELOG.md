@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.33] - 2025-01-03
 ### Changed
-- Implemented Wellness category pages deep linking [#4504](https://github.com/rokwire/illinois-app/issues/4504).
 - Updated wellness resources content [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+### Added
+- Added Wellness category pages deep linking [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+- Added the "Message this user" in Directory Account card [#4555](https://github.com/rokwire/illinois-app/issues/4555).
+- Show public account popup when user name or picture is tapped [#4558](https://github.com/rokwire/illinois-app/issues/4558).
 
 ## [6.1.31] - 2024-12-20
 ### Changed
