@@ -9,6 +9,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/SpeechToText.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -238,31 +239,24 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         Widget avatar = snapshot.data ??
             (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
-        return Container(
-          margin: EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Styles().colors.white,
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                children: [
-                  avatar,
-                  SizedBox(width: 8),
-                  Expanded(
-                      child: Text(
-                          "${message.sender?.name ?? 'Unknown'}",
-                          style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
-                      )
+        return Container(margin: EdgeInsets.only(bottom: 16), decoration: BoxDecoration(color: Styles().colors.white,), child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(child:
+                  InkWell(onTap: () => _onTapAccount(message), child:
+                    Row(children: [
+                      avatar,
+                      SizedBox(width: 8),
+                      Expanded(child:
+                        Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                      ),
+                    ],)
                   ),
-                  if (message.dateSentUtc != null)
-                    Text(
-                        AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                        style: Styles().textStyles.getTextStyle('widget.description.small'),
-                    ),
-                ],
-              ),
+                ),
+                if (message.dateSentUtc != null)
+                  Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+              ],),
               SizedBox(height: 8),
               //Text(message.message ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.small')),
               LinkText(message.message ?? '',
@@ -276,6 +270,30 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       },
     );
   }
+
+  void _onTapAccount(Message message) {
+    Analytics().logSelect(target: 'View Account');
+    showDialog(context: context, builder:(_) => Dialog(child:
+      _buildAccountPopup(message),
+    ));
+  }
+
+  void _onTapCloseAccountPopup() {
+    Navigator.pop(context);
+  }
+
+  Widget _buildAccountPopup(Message message) => Stack(children: [
+    DirectoryAccountBusinessCard(accountId: message.sender?.accountId),
+    Positioned.fill(child:
+      Align(alignment: Alignment.topRight, child:
+        InkWell(onTap: _onTapCloseAccountPopup, child:
+          Padding(padding: EdgeInsets.all(16), child:
+              Styles().images.getImage('close')
+          )
+        )
+      )
+    )
+  ],);
 
   void _onTapLink(String url) {
     Analytics().logSelect(target: url);
