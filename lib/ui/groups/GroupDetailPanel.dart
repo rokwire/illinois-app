@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -148,6 +149,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   bool get _isPublic {
     return _group?.privacy == GroupPrivacy.public;
   }
+
+  bool get _isManaged => _group?.authManEnabled ?? false;
 
   bool get isFavorite {
     return false;
@@ -626,6 +629,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
         commands.add(_buildWebsiteLinkCommand());
       }
+      commands.add(_buildPrivacyInfoWidget);
     }
     else {
       if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
@@ -654,23 +658,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         ),
 
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),),
+          _buildTitleWidget()
         ),
       ]);
     }
     else {
       contentList.addAll(<Widget>[
         Padding(padding: EdgeInsets.only(left: 16, right: _hasIconOptionButtons ? 0 : 16), child:
-          _buildTitleWidget(),
+          _buildTitleWidget(showButtons: true),
         ),
       ]);
     }
 
     if (StringUtils.isNotEmpty(members)) {
-      contentList.add(GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
+      contentList.add(GestureDetector(onTap: () => { if (_canViewMembers) {_onTapMembers()} }, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
-            Text(members, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+          Container(decoration: (_canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
+            Text(members, style:  Styles().textStyles.getTextStyle('widget.title.small'))
           ),
         ),
       ));
@@ -678,13 +682,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     if (StringUtils.isNotEmpty(pendingMembers)) {
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('panel.group.detail.fat') ,)
+        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small') ,)
       ));
     }
 
     if (StringUtils.isNotEmpty(attendedMembers)) {
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'),)
+        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('widget.title.small'),)
       ));
     }
 
@@ -745,9 +749,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         controller: _tabController,
         onTap:(index) => _onTab(_tabAtIndex(index)),
         indicatorSize: TabBarIndicatorSize.tab,
-        // indicatorPadding: EdgeInsets.zero,
         labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
-        labelStyle: TextStyle(fontSize: 16.0, height: 1.0),
+        labelStyle: Styles().textStyles.getTextStyle("widget.title.small.fat"),
+        unselectedLabelStyle: Styles().textStyles.getTextStyle("widget.title.small"),
         indicatorWeight: 4,
         tabAlignment: TabAlignment.fill,
     ));
@@ -921,28 +925,55 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return _hasIconOptionButtons ? Row(children: <Widget>[
       badgeWidget,
       Expanded(child: Container(),),
-      _buildIconButtons
+      _buildTitleIconButtons
     ]) : badgeWidget;
   }
 
-  Widget _buildTitleWidget() {
-    Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),);
-    return _hasIconOptionButtons ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(top: 8), child:
-          titleWidget
-        )
-      ),
-      _buildIconButtons
-    ]) : titleWidget;
+  Widget _buildTitleWidget({bool showButtons = false}) {
+    return
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Expanded(child:
+          RichText(textScaler: MediaQuery.of(context).textScaler,
+            text: TextSpan(text: _group?.title ?? '',  style:  Styles().textStyles.getTextStyle('widget.title.medium.fat'),
+              children: [
+                WidgetSpan(alignment: PlaceholderAlignment.middle,
+                    child: _buildManagedBadge),],))
+        ),
+        showButtons ? _buildTitleIconButtons : Container()
+      ]);
   }
 
-  Widget get _buildIconButtons =>
+  Widget get _buildTitleIconButtons =>
       Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
         ...?_buildPolicyIconButton(),
         ...?_buildCreateIconButton(),
         ...?_buildSettingsIconButton()
       ]);
+
+  Widget get _buildManagedBadge => _isManaged ?
+  InkWell(onTap: _onTapManagedGroupBadge,
+    child: Padding(padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Styles().images.getImage('group-managed-badge', excludeFromSemantics: true))):
+      Container();
+
+
+  Widget get _buildPrivacyInfoWidget => Padding(padding: EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Expanded(
+          child: RichText(textScaler: MediaQuery.of(context).textScaler,
+            text: TextSpan(text: Localization().getStringEx("","Your activity in the app is private. Please review the "), style:  Styles().textStyles.getTextStyle("widget.title.tiny"),
+            children: [
+              TextSpan(text: Localization().getStringEx("", "Student Code."), style: Styles().textStyles.getTextStyle("widget.title.tiny.underline.variant"),  recognizer: TapGestureRecognizer()..onTap = () => _onPrivacy()),
+              WidgetSpan(
+                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Styles().images.getImage('external-link', excludeFromSemantics: true)),
+              )
+            ],),
+          ),
+        )
+      ],
+    )
+  );
 
   List<Widget>? _buildPolicyIconButton() => _showPolicyIcon ? <Widget>[
     Semantics(button: true, excludeSemantics: true,
@@ -1362,6 +1393,50 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
+  }
+
+  void _onPrivacy () {
+    Analytics().logSelect(target: 'Privacy');
+    UrlUtils.launchExternal("https://studentcode.illinois.edu");
+  }
+
+  void _onTapManagedGroupBadge(){ //TBD
+    Analytics().logSelect(target: 'Managed Group Badge');
+    // showDialog(context: context, builder: (_) =>  InfoPopup(
+    //   backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
+    //   padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
+    //   border: Border.all(color: Styles().colors.textSurface, width: 1),
+    //   alignment: Alignment.center,
+    //   infoText: Localization().getStringEx('', 'This group is an official University of Illinois managed group. Membership is automatically populated based on various criteria.'),
+    //   infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
+    //   closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+    // ),);
+    showDialog(context: context, builder: (_) =>  AlertDialog(contentPadding: EdgeInsets.zero, content:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+          Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+            Padding(padding: EdgeInsets.all(30), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                Styles().images.getImage('university-logo') ?? Container(),
+                Padding(padding: EdgeInsets.only(top: 20), child:
+                  Text(Localization().getStringEx('', 'This group is an official University of Illinois managed group. Membership is automatically populated based on various criteria.'), textAlign: TextAlign.center, style:
+                    Styles().textStyles.getTextStyle("widget.detail.small")
+                  )
+                )
+              ])
+            ),
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                InkWell(onTap: () => Navigator.of(context).pop(),
+                  child: Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images.getImage("close-circle")
+                  )
+                )
+              )
+            )
+          ])
+        )
+      )
+    );
   }
 
   void _onTapMembers(){
