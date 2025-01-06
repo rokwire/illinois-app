@@ -45,7 +45,6 @@ class Canvas with Service implements NotificationsListener {
   static const String _canvasCoursesCacheFileName = "canvasCourses.json";
 
   List<CanvasCourse>? _courses;
-  List<Map<String, dynamic>>? _canvasEventDetailCache;
 
   File? _cacheFile;
   DateTime? _pausedDateTime;
@@ -72,9 +71,8 @@ class Canvas with Service implements NotificationsListener {
       Auth2.notifyLoginChanged,
       Connectivity.notifyStatusChanged,
       Storage.notifySettingChanged,
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
     ]);
-    _canvasEventDetailCache = <Map<String, dynamic>>[];
   }
 
   @override
@@ -85,12 +83,7 @@ class Canvas with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Auth2()]);
-  }
-
-  @override
-  void initServiceUI() {
-    _processCachedDeepLinkDetails();
+    return Set.from([Config(), Auth2(), DeepLink()]);
   }
 
   @override
@@ -653,44 +646,9 @@ class Canvas with Service implements NotificationsListener {
   String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';
 
   void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      Uri? eventUri = Uri.tryParse(canvasEventDetailUrl);
-      if ((eventUri != null) && (eventUri.scheme == uri.scheme) && (eventUri.authority == uri.authority) && (eventUri.path == uri.path)) {
-        try {
-          _handleDetail(uri.queryParameters.cast<String, dynamic>());
-        } catch (e) {
-          print(e.toString());
-        }
-      }
-    }
-  }
-
-  void _handleDetail(Map<String, dynamic>? params) {
-    if ((params != null) && params.isNotEmpty) {
-      if (_canvasEventDetailCache != null) {
-        _cacheCanvasEventDetail(params);
-      } else {
-        _processDetail(params);
-      }
-    }
-  }
-
-  void _processDetail(Map<String, dynamic> params) {
-    NotificationService().notify(notifyCanvasEventDetail, params);
-  }
-
-  void _cacheCanvasEventDetail(Map<String, dynamic> params) {
-    _canvasEventDetailCache?.add(params);
-  }
-
-  void _processCachedDeepLinkDetails() {
-    if (_canvasEventDetailCache != null) {
-      List<Map<String, dynamic>> gameDetailsCache = _canvasEventDetailCache!;
-      _canvasEventDetailCache = null;
-
-      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
-        _processDetail(gameDetail);
-      }
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(canvasEventDetailUrl))) {
+      try { NotificationService().notify(notifyCanvasEventDetail, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
     }
   }
 
@@ -824,8 +782,8 @@ class Canvas with Service implements NotificationsListener {
       if ((param == Storage.debugUseCanvasLmsKey) && isInitialized) {
         _updateCourses();
       }
-    } else if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+    } else if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
 

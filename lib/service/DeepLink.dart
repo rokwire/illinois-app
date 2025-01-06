@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/service.dart';
 class DeepLink extends rokwire.DeepLink {
 
   static String get notifyUri  => rokwire.DeepLink.notifyUri;
+  static String get notifyUiUri  => rokwire.DeepLink.notifyUiUri;
 
   String? _appScheme;
   
