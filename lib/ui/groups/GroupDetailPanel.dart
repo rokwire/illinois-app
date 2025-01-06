@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,6 +47,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -64,7 +66,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -112,21 +113,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Group?                _group;
   GroupStats?        _groupStats;
-  List<Member>?   _groupAdmins;
+  List<Member>?   _groupMembers;
   String?                 _postId;
 
+  List<_DetailTab>? _tabs;
   PageController? _pageController;
   TabController?  _tabController;
   StreamController _updateController = StreamController.broadcast();
 
-  List<_DetailTab>? _tabs;
   _DetailTab         _currentTab = _DetailTab.Events;
 
   bool               _confirmationLoading = false;
   bool               _researchProjectConsent = false;
 
   int                _progress = 0;
-  DateTime?          _pausedDateTime;
+  DateTime?         _pausedDateTime;
 
   String? get _groupId => _group?.id;
 
@@ -385,7 +386,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         }
         _trimForbiddenTabs();
         _redirectToGroupPostIfExists();
-        _loadGroupAdmins();
+        _loadGroupMembers();
         _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       if (loadEvents) {
@@ -456,17 +457,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
   }
 
-  void _loadGroupAdmins() {
+  void _loadGroupMembers() {
     _increaseProgress();
-    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
-      _groupAdmins = admins;
+    Groups().loadMembers(groupId: widget.groupId,).then((members) {
+      _groupMembers = members;
       _decreaseProgress();
     });
   }
 
   void _refreshGroupAdmins() {
-    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
-      _groupAdmins = admins;
+    Groups().loadMembers(groupId: widget.groupId).then((members) {
+      _groupMembers = members;
     });
   }
 
@@ -745,7 +746,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return Container(color: Colors.white, child:
       TabBar(
         tabs: tabs,
-        indicatorColor: Color(0xffF15C22),
+        indicatorColor: Styles().colors.fillColorSecondary,
         controller: _tabController,
         onTap:(index) => _onTab(_tabAtIndex(index)),
         indicatorSize: TabBarIndicatorSize.tab,
@@ -801,7 +802,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Events:
         return _GroupEventsContent(group: _group, updateController: _updateController);
       case _DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupMembers: _groupMembers);
       case _DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController);
       case _DetailTab.Polls:
@@ -1009,6 +1010,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     )] : null;
 
   Widget _buildAdmins() {
+    List<Member>? _groupAdmins = _groupMembers?.where((member) => member.isAdmin).toList();
     if (CollectionUtils.isEmpty(_groupAdmins)) {
       return Container();
     }
@@ -1846,14 +1848,13 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
 }
 
 class _GroupPostsContent extends StatefulWidget{
-  // static const String notifyPostRefresh  = "edu.illinois.rokwire.group_detail.posts.refresh";
-  // static const String notifyPostRefreshWithDelta  = "edu.illinois.rokwire.group_detail.posts.refresh.with_delta";
   static const String notifyPostRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.posts.refresh.with_scroll_to_last";
 
   final Group? group;
+  final List<Member>? groupMembers;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPostsContent({this.group, this.updateController});
+  const _GroupPostsContent({this.group, this.updateController, this.groupMembers});
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1864,6 +1865,7 @@ class _GroupPostsContent extends StatefulWidget{
 class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
     implements NotificationsListener {
   List<Post>         _posts = <Post>[];
+  Map<String, Uint8List?> _memberImages = {};
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
@@ -1873,8 +1875,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   Group? get _group => widget.group;
 
   String? get _groupId => _group?.id;
-
-  bool get _isMemberOrAdmin => _group?.currentMember?.isMemberOrAdmin ?? false;
 
   @override
   void initState() {
@@ -1906,25 +1906,14 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   Widget _buildPosts() {
     List<Widget> postsContent = [];
 
-    if (CollectionUtils.isEmpty(_posts)) {
-      if (_isMemberOrAdmin) {
-        Column(children: <Widget>[
-          SectionSlantHeader(
-              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-              titleIconKey: 'posts',
-              children: postsContent)
-        ]);
-      } else {
-        return Container();
-      }
-    }
-
     for (int i = 0; i <_posts.length ; i++) {
       Post? post = _posts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!));
+
+
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!, creator: _getPostCreatorAsMember(post), memberImage: _getMemberImage(post.creator?.accountId),));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
@@ -2034,6 +2023,27 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
   }
 
+  Uint8List? _getMemberImage(String? id){
+    if(StringUtils.isEmpty(id))
+      return null;
+
+    if(_memberImages.containsKey(id) == true){
+      return _memberImages[id];
+    } else {
+      _loadMemberImage(id!);
+      return null;
+    }
+  }
+
+  void _loadMemberImage(String id) async {
+    Content().loadUserPhoto(accountId: id, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+      if(imageResult?.succeeded == true)
+      setStateIfMounted(() =>
+        _memberImages[id] = imageResult?.imageData
+      );
+    });
+  }
+
   //Scroll
   void _scheduleLastPostScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2093,6 +2103,11 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         _refreshCurrentPosts(delta: -1);
       }
     }
+  }
+
+  Member?  _getPostCreatorAsMember(Post? post) {
+    Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
+    return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
   }
 }
 
