@@ -30,7 +30,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 enum DirectoryDisplayMode { browse, select }
 
-class DirectoryAccountCard extends StatefulWidget {
+// DirectoryAccountCard
+
+class DirectoryAccountListCard extends StatefulWidget {
   final Auth2PublicAccount account;
   final DirectoryDisplayMode displayMode;
   final String? photoImageToken;
@@ -39,13 +41,13 @@ class DirectoryAccountCard extends StatefulWidget {
   final bool selected;
   final void Function(bool)? onToggleSelected;
 
-  DirectoryAccountCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
+  DirectoryAccountListCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryAccountCardState();
+  State<StatefulWidget> createState() => _DirectoryAccountListCardState();
 }
 
-class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
+class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
 
   bool _messageProgress = false;
 
@@ -233,6 +235,8 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
   }
 }
 
+// DirectoryAccountBusinessCard
+
 class DirectoryAccountBusinessCard extends StatefulWidget {
   final Auth2PublicAccount? account;
   final String? accountId;
@@ -404,6 +408,36 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
     ]);
 }
 
+// DirectoryAccountPopupCard
+
+class DirectoryAccountPopupCard extends StatelessWidget {
+  final Auth2PublicAccount? account;
+  final String? accountId;
+
+  DirectoryAccountPopupCard({super.key, this.account, this.accountId });
+
+  @override
+  Widget build(BuildContext context) => Stack(children: [
+    DirectoryAccountBusinessCard(account: account, accountId: accountId,),
+    Positioned.fill(child:
+      Align(alignment: Alignment.topRight, child:
+        InkWell(onTap: () => _onTapClose(context), child:
+          Padding(padding: EdgeInsets.all(16), child:
+              Styles().images.getImage('close')
+          )
+        )
+      )
+    )
+  ],);
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logSelect(target: 'close');
+    Navigator.pop(context);
+  }
+}
+
+// DirectoryProfileDetails
+
 class DirectoryProfileDetails extends StatelessWidget {
   final Auth2UserProfile? profile;
 
@@ -462,6 +496,8 @@ void _launchUrl(String? url) {
   }
 }
 
+// DirectoryProfilePhoto
+
 class DirectoryProfilePhoto extends StatelessWidget {
 
   final String? photoUrl;
@@ -512,6 +548,8 @@ class DirectoryProfilePhoto extends StatelessWidget {
     } 
 }
 
+// DirectoryProfilePhotoUtils
+
 class DirectoryProfilePhotoUtils {
 
   static const String tokenKey = 'edu.illinois.rokwire.token';
@@ -530,6 +568,8 @@ class DirectoryProfilePhotoUtils {
     } : null;
   }
 }
+
+// DirectoryPronunciationButton
 
 class DirectoryPronunciationButton extends StatefulWidget {
   final String? url;
@@ -666,11 +706,15 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
   }
 }
 
+// DirectoryProgressWidget
+
 class DirectoryProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,);
 }
+
+// DirectoryProfileCard
 
 class DirectoryProfileCard extends StatelessWidget {
   final Widget? child;
@@ -687,6 +731,8 @@ class DirectoryProfileCard extends StatelessWidget {
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
   );
 }
+
+// DirectoryFilterBar
 
 class DirectoryFilterBar extends StatefulWidget {
   final String? searchText;
@@ -874,6 +920,8 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
       }
     }
 }
+
+// DirectoryFilter
 
 class DirectoryFilter {
   final String? searchText;
