@@ -67,7 +67,7 @@ class Safety with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUiUri) {
-      _onDeepLinkUri(param);
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
 
