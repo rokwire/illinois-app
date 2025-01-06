@@ -1235,6 +1235,9 @@
     "panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
     "panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
 
+    "panel.display_floor_plan_panel.html_svg_header": "<!DOCTYPE html><html lang=\"en\"><head><title>Floor Plan</title></head><body>",
+    "panel.display_floor_plan_panel.html_svg_footer": "</body></html>",
+    "panel.display_floor_plan_panel.html_error": "No floor plan available",
     "panel.display_floor_plan_panel.footer": "Floor",
     "panel.display_floor_plan_panel.footer.menu_item": "Floor",
     "panel.display_floor_plan_panel.footer.hint": "Double tap to select floor",
