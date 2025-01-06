@@ -1032,8 +1032,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
+  final Member? creator;
+  final Uint8List? memberImage;
 
-  GroupPostCard({Key? key, required this.post, required this.group}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.creator, this.memberImage}) :
     super(key: key);
 
   @override
@@ -1050,7 +1052,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? creatorName = widget.post?.creatorName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = _visibleRepliesCount;
@@ -1070,6 +1071,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
               child: Padding(
                   padding: EdgeInsets.all(12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Visibility(visible: widget.creator != null,
+                        child: GroupMemberProfileInfoWidget(member: widget.creator, memberImage: widget.memberImage , additionalInfo: widget.post?.displayDateTime,)),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
                           child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
@@ -1128,24 +1131,24 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                   child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
                             ))
                     ],),
-                    Container(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child:Container(
-                              padding: EdgeInsets.only(right: 6),
-                              child:Text(StringUtils.ensureNotEmpty(creatorName),
-                                textAlign: TextAlign.left,
-                                style: Styles().textStyles.getTextStyle('widget.description.small')),
-                          )),
-                          Expanded(
-                            flex: 2,
-                            child: _buildDisplayDateWidget),
-                        ],
-                      )
-                    )
+                    // Container(
+                    //   child: Row(
+                    //     crossAxisAlignment: CrossAxisAlignment.center,
+                    //     children: [
+                    //       Expanded(
+                    //         flex: 3,
+                    //         child:Container(
+                    //           padding: EdgeInsets.only(right: 6),
+                    //           child:Text(StringUtils.ensureNotEmpty(creatorName),
+                    //             textAlign: TextAlign.left,
+                    //             style: Styles().textStyles.getTextStyle('widget.description.small')),
+                    //       )),
+                    //       Expanded(
+                    //         flex: 2,
+                    //         child: _buildDisplayDateWidget),
+                    //     ],
+                    //   )
+                    // )
                   ]))))),
     ]);
   }
@@ -1195,8 +1198,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
     }
     return result;
   }
-
-
 }
 
 //////////////////////////////////////
@@ -2578,6 +2579,53 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
       });
     }
   }
+}
+
+/////////////////////////////////////
+// GroupMemberProfileWidget
+class GroupMemberProfileInfoWidget extends StatefulWidget {
+  final Member? member;
+  final Uint8List? memberImage;
+  final String? additionalInfo;
+
+  const GroupMemberProfileInfoWidget({super.key, this.member, this.additionalInfo, this.memberImage});
+
+  @override
+  State<StatefulWidget> createState() => _GroupMemberProfileInfoState();
+
+}
+
+class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
+  @override
+  Widget build(BuildContext context) =>
+      Container(
+        child:  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+            SizedBox(width: 34, height: 34,
+              child: _buildProfileImage),
+            Container(width: 8),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Text(widget.member?.displayName ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+                  Container(width: 8),
+                  Visibility(visible: widget.member?.isAdmin == true,
+                    child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
+                  )
+                ]),
+                Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
+                child: Text(widget.additionalInfo!, style: Styles().textStyles.getTextStyle("widget.title.tiny")))
+            ],)
+          ]),
+      );
+
+
+  Widget? get _buildProfileImage {
+    bool hasProfilePhoto = (widget.memberImage != null);
+    return hasProfilePhoto ?
+    Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(widget.memberImage !).image))) :
+    Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
+  }
+
 }
 
 /////////////////////////////////////

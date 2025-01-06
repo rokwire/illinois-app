@@ -216,6 +216,7 @@
     "widget.title.small.fat.disabled.spaced": {"extends": "widget.title.small.disabled", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.underline": { "extends" : "widget.title.tiny", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.title.tiny.underline.variant": { "extends" : "widget.title.tiny.underline", "decoration_color":  "fillColorPrimary"},
     "widget.title.tiny.fat": {"extends" : "widget.title.tiny", "font_family": "bold"},
     "widget.title.tiny.fat.spaced": {"extends" : "widget.title.tiny.fat", "letter_spacing": 1.0},
     "widget.title.tiny.fat.highlight": {"extends" : "widget.title.tiny", "color": "white"},
@@ -1141,6 +1142,8 @@
 
     "external-link": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
 
-    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"},
+
+    "group-managed-badge": {"src": "0xf336", "type": "fa.icon", "size": 18}
   }
 }
