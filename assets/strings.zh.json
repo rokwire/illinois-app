@@ -809,6 +809,14 @@
 	"panel.onboarding.confirm_phone.validation.invalid.text": "错误的代码",
 	"panel.onboarding.confirm_phone.link.cancel.text": "无法将此电话从帐户中移除。",
 
+	"panel.onboarding.profile_info.title":"User Directory",
+	"panel.onboarding.profile_info.title.hint":"Header 1",
+	"panel.onboarding.profile_info.description":"Choose how your account will be visible to other users in User Directory.",
+	"panel.onboarding.profile_info.continue.title":"Continue",
+	"panel.onboarding.profile_info.continue.hint":"",
+	"panel.onboarding.profile_info.skip.title":"Not Right Now",
+	"panel.onboarding.profile_info.skip.hint":"",
+
 	"panel.onboarding.upgrade.required.label.title":"需要升级",
 	"panel.onboarding.upgrade.required.label.description":"%s版本号%s需要升级到%s或者更新的版本。",
 	"panel.onboarding.upgrade.available.label.title":"升级可用",

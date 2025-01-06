@@ -811,6 +811,14 @@
     "panel.onboarding.confirm_phone.validation.invalid.text": "Incorrect code.",
     "panel.onboarding.confirm_phone.link.cancel.text": "Failed to remove phone number from your account.",
 
+    "panel.onboarding.profile_info.title":"User Directory",
+    "panel.onboarding.profile_info.title.hint":"Header 1",
+    "panel.onboarding.profile_info.description":"Choose how your account will be visible to other users in User Directory.",
+    "panel.onboarding.profile_info.continue.title":"Continue",
+    "panel.onboarding.profile_info.continue.hint":"",
+    "panel.onboarding.profile_info.skip.title":"Not Right Now",
+    "panel.onboarding.profile_info.skip.hint":"",
+
     "panel.onboarding.upgrade.required.label.title":"Update Required",
     "panel.onboarding.upgrade.required.label.description":"%s app version %s requires an upgrade to version %s or later.",
     "panel.onboarding.upgrade.available.label.title":"Update Available",
