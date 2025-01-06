@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added URL caching support in DeepLink service, removed it from other services [#4561](https://github.com/rokwire/illinois-app/issues/4561).
 - Added Directory Profile Visibility page in Onboarding [#4565](https://github.com/rokwire/illinois-app/issues/4565).
 
-## [6.1.33] - 2025-01-03
+## [6.1.32] - 2025-01-03
 ### Changed
 - Updated wellness resources content [#4504](https://github.com/rokwire/illinois-app/issues/4504).
 ### Added
