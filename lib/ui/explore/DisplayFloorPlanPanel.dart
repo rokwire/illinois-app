@@ -33,10 +33,14 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
         _currentFloorCode = floors.first; // Set to the first floor code
         loadFloorPlan(_currentFloorCode);
       }
+      else {
+        _htmlWithFloorPlan = '${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_header', 'Floor Plan')} ${Localization().getStringEx('panel.display_floor_plan_panel.html_error', 'No Floor Plan')} ${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_footer', 'Floor Plan')}';
+      }
     }
   }
 
   Future<void> loadFloorPlan(String floorCode) async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
@@ -48,7 +52,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
 
     String? floorPlanSvg = floorPlanData?['svg'] ?? null;
 
-    if (!mounted) return; // Ensure widget is still mounted before set state
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
       if (floorPlanSvg == null) {
@@ -63,6 +67,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   void changeActiveFloor(String? floorCode) {
     if (floorCode != null) {
       loadFloorPlan(floorCode);
+      if (!mounted) return;
       setState(() {
         _currentFloorCode = floorCode;
       });
