@@ -274,26 +274,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   void _onTapAccount(Message message) {
     Analytics().logSelect(target: 'View Account');
     showDialog(context: context, builder:(_) => Dialog(child:
-      _buildAccountPopup(message),
+      DirectoryAccountPopupCard(accountId: message.sender?.accountId),
     ));
   }
-
-  void _onTapCloseAccountPopup() {
-    Navigator.pop(context);
-  }
-
-  Widget _buildAccountPopup(Message message) => Stack(children: [
-    DirectoryAccountBusinessCard(accountId: message.sender?.accountId),
-    Positioned.fill(child:
-      Align(alignment: Alignment.topRight, child:
-        InkWell(onTap: _onTapCloseAccountPopup, child:
-          Padding(padding: EdgeInsets.all(16), child:
-              Styles().images.getImage('close')
-          )
-        )
-      )
-    )
-  ],);
 
   void _onTapLink(String url) {
     Analytics().logSelect(target: url);

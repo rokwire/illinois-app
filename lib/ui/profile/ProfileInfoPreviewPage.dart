@@ -7,16 +7,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/ui/profile/ProfileLoginPage.dart';
-import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -38,7 +33,6 @@ class ProfileInfoPreviewPage extends StatefulWidget {
 class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
-  bool _preparingDeleteAccount = false;
 
   @override
   void initState() {
@@ -69,13 +63,6 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
         Padding(padding: EdgeInsets.only(top: 24), child:
           _commandBar,
         ),
-        Padding(padding: EdgeInsets.only(top: 8), child:
-          _signOutButton,
-        ),
-        Padding(padding: EdgeInsets.zero, child:
-          _deleteAccountButton,
-        ),
-        Padding(padding: EdgeInsets.only(top: 8)),
       ],),
     );
   }
@@ -249,79 +236,6 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-  }
-
-  Widget get _signOutButton => LinkButton(
-    title: Localization().getStringEx('panel.profile.info.command.link.sign_out.text', 'Sign Out'),
-    textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
-    onTap: _onSignOut,
-  );
-
-  void _onSignOut() {
-    Analytics().logSelect(target: 'Sign Out');
-    showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
-      if (result == true) {
-        Auth2().logout();
-      }
-    });
-  }
-
-  Widget get _deleteAccountButton => Stack(children: [
-    LinkButton(
-      title: AppTextUtils.appTitleString('panel.profile.info.command.link.delete_account.text', 'Delete My ${AppTextUtils.appTitleMacro} App Account'),
-      textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
-      onTap: _onDeleteAccount,
-    ),
-    if (_preparingDeleteAccount)
-      Positioned.fill(child:
-        Center(child:
-          SizedBox(width: 14, height: 14, child:
-            DirectoryProgressWidget()
-          )
-        )
-      )
-  ],);
-
-  void _onDeleteAccount() {
-    Analytics().logSelect(target: 'Delete Account');
-    if (!_preparingDeleteAccount) {
-      setState(() {
-        _preparingDeleteAccount = true;
-      });
-      Social().getUserPostsCount().then((int userPostCount) {
-        if (mounted) {
-          setState(() {
-            _preparingDeleteAccount = false;
-          });
-          final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
-          SettingsDialog.show(context,
-              title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
-              message: [
-                TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-                TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles.getTextStyle("widget.text.fat")),
-                TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
-                if (0 < userPostCount)
-                  TextSpan(text:Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.")),
-              ],
-              options: (0 < userPostCount) ? [groupsSwitchTitle] : null,
-              initialOptionsSelection: (0 < userPostCount) ?  [groupsSwitchTitle] : [],
-              continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
-              onContinue: (List<String> selectedValues, OnContinueProgressController progressController) async {
-                Analytics().logAlert(text: "Remove My Information", selection: "Yes");
-                progressController(loading: true);
-                if (selectedValues.contains(groupsSwitchTitle)){
-                  Future.wait([Groups().deleteUserData(), Social().deleteUser()]);
-                }
-                await Auth2().deleteUser();
-                progressController(loading: false);
-                Navigator.pop(context);
-              },
-              longButtonTitle: true
-          );
-        }
-      });
-    }
   }
 
   bool get _directoryVisibility =>

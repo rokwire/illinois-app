@@ -809,6 +809,14 @@
     "panel.onboarding.confirm_phone.validation.invalid.text": "Código incorrecto.",
     "panel.onboarding.confirm_phone.link.cancel.text": "No se pudo eliminar el número de teléfono de tu cuenta.",
 
+    "panel.onboarding.profile_info.title":"User Directory",
+    "panel.onboarding.profile_info.title.hint":"Header 1",
+    "panel.onboarding.profile_info.description":"Choose how your account will be visible to other users in User Directory.",
+    "panel.onboarding.profile_info.continue.title":"Continue",
+    "panel.onboarding.profile_info.continue.hint":"",
+    "panel.onboarding.profile_info.skip.title":"Not Right Now",
+    "panel.onboarding.profile_info.skip.hint":"",
+
     "panel.onboarding.upgrade.required.label.title":"Actualización requerida",
     "panel.onboarding.upgrade.required.label.description":"%s versión de la aplicación %s requiere una actualización a la versión %s o posterior",
     "panel.onboarding.upgrade.available.label.title":"Actualización disponible",
