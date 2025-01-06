@@ -123,7 +123,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Autom
           contentList.add(_sectionHeading(directoryIndex = accountDirectoryIndex));
         }
         contentList.add(_sectionSplitter);
-        contentList.add(DirectoryAccountCard(account,
+        contentList.add(DirectoryAccountListCard(account,
           displayMode: widget.displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
