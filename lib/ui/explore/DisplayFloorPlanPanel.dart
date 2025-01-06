@@ -7,15 +7,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 
 import '../../model/StudentCourse.dart';
 
-String kExamplePage = '''
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-  <title>Load file or HTML string example</title>
-  </head>
-  <body>
-  ''';
-
 class DisplayFloorPlanPanel extends StatefulWidget {
   final Building? building;
   const DisplayFloorPlanPanel({super.key, this.building});
@@ -57,13 +48,13 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
 
     String? floorPlanSvg = floorPlanData?['svg'] ?? null;
 
-    if (!mounted) return; // Ensure widget is still mounted
+    if (!mounted) return; // Ensure widget is still mounted before set state
     setState(() {
       _isLoading = false;
       if (floorPlanSvg == null) {
-        _htmlWithFloorPlan = '<html lang=""><body>No floor plan available</body></html>';
+        _htmlWithFloorPlan = '${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_header', 'Floor Plan')} ${Localization().getStringEx('panel.display_floor_plan_panel.html_error', 'No Floor Plan')} ${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_footer', 'Floor Plan')}';
       } else {
-        _htmlWithFloorPlan = '$kExamplePage$floorPlanSvg</body></html>';
+        _htmlWithFloorPlan = '${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_header', 'Floor Plan')} $floorPlanSvg ${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_footer', 'Floor Plan')}';
       }
       _controller.loadHtmlString(_htmlWithFloorPlan);
     });
@@ -220,5 +211,3 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     );
   }
 }
-
-
