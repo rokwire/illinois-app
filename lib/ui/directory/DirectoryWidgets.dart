@@ -718,7 +718,8 @@ class DirectoryProgressWidget extends StatelessWidget {
 
 class DirectoryProfileCard extends StatelessWidget {
   final Widget? child;
-  DirectoryProfileCard({super.key, this.child });
+  final double roundingRadius;
+  DirectoryProfileCard({super.key, this.child, this.roundingRadius = 8 });
 
   @override
   Widget build(BuildContext context) =>
@@ -727,7 +728,7 @@ class DirectoryProfileCard extends StatelessWidget {
   Decoration get _cardDecoration => BoxDecoration(
     color: Styles().colors.white,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(16)),
+    borderRadius: BorderRadius.all(Radius.circular(roundingRadius)),
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
   );
 }
