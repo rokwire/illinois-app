@@ -62,8 +62,6 @@ class Appointments with Service implements NotificationsListener {
   AppointmentsAccount? _account;
   bool? _isLastAccountResponseSuccessful;
 
-  List<Map<String, dynamic>>? _appointmentDetailsCache;
-
   // Singletone
 
   static final Appointments _service = Appointments._internal();
@@ -75,11 +73,10 @@ class Appointments with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged
     ]);
-    _appointmentDetailsCache = <Map<String, dynamic>>[];
     super.createService();
   }
 
@@ -103,21 +100,16 @@ class Appointments with Service implements NotificationsListener {
   }
 
   @override
-  void initServiceUI() {
-    _processCachedAppointmentDetails();
-  }
-
-  @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), Auth2()]);
+    return Set.from([Storage(), Config(), Auth2(), DeepLink()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
@@ -449,50 +441,11 @@ class Appointments with Service implements NotificationsListener {
   String get appointmentDetailUrl => '${DeepLink().appUrl}/appointment';
 
   void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      Uri? appointmentUri = Uri.tryParse(appointmentDetailUrl);
-      if ((appointmentUri != null) &&
-          (appointmentUri.scheme == uri.scheme) &&
-          (appointmentUri.authority == uri.authority) &&
-          (appointmentUri.path == uri.path)) {
-        try {
-          _handleAppointmentDetail(uri.queryParameters.cast<String, dynamic>());
-        } catch (e) {
-          print(e.toString());
-        }
-      }
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(appointmentDetailUrl))) {
+      try { NotificationService().notify(notifyAppointmentDetail, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
     }
   }
-
-  void _handleAppointmentDetail(Map<String, dynamic>? params) {
-    if ((params != null) && params.isNotEmpty) {
-      if (_appointmentDetailsCache != null) {
-        _cacheAppointmentDetail(params);
-      } else {
-        _processAppointmentDetail(params);
-      }
-    }
-  }
-
-  void _processAppointmentDetail(Map<String, dynamic> params) {
-    NotificationService().notify(notifyAppointmentDetail, params);
-  }
-
-  void _cacheAppointmentDetail(Map<String, dynamic> params) {
-    _appointmentDetailsCache?.add(params);
-  }
-
-  void _processCachedAppointmentDetails() {
-    if (_appointmentDetailsCache != null) {
-      List<Map<String, dynamic>> appointmentDetailsCache = _appointmentDetailsCache!;
-      _appointmentDetailsCache = null;
-
-      for (Map<String, dynamic> appointmentDetail in appointmentDetailsCache) {
-        _processAppointmentDetail(appointmentDetail);
-      }
-    }
-  }
-
 
   // Service
 

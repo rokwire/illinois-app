@@ -66,8 +66,6 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   String? _dailyTipId;
   DateTime? _dailyTipTime;
 
-  List<Uri>? _deepLinkUrisCache;
-
   // Singleton Factory
 
   static final Wellness _instance = Wellness._internal();
@@ -81,7 +79,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
       AppLivecycle.notifyStateChanged,
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
     ]);
   }
 
@@ -115,11 +113,6 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   }
   
   @override
-  void initServiceUI() {
-    _processCachedDeepLinkUris();
-  }
-
-  @override
   Set<Service> get serviceDependsOn {
     return Set.from([Storage(), Content(), DeepLink()]);
   }
@@ -134,8 +127,8 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+    else if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
 
@@ -162,33 +155,9 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   static String get _wellnessCategoryUrl => '${DeepLink().appUrl}/wellness/category';
 
   void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      if (_deepLinkUrisCache != null) {
-        _cacheDeepLinkUri(uri);
-      } else {
-        _processDeepLinkUri(uri);
-      }
-    }
-  }
-
-  void _processDeepLinkUri(Uri uri) {
-    if (uri.matchDeepLinkUri(Uri.tryParse(_wellnessCategoryUrl))) {
-      NotificationService().notify(notifyCategorySelect, uri.queryParameters.cast<String, dynamic>());
-    }
-  }
-
-  void _cacheDeepLinkUri(Uri uri) {
-    _deepLinkUrisCache?.add(uri);
-  }
-
-  void _processCachedDeepLinkUris() {
-    if (_deepLinkUrisCache != null) {
-      List<Uri> deepLinkUrisCache = _deepLinkUrisCache!;
-      _deepLinkUrisCache = null;
-
-      for (Uri deepLinkUri in deepLinkUrisCache) {
-        _processDeepLinkUri(deepLinkUri);
-      }
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(_wellnessCategoryUrl))) {
+      try { NotificationService().notify(notifyCategorySelect, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
     }
   }
 

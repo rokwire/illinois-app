@@ -113,7 +113,7 @@ class _ProfileInfoAndDirectoryPageState extends State<ProfileInfoAndDirectoryPag
           //ProfileDirectoryMyInfoPage(contentType: MyDirectoryInfo.myConnectionsInfo,)
         //),
         //Visibility(visible: (_selectedMyInfoTab == MyDirectoryInfo.myDirectoryInfo), maintainState: true, child:
-          ProfileInfoPage(contentType: ProfileInfo.directoryInfo, params: widget.params,)
+          ProfileInfoPage(contentType: ProfileInfo.directoryInfo, params: widget.params, showAccountCommands: true,)
         //),
 
       ],),

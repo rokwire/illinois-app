@@ -56,7 +56,6 @@ class Sports with Service implements NotificationsListener {
   List<SportDefinition>? _menSports;
   List<SportDefinition>? _womenSports;
   List<SportSocialMedia>? _socialMedias;
-  List<Map<String, dynamic>>? _gameDetailsCache;
   int? _lastCheckSportsTime, _lastCheckSocialMediasTime;
 
   // Singletone Factory
@@ -73,10 +72,9 @@ class Sports with Service implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this,[
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
       AppLivecycle.notifyStateChanged,
     ]);
-    _gameDetailsCache = <Map<String, dynamic>>[];
   }
 
   @override
@@ -107,11 +105,6 @@ class Sports with Service implements NotificationsListener {
   }
 
   @override
-  void initServiceUI() {
-    _processCachedGameDetails();
-  }
-
-  @override
   Set<Service> get serviceDependsOn {
     return Set.from([Config(), Auth2()]);
   }
@@ -120,8 +113,8 @@ class Sports with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
@@ -810,46 +803,9 @@ class Sports with Service implements NotificationsListener {
   String get gameDetailUrl => '${DeepLink().appUrl}/game_detail';
 
   void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      Uri? gameUri = Uri.tryParse(gameDetailUrl);
-      if ((gameUri != null) &&
-          (gameUri.scheme == uri.scheme) &&
-          (gameUri.authority == uri.authority) &&
-          (gameUri.path == uri.path))
-      {
-        try { _handleGameDetail(uri.queryParameters.cast<String, dynamic>()); }
-        catch (e) { print(e.toString()); }
-      }
-    }
-  }
-
-  void _handleGameDetail(Map<String, dynamic>? params) {
-    if ((params != null) && params.isNotEmpty) {
-      if (_gameDetailsCache != null) {
-        _cacheGameDetail(params);
-      }
-      else {
-        _processGameDetail(params);
-      }
-    }
-  }
-
-  void _processGameDetail(Map<String, dynamic> params) {
-    NotificationService().notify(notifyGameDetail, params);
-  }
-
-  void _cacheGameDetail(Map<String, dynamic> params) {
-    _gameDetailsCache?.add(params);
-  }
-
-  void _processCachedGameDetails() {
-    if (_gameDetailsCache != null) {
-      List<Map<String, dynamic>> gameDetailsCache = _gameDetailsCache!;
-      _gameDetailsCache = null;
-
-      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
-        _processGameDetail(gameDetail);
-      }
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(gameDetailUrl)) ) {
+      try { NotificationService().notify(notifyGameDetail, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
     }
   }
 }
