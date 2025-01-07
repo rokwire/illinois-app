@@ -856,12 +856,15 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       _loading = true;
     });
 
+    _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
     // Load all conversations
     List<Conversation>? conversations = await Social().loadConversations(
       mute: _selectedMutedValue,
       offset: 0,
       limit: _conversationsPageSize,
       name: _searchText,
+      fromTime: selectedTimeInterval?.fromTime,
+      toTime: selectedTimeInterval?.toTime
     );
 
     if (mounted) {
