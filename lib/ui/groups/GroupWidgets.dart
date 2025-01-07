@@ -1153,6 +1153,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
+  // ignore: unused_element
   Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
     Semantics(child: Container(
       padding: EdgeInsets.only(left: 6),
