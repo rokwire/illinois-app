@@ -458,11 +458,6 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
-      //TMP:
-      setState(() {
-        Storage().onBoardingPassed = false;
-        _key = UniqueKey();
-      });
     }
     else if (state == AppLifecycleState.resumed) {
       if (_initializeError != null) {
