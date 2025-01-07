@@ -59,6 +59,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
 
+import '../directory/DirectoryWidgets.dart';
+
 /////////////////////////////////////
 // GroupSectionTitle
 
@@ -1034,10 +1036,11 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
-  final Member? creator;
-  final StreamController? updateController;
+  final bool? isAdmin;
+  // final Member? creator;
+  // final StreamController? updateController;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.creator, this.updateController}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin}) :
     super(key: key);
 
   @override
@@ -1073,11 +1076,18 @@ class _GroupPostCardState extends State<GroupPostCard> {
               child: Padding(
                   padding: EdgeInsets.all(12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Visibility(visible: widget.creator != null,
-                        child: GroupMemberProfileInfoWidget(
-                          member: widget.creator,
-                          additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
-                          updateController: widget.updateController,)),
+                    Row(children: [
+                      Expanded(child:
+                        Visibility(visible: widget.post?.creatorId != null,
+                            child: GroupMemberProfileInfoWidget(
+                                name: widget.post?.creatorName,
+                                userId: widget.post?.creatorId,
+                                isAdmin: widget.isAdmin,
+                                additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
+                              // updateController: widget.updateController,
+                            ))),
+                      _buildScheduledDateWidget
+                    ]),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
                           child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
@@ -1096,7 +1106,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 child: Text(StringUtils.ensureNotEmpty(repliesLabel),
                                     style: Styles().textStyles.getTextStyle('widget.description.small')))
                           ])),
-                      _buildScheduledDateWidget
                     ]),
                     Row(
                       children: [
@@ -2590,38 +2599,41 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 /////////////////////////////////////
 // GroupMemberProfileWidget
 class GroupMemberProfileInfoWidget extends StatefulWidget {
-  final Member? member;
+  final String? name;
+  final String? userId;
   final String? additionalInfo;
-  final StreamController? updateController;
+  final bool? isAdmin;
+  // final Member? member;
+  // final StreamController? updateController;
 
-  const GroupMemberProfileInfoWidget({super.key, this.member, this.additionalInfo, this.updateController});
+  const GroupMemberProfileInfoWidget({super.key, this.name, this.additionalInfo, this.isAdmin = false, this.userId});
 
   @override
   State<StatefulWidget> createState() => _GroupMemberProfileInfoState();
 }
 
 class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
-  // String photoImageToken = DirectoryProfilePhotoUtils.newToken;
-  Uint8List? _memberImageBytes;
-  bool _loadingImage = false;
+  String photoImageToken = DirectoryProfilePhotoUtils.newToken;
+  // Uint8List? _memberImageBytes;
+  // bool _loadingImage = false;
 
   @override
   void initState() {
-    widget.updateController?.stream.listen((command) {
-      if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
-        if(widget.member?.userId == command[GroupDetailPanel.notifyLoadMemberImage]){
-          setStateIfMounted(() => _loadingImage = true);
-        }
-      } else  if (command is Map && command.containsKey(GroupDetailPanel.notifyMemberImageLoaded)) {
-        Map? data = command[GroupDetailPanel.notifyMemberImageLoaded] is Map ? command[GroupDetailPanel.notifyMemberImageLoaded] : null;
-        if(data != null && JsonUtils.stringValue(data["id"]) == widget.member?.userId){
-          setStateIfMounted((){
-            _loadingImage = false;
-            _memberImageBytes = data["image_bytes"] is Uint8List ? data["image_bytes"] : _memberImageBytes;
-          });
-        }
-      }
-    });
+    // widget.updateController?.stream.listen((command) {
+    //   if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+    //     if(widget.member?.userId == command[GroupDetailPanel.notifyLoadMemberImage]){
+    //       setStateIfMounted(() => _loadingImage = true);
+    //     }
+    //   } else  if (command is Map && command.containsKey(GroupDetailPanel.notifyMemberImageLoaded)) {
+    //     Map? data = command[GroupDetailPanel.notifyMemberImageLoaded] is Map ? command[GroupDetailPanel.notifyMemberImageLoaded] : null;
+    //     if(data != null && JsonUtils.stringValue(data["id"]) == widget.member?.userId){
+    //       setStateIfMounted((){
+    //         _loadingImage = false;
+    //         _memberImageBytes = data["image_bytes"] is Uint8List ? data["image_bytes"] : _memberImageBytes;
+    //       });
+    //     }
+    //   }
+    // });
     super.initState();
   }
 
@@ -2635,65 +2647,63 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Text(widget.member?.displayName ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+                  Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
                   Container(width: 8),
-                  Visibility(visible: widget.member?.isAdmin == true,
+                  Visibility(visible: widget.isAdmin == true,
                     child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
                   )
                 ]),
                 Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
-                child: Text(widget.additionalInfo!, style: Styles().textStyles.getTextStyle("widget.title.tiny")))
+                child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
             ],)
           ]),
       );
 
+  Widget get _buildProfileImage =>
+      DirectoryProfilePhoto(
+        photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
+        imageSize: _photoImageSize,
+        photoUrlHeaders: _photoAuthHeaders,
+      );
 
-  Widget? get _buildProfileImage {
-    bool hasProfilePhoto = widget.member?.userId != null &&
-        (_getMemberImage() != null);
-    Widget? profileImage = hasProfilePhoto ?
-    Container(decoration: BoxDecoration(shape: BoxShape.circle,
-        image: DecorationImage(
-            fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain),
-            image: Image.memory(_memberImageBytes!).image))) :
-    Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
+  double get _photoImageSize => MediaQuery.of(context).size.width / 4;
 
-    return Stack(alignment: Alignment.center, children: [
-      if (profileImage != null) profileImage,
-      Visibility(
-          visible: _loadingImage,
-          child: SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                  color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
-    ]);
-  }
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
-  //   Widget get _buildProfileImage =>
-  //       DirectoryProfilePhoto(
-  //         photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.member?.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
-  //         imageSize: _photoImageSize,
-  //         photoUrlHeaders: _photoAuthHeaders,
-  //         borderSize: 12,
-  //       );
+  // Widget? get _buildProfileImage {
+  //   bool hasProfilePhoto = widget.member?.userId != null &&
+  //       (_getMemberImage() != null);
+  //   Widget? profileImage = hasProfilePhoto ?
+  //   Container(decoration: BoxDecoration(shape: BoxShape.circle,
+  //       image: DecorationImage(
+  //           fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain),
+  //           image: Image.memory(_memberImageBytes!).image))) :
+  //   Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
   //
-  // double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+  //   return Stack(alignment: Alignment.center, children: [
+  //     if (profileImage != null) profileImage,
+  //     Visibility(
+  //         visible: _loadingImage,
+  //         child: SizedBox(
+  //             width: 20,
+  //             height: 20,
+  //             child: CircularProgressIndicator(
+  //                 color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
+  //   ]);
+  // }
+
+  // Uint8List? _getMemberImage() {
+  //   String? id = widget.member?.userId;
+  //   if(StringUtils.isEmpty(id))
+  //     return null;
   //
-  // Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
-
-  Uint8List? _getMemberImage() {
-    String? id = widget.member?.userId;
-    if(StringUtils.isEmpty(id))
-      return null;
-
-    if(_memberImageBytes != null){
-      return _memberImageBytes;
-    } else {
-      widget.updateController?.add({GroupDetailPanel.notifyLoadMemberImage: id});
-      return null;
-    }
-  }
+  //   if(_memberImageBytes != null){
+  //     return _memberImageBytes;
+  //   } else {
+  //     widget.updateController?.add({GroupDetailPanel.notifyLoadMemberImage: id});
+  //     return null;
+  //   }
+  // }
 
 }
 

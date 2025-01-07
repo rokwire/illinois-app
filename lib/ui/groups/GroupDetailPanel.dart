@@ -115,7 +115,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Group?                _group;
   GroupStats?        _groupStats;
-  List<Member>?   _groupMembers;
+  List<Member>?   _groupAdmins;
   Map<String, Uint8List?> _groupMembersImages = {};
   String?                 _postId;
 
@@ -390,7 +390,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         }
         _trimForbiddenTabs();
         _redirectToGroupPostIfExists();
-        _loadGroupMembers();
+        _loadGroupAdmins();
         _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       if (loadEvents) {
@@ -405,7 +405,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
-          _refreshGroupMembers();
+          _refreshGroupAdmins();
           _trimForbiddenTabs();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
@@ -461,17 +461,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
   }
 
-  void _loadGroupMembers() {
+  void _loadGroupAdmins() {
     _increaseProgress();
-    Groups().loadMembers(groupId: widget.groupId,).then((members) {
-      _groupMembers = members;
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin] ).then((admins) {
+      _groupAdmins = admins;
       _decreaseProgress();
     });
   }
 
-  void _refreshGroupMembers() {
-    Groups().loadMembers(groupId: widget.groupId).then((members) {
-      _groupMembers = members;
+  void _refreshGroupAdmins() {
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
+      _groupAdmins = admins;
     });
   }
 
@@ -829,13 +829,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Events:
         return _GroupEventsContent(group: _group, updateController: _updateController);
       case _DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController, groupMembers: _groupMembers, memberImages: _groupMembersImages);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
       case _DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController);
+        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
       case _DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController);
       case _DetailTab.Scheduled:
-        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController);
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
 
       default: Container();
     }
@@ -1037,7 +1037,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     )] : null;
 
   Widget _buildAdmins() {
-    List<Member>? _groupAdmins = _groupMembers?.where((member) => member.isAdmin).toList();
     if (CollectionUtils.isEmpty(_groupAdmins)) {
       return Container();
     }
@@ -1614,7 +1613,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         });
       }
       _trimForbiddenTabs();
-      _refreshGroupMembers();
+      _refreshGroupAdmins();
       _refreshGroupStats();
       _updateController.add(GroupDetailPanel.notifyRefresh);
       _updateController.add(_GroupEventsContent.notifyEventsRefresh);
@@ -1878,11 +1877,11 @@ class _GroupPostsContent extends StatefulWidget{
   static const String notifyPostRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.posts.refresh.with_scroll_to_last";
 
   final Group? group;
-  final List<Member>? groupMembers;
+  final List<Member>? groupAdmins;
   final Map<String, Uint8List?>? memberImages;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPostsContent({this.group, this.updateController, this.groupMembers, this.memberImages});
+  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins, this.memberImages});
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1944,8 +1943,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         key: (i == 0) ? _lastPostKey : null,
         post: post,
         group: _group!,
-        creator: _getPostCreatorAsMember(post),
-        updateController: widget.updateController,
+        isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
       ));
     }
 
@@ -2056,10 +2054,10 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
   }
 
-  Member?  _getPostCreatorAsMember(Post? post) {
-    Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
-    return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
-  }
+  // Member?  _getPostCreatorAsMember(Post? post) {
+  //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
+  //   return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
+  // }
 
   //Scroll
   void _scheduleLastPostScroll() {
@@ -2281,10 +2279,10 @@ class _GroupMessagesContent extends StatefulWidget {
   static const String notifyMessagesRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.messages.refresh.with_scroll_to_last";
 
   final Group? group;
-  final List<Member>? groupMembers;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupMessagesContent({this.group, this.updateController, this.groupMembers});
+  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
 
@@ -2337,8 +2335,9 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
             key: (i == 0) ? _lastMessageKey : null,
             post: message,
             group: _group!,
-            creator: _getMessageCreatorAsMember(message),
-            updateController: widget.updateController,
+            isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            // creator: _getMessageCreatorAsMember(message),
+            // updateController: widget.updateController,
         ));
       }
     }
@@ -2444,10 +2443,10 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
     }
   }
 
-  Member?  _getMessageCreatorAsMember(Post? message) {
-    Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == message?.creatorId);
-    return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
-  }
+  // Member?  _getMessageCreatorAsMember(Post? message) {
+  //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == message?.creatorId);
+  //   return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
+  // }
 
   //Scroll
   void _scheduleLastMessageScroll() {
@@ -2508,9 +2507,10 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   static const String notifyPostsRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.scheduled_posts.refresh.with_scroll_to_last";
 
   final Group? group;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupScheduledPostsContent({this.group, this.updateController});
+  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins});
 
   @override
   State<StatefulWidget> createState() => _GroupScheduledPostsState();
@@ -2565,7 +2565,11 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
       scheduledPostsContent.add(GroupPostCard(
           key: (i == 0) ? _lastScheduledPostKey : null,
           post: post,
-          group: _group!));
+          group: _group!,
+          isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
+          // updateController: widget.updateController,
+          // creator: _getPostCreatorAsMember(post),
+      ));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin &&
@@ -2690,6 +2694,11 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
       }
     }
   }
+
+  // Member?  _getPostCreatorAsMember(Post? post) {
+  //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
+  //   return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
+  // }
 
   //Scroll
   void _scheduleLastScheduledPostScroll() {
