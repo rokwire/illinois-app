@@ -24,7 +24,7 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget {
 class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
 
   GlobalKey<ProfileInfoPageState> _profileKey = GlobalKey();
-  bool _progress = false;
+  bool _onboarding2Progress = false;
 
   bool get _isPreviewMode => (_profileKey.currentState?.previewMode == true);
   bool get _isAccountPublic => (Auth2().account?.privacy?.public == true);
@@ -51,10 +51,10 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   }
 
   @override
-  bool get onboarding2Progress => _progress;
+  bool get onboarding2Progress => _onboarding2Progress;
 
   @override
-  set onboarding2Progress(bool progress) => setStateIfMounted(() { _progress = progress; });
+  set onboarding2Progress(bool progress) => setStateIfMounted(() { _onboarding2Progress = progress; });
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -63,8 +63,6 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
       Column(children: [
         _headerWidget,
         _titleWidget,
-        if (_isAccountPublic == false)
-          _descriptionWidget,
         _profileWidget,
         _footerWidget,
       ],)
@@ -86,51 +84,32 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
       )
     );
 
-  Widget get _descriptionWidget =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, ), child:
-      Center(child:
-        Text(Localization().getStringEx('panel.onboarding.profile_info.description', 'Choose how your account will be visible to other users in User Directory'),
-          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.fillColorPrimary),
-          textAlign: TextAlign.center,
-        ),
-      )
-    );
-
   Widget get _profileWidget =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
       ProfileInfoPage(key: _profileKey, contentType: ProfileInfo.directoryInfo, onStateChanged: _onProfileStateChanged,),
     );
 
-  Widget get _footerWidget => _isPreviewMode ? (
-    _progress ? Stack(children: [
-        _continueButton,
-        Positioned.fill(child:
-          Center(child:
-            _progressWidget
-          )
-        ),
-    ],) : _continueButton
-  ) : Padding(padding: EdgeInsets.only(top: 24));
+  Widget get _footerWidget =>  _onboarding2Progress ?
+    Stack(children: [
+      _continueButton,
+      Positioned.fill(child:
+        Center(child:
+          _progressWidget
+        )
+      ),
+    ],) : _continueButton;
 
   Widget get _continueButton =>
     Onboarding2UnderlinedButton(
-      title: _continueTitle,
-      hint: _continueHint,
-      padding: EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
+      title: Localization().getStringEx('panel.onboarding.profile_info.continue.title', 'Continue'),
+      hint: Localization().getStringEx('panel.onboarding.profile_info.continue.hint', ''),
+      padding: EdgeInsets.only(top: 24, bottom: 24, left: 16, right: 16),
       onTap: _onTapContinue,
     );
 
   Widget get _progressWidget => SizedBox(width: 24, height: 24, child:
     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
   );
-
-  String get _continueTitle => _isAccountPublic ?
-    Localization().getStringEx('panel.onboarding.profile_info.continue.title', 'Continue') :
-    Localization().getStringEx('panel.onboarding.profile_info.skip.title', 'Not Right Now');
-
-  String get _continueHint => _isAccountPublic ?
-    Localization().getStringEx('panel.onboarding.profile_info.continue.hint', '') :
-    Localization().getStringEx('panel.onboarding.profile_info.skip.hint', '');
 
   void _onProfileStateChanged() {
     if (mounted) {
