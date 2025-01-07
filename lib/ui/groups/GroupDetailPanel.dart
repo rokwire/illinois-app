@@ -478,7 +478,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   void _loadMemberImage(String id) async {
     if(_groupMembersImages.containsKey(id) == true) {
       if(_groupMembersImages[id] != null)
-        _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: id});
+        _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: {"id": id, "image_bytes": _groupMembersImages[id]}});
       return; //Do not load the image many times
     }
 
@@ -488,7 +488,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         setStateIfMounted(() =>
         _groupMembersImages[id] = imageResult?.imageData
         );
-      _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: id});
+      _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: {"id": id, "image_bytes": _groupMembersImages[id]}});
     });
   }
 
@@ -1945,7 +1945,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         post: post,
         group: _group!,
         creator: _getPostCreatorAsMember(post),
-        memberImages: widget.memberImages,
         updateController: widget.updateController,
       ));
     }
@@ -2338,7 +2337,8 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
             key: (i == 0) ? _lastMessageKey : null,
             post: message,
             group: _group!,
-            //creator: , tbd
+            creator: _getMessageCreatorAsMember(message),
+            updateController: widget.updateController,
         ));
       }
     }

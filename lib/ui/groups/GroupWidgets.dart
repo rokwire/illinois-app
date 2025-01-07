@@ -1035,10 +1035,9 @@ class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
   final Member? creator;
-  final Map<String, Uint8List?>? memberImages;
   final StreamController? updateController;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.creator, this.memberImages, this.updateController}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.creator, this.updateController}) :
     super(key: key);
 
   @override
@@ -1077,7 +1076,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     Visibility(visible: widget.creator != null,
                         child: GroupMemberProfileInfoWidget(
                           member: widget.creator,
-                          memberImages: widget.memberImages ,
                           additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
                           updateController: widget.updateController,)),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -2593,17 +2591,18 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 // GroupMemberProfileWidget
 class GroupMemberProfileInfoWidget extends StatefulWidget {
   final Member? member;
-  final Map<String, Uint8List?>? memberImages;
   final String? additionalInfo;
   final StreamController? updateController;
 
-  const GroupMemberProfileInfoWidget({super.key, this.member, this.additionalInfo, this.memberImages, this.updateController});
+  const GroupMemberProfileInfoWidget({super.key, this.member, this.additionalInfo, this.updateController});
 
   @override
   State<StatefulWidget> createState() => _GroupMemberProfileInfoState();
 }
 
 class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
+  // String photoImageToken = DirectoryProfilePhotoUtils.newToken;
+  Uint8List? _memberImageBytes;
   bool _loadingImage = false;
 
   @override
@@ -2614,8 +2613,12 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
           setStateIfMounted(() => _loadingImage = true);
         }
       } else  if (command is Map && command.containsKey(GroupDetailPanel.notifyMemberImageLoaded)) {
-        if(widget.member?.userId == command[GroupDetailPanel.notifyMemberImageLoaded] ){
-          setStateIfMounted(() => _loadingImage = false);
+        Map? data = command[GroupDetailPanel.notifyMemberImageLoaded] is Map ? command[GroupDetailPanel.notifyMemberImageLoaded] : null;
+        if(data != null && JsonUtils.stringValue(data["id"]) == widget.member?.userId){
+          setStateIfMounted((){
+            _loadingImage = false;
+            _memberImageBytes = data["image_bytes"] is Uint8List ? data["image_bytes"] : _memberImageBytes;
+          });
         }
       }
     });
@@ -2646,9 +2649,13 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
 
 
   Widget? get _buildProfileImage {
-    bool hasProfilePhoto = widget.member?.userId != null && (_memberImage!= null);
+    bool hasProfilePhoto = widget.member?.userId != null &&
+        (_getMemberImage() != null);
     Widget? profileImage = hasProfilePhoto ?
-    Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_memberImage!).image))) :
+    Container(decoration: BoxDecoration(shape: BoxShape.circle,
+        image: DecorationImage(
+            fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain),
+            image: Image.memory(_memberImageBytes!).image))) :
     Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
 
     return Stack(alignment: Alignment.center, children: [
@@ -2656,17 +2663,32 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
       Visibility(
           visible: _loadingImage,
           child: SizedBox(
-              width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                  color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
     ]);
   }
 
-  Uint8List? get _memberImage{
+  //   Widget get _buildProfileImage =>
+  //       DirectoryProfilePhoto(
+  //         photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.member?.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
+  //         imageSize: _photoImageSize,
+  //         photoUrlHeaders: _photoAuthHeaders,
+  //         borderSize: 12,
+  //       );
+  //
+  // double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+  //
+  // Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
+
+  Uint8List? _getMemberImage() {
     String? id = widget.member?.userId;
     if(StringUtils.isEmpty(id))
       return null;
 
-    if(widget.memberImages?.containsKey(id) == true){
-      return widget.memberImages![id];
+    if(_memberImageBytes != null){
+      return _memberImageBytes;
     } else {
       widget.updateController?.add({GroupDetailPanel.notifyLoadMemberImage: id});
       return null;
