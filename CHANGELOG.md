@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated wellness resources content [#4504](https://github.com/rokwire/illinois-app/issues/4504).
 ### Added
 - Added Wellness category pages deep linking [#4504](https://github.com/rokwire/illinois-app/issues/4504).
-- Added the "32Message this user" in Directory Account card [#4555](https://github.com/rokwire/illinois-app/issues/4555).
+- Added the "Message this user" in Directory Account card [#4555](https://github.com/rokwire/illinois-app/issues/4555).
 - Show public account popup when user name or picture is tapped [#4558](https://github.com/rokwire/illinois-app/issues/4558).
 
 ## [6.1.31] - 2024-12-20
