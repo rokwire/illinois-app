@@ -81,6 +81,8 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
 
   static const String notifyRefresh  = "edu.illinois.rokwire.group_detail.refresh";
+  static const String notifyLoadMemberImage  = "edu.illinois.rokwire.group_detail.load.image";
+  static const String notifyMemberImageLoaded  = "edu.illinois.rokwire.group_detail.image.loaded";
 
   final Group? group;
   final String? groupIdentifier;
@@ -114,6 +116,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Group?                _group;
   GroupStats?        _groupStats;
   List<Member>?   _groupMembers;
+  Map<String, Uint8List?> _groupMembersImages = {};
   String?                 _postId;
 
   List<_DetailTab>? _tabs;
@@ -252,6 +255,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
     ]);
+    _initUpdateController();
     _postId = widget.groupPostId;
     _tabs = GroupDetailPanel.defaultTabs;
 
@@ -401,7 +405,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
-          _refreshGroupAdmins();
+          _refreshGroupMembers();
           _trimForbiddenTabs();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
@@ -465,9 +469,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     });
   }
 
-  void _refreshGroupAdmins() {
+  void _refreshGroupMembers() {
     Groups().loadMembers(groupId: widget.groupId).then((members) {
       _groupMembers = members;
+    });
+  }
+
+  void _loadMemberImage(String id) async {
+    if(_groupMembersImages.containsKey(id) == true) {
+      if(_groupMembersImages[id] != null)
+        _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: id});
+      return; //Do not load the image many times
+    }
+
+    _groupMembersImages[id] = null; //prepare the pair and disable multiple loading
+    Content().loadUserPhoto(accountId: id, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+      if(imageResult?.succeeded == true)
+        setStateIfMounted(() =>
+        _groupMembersImages[id] = imageResult?.imageData
+        );
+      _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: id});
     });
   }
 
@@ -530,6 +551,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       }
     }
   }
+
+  void _initUpdateController() => _updateController.stream.listen((command) {
+    if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+      _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
+    }
+  });
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
@@ -802,7 +829,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Events:
         return _GroupEventsContent(group: _group, updateController: _updateController);
       case _DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController, groupMembers: _groupMembers);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupMembers: _groupMembers, memberImages: _groupMembersImages);
       case _DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController);
       case _DetailTab.Polls:
@@ -1587,7 +1614,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         });
       }
       _trimForbiddenTabs();
-      _refreshGroupAdmins();
+      _refreshGroupMembers();
       _refreshGroupStats();
       _updateController.add(GroupDetailPanel.notifyRefresh);
       _updateController.add(_GroupEventsContent.notifyEventsRefresh);
@@ -1852,9 +1879,10 @@ class _GroupPostsContent extends StatefulWidget{
 
   final Group? group;
   final List<Member>? groupMembers;
+  final Map<String, Uint8List?>? memberImages;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPostsContent({this.group, this.updateController, this.groupMembers});
+  const _GroupPostsContent({this.group, this.updateController, this.groupMembers, this.memberImages});
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1865,7 +1893,6 @@ class _GroupPostsContent extends StatefulWidget{
 class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
     implements NotificationsListener {
   List<Post>         _posts = <Post>[];
-  Map<String, Uint8List?> _memberImages = {};
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
@@ -1913,7 +1940,14 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       }
 
 
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!, creator: _getPostCreatorAsMember(post), memberImage: _getMemberImage(post.creator?.accountId),));
+      postsContent.add(GroupPostCard(
+        key: (i == 0) ? _lastPostKey : null,
+        post: post,
+        group: _group!,
+        creator: _getPostCreatorAsMember(post),
+        memberImages: widget.memberImages,
+        updateController: widget.updateController,
+      ));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
@@ -2023,25 +2057,9 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
   }
 
-  Uint8List? _getMemberImage(String? id){
-    if(StringUtils.isEmpty(id))
-      return null;
-
-    if(_memberImages.containsKey(id) == true){
-      return _memberImages[id];
-    } else {
-      _loadMemberImage(id!);
-      return null;
-    }
-  }
-
-  void _loadMemberImage(String id) async {
-    Content().loadUserPhoto(accountId: id, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
-      if(imageResult?.succeeded == true)
-      setStateIfMounted(() =>
-        _memberImages[id] = imageResult?.imageData
-      );
-    });
+  Member?  _getPostCreatorAsMember(Post? post) {
+    Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
+    return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
   }
 
   //Scroll
@@ -2103,11 +2121,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         _refreshCurrentPosts(delta: -1);
       }
     }
-  }
-
-  Member?  _getPostCreatorAsMember(Post? post) {
-    Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
-    return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
   }
 }
 
@@ -2269,9 +2282,10 @@ class _GroupMessagesContent extends StatefulWidget {
   static const String notifyMessagesRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.messages.refresh.with_scroll_to_last";
 
   final Group? group;
+  final List<Member>? groupMembers;
   final StreamController<dynamic>? updateController;
 
-  const _GroupMessagesContent({this.group, this.updateController});
+  const _GroupMessagesContent({this.group, this.updateController, this.groupMembers});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
 
@@ -2323,7 +2337,9 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
         messagesContent.add(GroupPostCard(
             key: (i == 0) ? _lastMessageKey : null,
             post: message,
-            group: _group!));
+            group: _group!,
+            //creator: , tbd
+        ));
       }
     }
 
@@ -2426,6 +2442,11 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
         _hasMoreMessages = false;
       }
     }
+  }
+
+  Member?  _getMessageCreatorAsMember(Post? message) {
+    Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == message?.creatorId);
+    return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
   }
 
   //Scroll
