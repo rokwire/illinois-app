@@ -9,6 +9,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
+import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
@@ -160,18 +161,14 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
       setState(() {
         _messageProgress = true;
       });
-      Social().createConversation(memberIds: [accountId]).then((Conversation? conversation){
-        if (mounted) {
-          setState(() {
-            _messageProgress = false;
-          });
-          if (conversation != null) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
-          } else {
-            AppAlert.showDialogResult(context, Localization().getStringEx('panel.messages.directory.button.continue.failed.msg', 'Failed to create a conversation with the selected members.'));
-          }
-        }
+
+      setState(() {
+        _messageProgress = false;
       });
+
+      // For example, use the user’s full name as the search text:
+      String? userName = widget.account.profile?.fullName;
+      MessagesHomePanel.present(context, search: userName, userId: accountId,);
     }
   }
 

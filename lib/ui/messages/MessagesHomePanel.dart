@@ -39,15 +39,15 @@ import 'package:sprintf/sprintf.dart';
 class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'messages_home_content_panel';
 
-  MessagesHomePanel._({Key? key}) : super(key: key);
+  // 1) Add a field to hold the search text
+  final String? initialSearch;
+  final String? userId;
 
-  @override
-  _MessagesHomePanelState createState() => _MessagesHomePanelState();
+  // Make the constructor private, but accept the new param
+  MessagesHomePanel._({Key? key, this.initialSearch, this.userId}) : super(key: key);
 
-  @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Messages;
-
-  static void present(BuildContext context) {
+  // 2) Add an optional `search` param to present()
+  static void present(BuildContext context, { String? search, String? userId }) {
     if (!Auth2().isLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.messages', 'Messages'));
     }
@@ -64,12 +64,17 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
         backgroundColor: Styles().colors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-        builder: (context) {
-          return MessagesHomePanel._();
-        }
+        // Pass the `search` parameter into our constructor:
+        builder: (context) => MessagesHomePanel._(initialSearch: search, userId: userId),
       );
     }
   }
+
+  @override
+  _MessagesHomePanelState createState() => _MessagesHomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Messages;
 }
 
 class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -114,9 +119,10 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       Social.notifyMessageSent,
     ]);
 
-    _scrollController.addListener(_scrollListener);
-    _selectedMutedValue = false;
+    _searchText = widget.initialSearch ?? '';
+
     _loadContent();
+    _scrollController.addListener(_scrollListener);
   }
 
   @override
@@ -845,36 +851,52 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   // Content
 
-  Future<void> _loadContent() async{
+  Future<void> _loadContent() async {
     setStateIfMounted(() {
       _loading = true;
     });
 
-    _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    // Load all conversations
     List<Conversation>? conversations = await Social().loadConversations(
       mute: _selectedMutedValue,
       offset: 0,
       limit: _conversationsPageSize,
       name: _searchText,
-      fromTime: selectedTimeInterval?.fromTime,
-      toTime: selectedTimeInterval?.toTime
     );
+
     if (mounted) {
       setState(() {
+        _loading = false;
         if (conversations != null) {
           _conversations = conversations;
           Conversation.sortListByLastActivityTime(_conversations);
           _hasMoreConversations = (_conversationsPageSize <= conversations.length);
-        }
-        else {
+        } else {
           _conversations.clear();
           _hasMoreConversations = null;
         }
-        // _contentList = _buildContentList();
-        _loading = false;
       });
+
+      // >>> After we finish loading, if userId is provided, check for a matching conversation:
+      if ((widget.userId != null) && widget.userId!.isNotEmpty) {
+        bool hasConversation = _conversations.any((c) => c.memberIds?.contains(widget.userId!) ?? false);
+        if (!hasConversation) {
+          // no conversation with that user -> pop, then push MessagesDirectoryPanel
+          Navigator.of(context).pop(); // close the HomePanel
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+              MessagesDirectoryPanel(
+                recentConversations: const [],
+                conversationPageSize: 20,
+                // pass "startOnAllUsersTab" and "defaultSelectedAccountIds" so we jump directly to "All" tab with that user preselected
+                startOnAllUsersTab: true,
+                defaultSelectedAccountIds: [widget.userId!],
+              )
+          ));
+        }
+      }
     }
   }
+
 
   Future<void> _loadMoreContent() async {
     setState(() {
