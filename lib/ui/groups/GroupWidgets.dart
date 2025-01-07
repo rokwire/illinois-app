@@ -33,8 +33,9 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
-import 'package:rokwire_plugin/model/poll.dart';
+import 'package:illinois/ext/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -2125,8 +2126,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 class GroupPollCard extends StatefulWidget{
   final Poll? poll;
   final Group? group;
+  final bool? isAdmin;
 
-  GroupPollCard({required this.poll, this.group});
+  GroupPollCard({required this.poll, this.group, this.isAdmin});
 
   @override
   State<StatefulWidget> createState() => _GroupPollCardState();
@@ -2193,9 +2195,9 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
 
     String? pollStatus;
 
-    String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
-    String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
+    // String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
+    // String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
+    // String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
     String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Pin: %s'), [
       sprintf('%04i', [poll.pinCode ?? 0])
     ]);
@@ -2223,13 +2225,23 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
           borderRadius: BorderRadius.all(Radius.circular(8)),
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
-        child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
+        child: Padding(padding: EdgeInsets.all(12), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(children: [
+              Visibility(visible: widget.poll?.creatorUserUuid != null,
+                  child: GroupMemberProfileInfoWidget(
+                    name: widget.poll?.creatorUserName,
+                    userId: widget.poll?.creatorUserUuid,
+                    isAdmin: widget.isAdmin,
+                    additionalInfo: _pollDateText
+                    // updateController: widget.updateController,
+                  ))
+            ],),
             Row(children: <Widget>[
-              Expanded(child:
-                Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
-                  Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'))),
-              ),
+              Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),),
+              Container(width: 8,),
+              Text(pollStatus ?? "", style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+              Expanded(child: Container()),
               Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
               Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
@@ -2251,11 +2263,11 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
                   Padding(padding: EdgeInsets.only(bottom: 12), child:
                     Row(children: <Widget>[
-                      Expanded(child:
-                        Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
-                      ),
-                      Expanded(child:
-                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
+                      // Expanded(child:
+                        // Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+                      // ),
+                      // Expanded(child:
+                      //   Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
                     ],),
                   ),
                 ),
@@ -2268,6 +2280,10 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
       ),],
     );
   }
+
+
+  String? get _pollDateText =>
+      "Quick Poll,Updated ${widget.poll?.displayUpdateTime}";
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;

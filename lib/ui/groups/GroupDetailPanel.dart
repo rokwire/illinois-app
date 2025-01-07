@@ -833,7 +833,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
       case _DetailTab.Polls:
-        return _GroupPollsContent(group: _group,  updateController: _updateController);
+        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
       case _DetailTab.Scheduled:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
 
@@ -1878,10 +1878,9 @@ class _GroupPostsContent extends StatefulWidget{
 
   final Group? group;
   final List<Member>? groupAdmins;
-  final Map<String, Uint8List?>? memberImages;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins, this.memberImages});
+  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins});
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -2123,9 +2122,10 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
 
 class _GroupPollsContent extends StatefulWidget {
   final Group? group;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPollsContent({this.group, this.updateController});
+  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins});
 
   @override
   _GroupPollsState createState() => _GroupPollsState();
@@ -2172,7 +2172,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAlive
       for (Poll? groupPoll in _groupPolls!) {
         if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
+          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group, isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == groupPoll.creatorUserUuid).isNotEmpty,));
         }
       }
 
