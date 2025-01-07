@@ -158,15 +158,6 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
     Analytics().logSelect(target: 'Message User');
     String? accountId = widget.account.id;
     if (accountId != null) {
-      setState(() {
-        _messageProgress = true;
-      });
-
-      setState(() {
-        _messageProgress = false;
-      });
-
-      // For example, use the user’s full name as the search text:
       String? userName = widget.account.profile?.fullName;
       MessagesHomePanel.present(context, search: userName, userId: accountId,);
     }
