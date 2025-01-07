@@ -39,7 +39,6 @@ class ProfileInfoEditPage extends StatefulWidget {
 
 class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver {
 
-  late bool _directoryVisibility;
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;
   late Uint8List? _photoImageData;
@@ -64,8 +63,6 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
     });
-
-    _directoryVisibility = (widget.privacy?.public == true);
 
     _pronunciationAudioData = widget.pronunciationAudioData;
     _photoImageData = widget.photoImageData;
@@ -119,15 +116,11 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
   Widget build(BuildContext context) =>
       Padding(padding: EdgeInsets.zero, child:
         Column(children: [
-          Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-          Padding(padding: EdgeInsets.only(top: 24), child:
-            _photoWidget,
-          ),
+          _photoWidget,
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             _nameWidget,
           ),
 
-          _directoryVisibilitySection,
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
@@ -142,18 +135,11 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
           Padding(padding: EdgeInsets.only(top: 24), child:
             _commandBar,
           ),
-          Padding(padding: EdgeInsets.only(top: 8)),
+          Padding(padding: EdgeInsets.only(top: 16)),
           if (_screenInsetsBottom > 0)
             Padding(padding: EdgeInsets.only(top: _screenInsetsBottom)),
         ],),
       );
-
-    String get _desriptionText {
-      switch (widget.contentType) {
-        case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.edit.description.text', 'Choose how your profile displays for your Connections.');
-        case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.');
-      }
-    }
 
     // Edit: Photo
 
@@ -299,52 +285,6 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
 
     Widget get _nameWidget =>
       Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
-
-    // Edit: Directory Visibility
-
-  Widget get _directoryVisibilitySection => _fieldSection(
-      headingTitle: Localization().getStringEx('panel.profile.info.title.directory_visibility.text', 'Directory Visibility'),
-      fieldControl: _directoryVisibilityControl,
-    );
-
-    Widget get _directoryVisibilityControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Styles().images.getImage('gear', size: 20) ?? Container(),
-      Expanded(child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
-          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(_directoryVisibilityTitle, style: Styles().textStyles.getTextStyle('widget.detail.small.fat'),),
-            Text(_directoryVisibilityDescription, style: Styles().textStyles.getTextStyle('widget.detail.small'),),
-          ],)
-        ),
-      ),
-      Padding(padding: EdgeInsets.only(left: 6), child:
-        _directoryVisibilityButton,
-      ),
-    ],);
-
-    Widget get _directoryVisibilityButton =>
-      _iconButton(
-        icon: _directoryVisibilityIcon,
-        onTap: _onToggleDirectoryVisibility,
-      );
-
-    void _onToggleDirectoryVisibility() {
-      Analytics().logSelect(target: 'Directory Visibility');
-      setState(() {
-        _directoryVisibility = !_directoryVisibility;
-      });
-    }
-
-  String get _directoryVisibilityTitle => _directoryVisibility ?
-    Localization().getStringEx('panel.profile.info.edit.directory_visibility.public.title.text', 'Public') :
-    Localization().getStringEx('panel.profile.info.edit.directory_visibility.private.title.text', 'Private');
-
-  String get _directoryVisibilityDescription => _directoryVisibility ?
-    Localization().getStringEx('panel.profile.info.edit.directory_visibility.public.description.text', 'Anyone on or off the User Directory can view your account') :
-    Localization().getStringEx('panel.profile.info.edit.directory_visibility.private.description.text', 'Your account is available only to you');
-
-  Widget? get _directoryVisibilityIcon =>
-    _directoryVisibility ? _publicIcon : _privateIcon;
 
   // Edit: Pronunciation
 
@@ -737,7 +677,6 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
 
     Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
     Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-      public: _directoryVisibility,
       fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
           profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
       )
@@ -785,7 +724,6 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        public: _directoryVisibility,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
         )
