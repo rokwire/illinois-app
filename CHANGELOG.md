@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Start conversation to a specific user from the directory [#4555](https://github.com/rokwire/illinois-app/issues/4555)
-- New assistant provider - Gork [#4573](https://github.com/rokwire/illinois-app/issues/4573)
+- New assistant provider - Grok [#4573](https://github.com/rokwire/illinois-app/issues/4573)
 
 ## [6.1.34] - 2025-01-07
 ### Changed

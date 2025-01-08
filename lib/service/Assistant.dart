@@ -20,7 +20,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     AssistantProvider.uiuc: List<Message>.empty(growable: true),
     AssistantProvider.google: List<Message>.empty(growable: true),
     AssistantProvider.azure: List<Message>.empty(growable: true),
-    AssistantProvider.gork: List<Message>.empty(growable: true)
+    AssistantProvider.grok: List<Message>.empty(growable: true)
   };
 
   // Singleton Factory
