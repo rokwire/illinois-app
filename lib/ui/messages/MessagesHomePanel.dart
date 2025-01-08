@@ -39,15 +39,17 @@ import 'package:sprintf/sprintf.dart';
 class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'messages_home_content_panel';
 
+  static int get conversationsPageSize => _MessagesHomePanelState._conversationsPageSize;
+
   // 1) Add a field to hold the search text
-  final String? initialSearch;
-  final String? userId;
+  final String? search;
+  final List<Conversation>? conversations;
 
   // Make the constructor private, but accept the new param
-  MessagesHomePanel._({Key? key, this.initialSearch, this.userId}) : super(key: key);
+  MessagesHomePanel._({Key? key, this.search, this.conversations}) : super(key: key);
 
   // 2) Add an optional `search` param to present()
-  static void present(BuildContext context, { String? search, String? userId }) {
+  static void present(BuildContext context, { String? search, List<Conversation>? conversations }) {
     if (!Auth2().isLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.messages', 'Messages'));
     }
@@ -65,7 +67,7 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         // Pass the `search` parameter into our constructor:
-        builder: (context) => MessagesHomePanel._(initialSearch: search, userId: userId),
+        builder: (context) => MessagesHomePanel._(search: search, conversations: conversations),
       );
     }
   }
@@ -93,7 +95,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.last_month", "Last Month"), value: _TimeFilter.LastMonth),
   ];
 
-  final int _conversationsPageSize = 20;
+  static const int _conversationsPageSize = 20;
 
   _TimeFilter? _selectedTime;
   bool? _selectedMutedValue;
@@ -119,15 +121,21 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       Social.notifyMessageSent,
     ]);
 
-    _searchText = widget.initialSearch ?? '';
-
-    _loadContent();
     _scrollController.addListener(_scrollListener);
+    _searchText = widget.search ?? '';
+
+    if (widget.conversations?.isNotEmpty == true) {
+      _conversations = widget.conversations!;
+    }
+    else {
+      _loadContent();
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
     NotificationService().unsubscribe(this);
   }
 
@@ -879,24 +887,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
           _hasMoreConversations = null;
         }
       });
-
-      // >>> After we finish loading, if userId is provided, check for a matching conversation:
-      if ((widget.userId != null) && widget.userId!.isNotEmpty) {
-        bool hasConversation = _conversations.any((c) => c.memberIds?.contains(widget.userId!) ?? false);
-        if (!hasConversation) {
-          // no conversation with that user -> pop, then push MessagesDirectoryPanel
-          Navigator.of(context).pop(); // close the HomePanel
-          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-              MessagesDirectoryPanel(
-                recentConversations: const [],
-                conversationPageSize: 20,
-                // pass "startOnAllUsersTab" and "defaultSelectedAccountIds" so we jump directly to "All" tab with that user preselected
-                startOnAllUsersTab: true,
-                defaultSelectedAccountIds: [widget.userId!],
-              )
-          ));
-        }
-      }
     }
   }
 

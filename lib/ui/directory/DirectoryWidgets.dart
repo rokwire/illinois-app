@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
-import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
+import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
@@ -154,12 +154,49 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
   Widget  get _messageButton => _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress);
   Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.fillColorPrimary);
 
-  void _onMessage() {
+  void _onMessage() async {
     Analytics().logSelect(target: 'Message User');
     String? accountId = widget.account.id;
+    String? userName = widget.account.profile?.fullName;
     if (accountId != null) {
-      String? userName = widget.account.profile?.fullName;
-      MessagesHomePanel.present(context, search: userName, userId: accountId,);
+      List<Conversation>? conversations;
+      if (userName?.isNotEmpty == true) {
+        setState(() {
+          _messageProgress = true;
+        });
+        // Search this user across existing conversations.
+        conversations = await Social().loadConversations(
+          offset: 0,
+          limit: MessagesHomePanel.conversationsPageSize,
+          name: userName,
+        );
+      }
+      if (mounted) {
+        if (_messageProgress == true) {
+          setState(() {
+            _messageProgress = false;
+          });
+        }
+        if (conversations?.isNotEmpty == true) {
+          // If there are existing conversatins where this user participates, show them
+          MessagesHomePanel.present(context,
+            search: userName,
+            conversations: conversations,
+          );
+        }
+        else {
+          // otherwise, invoke new message UI having this user selected.
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+            MessagesDirectoryPanel(
+              recentConversations: const [],
+              conversationPageSize: MessagesHomePanel.conversationsPageSize,
+              // pass "startOnAllUsersTab" and "defaultSelectedAccountIds" so we jump directly to "All" tab with that user preselected
+              startOnAllUsersTab: true,
+              defaultSelectedAccountIds: [accountId],
+            )
+          ));
+        }
+      }
     }
   }
 
