@@ -15,7 +15,6 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -29,7 +28,6 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
-import 'package:illinois/reaction/GroupReactionTest.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
