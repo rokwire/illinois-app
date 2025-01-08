@@ -609,7 +609,7 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
 
           // TBD: MV Analytics add_illini_cash_failed
           if(mounted) {
-            AppAlert.showDialogResult(context, e.message);
+            AppAlert.showDialogResult(context, e.targetMessage);
           }
         });
       } on _ValidationException catch (e) {
