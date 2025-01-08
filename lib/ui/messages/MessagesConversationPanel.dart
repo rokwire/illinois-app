@@ -233,10 +233,25 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
+  Decoration get _messageCardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    //boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
+
+  Decoration get _highlightedMessageCardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
+
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
     Key? contentItemKey = (message.id == widget.targetMessageId) ? _targetMessageContentItemKey : null;
+    Decoration cardDecoration = (message.id == widget.targetMessageId) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
     return FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
@@ -244,7 +259,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         Widget avatar = snapshot.data ??
             (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
-        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: BoxDecoration(color: Styles().colors.white,), child:
+        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
           Padding(padding: EdgeInsets.all(16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
@@ -501,20 +516,21 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
 
     // Use the Social API to load conversation messages
+    int messagesCount = max(_messages.length, _messagesPageSize);
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
-      limit: max(_messages.length, _messagesPageSize),
       offset: 0,
+      limit: messagesCount,
     );
 
     setStateIfMounted(() {
       if (loadedMessages != null) {
         Message.sortListByDateSent(loadedMessages);
+        _hasMoreMessages = (messagesCount <= loadedMessages.length);
         _globalIds.clear();
         _messages = (_conversation?.isGroupConversation == true) ?
           _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
-        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        _shouldScrollToTarget = _ScrollTarget.bottom;
+        _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
         // If null, silently ignore the error
