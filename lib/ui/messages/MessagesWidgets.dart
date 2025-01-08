@@ -263,11 +263,14 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       Padding(padding: padding, child:
         SizedBox(height: 24.0, width: 24.0, child:
           Checkbox(
-            checkColor: Styles().colors.surface,
+            checkColor: Styles().colors.iconPrimary,
             activeColor: Styles().colors.fillColorPrimary,
             value: widget.selected,
             visualDensity: VisualDensity.compact,
-            side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+            side: BorderSide(
+              color: widget.selected ? Styles().colors.iconPrimary : Styles().colors.iconLight,
+              width: 1.0,
+            ),
             onChanged: _onToggleSelected,
           ),
         ),

@@ -222,7 +222,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         child: Center(
             child: Text(
                 dateText,
-                style: Styles().textStyles.getTextStyle('widget.description.small')
+                style: Styles().textStyles.getTextStyle('widget.description.small')?.copyWith(color: Styles().colors.textLight),
             )
         )
     );
@@ -384,27 +384,29 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     child: Semantics(
                         container: true,
                         child: TextField(
-                            key: _inputFieldKey,
-                            enabled: enabled,
-                            controller: _inputController,
-                            minLines: 1,
-                            maxLines: 5,
-                            textCapitalization: TextCapitalization.sentences,
-                            textInputAction: TextInputAction.send,
-                            focusNode: _inputFieldFocus,
-                            onSubmitted: _submitMessage,
-                            onChanged: (_) => setStateIfMounted(() {}),
-                            cursorColor: Styles().colors.fillColorPrimary,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
-                                fillColor: Styles().colors.surface,
-                                focusColor: Styles().colors.surface,
-                                hoverColor: Styles().colors.surface,
-                                hintText: "Message ${_getConversationTitle()}",
-                                hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                          key: _inputFieldKey,
+                          enabled: enabled,
+                          controller: _inputController,
+                          minLines: 1,
+                          maxLines: 5,
+                          textCapitalization: TextCapitalization.sentences,
+                          textInputAction: TextInputAction.send,
+                          focusNode: _inputFieldFocus,
+                          onSubmitted: _submitMessage,
+                          onChanged: (_) => setStateIfMounted(() {}),
+                          cursorColor: Styles().colors.fillColorPrimary,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Styles().colors.textSurface,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
-                            style: Styles().textStyles.getTextStyle('widget.title.regular')
+                            hintText: "Message ${_getConversationTitle()}",
+                            hintStyle: Styles().textStyles.getTextStyle('widget.item.small')?.copyWith(color: Styles().colors.textDark),
+                          ),
+                          style: Styles().textStyles.getTextStyle('widget.title.regular')?.copyWith(color: Styles().colors.textDark),
                         )
+
                     ),
                   ),
                   _buildSendImage(enabled),

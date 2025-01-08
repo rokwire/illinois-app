@@ -525,13 +525,13 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   Widget _buildNewMessageButton() {
     return RibbonButton(
         textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
-          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
+          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
-        backgroundColor: Styles().colors.fillColorPrimary,
-        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
+        backgroundColor: Styles().colors.fillColorSecondary,
+        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.fillColorPrimaryVariant),
         rightIconKey: null,
         borderRadius: BorderRadius.all(Radius.circular(8)),
         onTap: _onTapNewMessage,
