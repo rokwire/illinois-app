@@ -3571,6 +3571,15 @@ class ReactionKeyboard {
         return SizedBox(
           height: 310,
           child: emoji.EmojiPicker(
+            config: emoji.Config(
+                categoryViewConfig: emoji.CategoryViewConfig(
+                  indicatorColor: Styles().colors.fillColorSecondary,
+                  iconColorSelected: Styles().colors.fillColorSecondary
+                ),
+                bottomActionBarConfig: emoji.BottomActionBarConfig(
+                  backgroundColor: Styles().colors.fillColorPrimary,
+                  buttonColor: Styles().colors.fillColorPrimary,
+                )),
             onEmojiSelected: ((category, emoji) {
               // pop the bottom sheet
               Navigator.pop(context);
