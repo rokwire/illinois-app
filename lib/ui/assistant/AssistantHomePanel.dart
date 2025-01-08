@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { uiuc_conversation, google_conversation, azure_conversation, gork_conversation, all_assistants, faqs }
+enum AssistantContent { uiuc_conversation, google_conversation, azure_conversation, grok_conversation, all_assistants, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -290,8 +290,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantContent.google_conversation;
       case 'azure_assistant':
         return AssistantContent.azure_conversation;
-      case 'gork_assistant':
-        return AssistantContent.gork_conversation;
+      case 'grok_assistant':
+        return AssistantContent.grok_conversation;
       case 'all_assistants':
         return AssistantContent.all_assistants;
       case 'uiuc_faqs':
@@ -321,7 +321,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.azure_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContent.gork_conversation:
+      case AssistantContent.grok_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.all_assistants:
         return AssistantProvidersConversationContentWidget();
@@ -340,8 +340,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
       case AssistantContent.azure_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.azure.label', 'Ask the Azure Assistant');
-      case AssistantContent.gork_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.gork.label', 'Ask the Gork Assistant');
+      case AssistantContent.grok_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
       case AssistantContent.all_assistants:
         return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
       case AssistantContent.faqs:
@@ -359,8 +359,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
         return AssistantProvider.google;
       case AssistantContent.azure_conversation:
         return AssistantProvider.azure;
-      case AssistantContent.gork_conversation:
-        return AssistantProvider.gork;
+      case AssistantContent.grok_conversation:
+        return AssistantProvider.grok;
       default:
         return AssistantProvider.uiuc;
     }

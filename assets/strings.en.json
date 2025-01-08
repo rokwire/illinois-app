@@ -452,7 +452,7 @@
     "panel.assistant.content.conversation.label": "Ask the Illinois Assistant",
     "panel.assistant.content.conversation.google.label": "Ask the Google Assistant",
     "panel.assistant.content.conversation.azure.label": "Ask the Azure Assistant",
-    "panel.assistant.content.conversation.gork.label": "Ask the Gork Assistant",
+    "panel.assistant.content.conversation.grok.label": "Ask the Grok Assistant",
     "panel.assistant.content.conversation.all.label": "Use All Assistants",
     "panel.assistant.content.faqs.label": "Illinois Assistant FAQs",
     "panel.assistant.sources_links.label": "Sources and Links",
@@ -4354,7 +4354,7 @@
     "model.assistant.provider.uiuc.label": "Illinois",
     "model.assistant.provider.google.label": "Google",
     "model.assistant.provider.azure.label": "Azure",
-    "model.assistant.provider.gork.label": "Gork",
+    "model.assistant.provider.grok.label": "Grok",
     "model.assistant.provider.unknown.label": "Unknown",
 
     "logic.date_time.greeting.morning": "Good morning",
