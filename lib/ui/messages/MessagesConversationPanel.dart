@@ -500,10 +500,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _conversation = conversation;
         }
         if (messages != null) {
-          _hasMoreMessages = (_messagesPageSize <= messages.length);
           Message.sortListByDateSent(messages);
+          _globalIds.clear();
           _messages = (_conversation?.isGroupConversation == true) ?
             _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
+          _hasMoreMessages = (_messagesPageSize <= messages.length);
           _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
         }
       });
@@ -526,10 +527,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     setStateIfMounted(() {
       if (loadedMessages != null) {
         Message.sortListByDateSent(loadedMessages);
-        _hasMoreMessages = (messagesCount <= loadedMessages.length);
         _globalIds.clear();
         _messages = (_conversation?.isGroupConversation == true) ?
           _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
+        _hasMoreMessages = (messagesCount <= loadedMessages.length);
         _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
@@ -687,6 +688,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
     if ((scrollToContext != null) && scrollToContext.mounted) {
       Scrollable.ensureVisible(scrollToContext, duration: Duration(milliseconds: 500)).then((_) {});
+      _shouldScrollToTarget = null;
     }
   }
 
