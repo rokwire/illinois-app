@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -466,6 +467,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   bool _allDay = false;
 
   _RecurrenceRepeatType? _repeatType;
+  List<DayOfWeek>? _recurrenceDays;
 
   Event2Type? _eventType;
   late _Event2Visibility _visibility;
@@ -1079,17 +1081,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       _buildRepeatTypeDropDown(),
     ];
 
-    //TBD: DD - implement it based on the selection
+    if (_repeatType == _RecurrenceRepeatType.weekly) {
+      contentList.addAll(<Widget>[
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
+        _buildRepeatOnWeeklySectionWidget()
+      ]);
+    }
 
-    // if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
-    //   contentList.addAll(<Widget>[
-    //     Padding(padding: Event2CreatePanel.innerSectionPadding),
-    //     _buildOnlineUrlInnerSection(),
-    //     _buildOnlineMeetingIdInnerSection(),
-    //     _buildOnlinePasscodeInnerSection(),
-    //   ]);
-    // }
-    //
+    //TBD: DD - implement it based on the selection
     // if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
     //   contentList.addAll(<Widget>[
     //     Padding(padding: Event2CreatePanel.innerSectionPadding),
@@ -1105,7 +1104,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   Widget _buildRepeatTypeDropDown() {
-    String? title = Localization().getStringEx("panel.event2.create.label.repeat_type.title", "REPEAT");
+    String? title = Localization().getStringEx('panel.event2.create.label.repeat_type.title', 'REPEAT');
     return Semantics(
         label: title,
         container: true,
@@ -1145,6 +1144,42 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return menuItems;
   }
 
+  Widget _buildRepeatOnWeeklySectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.on.label', 'ON');
+    return Semantics(
+        label: title,
+        container: true,
+        child: Row(children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: RichText(
+                  textScaler: MediaQuery.of(context).textScaler,
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+          Container(width: 16),
+          Expanded(
+              flex: 6,
+              child: _buildRecurrenceWeekDays())
+        ]));
+  }
+
+  Widget _buildRecurrenceWeekDays() {
+    List<Widget> daysWidgets = <Widget>[];
+    for (DayOfWeek day in DayOfWeek.values) {
+      bool selected = CollectionUtils.isNotEmpty(_recurrenceDays) && _recurrenceDays!.contains(day);
+      String imageKey = selected ? 'check-circle-filled' : 'circle-outline-gray';
+      daysWidgets.add(InkWell(
+          splashColor: Colors.transparent,
+          onTap: () => _onToggleWeekDay(day),
+          child: Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Styles().images.getImage(imageKey) ?? Container(),
+                Padding(padding: EdgeInsets.only(left: 6), child: Text(day.name))
+              ]))));
+    }
+    return Wrap(crossAxisAlignment: WrapCrossAlignment.center, runSpacing: 6, children: daysWidgets);
+  }
+
   void _onToggleRecurrenceSection() {
     Analytics().logSelect(target: "Toggle Recurrence");
     Event2CreatePanel.hideKeyboard(context);
@@ -1161,6 +1196,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         _repeatType = value;
       });
     }
+  }
+
+  void _onToggleWeekDay(DayOfWeek day) {
+    setStateIfMounted(() {
+      if (_recurrenceDays == null) {
+        _recurrenceDays = <DayOfWeek>[];
+        _recurrenceDays!.add(day);
+      } else if (_recurrenceDays!.contains(day)) {
+        _recurrenceDays!.remove(day);
+      } else {
+        _recurrenceDays!.add(day);
+      }
+    });
   }
 
   // Event Type, Location and Online Details

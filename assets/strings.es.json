@@ -1347,6 +1347,7 @@
     "panel.event2.create.recurrence.repeat_type.does_not_repeat.label": "No se repite",
     "panel.event2.create.recurrence.repeat_type.weekly.label": "Semanalmente",
     "panel.event2.create.recurrence.repeat_type.monthly.label": "Mensual",
+    "panel.event2.create.label.recurrence.on.label": "EN",
     "panel.event2.create.label.event_type.title": "TIPO DE EVENTO",
     "panel.event2.create.online_details.url.title": "URL EN LÍNEA",
     "panel.event2.create.online_details.url.field": "CAMPO DEL URL EN LÍNEA",
