@@ -104,7 +104,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
-  static List<_DetailTab> get defaultTabs => [_DetailTab.Events, _DetailTab.Posts,  _DetailTab.Scheduled, _DetailTab.Messages, _DetailTab.Polls]; //TBD extract from Groups BB
+  static List<_DetailTab> get defaultTabs => [_DetailTab.Events, _DetailTab.Posts,  _DetailTab.Scheduled, _DetailTab.Messages, _DetailTab.Polls, _DetailTab.About]; //TBD extract from Groups BB
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -117,7 +117,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   String?                 _postId;
 
   final ScrollController _scrollController = ScrollController();
-  late TabController _tabController;
+  TabController?  _tabController;
   PageController? _pageController;
   StreamController _updateController = StreamController.broadcast();
 
@@ -128,8 +128,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   bool               _researchProjectConsent = false;
 
   int                _progress = 0;
-
-  List<Event2>?      _groupEvents;
 
   GlobalKey          _groupHeaderKey = GlobalKey();
   double?            _groupHeaderHeight;
@@ -258,9 +256,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupStatsUpdated,
     ]);
 
-    _tabController = TabController(length: _DetailTab.values.length, initialIndex: _currentTab.index, vsync: this);
-    // _tabController.addListener(_onTabChanged);
-
     _postId = widget.groupPostId;
     _tabs = GroupDetailPanel.defaultTabs;
 
@@ -271,8 +266,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    // _tabController.removeListener(_onTabChanged);
-    _tabController.dispose();
+    _tabController?.dispose();
     _updateController.close();
     _pageController?.dispose();
     super.dispose();
@@ -286,6 +280,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
     else if (_group != null) {
       content = _buildGroupContent();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _evalGroupHeaderHeight();
+      });
     }
     else {
       content = _buildErrorContent();
@@ -299,25 +297,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-      content,
+      body: RefreshIndicator(onRefresh: _onPullToRefresh,
+      child: content,
       ),
     );
   }
 
   Widget _buildLoadingContent() {
-    return Stack(children: <Widget>[
-      Column(children: <Widget>[
-        Expanded(
-          child: Center(
-            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),
-          ),
+    return Column(children: <Widget>[
+      Expanded(
+        child: Center(
+          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),
         ),
-      ]),
-      SafeArea(
-          child: HeaderBackButton()
       ),
-    ],);
+    ]);
   }
 
   Widget _buildErrorContent() {
@@ -338,34 +331,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   }
 
   Widget _buildGroupContent() {
-    Widget content;
-    if (_isMemberOrAdmin) {
-      content = TabBarView(
-        controller: _tabController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupEventsContent()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupPostsContent()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupScheduledPostsContent()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupMessagesContent()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: _GroupPollsContent()),
-          SingleChildScrollView(scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildAbout(), _buildPrivacyDescription(), _buildAdmins()],)),
-        ],
-      );
-    }
-    else {
-      content = SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _buildAbout(),
-          _buildPrivacyDescription(),
-          _buildAdmins(),
-          if (_isPublic && CollectionUtils.isNotEmpty(_groupEvents))
-            _GroupEventsContent(),
-          _buildResearchProjectMembershipRequest(),
-        ]),
-      );
-    }
-
     return NestedScrollView(
       controller: _scrollController,
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -380,15 +345,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                     pinned: true,
                     expandedHeight: _groupHeaderHeight,
                     flexibleSpace: _groupHeader,
-                    bottom: _isMemberOrAdmin ? TextTabBar(tabs: _buildTabs(), labelStyle: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
-                        labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,), controller: _tabController,
-                        backgroundColor: Styles().colors.fillColorPrimary, isScrollable: false, onTap: _onTabChanged) : null,
+                    bottom: _buildTabs(),
                   )
               )
           ),
         ];
       },
-      body: content,
+      body: _isMemberOrAdmin ? _buildViewPager() : SingleChildScrollView(scrollDirection: Axis.vertical, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildNonMemberContent(),),
+      ),
     );
   }
 
@@ -767,10 +732,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
-  /*
-  Widget _buildTabs() {
-    if(CollectionUtils.isEmpty(_tabs))
-      return Container();
+  PreferredSizeWidget? _buildTabs() {
+    if (CollectionUtils.isEmpty(_tabs) || !_isMemberOrAdmin)
+      return null;
 
     List<Widget> tabs = [];
     for (_DetailTab tab in _tabs!) {
@@ -792,79 +756,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
         case _DetailTab.Scheduled:
-          title = Localization().getStringEx("", 'Scheduled'); //localize
-          break;
-      }
-
-      Tab tabWidget = Tab(
-          text: title,
-          height: 35,
-      );
-      tabs.add(tabWidget);
-    }
-
-    // Widget leaveButton = GestureDetector(
-    //     onTap: _onTapLeave,
-    //     child: Padding(
-    //         padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
-    //         child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
-    //             style: Styles().textStyles.getTextStyle('panel.group.button.leave.title')
-    //         )));
-    //
-    // return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    //   SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
-    //   Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))
-    // ]));
-
-    if(_tabController == null || _tabController!.length != tabs.length){
-      _tabController = TabController(length: tabs.length, vsync: this);
-    }
-
-    return Container(color: Colors.white, child:
-      TabBar(
-        tabs: tabs,
-        indicatorColor: Color(0xffF15C22),
-        controller: _tabController,
-        onTap:(index) => _onTab(_tabAtIndex(index)),
-        indicatorSize: TabBarIndicatorSize.tab,
-        // indicatorPadding: EdgeInsets.zero,
-        labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
-        labelStyle: TextStyle(fontSize: 16.0, height: 1.0),
-        indicatorWeight: 4,
-        tabAlignment: TabAlignment.fill,
-    ));
-  }
-  */
-
-  List<Widget> _buildTabs() {
-    List<Widget> tabs = [];
-    for (_DetailTab tab in _DetailTab.values) {
-      String title;
-      switch (tab) {
-        case _DetailTab.Events:
-          title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
-          break;
-        case _DetailTab.Posts:
-          title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
-          break;
-        case _DetailTab.Messages:
-          title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
-          break;
-        case _DetailTab.Polls:
-          title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
-          break;
-        case _DetailTab.About:
-          title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
-          break;
-        case _DetailTab.Scheduled:
-          title = Localization().getStringEx("", 'Scheduled'); //localize
+          title = Localization().getStringEx("panel.group_detail.button.scheduled.title", 'Scheduled'); //localize
           break;
       }
 
       tabs.add(TextTabButton(title: title));
     }
 
-    return tabs;
+    if(_tabController == null || _tabController!.length != tabs.length){
+      _tabController = TabController(length: tabs.length, vsync: this);
+    }
+
+    return TextTabBar(
+      tabs: tabs,
+      labelStyle: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,),
+      controller: _tabController,
+      backgroundColor: Styles().colors.fillColorPrimary,
+      isScrollable: false,
+      onTap: (index) => _onTab(_tabAtIndex(index)),
+    );
   }
 
   Widget _buildViewPager(){
@@ -885,6 +796,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           ExpandablePageView(
             children: pages,
             controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
             onPageChanged: (int index){
               _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds));
               _currentTab = _tabAtIndex(index) ?? _currentTab;
@@ -918,7 +830,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         return _GroupPollsContent(group: _group,  updateController: _updateController);
       case _DetailTab.Scheduled:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController);
-
+      case _DetailTab.About:
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildAbout(), _buildPrivacyDescription(), _buildAdmins()],);
       default: Container();
     }
     return Container();
@@ -1122,7 +1035,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(headingText,
-                    style:   Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'))),
+                    style:   Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
     ]);
@@ -1131,16 +1044,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Widget _buildMembershipRequest() {
     if (Auth2().isLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
       return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
-      Padding(padding: EdgeInsets.all(16), child:
-      RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-          backgroundColor: Styles().colors.surface,
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          borderColor: Styles().colors.fillColorSecondary,
-          borderWidth: 2,
-          onTap:() { _onMembershipRequest();  }
-      ),
-      ),
+        Padding(padding: EdgeInsets.all(16), child:
+          RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
+              backgroundColor: Styles().colors.surface,
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              borderColor: Styles().colors.fillColorSecondary,
+              borderWidth: 2,
+              onTap:() { _onMembershipRequest();  }
+          ),
+        ),
       );
     }
     else {
@@ -1391,7 +1304,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.white,
+        backgroundColor: Styles().colors.surface,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
@@ -1451,40 +1364,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         });
   }
 
-  // void _onTab(_DetailTab? tab) {
-  //   Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
-  //   if (tab != null /*&& _currentTab != tab*/) {
-  //       _currentTab = tab;
-  //
-  //     _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
-  //   }
-  // }
-
-  void _onTabChanged(int index) {
-    _DetailTab tab = _DetailTab.values[_tabController.index];
+  void _onTab(_DetailTab? tab) {
     Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
-    if (!_tabController.indexIsChanging && _currentTab.index != _tabController.index) {
-      setState(() {
+    if (tab != null /*&& _currentTab != tab*/) {
         _currentTab = tab;
-      });
 
-      // switch (_currentTab) {
-      //   case _DetailTab.Posts:
-      //     if (CollectionUtils.isNotEmpty(_posts)) {
-      //       _scheduleLastPostScroll();
-      //     }
-      //     break;
-      //   case _DetailTab.Messages:
-      //     if (CollectionUtils.isNotEmpty(_messages)) {
-      //       _scheduleLastMessageScroll();
-      //     }
-      //     break;
-      //   case _DetailTab.Polls:
-      //     _schedulePollsScroll();
-      //     break;
-      //   default:
-      //     break;
-      // }
+      _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
     }
   }
 

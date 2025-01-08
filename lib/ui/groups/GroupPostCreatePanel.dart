@@ -320,7 +320,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       List<String>? memberAccountIds = MemberExt.extractUserIds(_selectedMembers);
       post = Post.forGroup(
           groupId: _groupId,
-          subject: subject!,
+          subject: subject ?? '',
           body: htmlModifiedBody,
           imageUrl: imageUrl,
           dateActivatedUtc: scheduleDate?.toUtc(),

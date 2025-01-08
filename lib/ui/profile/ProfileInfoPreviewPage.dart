@@ -12,6 +12,7 @@ import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -25,11 +26,12 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
+  final List<Auth2Identifier>? identifiers;
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
   final void Function()? onEditInfo;
-  ProfileInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData, this.onEditInfo });
+  ProfileInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.identifiers, this.photoImageData, this.photoImageToken, this.pronunciationAudioData, this.onEditInfo });
 
   @override
   State<StatefulWidget> createState() => _ProfileInfoPreviewPageState();
@@ -38,6 +40,7 @@ class ProfileInfoPreviewPage extends StatefulWidget {
 class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
+  List<Auth2PublicAccountIdentifier>? _identifiers;
   bool _preparingDeleteAccount = false;
 
   @override
@@ -49,6 +52,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
     );
 
     _profile = Auth2UserProfile.fromFieldsVisibility(widget.profile, profileVisibility, permitted: _permittedVisibility);
+    _identifiers = List.generate(widget.identifiers?.length ?? 0, (index) => Auth2PublicAccountIdentifier.fromUserIdentifier(widget.identifiers![index]));
 
     super.initState();
   }
@@ -63,7 +67,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: [
         if (_directoryVisibility)
-          Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+          Text(_descriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
         _profileContent,
         Padding(padding: EdgeInsets.only(top: 24), child:
           _commandBar,
@@ -79,7 +83,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
     );
   }
 
-  String get _desriptionText {
+  String get _descriptionText {
     switch (widget.contentType) {
       case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
       case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
@@ -126,7 +130,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
           ),
         ],),
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
-          DirectoryProfileDetails(_profile)
+          DirectoryProfileDetails(_profile, _identifiers, linkTextStyle: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline.dark',),)
         ),
         //_shareButton,
     ],)

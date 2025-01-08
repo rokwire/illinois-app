@@ -183,7 +183,7 @@ class _ProfileInfoAndDirectoryPageState extends State<ProfileInfoAndDirectoryPag
   );
 
   TextStyle? get _regularTabTextStyle =>
-    Styles().textStyles.getTextStyle('widget.button.title.medium');
+    Styles().textStyles.getTextStyle('widget.button.title.medium.light');
 
   TextStyle? get _selectedTabTextStyle =>
     Styles().textStyles.getTextStyle('widget.button.title.medium.fat');

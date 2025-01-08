@@ -404,7 +404,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
             )
           ) :
           Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
-            Styles().images.getImage('person-circle-header', excludeFromSemantics: true),
+            Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
           ),
       )
     );

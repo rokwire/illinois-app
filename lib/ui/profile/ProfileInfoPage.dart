@@ -38,6 +38,7 @@ class _ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileI
 
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
+  List<Auth2Identifier>? _identifiers;
   Uint8List? _photoImageData;
   Uint8List? _pronunciationAudioData;
   String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
@@ -51,6 +52,7 @@ class _ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileI
       DirectoryAccountsPage.notifyEditInfo,
     ]);
     _editing = widget.editParam ?? false;
+    _identifiers = Auth2().account?.identifiers;
     _loadInitialContent();
     super.initState();
   }
@@ -80,6 +82,7 @@ class _ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileI
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
+          identifiers: _identifiers,
           pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
@@ -91,6 +94,7 @@ class _ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileI
         contentType: widget.contentType,
         profile: _profile,
         privacy: _privacy,
+        identifiers: _identifiers,
         pronunciationAudioData: _pronunciationAudioData,
         photoImageData: _photoImageData,
         photoImageToken: _photoImageToken,
@@ -228,7 +232,7 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   // Name Text Style
 
   TextStyle? get nameTextStyle =>
-    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
+    Styles().textStyles.getTextStyleEx('widget.message.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
   // Positive and Permitted visibility
 

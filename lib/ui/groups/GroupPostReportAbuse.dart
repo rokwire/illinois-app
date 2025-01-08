@@ -104,7 +104,7 @@ class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
 
       Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 8), child:
         Text(Localization().getStringEx('panel.group.detail.post.report_abuse.comment.title', 'Please add your comment for this report:'),
-          style: Styles().textStyles.getTextStyle("widget.info.regular")
+          style: Styles().textStyles.getTextStyle("widget.info.regular.light")
         ),
       ),
       
@@ -177,10 +177,10 @@ class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
     showDialog(context: context, builder: (_) =>  InfoPopup(
       backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      border: Border.all(color: Styles().colors.textSurface, width: 1),
+      border: Border.all(color: Styles().colors.textDark, width: 1),
       alignment: Alignment.topRight,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),
+      infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
       closeIcon: Styles().images.getImage('close-circle'),
     ),);
   }
