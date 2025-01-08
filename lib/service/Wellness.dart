@@ -28,6 +28,7 @@ import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -50,6 +51,8 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   static const String notifyResourcesContentChanged = "edu.illinois.rokwire.wellness.content.resources.changed";
   static const String notifyTipsContentChanged = "edu.illinois.rokwire.wellness.content.tops.changed";
   static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
+
+  static const String notifyCategorySelect = "edu.illinois.rokwire.wellness.category.select";
 
   static final String _userAccessedToDoListSetting = 'edu.illinois.rokwire.settings.wellness.todo.list.accessed';
   static final String _userAccessedRingsSetting = 'edu.illinois.rokwire.settings.wellness.rings.accessed';
@@ -76,7 +79,14 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
       AppLivecycle.notifyStateChanged,
+      DeepLink.notifyUiUri,
     ]);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
@@ -104,7 +114,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Content()]);
+    return Set.from([Storage(), Content(), DeepLink()]);
   }
 
   // NotificationsListener
@@ -116,6 +126,9 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
 
@@ -134,6 +147,17 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.resumed) {
       _updateDailyTip();
+    }
+  }
+
+  // DeepLinks
+
+  static String get _wellnessCategoryUrl => '${DeepLink().appUrl}/wellness/category';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(_wellnessCategoryUrl))) {
+      try { NotificationService().notify(notifyCategorySelect, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
     }
   }
 

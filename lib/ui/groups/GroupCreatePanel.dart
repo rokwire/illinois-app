@@ -20,7 +20,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
-import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
@@ -314,11 +313,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
-    if(result?.succeeded == true)
-    setStateIfMounted(() {
-      _group!.imageURL = result?.stringData;
-    });
-    Log.d("Image Url: ${result?.stringData}");
+    if (result?.succeeded == true) {
+      setStateIfMounted(() {
+        _group!.imageURL = result?.imageUrl;
+      });
+      Log.d("Image Url: ${result?.imageUrl}");
+    }
   }
 
   //Name

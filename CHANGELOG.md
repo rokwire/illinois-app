@@ -5,8 +5,81 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.35] - 2025-01-08
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+### Added
+- Start conversation to a specific user from the directory [#4555](https://github.com/rokwire/illinois-app/issues/4555)
+- New assistant provider - Grok [#4573](https://github.com/rokwire/illinois-app/issues/4573).
+### Fixed
+- Fixed social message deep link support, ensure message visibility in MessagesConversionPanel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+
+## [6.1.34] - 2025-01-07
+### Changed
+- User Directory visibility control moved one level up [#4568](https://github.com/rokwire/illinois-app/issues/4568).
+
+## [6.1.33] - 2025-01-06
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+### Added
+- Added URL caching support in DeepLink service, removed it from other services [#4561](https://github.com/rokwire/illinois-app/issues/4561).
+- Added Directory Profile Visibility page in Onboarding [#4565](https://github.com/rokwire/illinois-app/issues/4565).
+
+## [6.1.32] - 2025-01-03
+### Changed
+- Updated wellness resources content [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+### Added
+- Added Wellness category pages deep linking [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+- Added the "Message this user" in Directory Account card [#4555](https://github.com/rokwire/illinois-app/issues/4555).
+- Show public account popup when user name or picture is tapped [#4558](https://github.com/rokwire/illinois-app/issues/4558).
+
+## [6.1.31] - 2024-12-20
+### Changed
+- Show only first line of the last message in ConversationCard [#4545](https://github.com/rokwire/illinois-app/issues/4545).
+- Detect URL links in text body of conversation message card [#4547](https://github.com/rokwire/illinois-app/issues/4547).
+### Fixed
+- Additional bug fixes for Messages [#4548](https://github.com/rokwire/illinois-app/issues/4548).
+### Added
+- Added social deep links support [#4551](https://github.com/rokwire/illinois-app/issues/4551).
+
+## [6.1.30] - 2024-12-19
+### Changed
+- Message Conversation UI Updates and Bug Fixes (in progress) [#4536](https://github.com/rokwire/illinois-app/issues/4536)
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- Directory Accounts support moved to standalone project location [#4540](https://github.com/rokwire/illinois-app/issues/4540).
+- Rename "Directory" section to "User Directory" [#4542](https://github.com/rokwire/illinois-app/issues/4542).
+- Single item browse section entry opens straightly the entry [#4542](https://github.com/rokwire/illinois-app/issues/4542).
+
+## [6.1.29] - 2024-12-18
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.28] - 2024-12-17
+### Added
+- Add Messages UI [#4498](https://github.com/rokwire/illinois-app/issues/4498).
+### Changed
+- Use "User Directory" term instead of "Illinois App Directory" everywhere [#4523](https://github.com/rokwire/illinois-app/issues/4523).
+- Automatically expand single entry sections in Home panel [#4527](https://github.com/rokwire/illinois-app/issues/4527).
+- Preserve scroll positions when switching Favorites & Sections tabs in HomePanel [#4529](https://github.com/rokwire/illinois-app/issues/4529).
+- Do not show user directory content for anonymous users [#4531](https://github.com/rokwire/illinois-app/issues/4531).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.27] - 2024-12-16
+### Fixed
+- Cleaned up Image & Audio Result data dispatch [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Fixed name pronunciation processing [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+### Added
+- New Azure Assistant provider [#4519](https://github.com/rokwire/illinois-app/issues/4519).
+### Changed
+- Standardized return type of loadUserPhoto and loadUserNamePronunciation [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Various fixes and improvements in Directory Profiles [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.26] - 2024-12-13
 ### Changed
 - Control wallet items visibility from app config settings [#4509](https://github.com/rokwire/illinois-app/issues/4509).
+- Sync photo / pronunciation URLs to user profile [#4402](https://github.com/rokwire/illinois-app/issues/4402).
+- Directory texts fixes/cleanup [#4402](https://github.com/rokwire/illinois-app/issues/4402).
 ### Fixed
 - Fixed "view-dark" image resource.
  

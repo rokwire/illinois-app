@@ -27,7 +27,7 @@
 
 			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
-			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "safety", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
+			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "safety", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
@@ -36,11 +36,12 @@
 			"browse.laundry": ["laundry", "my_laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_safety_resources", "campus_guide", "my_campus_guide"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
-			"browse.directory": ["app_directory"],
+			"browse.directory": ["user_directory"],
 			"browse.events": ["event_feed", "my_events"],
 			"browse.feeds": ["twitter", "daily_illini"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
+			"browse.messages": ["messages"],
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.polls": ["create_poll", "recent_polls"],
@@ -54,7 +55,7 @@
 
 			"wallet": ["illini_id", "illini_id_faq", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
@@ -97,12 +98,12 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
-			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs", "research_questionnaire"],
+			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "sport_prefs", "research_questionnaire"],
 	
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization"],
+				"gies", "new_student", "canvas", "safer", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization"],
 
 			"attributes": ["groups", "events"],
 			"attributes.groups": ["rso"],
@@ -146,11 +147,13 @@
 				"onboarding.confirm_phone"        	      : 4,
 				"onboarding.sport_prefs"          	      : 3,
 				"onboarding.research_questionnaire"       : 4,
-	
+				"onboarding.profile)info"                 : 4,
+
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,
 				"features.personalization"        	      : 3,
 				"features.notifications"          	      : 4,
+				"features.messages"          	      	  : 4,
 				"features.payment_information"         	  : 4,
 				"features.authentication"                 : 4,
 				"features.sharing"                	      : 5,
@@ -199,6 +202,7 @@
 				"authenticate.linked.email.remove"        : { "emailLinked": true },
 
 				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
+				"onboarding.profile_info"                 : { "shibbolethLoggedIn": true },
 
 				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },
@@ -209,6 +213,8 @@
 			},
 			"platform":{
 				"assistant.google_assistant"              : { "environment":  "dev"},
+				"assistant.azure_assistant"               : { "environment":  "dev"},
+				"assistant.grok_assistant"                : { "environment":  "dev"},
 				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {

@@ -1,25 +1,26 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryAccountsPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryMyInfoPage.dart';
-import 'package:illinois/ui/profile/ProfileDirectoryPage.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class ProfileDirectoryAccountsPanel extends StatefulWidget {
+class DirectoryAccountsPanel extends StatefulWidget {
   final DirectoryAccounts contentType;
-  ProfileDirectoryAccountsPanel(this.contentType, {super.key});
+  DirectoryAccountsPanel(this.contentType, {super.key});
 
   @override
-  State<StatefulWidget> createState() => _ProfileDirectoryAccountsPanelState();
+  State<StatefulWidget> createState() => _DirectoryAccountsPanelState();
 }
 
-class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccountsPanel> {
+class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
 
-  final GlobalKey<ProfileDirectoryAccountsPageState> _pageKey = GlobalKey();
+  final GlobalKey<DirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -40,8 +41,8 @@ class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccounts
 
   String get _appTitle {
     switch(widget.contentType) {
-      case DirectoryAccounts.myConnections: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.connections.title', 'My ${AppTextUtils.appTitleMacro} Connections');
-      case DirectoryAccounts.appDirectory: return AppTextUtils.appTitleString('panel.profile.directory.tab.accounts.directory.title', '${AppTextUtils.appTitleMacro} App Directory');
+      case DirectoryAccounts.connections: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.connections.title', 'My Connections');
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'User Directory');
     }
   }
 
@@ -49,17 +50,17 @@ class _ProfileDirectoryAccountsPanelState extends State<ProfileDirectoryAccounts
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          ProfileDirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile,),
+          DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile,),
         )
       )
     );
 
   void _onEditProfile(DirectoryAccounts contentType) {
     ProfileHomePanel.present(context,
-      content: ProfileContent.directory,
+      content: ProfileContent.info_and_directory,
       contentParams: {
-        ProfileDirectoryPage.tabParamKey: ProfileDirectoryTab.myInfo,
-        ProfileDirectoryMyInfoPage.editParamKey : true,
+        ProfileInfoAndDirectoryPage.tabParamKey: ProfileDirectoryTab.info,
+        ProfileInfoPage.editParamKey : true,
       }
     );
   }

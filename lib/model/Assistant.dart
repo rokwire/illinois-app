@@ -241,7 +241,7 @@ enum MessageFeedback { good, bad }
 ///
 /// AssistantProvider
 ///
-enum AssistantProvider { uiuc, google }
+enum AssistantProvider { uiuc, google, azure, grok }
 
 String? assistantProviderToKeyString(AssistantProvider? provider) {
   switch (provider) {
@@ -249,6 +249,10 @@ String? assistantProviderToKeyString(AssistantProvider? provider) {
       return 'uiuc';
     case AssistantProvider.google:
       return 'google';
+    case AssistantProvider.azure:
+      return 'azure';
+    case AssistantProvider.grok:
+      return 'grok';
     default:
       return null;
   }
@@ -260,6 +264,10 @@ String assistantProviderToDisplayString(AssistantProvider? provider) {
       return Localization().getStringEx('model.assistant.provider.uiuc.label', 'Illinois');
     case AssistantProvider.google:
       return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
+    case AssistantProvider.azure:
+      return Localization().getStringEx('model.assistant.provider.azure.label', 'Azure');
+    case AssistantProvider.grok:
+      return Localization().getStringEx('model.assistant.provider.grok.label', 'Grok');
     default:
       return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
   }

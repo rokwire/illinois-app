@@ -230,7 +230,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
             // var additionalCandidates = _additionalCandidates.where((additionalCandidate) =>
             //   candidates?.any((candidate) => candidate.id == additionalCandidate.id) == false); //Items which are removed but not uploaded yet
             candidates?.addAll(_additionalCandidates.where((additionalCandidate) =>
-              candidates.contains(additionalCandidate) == false)); //Do not double items. When we add/remove we directly manipulate, but when we search text we loose these items
+              candidates.contains(additionalCandidate) == false)); //Do not double items. When we add/remove we directly manipulate, but when we search text we lose these items
 
             setStateIfMounted(() {
               _subEventCandidates = candidates;

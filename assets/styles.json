@@ -216,6 +216,7 @@
     "widget.title.small.fat.disabled.spaced": {"extends": "widget.title.small.disabled", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.underline": { "extends" : "widget.title.tiny", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.title.tiny.underline.variant": { "extends" : "widget.title.tiny.underline", "decoration_color":  "fillColorPrimary"},
     "widget.title.tiny.fat": {"extends" : "widget.title.tiny", "font_family": "bold"},
     "widget.title.tiny.fat.spaced": {"extends" : "widget.title.tiny.fat", "letter_spacing": 1.0},
     "widget.title.tiny.fat.highlight": {"extends" : "widget.title.tiny", "color": "white"},
@@ -247,6 +248,7 @@
     "widget.detail.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.detail.regular.underline": { "extends": "widget.detail.regular", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary" },
     "widget.detail.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.detail.small.underline": { "extends": "widget.detail.small", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary" },
@@ -273,7 +275,7 @@
     "widget.description.regular.underline": { "extends": "widget.description.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.description.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.small": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.description.small_underline": { "font_family": "medium", "size": 14.0, "decoration": "underline"},
+    "widget.description.small.underline": { "font_family": "medium", "size": 14.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.description.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small.fat.semi_expanded": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 0.86},
     "widget.description.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "fillColorPrimary"},
@@ -803,6 +805,7 @@
     "posts": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "reply": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "floorplan": {"src": "0xf279", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "message": {"src": "0xf27a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "location": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
     "time": {"src": "images/icon-time.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "clear":  {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24},
@@ -844,14 +847,18 @@
     "browse": {"src": "0xf0c9", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 19},
     "close": {"src": "images/close-orange-small.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14},
     "settings": {"src": "images/icon-settings.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
+    "image-placeholder": {"src": "images/image-placeholder.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20},
     "gear": {"src": "0xf013", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "external-link": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15},
     "paper-plane": {"src": "0xf1d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "paper-plane-top": {"src": "0xe20a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "person-walking": {"src": "0xf554", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "web": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15, "todo":  "same as external-link"},
     "share-nodes": {"src": "0xf1e0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "share": {"src": "0xf064", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "notification": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "color issue, size issue"},
+    "notification-orange": {"src": "images/notifications-white.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
+    "notification-off": {"src": "0xf1f6", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "phone": {"src": "images/icon-phone.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
     "mail": {"src": "images/icon-mail.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
     "person": {"src": "images/identiy-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size"},
@@ -938,7 +945,9 @@
     "minus-circle-white": {"src": "images/group-decrease.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "notification-white": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "surface", "size": 16, "todo": "size"},
     "play-circle-white": {"src": "images/icon-watch.png", "type": "flutter.asset", "color": "surface", "size": 32},
-    "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
+    "clock-white": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
+    "person-circle-dark-blue": {"src": "images/person-white.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "messages-group-dark-blue": {"src": "0xf0c0", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 16},
 
     "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
     "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
@@ -1027,6 +1036,7 @@
     "university-logo-dark-frame": {"src": "images/block-i-orange-blue.png", "type": "flutter.asset"},
     "university-logo-oval-white": {"src": "images/block-i-orange-oval.png", "type": "flutter.asset"},
     "university-logo-dark": {"src": "images/illinois-blockI-blue.png", "type": "flutter.asset"},
+    "university-logo-blue": {"src": "images/block-i-blue.png", "type": "flutter.asset"},
     "university-logo-circle-white": {"src": "images/group-5-white.png", "type": "flutter.asset"},
     "university-logo-circle-dark": {"src": "images/group-5-blue.png", "type": "flutter.asset"},
     "transit-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
@@ -1132,6 +1142,8 @@
 
     "external-link": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
 
-    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"},
+
+    "group-managed-badge": {"src": "0xf336", "type": "fa.icon", "size": 18}
   }
 }

@@ -7,6 +7,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
@@ -71,7 +72,7 @@ class Onboarding2 with Service {
           _didProceedToLogin(context);
         },
         "onContinueActionEx": (dynamic state) {
-          _didProceedToLogin(context, loginPanelState: state);
+          _didProceedToLogin(context, currentPanelState: state);
         }
       })));
     }
@@ -81,7 +82,7 @@ class Onboarding2 with Service {
           _didProceedToLogin(context);
         },
         "onContinueActionEx": (dynamic state) {
-          _didProceedToLogin(context, loginPanelState: state);
+          _didProceedToLogin(context, currentPanelState: state);
         }
       })));
     }
@@ -90,10 +91,27 @@ class Onboarding2 with Service {
     }
   }
 
-  void _didProceedToLogin(BuildContext context, { dynamic loginPanelState}) {
+  void _didProceedToLogin(BuildContext context, { dynamic currentPanelState}) {
+    _proceedToProfileInfoIfNeeded(context, currentPanelState: currentPanelState);
+  }
+
+  void _proceedToProfileInfoIfNeeded(BuildContext context, { dynamic currentPanelState }) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('research_questionnaire')) {
-      _startResearhQuestionnaireIfNeeded(context, currentPanelState: loginPanelState);
+    if (codes.contains('profile_info')) {
+      Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2ProfileInfoPanel(onboardingContext: {
+        'onContinueAction': () => _didProceedProfileInfo(context),
+        'onContinueActionEx': (state) => _didProceedProfileInfo(context, currentPanelState: state),
+      },)));
+    }
+    else {
+      _didProceedProfileInfo(context, currentPanelState: currentPanelState);
+    }
+  }
+
+  void _didProceedProfileInfo(BuildContext context, { dynamic currentPanelState}) {
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('profile_info')) {
+      _startResearhQuestionnaireIfNeeded(context, currentPanelState: currentPanelState);
     }
     else {
       _didFinishResearhQuestionnaire(context);

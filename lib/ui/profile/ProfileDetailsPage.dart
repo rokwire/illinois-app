@@ -435,8 +435,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   void _loadUserProfilePicture() {
     if (StringUtils.isNotEmpty(Auth2().profile?.photoUrl)) {
       _setProfilePicProcessing(true);
-      Content().loadUserPhoto(type: UserProfileImageType.defaultType).then((imageBytes) {
-        _profileImageBytes = imageBytes;
+      Content().loadUserPhoto(type: UserProfileImageType.defaultType).then((ImagesResult? imageResult) {
+        _profileImageBytes = imageResult?.imageData;
         _setProfilePicProcessing(false);
       });
     }

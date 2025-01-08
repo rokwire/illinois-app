@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -32,8 +34,9 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
-import 'package:rokwire_plugin/model/poll.dart';
+import 'package:illinois/ext/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -57,6 +60,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
+
+import '../directory/DirectoryWidgets.dart';
 
 /////////////////////////////////////
 // GroupSectionTitle
@@ -558,7 +563,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, ImagesResult.succeed(url));
+      Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
     } else {
       //we need to process it
       setState(() {
@@ -629,7 +634,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
   void _onTapClear() {
     Analytics().logSelect(target: "Clear");
-    Navigator.pop(context, ImagesResult.succeed(null));
+    Navigator.pop(context, ImagesResult.succeed());
   }
 
 
@@ -1033,8 +1038,11 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
+  final bool? isAdmin;
+  // final Member? creator;
+  // final StreamController? updateController;
 
-  GroupPostCard({Key? key, required this.post, required this.group}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin}) :
     super(key: key);
 
   @override
@@ -1043,6 +1051,7 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   static const double _smallImageSize = 64;
+  List<String> _reactions = [];
 
   @override
   void initState() {
@@ -1051,7 +1060,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? creatorName = widget.post?.creatorName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = _visibleRepliesCount;
@@ -1059,6 +1067,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+
+    Map<String, int> uniqueReactions = _uniqueReactions;
+
     return Stack(alignment: Alignment.topRight, children: [
       Semantics(button:true,
         child:GestureDetector(
@@ -1071,25 +1082,36 @@ class _GroupPostCardState extends State<GroupPostCard> {
               child: Padding(
                   padding: EdgeInsets.all(12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      Expanded(child:
+                        Visibility(visible: widget.post?.creatorId != null,
+                            child: GroupMemberProfileInfoWidget(
+                                name: widget.post?.creatorName,
+                                userId: widget.post?.creatorId,
+                                isAdmin: widget.isAdmin,
+                                additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
+                              // updateController: widget.updateController,
+                            ))),
+                      _buildScheduledDateWidget
+                    ]),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
                           child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat') )),
-                      Visibility(
-                          visible: isRepliesLabelVisible,
-                          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                            Padding(
-                                padding: EdgeInsets.only(left: 8),
-                                child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
-                                    style: Styles().textStyles.getTextStyle('widget.description.small'))),
-                            Padding(
-                                padding: EdgeInsets.only(left: 8),
-                                child: Text(StringUtils.ensureNotEmpty(repliesLabel),
-                                    style: Styles().textStyles.getTextStyle('widget.description.small')))
-                          ])),
-                      _buildScheduledDateWidget
+                      // Visibility(
+                      //     visible: isRepliesLabelVisible,
+                      //     child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      //       Padding(
+                      //           padding: EdgeInsets.only(left: 8),
+                      //           child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
+                      //               style: Styles().textStyles.getTextStyle('widget.description.small'))),
+                      //       Padding(
+                      //           padding: EdgeInsets.only(left: 8),
+                      //           child: Text(StringUtils.ensureNotEmpty(repliesLabel),
+                      //               style: Styles().textStyles.getTextStyle('widget.description.small')))
+                      //     ])),
                     ]),
                     Row(
                       children: [
@@ -1131,19 +1153,47 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     ],),
                     Container(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
                         children: [
                           Expanded(
-                            flex: 3,
-                            child:Container(
-                              padding: EdgeInsets.only(right: 6),
-                              child:Text(StringUtils.ensureNotEmpty(creatorName),
-                                textAlign: TextAlign.left,
-                                style: Styles().textStyles.getTextStyle('widget.description.small')),
-                          )),
-                          Expanded(
-                            flex: 2,
-                            child: _buildDisplayDateWidget),
+                            child: Wrap(
+                              children: [
+                                ...uniqueReactions.keys.map((String reaction) =>
+                                  Padding( padding: EdgeInsets.all(4),
+                                    child: InkWell(
+                                    onTap: () => setStateIfMounted(() => _reactions.remove(reaction)), //TBD call BB to remove reaction
+                                    child: Row(mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(reaction),
+                                        Visibility(visible: uniqueReactions[reaction] != null && uniqueReactions[reaction]! > 1,
+                                          child: Text(uniqueReactions[reaction].toString())
+                                        )
+                                      ])
+                                    )
+                                  )
+                                  ).toList(),
+                                Container(
+                                    padding: EdgeInsets.only(right: 6),
+                                    child: InkWell(
+                                      onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _react),
+                                      child: Padding(padding: EdgeInsets.all(0),
+                                          child: Image.asset("images/add_reaction_icon.png"))
+                                )),
+                              ]
+                            )
+                          ),
+                          Visibility(
+                              visible: isRepliesLabelVisible,
+                              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                Padding(
+                                    padding: EdgeInsets.only(left: 8),
+                                    child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
+                                        style: Styles().textStyles.getTextStyle('widget.description.small'))),
+                                Padding(
+                                    padding: EdgeInsets.only(left: 8),
+                                    child: Text(StringUtils.ensureNotEmpty(repliesLabel),
+                                        style: Styles().textStyles.getTextStyle('widget.description.small')))
+                              ])),
                         ],
                       )
                     )
@@ -1151,6 +1201,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
+  void _react(emoji.Emoji emoji){
+    setStateIfMounted(() =>
+      _reactions.add(emoji.emoji)
+    );
+  }
+
+  // ignore: unused_element
   Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
     Semantics(child: Container(
       padding: EdgeInsets.only(left: 6),
@@ -1172,6 +1229,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
+    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
   }
 
   void _onLinkTap(String? url) {
@@ -1180,7 +1238,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   int get _visibleRepliesCount {
-    int result = 0;
+    int result = 2;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
     List<Comment>? replies = null;
@@ -1198,6 +1256,12 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
 
+  Map<String, int> get _uniqueReactions{
+    return _reactions.fold(<String, int>{}, (map, element) {
+      map[element] = (map[element] ?? 0) + 1;
+      return map;
+    });
+  }
 }
 
 //////////////////////////////////////
@@ -2096,11 +2160,11 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl).then((result) => result);
 
     if(result?.succeeded == true) {
-      widget.onImageChanged?.call(result?.stringData);
+      widget.onImageChanged?.call(result?.imageUrl);
       // setStateIfMounted(() {
       //   _imageUrl = result?.stringData;
       // });
-      Log.d("Image Url: ${result?.stringData}");
+      Log.d("Image Url: ${result?.imageUrl}");
     }
   }
 }
@@ -2110,8 +2174,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 class GroupPollCard extends StatefulWidget{
   final Poll? poll;
   final Group? group;
+  final bool? isAdmin;
 
-  GroupPollCard({required this.poll, this.group});
+  GroupPollCard({required this.poll, this.group, this.isAdmin});
 
   @override
   State<StatefulWidget> createState() => _GroupPollCardState();
@@ -2178,9 +2243,9 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
 
     String? pollStatus;
 
-    String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
-    String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
+    // String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
+    // String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
+    // String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
     String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Pin: %s'), [
       sprintf('%04i', [poll.pinCode ?? 0])
     ]);
@@ -2208,13 +2273,23 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
           borderRadius: BorderRadius.all(Radius.circular(8)),
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
-        child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
+        child: Padding(padding: EdgeInsets.all(12), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(children: [
+              Visibility(visible: widget.poll?.creatorUserUuid != null,
+                  child: GroupMemberProfileInfoWidget(
+                    name: widget.poll?.creatorUserName,
+                    userId: widget.poll?.creatorUserUuid,
+                    isAdmin: widget.isAdmin,
+                    additionalInfo: _pollDateText
+                    // updateController: widget.updateController,
+                  ))
+            ],),
             Row(children: <Widget>[
-              Expanded(child:
-                Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
-                  Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'))),
-              ),
+              Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),),
+              Container(width: 8,),
+              Text(pollStatus ?? "", style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+              Expanded(child: Container()),
               Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
               Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
@@ -2236,11 +2311,11 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
                   Padding(padding: EdgeInsets.only(bottom: 12), child:
                     Row(children: <Widget>[
-                      Expanded(child:
-                        Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
-                      ),
-                      Expanded(child:
-                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
+                      // Expanded(child:
+                        // Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+                      // ),
+                      // Expanded(child:
+                      //   Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
                     ],),
                   ),
                 ),
@@ -2253,6 +2328,10 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
       ),],
     );
   }
+
+
+  String? get _pollDateText =>
+      "Quick Poll,Updated ${widget.poll?.displayUpdateTime}";
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;
@@ -2582,6 +2661,117 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 }
 
 /////////////////////////////////////
+// GroupMemberProfileWidget
+class GroupMemberProfileInfoWidget extends StatefulWidget {
+  final String? name;
+  final String? userId;
+  final String? additionalInfo;
+  final bool? isAdmin;
+  // final Member? member;
+  // final StreamController? updateController;
+
+  const GroupMemberProfileInfoWidget({super.key, this.name, this.additionalInfo, this.isAdmin = false, this.userId});
+
+  @override
+  State<StatefulWidget> createState() => _GroupMemberProfileInfoState();
+}
+
+class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
+  String photoImageToken = DirectoryProfilePhotoUtils.newToken;
+  // Uint8List? _memberImageBytes;
+  // bool _loadingImage = false;
+
+  @override
+  void initState() {
+    // widget.updateController?.stream.listen((command) {
+    //   if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+    //     if(widget.member?.userId == command[GroupDetailPanel.notifyLoadMemberImage]){
+    //       setStateIfMounted(() => _loadingImage = true);
+    //     }
+    //   } else  if (command is Map && command.containsKey(GroupDetailPanel.notifyMemberImageLoaded)) {
+    //     Map? data = command[GroupDetailPanel.notifyMemberImageLoaded] is Map ? command[GroupDetailPanel.notifyMemberImageLoaded] : null;
+    //     if(data != null && JsonUtils.stringValue(data["id"]) == widget.member?.userId){
+    //       setStateIfMounted((){
+    //         _loadingImage = false;
+    //         _memberImageBytes = data["image_bytes"] is Uint8List ? data["image_bytes"] : _memberImageBytes;
+    //       });
+    //     }
+    //   }
+    // });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Container(
+        child:  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+            SizedBox(width: 34, height: 34,
+              child: _buildProfileImage),
+            Container(width: 8),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+                  Container(width: 8),
+                  Visibility(visible: widget.isAdmin == true,
+                    child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
+                  )
+                ]),
+                Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
+                child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
+            ],)
+          ]),
+      );
+
+  Widget get _buildProfileImage =>
+      DirectoryProfilePhoto(
+        photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
+        imageSize: _photoImageSize,
+        photoUrlHeaders: _photoAuthHeaders,
+      );
+
+  double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
+
+  // Widget? get _buildProfileImage {
+  //   bool hasProfilePhoto = widget.member?.userId != null &&
+  //       (_getMemberImage() != null);
+  //   Widget? profileImage = hasProfilePhoto ?
+  //   Container(decoration: BoxDecoration(shape: BoxShape.circle,
+  //       image: DecorationImage(
+  //           fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain),
+  //           image: Image.memory(_memberImageBytes!).image))) :
+  //   Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
+  //
+  //   return Stack(alignment: Alignment.center, children: [
+  //     if (profileImage != null) profileImage,
+  //     Visibility(
+  //         visible: _loadingImage,
+  //         child: SizedBox(
+  //             width: 20,
+  //             height: 20,
+  //             child: CircularProgressIndicator(
+  //                 color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
+  //   ]);
+  // }
+
+  // Uint8List? _getMemberImage() {
+  //   String? id = widget.member?.userId;
+  //   if(StringUtils.isEmpty(id))
+  //     return null;
+  //
+  //   if(_memberImageBytes != null){
+  //     return _memberImageBytes;
+  //   } else {
+  //     widget.updateController?.add({GroupDetailPanel.notifyLoadMemberImage: id});
+  //     return null;
+  //   }
+  // }
+
+}
+
+/////////////////////////////////////
 // GroupMemberProfileImage
 
 class GroupMemberProfileImage extends StatefulWidget {
@@ -2632,8 +2822,8 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _loadImage() {
     if (StringUtils.isNotEmpty(widget.userId)) {
       _setImageLoading(true);
-      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((imageBytes) {
-        _imageBytes = imageBytes;
+      Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+        _imageBytes = imageResult?.imageData;
         _setImageLoading(false);
       });
     }
@@ -3367,5 +3557,35 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
+  }
+}
+
+typedef EmojiSelector = void Function(emoji.Emoji);
+class ReactionKeyboard {
+  static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 310,
+          child: emoji.EmojiPicker(
+            config: emoji.Config(
+                categoryViewConfig: emoji.CategoryViewConfig(
+                  indicatorColor: Styles().colors.fillColorSecondary,
+                  iconColorSelected: Styles().colors.fillColorSecondary
+                ),
+                bottomActionBarConfig: emoji.BottomActionBarConfig(
+                  backgroundColor: Styles().colors.fillColorPrimary,
+                  buttonColor: Styles().colors.fillColorPrimary,
+                )),
+            onEmojiSelected: ((category, emoji) {
+              // pop the bottom sheet
+              Navigator.pop(context);
+              onSelect.call(emoji);
+            }),
+          ),
+        );
+      },
+    );
   }
 }

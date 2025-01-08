@@ -30,6 +30,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -43,6 +44,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -82,6 +84,7 @@ import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widget_builders/actions.dart';
@@ -131,6 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsTeam,
       FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifySocialMessageNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyHomeFavoritesNotification,
@@ -205,6 +209,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
+      Social.notifyMessageDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
@@ -214,6 +219,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
+      Wellness.notifyCategorySelect,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -305,6 +311,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
     }
+    else if (name == Social.notifyMessageDetail) {
+      _onSocialMessageDetail(param);
+    }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
     }
@@ -316,6 +325,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideList) {
       _onGuideList(param);
+    }
+    else if (name == Wellness.notifyCategorySelect) {
+      _onWellnessCategorySelect(param);
     }
     else if (name == Canvas.notifyCanvasEventDetail) {
       _onCanvasEventDetail(param);
@@ -353,6 +365,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifySocialMessageNotification) {
+      _onFirebaseSocialMessageNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
@@ -853,6 +868,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _presentGroupDetailPanel(groupId: groupId);
   }
 
+  Future<void> _onSocialMessageDetail(Map<String, dynamic>? content) async {
+    if ((content != null)) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id']),
+        messageId: JsonUtils.stringValue(content['message_id'])
+      );
+    }
+  }
+
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
     String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) ?? JsonUtils.stringValue(content['entity_id']) : null;
     if (StringUtils.isNotEmpty(appointmentId)) {
@@ -899,6 +923,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
           setState(() {}); // Force the postFrameCallback invokation.
         }
       }
+    }
+  }
+
+  Future<void> _onWellnessCategorySelect(Map<String, dynamic>? content) async {
+    String? categoryCode = (content != null) ? JsonUtils.stringValue(content['id']) : null;
+    WellnessContent? category = WellnessContentImpl.fromString(categoryCode);
+    if (category != null) {
+      _onFirebaseWellnessNotification(category);
     }
   }
 
@@ -1097,6 +1129,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+    }
+  }
+
+  void _onFirebaseSocialMessageNotification(param) {
+    if (param is Map<String, dynamic>) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(param["entity_id"]),
+        messageId: JsonUtils.stringValue(param["message_id"]),
+      );
+    }
+  }
+
+  void _presentSocialMessagePanel({String? conversationId, String? messageId}) {
+    if (StringUtils.isNotEmpty(conversationId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId, targetMessageId: messageId,)));;
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }
   }
 

@@ -18,7 +18,9 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
     AssistantProvider.uiuc: List<Message>.empty(growable: true),
-    AssistantProvider.google: List<Message>.empty(growable: true)
+    AssistantProvider.google: List<Message>.empty(growable: true),
+    AssistantProvider.azure: List<Message>.empty(growable: true),
+    AssistantProvider.grok: List<Message>.empty(growable: true)
   };
 
   // Singleton Factory
@@ -46,7 +48,9 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Future<void> initService() async {
-    _loadAllMessages();
+    if (Auth2().isLoggedIn) {
+      _loadAllMessages();
+    }
     _initFaqs();
   }
 
@@ -58,7 +62,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Content()]);
+    return Set.from([Auth2(), Content()]);
   }
 
   // NotificationsListener
@@ -68,7 +72,11 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      _loadAllMessages();
+      if (Auth2().isLoggedIn) {
+        _loadAllMessages();
+      } else {
+        _clearAllMessages();
+      }
     }
   }
 
@@ -118,6 +126,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
             user: false));
   }
 
+  void _clearAllMessages() {
+    for (AssistantProvider provider in AssistantProvider.values) {
+      if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
+        _displayMessages[provider]!.clear();
+      }
+    }
+  }
+
   void addMessage({required AssistantProvider provider, required Message message}) {
     _displayMessages[provider]!.add(message);
   }
@@ -151,6 +167,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     await Future.wait([
       _loadMessages(provider: AssistantProvider.uiuc),
       _loadMessages(provider: AssistantProvider.google),
+      _loadMessages(provider: AssistantProvider.azure),
     ]);
   }
 

@@ -227,7 +227,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     if (contentCodes != null) {
       contentValues = [];
       for (String code in contentCodes) {
-        WellnessContent? value = _getContentValueFromCode(code);
+        WellnessContent? value = WellnessContentImpl.fromString(code);
         if (value != null) {
           contentValues.add(value);
         }
@@ -267,32 +267,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   void _changeSettingsContentValuesVisibility() {
     _contentValuesVisible = !_contentValuesVisible;
     setStateIfMounted(() { });
-  }
-
-  WellnessContent? _getContentValueFromCode(String? code) {
-    if (code == 'daily_tips') {
-      return WellnessContent.dailyTips;
-    } else if (code == 'rings') {
-      return WellnessContent.rings;
-    } else if (code == 'todo_list') {
-      return WellnessContent.todo;
-    } else if (code == 'appointments') {
-      return WellnessContent.appointments;
-    } else if (code == 'health_screener') {
-      return WellnessContent.healthScreener;
-    } else if (code == 'podcast') {
-      return WellnessContent.podcast;
-    } else if (code == 'resources') {
-      return WellnessContent.resources;
-    } else if (code == 'mental_health') {
-      return WellnessContent.mentalHealth;
-    } else if (code == 'success_team') {
-      return WellnessContent.successTeam;
-    } else if (code == 'struggling') {
-      return WellnessContent.struggling;
-    } else {
-      return null;
-    }
   }
 
   PreferredSizeWidget get _headerBar {
@@ -409,4 +383,24 @@ class WellnessFavorite extends Favorite {
   static String favoriteKeyName({String? category}) => (category != null) ? "wellness.$category.widgetIds" : "wellness.widgetIds";
   @override String get favoriteKey => favoriteKeyName(category: category);
   @override String? get favoriteId => id;
+}
+
+// WellnessContentImpl
+
+extension WellnessContentImpl on WellnessContent {
+  static WellnessContent? fromString(String? value) {
+    switch (value) {
+      case 'daily_tips':      return WellnessContent.dailyTips;
+      case 'rings':           return WellnessContent.rings;
+      case 'todo_list':       return WellnessContent.todo;
+      case 'appointments':    return WellnessContent.appointments;
+      case 'health_screener': return WellnessContent.healthScreener;
+      case 'resources':       return WellnessContent.resources;
+      case 'mental_health':   return WellnessContent.mentalHealth;
+      case 'success_team':    return WellnessContent.successTeam;
+      case 'podcast':         return WellnessContent.podcast;
+      case 'struggling':      return WellnessContent.struggling;
+      default:                return null;
+    }
+  }
 }
