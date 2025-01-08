@@ -465,6 +465,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   TimeOfDay? _endTime;
   bool _allDay = false;
 
+  _RecurrenceRepeatType? _repeatType;
+
   Event2Type? _eventType;
   late _Event2Visibility _visibility;
 
@@ -513,6 +515,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   bool _confirmingOnlineUrl = false;
 
   bool _dateTimeSectionExpanded = false;
+  bool _recurrenceSectionExpanded = false;
   bool _typeAndLocationSectionExpanded = false;
   bool _costSectionExpanded = false;
 
@@ -630,6 +633,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
+            _buildRecurrenceDropdownSection(),
             _buildTypeAndLocationDropdownSection(),
             _buildCostDropdownSection(),
             _buildDescriptionSection(),
@@ -1056,6 +1060,107 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     setStateIfMounted(() {
       _allDay = !_allDay;
     });
+  }
+
+  // Recurrence Section - show it only when creating an event
+
+  Widget _buildRecurrenceDropdownSection() => Visibility(visible: widget.isCreate, child: Event2CreatePanel.buildDropdownSectionWidget(
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.recurrence.title', 'RECURRENCE'),
+        required: false,
+        expanded: _recurrenceSectionExpanded,
+        onToggleExpanded: _onToggleRecurrenceSection
+    ),
+    body: _buildRecurrenceSectionBody(),
+    expanded: _recurrenceSectionExpanded,
+  ));
+
+  Widget _buildRecurrenceSectionBody() {
+    List<Widget> contentList = <Widget>[
+      _buildRepeatTypeDropDown(),
+    ];
+
+    //TBD: DD - implement it based on the selection
+
+    // if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
+    //   contentList.addAll(<Widget>[
+    //     Padding(padding: Event2CreatePanel.innerSectionPadding),
+    //     _buildOnlineUrlInnerSection(),
+    //     _buildOnlineMeetingIdInnerSection(),
+    //     _buildOnlinePasscodeInnerSection(),
+    //   ]);
+    // }
+    //
+    // if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
+    //   contentList.addAll(<Widget>[
+    //     Padding(padding: Event2CreatePanel.innerSectionPadding),
+    //     _buildLocationBuildingInnerSection(),
+    //     _buildLocationAddressInnerSection(),
+    //     _buildLocationLatitudeInnerSection(),
+    //     _buildLocationLongitudeInnerSection(),
+    //     _buildSelectLocationButton()
+    //   ]);
+    // }
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
+  }
+
+  Widget _buildRepeatTypeDropDown() {
+    String? title = Localization().getStringEx("panel.event2.create.label.repeat_type.title", "REPEAT");
+    return Semantics(
+        label: title,
+        container: true,
+        child: Row(children: <Widget>[
+          Expanded(
+              flex: 4,
+              child: RichText(
+                  textScaler: MediaQuery.of(context).textScaler,
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+          Container(width: 16),
+          Expanded(
+              flex: 6,
+              child: Container(
+                  decoration: Event2CreatePanel.dropdownButtonDecoration,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 12, right: 8),
+                      child: DropdownButtonHideUnderline(
+                          child: DropdownButton<_RecurrenceRepeatType>(
+                              icon: Styles().images.getImage('chevron-down'),
+                              isExpanded: true,
+                              style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                              hint: Text(
+                                _repeatTypeToDisplayString(_repeatType) ?? '-----',
+                              ),
+                              items: _buildRepeatTypeDropDownItems(),
+                              onChanged: _onRepeatTypeChanged)))))
+        ]));
+  }
+
+  List<DropdownMenuItem<_RecurrenceRepeatType>>? _buildRepeatTypeDropDownItems() {
+    List<DropdownMenuItem<_RecurrenceRepeatType>> menuItems = <DropdownMenuItem<_RecurrenceRepeatType>>[];
+
+    for (_RecurrenceRepeatType repeatType in _RecurrenceRepeatType.values) {
+      menuItems.add(DropdownMenuItem<_RecurrenceRepeatType>(value: repeatType, child: Text(_repeatTypeToDisplayString(repeatType) ?? '')));
+    }
+
+    return menuItems;
+  }
+
+  void _onToggleRecurrenceSection() {
+    Analytics().logSelect(target: "Toggle Recurrence");
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _recurrenceSectionExpanded = !_recurrenceSectionExpanded;
+    });
+  }
+
+  void _onRepeatTypeChanged(_RecurrenceRepeatType? value) {
+    Analytics().logSelect(target: "Recurrence Repeat type selected: $value");
+    Event2CreatePanel.hideKeyboard(context);
+    if ((value != null) && mounted) {
+      setState(() {
+        _repeatType = value;
+      });
+    }
   }
 
   // Event Type, Location and Online Details
@@ -2315,3 +2420,16 @@ _Event2Visibility? _event2VisibilityFromAuthorizationContext(Event2Authorization
 // _ErrorCategory
 
 enum _ErrorCategory { missing, invalid }
+
+// _RecurrenceRepeatType
+
+enum _RecurrenceRepeatType { does_not_repeat, weekly, monthly }
+
+String? _repeatTypeToDisplayString(_RecurrenceRepeatType? value) {
+  switch (value) {
+    case _RecurrenceRepeatType.does_not_repeat: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.does_not_repeat.label', 'Does Not Repeat');
+    case _RecurrenceRepeatType.weekly: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.weekly.label', 'Weekly');
+    case _RecurrenceRepeatType.monthly: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.monthly.label', 'Monthly');
+    default: return null;
+  }
+}
