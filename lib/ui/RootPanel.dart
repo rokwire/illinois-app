@@ -134,6 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsTeam,
       FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifySocialMessageNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyHomeFavoritesNotification,
@@ -208,7 +209,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
-      Social.notifySocialDetail,
+      Social.notifyMessageDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
@@ -310,8 +311,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
     }
-    else if (name == Social.notifySocialDetail) {
-      _onSocialDetail(param);
+    else if (name == Social.notifyMessageDetail) {
+      _onSocialMessageDetail(param);
     }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
@@ -365,8 +366,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
     }
-    else if (name == FirebaseMessaging.notifyConversationNotification) {
-      _onFirebaseConversationNotification(param);
+    else if (name == FirebaseMessaging.notifySocialMessageNotification) {
+      _onFirebaseSocialMessageNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
@@ -867,9 +868,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _presentGroupDetailPanel(groupId: groupId);
   }
 
-  Future<void> _onSocialDetail(Map<String, dynamic>? content) async {
-    String? conversationId = (content != null) ? JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
-    _presentSocialDetailPanel(conversationId: conversationId);
+  Future<void> _onSocialMessageDetail(Map<String, dynamic>? content) async {
+    if ((content != null)) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id']),
+        messageId: JsonUtils.stringValue(content['message_id'])
+      );
+    }
   }
 
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
@@ -1127,15 +1132,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseConversationNotification(param) {
+  void _onFirebaseSocialMessageNotification(param) {
     if (param is Map<String, dynamic>) {
-      _presentSocialDetailPanel(conversationId: JsonUtils.stringValue(param["entity_id"]));
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(param["entity_id"]),
+        messageId: JsonUtils.stringValue(param["message_id"]),
+      );
     }
   }
 
-  void _presentSocialDetailPanel({String? conversationId}) {
+  void _presentSocialMessagePanel({String? conversationId, String? messageId}) {
     if (StringUtils.isNotEmpty(conversationId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId,)));;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId, targetMessageId: messageId,)));;
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }
