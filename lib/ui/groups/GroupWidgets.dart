@@ -15,9 +15,11 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +29,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
+import 'package:illinois/reaction/GroupReactionTest.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -1050,6 +1053,7 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   static const double _smallImageSize = 64;
+  List<String> _reactions = [];
 
   @override
   void initState() {
@@ -1065,6 +1069,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+
+    Map<String, int> uniqueReactions = _uniqueReactions;
+
     return Stack(alignment: Alignment.topRight, children: [
       Semantics(button:true,
         child:GestureDetector(
@@ -1095,18 +1102,18 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat') )),
-                      Visibility(
-                          visible: isRepliesLabelVisible,
-                          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                            Padding(
-                                padding: EdgeInsets.only(left: 8),
-                                child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
-                                    style: Styles().textStyles.getTextStyle('widget.description.small'))),
-                            Padding(
-                                padding: EdgeInsets.only(left: 8),
-                                child: Text(StringUtils.ensureNotEmpty(repliesLabel),
-                                    style: Styles().textStyles.getTextStyle('widget.description.small')))
-                          ])),
+                      // Visibility(
+                      //     visible: isRepliesLabelVisible,
+                      //     child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      //       Padding(
+                      //           padding: EdgeInsets.only(left: 8),
+                      //           child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
+                      //               style: Styles().textStyles.getTextStyle('widget.description.small'))),
+                      //       Padding(
+                      //           padding: EdgeInsets.only(left: 8),
+                      //           child: Text(StringUtils.ensureNotEmpty(repliesLabel),
+                      //               style: Styles().textStyles.getTextStyle('widget.description.small')))
+                      //     ])),
                     ]),
                     Row(
                       children: [
@@ -1146,26 +1153,60 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                   child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
                             ))
                     ],),
-                    // Container(
-                    //   child: Row(
-                    //     crossAxisAlignment: CrossAxisAlignment.center,
-                    //     children: [
-                    //       Expanded(
-                    //         flex: 3,
-                    //         child:Container(
-                    //           padding: EdgeInsets.only(right: 6),
-                    //           child:Text(StringUtils.ensureNotEmpty(creatorName),
-                    //             textAlign: TextAlign.left,
-                    //             style: Styles().textStyles.getTextStyle('widget.description.small')),
-                    //       )),
-                    //       Expanded(
-                    //         flex: 2,
-                    //         child: _buildDisplayDateWidget),
-                    //     ],
-                    //   )
-                    // )
+                    Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              children: [
+                                ...uniqueReactions.keys.map((String reaction) =>
+                                  Padding( padding: EdgeInsets.all(4),
+                                    child: InkWell(
+                                    onTap: () => setStateIfMounted(() => _reactions.remove(reaction)), //TBD call BB to remove reaction
+                                    child: Row(mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(reaction),
+                                        Visibility(visible: uniqueReactions[reaction] != null && uniqueReactions[reaction]! > 1,
+                                          child: Text(uniqueReactions[reaction].toString())
+                                        )
+                                      ])
+                                    )
+                                  )
+                                  ).toList(),
+                                Container(
+                                    padding: EdgeInsets.only(right: 6),
+                                    child: InkWell(
+                                      onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _react),
+                                      child: Padding(padding: EdgeInsets.all(0),
+                                          child: Image.asset("images/add_reaction_icon.png"))
+                                )),
+                              ]
+                            )
+                          ),
+                          Visibility(
+                              visible: isRepliesLabelVisible,
+                              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                Padding(
+                                    padding: EdgeInsets.only(left: 8),
+                                    child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
+                                        style: Styles().textStyles.getTextStyle('widget.description.small'))),
+                                Padding(
+                                    padding: EdgeInsets.only(left: 8),
+                                    child: Text(StringUtils.ensureNotEmpty(repliesLabel),
+                                        style: Styles().textStyles.getTextStyle('widget.description.small')))
+                              ])),
+                        ],
+                      )
+                    )
                   ]))))),
     ]);
+  }
+
+  void _react(emoji.Emoji emoji){
+    setStateIfMounted(() =>
+      _reactions.add(emoji.emoji)
+    );
   }
 
   // ignore: unused_element
@@ -1190,6 +1231,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
+    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
   }
 
   void _onLinkTap(String? url) {
@@ -1198,7 +1240,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   int get _visibleRepliesCount {
-    int result = 0;
+    int result = 2;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
     List<Comment>? replies = null;
@@ -1213,6 +1255,14 @@ class _GroupPostCardState extends State<GroupPostCard> {
       result = replies.length;
     }
     return result;
+  }
+
+
+  Map<String, int> get _uniqueReactions{
+    return _reactions.fold(<String, int>{}, (map, element) {
+      map[element] = (map[element] ?? 0) + 1;
+      return map;
+    });
   }
 }
 
@@ -3509,5 +3559,26 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
+  }
+}
+
+typedef EmojiSelector = void Function(emoji.Emoji);
+class ReactionKeyboard {
+  static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 310,
+          child: emoji.EmojiPicker(
+            onEmojiSelected: ((category, emoji) {
+              // pop the bottom sheet
+              Navigator.pop(context);
+              onSelect.call(emoji);
+            }),
+          ),
+        );
+      },
+    );
   }
 }
