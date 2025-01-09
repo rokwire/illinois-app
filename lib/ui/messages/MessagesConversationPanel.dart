@@ -64,6 +64,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   int _messagesLength = 0;
   bool _hasMoreMessages = false;
   final int _messagesPageSize = 20;
+  Message? _editingMessage;
 
   final Set<String> _globalIds = {};
 
@@ -256,43 +257,66 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     Key? contentItemKey = isTargetCard ? _targetMessageContentItemKey : null;
     Decoration cardDecoration = isTargetCard ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
-    return FutureBuilder<Widget>(
-      future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
-      builder: (context, snapshot) {
-        Widget avatar = snapshot.data ??
-            (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+    return GestureDetector(
+      onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null,
+      child: FutureBuilder<Widget>(
+        future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
+        builder: (context, snapshot) {
+          Widget avatar = snapshot.data ??
+              (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
-        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
-          Padding(padding: EdgeInsets.all(16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Expanded(child:
-                  InkWell(onTap: () => _onTapAccount(message), child:
-                    Row(children: [
-                      avatar,
-                      SizedBox(width: 8),
-                      Expanded(child:
-                        Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
-                      ),
-                    ],)
+          return Container(
+            key: contentItemKey,
+            margin: EdgeInsets.only(bottom: 16),
+            decoration: cardDecoration,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _onTapAccount(message),
+                      child: Row(children: [
+                        avatar,
+                        SizedBox(width: 8),
+                        Expanded(
+                            child: Text(
+                                "${message.sender?.name ?? 'Unknown'}",
+                                style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
+                            )
+                        ),
+                      ]),
+                    ),
                   ),
+                  if (message.dateSentUtc != null)
+                    Text(
+                      AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
+                      style: Styles().textStyles.getTextStyle('widget.description.small'),
+                    ),
+                ]),
+                SizedBox(height: 8),
+                LinkText(
+                  message.message ?? '',
+                  textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                  linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                  onLinkTap: _onTapLink,
                 ),
-                if (message.dateSentUtc != null)
-                  Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
-              ],),
-              SizedBox(height: 8),
-              //Text(message.message ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.small')),
-              LinkText(message.message ?? '',
-                textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                onLinkTap: _onTapLink,
-              ),
-            ]),
-          ),
-        );
-      },
+              ]),
+            ),
+          );
+        },
+      ),
     );
   }
+
+  void _onMessageLongPress(Message message) { // NEW CODE
+    setState(() {
+      _editingMessage = message;
+      _inputController.text = message.message ?? '';
+    });
+    FocusScope.of(context).requestFocus(_inputFieldFocus); // optional: focus the input
+  }
+
 
   void _onTapAccount(Message message) {
     Analytics().logSelect(target: 'View Account');
@@ -590,17 +614,24 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Future<void> _onPullToRefresh() async =>
     _refreshMessages();
 
-  Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text) && _conversationId != null && _currentUserId != null && _submitting == false) {
+  Future<void> _submitMessage(String messageText) async {
+    messageText = messageText.trim();
+
+    if (_editingMessage != null && StringUtils.isNotEmpty(messageText)) { // NEW CODE
+      await _updateExistingMessage(_editingMessage!, messageText);
+      return;
+    }
+
+    if (StringUtils.isNotEmpty(_inputController.text) && _conversationId != null && _currentUserId != null && !_submitting) {
       FocusScope.of(context).requestFocus(FocusNode());
 
-      String messageText = _inputController.text.trim();
+      String newText = _inputController.text.trim();
       _inputController.text = '';
 
       // Create a temporary message and add it immediately
       Message tempMessage = Message(
         sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
-        message: messageText,
+        message: newText,
         dateSentUtc: DateTime.now().toUtc(),
       );
 
@@ -615,7 +646,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         // Send to the backend
         List<Message>? newMessages = await Social().createConversationMessage(
           conversationId: _conversationId!,
-          message: messageText,
+          message: newText,
         );
 
         if (newMessages != null && newMessages.isNotEmpty) {
@@ -623,29 +654,74 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           // Update the temporary message with the server's message if needed
           int index = _messages.indexOf(tempMessage);
           if (index >= 0) {
-            _inputController.text = '';
-            setState(() {
-              _submitting = false;
-              _messages[index] = serverMessage;
-              Message.sortListByDateSent(_messages);
-            });
+            _messages[index] = serverMessage;
+            Message.sortListByDateSent(_messages);
           }
         } else {
+          // If creation failed
           _messages.remove(tempMessage);
-          setState(() {
-            _submitting = false;
-          });
           AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
         }
       } catch (e) {
-        // On error, remove the temporary message
         _messages.remove(tempMessage);
-        setState(() {
-          _submitting = false;
-        });
         AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
       }
+
+      // Done submitting new message
+      setState(() {
+        _submitting = false;
+      });
     }
+  }
+
+  Future<void> _updateExistingMessage(Message oldMessage, String newText) async {
+    if (_conversationId == null || oldMessage.globalId == null) {
+      return;
+    }
+
+    setState(() {
+      _submitting = true;
+    });
+
+    try {
+      bool success = await Social().updateConversationMessage(
+        conversationId: _conversationId!,
+        globalMessageId: oldMessage.globalId!,
+        newText: newText,
+      );
+
+      if (success) {
+        int index = _messages.indexWhere((msg) => msg.globalId == oldMessage.globalId);
+        if (index >= 0) {
+
+          Message updatedMessage = Message(
+            id: oldMessage.id,
+            globalId: oldMessage.globalId,
+            sender: oldMessage.sender,
+            message: newText,
+            dateSentUtc: oldMessage.dateSentUtc, // or DateTime.now().toUtc() if changed
+          );
+
+          _messages[index] = updatedMessage;
+          Message.sortListByDateSent(_messages);
+          FocusScope.of(context).unfocus();
+        }
+        else {
+          debugPrint('Could not find the old message with globalId: ${oldMessage.globalId} to replace.');
+        }
+      } else {
+        AppToast.showMessage(Localization().getStringEx('', 'Failed to update message'));
+      }
+    } catch (e) {
+      AppToast.showMessage(Localization().getStringEx('', 'Error updating message'));
+    }
+
+    setState(() {
+      _editingMessage = null;
+      _inputController.text = '';
+      _submitting = false;
+      _shouldScrollToTarget = _ScrollTarget.bottom;
+    });
   }
 
   void _startListening() {
