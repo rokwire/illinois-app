@@ -61,6 +61,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   // Conversation and Messages loaded from the backend
   Conversation? _conversation;
   List<Message> _messages = [];
+  int _messagesLength = 0;
   bool _hasMoreMessages = false;
   final int _messagesPageSize = 20;
 
@@ -486,8 +487,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
     futures.add(Social().loadConversationMessages(
       conversationId: _conversationId!,
-      offset: 0,
-      limit: _messagesPageSize,
+      offset: 0, limit: _messagesPageSize,
       extendLimitToMessageId: widget.targetMessageId,
     ));
 
@@ -506,6 +506,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _globalIds.clear();
           _messages = (_conversation?.isGroupConversation == true) ?
             _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
+          _messagesLength = messages.length;
           _hasMoreMessages = (_messagesPageSize <= messages.length);
           _shouldScrollToTarget = ((widget.targetMessageId != null) || (widget.targetMessageGlobalId != null)) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
         }
@@ -519,20 +520,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
 
     // Use the Social API to load conversation messages
-    int messagesCount = max(_messages.length, _messagesPageSize);
-    List<Message>? loadedMessages = await Social().loadConversationMessages(
+    int messagesCount = max(_messagesLength, _messagesPageSize);
+    List<Message>? messages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
-      offset: 0,
-      limit: messagesCount,
+      offset: 0, limit: messagesCount,
     );
 
     setStateIfMounted(() {
-      if (loadedMessages != null) {
-        Message.sortListByDateSent(loadedMessages);
+      if (messages != null) {
+        Message.sortListByDateSent(messages);
         _globalIds.clear();
         _messages = (_conversation?.isGroupConversation == true) ?
-          _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
-        _hasMoreMessages = (messagesCount <= loadedMessages.length);
+          _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
+        _messagesLength = messages.length;
+        _hasMoreMessages = (messagesCount <= messages.length);
         _shouldScrollToTarget = ((widget.targetMessageId != null) || (widget.targetMessageGlobalId != null)) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
@@ -553,10 +554,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
 
     // Use the Social API to load conversation messages
+    List<Message> messages = <Message>[];
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
       limit: _messagesPageSize,
-      offset: _messages.length,
+      offset: _messagesLength,
     );
 
     setStateIfMounted(() {
@@ -567,6 +569,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
         newMessages.addAll(_messages);
         _messages = newMessages;
+        _messagesLength += loadedMessages.length;
         _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
         _shouldScrollToTarget = null;
       }
