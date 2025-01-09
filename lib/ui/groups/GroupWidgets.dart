@@ -1103,7 +1103,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             )
                           )
                         ),
-                        _buildDisplayDateWidget,
                       ],
                     ),
                     Container(height: 16.0),
@@ -1212,17 +1211,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
             )
         )
     );
-  }
-
-  Widget get _buildDisplayDateWidget {
-    String displayDateTime = StringUtils.ensureNotEmpty(widget.post?.displayDateTime);
-    return Visibility(visible: widget.post?.isScheduled != true, child:
-    Semantics(child: Container(
-        padding: EdgeInsets.only(left: 6),
-        child: Text(displayDateTime,
-            semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""}",
-            textAlign: TextAlign.right,
-            style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')))));
   }
 
   Widget get _buildScheduledDateWidget => Visibility(visible: widget.post?.isScheduled == true, child:

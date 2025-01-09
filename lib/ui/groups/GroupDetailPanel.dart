@@ -739,7 +739,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       contentList.add(GestureDetector(onTap: () => { if (_canViewMembers) {_onTapMembers()} }, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
           Container(decoration: (_canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
-            Text(members, style:  Styles().textStyles.getTextStyle('widget.title.small'))
+            Text(members, style:  Styles().textStyles.getTextStyle('widget.title.dark.small'))
           ),
         ),
       ));
@@ -747,13 +747,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     if (StringUtils.isNotEmpty(pendingMembers)) {
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small') ,)
+        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.dark.small') ,)
       ));
     }
 
     if (StringUtils.isNotEmpty(attendedMembers)) {
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('widget.title.small'),)
+        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('widget.title.dark.small'),)
       ));
     }
 
@@ -988,11 +988,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          RichText(textScaler: MediaQuery.of(context).textScaler,
-            text: TextSpan(text: _group?.title?.toUpperCase() ?? '',  style:  Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'),
-              children: [
-                WidgetSpan(alignment: PlaceholderAlignment.middle,
-                    child: _buildManagedBadge),],))
+          Padding(
+            padding: EdgeInsets.only(top: showButtons ? 8.0 : 0.0),
+            child: RichText(textScaler: MediaQuery.of(context).textScaler,
+              text: TextSpan(text: _group?.title?.toUpperCase() ?? '',  style:  Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'),
+                children: [
+                  WidgetSpan(alignment: PlaceholderAlignment.middle,
+                      child: _buildManagedBadge),],)),
+          )
         ),
         showButtons ? _buildTitleIconButtons : Container()
       ]);
@@ -1019,10 +1022,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           child: RichText(textScaler: MediaQuery.of(context).textScaler,
             text: TextSpan(text: Localization().getStringEx("","Your activity in the app is private. Please review the "), style:  Styles().textStyles.getTextStyle("widget.title.tiny"),
             children: [
-              TextSpan(text: Localization().getStringEx("", "Student Code."), style: Styles().textStyles.getTextStyle("widget.title.tiny.underline.variant"),  recognizer: TapGestureRecognizer()..onTap = () => _onPrivacy()),
-              WidgetSpan(
-                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Styles().images.getImage('external-link', excludeFromSemantics: true)),
-              )
+              TextSpan(text: Localization().getStringEx("", "Student Code."), style: Styles().textStyles.getTextStyle("widget.title.tiny")),  //recognizer: TapGestureRecognizer()..onTap = () => _onPrivacy()),
+              // WidgetSpan(
+              //     child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Styles().images.getImage('external-link', excludeFromSemantics: true)),
+              // )
             ],),
           ),
         )
@@ -1035,9 +1038,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
       hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
       child: InkWell(onTap: _onPolicy, child:
-      Padding(padding: EdgeInsets.all(8), child:
-      Styles().images.getImage('info', excludeFromSemantics: true)
-      ),
+        Padding(padding: EdgeInsets.all(8), child:
+          Styles().images.getImage('info', excludeFromSemantics: true)
+        ),
       ),
     )] : null;
 
@@ -1047,7 +1050,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       hint: Localization().getStringEx('', ''),
       child: InkWell(onTap: _onGroupOptionsTap, child:
         Padding(padding: EdgeInsets.all(8), child:
-        Styles().images.getImage('more', excludeFromSemantics: true)
+          Styles().images.getImage('more', excludeFromSemantics: true)
         ),
       ),
     )] : null;
@@ -1057,9 +1060,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       label: Localization().getStringEx('', 'Create'),
       hint: Localization().getStringEx('', ''),
       child: InkWell(onTap: _onCreateOptionsTap, child:
-      Padding(padding: EdgeInsets.all(8), child:
-      Styles().images.getImage('plus-circle', excludeFromSemantics: true)
-      ),
+        Padding(padding: EdgeInsets.all(8), child:
+          Styles().images.getImage('plus-circle', excludeFromSemantics: true)
+        ),
       ),
     )] : null;
 
@@ -1475,10 +1478,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     ),);
   }
 
-  void _onPrivacy () {
-    Analytics().logSelect(target: 'Privacy');
-    UrlUtils.launchExternal("https://studentcode.illinois.edu");
-  }
+  // void _onPrivacy () {
+  //   Analytics().logSelect(target: 'Privacy');
+  //   UrlUtils.launchExternal("https://studentcode.illinois.edu");
+  // }
 
   void _onTapManagedGroupBadge(){ //TBD
     Analytics().logSelect(target: 'Managed Group Badge');

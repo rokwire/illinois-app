@@ -309,7 +309,7 @@
     "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
     "panel.browse.section.dinings.title": "Dining",
     "panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
-    "panel.browse.section.directory.title": "Directory of Users",
+    "panel.browse.section.directory.title": "Directory",
     "panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
@@ -449,7 +449,7 @@
     "panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
     "panel.browse.entry.wellness.wellness_struggling.title": "I'm Struggling",
 
-    "panel.assistant.header.title": "NEOM U Assistant",
+    "panel.assistant.header.title": "NEOM U ASSISTANT",
     "panel.assistant.offline.label": "The NEOM U Assistant is not available while offline.",
     "panel.assistant.clear_all.label": "Clear All",
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your NEOM U Assistant history? This action cannot be undone.",

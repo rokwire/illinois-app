@@ -119,7 +119,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
     Expanded(child:
       LinkButton(
         title: AppTextUtils.appTitleString('panel.profile.info.command.link.share.text', 'Share my info outside the ${AppTextUtils.appTitleMacro} app'),
-        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline.dark'),
         textAlign: TextAlign.left,
         padding: EdgeInsets.symmetric(vertical: 16),
         onTap: _onShare,

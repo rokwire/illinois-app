@@ -844,11 +844,11 @@ class ProfilePromptLogoutWidget extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Text(AppTextUtils.appTitleString("panel.settings.home.logout.title", AppTextUtils.appTitleMacro),
-            style: Styles().textStyles.getTextStyle("widget.message.light.extra_large"),
+            style: Styles().textStyles.getTextStyle("widget.message.extra_large.fat"),
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
             Text(_promptText(), textAlign: TextAlign.left,
-              style: Styles().textStyles.getTextStyle("widget.message.light.medium")
+              style: Styles().textStyles.getTextStyle("widget.message.medium")
             ),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[

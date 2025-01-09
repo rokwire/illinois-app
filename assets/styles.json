@@ -329,6 +329,7 @@
     "widget.detail.dark.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textDark"},
     "widget.detail.dark.regular": { "font_family": "regular", "size": 16.0, "color": "textDark"},
     "widget.detail.dark.small": {"font_family": "regular", "size": 14.0, "color": "textDark"},
+    "widget.detail.dark.small.fat": {"font_family": "bold", "size": 14.0, "color": "textDark"},
     "widget.detail.light.small.thin": {"font_family": "regular", "size": 14.0, "color": "textLight"},
     "widget.detail.light.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textLight"},
     "widget.detail.light.regular": {"font_family": "regular", "size": 16.0, "color": "textLight"},

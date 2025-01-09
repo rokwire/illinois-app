@@ -140,8 +140,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                 child: Semantics(container: true,
                   child: Padding(
                     padding: EdgeInsets.only(left: 16),
-                    child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
-                        style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
+                    child: Text(Localization().getStringEx('panel.assistant.header.title', 'NEOM U ASSISTANT'),
+                        style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"))))),
             Visibility(visible: (_selectedContent == AssistantContent.uiuc_conversation) && !Config().assistantComingSoon, child: LinkButton(
               onTap: _onTapClearAll,
               title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'),
@@ -156,9 +156,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     onTap: _onTapClose,
                     child: Container(
                         padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
+                        child: Styles().images.getImage('close-circle-white', excludeFromSemantics: true))))
           ])),
-      Container(color: Styles().colors.surfaceAccent, height: 1),
       Expanded(child: _buildPage(context))
     ]);
   }

@@ -20,6 +20,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:neom/model/Assistant.dart';
 import 'package:neom/service/Assistant.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/IlliniCash.dart';
@@ -151,6 +152,10 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   Widget build(BuildContext context) {
     super.build(context);
 
+    if (Config().assistantComingSoon) {
+      return _comingSoon();
+    }
+
     _scrollToBottomIfNeeded();
 
     return Positioned.fill(
@@ -177,6 +182,20 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     _checkKeyboardVisible.then((visible){
       _onKeyboardVisibilityChanged(visible);
     });
+  }
+
+  Widget _comingSoon() {
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 56.0),
+          child: Text(Localization().getStringEx('panel.assistant.coming_soon.message', '{{app_title}} Assistant\nComing Soon!').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+            style: Styles().textStyles.getTextStyle('widget.title.light.large.fat'),
+            textAlign: TextAlign.center,),
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildContentList() {
