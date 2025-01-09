@@ -871,7 +871,12 @@
     "attendance": {"src": "0xf7f3", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "report": {"src": "0xf06a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
 
-    "clock": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "clock": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+
+    "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "envelope": {"src": "0xf0e0", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "message-lines": {"src": "0xf4a6", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "copy-fa": {"src": "0xf0c5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "star-partially-filled": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 19},
