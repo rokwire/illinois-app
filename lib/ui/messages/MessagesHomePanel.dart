@@ -39,15 +39,17 @@ import 'package:sprintf/sprintf.dart';
 class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'messages_home_content_panel';
 
-  MessagesHomePanel._({Key? key}) : super(key: key);
+  static int get conversationsPageSize => _MessagesHomePanelState._conversationsPageSize;
 
-  @override
-  _MessagesHomePanelState createState() => _MessagesHomePanelState();
+  // 1) Add a field to hold the search text
+  final String? search;
+  final List<Conversation>? conversations;
 
-  @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Messages;
+  // Make the constructor private, but accept the new param
+  MessagesHomePanel._({Key? key, this.search, this.conversations}) : super(key: key);
 
-  static void present(BuildContext context) {
+  // 2) Add an optional `search` param to present()
+  static void present(BuildContext context, { String? search, List<Conversation>? conversations }) {
     if (!Auth2().isLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.messages', 'Messages'));
     }
@@ -64,12 +66,17 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
         backgroundColor: Styles().colors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-        builder: (context) {
-          return MessagesHomePanel._();
-        }
+        // Pass the `search` parameter into our constructor:
+        builder: (context) => MessagesHomePanel._(search: search, conversations: conversations),
       );
     }
   }
+
+  @override
+  _MessagesHomePanelState createState() => _MessagesHomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Messages;
 }
 
 class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -88,7 +95,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.last_month", "Last Month"), value: _TimeFilter.LastMonth),
   ];
 
-  final int _conversationsPageSize = 20;
+  static const int _conversationsPageSize = 20;
 
   _TimeFilter? _selectedTime;
   bool? _selectedMutedValue;
@@ -115,13 +122,20 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     ]);
 
     _scrollController.addListener(_scrollListener);
-    _selectedMutedValue = false;
-    _loadContent();
+    _searchText = widget.search ?? '';
+
+    if (widget.conversations?.isNotEmpty == true) {
+      _conversations = widget.conversations!;
+    }
+    else {
+      _loadContent();
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
     NotificationService().unsubscribe(this);
   }
 
@@ -845,12 +859,13 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   // Content
 
-  Future<void> _loadContent() async{
+  Future<void> _loadContent() async {
     setStateIfMounted(() {
       _loading = true;
     });
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    // Load all conversations
     List<Conversation>? conversations = await Social().loadConversations(
       mute: _selectedMutedValue,
       offset: 0,
@@ -859,22 +874,22 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       fromTime: selectedTimeInterval?.fromTime,
       toTime: selectedTimeInterval?.toTime
     );
+
     if (mounted) {
       setState(() {
+        _loading = false;
         if (conversations != null) {
           _conversations = conversations;
           Conversation.sortListByLastActivityTime(_conversations);
           _hasMoreConversations = (_conversationsPageSize <= conversations.length);
-        }
-        else {
+        } else {
           _conversations.clear();
           _hasMoreConversations = null;
         }
-        // _contentList = _buildContentList();
-        _loading = false;
       });
     }
   }
+
 
   Future<void> _loadMoreContent() async {
     setState(() {

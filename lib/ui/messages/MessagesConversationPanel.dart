@@ -27,10 +27,13 @@ import 'package:url_launcher/url_launcher.dart';
 class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
   final String? conversationId;
-  MessagesConversationPanel({Key? key, this.conversation, this.conversationId}) : super(key: key);
+  final String? targetMessageId;
+  MessagesConversationPanel({Key? key, this.conversation, this.conversationId, this.targetMessageId}) : super(key: key);
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
+
+enum _ScrollTarget { bottom, targetMessage }
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
@@ -38,10 +41,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
+  final GlobalKey _targetMessageContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
 
-  bool _shouldScrollToBottom = false;
+  _ScrollTarget? _shouldScrollToTarget;
   Map<String, Uint8List?> _userPhotosCache = {};
 
   bool _listening = false;
@@ -229,9 +233,25 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
+  Decoration get _messageCardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    //boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
+
+  Decoration get _highlightedMessageCardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
+
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
+    Key? contentItemKey = (message.id == widget.targetMessageId) ? _targetMessageContentItemKey : null;
+    Decoration cardDecoration = (message.id == widget.targetMessageId) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
     return FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
@@ -239,7 +259,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         Widget avatar = snapshot.data ??
             (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
-        return Container(margin: EdgeInsets.only(bottom: 16), decoration: BoxDecoration(color: Styles().colors.white,), child:
+        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
           Padding(padding: EdgeInsets.all(16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
@@ -466,6 +486,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       conversationId: _conversationId!,
       offset: 0,
       limit: _messagesPageSize,
+      extendLimitToMessageId: widget.targetMessageId,
     ));
 
     List<dynamic> results = await Future.wait(futures);
@@ -480,10 +501,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         }
         if (messages != null) {
           Message.sortListByDateSent(messages);
+          _globalIds.clear();
           _messages = (_conversation?.isGroupConversation == true) ?
             _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
           _hasMoreMessages = (_messagesPageSize <= messages.length);
-          _shouldScrollToBottom = true;
+          _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
         }
       });
     }
@@ -495,10 +517,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
 
     // Use the Social API to load conversation messages
+    int messagesCount = max(_messages.length, _messagesPageSize);
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
-      limit: max(_messages.length, _messagesPageSize),
       offset: 0,
+      limit: messagesCount,
     );
 
     setStateIfMounted(() {
@@ -507,8 +530,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _globalIds.clear();
         _messages = (_conversation?.isGroupConversation == true) ?
           _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
-        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        _shouldScrollToBottom = true;
+        _hasMoreMessages = (messagesCount <= loadedMessages.length);
+        _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
         // If null, silently ignore the error
@@ -543,7 +566,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         newMessages.addAll(_messages);
         _messages = newMessages;
         _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        _shouldScrollToBottom = false;
+        _shouldScrollToTarget = null;
       }
     });
   }
@@ -580,7 +603,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _submitting = true;
         _messages.add(tempMessage);
         Message.sortListByDateSent(_messages);
-        _shouldScrollToBottom = true;
+        _shouldScrollToTarget = _ScrollTarget.bottom;
       });
 
       try {
@@ -652,15 +675,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _onKeyboardVisibilityChanged(bool visible) {
     setStateIfMounted(() {
-      _shouldScrollToBottom = true;
+      _shouldScrollToTarget = _ScrollTarget.bottom;
     });
   }
 
   void _scrollToBottomIfNeeded() {
-    BuildContext? handleContext = _lastContentItemKey.currentContext;
-    if (handleContext != null && _shouldScrollToBottom) {
-      Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
-      _shouldScrollToBottom = false;
+    BuildContext? scrollToContext;
+    switch (_shouldScrollToTarget) {
+      case _ScrollTarget.bottom: scrollToContext = _lastContentItemKey.currentContext; break;
+      case _ScrollTarget.targetMessage: scrollToContext = _targetMessageContentItemKey.currentContext; break;
+      default: break;
+    }
+    if ((scrollToContext != null) && scrollToContext.mounted) {
+      Scrollable.ensureVisible(scrollToContext, duration: Duration(milliseconds: 500)).then((_) {});
+      _shouldScrollToTarget = null;
     }
   }
 

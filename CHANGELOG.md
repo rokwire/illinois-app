@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.35] - 2025-01-08
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+### Added
+- Start conversation to a specific user from the directory [#4555](https://github.com/rokwire/illinois-app/issues/4555)
+- New assistant provider - Grok [#4573](https://github.com/rokwire/illinois-app/issues/4573).
+### Fixed
+- Fixed social message deep link support, ensure message visibility in MessagesConversionPanel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+
+## [6.1.34] - 2025-01-07
 ### Changed
 - User Directory visibility control moved one level up [#4568](https://github.com/rokwire/illinois-app/issues/4568).
 

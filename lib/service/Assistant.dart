@@ -19,7 +19,8 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
     AssistantProvider.uiuc: List<Message>.empty(growable: true),
     AssistantProvider.google: List<Message>.empty(growable: true),
-    AssistantProvider.azure: List<Message>.empty(growable: true)
+    AssistantProvider.azure: List<Message>.empty(growable: true),
+    AssistantProvider.grok: List<Message>.empty(growable: true)
   };
 
   // Singleton Factory

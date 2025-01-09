@@ -23,11 +23,7 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget {
 
 class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
 
-  GlobalKey<ProfileInfoPageState> _profileKey = GlobalKey();
   bool _onboarding2Progress = false;
-
-  bool get _isPreviewMode => (_profileKey.currentState?.previewMode == true);
-  bool get _isAccountPublic => (Auth2().account?.privacy?.public == true);
 
   @override
   void initState() {
@@ -86,7 +82,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
 
   Widget get _profileWidget =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
-      ProfileInfoPage(key: _profileKey, contentType: ProfileInfo.directoryInfo, onStateChanged: _onProfileStateChanged,),
+      ProfileInfoPage(contentType: ProfileInfo.directoryInfo, onStateChanged: _onProfileStateChanged,),
     );
 
   Widget get _footerWidget =>  _onboarding2Progress ?
