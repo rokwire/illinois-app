@@ -1937,7 +1937,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         postsContent.add(Container(height: 16));
       }
 
-
       postsContent.add(GroupPostCard(
         key: (i == 0) ? _lastPostKey : null,
         post: post,

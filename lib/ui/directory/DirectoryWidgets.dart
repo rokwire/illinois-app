@@ -314,7 +314,9 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
 
   Decoration get _cardDecoration => BoxDecoration(
     color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: _cardBorderRadiusGeometry,
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]
   );
 
   BorderRadiusGeometry get _cardBorderRadiusGeometry =>

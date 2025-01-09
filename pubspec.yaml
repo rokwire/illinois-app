@@ -11,7 +11,7 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 6.1.35+2235
+version: 6.1.36+2236
 
 publish_to: none
 
@@ -69,7 +69,7 @@ dependencies:
   flutter_markdown: ^0.7.4
   quick_actions: ^1.0.8
   link_text: ^0.2.1
-#  emoji_picker_flutter: ^4.2.0
+  emoji_picker_flutter: ^4.2.0
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
