@@ -129,69 +129,100 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             controller: _scrollController,
             child: Column(children: [
               Container(height: _sliverHeaderHeight ?? 0),
-              _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
+              _isEditMainPost /*|| StringUtils.isNotEmpty(_post?.imageUrl)*/
                   ? ImageChooserWidget(
                       key: _postImageHolderKey,
                       buttonVisible: _isEditMainPost,
                       imageUrl: _isEditMainPost ? _mainPostUpdateData?.imageUrl : _post?.imageUrl,
                       onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url)
                   : Container(),
+              Visibility(visible: _post?.isMessage == true,
+                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
+                    GroupMembersSelectionWidget(
+                      selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(
+                          selectedAccountIds: (_isEditMainPost
+                              ? MemberExt.extractUserIds(_mainPostUpdateData?.members)
+                              : _post?.getMemberAccountIds(groupId: _groupId)),
+                          upToDateMembers: _allMembersAllowedToPost),
+                      allMembers: _allMembersAllowedToPost,
+                      enabled: _isEditMainPost,
+                      groupId: _groupId,
+                      groupPrivacy: widget.group.privacy,
+                      onSelectionChanged: (members) {
+                        setStateIfMounted(() {
+                          _mainPostUpdateData?.members = members;
+                        });
+                      }))),
+              Visibility(visible: widget.post?.isScheduled == true, child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
+                  GroupScheduleTimeWidget(
+                    timeZone: null,//TBD pass timezone
+                    scheduleTime: widget.post?.dateActivatedUtc,
+                    enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
+                    onDateChanged: (DateTime? dateTimeUtc){
+                      setStateIfMounted(() {
+                        Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
+                        _mainPostUpdateData?.dateScheduled = dateTimeUtc;
+                      });
+                    },
+                  )
+                )
+              ),
               _buildPostContent(),
               _buildRepliesSection(),
-              _buildPostEdit()
+              _buildPostInputSection(),
             ])),
           Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              Row(children: [
-                Expanded(child:
-                  Semantics(sortKey: OrdinalSortKey(1), container: true, child:
-                    Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
-                    )
-                  )
-                ),
-
-                Visibility(
-                  visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
-                    child: GroupReaction(
-                      groupId: _groupId,
-                      entityId: _post?.id,
-                      reactionSource: SocialEntityType.post
-                    ),
+                Row(children: [
+                  Expanded( child:  Container(),
+                    // Semantics(sortKey: OrdinalSortKey(1), container: true, child:
+                    //   Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
+                    //       style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
+                    //   )
+                    // )
                   ),
-                ),
+                  // Visibility(
+                  //   visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
+                  //   child: Padding(
+                  //     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
+                  //     child: GroupReaction(
+                  //       groupId: _groupId,
+                  //       entityId: _post?.id,
+                  //       reactionSource: SocialEntityType.post
+                  //     ),
+                  //   ),
+                  // ),
 
-                Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
-                  Semantics(container: true, sortKey: OrdinalSortKey(5), child:
-                    Container(child:
-                      Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
-                        GestureDetector(onTap: _onTapEditMainPost, child:
-                          Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                            Styles().images.getImage('edit', excludeFromSemantics: true))))))),
-
-                Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
-                  Semantics(container: true, sortKey: OrdinalSortKey(5), child:
-                    Container(child:
-                      Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
-                        GestureDetector(onTap: _onTapDeletePost, child:
+                  Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
+                    Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                      Container(child:
+                        Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
+                          GestureDetector(onTap: _onTapEditMainPost, child:
                             Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                              Styles().images.getImage('trash', excludeFromSemantics: true))))))),
+                              Styles().images.getImage('edit', excludeFromSemantics: true))))))),
 
-                Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
-                  Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
-                    GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
-                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                          Styles().images.getImage('report', excludeFromSemantics: true))))),
+                  Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
+                    Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                      Container(child:
+                        Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
+                          GestureDetector(onTap: _onTapDeletePost, child:
+                              Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                Styles().images.getImage('trash', excludeFromSemantics: true))))))),
 
-                Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
-                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
-                    GestureDetector(onTap: _onTapHeaderReply, child:
-                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                          Styles().images.getImage('reply', excludeFromSemantics: true))))),
+                  Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
+                    Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
+                      GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
+                          Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                            Styles().images.getImage('report', excludeFromSemantics: true))))),
 
-              ]),
+                  Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
+                    Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
+                      GestureDetector(onTap: _onTapHeaderReply, child:
+                          Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
+                            Styles().images.getImage('reply', excludeFromSemantics: true))))),
+
+                ]),
             ])
           )
       ]),
@@ -216,16 +247,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Visibility(visible: !_isEditMainPost,
-                          child: Semantics(
-                              container: true,
-                              child:
-                              HtmlWidget(
-                                  StringUtils.ensureNotEmpty(_post?.body),
-                                  onTapUrl : (url) {_onTapPostLink(url); return true;},
-                                  textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
-                              )
-                          )),
+                      Visibility(visible: !_isEditMainPost, child:
+                              // Semantics(
+                          //     container: true,
+                          //     child:
+                          //     HtmlWidget(
+                          //         StringUtils.ensureNotEmpty(_post?.body),
+                          //         onTapUrl : (url) {_onTapPostLink(url); return true;},
+                          //         textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
+                          //     )
+                            GroupPostCard(post: _post, group: widget.group)
+                          ),
                       Visibility(
                           visible: _isEditMainPost,
                           child: Column(
@@ -256,57 +288,28 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           borderColor: Styles().colors.fillColorSecondary,
                                           backgroundColor: Styles().colors.white,
                                           onTap: _onTapUpdateMainPost)),
-                                ])
+                                ]),
 
+                                // Semantics(
+                                //     sortKey: OrdinalSortKey(2),
+                                //     container: true,
+                                //     child: Padding(
+                                //         padding: EdgeInsets.only(top: 4, right: _outerPadding),
+                                //         child: Text(StringUtils.ensureNotEmpty(_post?.creatorName),
+                                //             style: Styles().textStyles.getTextStyle("widget.detail.large.thin")))),
+                                // Semantics(
+                                //     sortKey: OrdinalSortKey(3),
+                                //     container: true,
+                                //     child: Padding(
+                                //         padding: EdgeInsets.only(top: 3, right: _outerPadding),
+                                //         child: Text(
+                                //           StringUtils.ensureNotEmpty(
+                                //               _post?.displayDateTime),
+                                //           semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
+                                //           style: Styles().textStyles.getTextStyle("widget.detail.medium"),))),
 
                               ])),
-                      Semantics(
-                          sortKey: OrdinalSortKey(2),
-                          container: true,
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
-                              child: Text(StringUtils.ensureNotEmpty(_post?.creatorName),
-                                  style: Styles().textStyles.getTextStyle("widget.detail.large.thin")))),
-                      Semantics(
-                          sortKey: OrdinalSortKey(3),
-                          container: true,
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
-                              child: Text(
-                                  StringUtils.ensureNotEmpty(
-                                      _post?.displayDateTime),
-                                  semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
-                                  style: Styles().textStyles.getTextStyle("widget.detail.medium"),))),
                       Container(height: 6,),
-                      GroupMembersSelectionWidget(
-                      selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(
-                          selectedAccountIds: (_isEditMainPost
-                              ? MemberExt.extractUserIds(_mainPostUpdateData?.members)
-                              : _post?.getMemberAccountIds(groupId: _groupId)),
-                          upToDateMembers: _allMembersAllowedToPost),
-                      allMembers: _allMembersAllowedToPost,
-                      enabled: _isEditMainPost,
-                      groupId: _groupId,
-                      groupPrivacy: widget.group.privacy,
-                      onSelectionChanged: (members) {
-                        setStateIfMounted(() {
-                          _mainPostUpdateData?.members = members;
-                        });
-                      }),
-                  Container(height: 6,),
-                      Visibility(visible: widget.post?.dateActivatedUtc != null, child:
-                        GroupScheduleTimeWidget(
-                          timeZone: null,//TBD pass timezone
-                          scheduleTime: widget.post?.dateActivatedUtc,
-                          enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
-                          onDateChanged: (DateTime? dateTimeUtc){
-                            setStateIfMounted(() {
-                              Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
-                              _mainPostUpdateData?.dateScheduled = dateTimeUtc;
-                            });
-                          },
-                        )
-                      )
                     ],
                   )),
 
@@ -366,7 +369,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null));
   }
 
-  Widget _buildPostEdit() {
+  Widget _buildPostInputSection() {
     return Visibility(
         key: _postEditKey,
         visible: widget.group.currentUserHasPermissionToSendReply == true,
@@ -435,9 +438,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       return Container();
     }
     List<Widget> replyWidgetList = [];
-    if(StringUtils.isEmpty(focusedReplyId) && CollectionUtils.isNotEmpty(replies) ){
-      replyWidgetList.add(_buildRepliesHeader());
-      replyWidgetList.add(Container(height: 8,));
+
+    if(_post?.isPost == true) {
+      if (StringUtils.isEmpty(focusedReplyId) &&
+          CollectionUtils.isNotEmpty(replies)) {
+        replyWidgetList.add(_buildRepliesHeader());
+        replyWidgetList.add(Container(height: 8,));
+      }
     }
 
     for (int i = 0; i < replies!.length; i++) {
