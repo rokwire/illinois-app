@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+
+## [0.5.1] = 2025-01-08
 ### Fixed
 - Group details UI and posts functionality not working [#27](https://github.com/rokmetro/neom-app/issues/27)
 - My directory info styling
