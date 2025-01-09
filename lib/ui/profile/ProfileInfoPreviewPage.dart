@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -86,7 +87,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
           DirectoryProfileDetails(_profile)
         ),
-        //_shareButton,
+        _shareButton,
     ],)
   );
 
@@ -124,6 +125,7 @@ class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<P
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
+    ProfileInfoSharePanel.present(context, profile: _profile);
   }
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>

@@ -274,6 +274,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     }
   }
+
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();

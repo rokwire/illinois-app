@@ -2345,6 +2345,11 @@
     "panel.profile.info.directory_visibility.private.text": "Private",
     "panel.profile.info.directory_visibility.toggle.failed.text": "Failed to update directory visibility.",
 
+    "panel.profile.info.share.command.button.save.text": "Save to Photos",
+    "panel.profile.info.share.command.button.share.email.text": "Share via Email",
+    "panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
+    "panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
+
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
 
