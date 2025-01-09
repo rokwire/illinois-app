@@ -10,5 +10,8 @@ extension PollExt on Poll {
       DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(DateTime.tryParse(dateUpdatedUtcString!));
       return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
     }
+    else {
+      return null;
+    }
   }
 }
