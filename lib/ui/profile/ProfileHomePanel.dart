@@ -21,8 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
-import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoWrapperPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -32,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { login, profile, info_and_directory, who_are_you, }
+enum ProfileContent { login, profile, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
@@ -90,7 +89,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
-      ProfileInfoAndDirectoryPage.notifySignIn,
+      ProfileInfoWrapperPage.notifySignIn,
     ]);
 
     if (_isContentItemEnabled(widget.content)) {
@@ -120,7 +119,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     else if (name == FlexUI.notifyChanged) {
       _updateContentItemIfNeeded();
     }
-    else if (name == ProfileInfoAndDirectoryPage.notifySignIn) {
+    else if (name == ProfileInfoWrapperPage.notifySignIn) {
       setStateIfMounted(() {
         _selectedContent = _lastSelectedContent = ProfileContent.login;
       });
@@ -275,6 +274,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     }
   }
+
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
@@ -306,9 +306,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
+      case ProfileContent.profile: return ProfileInfoWrapperPage(params: widget.contentParams,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
-      case ProfileContent.info_and_directory: return ProfileInfoAndDirectoryPage(scrollController: _scrollController, params: widget.contentParams,);
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
     }
@@ -318,7 +317,6 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     switch (contentItem) {
       case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
       case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
-      case ProfileContent.info_and_directory: return Localization().getStringEx('panel.settings.profile.content.info_and_directory.label', 'My Info & User Directory');
       case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
       default: return null;
     }
@@ -326,9 +324,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   bool _isContentItemEnabled(ProfileContent? contentItem) {
     switch (contentItem) {
-      case ProfileContent.profile: return Auth2().isLoggedIn;
+      case ProfileContent.profile: return true;
       case ProfileContent.who_are_you: return true;
-      case ProfileContent.info_and_directory: return true;
       case ProfileContent.login: return true;
       case null: return false;
     }

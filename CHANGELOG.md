@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - "Messages" renamed to "Connections" [#4585](https://github.com/rokwire/illinois-app/issues/4585).
 - Change the name in sections from "User Directory" to "Directory of Users" [#4587](https://github.com/rokwire/illinois-app/issues/4587).
+- Old Profile page replaced by stripped version of Profile Info and Connections page [#4589](https://github.com/rokwire/illinois-app/issues/4589).
+### Added
+- Added Share My Info sheet [#4589](https://github.com/rokwire/illinois-app/issues/4589).
  
 ## [6.1.35] - 2025-01-08
 ### Changed

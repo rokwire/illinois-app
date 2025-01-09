@@ -1914,7 +1914,6 @@
 
 	"panel.settings.profile.content.profile.label": "我的个人资料",
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
-	"panel.settings.profile.content.info_and_directory.label": "My Info & User Directory",
 	"panel.settings.profile.content.privacy.label": "我的应用隐私设置",
 	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
 	"panel.settings.profile.header.profile.label": "个人资料",
@@ -2331,6 +2330,11 @@
 	"panel.profile.info.directory_visibility.public.text": "Public",
 	"panel.profile.info.directory_visibility.private.text": "Private",
 	"panel.profile.info.directory_visibility.toggle.failed.text": "Failed to update directory visibility.",
+
+	"panel.profile.info.share.command.button.save.text": "Save to Photos",
+	"panel.profile.info.share.command.button.share.email.text": "Share via Email",
+	"panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
+	"panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
 
 	"widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
 	"widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
