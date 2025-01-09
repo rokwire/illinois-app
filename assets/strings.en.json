@@ -124,6 +124,7 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
     "generic.app.feature.messages": "Messages",
+    "generic.app.feature.connections": "Connections",
 
     "generic.time.now": "now",
     "generic.time.minutes": "minutes",
@@ -315,7 +316,7 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Laundry",
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
-    "panel.browse.section.messages.title": "Messages",
+    "panel.browse.section.messages.title": "Connections",
     "panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
@@ -3218,7 +3219,7 @@
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
 
-    "panel.messages.header.messages.label": "Messages",
+    "panel.messages.header.connections.label": "Connections",
     "panel.messages.mark_all_read.label": "Mark all as read",
     "panel.messages.label.time.any": "Any Time",
     "panel.messages.label.time.today": "Today",

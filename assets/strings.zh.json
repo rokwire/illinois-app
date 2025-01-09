@@ -123,6 +123,7 @@
 	"generic.app.feature.checklist.uiuc": "New Student Checklist",
 	"generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 	"generic.app.feature.messages": "Messages",
+	"generic.app.feature.connections": "Connections",
 
 	"generic.time.now": "現在",
 	"generic.time.minutes": "分",
@@ -313,7 +314,7 @@
 	"panel.browse.section.research_projects.description": "Discover and participate in research projects.",
 	"panel.browse.section.laundry.title": "洗衣房",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
-	"panel.browse.section.messages.title": "留言",
+	"panel.browse.section.messages.title": "連接",
 	"panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
 	"panel.browse.section.mtd.title": "MTD 巴士",
 	"panel.browse.section.mtd.description": "查看 MTD 巴士站位置、路线和实时动态。",
@@ -3195,7 +3196,7 @@
 	"widget.inbox_message_card.subject.hint": "主題：%s",
 	"widget.inbox_message_card.body.hint": "身體：%s",
 
-	"panel.messages.header.messages.label": "留言",
+	"panel.messages.header.connections.label": "連接",
 	"panel.messages.mark_all_read.label": "標記為已讀",
 	"panel.messages.label.time.any": "任何時間",
 	"panel.messages.label.time.today": "今天",
