@@ -18,7 +18,7 @@ import 'dart:async';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1175,7 +1175,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 Container(
                                     padding: EdgeInsets.only(right: 6),
                                     child: InkWell(
-                                      // onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _react),
+                                      onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _react),
                                       child: Padding(padding: EdgeInsets.all(0),
                                           child: Image.asset("images/add_reaction_icon.png"))
                                 )),
@@ -1201,11 +1201,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
-  // void _react(emoji.Emoji emoji){
-  //   setStateIfMounted(() =>
-  //     _reactions.add(emoji.emoji)
-  //   );
-  // }
+  void _react(emoji.Emoji emoji){
+    setStateIfMounted(() =>
+      _reactions.add(emoji.emoji)
+    );
+  }
 
   // ignore: unused_element
   Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
@@ -3560,32 +3560,32 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   }
 }
 
-// typedef EmojiSelector = void Function(emoji.Emoji);
-// class ReactionKeyboard {
-//   static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
-//     showModalBottomSheet(
-//       context: context,
-//       builder: (context) {
-//         return SizedBox(
-//           height: 310,
-//           child: emoji.EmojiPicker(
-//             config: emoji.Config(
-//                 categoryViewConfig: emoji.CategoryViewConfig(
-//                   indicatorColor: Styles().colors.fillColorSecondary,
-//                   iconColorSelected: Styles().colors.fillColorSecondary
-//                 ),
-//                 bottomActionBarConfig: emoji.BottomActionBarConfig(
-//                   backgroundColor: Styles().colors.fillColorPrimary,
-//                   buttonColor: Styles().colors.fillColorPrimary,
-//                 )),
-//             onEmojiSelected: ((category, emoji) {
-//               // pop the bottom sheet
-//               Navigator.pop(context);
-//               onSelect.call(emoji);
-//             }),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+typedef EmojiSelector = void Function(emoji.Emoji);
+class ReactionKeyboard {
+  static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 310,
+          child: emoji.EmojiPicker(
+            config: emoji.Config(
+                categoryViewConfig: emoji.CategoryViewConfig(
+                  indicatorColor: Styles().colors.fillColorSecondary,
+                  iconColorSelected: Styles().colors.fillColorSecondary
+                ),
+                bottomActionBarConfig: emoji.BottomActionBarConfig(
+                  backgroundColor: Styles().colors.fillColorPrimary,
+                  buttonColor: Styles().colors.fillColorPrimary,
+                )),
+            onEmojiSelected: ((category, emoji) {
+              // pop the bottom sheet
+              Navigator.pop(context);
+              onSelect.call(emoji);
+            }),
+          ),
+        );
+      },
+    );
+  }
+}
