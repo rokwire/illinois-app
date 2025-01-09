@@ -217,7 +217,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   void _onFloorPlansAndAmenities() {
     Analytics().logSelect(target: "Floor Plans & Amenities");
     // TODO: present the relevant UI
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebViewApp(building: _building)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DisplayFloorPlanPanel(building: _building)));
   }
 }
 
