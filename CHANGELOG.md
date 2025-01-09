@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged "extend-limit-to-global-message-id" parameter of GET /api/conversations/{id}/messages API [#4572](https://github.com/rokwire/illinois-app/issues/4572).
 ### Fixed
 - Fixed pagination in conversation messages panel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+### Changed
+- "Messages" renamed to "Connections" [#4585](https://github.com/rokwire/illinois-app/issues/4585).
  
 ## [6.1.35] - 2025-01-08
 ### Changed

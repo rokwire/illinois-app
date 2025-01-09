@@ -51,7 +51,7 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   // 2) Add an optional `search` param to present()
   static void present(BuildContext context, { String? search, List<Conversation>? conversations }) {
     if (!Auth2().isLoggedIn) {
-      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.messages', 'Messages'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.connections', 'Connections'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -156,7 +156,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.messages.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+              Text(Localization().getStringEx('panel.messages.header.connections.label', 'Connections'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
             ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
