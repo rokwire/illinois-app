@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed pagination in conversation messages panel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
 ### Changed
 - "Messages" renamed to "Connections" [#4585](https://github.com/rokwire/illinois-app/issues/4585).
+- Change the name in sections from "User Directory" to "Directory of Users" [#4587](https://github.com/rokwire/illinois-app/issues/4587).
  
 ## [6.1.35] - 2025-01-08
 ### Changed
