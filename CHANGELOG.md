@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Acknowledged global message id parameter from social message notification [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+### Fixed
+- Fixed pagination in conversation messages panel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+ 
 ## [6.1.35] - 2025-01-08
 ### Changed
 - GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
