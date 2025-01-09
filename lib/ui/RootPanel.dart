@@ -30,6 +30,7 @@ import 'package:neom/service/Config.dart';
 import 'package:neom/service/Gateway.dart';
 import 'package:neom/service/Safety.dart';
 import 'package:neom/service/SkillsSelfEvaluation.dart';
+import 'package:neom/service/Wellness.dart';
 import 'package:neom/ui/academics/AcademicsHomePanel.dart';
 import 'package:neom/ui/assistant/AssistantHomePanel.dart';
 import 'package:neom/ui/athletics/AthleticsRosterListPanel.dart';
@@ -133,6 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsTeam,
       FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifySocialMessageNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyHomeFavoritesNotification,
@@ -207,7 +209,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
-      Social.notifySocialDetail,
+      Social.notifyMessageDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
@@ -217,6 +219,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
+      Wellness.notifyCategorySelect,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -308,8 +311,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
     }
-    else if (name == Social.notifySocialDetail) {
-      _onSocialDetail(param);
+    else if (name == Social.notifyMessageDetail) {
+      _onSocialMessageDetail(param);
     }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
@@ -322,6 +325,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideList) {
       _onGuideList(param);
+    }
+    else if (name == Wellness.notifyCategorySelect) {
+      _onWellnessCategorySelect(param);
     }
     else if (name == Canvas.notifyCanvasEventDetail) {
       _onCanvasEventDetail(param);
@@ -360,8 +366,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
     }
-    else if (name == FirebaseMessaging.notifyConversationNotification) {
-      _onFirebaseConversationNotification(param);
+    else if (name == FirebaseMessaging.notifySocialMessageNotification) {
+      _onFirebaseSocialMessageNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
@@ -866,9 +872,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _presentGroupDetailPanel(groupId: groupId);
   }
 
-  Future<void> _onSocialDetail(Map<String, dynamic>? content) async {
-    String? conversationId = (content != null) ? JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
-    _presentSocialDetailPanel(conversationId: conversationId);
+  Future<void> _onSocialMessageDetail(Map<String, dynamic>? content) async {
+    if ((content != null)) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id']),
+        messageId: JsonUtils.stringValue(content['message_id']),
+        messageGlobalId: JsonUtils.stringValue(content['message_global_id']),
+      );
+    }
   }
 
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
@@ -917,6 +928,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
           setState(() {}); // Force the postFrameCallback invokation.
         }
       }
+    }
+  }
+
+  Future<void> _onWellnessCategorySelect(Map<String, dynamic>? content) async {
+    String? categoryCode = (content != null) ? JsonUtils.stringValue(content['id']) : null;
+    WellnessContent? category = WellnessContentImpl.fromString(categoryCode);
+    if (category != null) {
+      _onFirebaseWellnessNotification(category);
     }
   }
 
@@ -1118,15 +1137,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseConversationNotification(param) {
+  void _onFirebaseSocialMessageNotification(param) {
     if (param is Map<String, dynamic>) {
-      _presentSocialDetailPanel(conversationId: JsonUtils.stringValue(param["entity_id"]));
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(param["entity_id"]),
+        messageId: JsonUtils.stringValue(param["message_id"]),
+        messageGlobalId: JsonUtils.stringValue(param["message_global_id"]),
+      );
     }
   }
 
-  void _presentSocialDetailPanel({String? conversationId}) {
+  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
     if (StringUtils.isNotEmpty(conversationId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId,)));;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+        conversationId: conversationId,
+        targetMessageId: messageId,
+        targetMessageGlobalId: messageGlobalId,
+      )));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }

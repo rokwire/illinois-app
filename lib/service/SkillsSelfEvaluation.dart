@@ -22,8 +22,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class SkillsSelfEvaluation with Service implements NotificationsListener {
   static const String notifyLaunchSkillsSelfEvaluation = "edu.illinois.rokwire.skills_self_evaluation.launch";
 
-  List<Uri>? _deepLinkUrisCache;
-
   // Singleton Factory
 
   static SkillsSelfEvaluation? _instance;
@@ -37,9 +35,8 @@ class SkillsSelfEvaluation with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
     ]);
-    _deepLinkUrisCache = <Uri>[];
     super.createService();
   }
 
@@ -47,11 +44,6 @@ class SkillsSelfEvaluation with Service implements NotificationsListener {
   void destroyService() {
     NotificationService().unsubscribe(this);
     super.destroyService();
-  }
-
-  @override
-  void initServiceUI() {
-    _processCachedDeepLinkUris();
   }
 
   @override
@@ -64,33 +56,8 @@ class SkillsSelfEvaluation with Service implements NotificationsListener {
   static String get skillsSelfEvaluationUrl => '${DeepLink().appUrl}/skills_self_evaluation';
 
   void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      if (_deepLinkUrisCache != null) {
-        _cacheDeepLinkUri(uri);
-      } else {
-        _processDeepLinkUri(uri);
-      }
-    }
-  }
-
-  void _processDeepLinkUri(Uri uri) {
-    if (uri.matchDeepLinkUri(Uri.tryParse(skillsSelfEvaluationUrl))) {
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(skillsSelfEvaluationUrl))) {
       NotificationService().notify(notifyLaunchSkillsSelfEvaluation);
-    }
-  }
-
-  void _cacheDeepLinkUri(Uri uri) {
-    _deepLinkUrisCache?.add(uri);
-  }
-
-  void _processCachedDeepLinkUris() {
-    if (_deepLinkUrisCache != null) {
-      List<Uri> deepLinkUrisCache = _deepLinkUrisCache!;
-      _deepLinkUrisCache = null;
-
-      for (Uri deepLinkUri in deepLinkUrisCache) {
-        _processDeepLinkUri(deepLinkUri);
-      }
     }
   }
 
@@ -98,8 +65,8 @@ class SkillsSelfEvaluation with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
 }

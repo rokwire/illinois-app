@@ -9,6 +9,7 @@ import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/SpeechToText.dart';
+import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/utils/AppUtils.dart';
@@ -26,10 +27,18 @@ import 'package:url_launcher/url_launcher.dart';
 class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
   final String? conversationId;
-  MessagesConversationPanel({Key? key, this.conversation, this.conversationId}) : super(key: key);
+  final String? targetMessageId;
+  final String? targetMessageGlobalId;
+
+  MessagesConversationPanel({Key? key, this.conversation, this.conversationId, this.targetMessageId, this.targetMessageGlobalId}) : super(key: key);
+
+  bool get _hasTargetMessage => ((targetMessageId != null) || (targetMessageGlobalId != null));
+  bool isTargetMessage(Message message) => ((message.id == targetMessageId) || (message.globalId == targetMessageGlobalId));
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
+
+enum _ScrollTarget { bottom, targetMessage }
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
@@ -37,10 +46,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
+  final GlobalKey _targetMessageContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
 
-  bool _shouldScrollToBottom = false;
+  _ScrollTarget? _shouldScrollToTarget;
   Map<String, Uint8List?> _userPhotosCache = {};
 
   bool _listening = false;
@@ -55,6 +65,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   // Conversation and Messages loaded from the backend
   Conversation? _conversation;
   List<Message> _messages = [];
+  int _messagesLength = 0;
   bool _hasMoreMessages = false;
   final int _messagesPageSize = 20;
 
@@ -228,9 +239,25 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
+  Decoration get _messageCardDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    //boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
+
+  Decoration get _highlightedMessageCardDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+  );
+
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
+    Key? contentItemKey = widget.isTargetMessage(message) ? _targetMessageContentItemKey : null;
+    Decoration cardDecoration = widget.isTargetMessage(message) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
     return FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
@@ -238,31 +265,24 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         Widget avatar = snapshot.data ??
             (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
-        return Container(
-          margin: EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Styles().colors.surface,
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                children: [
-                  avatar,
-                  SizedBox(width: 8),
-                  Expanded(
-                      child: Text(
-                          "${message.sender?.name ?? 'Unknown'}",
-                          style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
-                      )
+        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(child:
+                  InkWell(onTap: () => _onTapAccount(message), child:
+                    Row(children: [
+                      avatar,
+                      SizedBox(width: 8),
+                      Expanded(child:
+                        Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                      ),
+                    ],)
                   ),
-                  if (message.dateSentUtc != null)
-                    Text(
-                        AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                        style: Styles().textStyles.getTextStyle('widget.description.small'),
-                    ),
-                ],
-              ),
+                ),
+                if (message.dateSentUtc != null)
+                  Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+              ],),
               SizedBox(height: 8),
               //Text(message.message ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.small')),
               LinkText(message.message ?? '',
@@ -275,6 +295,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         );
       },
     );
+  }
+
+  void _onTapAccount(Message message) {
+    Analytics().logSelect(target: 'View Account');
+    showDialog(context: context, builder:(_) => Dialog(child:
+      DirectoryAccountPopupCard(accountId: message.sender?.accountId),
+    ));
   }
 
   void _onTapLink(String url) {
@@ -406,7 +433,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                           ),
                           style: Styles().textStyles.getTextStyle('widget.title.dark.regular'),
                         )
-
                     ),
                   ),
                   _buildSendImage(enabled),
@@ -465,8 +491,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
     futures.add(Social().loadConversationMessages(
       conversationId: _conversationId!,
-      offset: 0,
-      limit: _messagesPageSize,
+      offset: 0, limit: _messagesPageSize,
+      // Pass messageId param only if we messageGlobalId is not applied
+      extendLimitToMessageId: (widget.targetMessageGlobalId == null) ? widget.targetMessageId : null,
+      extendLimitToGlobalMessageId: widget.targetMessageGlobalId,
     ));
 
     List<dynamic> results = await Future.wait(futures);
@@ -481,10 +509,12 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         }
         if (messages != null) {
           Message.sortListByDateSent(messages);
+          _globalIds.clear();
           _messages = (_conversation?.isGroupConversation == true) ?
             _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
+          _messagesLength = messages.length;
           _hasMoreMessages = (_messagesPageSize <= messages.length);
-          _shouldScrollToBottom = true;
+          _shouldScrollToTarget = widget._hasTargetMessage ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
         }
       });
     }
@@ -496,20 +526,21 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
 
     // Use the Social API to load conversation messages
-    List<Message>? loadedMessages = await Social().loadConversationMessages(
+    int messagesCount = max(_messagesLength, _messagesPageSize);
+    List<Message>? messages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
-      limit: max(_messages.length, _messagesPageSize),
-      offset: 0,
+      offset: 0, limit: messagesCount,
     );
 
     setStateIfMounted(() {
-      if (loadedMessages != null) {
-        Message.sortListByDateSent(loadedMessages);
+      if (messages != null) {
+        Message.sortListByDateSent(messages);
         _globalIds.clear();
         _messages = (_conversation?.isGroupConversation == true) ?
-          _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
-        _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        _shouldScrollToBottom = true;
+          _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
+        _messagesLength = messages.length;
+        _hasMoreMessages = (messagesCount <= messages.length);
+        _shouldScrollToTarget = widget._hasTargetMessage ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
         // If null, silently ignore the error
@@ -532,7 +563,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
       limit: _messagesPageSize,
-      offset: _messages.length,
+      offset: _messagesLength,
     );
 
     setStateIfMounted(() {
@@ -543,8 +574,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
         newMessages.addAll(_messages);
         _messages = newMessages;
+        _messagesLength += loadedMessages.length;
         _hasMoreMessages = (_messagesPageSize <= loadedMessages.length);
-        _shouldScrollToBottom = false;
+        _shouldScrollToTarget = null;
       }
     });
   }
@@ -581,7 +613,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _submitting = true;
         _messages.add(tempMessage);
         Message.sortListByDateSent(_messages);
-        _shouldScrollToBottom = true;
+        _shouldScrollToTarget = _ScrollTarget.bottom;
       });
 
       try {
@@ -653,15 +685,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _onKeyboardVisibilityChanged(bool visible) {
     setStateIfMounted(() {
-      _shouldScrollToBottom = true;
+      _shouldScrollToTarget = _ScrollTarget.bottom;
     });
   }
 
   void _scrollToBottomIfNeeded() {
-    BuildContext? handleContext = _lastContentItemKey.currentContext;
-    if (handleContext != null && _shouldScrollToBottom) {
-      Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
-      _shouldScrollToBottom = false;
+    BuildContext? scrollToContext;
+    switch (_shouldScrollToTarget) {
+      case _ScrollTarget.bottom: scrollToContext = _lastContentItemKey.currentContext; break;
+      case _ScrollTarget.targetMessage: scrollToContext = _targetMessageContentItemKey.currentContext; break;
+      default: break;
+    }
+    if ((scrollToContext != null) && scrollToContext.mounted) {
+      Scrollable.ensureVisible(scrollToContext, duration: Duration(milliseconds: 500)).then((_) {});
+      _shouldScrollToTarget = null;
     }
   }
 

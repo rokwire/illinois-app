@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/DeepLink.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
+import 'package:neom/ui/messages/MessagesDirectoryPanel.dart';
+import 'package:neom/ui/messages/MessagesHomePanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:neom/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
@@ -15,18 +17,23 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum DirectoryDisplayMode { browse, select }
 
-class DirectoryAccountCard extends StatefulWidget {
+// DirectoryAccountCard
+
+class DirectoryAccountListCard extends StatefulWidget {
   final Auth2PublicAccount account;
   final DirectoryDisplayMode displayMode;
   final String? photoImageToken;
@@ -35,13 +42,15 @@ class DirectoryAccountCard extends StatefulWidget {
   final bool selected;
   final void Function(bool)? onToggleSelected;
 
-  DirectoryAccountCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
+  DirectoryAccountListCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryAccountCardState();
+  State<StatefulWidget> createState() => _DirectoryAccountListCardState();
 }
 
-class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
+class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
+
+  bool _messageProgress = false;
 
   @override
   Widget build(BuildContext context) =>
@@ -118,23 +127,97 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
   Widget get _expandedBody =>
     Padding(padding: EdgeInsets.only(bottom: 16), child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Expanded(child:
+        Expanded(flex: 60, child:
           Padding(padding: EdgeInsets.only(top: 12), child:
             DirectoryProfileDetails(widget.account.profile, widget.account.identifiers),
           ),
         ),
-        Expanded(child:
+        Expanded(flex: 40, child:
           Padding(padding: EdgeInsets.only(top: 0), child:
-            DirectoryProfilePhoto(
-              photoUrl: _photoUrl,
-              imageSize: _photoImageSize,
-              photoUrlHeaders: _photoAuthHeaders,
-              borderSize: 12,
-            )
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              DirectoryProfilePhoto(
+                photoUrl: _photoUrl,
+                imageSize: _photoImageSize,
+                photoUrlHeaders: _photoAuthHeaders,
+                borderSize: 12,
+              ),
+              _expandedCommandsBar,
+            ],),
           ),
         ),
         //Container(width: 32,),
       ],),
+    );
+
+  Widget get _expandedCommandsBar =>
+    Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
+      _messageButton,
+    ],);
+
+  Widget  get _messageButton => _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress);
+  Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.fillColorPrimary);
+
+  void _onMessage() async {
+    Analytics().logSelect(target: 'Message User');
+    String? accountId = widget.account.id;
+    String? userName = widget.account.profile?.fullName;
+    if (accountId != null) {
+      List<Conversation>? conversations;
+      if (userName?.isNotEmpty == true) {
+        setState(() {
+          _messageProgress = true;
+        });
+        // Search this user across existing conversations.
+        conversations = await Social().loadConversations(
+          offset: 0,
+          limit: MessagesHomePanel.conversationsPageSize,
+          name: userName,
+        );
+      }
+      if (mounted) {
+        if (_messageProgress == true) {
+          setState(() {
+            _messageProgress = false;
+          });
+        }
+        if (conversations?.isNotEmpty == true) {
+          // If there are existing conversatins where this user participates, show them
+          MessagesHomePanel.present(context,
+            search: userName,
+            conversations: conversations,
+          );
+        }
+        else {
+          // otherwise, invoke new message UI having this user selected.
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+            MessagesDirectoryPanel(
+              recentConversations: const [],
+              conversationPageSize: MessagesHomePanel.conversationsPageSize,
+              // pass "startOnAllUsersTab" and "defaultSelectedAccountIds" so we jump directly to "All" tab with that user preselected
+              startOnAllUsersTab: true,
+              defaultSelectedAccountIds: [accountId],
+            )
+          ));
+        }
+      }
+    }
+  }
+
+  Widget _iconButton({Widget? icon, void Function()? onTap, bool progress = false }) =>
+    progress ? _iconButtonProgress : _iconButtonImpl(icon: icon, onTap: onTap);
+
+  Widget _iconButtonImpl({Widget? icon, void Function()? onTap }) =>
+    InkWell(onTap: onTap, child:
+      Padding(padding: EdgeInsets.all(6), child:
+        icon,
+      )
+    );
+
+  Widget get _iconButtonProgress =>
+    Padding(padding: EdgeInsets.all(8), child:
+      SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary,),
+      )
     );
 
   String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
@@ -180,6 +263,211 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
   }
 }
 
+// DirectoryAccountBusinessCard
+
+class DirectoryAccountBusinessCard extends StatefulWidget {
+  final Auth2PublicAccount? account;
+  final String? accountId;
+
+  DirectoryAccountBusinessCard({super.key, this.account, this.accountId });
+
+  @override
+  State<StatefulWidget> createState() => _DirectoryAccountBusinessCardState();
+}
+
+class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessCard> {
+
+  Auth2PublicAccount? _account;
+  bool _loadingAccount = false;
+
+  Auth2UserProfile? get _profile => _account?.profile;
+
+  String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
+    Content().getUserPhotoUrl(accountId: _account?.id, type: UserProfileImageType.medium) : null;
+
+  double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
+
+  @override
+  void initState() {
+    _account = widget.account;
+    if ((_account == null) && (widget.accountId != null)) {
+      _loadingAccount = true;
+      Auth2().loadDirectoryAccounts(ids: [widget.accountId!], limit: 1).then((List<Auth2PublicAccount>? accounts){
+        if (mounted) {
+          setState(() {
+            _loadingAccount = false;
+            _account = (accounts?.isNotEmpty == true) ? accounts?.first : null;
+          });
+        }
+      });
+    }
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+    ClipRRect(borderRadius: _cardBorderRadiusGeometry, child:
+      Container(decoration: _cardDecoration, child:
+      _cardContent
+      ),
+    );
+
+  Decoration get _cardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: _cardBorderRadiusGeometry,
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]
+  );
+
+  BorderRadiusGeometry get _cardBorderRadiusGeometry =>
+    BorderRadius.all(Radius.circular(_cardBorderRadius));
+
+  double get _cardBorderRadius => 16;
+
+  Widget get _cardContent {
+    if (_loadingAccount) {
+      return _loadingContent;
+    }
+    else if (_profile == null) {
+      return _messageContent(Localization().getStringEx('', 'Failed to load user account'));
+    }
+    else {
+      return _profileContent;
+    }
+  }
+
+  Widget get _profileContent =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          (_photoImageUrl != null) ? _profileImageHeading : _profileTextHeading,
+          Padding(padding: EdgeInsets.only(top: 12), child:
+            Align(alignment: Alignment.centerLeft, child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
+                DirectoryProfileDetails(_profile),
+              ]),
+            )
+          ),
+        ])
+      ),
+
+      _profileTrailing
+    ],);
+
+  Widget get _profileImageHeading =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      DirectoryProfilePhoto(
+        photoUrl: _photoImageUrl,
+        photoUrlHeaders: _photoAuthHeaders,
+        imageSize: _photoImageSize,
+      ),
+      Row(children: [
+        Expanded(child:
+          Center(child:
+            Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+                DirectoryPronunciationButton.spacer(),
+              Column(mainAxisSize: MainAxisSize.min, children: [
+                Padding(padding: EdgeInsets.only(top: 16), child:
+                  Text(_profile?.fullName ?? '', style: _profileNameTextStyle, textAlign: TextAlign.center,),
+                ),
+                if (_profile?.pronouns?.isNotEmpty == true)
+                  Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+              ]),
+              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+                DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
+            ],),
+          ),
+        ),
+      ],),
+    ]);
+
+  Widget get _profileTextHeading => Column(mainAxisSize: MainAxisSize.min, children: [
+    Row(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          Text(_profile?.fullName ?? '', style: _profileNameTextStyle, textAlign: TextAlign.center,),
+        ),
+        if (_profile?.pronouns?.isNotEmpty == true)
+          Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+      ]),
+      if (_profile?.pronunciationUrl?.isNotEmpty == true)
+        DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
+    ],),
+  ]);
+
+  Widget get _profileTrailing =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      CustomPaint(
+        painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondary, horzDir: TriangleHorzDirection.leftToRight),
+        child: Padding(padding: EdgeInsets.only(right: _cardBorderRadius, top: _cardBorderRadius / 2 * 3), child:
+          Row( mainAxisAlignment: MainAxisAlignment.end, children: [
+            Styles().images.getImage('university-logo-blue') ?? Container(),
+          ],)
+        ),
+      ),
+      Container(height: _cardBorderRadius / 2 * 3, color: Styles().colors.fillColorSecondary,),
+
+    ],);
+
+  TextStyle? get _profileNameTextStyle =>
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
+
+  Widget get _loadingContent =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: 64, horizontal: 32), child:
+        Center(child:
+          SizedBox(width: 24, height: 24, child:
+            CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary,),
+          )
+        )
+      ),
+    ]);
+
+  Widget _messageContent(String? message) =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: 64, horizontal: 32), child:
+        Center(child:
+          Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
+        )
+      ),
+    ]);
+}
+
+// DirectoryAccountPopupCard
+
+class DirectoryAccountPopupCard extends StatelessWidget {
+  final Auth2PublicAccount? account;
+  final String? accountId;
+
+  DirectoryAccountPopupCard({super.key, this.account, this.accountId });
+
+  @override
+  Widget build(BuildContext context) => Stack(children: [
+    DirectoryAccountBusinessCard(account: account, accountId: accountId,),
+    Positioned.fill(child:
+      Align(alignment: Alignment.topRight, child:
+        InkWell(onTap: () => _onTapClose(context), child:
+          Padding(padding: EdgeInsets.all(16), child:
+              Styles().images.getImage('close')
+          )
+        )
+      )
+    )
+  ],);
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logSelect(target: 'close');
+    Navigator.pop(context);
+  }
+}
+
+// DirectoryProfileDetails
+
 class DirectoryProfileDetails extends StatelessWidget {
   final Auth2UserProfile? profile;
   final List<Auth2PublicAccountIdentifier>? identifiers;
@@ -190,7 +478,7 @@ class DirectoryProfileDetails extends StatelessWidget {
   String? get college => null;
   String? get department => null;
   String? get major => null;
-  
+
   String? get website => null;
   
   @override
@@ -237,6 +525,8 @@ void _launchUrl(String? url) {
     }
   }
 }
+
+// DirectoryProfilePhoto
 
 class DirectoryProfilePhoto extends StatelessWidget {
 
@@ -288,6 +578,8 @@ class DirectoryProfilePhoto extends StatelessWidget {
     } 
 }
 
+// DirectoryProfilePhotoUtils
+
 class DirectoryProfilePhotoUtils {
 
   static const String tokenKey = 'edu.illinois.rokwire.token';
@@ -306,6 +598,8 @@ class DirectoryProfilePhotoUtils {
     } : null;
   }
 }
+
+// DirectoryPronunciationButton
 
 class DirectoryPronunciationButton extends StatefulWidget {
   final String? url;
@@ -442,27 +736,34 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
   }
 }
 
+// DirectoryProgressWidget
+
 class DirectoryProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,);
 }
 
+// DirectoryProfileCard
+
 class DirectoryProfileCard extends StatelessWidget {
   final Widget? child;
-  DirectoryProfileCard({super.key, this.child});
+  final double roundingRadius;
+  DirectoryProfileCard({super.key, this.child, this.roundingRadius = 8 });
 
   @override
   Widget build(BuildContext context) =>
-    Container(decoration: cardDecoration, child: child);
+    Container(decoration: _cardDecoration, child: child);
 
-  Decoration get cardDecoration => BoxDecoration(
+  Decoration get _cardDecoration => BoxDecoration(
     color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(16)),
+    borderRadius: BorderRadius.all(Radius.circular(roundingRadius)),
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
   );
 }
+
+// DirectoryFilterBar
 
 class DirectoryFilterBar extends StatefulWidget {
   final String? searchText;
@@ -650,6 +951,8 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
       }
     }
 }
+
+// DirectoryFilter
 
 class DirectoryFilter {
   final String? searchText;

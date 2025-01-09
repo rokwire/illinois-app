@@ -93,6 +93,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+## [6.1.36] - 2025-01-09
+### Added
+- Acknowledged global message id parameter from social message notification [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+- Acknowledged "extend-limit-to-global-message-id" parameter of GET /api/conversations/{id}/messages API [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+### Fixed
+- Fixed pagination in conversation messages panel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- "Messages" renamed to "Connections" [#4585](https://github.com/rokwire/illinois-app/issues/4585).
+- Change the name in sections from "User Directory" to "Directory of Users" [#4587](https://github.com/rokwire/illinois-app/issues/4587).
+- Old Profile page replaced by stripped version of Profile Info and Connections page [#4589](https://github.com/rokwire/illinois-app/issues/4589).
+### Added
+- Added Share My Info sheet [#4589](https://github.com/rokwire/illinois-app/issues/4589).
+ 
+## [6.1.35] - 2025-01-08
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+### Added
+- Start conversation to a specific user from the directory [#4555](https://github.com/rokwire/illinois-app/issues/4555)
+- New assistant provider - Grok [#4573](https://github.com/rokwire/illinois-app/issues/4573).
+### Fixed
+- Fixed social message deep link support, ensure message visibility in MessagesConversionPanel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+
+## [6.1.34] - 2025-01-07
+### Changed
+- User Directory visibility control moved one level up [#4568](https://github.com/rokwire/illinois-app/issues/4568).
+
+## [6.1.33] - 2025-01-06
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+### Added
+- Added URL caching support in DeepLink service, removed it from other services [#4561](https://github.com/rokwire/illinois-app/issues/4561).
+- Added Directory Profile Visibility page in Onboarding [#4565](https://github.com/rokwire/illinois-app/issues/4565).
+
+## [6.1.32] - 2025-01-03
+### Changed
+- Updated wellness resources content [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+### Added
+- Added Wellness category pages deep linking [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+- Added the "Message this user" in Directory Account card [#4555](https://github.com/rokwire/illinois-app/issues/4555).
+- Show public account popup when user name or picture is tapped [#4558](https://github.com/rokwire/illinois-app/issues/4558).
+
 ## [6.1.31] - 2024-12-20
 ### Changed
 - Show only first line of the last message in ConversationCard [#4545](https://github.com/rokwire/illinois-app/issues/4545).

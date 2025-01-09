@@ -33,7 +33,7 @@
 			"browse.polls": ["recent_polls"],
             "browse.messages": ["messages"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
 
 			"settings": ["favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
@@ -52,7 +52,7 @@
 
 			"roles": ["neom_u", "talent_academy", "eri_f", "ec_12", "debug"],
 
-			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth"],
+			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth", "profile_info"],
 
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"new_student", "messages", "student", "assistant", "assistant_personalization"],
@@ -100,31 +100,28 @@
 			},
 			"locations": {
 			},
-			"privacy" : {
-				"connect"                         : 4,
+			"privacy": {
+				"onboarding.notifications_auth"   	      : 4,
+				"onboarding.location_auth"        	      : 2,
+				"onboarding.roles"                   	    : 3,
+				"onboarding.login_netid"             	    : 4,
+				"onboarding.login_phone"          	      : 4,
+				"onboarding.verify_phone"         	      : 4,
+				"onboarding.confirm_phone"        	      : 4,
+				"onboarding.sport_prefs"          	      : 3,
+				"onboarding.research_questionnaire"       : 4,
+				"onboarding.profile_info"                 : 4,
 
-				"authenticate.connected"          : 4,
-				"authenticate.link"               : 4,
-				"authenticate.linked"             : 4,
-
-				"onboarding.notifications_auth"   : 4,
-				"onboarding.location_auth"        : 2,
-				"onboarding.roles"                : 3,
-				"onboarding.login_netid"          : 4,
-				"onboarding.login_phone"          : 4,
-				"onboarding.verify_phone"         : 4,
-				"onboarding.confirm_phone"        : 4,
-				"onboarding.sport_prefs"          : 3,
-				"onboarding.research_questionnaire": 4,
-
-				"features.analytics"              : 2,
-				"features.location_services"      : 2,
-				"features.personalization"        : 3,
-				"features.notifications"          : 4,
-                "features.messages"          	  : 4,
-                "features.payment_information"    : 4,
-				"features.authentication"         : 4,
-				"features.sharing"                : 5
+				"features.analytics"              	      : 2,
+				"features.location_services"         	    : 2,
+				"features.personalization"        	      : 3,
+				"features.notifications"          	      : 4,
+				"features.messages"          	      	  : 4,
+				"features.payment_information"         	  : 4,
+				"features.authentication"                 : 4,
+				"features.sharing"                	      : 5,
+				"features.assistant"  				            : 4,
+				"features.assistant_personalization"      : 5
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },
@@ -156,6 +153,7 @@
 				"authenticate.connected.passkey.login"      : { "passkeyLoggedIn": false },
 
 				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
+				"onboarding.profile_info"                 : { "loggedIn": true },
 
 				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },
@@ -167,6 +165,7 @@
 			"platform":{
 				"assistant.google_assistant"              : { "environment":  "dev"},
 				"assistant.azure_assistant"               : { "environment":  "dev"},
+				"assistant.grok_assistant"                : { "environment":  "dev"},
 				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {

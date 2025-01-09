@@ -15,9 +15,11 @@
  */
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
@@ -47,6 +49,7 @@ import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -65,7 +68,6 @@ import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -81,6 +83,8 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
 
   static const String notifyRefresh  = "edu.illinois.rokwire.group_detail.refresh";
+  static const String notifyLoadMemberImage  = "edu.illinois.rokwire.group_detail.load.image";
+  static const String notifyMemberImageLoaded  = "edu.illinois.rokwire.group_detail.image.loaded";
 
   final Group? group;
   final String? groupIdentifier;
@@ -114,14 +118,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Group?                _group;
   GroupStats?        _groupStats;
   List<Member>?   _groupAdmins;
+  Map<String, Uint8List?> _groupMembersImages = {};
   String?                 _postId;
 
-  final ScrollController _scrollController = ScrollController();
-  TabController?  _tabController;
+  List<_DetailTab>? _tabs;
   PageController? _pageController;
+  TabController?  _tabController;
   StreamController _updateController = StreamController.broadcast();
 
-  List<_DetailTab>? _tabs;
   _DetailTab         _currentTab = _DetailTab.Events;
 
   bool               _confirmationLoading = false;
@@ -155,6 +159,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   bool get _isPublic {
     return _group?.privacy == GroupPrivacy.public;
   }
+
+  bool get _isManaged => _group?.authManEnabled ?? false;
 
   bool get isFavorite {
     return false;
@@ -255,7 +261,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
     ]);
-
+    _initUpdateController();
     _postId = widget.groupPostId;
     _tabs = GroupDetailPanel.defaultTabs;
 
@@ -266,9 +272,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _tabController?.dispose();
     _updateController.close();
     _pageController?.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
@@ -466,7 +472,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   void _loadGroupAdmins() {
     _increaseProgress();
-    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin] ).then((admins) {
       _groupAdmins = admins;
       _decreaseProgress();
     });
@@ -475,6 +481,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   void _refreshGroupAdmins() {
     Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
       _groupAdmins = admins;
+    });
+  }
+
+  void _loadMemberImage(String id) async {
+    if(_groupMembersImages.containsKey(id) == true) {
+      if(_groupMembersImages[id] != null)
+        _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: {"id": id, "image_bytes": _groupMembersImages[id]}});
+      return; //Do not load the image many times
+    }
+
+    _groupMembersImages[id] = null; //prepare the pair and disable multiple loading
+    Content().loadUserPhoto(accountId: id, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
+      if(imageResult?.succeeded == true)
+        setStateIfMounted(() =>
+        _groupMembersImages[id] = imageResult?.imageData
+        );
+      _updateController.add({GroupDetailPanel.notifyMemberImageLoaded: {"id": id, "image_bytes": _groupMembersImages[id]}});
     });
   }
 
@@ -537,6 +560,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       }
     }
   }
+
+  void _initUpdateController() => _updateController.stream.listen((command) {
+    if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+      _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
+    }
+  });
 
   void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
@@ -663,6 +692,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
         commands.add(_buildWebsiteLinkCommand());
       }
+      commands.add(_buildPrivacyInfoWidget);
     }
     else {
       if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
@@ -691,23 +721,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         ),
 
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Text(_group?.title?.toUpperCase() ?? '',  style:  Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'),),
+          _buildTitleWidget()
         ),
       ]);
     }
     else {
       contentList.addAll(<Widget>[
         Padding(padding: EdgeInsets.only(left: 16, right: _hasIconOptionButtons ? 0 : 16), child:
-          _buildTitleWidget(),
+          _buildTitleWidget(showButtons: true),
         ),
       ]);
     }
 
     if (StringUtils.isNotEmpty(members)) {
-      contentList.add(GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
+      contentList.add(GestureDetector(onTap: () => { if (_canViewMembers) {_onTapMembers()} }, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
-            Text(members, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+          Container(decoration: (_canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
+            Text(members, style:  Styles().textStyles.getTextStyle('widget.title.small'))
           ),
         ),
       ));
@@ -715,13 +745,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
     if (StringUtils.isNotEmpty(pendingMembers)) {
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('panel.group.detail.fat') ,)
+        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small') ,)
       ));
     }
 
     if (StringUtils.isNotEmpty(attendedMembers)) {
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'),)
+        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('widget.title.small'),)
       ));
     }
 
@@ -823,13 +853,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       case _DetailTab.Events:
         return _GroupEventsContent(group: _group, updateController: _updateController);
       case _DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
       case _DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController);
+        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
       case _DetailTab.Polls:
-        return _GroupPollsContent(group: _group,  updateController: _updateController);
+        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
       case _DetailTab.Scheduled:
-        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController);
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
       case _DetailTab.About:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildAbout(), _buildPrivacyDescription(), _buildAdmins()],);
       default: Container();
@@ -948,28 +978,55 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return _hasIconOptionButtons ? Row(children: <Widget>[
       badgeWidget,
       Expanded(child: Container(),),
-      _buildIconButtons
+      _buildTitleIconButtons
     ]) : badgeWidget;
   }
 
-  Widget _buildTitleWidget() {
-    Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.large'),);
-    return _hasIconOptionButtons ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(top: 8), child:
-          titleWidget
-        )
-      ),
-      _buildIconButtons
-    ]) : titleWidget;
+  Widget _buildTitleWidget({bool showButtons = false}) {
+    return
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Expanded(child:
+          RichText(textScaler: MediaQuery.of(context).textScaler,
+            text: TextSpan(text: _group?.title?.toUpperCase() ?? '',  style:  Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'),
+              children: [
+                WidgetSpan(alignment: PlaceholderAlignment.middle,
+                    child: _buildManagedBadge),],))
+        ),
+        showButtons ? _buildTitleIconButtons : Container()
+      ]);
   }
 
-  Widget get _buildIconButtons =>
+  Widget get _buildTitleIconButtons =>
       Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
         ...?_buildPolicyIconButton(),
         ...?_buildCreateIconButton(),
         ...?_buildSettingsIconButton()
       ]);
+
+  Widget get _buildManagedBadge => _isManaged ?
+  InkWell(onTap: _onTapManagedGroupBadge,
+    child: Padding(padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Styles().images.getImage('group-managed-badge', excludeFromSemantics: true))):
+      Container();
+
+
+  Widget get _buildPrivacyInfoWidget => Padding(padding: EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Expanded(
+          child: RichText(textScaler: MediaQuery.of(context).textScaler,
+            text: TextSpan(text: Localization().getStringEx("","Your activity in the app is private. Please review the "), style:  Styles().textStyles.getTextStyle("widget.title.tiny"),
+            children: [
+              TextSpan(text: Localization().getStringEx("", "Student Code."), style: Styles().textStyles.getTextStyle("widget.title.tiny.underline.variant"),  recognizer: TapGestureRecognizer()..onTap = () => _onPrivacy()),
+              WidgetSpan(
+                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Styles().images.getImage('external-link', excludeFromSemantics: true)),
+              )
+            ],),
+          ),
+        )
+      ],
+    )
+  );
 
   List<Widget>? _buildPolicyIconButton() => _showPolicyIcon ? <Widget>[
     Semantics(button: true, excludeSemantics: true,
@@ -1416,6 +1473,50 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     ),);
   }
 
+  void _onPrivacy () {
+    Analytics().logSelect(target: 'Privacy');
+    UrlUtils.launchExternal("https://studentcode.illinois.edu");
+  }
+
+  void _onTapManagedGroupBadge(){ //TBD
+    Analytics().logSelect(target: 'Managed Group Badge');
+    // showDialog(context: context, builder: (_) =>  InfoPopup(
+    //   backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
+    //   padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
+    //   border: Border.all(color: Styles().colors.textSurface, width: 1),
+    //   alignment: Alignment.center,
+    //   infoText: Localization().getStringEx('', 'This group is an official University of Illinois managed group. Membership is automatically populated based on various criteria.'),
+    //   infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
+    //   closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+    // ),);
+    showDialog(context: context, builder: (_) =>  AlertDialog(contentPadding: EdgeInsets.zero, content:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+          Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+            Padding(padding: EdgeInsets.all(30), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                Styles().images.getImage('university-logo') ?? Container(),
+                Padding(padding: EdgeInsets.only(top: 20), child:
+                  Text(Localization().getStringEx('', 'This group is an official University of Illinois managed group. Membership is automatically populated based on various criteria.'), textAlign: TextAlign.center, style:
+                    Styles().textStyles.getTextStyle("widget.detail.small")
+                  )
+                )
+              ])
+            ),
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                InkWell(onTap: () => Navigator.of(context).pop(),
+                  child: Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images.getImage("close-circle")
+                  )
+                )
+              )
+            )
+          ])
+        )
+      )
+    );
+  }
+
   void _onTapMembers(){
     Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
@@ -1833,14 +1934,13 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
 }
 
 class _GroupPostsContent extends StatefulWidget{
-  // static const String notifyPostRefresh  = "edu.illinois.rokwire.group_detail.posts.refresh";
-  // static const String notifyPostRefreshWithDelta  = "edu.illinois.rokwire.group_detail.posts.refresh.with_delta";
   static const String notifyPostRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.posts.refresh.with_scroll_to_last";
 
   final Group? group;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPostsContent({this.group, this.updateController});
+  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins});
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1860,8 +1960,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   Group? get _group => widget.group;
 
   String? get _groupId => _group?.id;
-
-  bool get _isMemberOrAdmin => _group?.currentMember?.isMemberOrAdmin ?? false;
 
   @override
   void initState() {
@@ -1893,25 +1991,18 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   Widget _buildPosts() {
     List<Widget> postsContent = [];
 
-    if (CollectionUtils.isEmpty(_posts)) {
-      if (_isMemberOrAdmin) {
-        Column(children: <Widget>[
-          SectionSlantHeader(
-              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-              titleIconKey: 'posts',
-              children: postsContent)
-        ]);
-      } else {
-        return Container();
-      }
-    }
-
     for (int i = 0; i <_posts.length ; i++) {
       Post? post = _posts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group!));
+
+      postsContent.add(GroupPostCard(
+        key: (i == 0) ? _lastPostKey : null,
+        post: post,
+        group: _group!,
+        isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
+      ));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
@@ -2021,6 +2112,11 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
   }
 
+  // Member?  _getPostCreatorAsMember(Post? post) {
+  //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
+  //   return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
+  // }
+
   //Scroll
   void _scheduleLastPostScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2085,9 +2181,10 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
 
 class _GroupPollsContent extends StatefulWidget {
   final Group? group;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupPollsContent({this.group, this.updateController});
+  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins});
 
   @override
   _GroupPollsState createState() => _GroupPollsState();
@@ -2134,7 +2231,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAlive
       for (Poll? groupPoll in _groupPolls!) {
         if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(PollCard(poll: groupPoll, group: _group));
+          pollsContentList.add(PollCard(poll: groupPoll, group: _group, isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == groupPoll.creatorUserUuid).isNotEmpty,));
         }
       }
 
@@ -2241,9 +2338,10 @@ class _GroupMessagesContent extends StatefulWidget {
   static const String notifyMessagesRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.messages.refresh.with_scroll_to_last";
 
   final Group? group;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupMessagesContent({this.group, this.updateController});
+  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
 
@@ -2295,7 +2393,11 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
         messagesContent.add(GroupPostCard(
             key: (i == 0) ? _lastMessageKey : null,
             post: message,
-            group: _group!));
+            group: _group!,
+            isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            // creator: _getMessageCreatorAsMember(message),
+            // updateController: widget.updateController,
+        ));
       }
     }
 
@@ -2400,6 +2502,11 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
     }
   }
 
+  // Member?  _getMessageCreatorAsMember(Post? message) {
+  //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == message?.creatorId);
+  //   return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
+  // }
+
   //Scroll
   void _scheduleLastMessageScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2459,9 +2566,10 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   static const String notifyPostsRefreshWithScrollToLast = "edu.illinois.rokwire.group_detail.scheduled_posts.refresh.with_scroll_to_last";
 
   final Group? group;
+  final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
 
-  const _GroupScheduledPostsContent({this.group, this.updateController});
+  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins});
 
   @override
   State<StatefulWidget> createState() => _GroupScheduledPostsState();
@@ -2516,7 +2624,11 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
       scheduledPostsContent.add(GroupPostCard(
           key: (i == 0) ? _lastScheduledPostKey : null,
           post: post,
-          group: _group!));
+          group: _group!,
+          isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
+          // updateController: widget.updateController,
+          // creator: _getPostCreatorAsMember(post),
+      ));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin &&
@@ -2641,6 +2753,11 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
       }
     }
   }
+
+  // Member?  _getPostCreatorAsMember(Post? post) {
+  //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
+  //   return CollectionUtils.isNotEmpty(creatorProfiles) ? creatorProfiles?.first : null;
+  // }
 
   //Scroll
   void _scheduleLastScheduledPostScroll() {

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +28,7 @@ import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:neom/ui/groups/GroupPostCreatePanel.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
@@ -33,7 +37,9 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/ext/Social.dart';
+import 'package:neom/ext/Poll.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -1041,12 +1047,12 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
-  final List<Member>? allMembersAllowedToPost;
+  final bool? isAdmin;
   final bool showImage;
   final bool isReply;
   final bool allowTap;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.allMembersAllowedToPost, this.showImage = true, this.isReply = false, this.allowTap = true}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.showImage = true, this.isReply = false, this.allowTap = true}) :
     super(key: key);
 
   @override
@@ -1055,6 +1061,7 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   static const double _smallImageSize = 64;
+  List<Reaction> _reactions = [];
 
   @override
   void initState() {
@@ -1063,7 +1070,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? creatorName = widget.post?.creatorName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     List<String>? memberIds = widget.group.id != null ? widget.post?.getMemberAccountIds(groupId: widget.group.id!) : null;
@@ -1088,20 +1094,17 @@ class _GroupPostCardState extends State<GroupPostCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
-                            Container(width: 20, height: 20, decoration:
-                              BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
-                              )
-                            ) : Styles().images.getImage('person-circle-white') ?? Container(),
-                          Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child:Text(StringUtils.ensureNotEmpty(creatorName),
-                                textAlign: TextAlign.left,
-                                style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')),
-                          ),
-                        ]),
+                        Expanded(child:
+                          Visibility(visible: widget.post?.creatorId != null,
+                            child: GroupMemberProfileInfoWidget(
+                              name: widget.post?.creatorName,
+                              userId: widget.post?.creatorId,
+                              isAdmin: widget.isAdmin,
+                              additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
+                              // updateController: widget.updateController,
+                            )
+                          )
+                        ),
                         _buildDisplayDateWidget,
                       ],
                     ),
@@ -1132,10 +1135,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     ],),
                     Container(height: 16.0),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      GroupReaction(
-                        groupId: widget.group.id,
-                        entityId: widget.post?.id,
-                        reactionSource: SocialEntityType.post,
+                      Expanded(
+                          child: _buildReactionsLayoutWidget
                       ),
                       _buildScheduledDateWidget,
                       Visibility(
@@ -1167,6 +1168,54 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
+  //ReactionWidget //TBD move to GroupReaction when ready to hook BB
+  Widget get _buildReactionsLayoutWidget {
+    Map<String, List<Reaction>> sameEmojiReactions = _sameEmojiReactions;
+    return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          ...sameEmojiReactions.keys.map((String emoji) =>
+              _buildReactionWidget(
+                  occurrences: sameEmojiReactions[emoji]?.length,
+                  reaction: sameEmojiReactions[emoji]?.
+                  firstWhere(
+                          (Reaction reaction) => reaction.isCurrentUserReacted,
+                      orElse: () => (CollectionUtils.isNotEmpty(sameEmojiReactions[emoji]) ? sameEmojiReactions[emoji]?.first : null)
+                          ?? Reaction()))
+          ).toList(),
+          Container(
+              padding: EdgeInsets.only(right: 6),
+              child: InkWell(
+                  onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
+                  child: Padding(padding: EdgeInsets.all(0),
+                      child: Image.asset("images/add_reaction_icon.png", width: 40, fit: BoxFit.fitWidth,))
+              )),
+        ]
+    );
+  }
+
+  Widget _buildReactionWidget({Reaction? reaction, int? occurrences}){
+    return Padding( padding: EdgeInsets.all(4),
+        child: InkWell(
+            onTap: () => _deleteReaction(reaction), //TBD call BB to remove reaction
+            child: Container(
+                padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
+                decoration: BoxDecoration(
+                    color: Styles().colors.fillColorPrimaryTransparent015,
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    border: Border.all(color: Styles().colors.fillColorPrimary,)),
+                child: Row(mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(reaction?.data ?? ""),
+                      Visibility(visible: (occurrences ?? 0 ) > 1,
+                          child: Text(occurrences?.toString() ?? "")
+                      )
+                    ])
+            )
+        )
+    );
+  }
+
   Widget get _buildDisplayDateWidget {
     String displayDateTime = StringUtils.ensureNotEmpty(widget.post?.displayDateTime);
     return Visibility(visible: widget.post?.isScheduled != true, child:
@@ -1196,6 +1245,31 @@ class _GroupPostCardState extends State<GroupPostCard> {
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
     UrlUtils.launchExternal(url);
+  }
+
+  void _reactWithEmoji(emoji.Emoji emoji){
+    _sendReaction(
+        Reaction(
+          data: emoji.emoji,
+          type: ReactionType.emoji,
+          dateCreatedUtc: DateTime.now().toUtc(),
+          engager: Creator(accountId: widget.group.currentMember?.userId, name: widget.group.currentMember?.name),
+        )
+    );
+  }
+
+  void _sendReaction(Reaction? reaction){ //TBD hook to BB
+    if(reaction != null)
+      setStateIfMounted(() =>
+          _reactions.add(reaction)
+      );
+  }
+
+  void _deleteReaction(Reaction? reaction){ //TBD remove
+    if(reaction != null)
+      setStateIfMounted(() =>
+          _reactions.remove(reaction)
+      );
   }
 
   void _onTapPostOptions() {
@@ -1257,7 +1331,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   // }
 
   int get _visibleRepliesCount {
-    int result = 0;
+    int result = 2;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
     List<Comment>? replies = null;
@@ -1272,6 +1346,19 @@ class _GroupPostCardState extends State<GroupPostCard> {
       result = replies.length;
     }
     return result;
+  }
+
+  Map<String, List<Reaction>> get _sameEmojiReactions{
+    return _reactions.fold(<String, List<Reaction>>{}, (map, element) {
+      if(element.data != null){
+        List<Reaction>? collection = map[element.data];
+        if(collection == null){
+          map[element.data!] = collection = <Reaction>[];
+        }
+        collection.add(element);
+      }
+      return map;
+    });
   }
 }
 
@@ -2179,6 +2266,117 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 }
 
 /////////////////////////////////////
+// GroupMemberProfileWidget
+class GroupMemberProfileInfoWidget extends StatefulWidget {
+  final String? name;
+  final String? userId;
+  final String? additionalInfo;
+  final bool? isAdmin;
+  // final Member? member;
+  // final StreamController? updateController;
+
+  const GroupMemberProfileInfoWidget({super.key, this.name, this.additionalInfo, this.isAdmin = false, this.userId});
+
+  @override
+  State<StatefulWidget> createState() => _GroupMemberProfileInfoState();
+}
+
+class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
+  String photoImageToken = DirectoryProfilePhotoUtils.newToken;
+  // Uint8List? _memberImageBytes;
+  // bool _loadingImage = false;
+
+  @override
+  void initState() {
+    // widget.updateController?.stream.listen((command) {
+    //   if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+    //     if(widget.member?.userId == command[GroupDetailPanel.notifyLoadMemberImage]){
+    //       setStateIfMounted(() => _loadingImage = true);
+    //     }
+    //   } else  if (command is Map && command.containsKey(GroupDetailPanel.notifyMemberImageLoaded)) {
+    //     Map? data = command[GroupDetailPanel.notifyMemberImageLoaded] is Map ? command[GroupDetailPanel.notifyMemberImageLoaded] : null;
+    //     if(data != null && JsonUtils.stringValue(data["id"]) == widget.member?.userId){
+    //       setStateIfMounted((){
+    //         _loadingImage = false;
+    //         _memberImageBytes = data["image_bytes"] is Uint8List ? data["image_bytes"] : _memberImageBytes;
+    //       });
+    //     }
+    //   }
+    // });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Container(
+        child:  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+          SizedBox(width: 34, height: 34,
+              child: _buildProfileImage),
+          Container(width: 8),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+                Container(width: 8),
+                Visibility(visible: widget.isAdmin == true,
+                  child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
+                )
+              ]),
+              Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
+                  child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
+            ],)
+        ]),
+      );
+
+  Widget get _buildProfileImage =>
+      DirectoryProfilePhoto(
+        photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
+        imageSize: _photoImageSize,
+        photoUrlHeaders: _photoAuthHeaders,
+      );
+
+  double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
+
+// Widget? get _buildProfileImage {
+//   bool hasProfilePhoto = widget.member?.userId != null &&
+//       (_getMemberImage() != null);
+//   Widget? profileImage = hasProfilePhoto ?
+//   Container(decoration: BoxDecoration(shape: BoxShape.circle,
+//       image: DecorationImage(
+//           fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain),
+//           image: Image.memory(_memberImageBytes!).image))) :
+//   Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
+//
+//   return Stack(alignment: Alignment.center, children: [
+//     if (profileImage != null) profileImage,
+//     Visibility(
+//         visible: _loadingImage,
+//         child: SizedBox(
+//             width: 20,
+//             height: 20,
+//             child: CircularProgressIndicator(
+//                 color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
+//   ]);
+// }
+
+// Uint8List? _getMemberImage() {
+//   String? id = widget.member?.userId;
+//   if(StringUtils.isEmpty(id))
+//     return null;
+//
+//   if(_memberImageBytes != null){
+//     return _memberImageBytes;
+//   } else {
+//     widget.updateController?.add({GroupDetailPanel.notifyLoadMemberImage: id});
+//     return null;
+//   }
+// }
+
+}
+
+/////////////////////////////////////
 // GroupMemberProfileImage
 
 class GroupMemberProfileImage extends StatefulWidget {
@@ -2964,5 +3162,35 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
+  }
+}
+
+typedef EmojiSelector = void Function(emoji.Emoji);
+class ReactionKeyboard {
+  static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 310,
+          child: emoji.EmojiPicker(
+            config: emoji.Config(
+                categoryViewConfig: emoji.CategoryViewConfig(
+                  indicatorColor: Styles().colors.fillColorSecondary,
+                  iconColorSelected: Styles().colors.fillColorSecondary
+                ),
+                bottomActionBarConfig: emoji.BottomActionBarConfig(
+                  backgroundColor: Styles().colors.fillColorPrimary,
+                  buttonColor: Styles().colors.fillColorPrimary,
+                )),
+            onEmojiSelected: ((category, emoji) {
+              // pop the bottom sheet
+              Navigator.pop(context);
+              onSelect.call(emoji);
+            }),
+          ),
+        );
+      },
+    );
   }
 }

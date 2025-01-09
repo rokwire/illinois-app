@@ -242,6 +242,7 @@
     "widget.title.small.fat.disabled.spaced": {"extends": "widget.title.small.disabled", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "textDark"},
     "widget.title.tiny.underline": { "extends" : "widget.title.tiny", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.title.tiny.underline.variant": { "extends" : "widget.title.tiny.underline", "decoration_color":  "fillColorPrimary"},
     "widget.title.tiny.fat": {"extends" : "widget.title.tiny", "font_family": "bold"},
     "widget.title.tiny.fat.spaced": {"extends" : "widget.title.tiny.fat", "letter_spacing": 1.0},
     "widget.title.tiny.fat.highlight": {"extends" : "widget.title.tiny", "color": "textLight"},
@@ -922,6 +923,7 @@
     "posts": {"src": "0xf27a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "reply": {"src": "0xf3e5", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "floorplan": {"src": "0xf279", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "message": {"src": "0xf27a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "location": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
     "time": {"src": "images/icon-time.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "clear":  {"src": "0xf057", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 24},
@@ -990,6 +992,11 @@
 
     "clock": {"src": "0xf017", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "download": {"src": "0xf019", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+
+    "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "envelope": {"src": "0xf0e0", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "message-lines": {"src": "0xf4a6", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "copy-fa": {"src": "0xf0c5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "star-partially-filled": {"src": "0xf5c0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
@@ -1284,6 +1291,8 @@
 
     "external-link": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
 
-    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"},
+
+    "group-managed-badge": {"src": "0xf336", "type": "fa.icon", "size": 18}
   }
 }

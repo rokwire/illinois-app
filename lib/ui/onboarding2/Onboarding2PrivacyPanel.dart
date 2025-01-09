@@ -50,347 +50,88 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   @override
   Widget build(BuildContext context) {
-    /*String titleText = Localization().getStringEx(
-        'panel.onboarding2.privacy.label.title',
-        'YOUR PRIVACY LEVEL IS');*/
-
-    return Scaffold(
-        backgroundColor: Styles().colors.fillColorPrimary,
-        body: SafeArea(child: SwipeDetector(
-          onSwipeLeft: () => _goNext(context),
-          onSwipeRight: () => _goBack(context),
-          child:
-          Container(color: Styles().colors.background, child:
-            Column(children: [
-              Expanded(child:
-                SingleChildScrollView(child:
-                  Column(
-                    children:[
-                    Container(
-                        color: Styles().colors.fillColorPrimary,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-
-                              Container(
-//                                padding: EdgeInsets.symmetric(vertical: 19),
-                                child: Row(children: [
-                                Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
-                                    color: Styles().colors.surface,
-                                    onTap: () {
-                                      Analytics().logSelect(target: "Back");
-                                      _goBack(context);
-                                    }),
-                                Expanded(child: Container()),
-
-//                                GestureDetector(
-//                                  onTap: () {
-//                                    Analytics().logSelect(target: 'Privacy Policy') ;
-//                                    _onTapPrivacyPolicy(context);
-//                                  },
-//                                  child:
-                                  Semantics(
-                                      label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
-                                      hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
-                                      button: true,
-                                      excludeSemantics: true,
-                                      child:
-//                                      Padding(
-//                                          padding: EdgeInsets.symmetric(vertical: 0),
-//                                          child: Text(
-//                                            "Skip",
-//                                            style: TextStyle(
-//                                                fontFamily: Styles().fontFamilies.regular,
-//                                                fontSize: 16,
-//                                                color: Styles().colors.surface,
-//                                                decoration: TextDecoration.underline,
-//                                                decorationColor: Styles().colors.fillColorSecondary,
-//                                                decorationThickness: 1,
-//                                                decorationStyle:
-//                                                TextDecorationStyle.solid),
-//                                          ))
-                                    _buildPrivacyPolicyButton()
-                                  ),
-//                                ),
-                                Container(width: 16,)
-                              ],)),
-//                              Semantics(
-//                                  label: titleText,
-//                                  hint: Localization().getStringEx(
-//                                      'panel.onboarding2.privacy.label.title.hint',
-//                                      ''),
-//                                  excludeSemantics: true,
-//                                  child: Padding(
-//                                    padding: EdgeInsets.only(
-//                                        left: 17, right: 17, top: 0, bottom: 12),
-//                                    child: Align(
-//                                        alignment: Alignment.center,
-//                                        child: Text(
-//                                            titleText,
-//                                            style: TextStyle(
-//                                                color: Styles().colors.surface,
-//                                                fontSize: 24,
-//                                                fontFamily: Styles().fontFamilies.bold
-//                                            ))
-//                                    ),
-//                                  )),
-//                              _buildPrivacySlider(),
-                              Container(height: 18,),
-                              Semantics(
-                                  label: _privacyDescription,
-                                  hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
-                                  header: true,
-                                  excludeSemantics: true,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 16),
-                                    child: Align(
-                                        alignment: Alignment.topCenter,
-                                        child: Text(
-                                          _privacyDescription!,
-                                          textAlign: TextAlign.center,
-                                          style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),
-                                        )),
-                                  )),
-                              Container(height: 35,),
-                              Container(
-                                  height: 90,
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topCenter,
-                                        child: Container(
-                                          height: 90,
-                                          child: Column(
-                                              children: [
-                                                CustomPaint(
-                                                  painter: TrianglePainter(
-                                                    painterColor: Styles().colors.background,),
-                                                  child: Container(
-                                                    height: 90,
-                                                  ),
-                                                ),
-                                                Container(height: 0,
-                                                  color: Styles().colors.background,)
-                                              ]),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.topRight,
-                                        child: _buildPrivacyBadge(),
-                                      )
-                                    ],
-                                  )
-                              )
-                    ])),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child:
-                      Text(
-                        _privacyLongDescription!,
-                        textAlign: TextAlign.center,
-                        style: Styles().textStyles.getTextStyle("widget.description.regular"),
-                      )
-                    ),
-                    _buildPrivacySlider(),
-                  ]),
-              )),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(height: 16,),
-                    Text(
-                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."),
-                      textAlign: TextAlign.center,
-                      style: Styles().textStyles.getTextStyle("widget.info.small"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 20, top: 16),
-                      child: RoundedButton(
-                        label: _continueButtonLabel,
-                        hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Styles().colors.surface,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
-                        onTap: () => _goNext(context),
-                      ),),
-                    Container(height: 16,)
-                  ],
-                ),
-              ),
-            ])))));
-  }
-
-  /*Widget _buildPrivacySlider(){
-    double selectedItemWidth = 50;
-    double deselectedItemWidth = 40;
-    double selectedTextSize = 28;
-    double deselectedTextSize = 24;
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 82),
-      height: 100,
-      child: Stack(
-        children:[
-          Align(
-            alignment: Alignment.center,
-            child: Row(children: [
-              Expanded(child:
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Container(
-                      height: 1,
-                      color: Styles().colors.surface,
-                    )
-              ))
-            ]),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child:
-            Row(children: [
-              Container(
-                width: _privacyLevel==1? selectedItemWidth : deselectedItemWidth ,
-                child: Stack(
-                  children: [
-                    Align(
-                      child: Container(
-                        width:50,
-                        child: Image.asset(_privacyLevel==1?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
-                      )
-                    ),
-                    Center(
-                      child:
-                      Text(
-                        "1",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: _privacyLevel==1? selectedTextSize: deselectedTextSize,
-                          color: Styles().colors.surface
+    return Scaffold(backgroundColor: Styles().colors.background,
+      appBar: AppBar(backgroundColor: Styles().colors.fillColorPrimary, toolbarHeight: 0,),
+      body: SwipeDetector(onSwipeLeft: _goNext, onSwipeRight: _goBack, child:
+        Column(children: [
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(children:[
+                Container(color: Styles().colors.fillColorPrimary, child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+                    Row(children: [
+                      Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19), color: Styles().colors.white, onTap: _goBack,),
+                      Expanded(child: Container()),
+                      Semantics(
+                        label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
+                        hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
+                        button: true,
+                        excludeSemantics: true,
+                        child: _buildPrivacyPolicyButton()
+                      ),
+                      Container(width: 16,)
+                    ],),
+                    Container(height: 18,),
+                    Semantics(
+                      label: _privacyDescription,
+                      hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
+                      header: true,
+                      excludeSemantics: true,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                        Align(alignment: Alignment.topCenter, child:
+                          Text(_privacyDescription ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),)
                         ),
                       )
-                    )
-                  ],
-              ),
-            ),
-            Expanded(
-              child: Container(),
-            ),
-              Container(
-                width: _privacyLevel==2? selectedItemWidth : deselectedItemWidth ,
-                child: Stack(
-                  children: [
-                    Align(
-                        child: Container(
-                          width:50,
-                          child: Image.asset(_privacyLevel==2?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
-                        )
                     ),
-                    Center(
-                        child:
-                        Text(
-                          "2",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: _privacyLevel==2? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.surface
+                    Container(height: 35,),
+                    Container(height: 90, child:
+                      Stack(children: [
+                        Align(alignment: Alignment.topCenter, child:
+                          Container(height: 90, child:
+                            Column(children: [
+                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background,), child:
+                                Container(height: 90,),
+                              ),
+                              Container(height: 0, color: Styles().colors.background,)
+                            ]),
                           ),
+                        ),
+                        Align(alignment: Alignment.topRight, child:
+                          _buildPrivacyBadge(),
                         )
+                      ],)
                     )
-                  ],
+                  ])
+                ),
+                Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                  Text(_privacyLongDescription ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.description.regular"),)
+                ),
+                _buildPrivacySlider(),
+              ]),
+            )
+          ),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              Container(height: 16,),
+              Text(Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.info.small"),),
+              Padding(padding: EdgeInsets.only(bottom: 20, top: 16), child:
+                RoundedButton(
+                  label: _continueButtonLabel,
+                  hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondaryVariant,
+                  onTap: _goNext,
                 ),
               ),
-              Expanded(
-                child: Container(),
-              ),
-              Container(
-                width: _privacyLevel==3? selectedItemWidth : deselectedItemWidth ,
-                child: Stack(
-                  children: [
-                    Align(
-                        child: Container(
-                          width:50,
-                          child: Image.asset(_privacyLevel==3?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
-                        )
-                    ),
-                    Center(
-                        child:
-                        Text(
-                          "3",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: _privacyLevel==3? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.surface
-                          ),
-                        )
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              Container(
-                width: _privacyLevel==4? selectedItemWidth : deselectedItemWidth ,
-                child: Stack(
-                  children: [
-                    Align(
-                        child: Container(
-                          width:50,
-                          child: Image.asset(_privacyLevel==4?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
-                        )
-                    ),
-                    Center(
-                        child:
-                        Text(
-                          "4",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: _privacyLevel==4? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.surface
-                          ),
-                        )
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              Container(
-                width: _privacyLevel==5? selectedItemWidth : deselectedItemWidth ,
-                child: Stack(
-                  children: [
-                    Align(
-                        child: Container(
-                          width:50,
-                          child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
-                        )
-                    ),
-                    Center(
-                        child:
-                        Text(
-                          "5",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: _privacyLevel==5? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.surface
-                          ),
-                        )
-                    )
-                  ],
-                ),
-              ),
-            Container()
-            ],)
-          )
-        ]
+              Container(height: 16,)
+            ],),
+          ),
+        ])
       )
     );
-  }*/
+  }
 
   Widget _buildPrivacyBadge(){
     return
@@ -518,13 +259,15 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save Privacy Level");
   }
 
-  void _goNext(BuildContext context) {
+  void _goNext() {
+    Analytics().logSelect(target: "Next");
     Auth2().prefs?.privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
     Onboarding2().finalize(context);
   }
 
-  void _goBack(BuildContext context) {
+  void _goBack() {
+    Analytics().logSelect(target: "Back");
     Navigator.of(context).pop();
   }
 

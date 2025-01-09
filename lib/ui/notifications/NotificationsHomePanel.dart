@@ -130,7 +130,8 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeSettingsFavorites,
       FirebaseMessaging.payloadTypeSettingsAssessments,
       FirebaseMessaging.payloadTypeSettingsCalendar,
-      FirebaseMessaging.payloadTypeSettingsAppointments
+      FirebaseMessaging.payloadTypeSettingsAppointments,
+      FirebaseMessaging.payloadTypeSocialMessage,
     });
   }
 

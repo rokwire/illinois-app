@@ -21,8 +21,11 @@ class MessagesDirectoryPanel extends StatefulWidget {
   final int conversationPageSize;
   final bool? unread;
   final void Function()? onTapBanner;
-  MessagesDirectoryPanel({Key? key, required this.recentConversations, required this.conversationPageSize, this.unread, this.onTapBanner}) :
-    super(key: key);
+  final bool startOnAllUsersTab;
+  final List<String>? defaultSelectedAccountIds;
+
+  MessagesDirectoryPanel({Key? key, required this.recentConversations, required this.conversationPageSize, this.unread, this.onTapBanner, this.startOnAllUsersTab = false,
+    this.defaultSelectedAccountIds,}) :super(key: key);
 
   _MessagesDirectoryPanelState createState() => _MessagesDirectoryPanelState();
 }
@@ -54,8 +57,13 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
       Social.notifyMessageSent,
     ]);
 
+    _selectedTab = widget.startOnAllUsersTab ? 1 : 0;
     _tabController = TabController(length: _tabNames.length, initialIndex: _selectedTab, vsync: this);
     _tabController.addListener(_onTabChanged);
+
+    if (widget.defaultSelectedAccountIds?.isNotEmpty ?? false) {
+      _selectedAccountIds.addAll(widget.defaultSelectedAccountIds!);
+    }
 
     _recentConversations = widget.recentConversations;
 
