@@ -19,9 +19,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -40,7 +38,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:sprintf/sprintf.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
@@ -743,10 +740,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  void _onTapPostLink(String? url) {
-    Analytics().logSelect(target: 'link');
-    UrlUtils.launchExternal(url);
-  }
+  // void _onTapPostLink(String? url) {
+  //   Analytics().logSelect(target: 'link');
+  //   UrlUtils.launchExternal(url);
+  // }
 
   void _setLoading(bool loading) {
     setStateIfMounted(() {
