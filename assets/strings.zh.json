@@ -1354,6 +1354,8 @@
 	"panel.event2.create.recurrence.repeat_type.monthly.label": "每月",
 	"panel.event2.create.label.recurrence.on.label": "在",
 	"panel.event2.create.label.recurrence.every.label": "每一個",
+	"panel.event2.create.label.recurrence.period.week.label": "星期",
+	"panel.event2.create.label.recurrence.period.weeks.label": "週",
 	"panel.event2.create.label.event_type.title": "活动类别",
 	"panel.event2.create.online_details.url.title": "网址链接",
 	"panel.event2.create.online_details.meeting_id.title": "会议密码",

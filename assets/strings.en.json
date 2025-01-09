@@ -1359,6 +1359,8 @@
     "panel.event2.create.recurrence.repeat_type.monthly.label": "Monthly",
     "panel.event2.create.label.recurrence.on.label": "ON",
     "panel.event2.create.label.recurrence.every.label": "EVERY",
+    "panel.event2.create.label.recurrence.period.week.label": "week",
+    "panel.event2.create.label.recurrence.period.weeks.label": "weeks",
     "panel.event2.create.label.event_type.title": "EVENT TYPE",
     "panel.event2.create.online_details.url.title": "ONLINE URL",
     "panel.event2.create.online_details.url.field": "ONLINE URL FIELD",

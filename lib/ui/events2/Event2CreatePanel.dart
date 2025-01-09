@@ -1229,10 +1229,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       return '-----';
     }
 
-    //TBD: DD - localize
     String weeksLabel = (period > 1)
-        ? Localization().getStringEx('panel.event2.create.label.recurrence.period.week.label', 'week')
-        : Localization().getStringEx('panel.event2.create.label.recurrence.period.weeks.label', 'weeks');
+        ? Localization().getStringEx('panel.event2.create.label.recurrence.period.weeks.label', 'weeks')
+        : Localization().getStringEx('panel.event2.create.label.recurrence.period.week.label', 'week');
     return '$period $weeksLabel';
   }
 
