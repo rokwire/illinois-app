@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/ext/Poll.dart';
+import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:neom/service/Analytics.dart';
@@ -18,9 +20,10 @@ import 'package:neom/service/Polls.dart' as neom;
 class PollCard extends StatefulWidget{
   final Poll? poll;
   final Group? group;
+  final bool? isAdmin;
   final bool showGroupName;
 
-  PollCard({required this.poll, this.group, this.showGroupName = true});
+  PollCard({required this.poll, this.group, this.isAdmin, this.showGroupName = true});
 
   @override
   State<StatefulWidget> createState() => _PollCardState();
@@ -143,12 +146,22 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
               )
             ]),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
-            Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.regular'))
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 16.0),
+          //   child: Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
+          //   Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.regular'))
+          //   ),
+          // ),
+          Row(children: [
+            Visibility(visible: widget.poll?.creatorUserUuid != null,
+                child: GroupMemberProfileInfoWidget(
+                    name: widget.poll?.creatorUserName,
+                    userId: widget.poll?.creatorUserUuid,
+                    isAdmin: widget.isAdmin,
+                    additionalInfo: _pollDateText
+                  // updateController: widget.updateController,
+                ))
+          ],),
           Padding(padding: EdgeInsets.only(right: 16), child:
           Column(children: [
             Container(height: 8,),
@@ -178,6 +191,9 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
       ),],
     );
   }
+
+  String? get _pollDateText =>
+      "Quick Poll,Updated ${widget.poll?.displayUpdateTime}";
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;

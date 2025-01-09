@@ -125,6 +125,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   PageController? _pageController;
   TabController?  _tabController;
   StreamController _updateController = StreamController.broadcast();
+  final ScrollController _scrollController = ScrollController();
 
   _DetailTab         _currentTab = _DetailTab.Events;
 
@@ -275,6 +276,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     _updateController.close();
     _pageController?.dispose();
     _tabController?.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -1490,7 +1492,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     //   closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     // ),);
     showDialog(context: context, builder: (_) =>  AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
             Padding(padding: EdgeInsets.all(30), child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [

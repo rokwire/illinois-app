@@ -1,8 +1,8 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/ui/profile/ProfileInfoPage.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

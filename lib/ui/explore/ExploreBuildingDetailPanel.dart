@@ -12,7 +12,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
+import 'package:neom/ui/explore/DisplayFloorPlanPanel.dart';
 
 class ExploreBuildingDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Building? building;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -19,7 +19,7 @@ class ProfileInfoSharePanel extends StatefulWidget {
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => ProfileInfoSharePanel._(profile: profile,),
     );

@@ -1,4 +1,4 @@
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
+import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/profile/ProfileInfoPage.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

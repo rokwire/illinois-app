@@ -281,6 +281,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
   bool _loadingAccount = false;
 
   Auth2UserProfile? get _profile => _account?.profile;
+  List<Auth2PublicAccountIdentifier>? get _identifiers => _account?.identifiers;
 
   String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
     Content().getUserPhotoUrl(accountId: _account?.id, type: UserProfileImageType.medium) : null;
@@ -316,7 +317,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
     );
 
   Decoration get _cardDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: _cardBorderRadiusGeometry,
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]
@@ -348,7 +349,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
             Align(alignment: Alignment.centerLeft, child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
-                DirectoryProfileDetails(_profile),
+                DirectoryProfileDetails(_profile, _identifiers),
               ]),
             )
           ),
@@ -406,7 +407,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
         painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondary, horzDir: TriangleHorzDirection.leftToRight),
         child: Padding(padding: EdgeInsets.only(right: _cardBorderRadius, top: _cardBorderRadius / 2 * 3), child:
           Row( mainAxisAlignment: MainAxisAlignment.end, children: [
-            Styles().images.getImage('university-logo-blue') ?? Container(),
+            Styles().images.getImage('university-logo-dark') ?? Container(),
           ],)
         ),
       ),
