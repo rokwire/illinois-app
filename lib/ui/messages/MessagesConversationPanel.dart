@@ -577,8 +577,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       _loadingMore = true;
     });
 
-    // Use the Social API to load conversation messages
-    List<Message> messages = <Message>[];
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
       limit: _messagesPageSize,
