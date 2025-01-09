@@ -123,6 +123,7 @@
 	"generic.app.feature.checklist.uiuc": "New Student Checklist",
 	"generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
 	"generic.app.feature.messages": "Messages",
+	"generic.app.feature.connections": "Connections",
 
 	"generic.time.now": "現在",
 	"generic.time.minutes": "分",
@@ -301,7 +302,7 @@
 	"panel.browse.section.campus_guide.description": "了解更多關於校園生活的信息。",
 	"panel.browse.section.dinings.title": "校园餐饮",
 	"panel.browse.section.dinings.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
-	"panel.browse.section.directory.title": "User Directory",
+	"panel.browse.section.directory.title": "Directory of Users",
 	"panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
 	"panel.browse.section.events.title": "活動",
 	"panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
@@ -313,7 +314,7 @@
 	"panel.browse.section.research_projects.description": "Discover and participate in research projects.",
 	"panel.browse.section.laundry.title": "洗衣房",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
-	"panel.browse.section.messages.title": "留言",
+	"panel.browse.section.messages.title": "連接",
 	"panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
 	"panel.browse.section.mtd.title": "MTD 巴士",
 	"panel.browse.section.mtd.description": "查看 MTD 巴士站位置、路线和实时动态。",
@@ -1244,6 +1245,13 @@
 	"panel.explore_building_detail.detail.entry.amenity.floors": "• {{name}}: Floors {{floors}}",
 	"panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
 	"panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
+
+	"panel.display_floor_plan_panel.html_svg_header": "<!DOCTYPE html><html lang=\"en\"><head><title>Floor Plan</title></head><body>",
+ "panel.display_floor_plan_panel.html_svg_footer": "</body></html>",
+ "panel.display_floor_plan_panel.html_error": "No floor plan available",
+	"panel.display_floor_plan_panel.footer": "楼层",
+	"panel.display_floor_plan_panel.footer.menu_item": "楼层",
+	"panel.display_floor_plan_panel.footer.hint": "双击选择楼层",
 
 	"panel.search_building.header.title": "Search",
 	"panel.search_building.result.error.label": "Failed to search buildings",
@@ -3194,7 +3202,7 @@
 	"widget.inbox_message_card.subject.hint": "主題：%s",
 	"widget.inbox_message_card.body.hint": "身體：%s",
 
-	"panel.messages.header.messages.label": "留言",
+	"panel.messages.header.connections.label": "連接",
 	"panel.messages.mark_all_read.label": "標記為已讀",
 	"panel.messages.label.time.any": "任何時間",
 	"panel.messages.label.time.today": "今天",

@@ -222,6 +222,7 @@ class Building with Explore {
 
   List<BuildingFeature>? features;
   List<BuildingEntrance>? entrances;
+  List<String>? floors;
 
   Building({
     this.id, this.name, this.number,
@@ -229,7 +230,7 @@ class Building with Explore {
     this.city, this.state, this.zipCode,
     this.imageURL, this.mailCode,
     this.latitude, this.longitude,
-    this.features, this.entrances,
+    this.features, this.entrances, this.floors,
   });
 
   static Building? fromJson(Map<String, dynamic>? json) {
@@ -254,6 +255,7 @@ class Building with Explore {
 
       features: BuildingFeature.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['Features']))),
       entrances: BuildingEntrance.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['entrances', 'Entrances']))),
+      floors: JsonUtils.listStringsValue(MapUtils.get2(json, ['floors', 'Floors'])),
     ) : null;
   }
 
@@ -278,6 +280,7 @@ class Building with Explore {
 
     'features': BuildingFeature.listToJson(features),
     'entrances': BuildingEntrance.listToJson(entrances),
+    'floors': floors,
   };
 
   bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
@@ -303,6 +306,7 @@ class Building with Explore {
     
     (latitude == other.latitude) &&
     (longitude == other.longitude) &&
+        (floors == other.floors) &&
 
     DeepCollectionEquality().equals(features, other.features) &&
     DeepCollectionEquality().equals(entrances, other.entrances);
@@ -326,6 +330,7 @@ class Building with Explore {
 
     (latitude?.hashCode ?? 0) ^
     (longitude?.hashCode ?? 0) ^
+    (floors?.hashCode ?? 0) ^
     
     DeepCollectionEquality().hash(features)  ^
     DeepCollectionEquality().hash(entrances);

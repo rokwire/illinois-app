@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Acknowledged global message id parameter from social message notification [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+- Acknowledged "extend-limit-to-global-message-id" parameter of GET /api/conversations/{id}/messages API [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+### Fixed
+- Fixed pagination in conversation messages panel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+### Changed
+- "Messages" renamed to "Connections" [#4585](https://github.com/rokwire/illinois-app/issues/4585).
+- Change the name in sections from "User Directory" to "Directory of Users" [#4587](https://github.com/rokwire/illinois-app/issues/4587).
+ 
+## [6.1.35] - 2025-01-08
+### Changed
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+### Added
 - Start conversation to a specific user from the directory [#4555](https://github.com/rokwire/illinois-app/issues/4555)
 - New assistant provider - Grok [#4573](https://github.com/rokwire/illinois-app/issues/4573).
 ### Fixed
