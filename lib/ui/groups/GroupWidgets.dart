@@ -18,7 +18,7 @@ import 'dart:async';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1051,7 +1051,7 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   static const double _smallImageSize = 64;
-  List<String> _reactions = [];
+  List<Reaction> _reactions = [];
 
   @override
   void initState() {
@@ -1067,8 +1067,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
-
-    Map<String, int> uniqueReactions = _uniqueReactions;
 
     return Stack(alignment: Alignment.topRight, children: [
       Semantics(button:true,
@@ -1100,18 +1098,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat') )),
-                      // Visibility(
-                      //     visible: isRepliesLabelVisible,
-                      //     child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      //       Padding(
-                      //           padding: EdgeInsets.only(left: 8),
-                      //           child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
-                      //               style: Styles().textStyles.getTextStyle('widget.description.small'))),
-                      //       Padding(
-                      //           padding: EdgeInsets.only(left: 8),
-                      //           child: Text(StringUtils.ensureNotEmpty(repliesLabel),
-                      //               style: Styles().textStyles.getTextStyle('widget.description.small')))
-                      //     ])),
                     ]),
                     Row(
                       children: [
@@ -1156,31 +1142,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
                         children: [
                           Expanded(
-                            child: Wrap(
-                              children: [
-                                ...uniqueReactions.keys.map((String reaction) =>
-                                  Padding( padding: EdgeInsets.all(4),
-                                    child: InkWell(
-                                    onTap: () => setStateIfMounted(() => _reactions.remove(reaction)), //TBD call BB to remove reaction
-                                    child: Row(mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(reaction),
-                                        Visibility(visible: uniqueReactions[reaction] != null && uniqueReactions[reaction]! > 1,
-                                          child: Text(uniqueReactions[reaction].toString())
-                                        )
-                                      ])
-                                    )
-                                  )
-                                  ).toList(),
-                                Container(
-                                    padding: EdgeInsets.only(right: 6),
-                                    child: InkWell(
-                                      // onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _react),
-                                      child: Padding(padding: EdgeInsets.all(0),
-                                          child: Image.asset("images/add_reaction_icon.png"))
-                                )),
-                              ]
-                            )
+                            child: _buildReactionsLayoutWidget
                           ),
                           Visibility(
                               visible: isRepliesLabelVisible,
@@ -1201,11 +1163,79 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
-  // void _react(emoji.Emoji emoji){
-  //   setStateIfMounted(() =>
-  //     _reactions.add(emoji.emoji)
-  //   );
-  // }
+  //ReactionWidget //TBD move to GroupReaction when ready to hook BB
+  Widget get _buildReactionsLayoutWidget {
+    Map<String, List<Reaction>> sameEmojiReactions = _sameEmojiReactions;
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          ...sameEmojiReactions.keys.map((String emoji) =>
+              _buildReactionWidget(
+                  occurrences: sameEmojiReactions[emoji]?.length,
+                  reaction: sameEmojiReactions[emoji]?.
+                  firstWhere(
+                          (Reaction reaction) => reaction.isCurrentUserReacted,
+                      orElse: () => (CollectionUtils.isNotEmpty(sameEmojiReactions[emoji]) ? sameEmojiReactions[emoji]?.first : null)
+                          ?? Reaction()))
+          ).toList(),
+          Container(
+              padding: EdgeInsets.only(right: 6),
+              child: InkWell(
+                  onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
+                  child: Padding(padding: EdgeInsets.all(0),
+                      child: Image.asset("images/add_reaction_icon.png", width: 40, fit: BoxFit.fitWidth,))
+              )),
+        ]
+    );
+  }
+
+  Widget _buildReactionWidget({Reaction? reaction, int? occurrences}){
+    return Padding( padding: EdgeInsets.all(4),
+        child: InkWell(
+            onTap: () => _deleteReaction(reaction), //TBD call BB to remove reaction
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
+              decoration: BoxDecoration(
+                  color: Styles().colors.fillColorPrimaryTransparent015,
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  border: Border.all(color: Styles().colors.fillColorPrimary,)),
+              child: Row(mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(reaction?.data ?? ""),
+                  Visibility(visible: (occurrences ?? 0 ) > 1,
+                      child: Text(occurrences?.toString() ?? "")
+                  )
+                ])
+            )
+        )
+    );
+  }
+
+  void _reactWithEmoji(emoji.Emoji emoji){
+      _sendReaction(
+        Reaction(
+          data: emoji.emoji,
+          type: ReactionType.emoji,
+          dateCreatedUtc: DateTime.now().toUtc(),
+          engager: Creator(accountId: widget.group.currentMember?.userId, name: widget.group.currentMember?.name),
+        )
+      );
+  }
+
+  void _sendReaction(Reaction? reaction){ //TBD hook to BB
+    if(reaction != null)
+      setStateIfMounted(() =>
+          _reactions.add(reaction)
+      );
+  }
+
+  void _deleteReaction(Reaction? reaction){ //TBD remove
+    if(reaction != null)
+      setStateIfMounted(() =>
+          _reactions.remove(reaction)
+      );
+  }
+  ////
 
   // ignore: unused_element
   Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
@@ -1256,9 +1286,15 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
 
-  Map<String, int> get _uniqueReactions{
-    return _reactions.fold(<String, int>{}, (map, element) {
-      map[element] = (map[element] ?? 0) + 1;
+  Map<String, List<Reaction>> get _sameEmojiReactions{
+    return _reactions.fold(<String, List<Reaction>>{}, (map, element) {
+      if(element.data != null){
+        List<Reaction>? collection = map[element.data];
+        if(collection == null){
+          map[element.data!] = collection = <Reaction>[];
+        }
+        collection.add(element);
+      }
       return map;
     });
   }
@@ -3560,32 +3596,32 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   }
 }
 
-// typedef EmojiSelector = void Function(emoji.Emoji);
-// class ReactionKeyboard {
-//   static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
-//     showModalBottomSheet(
-//       context: context,
-//       builder: (context) {
-//         return SizedBox(
-//           height: 310,
-//           child: emoji.EmojiPicker(
-//             config: emoji.Config(
-//                 categoryViewConfig: emoji.CategoryViewConfig(
-//                   indicatorColor: Styles().colors.fillColorSecondary,
-//                   iconColorSelected: Styles().colors.fillColorSecondary
-//                 ),
-//                 bottomActionBarConfig: emoji.BottomActionBarConfig(
-//                   backgroundColor: Styles().colors.fillColorPrimary,
-//                   buttonColor: Styles().colors.fillColorPrimary,
-//                 )),
-//             onEmojiSelected: ((category, emoji) {
-//               // pop the bottom sheet
-//               Navigator.pop(context);
-//               onSelect.call(emoji);
-//             }),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+typedef EmojiSelector = void Function(emoji.Emoji);
+class ReactionKeyboard {
+  static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 310,
+          child: emoji.EmojiPicker(
+            config: emoji.Config(
+                categoryViewConfig: emoji.CategoryViewConfig(
+                  indicatorColor: Styles().colors.fillColorSecondary,
+                  iconColorSelected: Styles().colors.fillColorSecondary
+                ),
+                bottomActionBarConfig: emoji.BottomActionBarConfig(
+                  backgroundColor: Styles().colors.fillColorPrimary,
+                  buttonColor: Styles().colors.fillColorPrimary,
+                )),
+            onEmojiSelected: ((category, emoji) {
+              // pop the bottom sheet
+              Navigator.pop(context);
+              onSelect.call(emoji);
+            }),
+          ),
+        );
+      },
+    );
+  }
+}
