@@ -2785,7 +2785,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
                   Expanded(child:
                     Semantics ( label: title, child:
                       RichText(text:
-                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.dark.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
+                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
                           TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
                   ] : null),
                   ))

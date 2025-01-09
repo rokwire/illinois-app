@@ -3219,7 +3219,7 @@
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
 
-    "panel.messages.header.messages.label": "Messages",
+    "panel.messages.header.messages.label": "MESSAGES",
     "panel.messages.mark_all_read.label": "Mark all as read",
     "panel.messages.label.time.any": "Any Time",
     "panel.messages.label.time.today": "Today",

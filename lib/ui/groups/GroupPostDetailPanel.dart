@@ -241,6 +241,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                         autofocus: true,
                                         decoration: InputDecoration(
                                             hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
+                                            fillColor: Styles().colors.surface,
+                                            filled: true,
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Styles().colors.mediumGray,

@@ -138,23 +138,22 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(color: Styles().colors.surface, child:
+      Container(color: Styles().colors.backgroundAccent, child:
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.messages.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+              Text(Localization().getStringEx('panel.messages.header.messages.label', 'MESSAGES'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),)
             ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
               ),
             ),
           ),
         ],),
       ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
       // _buildBanner(),
       _buildAdditionalButtons(),
       _buildFilters(),
@@ -397,11 +396,13 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
                 separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimary.withAlpha(77),),
                 itemCount: filterValues.length,
                 itemBuilder: (context, index) {
-                  return  FilterListItem(
+                  return FilterListItem(
                     title: filterValues[index].name,
                     description: (subLabels != null) ? subLabels[index] : null,
-                    selected: selectedFilterValue == filterValues[index].value,
-                    onTap: () { _onFilterValue(_selectedFilter, filterValues[index]); },
+                    iconKey: (selectedFilterValue == filterValues[index].value) ? 'check-circle-filled' : 'check-circle-outline-gray',
+                    onTap: () {
+                      _onFilterValue(_selectedFilter, filterValues[index]);
+                    },
                   );
                 }
             ),
@@ -525,13 +526,13 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   Widget _buildNewMessageButton() {
     return RibbonButton(
         textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
-          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
+          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
-        backgroundColor: Styles().colors.fillColorPrimary,
-        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
+        backgroundColor: Styles().colors.fillColorSecondary,
+        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.fillColorPrimaryVariant),
         rightIconKey: null,
         borderRadius: BorderRadius.all(Radius.circular(8)),
         onTap: _onTapNewMessage,

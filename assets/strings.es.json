@@ -3203,7 +3203,7 @@
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
 
-    "panel.messages.header.messages.label": "Mensajes",
+    "panel.messages.header.messages.label": "MENSAJES",
     "panel.messages.mark_all_read.label": "Marcar todo como leido",
     "panel.messages.label.time.any": "Cualquier momento",
     "panel.messages.label.time.today": "Hoy dia",

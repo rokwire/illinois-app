@@ -61,7 +61,7 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
           _expandedHeadingLeftContent
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12), child:
-          Styles().images.getImage('chevron2-up',)
+          Styles().images.getImage('chevron2-up', color: Styles().colors.iconPrimary)
         ),
       ],),
     );
@@ -70,12 +70,15 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
     InkWell(onTap: _onSelect, child:
       Padding(padding: padding, child:
         SizedBox(height: 24.0, width: 24.0, child:
-          Checkbox(
-          checkColor: Styles().colors.surface,
+        Checkbox(
+          checkColor: Styles().colors.iconPrimary,
           activeColor: Styles().colors.fillColorPrimary,
           value: widget.selected,
           visualDensity: VisualDensity.compact,
-          side: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),
+          side: BorderSide(
+            color: widget.selected ? Styles().colors.iconPrimary : Styles().colors.iconLight,
+            width: 1.0,
+          ),
           onChanged: _onToggleSelected,
         ),
       ),
@@ -154,7 +157,7 @@ class _DirectoryAccountCardState extends State<DirectoryAccountCard> {
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
-          Styles().images.getImage('chevron2-down',)
+          Styles().images.getImage('chevron2-down', color: Styles().colors.iconPrimary)
         ),
       ],),
     );

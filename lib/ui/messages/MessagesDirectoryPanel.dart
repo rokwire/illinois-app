@@ -172,8 +172,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with Ti
                       child: RoundedButton(
                           label: Localization().getStringEx('panel.messages.directory.button.continue.label', 'Continue'),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
-                          backgroundColor: Styles().colors.fillColorPrimary,
-                          borderColor: Styles().colors.fillColorPrimary,
+                          backgroundColor: Styles().colors.fillColorSecondary,
+                          borderColor: Styles().colors.fillColorSecondary,
                           onTap: _onTapCreateConversation
                       )
                   ),
