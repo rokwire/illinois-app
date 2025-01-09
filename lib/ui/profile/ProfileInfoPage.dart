@@ -8,7 +8,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoAndDirectoryPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -24,6 +23,8 @@ import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+enum ProfileInfo { connectionsInfo, directoryInfo }
 
 class ProfileInfoPage extends StatefulWidget {
   static const String editParamKey = 'edu.illinois.rokwire.profile.directory.info.edit';
