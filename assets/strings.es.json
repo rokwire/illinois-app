@@ -123,6 +123,7 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
     "generic.app.feature.messages": "Messages",
+    "generic.app.feature.connections": "Connections",
 
     "generic.time.now": "ahora",
     "generic.time.minutes": "minutos",
@@ -301,7 +302,7 @@
     "panel.browse.section.campus_guide.description": "Obtenga más información sobre la vida en el campus.",
     "panel.browse.section.dinings.title": "Comida",
     "panel.browse.section.dinings.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
-    "panel.browse.section.directory.title": "User Directory",
+    "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
     "panel.browse.section.events.title": "Eventos",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
@@ -313,7 +314,7 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
-    "panel.browse.section.messages.title": "Mensajes",
+    "panel.browse.section.messages.title": "Conexiones",
     "panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
     "panel.browse.section.mtd.title": "Autobuses MTD",
     "panel.browse.section.mtd.description": "Vea las ubicaciones, las rutas y la disponibilidad de las paradas de autobús de MTD.",
@@ -1244,6 +1245,13 @@
     "panel.explore_building_detail.detail.entry.amenity.floors": "• {{name}}: Floors {{floors}}",
     "panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
     "panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
+
+    "panel.display_floor_plan_panel.html_svg_header": "<!DOCTYPE html><html lang=\"en\"><head><title>Floor Plan</title></head><body>",
+    "panel.display_floor_plan_panel.html_svg_footer": "</body></html>",
+    "panel.display_floor_plan_panel.html_error": "No floor plan available",
+    "panel.display_floor_plan_panel.footer": "Planta",
+    "panel.display_floor_plan_panel.footer.menu_item": "Planta",
+    "panel.display_floor_plan_panel.footer.hint": "Doble toque para seleccionar planta",
 
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
@@ -3203,7 +3211,7 @@
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
 
-    "panel.messages.header.messages.label": "Mensajes",
+    "panel.messages.header.connections.label": "Conexiones",
     "panel.messages.mark_all_read.label": "Marcar todo como leido",
     "panel.messages.label.time.any": "Cualquier momento",
     "panel.messages.label.time.today": "Hoy dia",

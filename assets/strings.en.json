@@ -124,6 +124,7 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
     "generic.app.feature.messages": "Messages",
+    "generic.app.feature.connections": "Connections",
 
     "generic.time.now": "now",
     "generic.time.minutes": "minutes",
@@ -303,7 +304,7 @@
     "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
     "panel.browse.section.dinings.title": "Dining",
     "panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
-    "panel.browse.section.directory.title": "User Directory",
+    "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
@@ -315,7 +316,7 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Laundry",
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
-    "panel.browse.section.messages.title": "Messages",
+    "panel.browse.section.messages.title": "Connections",
     "panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
@@ -1246,6 +1247,13 @@
     "panel.explore_building_detail.detail.entry.amenity.floors": "• {{name}}: Floors {{floors}}",
     "panel.explore_building_detail.detail.entry.amenity.floor": "• {{name}}: Floor {{floors}}",
     "panel.explore_building_detail.detail.entry.amenity": "• {{name}}",
+
+    "panel.display_floor_plan_panel.html_svg_header": "<!DOCTYPE html><html lang=\"en\"><head><title>Floor Plan</title></head><body>",
+    "panel.display_floor_plan_panel.html_svg_footer": "</body></html>",
+    "panel.display_floor_plan_panel.html_error": "No floor plan available",
+    "panel.display_floor_plan_panel.footer": "Floor",
+    "panel.display_floor_plan_panel.footer.menu_item": "Floor",
+    "panel.display_floor_plan_panel.footer.hint": "Double tap to select floor",
 
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
@@ -3211,7 +3219,7 @@
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
 
-    "panel.messages.header.messages.label": "Messages",
+    "panel.messages.header.connections.label": "Connections",
     "panel.messages.mark_all_read.label": "Mark all as read",
     "panel.messages.label.time.any": "Any Time",
     "panel.messages.label.time.today": "Today",

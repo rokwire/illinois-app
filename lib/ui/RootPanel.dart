@@ -872,7 +872,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if ((content != null)) {
       _presentSocialMessagePanel(
         conversationId: JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id']),
-        messageId: JsonUtils.stringValue(content['message_id'])
+        messageId: JsonUtils.stringValue(content['message_id']),
+        messageGlobalId: JsonUtils.stringValue(content['message_global_id']),
       );
     }
   }
@@ -1137,13 +1138,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _presentSocialMessagePanel(
         conversationId: JsonUtils.stringValue(param["entity_id"]),
         messageId: JsonUtils.stringValue(param["message_id"]),
+        messageGlobalId: JsonUtils.stringValue(param["message_global_id"]),
       );
     }
   }
 
-  void _presentSocialMessagePanel({String? conversationId, String? messageId}) {
+  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
     if (StringUtils.isNotEmpty(conversationId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversationId: conversationId, targetMessageId: messageId,)));;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+        conversationId: conversationId,
+        targetMessageId: messageId,
+        targetMessageGlobalId: messageGlobalId,
+      )));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
     }

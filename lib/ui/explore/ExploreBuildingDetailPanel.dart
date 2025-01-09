@@ -12,6 +12,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
 
 class ExploreBuildingDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Building? building;
@@ -94,7 +95,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       _buildTitle(),
       _buildLocation(),
       _buildShare(),
-      // _buildFloorPlansAndAmenities(),
+      _buildFloorPlansAndAmenities(),
       _buildSelectLocation(),
       if (_building?.features?.isNotEmpty == true)
         _buildFeatureList(),
@@ -143,7 +144,6 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       ),
     );
 
-  // ignore: unused_element
   Widget _buildFloorPlansAndAmenities() =>
     Visibility(visible: _canFloorPlansAndAmenities(), child:
       InkWell(onTap: _onFloorPlansAndAmenities, child:
@@ -217,6 +217,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   void _onFloorPlansAndAmenities() {
     Analytics().logSelect(target: "Floor Plans & Amenities");
     // TODO: present the relevant UI
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DisplayFloorPlanPanel(building: _building)));
   }
 }
 
