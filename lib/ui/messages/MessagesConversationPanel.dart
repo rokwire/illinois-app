@@ -28,7 +28,8 @@ class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
   final String? conversationId;
   final String? targetMessageId;
-  MessagesConversationPanel({Key? key, this.conversation, this.conversationId, this.targetMessageId}) : super(key: key);
+  final String? targetMessageGlobalId;
+  MessagesConversationPanel({Key? key, this.conversation, this.conversationId, this.targetMessageId, this.targetMessageGlobalId}) : super(key: key);
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
@@ -250,8 +251,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
-    Key? contentItemKey = (message.id == widget.targetMessageId) ? _targetMessageContentItemKey : null;
-    Decoration cardDecoration = (message.id == widget.targetMessageId) ? _highlightedMessageCardDecoration : _messageCardDecoration;
+    bool isTargetCard = ((message.id == widget.targetMessageId) || (message.globalId == widget.targetMessageGlobalId));
+    Key? contentItemKey = isTargetCard ? _targetMessageContentItemKey : null;
+    Decoration cardDecoration = isTargetCard ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
     return FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
@@ -505,7 +507,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _messages = (_conversation?.isGroupConversation == true) ?
             _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
           _hasMoreMessages = (_messagesPageSize <= messages.length);
-          _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
+          _shouldScrollToTarget = ((widget.targetMessageId != null) || (widget.targetMessageGlobalId != null)) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
         }
       });
     }
@@ -531,7 +533,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _messages = (_conversation?.isGroupConversation == true) ?
           _removeDuplicateMessagesByGlobalId(loadedMessages, _globalIds) : List.from(loadedMessages);
         _hasMoreMessages = (messagesCount <= loadedMessages.length);
-        _shouldScrollToTarget = (widget.targetMessageId != null) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
+        _shouldScrollToTarget = ((widget.targetMessageId != null) || (widget.targetMessageGlobalId != null)) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
         // If null, silently ignore the error
