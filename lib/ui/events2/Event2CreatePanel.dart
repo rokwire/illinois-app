@@ -1114,13 +1114,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         container: true,
         child: Row(children: <Widget>[
           Expanded(
-              flex: 4,
+              flex: 1,
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
                   text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
           Container(width: 16),
           Expanded(
-              flex: 6,
+              flex: 4,
               child: Container(
                   decoration: Event2CreatePanel.dropdownButtonDecoration,
                   child: Padding(
@@ -1161,7 +1161,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
           Container(width: 16),
           Expanded(
-              flex: 6,
+              flex: 4,
               child: _buildRecurrenceWeekDays())
         ]));
   }
@@ -1189,7 +1189,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return Semantics(
         label: title,
         container: true,
-        child: Row(children: <Widget>[
+        child: Padding(padding: EdgeInsets.only(top: 16), child: Row(children: <Widget>[
           Expanded(
               flex: 1,
               child: RichText(
@@ -1197,7 +1197,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
           Container(width: 16),
           Expanded(
-              flex: 3,
+              flex: 4,
               child: Container(
                   decoration: Event2CreatePanel.dropdownButtonDecoration,
                   child: Padding(
@@ -1211,7 +1211,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                               items: _buildEveryWeeklyRecurrenceDropDownItems(),
                               value: _weeklyRepeatPeriod,
                               onChanged: _onWeeklyPeriodChanged)))))
-        ]));
+        ])));
   }
 
   List<DropdownMenuItem<int?>>? _buildEveryWeeklyRecurrenceDropDownItems() {
