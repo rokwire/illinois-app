@@ -187,7 +187,7 @@ PODS:
     - CocoaLumberjack
     - JSONModel
     - Mixpanel
-  - share (0.0.1):
+  - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -250,7 +250,7 @@ DEPENDENCIES:
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
   - SeosMobileKeysSDK-Debug (from `../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec`)
   - SeosMobileKeysSDK-Release (from `../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec`)
-  - share (from `.symlinks/plugins/share/ios`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
@@ -356,8 +356,8 @@ EXTERNAL SOURCES:
     :path: "../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec"
   SeosMobileKeysSDK-Release:
     :path: "../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec"
-  share:
-    :path: ".symlinks/plugins/share/ios"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   speech_to_text:
@@ -380,7 +380,7 @@ SPEC CHECKSUMS:
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
   BerTlv: c94b89a7b93bf8c1881691a8d105ec87a4a10759
   CocoaLumberjack: 6a459bc897d6d80bd1b8c78482ec7ad05dffc3f0
-  connectivity_plus: ddd7f30999e1faaef5967c23d5b6d503d10434db
+  connectivity_plus: 4c41c08fc6d7c91f63bc7aec70ffe3730b04f563
   device_calendar: 9cb33f88a02e19652ec7b8b122ca778f751b1f7b
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
@@ -430,7 +430,7 @@ SPEC CHECKSUMS:
   rokwire_plugin: a5f02f3b3034208386b38618f12fcbfa9bc678fc
   SeosMobileKeysSDK-Debug: 41dc15710ad56f340a9ef3e82d987623c289d9ce
   SeosMobileKeysSDK-Release: add079b6221cd9d42b4c088407b2f8f365c0cd53
-  share: 0b2c3e82132f5888bccca3351c504d0003b3b410
+  share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
