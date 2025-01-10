@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Acknowledged global message id parameter from social message notification [#4572](https://github.com/rokwire/illinois-app/issues/4572).
+- Edit a message [#4579](https://github.com/rokwire/illinois-app/issues/4572)
 ### Fixed
 - Fixed pagination in conversation messages panel [#4572](https://github.com/rokwire/illinois-app/issues/4572).
  
