@@ -580,7 +580,7 @@ class _BrowseEntry extends StatelessWidget {
   static Map<String, String> _iconsMap = <String, String>{
     'academics.my_illini'        : 'external-link',
     'academics.due_date_catalog' : 'external-link',
-    'feeds.daily_illini'         : 'external-link',
+    'music_and_news.daily_illini': 'external-link',
     'app_help.faqs'              : 'external-link',
     'app_help.feedback'          : 'external-link',
     'safer.my_mckinley'          : 'external-link',
@@ -651,12 +651,12 @@ class _BrowseEntry extends StatelessWidget {
       case "events.my_events":               _onTapMyEvents(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
-      case "feeds.daily_illini":             _onTapDailyIllini(context); break;
 
-      case "radio_stations.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
-      case "radio_stations.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
-      case "radio_stations.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
-      case "radio_stations.wpgufm_radio":    _onTapRadioStation(context, RadioStation.wpgufm); break;
+      case "music_and_news.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
+      case "music_and_news.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
+      case "music_and_news.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
+      case "music_and_news.wpgufm_radio":    _onTapRadioStation(context, RadioStation.wpgufm); break;
+      case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
 
       case "groups.all_groups":              _onTapAllGroups(context); break;
       case "groups.my_groups":               _onTapMyGroups(context); break;
