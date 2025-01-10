@@ -471,6 +471,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   int? _weeklyRepeatPeriod;
   int? _monthlyRepeatPeriod;
   static const int _maxRecurrenceEveryValue = 10;
+  DateTime? _recurrenceEndDate;
 
   Event2Type? _eventType;
   late _Event2Visibility _visibility;
@@ -1088,7 +1089,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
         _buildRepeatOnWeeklySectionWidget(),
-        _buildRecurrenceEverySectionWidget()
+        _buildRecurrenceEverySectionWidget(),
+        _buildRecurrenceEndOnSectionWidget()
       ]);
     }
 
@@ -1235,6 +1237,38 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return '$period $weeksLabel';
   }
 
+  Widget _buildRecurrenceEndOnSectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.end_on.label', 'END ON');
+    return Semantics(
+        label: title,
+        container: true,
+        child: Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: Row(children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: RichText(
+                      textScaler: MediaQuery.of(context).textScaler,
+                      text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+              Container(width: 16),
+              Expanded(
+                  flex: 4,
+                  child: InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: _onTapRecurrenceEndDate,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Padding(padding: EdgeInsets.only(right: 10), child: Icon(Icons.calendar_today)),
+                        Text(
+                            _hasRecurrenceEndDate
+                                ? DateFormat("EEE, MMM dd, yyyy").format(_recurrenceEndDate!)
+                                : Localization().getStringEx('panel.event2.create.label.recurrence.end_date.label', 'End Date'),
+                            style: _hasRecurrenceEndDate
+                                ? Styles().textStyles.getTextStyle('widget.button.title.small.fat')
+                                : Event2CreatePanel.headingDisabledTextStype)
+                      ])))
+            ])));
+  }
+
   void _onToggleRecurrenceSection() {
     Analytics().logSelect(target: "Toggle Recurrence");
     Event2CreatePanel.hideKeyboard(context);
@@ -1271,6 +1305,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _weeklyRepeatPeriod = value;
+    });
+  }
+
+  void _onTapRecurrenceEndDate() {
+    Analytics().logSelect(target: 'Recurrence: End Date');
+    Event2CreatePanel.hideKeyboard(context);
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    DateTime minDate = now;
+    DateTime maxDate = now.add(Duration(days: 366));
+    DateTime selectedDate =
+        (_recurrenceEndDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_recurrenceEndDate!, minDate), maxDate) : minDate;
+    showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: minDate,
+      lastDate: maxDate,
+      currentDate: now,
+    ).then((DateTime? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _recurrenceEndDate = DateUtils.dateOnly(result);
+        });
+      }
     });
   }
 
@@ -2306,6 +2363,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       meetingPasscode: _onlinePasscodeController.text,
     ) : null;
 
+
+  bool get _hasRecurrenceEndDate => (_recurrenceEndDate != null);
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
   bool get _hasAttendanceDetails => _attendanceDetails?.isNotEmpty ?? false;
