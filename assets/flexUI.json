@@ -27,7 +27,7 @@
 
 			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
-			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "safety", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
+			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "inbox", "polls", "music_and_news", "recent", "safety", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
@@ -45,7 +45,7 @@
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.polls": ["create_poll", "recent_polls"],
-			"browse.radio_stations": ["will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio"],
+			"browse.music_and_news": ["will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio"],
 			"browse.recent": ["recent_items"],
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
 			"browse.surveys": ["public_surveys"],
