@@ -41,11 +41,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
+  final List<Reaction>? postReactions; //TBD load from bb
   final Comment? focusedReply;
   final Group group;
   final bool hidePostOptions;
 
-  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.postReactions, this.hidePostOptions = false});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -172,12 +173,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Row(children: [
-                  Expanded( child:  Container(),
-                    // Semantics(sortKey: OrdinalSortKey(1), container: true, child:
-                    //   Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
-                    //       style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
-                    //   )
-                    // )
+                  Expanded( child:
+                    // Container(),
+                    Visibility(visible: _post?.isPost == true,
+                      child: Semantics(sortKey: OrdinalSortKey(1), container: true, child:
+                        Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
+                            style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
+                        )
+                      )
+                    )
                   ),
                   // Visibility(
                   //   visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
@@ -253,7 +257,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           //         onTapUrl : (url) {_onTapPostLink(url); return true;},
                           //         textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
                           //     )
-                            GroupPostCard(post: _post, group: widget.group)
+                            GroupPostCard(post: _post, group: widget.group, isClickable: false, postReactions: widget.postReactions,
+                              isAdmin: _post?.findCreatorMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
                           visible: _isEditMainPost,
@@ -465,6 +470,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 reply: reply,
                 post: widget.post,
                 group: widget.group,
+                creator: widget.post?.findCreatorMember(groupMembers: _allMembersAllowedToPost),
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
