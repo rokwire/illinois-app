@@ -385,12 +385,12 @@
 	"panel.browse.entry.events.my_events.title": "我的活動",
 
 	"panel.browse.entry.feeds.twitter.title": "推特",
-	"panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
 
 	"panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
 	"panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
 	"panel.browse.entry.music_and_news.willhd_radio.title": "Illinois Soul 101.1 FM",
 	"panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 調頻",
+	"panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
 	"panel.browse.entry.groups.my_groups.title": "我的群組",
