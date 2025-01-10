@@ -23,10 +23,10 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   ProfileInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData });
 
   @override
-  State<StatefulWidget> createState() => _ProfileInfoPreviewPageState();
+  State<StatefulWidget> createState() => ProfileInfoPreviewPageState();
 }
 
-class _ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
+class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
 

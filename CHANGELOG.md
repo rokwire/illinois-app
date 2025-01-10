@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.37] - 2025-01-10
 ### Changed
 - UI Cleanup: Home > Sections > news and radio groupings [#4469](https://github.com/rokwire/illinois-app/issues/4469).
 - Rename "New Message" button to "New Connection" on the Connections panel [#4594](https://github.com/rokwire/illinois-app/issues/4594).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- Updated Onboarding Profile Info flow [#4596](https://github.com/rokwire/illinois-app/issues/4596).
 
 ## [6.1.36] - 2025-01-09
 ### Added
