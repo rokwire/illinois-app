@@ -538,7 +538,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   Widget _buildNewMessageButton() {
     return RibbonButton(
-        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
+        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Connection'),
           style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

@@ -3212,7 +3212,7 @@
 	"panel.messages.label.muted.show": "顯示靜音",
 	"panel.messages.label.muted.hide": "隱藏靜音",
 	"panel.messages.label.content.empty": "沒有對話",
-	"panel.messages.button.new.title": "新訊息",
+	"panel.messages.button.new.title": "新連接",
 	"panel.messages.button.new.hint": "",
 	"panel.messages.mark_as_read.failed.msg": "無法將所有對話標記為已讀",
 

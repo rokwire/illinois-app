@@ -3235,7 +3235,7 @@
     "panel.messages.label.muted.show": "Show Muted",
     "panel.messages.label.muted.hide": "Hide Muted",
     "panel.messages.label.content.empty": "No conversations",
-    "panel.messages.button.new.title": "New Message",
+    "panel.messages.button.new.title": "New Connection",
     "panel.messages.button.new.hint": "",
     "panel.messages.mark_as_read.failed.msg": "Failed to mark all conversations as read.",
 

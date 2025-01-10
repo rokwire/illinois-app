@@ -3227,7 +3227,7 @@
     "panel.messages.label.muted.show": "Mostrar silenciado",
     "panel.messages.label.muted.hide": "Ocultar silenciado",
     "panel.messages.label.content.empty": "Sin conversaciones",
-    "panel.messages.button.new.title": "Nuevo mensaje",
+    "panel.messages.button.new.title": "Nueva conexión",
     "panel.messages.button.new.hint": "",
     "panel.messages.mark_as_read.failed.msg": "Error al marcar todas las conversaciones como leídas",
 
