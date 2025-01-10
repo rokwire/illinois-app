@@ -817,6 +817,8 @@
     "panel.onboarding.profile_info.title.hint":"Header 1",
     "panel.onboarding.profile_info.continue.title":"Continue",
     "panel.onboarding.profile_info.continue.hint":"",
+    "panel.onboarding.profile_info.skip.title":"Skip",
+    "panel.onboarding.profile_info.skip.hint":"",
 
     "panel.onboarding.upgrade.required.label.title":"Update Required",
     "panel.onboarding.upgrade.required.label.description":"%s app version %s requires an upgrade to version %s or later.",
