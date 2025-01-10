@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- UI Cleanup: Home > Sections > news and radio groupings [#4469](https://github.com/rokwire/illinois-app/issues/4469).
+- Rename "New Message" button to "New Connection" on the Connections panel [#4594](https://github.com/rokwire/illinois-app/issues/4594).
+
 ## [6.1.36] - 2025-01-09
 ### Added
 - Acknowledged global message id parameter from social message notification [#4572](https://github.com/rokwire/illinois-app/issues/4572).

@@ -322,8 +322,8 @@
 	"panel.browse.section.inbox.description": "來自團體、學術或體育賽事等的應用內通知的快捷方式。",
 	"panel.browse.section.polls.title": "民意調查",
 	"panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
-	"panel.browse.section.radio_stations.title": "Radio Stations",
-	"panel.browse.section.radio_stations.description": "Listen to {{app_title}} Public Media and student-run WPGU.",
+	"panel.browse.section.music_and_news.title": "Illini Music & News",
+	"panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
 	"panel.browse.section.recent.title": "Recently Viewed",
  	"panel.browse.section.recent.description": "Revisit your recent app activity.",
 	"panel.browse.section.safety.title": "Safety",
@@ -385,12 +385,12 @@
 	"panel.browse.entry.events.my_events.title": "我的活動",
 
 	"panel.browse.entry.feeds.twitter.title": "推特",
-	"panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
 
-	"panel.browse.entry.radio_stations.will_radio.title": "WILL News & Talk (NPR)",
-	"panel.browse.entry.radio_stations.willfm_radio.title": "WILL Classical & More",
-	"panel.browse.entry.radio_stations.willhd_radio.title": "Illinois Soul 101.1 FM",
-	"panel.browse.entry.radio_stations.wpgufm_radio.title": "WPGU 107.1 調頻",
+	"panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
+	"panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
+	"panel.browse.entry.music_and_news.willhd_radio.title": "Illinois Soul 101.1 FM",
+	"panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 調頻",
+	"panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
 	"panel.browse.entry.groups.my_groups.title": "我的群組",
@@ -3212,7 +3212,7 @@
 	"panel.messages.label.muted.show": "顯示靜音",
 	"panel.messages.label.muted.hide": "隱藏靜音",
 	"panel.messages.label.content.empty": "沒有對話",
-	"panel.messages.button.new.title": "新訊息",
+	"panel.messages.button.new.title": "新連接",
 	"panel.messages.button.new.hint": "",
 	"panel.messages.mark_as_read.failed.msg": "無法將所有對話標記為已讀",
 
