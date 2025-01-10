@@ -295,11 +295,29 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     ),
                 ]),
                 SizedBox(height: 8),
-                LinkText(
-                  message.message ?? '',
-                  textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                  linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                  onLinkTap: _onTapLink,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: LinkText(
+                        message.message ?? '',
+                        textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                        linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                        onLinkTap: _onTapLink,
+                      ),
+                    ),
+                    // If dateUpdatedUtc is not null, show a small “(edited)” label
+                    if (message.dateUpdatedUtc != null)
+                      Padding(
+                        padding: EdgeInsets.only(left: 4),
+                        child: Text(
+                          '(edited)',
+                          style: Styles().textStyles
+                              .getTextStyle('widget.message.light.small')
+                              ?.copyWith(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                  ],
                 ),
               ]),
             ),
@@ -677,6 +695,17 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       return;
     }
 
+    if (newText == oldMessage.message?.trim()) {
+      FocusScope.of(context).unfocus();
+      setState(() {
+        _editingMessage = null;
+        _inputController.clear();
+        _submitting = false;
+        _shouldScrollToTarget = _ScrollTarget.bottom;
+      });
+      return;
+    }
+
     setState(() {
       _submitting = true;
     });
@@ -691,20 +720,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       if (success) {
         int index = _messages.indexWhere((msg) => msg.globalId == oldMessage.globalId);
         if (index >= 0) {
-
           Message updatedMessage = Message(
             id: oldMessage.id,
             globalId: oldMessage.globalId,
             sender: oldMessage.sender,
             message: newText,
-            dateSentUtc: oldMessage.dateSentUtc, // or DateTime.now().toUtc() if changed
+            dateSentUtc: oldMessage.dateSentUtc,
+            dateUpdatedUtc: DateTime.now().toUtc(), // Mark it as edited
           );
 
           _messages[index] = updatedMessage;
           Message.sortListByDateSent(_messages);
+          // Close the keyboard:
           FocusScope.of(context).unfocus();
-        }
-        else {
+        } else {
           debugPrint('Could not find the old message with globalId: ${oldMessage.globalId} to replace.');
         }
       } else {
