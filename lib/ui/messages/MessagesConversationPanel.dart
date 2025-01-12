@@ -29,7 +29,11 @@ class MessagesConversationPanel extends StatefulWidget {
   final String? conversationId;
   final String? targetMessageId;
   final String? targetMessageGlobalId;
+
   MessagesConversationPanel({Key? key, this.conversation, this.conversationId, this.targetMessageId, this.targetMessageGlobalId}) : super(key: key);
+
+  bool get _hasTargetMessage => ((targetMessageId != null) || (targetMessageGlobalId != null));
+  bool isTargetMessage(Message message) => ((message.id == targetMessageId) || (message.globalId == targetMessageGlobalId));
 
   _MessagesConversationPanelState createState() => _MessagesConversationPanelState();
 }
@@ -253,9 +257,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
-    bool isTargetCard = ((message.id == widget.targetMessageId) || (message.globalId == widget.targetMessageGlobalId));
-    Key? contentItemKey = isTargetCard ? _targetMessageContentItemKey : null;
-    Decoration cardDecoration = isTargetCard ? _highlightedMessageCardDecoration : _messageCardDecoration;
+    Key? contentItemKey = widget.isTargetMessage(message) ? _targetMessageContentItemKey : null;
+    Decoration cardDecoration = widget.isTargetMessage(message) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
     return GestureDetector(
       onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null,
@@ -530,7 +533,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     futures.add(Social().loadConversationMessages(
       conversationId: _conversationId!,
       offset: 0, limit: _messagesPageSize,
-      extendLimitToMessageId: widget.targetMessageId,
+      // Pass messageId param only if we messageGlobalId is not applied
+      extendLimitToMessageId: (widget.targetMessageGlobalId == null) ? widget.targetMessageId : null,
+      extendLimitToGlobalMessageId: widget.targetMessageGlobalId,
     ));
 
     List<dynamic> results = await Future.wait(futures);
@@ -550,7 +555,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
           _messagesLength = messages.length;
           _hasMoreMessages = (_messagesPageSize <= messages.length);
-          _shouldScrollToTarget = ((widget.targetMessageId != null) || (widget.targetMessageGlobalId != null)) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
+          _shouldScrollToTarget = widget._hasTargetMessage ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
         }
       });
     }
@@ -576,7 +581,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _removeDuplicateMessagesByGlobalId(messages, _globalIds) : List.from(messages);
         _messagesLength = messages.length;
         _hasMoreMessages = (messagesCount <= messages.length);
-        _shouldScrollToTarget = ((widget.targetMessageId != null) || (widget.targetMessageGlobalId != null)) ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
+        _shouldScrollToTarget = widget._hasTargetMessage ? _ScrollTarget.targetMessage : _ScrollTarget.bottom;
       } else {
         // If null, could indicate a failure to load messages
         // If null, silently ignore the error
@@ -595,6 +600,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       _loadingMore = true;
     });
 
+    // Use the Social API to load conversation messages
     List<Message>? loadedMessages = await Social().loadConversationMessages(
       conversationId: _conversationId!,
       limit: _messagesPageSize,

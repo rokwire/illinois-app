@@ -123,6 +123,7 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
     "generic.app.feature.messages": "Messages",
+    "generic.app.feature.connections": "Connections",
 
     "generic.time.now": "ahora",
     "generic.time.minutes": "minutos",
@@ -301,7 +302,7 @@
     "panel.browse.section.campus_guide.description": "Obtenga más información sobre la vida en el campus.",
     "panel.browse.section.dinings.title": "Comida",
     "panel.browse.section.dinings.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
-    "panel.browse.section.directory.title": "User Directory",
+    "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Connect with {{university_long_name}} students and employees",
     "panel.browse.section.events.title": "Eventos",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
@@ -313,7 +314,7 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
-    "panel.browse.section.messages.title": "Mensajes",
+    "panel.browse.section.messages.title": "Conexiones",
     "panel.browse.section.messages.description": "Send messages to {{university_long_name}} students and employees",
     "panel.browse.section.mtd.title": "Autobuses MTD",
     "panel.browse.section.mtd.description": "Vea las ubicaciones, las rutas y la disponibilidad de las paradas de autobús de MTD.",
@@ -321,8 +322,8 @@
     "panel.browse.section.inbox.description": "Accesos directos a sus notificaciones en la aplicación de grupos, académicos o eventos deportivos y más.",
     "panel.browse.section.polls.title": "Encuestas",
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
-    "panel.browse.section.radio_stations.title": "Radio Stations",
-    "panel.browse.section.radio_stations.description": "Listen to {{app_title}} Public Media and student-run WPGU.",
+    "panel.browse.section.music_and_news.title": "Illini Music & News",
+    "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
     "panel.browse.section.recent.title": "Recently Viewed",
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.safety.title": "Safety",
@@ -384,12 +385,12 @@
     "panel.browse.entry.events.my_events.title": "Mis eventos",
 
     "panel.browse.entry.feeds.twitter.title": "X/Twitter",
-    "panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
 
-    "panel.browse.entry.radio_stations.will_radio.title": "WILL News & Talk (NPR)",
-    "panel.browse.entry.radio_stations.willfm_radio.title": "WILL Classical & More",
-    "panel.browse.entry.radio_stations.willhd_radio.title": "Illinois Soul 101.1 FM",
-    "panel.browse.entry.radio_stations.wpgufm_radio.title": "WPGU 107.1 FM",
+    "panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
+    "panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
+    "panel.browse.entry.music_and_news.willhd_radio.title": "Illinois Soul 101.1 FM",
+    "panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 FM",
+    "panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
     "panel.browse.entry.groups.my_groups.title": "Mis grupos",
@@ -814,6 +815,8 @@
     "panel.onboarding.profile_info.title.hint":"Header 1",
     "panel.onboarding.profile_info.continue.title":"Continue",
     "panel.onboarding.profile_info.continue.hint":"",
+    "panel.onboarding.profile_info.skip.title":"Skip",
+    "panel.onboarding.profile_info.skip.hint":"",
 
     "panel.onboarding.upgrade.required.label.title":"Actualización requerida",
     "panel.onboarding.upgrade.required.label.description":"%s versión de la aplicación %s requiere una actualización a la versión %s o posterior",
@@ -1926,7 +1929,6 @@
 
     "panel.settings.profile.content.profile.label": "Mi perfil",
     "panel.settings.profile.content.who_are_you.label": "Quién eres tú",
-    "panel.settings.profile.content.info_and_directory.label": "My Info & User Directory",
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Perfil",
@@ -2342,6 +2344,11 @@
     "panel.profile.info.directory_visibility.public.text": "Public",
     "panel.profile.info.directory_visibility.private.text": "Private",
     "panel.profile.info.directory_visibility.toggle.failed.text": "Failed to update directory visibility.",
+
+    "panel.profile.info.share.command.button.save.text": "Save to Photos",
+    "panel.profile.info.share.command.button.share.email.text": "Share via Email",
+    "panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
+    "panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
@@ -3210,7 +3217,7 @@
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
 
-    "panel.messages.header.messages.label": "Mensajes",
+    "panel.messages.header.connections.label": "Conexiones",
     "panel.messages.mark_all_read.label": "Marcar todo como leido",
     "panel.messages.label.time.any": "Cualquier momento",
     "panel.messages.label.time.today": "Hoy dia",
@@ -3222,7 +3229,7 @@
     "panel.messages.label.muted.show": "Mostrar silenciado",
     "panel.messages.label.muted.hide": "Ocultar silenciado",
     "panel.messages.label.content.empty": "Sin conversaciones",
-    "panel.messages.button.new.title": "Nuevo mensaje",
+    "panel.messages.button.new.title": "Nueva conexión",
     "panel.messages.button.new.hint": "",
     "panel.messages.mark_as_read.failed.msg": "Error al marcar todas las conversaciones como leídas",
 
