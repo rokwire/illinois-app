@@ -260,68 +260,47 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     Key? contentItemKey = widget.isTargetMessage(message) ? _targetMessageContentItemKey : null;
     Decoration cardDecoration = widget.isTargetMessage(message) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
-    return GestureDetector(
-      onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null,
-      child: FutureBuilder<Widget>(
-        future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
-        builder: (context, snapshot) {
-          Widget avatar = snapshot.data ??
-              (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+    return GestureDetector(onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null, child:
+      FutureBuilder<Widget>(
+      future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
+      builder: (context, snapshot) {
+        Widget avatar = snapshot.data ??
+          (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
-          return Container(
-            key: contentItemKey,
-            margin: EdgeInsets.only(bottom: 16),
-            decoration: cardDecoration,
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _onTapAccount(message),
-                      child: Row(children: [
-                        avatar,
-                        SizedBox(width: 8),
-                        Expanded(
-                            child: Text(
-                                "${message.sender?.name ?? 'Unknown'}",
-                                style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
-                            )
-                        ),
-                      ]),
-                    ),
+        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(child:
+                  InkWell(onTap: () => _onTapAccount(message), child:
+                    Row(children: [
+                      avatar,
+                      SizedBox(width: 8),
+                      Expanded(child:
+                        Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                      ),
+                    ]),
                   ),
-                  if (message.dateSentUtc != null)
-                    Text(
-                      AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '',
-                      style: Styles().textStyles.getTextStyle('widget.description.small'),
-                    ),
-                ]),
-                SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: LinkText(
-                        message.message ?? '',
-                        textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                        linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                        onLinkTap: _onTapLink,
-                      ),
-                    ),
-                    // If dateUpdatedUtc is not null, show a small “(edited)” label
-                    if (message.dateUpdatedUtc != null)
-                      Padding(
-                        padding: EdgeInsets.only(left: 4),
-                        child: Text(
-                          '(edited)',
-                          style: Styles().textStyles
-                              .getTextStyle('widget.message.light.small')
-                              ?.copyWith(fontStyle: FontStyle.italic),
-                        ),
-                      ),
-                  ],
                 ),
+                if (message.dateSentUtc != null)
+                  Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+              ]),
+              SizedBox(height: 8),
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(child:
+                  LinkText(
+                    message.message ?? '',
+                    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                    linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                    onLinkTap: _onTapLink,
+                  ),
+                ),
+                // If dateUpdatedUtc is not null, show a small “(edited)” label
+                if (message.dateUpdatedUtc != null)
+                  Padding(padding: EdgeInsets.only(left: 4), child:
+                    Text('(edited)', style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                  ),
+                ],),
               ]),
             ),
           );
