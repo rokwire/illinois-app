@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Edit a message [#4579](https://github.com/rokwire/illinois-app/issues/4572)
+
 ## [6.1.37] - 2025-01-10
 ### Changed
 - UI Cleanup: Home > Sections > news and radio groupings [#4469](https://github.com/rokwire/illinois-app/issues/4469).
