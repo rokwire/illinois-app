@@ -298,7 +298,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                 // If dateUpdatedUtc is not null, show a small “(edited)” label
                 if (message.dateUpdatedUtc != null)
                   Padding(padding: EdgeInsets.only(left: 4), child:
-                    Text('(edited)', style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                    Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                   ),
                 ],),
               ]),
@@ -617,22 +617,22 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Future<void> _submitMessage(String messageText) async {
     messageText = messageText.trim();
-
-    if (_editingMessage != null && StringUtils.isNotEmpty(messageText)) { // NEW CODE
-      await _updateExistingMessage(_editingMessage!, messageText);
-      return;
+    if (StringUtils.isNotEmpty(messageText)) {
+      return (_editingMessage != null) ? _updateEditingMessage(messageText) : _createNewMessage(messageText);
     }
+  }
 
-    if (StringUtils.isNotEmpty(_inputController.text) && _conversationId != null && _currentUserId != null && !_submitting) {
+
+  Future<void> _createNewMessage(String messageText) async {
+    if (StringUtils.isNotEmpty(messageText) && _conversationId != null && _currentUserId != null && !_submitting) {
       FocusScope.of(context).requestFocus(FocusNode());
 
-      String newText = _inputController.text.trim();
       _inputController.text = '';
 
       // Create a temporary message and add it immediately
       Message tempMessage = Message(
         sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
-        message: newText,
+        message: messageText,
         dateSentUtc: DateTime.now().toUtc(),
       );
 
@@ -640,100 +640,93 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _submitting = true;
         _messages.add(tempMessage);
         Message.sortListByDateSent(_messages);
-        _shouldScrollToTarget = _ScrollTarget.bottom;
+        _shouldScrollToTarget = _ScrollTarget.bottom; //TBD
       });
 
-      try {
-        // Send to the backend
-        List<Message>? newMessages = await Social().createConversationMessage(
-          conversationId: _conversationId!,
-          message: newText,
-        );
+      // Send to the backend
+      List<Message>? newMessages = await Social().createConversationMessage(
+        conversationId: _conversationId!,
+        message: messageText,
+      );
 
+      if (mounted) {
         if (newMessages != null && newMessages.isNotEmpty) {
-          Message serverMessage = newMessages.first;
-          // Update the temporary message with the server's message if needed
-          int index = _messages.indexOf(tempMessage);
-          if (index >= 0) {
-            _messages[index] = serverMessage;
-            Message.sortListByDateSent(_messages);
-          }
+          setState(() {
+            Message serverMessage = newMessages.first;
+            // Update the temporary message with the server's message if needed
+            int index = _messages.indexOf(tempMessage);
+            if (index >= 0) {
+              _messages[index] = serverMessage;
+              Message.sortListByDateSent(_messages);
+            }
+            _submitting = false;
+          });
         } else {
           // If creation failed
-          _messages.remove(tempMessage);
+          setState(() {
+            _messages.remove(tempMessage);
+            _submitting = false;
+          });
           AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
         }
-      } catch (e) {
-        _messages.remove(tempMessage);
-        AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
       }
-
-      // Done submitting new message
-      setState(() {
-        _submitting = false;
-      });
     }
   }
 
-  Future<void> _updateExistingMessage(Message oldMessage, String newText) async {
-    if (_conversationId == null || oldMessage.globalId == null) {
-      return;
-    }
-
-    if (newText == oldMessage.message?.trim()) {
-      FocusScope.of(context).unfocus();
-      setState(() {
-        _editingMessage = null;
+  Future<void> _updateEditingMessage(String newText) async {
+    if (_conversationId != null && _editingMessage?.globalId != null) {
+      if (newText == _editingMessage?.message?.trim()) {
+        FocusScope.of(context).unfocus();
+        setState(() {
+          _editingMessage = null;
+          _submitting = false;
+          //_shouldScrollToTarget = _ScrollTarget.bottom;
+        });
         _inputController.clear();
-        _submitting = false;
-        _shouldScrollToTarget = _ScrollTarget.bottom;
-      });
-      return;
-    }
-
-    setState(() {
-      _submitting = true;
-    });
-
-    try {
-      bool success = await Social().updateConversationMessage(
-        conversationId: _conversationId!,
-        globalMessageId: oldMessage.globalId!,
-        newText: newText,
-      );
-
-      if (success) {
-        int index = _messages.indexWhere((msg) => msg.globalId == oldMessage.globalId);
-        if (index >= 0) {
-          Message updatedMessage = Message(
-            id: oldMessage.id,
-            globalId: oldMessage.globalId,
-            sender: oldMessage.sender,
-            message: newText,
-            dateSentUtc: oldMessage.dateSentUtc,
-            dateUpdatedUtc: DateTime.now().toUtc(), // Mark it as edited
-          );
-
-          _messages[index] = updatedMessage;
-          Message.sortListByDateSent(_messages);
-          // Close the keyboard:
-          FocusScope.of(context).unfocus();
-        } else {
-          debugPrint('Could not find the old message with globalId: ${oldMessage.globalId} to replace.');
-        }
-      } else {
-        AppToast.showMessage(Localization().getStringEx('', 'Failed to update message'));
       }
-    } catch (e) {
-      AppToast.showMessage(Localization().getStringEx('', 'Error updating message'));
-    }
+      else {
+        setState(() {
+          _submitting = true;
+        });
 
-    setState(() {
-      _editingMessage = null;
-      _inputController.text = '';
-      _submitting = false;
-      _shouldScrollToTarget = _ScrollTarget.bottom;
-    });
+        // Close the keyboard:
+        FocusScope.of(context).unfocus();
+
+        bool success = await Social().updateConversationMessage(
+          conversationId: _conversationId!,
+          globalMessageId: _editingMessage!.globalId!,
+          newText: newText,
+        );
+
+        if (mounted) {
+          if (success) {
+            int index = _messages.indexWhere((msg) => msg.globalId == _editingMessage?.globalId);
+            if (index >= 0) {
+              setState(() {
+                Message updatedMessage = Message.fromOther(_editingMessage,
+                  message: newText,
+                  dateUpdatedUtc: DateTime.now().toUtc(), // Mark it as edited
+                );
+
+                _messages[index] = updatedMessage;
+                Message.sortListByDateSent(_messages);
+
+                _editingMessage = null;
+                _submitting = false;
+                // _shouldScrollToTarget = _ScrollTarget.bottom;
+              });
+            } else {
+              debugPrint('Could not find the old message with globalId: ${_editingMessage?.globalId} to replace.');
+            }
+          } else {
+            setState(() {
+              _submitting = false;
+            });
+            AppToast.showMessage(Localization().getStringEx('', 'Failed to update message'));
+          }
+        }
+      }
+    }
   }
 
   void _startListening() {
