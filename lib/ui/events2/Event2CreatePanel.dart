@@ -469,8 +469,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   _RecurrenceRepeatType? _recurrenceRepeatType;
   List<DayOfWeek>? _recurrenceWeekDays;
   int? _weeklyRepeatPeriod;
+  static const int _maxRecurrenceWeeksValue = 10;
   int? _monthlyRepeatPeriod;
-  static const int _maxRecurrenceEveryValue = 10;
+  static const int _maxRecurrenceMonthsValue = 10;
+  _RecurrenceRepeatMonthlyType? _recurrenceRepeatMonthlyType;
+  int? _recurrenceRepeatDay;
+  static const int _maxRecurrenceRepeatDayValue = 31;
+  _RecurrenceOrdinalNumber? _recurrenceOrdinalNumber;
+  _RecurrenceMonthWeekDay? _recurrenceMonthWeekDay;
   DateTime? _recurrenceEndDate;
 
   Event2Type? _eventType;
@@ -1070,6 +1076,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   // Recurrence Section - show it only when creating an event
 
+  // 1 Common Recurrence sections
+
   Widget _buildRecurrenceDropdownSection() => Visibility(visible: widget.isCreate, child: Event2CreatePanel.buildDropdownSectionWidget(
     heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.recurrence.title', 'RECURRENCE'),
         required: false,
@@ -1089,22 +1097,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
         _buildRepeatOnWeeklySectionWidget(),
-        _buildRecurrenceEverySectionWidget(),
+        _buildRecurrenceEveryWeekSectionWidget(),
+        _buildRecurrenceEndOnSectionWidget()
+      ]);
+    } else if (_recurrenceRepeatType == _RecurrenceRepeatType.monthly) {
+      contentList.addAll(<Widget>[
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
+        _buildRepeatOnMonthlySectionWidget(),
+        _buildRecurrenceEveryMonthSectionWidget(),
         _buildRecurrenceEndOnSectionWidget()
       ]);
     }
-
-    //TBD: DD - implement it based on the selection
-    // if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
-    //   contentList.addAll(<Widget>[
-    //     Padding(padding: Event2CreatePanel.innerSectionPadding),
-    //     _buildLocationBuildingInnerSection(),
-    //     _buildLocationAddressInnerSection(),
-    //     _buildLocationLatitudeInnerSection(),
-    //     _buildLocationLongitudeInnerSection(),
-    //     _buildSelectLocationButton()
-    //   ]);
-    // }
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
@@ -1150,93 +1153,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return menuItems;
   }
 
-  Widget _buildRepeatOnWeeklySectionWidget() {
-    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.on.label', 'ON');
-    return Semantics(
-        label: title,
-        container: true,
-        child: Row(children: <Widget>[
-          Expanded(
-              flex: 1,
-              child: RichText(
-                  textScaler: MediaQuery.of(context).textScaler,
-                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-          Container(width: 16),
-          Expanded(
-              flex: 4,
-              child: _buildRecurrenceWeekDays())
-        ]));
-  }
-
-  Widget _buildRecurrenceWeekDays() {
-    List<Widget> daysWidgets = <Widget>[];
-    for (DayOfWeek day in DayOfWeek.values) {
-      bool selected = CollectionUtils.isNotEmpty(_recurrenceWeekDays) && _recurrenceWeekDays!.contains(day);
-      String imageKey = selected ? 'check-circle-filled' : 'circle-outline-gray';
-      daysWidgets.add(InkWell(
-          splashColor: Colors.transparent,
-          onTap: () => _onToggleWeekDay(day),
-          child: Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Styles().images.getImage(imageKey) ?? Container(),
-                Padding(padding: EdgeInsets.only(left: 6), child: Text(day.name))
-              ]))));
-    }
-    return Wrap(crossAxisAlignment: WrapCrossAlignment.center, runSpacing: 6, children: daysWidgets);
-  }
-
-  Widget _buildRecurrenceEverySectionWidget() {
-    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.every.label', 'EVERY');
-    return Semantics(
-        label: title,
-        container: true,
-        child: Padding(padding: EdgeInsets.only(top: 16), child: Row(children: <Widget>[
-          Expanded(
-              flex: 1,
-              child: RichText(
-                  textScaler: MediaQuery.of(context).textScaler,
-                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-          Container(width: 16),
-          Expanded(
-              flex: 4,
-              child: Container(
-                  decoration: Event2CreatePanel.dropdownButtonDecoration,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 12, right: 8),
-                      child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int?>(
-                              icon: Styles().images.getImage('chevron-down'),
-                              isExpanded: true,
-                              style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                              hint: Text(_getEveryWeekRecurrencePeriod(_weeklyRepeatPeriod)),
-                              items: _buildEveryWeeklyRecurrenceDropDownItems(),
-                              value: _weeklyRepeatPeriod,
-                              onChanged: _onWeeklyPeriodChanged)))))
-        ])));
-  }
-
-  List<DropdownMenuItem<int?>>? _buildEveryWeeklyRecurrenceDropDownItems() {
-    List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryWeekRecurrencePeriod(null))));
-    for (int i = 1; i<= _maxRecurrenceEveryValue; i++) {
-      menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryWeekRecurrencePeriod(i))));
-    }
-
-    return menuItems;
-  }
-
-  String _getEveryWeekRecurrencePeriod(int? period) {
-    if (period == null) {
-      return '-----';
-    }
-
-    String weeksLabel = (period > 1)
-        ? Localization().getStringEx('panel.event2.create.label.recurrence.period.weeks.label', 'weeks')
-        : Localization().getStringEx('panel.event2.create.label.recurrence.period.week.label', 'week');
-    return '$period $weeksLabel';
-  }
-
   Widget _buildRecurrenceEndOnSectionWidget() {
     String? title = Localization().getStringEx('panel.event2.create.label.recurrence.end_on.label', 'END ON');
     return Semantics(
@@ -1280,11 +1196,123 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onRepeatTypeChanged(_RecurrenceRepeatType? value) {
     Analytics().logSelect(target: "Recurrence Repeat type selected: $value");
     Event2CreatePanel.hideKeyboard(context);
-    if ((value != null) && mounted) {
-      setState(() {
+    if (value != null) {
+      setStateIfMounted(() {
         _recurrenceRepeatType = value;
       });
     }
+  }
+
+  void _onTapRecurrenceEndDate() {
+    Analytics().logSelect(target: 'Recurrence: End Date');
+    Event2CreatePanel.hideKeyboard(context);
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    DateTime minDate = now;
+    DateTime maxDate = now.add(Duration(days: 366));
+    DateTime selectedDate =
+    (_recurrenceEndDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_recurrenceEndDate!, minDate), maxDate) : minDate;
+    showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: minDate,
+      lastDate: maxDate,
+      currentDate: now,
+    ).then((DateTime? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _recurrenceEndDate = DateUtils.dateOnly(result);
+        });
+      }
+    });
+  }
+
+  // 2 Weekly Section
+
+  Widget _buildRepeatOnWeeklySectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.on.label', 'ON');
+    return Semantics(
+        label: title,
+        container: true,
+        child: Row(children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: RichText(
+                  textScaler: MediaQuery.of(context).textScaler,
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+          Container(width: 16),
+          Expanded(
+              flex: 4,
+              child: _buildRecurrenceWeekDays())
+        ]));
+  }
+
+  Widget _buildRecurrenceWeekDays() {
+    List<Widget> daysWidgets = <Widget>[];
+    for (DayOfWeek day in DayOfWeek.values) {
+      bool selected = CollectionUtils.isNotEmpty(_recurrenceWeekDays) && _recurrenceWeekDays!.contains(day);
+      String imageKey = selected ? 'check-circle-filled' : 'circle-outline-gray';
+      daysWidgets.add(InkWell(
+          splashColor: Colors.transparent,
+          onTap: () => _onToggleWeekDay(day),
+          child: Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Styles().images.getImage(imageKey) ?? Container(),
+                Padding(padding: EdgeInsets.only(left: 6), child: Text(day.name))
+              ]))));
+    }
+    return Wrap(crossAxisAlignment: WrapCrossAlignment.center, runSpacing: 6, children: daysWidgets);
+  }
+
+  Widget _buildRecurrenceEveryWeekSectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.every.label', 'EVERY');
+    return Semantics(
+        label: title,
+        container: true,
+        child: Padding(padding: EdgeInsets.only(top: 16), child: Row(children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: RichText(
+                  textScaler: MediaQuery.of(context).textScaler,
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+          Container(width: 16),
+          Expanded(
+              flex: 4,
+              child: Container(
+                  decoration: Event2CreatePanel.dropdownButtonDecoration,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 12, right: 8),
+                      child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int?>(
+                              icon: Styles().images.getImage('chevron-down'),
+                              isExpanded: true,
+                              style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                              hint: Text(_getEveryWeekRecurrencePeriod(_weeklyRepeatPeriod)),
+                              items: _buildWeeklyRecurrenceDropDownItems(),
+                              value: _weeklyRepeatPeriod,
+                              onChanged: _onWeeklyPeriodChanged)))))
+        ])));
+  }
+
+  List<DropdownMenuItem<int?>>? _buildWeeklyRecurrenceDropDownItems() {
+    List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
+    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryWeekRecurrencePeriod(null))));
+    for (int i = 1; i<= _maxRecurrenceWeeksValue; i++) {
+      menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryWeekRecurrencePeriod(i))));
+    }
+
+    return menuItems;
+  }
+
+  String _getEveryWeekRecurrencePeriod(int? period) {
+    if (period == null) {
+      return '-----';
+    }
+
+    String weeksLabel = (period > 1)
+        ? Localization().getStringEx('panel.event2.create.label.recurrence.period.weeks.label', 'weeks')
+        : Localization().getStringEx('panel.event2.create.label.recurrence.period.week.label', 'week');
+    return '$period $weeksLabel';
   }
 
   void _onToggleWeekDay(DayOfWeek day) {
@@ -1308,26 +1336,222 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     });
   }
 
-  void _onTapRecurrenceEndDate() {
-    Analytics().logSelect(target: 'Recurrence: End Date');
+  // 3 Monthly Section
+
+  Widget _buildRepeatOnMonthlySectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.on.label', 'ON');
+    return Semantics(
+        label: title,
+        container: true,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(
+                flex: 1,
+                child: RichText(
+                    textScaler: MediaQuery.of(context).textScaler,
+                    text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+            Container(width: 12),
+            InkWell(
+                onTap: () => _onRecurrenceRepeatMonthlyTypeChanged(_RecurrenceRepeatMonthlyType.daily),
+                splashColor: Colors.transparent,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Styles().images.getImage((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.daily)
+                        ? 'check-circle-filled'
+                        : 'circle-outline-gray'))),
+            Expanded(
+                flex: 4,
+                child: Container(
+                    decoration: Event2CreatePanel.dropdownButtonDecoration,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 12, right: 8),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int?>(
+                                icon: Styles().images.getImage('chevron-down'),
+                                isExpanded: true,
+                                style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                                hint: Text(_getRecurrenceMonthlyDayLabel(_recurrenceRepeatDay)),
+                                items: _buildRecurrenceMonthDayDropDownItems(),
+                                value: _recurrenceRepeatDay,
+                                onChanged: _onMonthDayChanged)))))
+          ]),
+          Padding(padding: EdgeInsets.only(top: 10), child: Row(children: [
+            Expanded(flex: 1, child: Container()),
+            Container(width: 16),
+            InkWell(
+                onTap: () => _onRecurrenceRepeatMonthlyTypeChanged(_RecurrenceRepeatMonthlyType.weekly),
+                splashColor: Colors.transparent,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Styles().images.getImage((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.weekly)
+                        ? 'check-circle-filled'
+                        : 'circle-outline-gray'))),
+            Expanded(
+                flex: 2,
+                child: Container(
+                    decoration: Event2CreatePanel.dropdownButtonDecoration,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 12, right: 8),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<_RecurrenceOrdinalNumber>(
+                                icon: Styles().images.getImage('chevron-down'),
+                                isExpanded: true,
+                                style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                                hint: Text(_recurrenceOrdinalNumberToDisplayString(_recurrenceOrdinalNumber)),
+                                items: _buildRecurrenceOrdinalNumberDropDownItems(),
+                                value: _recurrenceOrdinalNumber,
+                                onChanged: _onMonthlyOrdinalNumberChanged))))),
+            Container(width: 16),
+            Expanded(
+                flex: 2,
+                child: Container(
+                    decoration: Event2CreatePanel.dropdownButtonDecoration,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 12, right: 8),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<_RecurrenceMonthWeekDay>(
+                                icon: Styles().images.getImage('chevron-down'),
+                                isExpanded: true,
+                                style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                                hint: Text(_recurrenceMonthWeekDayToDisplayString(_recurrenceMonthWeekDay)),
+                                items: _buildRecurrenceMonthWeekDayDropDownItems(),
+                                value: _recurrenceMonthWeekDay,
+                                onChanged: _onMonthWeekDayChanged)))))
+          ]))
+        ]));
+  }
+
+  List<DropdownMenuItem<int?>>? _buildRecurrenceMonthDayDropDownItems() {
+    List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
+    for (int i = 0; i <= _maxRecurrenceRepeatDayValue; i++) {
+      menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getRecurrenceMonthlyDayLabel(i))));
+    }
+
+    return menuItems;
+  }
+
+  List<DropdownMenuItem<_RecurrenceOrdinalNumber>>? _buildRecurrenceOrdinalNumberDropDownItems() {
+    List<DropdownMenuItem<_RecurrenceOrdinalNumber>> menuItems = <DropdownMenuItem<_RecurrenceOrdinalNumber>>[];
+    for (_RecurrenceOrdinalNumber number in _RecurrenceOrdinalNumber.values) {
+      menuItems.add(DropdownMenuItem<_RecurrenceOrdinalNumber>(
+          value: number, child: Text(_recurrenceOrdinalNumberToDisplayString(number))));
+    }
+
+    return menuItems;
+  }
+
+  List<DropdownMenuItem<_RecurrenceMonthWeekDay>>? _buildRecurrenceMonthWeekDayDropDownItems() {
+    List<DropdownMenuItem<_RecurrenceMonthWeekDay>> menuItems = <DropdownMenuItem<_RecurrenceMonthWeekDay>>[];
+    for (_RecurrenceMonthWeekDay weekDay in _RecurrenceMonthWeekDay.values) {
+      menuItems.add(DropdownMenuItem<_RecurrenceMonthWeekDay>(
+          value: weekDay, child: Text(_recurrenceMonthWeekDayToDisplayString(weekDay))));
+    }
+
+    return menuItems;
+  }
+
+  String _getRecurrenceMonthlyDayLabel(int? day) {
+    if (day == null) {
+      return '-----';
+    }
+
+    if (day == 0) {
+      return '1-31';
+    }
+
+    return '$day ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
+  }
+
+  Widget _buildRecurrenceEveryMonthSectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.every.label', 'EVERY');
+    return Semantics(
+        label: title,
+        container: true,
+        child: Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: Row(children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: RichText(
+                      textScaler: MediaQuery.of(context).textScaler,
+                      text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+              Container(width: 16),
+              Expanded(
+                  flex: 4,
+                  child: Container(
+                      decoration: Event2CreatePanel.dropdownButtonDecoration,
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 12, right: 8),
+                          child: DropdownButtonHideUnderline(
+                              child: DropdownButton<int?>(
+                                  icon: Styles().images.getImage('chevron-down'),
+                                  isExpanded: true,
+                                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                                  hint: Text(_getEveryMonthRecurrencePeriod(_monthlyRepeatPeriod)),
+                                  items: _buildMonthlyRecurrenceDropDownItems(),
+                                  value: _monthlyRepeatPeriod,
+                                  onChanged: _onMonthlyPeriodChanged)))))
+            ])));
+  }
+
+  List<DropdownMenuItem<int?>>? _buildMonthlyRecurrenceDropDownItems() {
+    List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
+    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryMonthRecurrencePeriod(null))));
+    for (int i = 1; i <= _maxRecurrenceMonthsValue; i++) {
+      menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryMonthRecurrencePeriod(i))));
+    }
+
+    return menuItems;
+  }
+
+  String _getEveryMonthRecurrencePeriod(int? period) {
+    if (period == null) {
+      return '-----';
+    }
+
+    String monthsLabel = (period > 1)
+        ? Localization().getStringEx('panel.event2.create.label.recurrence.period.months.label', 'months')
+        : Localization().getStringEx('panel.event2.create.label.recurrence.period.month.label', 'month');
+    return '$period $monthsLabel';
+  }
+
+  void _onRecurrenceRepeatMonthlyTypeChanged(_RecurrenceRepeatMonthlyType? value) {
+    Analytics().logSelect(target: 'Recurrence Monthly type: $value');
     Event2CreatePanel.hideKeyboard(context);
-    DateTime now = DateUtils.dateOnly(DateTime.now());
-    DateTime minDate = now;
-    DateTime maxDate = now.add(Duration(days: 366));
-    DateTime selectedDate =
-        (_recurrenceEndDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_recurrenceEndDate!, minDate), maxDate) : minDate;
-    showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: minDate,
-      lastDate: maxDate,
-      currentDate: now,
-    ).then((DateTime? result) {
-      if ((result != null) && mounted) {
-        setState(() {
-          _recurrenceEndDate = DateUtils.dateOnly(result);
-        });
-      }
+    setStateIfMounted(() {
+      _recurrenceRepeatMonthlyType = value;
+    });
+  }
+
+  void _onMonthlyPeriodChanged(int? value) {
+    Analytics().logSelect(target: 'Recurrence Every month: $value');
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _monthlyRepeatPeriod = value;
+    });
+  }
+
+  void _onMonthDayChanged(int? day) {
+    Analytics().logSelect(target: "Recurrence Every month: $day");
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _recurrenceRepeatDay = day;
+    });
+  }
+
+  void _onMonthlyOrdinalNumberChanged(_RecurrenceOrdinalNumber? value) {
+    Analytics().logSelect(target: 'Recurrence Ordinal number: $value');
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _recurrenceOrdinalNumber = value;
+    });
+  }
+
+  void _onMonthWeekDayChanged(_RecurrenceMonthWeekDay? value) {
+    Analytics().logSelect(target: 'Recurrence Month week day: $value');
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _recurrenceMonthWeekDay = value;
     });
   }
 
@@ -2601,5 +2825,44 @@ String? _repeatTypeToDisplayString(_RecurrenceRepeatType? value) {
     case _RecurrenceRepeatType.weekly: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.weekly.label', 'Weekly');
     case _RecurrenceRepeatType.monthly: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.monthly.label', 'Monthly');
     default: return null;
+  }
+}
+
+// _RecurrenceRepeatMonthlyType
+
+enum _RecurrenceRepeatMonthlyType { daily, weekly }
+
+// _RecurrenceOrdinalNumber
+
+enum _RecurrenceOrdinalNumber { first, second, third, fourth, last }
+
+String _recurrenceOrdinalNumberToDisplayString(_RecurrenceOrdinalNumber? value) {
+  switch (value) {
+    case _RecurrenceOrdinalNumber.first: return Localization().getStringEx('panel.event2.create.recurrence.ordinal_number.first.label', 'First');
+    case _RecurrenceOrdinalNumber.second: return Localization().getStringEx('panel.event2.create.recurrence.ordinal_number.second.label', 'Second');
+    case _RecurrenceOrdinalNumber.third: return Localization().getStringEx('panel.event2.create.recurrence.ordinal_number.third.label', 'Third');
+    case _RecurrenceOrdinalNumber.fourth: return Localization().getStringEx('panel.event2.create.recurrence.ordinal_number.fourth.label', 'Fourth');
+    case _RecurrenceOrdinalNumber.last: return Localization().getStringEx('panel.event2.create.recurrence.ordinal_number.last.label', 'Last');
+    default: return '-----';
+  }
+}
+
+// _RecurrenceMonthWeekDay
+
+enum _RecurrenceMonthWeekDay { sunday, monday, tuesday, wednesday, thursday, friday, saturday, day, weekday, weekend_day }
+
+String _recurrenceMonthWeekDayToDisplayString(_RecurrenceMonthWeekDay? value) {
+  switch (value) {
+    case _RecurrenceMonthWeekDay.sunday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.sunday.label', 'Sunday');
+    case _RecurrenceMonthWeekDay.monday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.monday.label', 'Monday');
+    case _RecurrenceMonthWeekDay.tuesday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.tuesday.label', 'Tuesday');
+    case _RecurrenceMonthWeekDay.wednesday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.wednesday.label', 'Wednesday');
+    case _RecurrenceMonthWeekDay.thursday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.thursday.label', 'Thursday');
+    case _RecurrenceMonthWeekDay.friday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.friday.label', 'Friday');
+    case _RecurrenceMonthWeekDay.saturday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.saturday.label', 'Saturday');
+    case _RecurrenceMonthWeekDay.day: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.day.label', 'Day');
+    case _RecurrenceMonthWeekDay.weekday: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.weekday.label', 'Weekday');
+    case _RecurrenceMonthWeekDay.weekend_day: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.weekend_day.label', 'Weekend Day');
+    default: return '-----';
   }
 }
