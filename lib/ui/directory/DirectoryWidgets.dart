@@ -281,9 +281,10 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
   Auth2UserProfile? get _profile => _account?.profile;
 
   String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(accountId: _account?.id, type: UserProfileImageType.medium) : null;
+    Content().getUserPhotoUrl(accountId: _account?.id, type: _photoImageType) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+  UserProfileImageType get _photoImageType => widget.printMode ? UserProfileImageType.defaultType : UserProfileImageType.medium;
 
   Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
