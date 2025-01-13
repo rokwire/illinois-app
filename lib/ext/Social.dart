@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -51,6 +52,13 @@ extension PostExt on Post {
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
   bool get createdByUser => creatorId == Auth2().accountId;
+
+  Member? findCreatorMember({List<Member>? groupMembers}){
+    Iterable<Member>? creators = groupMembers?.where((Member member) =>
+    member.userId == creatorId
+    );
+    return CollectionUtils.isNotEmpty(creators) ? creators!.first : null;
+  }
 }
 
 extension CommentExt on Comment {
@@ -67,6 +75,20 @@ extension ReactionExt on Reaction {
   String? get engagerName => engager?.name;
   String? get engagerId => engager?.accountId;
   bool get isCurrentUserReacted => (Auth2().accountId == engagerId);
+
+  /// Returns Key: Emoji.emoji and Value: List of all Reactions with this emoji
+  static   Map<String, List<Reaction>>?  extractSameEmojiReactions(List<Reaction>? reactions){
+    return reactions?.fold(<String, List<Reaction>>{}, (map, element) {
+      if(element.type == ReactionType.emoji &&  element.data != null){
+        List<Reaction>? collection = map?[element.data];
+        if(collection == null){
+          map?[element.data!] = collection = <Reaction>[];
+        }
+        collection?.add(element);
+      }
+      return map;
+    });
+  }
 }
 
 extension MessageExt on Message {
