@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Edit a message [#4579](https://github.com/rokwire/illinois-app/issues/4572).
+- Create recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 ### Changed
 - Updated Connections and Directory section descriptions [#4603](https://github.com/rokwire/illinois-app/issues/4603).
 
