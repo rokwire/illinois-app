@@ -77,6 +77,8 @@ class Event2CreatePanel extends StatefulWidget {
   static const EdgeInsetsGeometry textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
   static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
 
+  static const double innerRecurrenceSectionPaddingWidth = 16;
+
   static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
   static TextStyle? get headingDisabledTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.disabled.spaced");
   static TextStyle? get subTitleTextStype => Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
@@ -1123,7 +1125,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
                   text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-          Container(width: 16),
+          Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
           Expanded(
               flex: 4,
               child: Container(
@@ -1166,7 +1168,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   child: RichText(
                       textScaler: MediaQuery.of(context).textScaler,
                       text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-              Container(width: 16),
+              Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
               Expanded(
                   flex: 4,
                   child: InkWell(
@@ -1239,7 +1241,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
                   text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-          Container(width: 16),
+          Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
           Expanded(
               flex: 4,
               child: _buildRecurrenceWeekDays())
@@ -1275,7 +1277,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
                   text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-          Container(width: 16),
+          Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
           Expanded(
               flex: 4,
               child: Container(
@@ -1350,17 +1352,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                 child: RichText(
                     textScaler: MediaQuery.of(context).textScaler,
                     text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-            Container(width: 12),
+            Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
             InkWell(
                 onTap: () => _onRecurrenceRepeatMonthlyTypeChanged(_RecurrenceRepeatMonthlyType.daily),
                 splashColor: Colors.transparent,
                 child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: Event2CreatePanel.innerRecurrenceSectionPaddingWidth, vertical: 10),
                     child: Styles().images.getImage((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.daily)
                         ? 'check-circle-filled'
                         : 'circle-outline-gray'))),
             Expanded(
-                flex: 4,
+                flex: 2,
                 child: Container(
                     decoration: Event2CreatePanel.dropdownButtonDecoration,
                     child: Padding(
@@ -1373,16 +1375,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                                 hint: Text(_getRecurrenceMonthlyDayLabel(_recurrenceRepeatDay)),
                                 items: _buildRecurrenceMonthDayDropDownItems(),
                                 value: _recurrenceRepeatDay,
-                                onChanged: _onMonthDayChanged)))))
+                                onChanged: _onMonthDayChanged))))),
+            Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
+            Expanded(flex: 2, child: Container())
           ]),
           Padding(padding: EdgeInsets.only(top: 10), child: Row(children: [
             Expanded(flex: 1, child: Container()),
-            Container(width: 16),
+            Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
             InkWell(
                 onTap: () => _onRecurrenceRepeatMonthlyTypeChanged(_RecurrenceRepeatMonthlyType.weekly),
                 splashColor: Colors.transparent,
                 child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: Event2CreatePanel.innerRecurrenceSectionPaddingWidth, vertical: 10),
                     child: Styles().images.getImage((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.weekly)
                         ? 'check-circle-filled'
                         : 'circle-outline-gray'))),
@@ -1401,7 +1405,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                                 items: _buildRecurrenceOrdinalNumberDropDownItems(),
                                 value: _recurrenceOrdinalNumber,
                                 onChanged: _onMonthlyOrdinalNumberChanged))))),
-            Container(width: 16),
+            Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
             Expanded(
                 flex: 2,
                 child: Container(
@@ -1475,7 +1479,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   child: RichText(
                       textScaler: MediaQuery.of(context).textScaler,
                       text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
-              Container(width: 16),
+              Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
               Expanded(
                   flex: 4,
                   child: Container(
