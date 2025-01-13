@@ -43,7 +43,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       ),
     ),
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile)),
+      DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
     ),
     Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
       Container(color: Styles().colors.surfaceAccent, height: 1,),

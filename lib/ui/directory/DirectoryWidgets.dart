@@ -265,8 +265,9 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
 class DirectoryAccountContactCard extends StatefulWidget {
   final Auth2PublicAccount? account;
   final String? accountId;
+  final bool printMode;
 
-  DirectoryAccountContactCard({super.key, this.account, this.accountId });
+  DirectoryAccountContactCard({super.key, this.account, this.accountId, this.printMode = false });
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountContactCardState();
@@ -366,7 +367,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
         Expanded(child:
           Center(child:
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
                 DirectoryPronunciationButton.spacer(),
               Column(mainAxisSize: MainAxisSize.min, children: [
                 Padding(padding: EdgeInsets.only(top: 16), child:
@@ -375,7 +376,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
                 if (_profile?.pronouns?.isNotEmpty == true)
                   Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
               ]),
-              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
                 DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
             ],),
           ),
@@ -392,7 +393,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
         if (_profile?.pronouns?.isNotEmpty == true)
           Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
+      if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
         DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
     ],),
   ]);
