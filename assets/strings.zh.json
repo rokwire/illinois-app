@@ -2365,7 +2365,12 @@
 	"panel.profile.info.share.command.button.save.text": "Save to Photos",
 	"panel.profile.info.share.command.button.share.email.text": "Share via Email",
 	"panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
+	"panel.profile.info.share.command.button.share.vcf.text": "Share Virtual Card",
 	"panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
+	"panel.profile.info.share.command.save.succeeded": "Contact card image saved successfully",
+	"panel.profile.info.share.command.save.save.failed": "Failed to save contact card image",
+	"panel.profile.info.share.command.save.create.failed": "Failed to create contact card image",
+	"panel.profile.info.share.command.save.unknown.failed": "Unknown problem occured",
 
 	"widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
 	"widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
