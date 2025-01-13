@@ -1,16 +1,20 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:share/share.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 
@@ -38,6 +42,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _savingToPhotos = false;
+  bool _sharingVirtualCard = false;
 
   @override
   Widget build(BuildContext context) => Column(mainAxisSize: MainAxisSize.min, children: [
@@ -61,8 +66,14 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     _buildCommand(
         icon: Styles().images.getImage('down-to-bracket', size: _commandIconSize),
         text: Localization().getStringEx('panel.profile.info.share.command.button.save.text', 'Save to Photos'),
+      progress: _savingToPhotos,
         onTap: _onTapSaveToPhotos,
-        progress: _savingToPhotos,
+    ),
+    _buildCommand(
+        icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
+        text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcf.text', 'Share Virtual Card'),
+      progress: _sharingVirtualCard,
+        onTap: _onTapShareVirtualCard,
     ),
     _buildCommand(
         icon: Styles().images.getImage('envelope', size: _commandIconSize),
@@ -100,6 +111,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     );
 
   void _onTapSaveToPhotos() async {
+    Analytics().logSelect(target: 'Save to Files');
     RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
     if (boundary != null) {
       setState(() {
@@ -140,6 +152,31 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       });
     }
 
+  }
+
+  void _onTapShareVirtualCard() async {
+    Analytics().logSelect(target: 'Share Virtual Card');
+    String? vcfContent = widget.profile?.toVCF();
+    if ((vcfContent != null) && vcfContent.isNotEmpty) {
+      setState(() {
+        _sharingVirtualCard = true;
+      });
+
+      final String dir = (await getApplicationDocumentsDirectory()).path;
+      final String saveFileName = 'Virtual Contact Card ${DateTimeUtils.localDateTimeToString(DateTime.now())}';
+      final String fullPath = '$dir/$saveFileName.vcf';
+      File capturedFile = File(fullPath);
+      await capturedFile.writeAsString(vcfContent);
+      if (mounted) {
+        setState(() {
+          _sharingVirtualCard = false;
+        });
+        Share.shareFiles([fullPath],
+          mimeTypes: ['text/vcard'],
+          text: widget.profile?.vcfFullName,
+        );
+      }
+    }
   }
 
   void _onTapShareViaEmail() => _onTBD();
