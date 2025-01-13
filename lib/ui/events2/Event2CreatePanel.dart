@@ -2322,6 +2322,30 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
     }
 
+    //TBD: DD - localize strings
+    if ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat)) {
+      if (_recurrenceRepeatType == _RecurrenceRepeatType.weekly) {
+        if (CollectionUtils.isEmpty(_recurrenceWeekDays)) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.week.weekday', 'recurrence weekday'));
+        } else if (_weeklyRepeatPeriod == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.week.every', 'recurrence week period'));
+        }
+      } else if (_recurrenceRepeatType == _RecurrenceRepeatType.monthly) {
+        if (_recurrenceRepeatMonthlyType == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.on', 'recurrence on'));
+        } else if (_recurrenceRepeatDay == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.every', 'recurrence every'));
+        } else {
+          //TBD: DD - check the values based on the selection
+        }
+      }
+      if (!_hasRecurrenceEndDate) {
+        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.end_date', 'recurrence end date'));
+      } else if (_recurrenceEndDate!.isBefore(_startDate!)) {
+        invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.recurrence.end_date', 'recurrence end date before start date'));
+      }
+    }
+
     if (_eventType == null) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.event_type', 'event type'));
     }
