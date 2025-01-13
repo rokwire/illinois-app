@@ -262,17 +262,17 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
 
 // DirectoryAccountBusinessCard
 
-class DirectoryAccountBusinessCard extends StatefulWidget {
+class DirectoryAccountContactCard extends StatefulWidget {
   final Auth2PublicAccount? account;
   final String? accountId;
 
-  DirectoryAccountBusinessCard({super.key, this.account, this.accountId });
+  DirectoryAccountContactCard({super.key, this.account, this.accountId });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryAccountBusinessCardState();
+  State<StatefulWidget> createState() => _DirectoryAccountContactCardState();
 }
 
-class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessCard> {
+class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCard> {
 
   Auth2PublicAccount? _account;
   bool _loadingAccount = false;
@@ -445,7 +445,7 @@ class DirectoryAccountPopupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(children: [
-    DirectoryAccountBusinessCard(account: account, accountId: accountId,),
+    DirectoryAccountContactCard(account: account, accountId: accountId,),
     Positioned.fill(child:
       Align(alignment: Alignment.topRight, child:
         InkWell(onTap: () => _onTapClose(context), child:
