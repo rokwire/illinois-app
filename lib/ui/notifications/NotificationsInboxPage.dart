@@ -67,7 +67,8 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     super.initState();
     NotificationService().subscribe(this, [
       Inbox.notifyInboxUserInfoChanged,
-      Inbox.notifyInboxMessageRead
+      Inbox.notifyInboxMessageRead,
+      Inbox.notifyInboxMessagesDeleted
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -91,6 +92,8 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
         });
       }
     } else if (name == Inbox.notifyInboxMessageRead) {
+      _refreshContent();
+    } else if (name == Inbox.notifyInboxMessagesDeleted) {
       _refreshContent();
     }
   }
@@ -1007,7 +1010,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
     setStateIfMounted(() {
       _deleting = true;
     });
-    Inbox().deleteMessages([widget.message!.messageId!]).then((bool succeeded) {
+    Inbox().deleteMessage(widget.message!.messageId!).then((bool succeeded) {
       setStateIfMounted(() {
         _deleting = false;
       });
