@@ -30,7 +30,6 @@ import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/groups/GroupMembersSelectionPanel.dart';
-import 'package:neom/ui/groups/GroupPostCreatePanel.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -1170,7 +1169,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             ])),
                       ],
                     ),
-                    Padding(
+                              Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
                     ),
@@ -1200,6 +1199,17 @@ class _GroupPostCardState extends State<GroupPostCard> {
           textAlign: TextAlign.right,
           style: Styles().textStyles.getTextStyle('widget.description.small')))));
 
+  Widget get _buildScheduledDateWidget => Visibility(visible: widget.post?.isScheduled == true, child:
+  Row( mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end,
+      children:[
+        Container(width: 6,),
+        Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
+            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
+          )
+        )
+      ]));
+
   void _onTapPostOptions() {
     bool isReportAbuseVisible = widget.group.currentUserIsMemberOrAdmin ?? false;
     Analytics().logSelect(target: 'Post Options');
@@ -1218,7 +1228,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                 Visibility(visible: isReportAbuseVisible, child: RibbonButton(
                     leftIconKey: "reply",
                     label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
-                    onTap: _onTapReply
+                    onTap: _onTapCard
                 )),
                 // Visibility(visible: isReportAbuseVisible, child: RibbonButton(
                 //   leftIconKey: "comment",
@@ -1257,6 +1267,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
     Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReactions: _reactions,)));
     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
+  }
+
+  void _onLinkTap(String? url) {
+    Analytics().logSelect(target: url);
+    UrlUtils.launchExternal(url);
   }
 
   // void _onTapReportAbuse({required GroupPostReportAbuseOptions options, Post? post}) {

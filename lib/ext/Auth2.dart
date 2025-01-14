@@ -12,8 +12,9 @@ extension Auth2UserProfileExt on Auth2UserProfile {
     vcfContent += _fieldValue('N', _vcfName);
     vcfContent += _fieldValue('TITLE', title);
     vcfContent += _fieldValue('ORG', _vcfOrg);
-    vcfContent += _fieldValue('EMAIL', email);
-    vcfContent += _fieldValue('TEL', phone);
+    //TODO: get email and phone from identifiers
+    // vcfContent += _fieldValue('EMAIL', email);
+    // vcfContent += _fieldValue('TEL', phone);
     vcfContent += _fieldValue('URL', website);
     //LOGO;TYPE=PNG;ENCODING=BASE64:[base64-data]
     //PHOTO;TYPE=PNG;ENCODING=BASE64:[base64-data]
