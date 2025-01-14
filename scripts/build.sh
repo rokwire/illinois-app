@@ -84,8 +84,8 @@ if [ "$BRAND" = "Illinois" ]; then
     BRAND_NAME="UIUC"
 fi
 
-cd ios
-BUNDLE_ID=$(xcodebuild -showBuildSettings | grep PRODUCT_BUNDLE_IDENTIFIER | awk -F ' = ' '{print $2}')
+cd ios #explicit PRODUCT_BUNDLE_IDENTIFIER becayse we also have DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER
+BUNDLE_ID=$(xcodebuild -showBuildSettings | awk -F ' = ' '{gsub(/^[ \t]+/, "", $1); if ($1 == "PRODUCT_BUNDLE_IDENTIFIER") print $2}')
 cd ..
 
 TEMPLATE_BRAND="{{BRAND}}"
