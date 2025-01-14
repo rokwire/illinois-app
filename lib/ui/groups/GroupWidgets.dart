@@ -1095,13 +1095,15 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             ))),
                       _buildScheduledDateWidget
                     ]),
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                      Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat') )),
-                    ]),
+                    Visibility(visible: widget.post?.isPost == true,
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                          Expanded(
+                              child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat') )),
+                        ]),
+                    ),
                     Column(
                       children: [
                           HtmlWidget(
@@ -1564,6 +1566,12 @@ class PostInputField extends StatefulWidget{
   final OnBodyChangedListener? onBodyChanged;
 
   const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title}) : super(key: key);
+
+  static get fieldDecoration => BoxDecoration(
+      color: Styles().colors.white,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
+  );
   
   @override
   State<StatefulWidget> createState() {
@@ -1576,13 +1584,13 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
   
-  EdgeInsets? _padding;
+  // EdgeInsets? _padding;
   String? _hint;
 
   @override
   void initState() {
     super.initState();
-    _padding = widget.padding ?? EdgeInsets.only(top: 5);
+    // _padding = widget.padding ?? EdgeInsets.only(top: 5);
     _hint = widget.hint;  /*?? Localization().getStringEx("panel.group.detail.post.reply.create.body.field.hint", "Write a Reply ...");*/
     _bodyController.text = widget.text ?? "";
   }
@@ -1618,11 +1626,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Container(
-                    decoration: BoxDecoration(
-                        color: Styles().colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
-                    ),
+                    decoration: PostInputField.fieldDecoration,
                     child: TextField(
                       controller: _bodyController,
                       onChanged: _notifyChanged,
