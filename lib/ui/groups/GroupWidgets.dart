@@ -1142,7 +1142,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
                         children: [
                           Expanded(
-                            child: GroupReactionsLayout(reactions: _reactions, group: widget.group)
+                            child: Container(),
+                            // GroupReactionsLayout(reactions: _reactions, group: widget.group)
                           ),
                           Visibility(
                               visible: isRepliesLabelVisible,
@@ -1286,15 +1287,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
                       // updateController: widget.updateController,
                     ))),),
-                // Visibility(
-                //   visible: Config().showGroupPostReactions &&
-                //       (widget.group?.currentUserHasPermissionToSendReactions == true),
-                //   child: GroupReaction(
-                //     groupId: widget.group?.id,
-                //     entityId: widget.reply?.id,
-                //     reactionSource: SocialEntityType.comment,
-                //   ),
-                // ),
+                Visibility(
+                  visible: Config().showGroupPostReactions &&
+                      (widget.group?.currentUserHasPermissionToSendReactions == true),
+                  child: GroupReaction(
+                    groupId: widget.group?.id,
+                    entityId: widget.reply?.id,
+                    reactionSource: SocialEntityType.comment,
+                  ),
+                ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
                     child: Semantics( child:Container(
@@ -1367,7 +1368,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     Visibility(
                       visible: Config().showGroupPostReactions,
                       child: Expanded(
-                          child: GroupReactionsLayout(reactions: _reactions)
+                          child: Container()
+                          // GroupReactionsLayout(reactions: _reactions)
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                           //       semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
@@ -3594,11 +3596,16 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
           Visibility(visible: widget.enabled == true,
             child: Container(
               padding: EdgeInsets.only(right: 6),
-              child: InkWell(
-                  onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
-                  child: Padding(padding: EdgeInsets.all(0),
-                      child: Image.asset("images/add_reaction_icon.png", width: 40, fit: BoxFit.fitWidth,))
-              ))),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Styles().colors.background,
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  border: Border.all(color: Styles().colors.surfaceAccent)),
+                child: InkWell(
+                    onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        child:Styles().images.getImage('add_emoji', excludeFromSemantics: true, size: 18, color: Styles().colors.mediumGray2))
+                )))),
         ]
     );
   }
@@ -3610,14 +3617,14 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
             child: Container(
                 padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
                 decoration: BoxDecoration(
-                    color: Styles().colors.fillColorPrimaryTransparent015,
+                    color: Styles().colors.background,
                     borderRadius: BorderRadius.all(Radius.circular(15)),
-                    border: Border.all(color: Styles().colors.fillColorPrimary,)),
+                    border: Border.all(color: Styles().colors.surfaceAccent,)),
                 child: Row(mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(reaction?.data ?? ""),
+                      Text(reaction?.data ?? "", style: TextStyle(fontSize: 18)),
                       Visibility(visible: (occurrences ?? 0 ) > 1,
-                          child: Text(occurrences?.toString() ?? "")
+                          child: Text(occurrences?.toString() ?? "", style: TextStyle(fontSize: 16),)
                       )
                     ])
             )

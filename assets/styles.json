@@ -1150,6 +1150,7 @@
 
     "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"},
 
-    "group-managed-badge": {"src": "0xf336", "type": "fa.icon", "size": 18}
+    "group-managed-badge": {"src": "0xf336", "type": "fa.icon", "size": 18},
+    "add_emoji": {"src": "0xf5b9", "type": "fa.icon"}
   }
 }
