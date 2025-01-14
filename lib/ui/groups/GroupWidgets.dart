@@ -29,6 +29,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -1126,7 +1127,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
                         StringUtils.isEmpty(imageUrl)? Container() :
                         // AspectRatio(aspectRatio: 1, child:
-                            Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                            Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true),
+                            WebEmbed(body: htmlBody)
                         // ),
                         // Container(
                         //   constraints: BoxConstraints(maxHeight: 200),
