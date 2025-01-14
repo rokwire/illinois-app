@@ -92,6 +92,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+### Changed
+- Updated Home > Sections text styles and spacings [#4470](https://github.com/rokwire/illinois-app/issues/4470).
+
+## [6.1.38] - 2025-01-13
+### Added
+- Edit a message [#4579](https://github.com/rokwire/illinois-app/issues/4572).
+- Create recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
+- Implemented Save to Photos and Share Virtual Card commands for Profile [#4605](https://github.com/rokwire/illinois-app/issues/4605).
+### Changed
+- Updated Connections and Directory section descriptions [#4603](https://github.com/rokwire/illinois-app/issues/4603).
+
+## [6.1.37] - 2025-01-10
+### Changed
+- UI Cleanup: Home > Sections > news and radio groupings [#4469](https://github.com/rokwire/illinois-app/issues/4469).
+- Rename "New Message" button to "New Connection" on the Connections panel [#4594](https://github.com/rokwire/illinois-app/issues/4594).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+- Updated Onboarding Profile Info flow [#4596](https://github.com/rokwire/illinois-app/issues/4596).
 
 ## [6.1.36] - 2025-01-09
 ### Added

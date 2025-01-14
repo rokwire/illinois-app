@@ -30,15 +30,20 @@ class ProfileInfoEditPage extends StatefulWidget {
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
+  final bool showProfileCommands;
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
-  ProfileInfoEditPage({super.key, required this.contentType, this.profile, this.privacy, this.identifiers, this.pronunciationAudioData, this.photoImageData, this.photoImageToken, this.onFinishEdit });
+  ProfileInfoEditPage({super.key, required this.contentType,
+    this.profile, this.privacy, this.identifiers,
+    this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
+    this.showProfileCommands = true, this.onFinishEdit
+  });
 
   @override
-  State<StatefulWidget> createState() => _ProfileInfoEditPageState();
+  State<StatefulWidget> createState() => ProfileInfoEditPageState();
 }
 
-class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver {
+class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver {
 
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;
@@ -147,10 +152,10 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
           _phoneSection,
           _websiteSection,
 
-          Padding(padding: EdgeInsets.only(top: 24), child:
-            _commandBar,
-          ),
-          Padding(padding: EdgeInsets.only(top: 16)),
+          if (widget.showProfileCommands)
+            Padding(padding: EdgeInsets.only(top: 24, bottom: 16), child:
+              _commandBar,
+            ),
           if (_screenInsetsBottom > 0)
             Padding(padding: EdgeInsets.only(top: _screenInsetsBottom)),
         ],),
@@ -762,11 +767,19 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
     onTap: _onSaveEdit,
   );
 
-  void _onSaveEdit() async {
+  void _onSaveEdit() {
     Analytics().logSelect(target: 'Save Edit');
+    saveEdit();
+  }
+
+  Future<bool> saveEdit() async {
     FocusScope.of(context).unfocus();
 
-    if (_saving == false) {
+    if (_saving == true) {
+      // Operation in progress
+      return false;
+    }
+    else {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
@@ -787,14 +800,27 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
         futures.add(Auth2().saveUserPrivacy(privacy));
       }
 
-      if (0 < futures.length) {
+      if (futures.length == 0) {
+        // Nothing to save
+        widget.onFinishEdit?.call(
+          pronunciationAudioData: _pronunciationAudioData,
+          photoImageData: _photoImageData,
+          photoImageToken: _photoImageToken,
+        );
+        return true;
+      }
+      else {
         setState(() {
           _saving = true;
         });
 
         List<dynamic> results = await Future.wait(futures);
 
-        if (mounted) {
+        if (mounted == false) {
+          // Already stalled
+          return false;
+        }
+        else {
           bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
           bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
 
@@ -810,18 +836,13 @@ class _ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Prof
               photoImageData: _photoImageData,
               photoImageToken: _photoImageToken,
             );
+            return true; // Succeeded
           }
           else {
             AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.save.failed.text', 'Failed to update profile and privacy settings.'));
+            return false; // Failed
           }
         }
-      }
-      else {
-        widget.onFinishEdit?.call(
-          pronunciationAudioData: _pronunciationAudioData,
-          photoImageData: _photoImageData,
-          photoImageToken: _photoImageToken,
-        );
       }
     }
   }

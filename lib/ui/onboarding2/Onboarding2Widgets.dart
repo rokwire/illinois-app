@@ -68,9 +68,8 @@ class Onboarding2BackButton extends StatelessWidget {
           label: Localization().getStringEx('headerbar.back.title', 'Back'),
           hint: Localization().getStringEx('headerbar.back.hint', ''),
           button: true,
-          child: GestureDetector(
+          child: InkWell(
             onTap: onTap,
-            behavior: HitTestBehavior.opaque,
             child: Padding(
               padding: padding!,
               child: Container(child: Styles().images.getImage(imageKey, color: this.color, excludeFromSemantics: true)
@@ -250,7 +249,7 @@ class Onboarding2UnderlinedButton extends StatelessWidget{ //TBD check if we can
 
   @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
+    return  InkWell(
       onTap: () {
         onTap!();
       },

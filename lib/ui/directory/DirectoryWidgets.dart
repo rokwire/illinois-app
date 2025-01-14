@@ -265,17 +265,18 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
 
 // DirectoryAccountBusinessCard
 
-class DirectoryAccountBusinessCard extends StatefulWidget {
+class DirectoryAccountContactCard extends StatefulWidget {
   final Auth2PublicAccount? account;
   final String? accountId;
+  final bool printMode;
 
-  DirectoryAccountBusinessCard({super.key, this.account, this.accountId });
+  DirectoryAccountContactCard({super.key, this.account, this.accountId, this.printMode = false });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryAccountBusinessCardState();
+  State<StatefulWidget> createState() => _DirectoryAccountContactCardState();
 }
 
-class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessCard> {
+class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCard> {
 
   Auth2PublicAccount? _account;
   bool _loadingAccount = false;
@@ -284,9 +285,10 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
   List<Auth2PublicAccountIdentifier>? get _identifiers => _account?.identifiers;
 
   String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(accountId: _account?.id, type: UserProfileImageType.medium) : null;
+    Content().getUserPhotoUrl(accountId: _account?.id, type: _photoImageType) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+  UserProfileImageType get _photoImageType => widget.printMode ? UserProfileImageType.defaultType : UserProfileImageType.medium;
 
   Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
@@ -370,7 +372,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
         Expanded(child:
           Center(child:
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
                 DirectoryPronunciationButton.spacer(),
               Column(mainAxisSize: MainAxisSize.min, children: [
                 Padding(padding: EdgeInsets.only(top: 16), child:
@@ -379,7 +381,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
                 if (_profile?.pronouns?.isNotEmpty == true)
                   Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
               ]),
-              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
                 DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
             ],),
           ),
@@ -396,7 +398,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
         if (_profile?.pronouns?.isNotEmpty == true)
           Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
+      if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
         DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
     ],),
   ]);
@@ -449,7 +451,7 @@ class DirectoryAccountPopupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(children: [
-    DirectoryAccountBusinessCard(account: account, accountId: accountId,),
+    DirectoryAccountContactCard(account: account, accountId: accountId,),
     Positioned.fill(child:
       Align(alignment: Alignment.topRight, child:
         InkWell(onTap: () => _onTapClose(context), child:

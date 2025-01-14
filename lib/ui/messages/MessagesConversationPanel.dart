@@ -68,6 +68,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   int _messagesLength = 0;
   bool _hasMoreMessages = false;
   final int _messagesPageSize = 20;
+  Message? _editingMessage;
 
   final Set<String> _globalIds = {};
 
@@ -259,11 +260,12 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     Key? contentItemKey = widget.isTargetMessage(message) ? _targetMessageContentItemKey : null;
     Decoration cardDecoration = widget.isTargetMessage(message) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
-    return FutureBuilder<Widget>(
+    return GestureDetector(onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null, child:
+      FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
       builder: (context, snapshot) {
         Widget avatar = snapshot.data ??
-            (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+          (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
 
         return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
           Padding(padding: EdgeInsets.all(16), child:
@@ -277,25 +279,44 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                       Expanded(child:
                         Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
                       ),
-                    ],)
+                    ]),
                   ),
                 ),
                 if (message.dateSentUtc != null)
                   Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
-              ],),
+              ]),
               SizedBox(height: 8),
-              //Text(message.message ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.small')),
-              LinkText(message.message ?? '',
-                textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                onLinkTap: _onTapLink,
-              ),
-            ]),
-          ),
-        );
-      },
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(child:
+                  LinkText(
+                    message.message ?? '',
+                    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                    linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                    onLinkTap: _onTapLink,
+                  ),
+                ),
+                // If dateUpdatedUtc is not null, show a small “(edited)” label
+                if (message.dateUpdatedUtc != null)
+                  Padding(padding: EdgeInsets.only(left: 4), child:
+                    Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                  ),
+                ],),
+              ]),
+            ),
+          );
+        },
+      ),
     );
   }
+
+  void _onMessageLongPress(Message message) { // NEW CODE
+    setState(() {
+      _editingMessage = message;
+      _inputController.text = message.message ?? '';
+    });
+    FocusScope.of(context).requestFocus(_inputFieldFocus); // optional: focus the input
+  }
+
 
   void _onTapAccount(Message message) {
     Analytics().logSelect(target: 'View Account');
@@ -595,11 +616,18 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Future<void> _onPullToRefresh() async =>
     _refreshMessages();
 
-  Future<void> _submitMessage(String message) async {
-    if (StringUtils.isNotEmpty(_inputController.text) && _conversationId != null && _currentUserId != null && _submitting == false) {
+  Future<void> _submitMessage(String messageText) async {
+    messageText = messageText.trim();
+    if (StringUtils.isNotEmpty(messageText)) {
+      return (_editingMessage != null) ? _updateEditingMessage(messageText) : _createNewMessage(messageText);
+    }
+  }
+
+
+  Future<void> _createNewMessage(String messageText) async {
+    if (StringUtils.isNotEmpty(messageText) && _conversationId != null && _currentUserId != null && !_submitting) {
       FocusScope.of(context).requestFocus(FocusNode());
 
-      String messageText = _inputController.text.trim();
       _inputController.text = '';
 
       // Create a temporary message and add it immediately
@@ -613,42 +641,91 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _submitting = true;
         _messages.add(tempMessage);
         Message.sortListByDateSent(_messages);
-        _shouldScrollToTarget = _ScrollTarget.bottom;
+        _shouldScrollToTarget = _ScrollTarget.bottom; //TBD
       });
 
-      try {
-        // Send to the backend
-        List<Message>? newMessages = await Social().createConversationMessage(
-          conversationId: _conversationId!,
-          message: messageText,
-        );
+      // Send to the backend
+      List<Message>? newMessages = await Social().createConversationMessage(
+        conversationId: _conversationId!,
+        message: messageText,
+      );
 
+      if (mounted) {
         if (newMessages != null && newMessages.isNotEmpty) {
-          Message serverMessage = newMessages.first;
-          // Update the temporary message with the server's message if needed
-          int index = _messages.indexOf(tempMessage);
-          if (index >= 0) {
-            _inputController.text = '';
-            setState(() {
-              _submitting = false;
+          setState(() {
+            Message serverMessage = newMessages.first;
+            // Update the temporary message with the server's message if needed
+            int index = _messages.indexOf(tempMessage);
+            if (index >= 0) {
               _messages[index] = serverMessage;
               Message.sortListByDateSent(_messages);
-            });
-          }
+            }
+            _submitting = false;
+          });
         } else {
-          _messages.remove(tempMessage);
+          // If creation failed
           setState(() {
+            _messages.remove(tempMessage);
             _submitting = false;
           });
           AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
         }
-      } catch (e) {
-        // On error, remove the temporary message
-        _messages.remove(tempMessage);
+      }
+    }
+  }
+
+  Future<void> _updateEditingMessage(String newText) async {
+    if (_conversationId != null && _editingMessage?.globalId != null) {
+      if (newText == _editingMessage?.message?.trim()) {
+        FocusScope.of(context).unfocus();
         setState(() {
+          _editingMessage = null;
           _submitting = false;
+          //_shouldScrollToTarget = _ScrollTarget.bottom;
         });
-        AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
+        _inputController.clear();
+      }
+      else {
+        setState(() {
+          _submitting = true;
+        });
+
+        // Close the keyboard:
+        FocusScope.of(context).unfocus();
+
+        bool success = await Social().updateConversationMessage(
+          conversationId: _conversationId!,
+          globalMessageId: _editingMessage!.globalId!,
+          newText: newText,
+        );
+
+        if (mounted) {
+          if (success) {
+            int index = _messages.indexWhere((msg) => msg.globalId == _editingMessage?.globalId);
+            if (index >= 0) {
+              setState(() {
+                Message updatedMessage = Message.fromOther(_editingMessage,
+                  message: newText,
+                  dateUpdatedUtc: DateTime.now().toUtc(), // Mark it as edited
+                );
+
+                _messages[index] = updatedMessage;
+                Message.sortListByDateSent(_messages);
+
+                _editingMessage = null;
+                _submitting = false;
+                // _shouldScrollToTarget = _ScrollTarget.bottom;
+              });
+            } else {
+              debugPrint('Could not find the old message with globalId: ${_editingMessage?.globalId} to replace.');
+            }
+          } else {
+            setState(() {
+              _submitting = false;
+            });
+            AppToast.showMessage(Localization().getStringEx('', 'Failed to update message'));
+          }
+        }
       }
     }
   }

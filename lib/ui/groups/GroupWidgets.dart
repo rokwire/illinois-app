@@ -1044,13 +1044,14 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
 class GroupPostCard extends StatefulWidget {
   final Post? post;
+  final List<Reaction>? postReactions;
   final Group group;
   final bool? isAdmin;
   final bool showImage;
   final bool isReply;
-  final bool allowTap;
+  final bool? isClickable;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.showImage = true, this.isReply = false, this.allowTap = true}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.postReactions, this.isClickable = true, this.showImage = true, this.isReply = false}) :
     super(key: key);
 
   @override
@@ -1058,11 +1059,12 @@ class GroupPostCard extends StatefulWidget {
 }
 
 class _GroupPostCardState extends State<GroupPostCard> {
-  static const double _smallImageSize = 64;
-  List<Reaction> _reactions = [];
+  // static const double _smallImageSize = 64;
+  late List<Reaction> _reactions;
 
   @override
   void initState() {
+    _reactions = widget.postReactions ?? [];
     super.initState();
   }
 
@@ -1079,7 +1081,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
     return Stack(alignment: Alignment.topRight, children: [
       Semantics(button:true,
         child:GestureDetector(
-          onTap: widget.allowTap ? _onTapCard : null,
+          onTap: widget.isClickable == true ? _onTapCard : null,
           child: Container(
               decoration: BoxDecoration(
                   color: Styles().colors.surface,
@@ -1103,160 +1105,95 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             )
                           )
                         ),
+                        _buildScheduledDateWidget,
                       ],
                     ),
                     Container(height: 16.0),
                     Row(
                       children: [
-                        Expanded(
-                          flex: 2,
-                          child: HtmlWidget(
+                          HtmlWidget(
                               "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
                               onTapUrl : (url) {_onLinkTap(url); return true;},
                               textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small")
-                          )),
+                          ),
+                          // Html(data: htmlBody, style: {
+                          //   "body": Style(
+                          //       color: Styles().colors.fillColorPrimary,
+                          //       fontFamily: Styles().fontFamilies.regular,
+                          //       fontSize: FontSize(16),
+                          //       maxLines: 3,
+                          //       textOverflow: TextOverflow.ellipsis,
+                          //       margin: EdgeInsets.zero,
+                          //   ),
+                          // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
                         StringUtils.isEmpty(imageUrl) || !widget.showImage ? Container() :
-                        Expanded(
-                          flex: 1,
-                          child: Semantics(
-                            label: "post image",
-                            button: true,
-                            hint: "Double tap to zoom the image",
-                            child: Container(
-                                padding: EdgeInsets.only(left: 8),
-                                child: SizedBox(
-                                  width: _smallImageSize,
-                                  height: _smallImageSize,
-                                  child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
-                            ))
+                        // AspectRatio(aspectRatio: 1, child:
+                            Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                        // ),
+                        // Container(
+                        //   constraints: BoxConstraints(maxHeight: 200),
+                        //     child: Semantics(
+                        //     label: "post image",
+                        //     button: true,
+                        //     hint: "Double tap to zoom the image",
+                        //     child: Container(
+                        //         padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                        //         child: SizedBox(
+                        //           width: _smallImageSize,
+                        //           height: _smallImageSize,
+                        //           child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
+                        //     ))
                     ],),
                     Container(height: 16.0),
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(
-                          child: _buildReactionsLayoutWidget
-                      ),
-                      _buildScheduledDateWidget,
-                      Visibility(
-                        visible: isRepliesLabelVisible,
-                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Styles().images.getImage('comment') ?? Container(),
-                          Padding(
-                            padding: EdgeInsets.only(left: 6.0),
-                            child: Text(StringUtils.ensureNotEmpty('${visibleRepliesCount.toString()} $repliesLabel'),
-                              style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
-                            ),
-                          ),
-                        ]),
-                      )
-                    ]),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: GroupReactionsLayout(reactions: _reactions, group: widget.group)
+                        ),
+                        Visibility(
+                            visible: isRepliesLabelVisible,
+                            child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                              Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
+                                      style: Styles().textStyles.getTextStyle('widget.description.small'))),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Text(StringUtils.ensureNotEmpty(repliesLabel),
+                                      style: Styles().textStyles.getTextStyle('widget.description.small')))
+                            ])),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
                     ),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Text('To: ${memberIds?.length ?? 0} members',
-                        style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
+                          style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
                       ),
                       GestureDetector( onTap: () => _onTapPostOptions(), child:
-                        Styles().images.getImage(widget.isReply ? 'ellipsis-alert' : 'report', excludeFromSemantics: true, color: Styles().colors.alert)
+                      Styles().images.getImage(widget.isReply ? 'ellipsis-alert' : 'report', excludeFromSemantics: true, color: Styles().colors.alert)
                       ),
                     ]),
                   ]))))),
+
     ]);
   }
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
-  Widget get _buildReactionsLayoutWidget {
-    Map<String, List<Reaction>> sameEmojiReactions = _sameEmojiReactions;
-    return Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          ...sameEmojiReactions.keys.map((String emoji) =>
-              _buildReactionWidget(
-                  occurrences: sameEmojiReactions[emoji]?.length,
-                  reaction: sameEmojiReactions[emoji]?.
-                  firstWhere(
-                          (Reaction reaction) => reaction.isCurrentUserReacted,
-                      orElse: () => (CollectionUtils.isNotEmpty(sameEmojiReactions[emoji]) ? sameEmojiReactions[emoji]?.first : null)
-                          ?? Reaction()))
-          ).toList(),
-          Container(
-              padding: EdgeInsets.only(right: 6),
-              child: InkWell(
-                  onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
-                  child: Padding(padding: EdgeInsets.all(0),
-                      child: Image.asset("images/add_reaction_icon.png", width: 40, fit: BoxFit.fitWidth,))
-              )),
-        ]
-    );
-  }
 
-  Widget _buildReactionWidget({Reaction? reaction, int? occurrences}){
-    return Padding( padding: EdgeInsets.all(4),
-        child: InkWell(
-            onTap: () => _deleteReaction(reaction), //TBD call BB to remove reaction
-            child: Container(
-                padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
-                decoration: BoxDecoration(
-                    color: Styles().colors.fillColorPrimaryTransparent015,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    border: Border.all(color: Styles().colors.fillColorPrimary,)),
-                child: Row(mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(reaction?.data ?? ""),
-                      Visibility(visible: (occurrences ?? 0 ) > 1,
-                          child: Text(occurrences?.toString() ?? "")
-                      )
-                    ])
-            )
-        )
-    );
-  }
+  ////
 
-  Widget get _buildScheduledDateWidget => Visibility(visible: widget.post?.isScheduled == true, child:
-    Row( mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end,
-      children:[
-        Container(width: 6,),
-        Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-          Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
-            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
-        ))
-    ]));
-
-  void _onTapCard() {
-    Analytics().logSelect(target: "Group post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
-  }
-
-  void _onLinkTap(String? url) {
-    Analytics().logSelect(target: url);
-    UrlUtils.launchExternal(url);
-  }
-
-  void _reactWithEmoji(emoji.Emoji emoji){
-    _sendReaction(
-        Reaction(
-          data: emoji.emoji,
-          type: ReactionType.emoji,
-          dateCreatedUtc: DateTime.now().toUtc(),
-          engager: Creator(accountId: widget.group.currentMember?.userId, name: widget.group.currentMember?.name),
-        )
-    );
-  }
-
-  void _sendReaction(Reaction? reaction){ //TBD hook to BB
-    if(reaction != null)
-      setStateIfMounted(() =>
-          _reactions.add(reaction)
-      );
-  }
-
-  void _deleteReaction(Reaction? reaction){ //TBD remove
-    if(reaction != null)
-      setStateIfMounted(() =>
-          _reactions.remove(reaction)
-      );
-  }
+  // ignore: unused_element
+  Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
+    Semantics(child: Container(
+      padding: EdgeInsets.only(left: 6),
+      child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
+          semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
+          textAlign: TextAlign.right,
+          style: Styles().textStyles.getTextStyle('widget.description.small')))));
 
   void _onTapPostOptions() {
     bool isReportAbuseVisible = widget.group.currentUserIsMemberOrAdmin ?? false;
@@ -1294,10 +1231,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
         });
   }
 
-  void _onTapReply() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: widget.group, inReplyTo: widget.post?.id))).then((_) {
-      Navigator.of(context).pop();
-    });
+  void _onTapCard() {
+    Analytics().logSelect(target: "Group post");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReactions: _reactions,)));
+    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
   }
 
   // void _onTapReportAbuse({required GroupPostReportAbuseOptions options, Post? post}) {
@@ -1334,18 +1271,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
     return result;
   }
 
-  Map<String, List<Reaction>> get _sameEmojiReactions{
-    return _reactions.fold(<String, List<Reaction>>{}, (map, element) {
-      if(element.data != null){
-        List<Reaction>? collection = map[element.data];
-        if(collection == null){
-          map[element.data!] = collection = <Reaction>[];
-        }
-        collection.add(element);
-      }
-      return map;
-    });
-  }
 }
 
 //////////////////////////////////////
@@ -1355,20 +1280,22 @@ class GroupReplyCard extends StatefulWidget {
   final Comment? reply;
   final Post? post;
   final Group? group;
+  final Member? creator;
   final String? iconPath;
   final String? semanticsLabel;
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
 }
 
 class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
-  static const double _smallImageSize = 64;
+  // static const double _smallImageSize = 64;
+  List<Reaction> _reactions = []; //TBD load
 
   @override
   void initState() {
@@ -1406,20 +1333,24 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Semantics( child:
-                  Text(StringUtils.ensureNotEmpty(widget.reply?.creatorName),
-                    style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")),
-                ),
-                Expanded(child: Container()),
-                Visibility(
-                  visible: Config().showGroupPostReactions &&
-                      (widget.group?.currentUserHasPermissionToSendReactions == true),
-                  child: GroupReaction(
-                    groupId: widget.group?.id,
-                    entityId: widget.reply?.id,
-                    reactionSource: SocialEntityType.comment,
-                  ),
-                ),
+                Expanded(child: Expanded(child:
+                Visibility(visible: widget.post?.creatorId != null,
+                    child: GroupMemberProfileInfoWidget(
+                      name: widget.post?.creatorName,
+                      userId: widget.post?.creatorId,
+                      isAdmin: widget.creator?.isAdmin == true,
+                      additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
+                      // updateController: widget.updateController,
+                    ))),),
+                // Visibility(
+                //   visible: Config().showGroupPostReactions &&
+                //       (widget.group?.currentUserHasPermissionToSendReactions == true),
+                //   child: GroupReaction(
+                //     groupId: widget.group?.id,
+                //     entityId: widget.reply?.id,
+                //     reactionSource: SocialEntityType.comment,
+                //   ),
+                // ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
                     child: Semantics( child:Container(
@@ -1467,27 +1398,37 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               //   onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
 
                           )))),
-                  StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
-                  Expanded(
-                      flex: 1,
-                      child: Semantics (
-                        button: true, label: "Image",
-                       child: Container(
-                          padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
-                          child: SizedBox(
-                          width: _smallImageSize,
-                          height: _smallImageSize,
-                           child: ModalImageHolder(child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),))
-                  )
+                  // StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
+                  // Expanded(
+                  //     flex: 1,
+                  //     child: Semantics (
+                  //       button: true, label: "Image",
+                  //      child: Container(
+                  //         padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                  //         child: SizedBox(
+                  //         width: _smallImageSize,
+                  //         height: _smallImageSize,
+                  //          child: ModalImageHolder(child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),))
+                  // )
                 ],),
+              Container(
+                child: StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
+                // AspectRatio(aspectRatio: 1, child:
+                    Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                // ),
+              ),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
-                      Expanded(
-                          child: Container(
-                            child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
-                                style: Styles().textStyles.getTextStyle('widget.description.small'))),)),
+                    Visibility(
+                      visible: Config().showGroupPostReactions,
+                      child: Expanded(
+                          child: GroupReactionsLayout(reactions: _reactions)
+                          // Container(
+                          //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
+                          //       semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
+                          //       style: Styles().textStyles.getTextStyle('widget.description.small'))),)
+                      )),
                 ],),)
             ])))));
   }
@@ -3180,3 +3121,101 @@ class ReactionKeyboard {
     );
   }
 }
+
+class GroupReactionsLayout extends StatefulWidget {
+  final Group? group;
+  final List<Reaction> reactions;
+  final Future<bool> Function(Reaction)? onSendReaction;
+  final Future<bool> Function(Reaction)? onDeleteReaction;
+  final bool? enabled;
+
+  const GroupReactionsLayout({super.key, required this.reactions, this.group, this.onSendReaction, this.onDeleteReaction, this.enabled = true,});
+
+  @override
+  State<StatefulWidget> createState() => _GroupReactionsState();
+}
+
+class _GroupReactionsState extends State<GroupReactionsLayout> {
+  @override
+  Widget build(BuildContext context)
+    => _buildReactionsLayoutWidget;
+
+  Widget get _buildReactionsLayoutWidget {
+    Map<String, List<Reaction>> sameEmojiReactions = ReactionExt.extractSameEmojiReactions(widget.reactions) ?? {};
+    return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          ...sameEmojiReactions.keys.map((String emoji) =>
+              _buildReactionWidget(
+                  occurrences: sameEmojiReactions[emoji]?.length,
+                  reaction: sameEmojiReactions[emoji]?.
+                  firstWhere(
+                          (Reaction reaction) => reaction.isCurrentUserReacted,
+                      orElse: () => (CollectionUtils.isNotEmpty(sameEmojiReactions[emoji]) ? sameEmojiReactions[emoji]?.first : null)
+                          ?? Reaction()))
+          ).toList(),
+          Visibility(visible: widget.enabled == true,
+            child: Container(
+              padding: EdgeInsets.only(right: 6),
+              child: InkWell(
+                  onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
+                  child: Padding(padding: EdgeInsets.all(0),
+                      child: Image.asset("images/add_reaction_icon.png", width: 40, fit: BoxFit.fitWidth,))
+              ))),
+        ]
+    );
+  }
+
+  Widget _buildReactionWidget({Reaction? reaction, int? occurrences}){
+    return Padding( padding: EdgeInsets.all(4),
+        child: InkWell(
+            onTap: () => _deleteReaction(reaction), //TBD call BB to remove reaction
+            child: Container(
+                padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
+                decoration: BoxDecoration(
+                    color: Styles().colors.fillColorPrimaryTransparent015,
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    border: Border.all(color: Styles().colors.fillColorPrimary,)),
+                child: Row(mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(reaction?.data ?? ""),
+                      Visibility(visible: (occurrences ?? 0 ) > 1,
+                          child: Text(occurrences?.toString() ?? "")
+                      )
+                    ])
+            )
+        )
+    );
+  }
+
+  void _reactWithEmoji(emoji.Emoji emoji){
+    _sendReaction(
+        Reaction(
+          data: emoji.emoji,
+          type: ReactionType.emoji,
+          dateCreatedUtc: DateTime.now().toUtc(),
+          engager: Creator(accountId: widget.group?.currentMember?.userId, name: widget.group?.currentMember?.name),
+        )
+    );
+  }
+
+  void _sendReaction(Reaction? reaction){ //TBD hook to BB
+    if(widget.enabled == true && reaction != null) {
+      setStateIfMounted(() =>
+          widget.reactions.add(reaction)
+      );
+      widget.onSendReaction?.call(reaction);
+    }
+  }
+
+  void _deleteReaction(Reaction? reaction){ //TBD remove
+    if(widget.enabled == true && reaction != null) {
+      setStateIfMounted(() =>
+          widget.reactions.remove(reaction)
+      );
+      widget.onDeleteReaction?.call(reaction);
+    }
+  }
+}
+
+
