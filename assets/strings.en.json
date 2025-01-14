@@ -3258,6 +3258,8 @@
     "widget.inbox_message_card.status.hint": "status: %s ,for: ",
     "widget.inbox_message_card.subject.hint": "Subject: %s",
     "widget.inbox_message_card.body.hint": "Body: %s",
+    "widget.inbox_message_card.delete.confirm.msg": "Are you sure that you want to delete this message?",
+    "widget.inbox_message_card.delete.failed.msg": "Failed to delete message. Please, try again later.",
 
     "panel.messages.header.connections.label": "Connections",
     "panel.messages.mark_all_read.label": "Mark all as read",

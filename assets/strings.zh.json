@@ -3235,6 +3235,8 @@
 	"widget.inbox_message_card.status.hint": "狀態：%s，用於：",
 	"widget.inbox_message_card.subject.hint": "主題：%s",
 	"widget.inbox_message_card.body.hint": "身體：%s",
+	"widget.inbox_message_card.delete.confirm.msg": "您確實要刪除該訊息嗎？",
+	"widget.inbox_message_card.delete.failed.msg": "刪除訊息失敗。請稍後再試。",
 
 	"panel.messages.header.connections.label": "連接",
 	"panel.messages.mark_all_read.label": "標記為已讀",

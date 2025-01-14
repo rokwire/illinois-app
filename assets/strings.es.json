@@ -3250,6 +3250,8 @@
     "widget.inbox_message_card.status.hint": "sestado: %s ,para:",
     "widget.inbox_message_card.subject.hint": "Asignaturas",
     "widget.inbox_message_card.body.hint": "Cuerpo: %s",
+    "widget.inbox_message_card.delete.confirm.msg": "¿Estás seguro que deseas eliminar este mensaje?",
+    "widget.inbox_message_card.delete.failed.msg": "No se pudo eliminar el mensaje. Inténtalo de nuevo más tarde.",
 
     "panel.messages.header.connections.label": "Conexiones",
     "panel.messages.mark_all_read.label": "Marcar todo como leido",

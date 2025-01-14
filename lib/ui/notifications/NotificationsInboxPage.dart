@@ -893,6 +893,8 @@ class InboxMessageCard extends StatefulWidget {
 
 class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
 
+  bool _deleting = false;
+
   @override
   void initState() {
     super.initState();
@@ -966,14 +968,55 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                     Row(children: [
                       Expanded(child:
                         Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle('widget.info.tiny'))
-                    )]),
+                      ),
+                    ]),
                   ])
                 ),
               ],)
             ),
           ),
           Container(color: Styles().colors.fillColorSecondary, height: 4),
-        ],)
+          Positioned(bottom: 0, right: 0, child:
+            Stack(alignment: Alignment.center, children: [
+              InkWell(onTap: _onTapDelete, splashColor: Colors.transparent, child: Container(padding: EdgeInsets.all(16), child: Styles().images.getImage('trash-blue'))),
+              Visibility(visible: _deleting, child: SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 1, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
+            ])
+          )
+        ])
     );
+  }
+
+  void _onTapDelete() {
+    Analytics().logSelect(target: 'Delete Inbox Message');
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization()
+            .getStringEx('widget.inbox_message_card.delete.confirm.msg', 'Are you sure that you want to delete this message?')),
+        actions: <Widget>[
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteMessage();
+              }),
+          TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: () => Navigator.of(context).pop())
+        ]);
+  }
+
+  void _deleteMessage() {
+    setStateIfMounted(() {
+      _deleting = true;
+    });
+    Inbox().deleteMessages([widget.message!.messageId!]).then((bool succeeded) {
+      setStateIfMounted(() {
+        _deleting = false;
+      });
+      if (!succeeded) {
+        AppAlert.showDialogResult(
+            context,
+            Localization()
+                .getStringEx('widget.inbox_message_card.delete.failed.msg', 'Failed to delete message. Please, try again later.'));
+      }
+    });
   }
 }
