@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -356,6 +357,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           dateActivatedUtc: scheduleDate?.toUtc(),
           memberAccountIds: memberAccountIds);
     }
+    //TBD TBP hook to BB
+    if(_pinPost)
+      post.pinPost();
+
     Social().createPost(post: post).then((success) {
       _onCreateFinished(success ? post : null);
     });

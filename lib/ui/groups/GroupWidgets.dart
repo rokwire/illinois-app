@@ -1083,17 +1083,20 @@ class _GroupPostCardState extends State<GroupPostCard> {
               child: Padding(
                   padding: EdgeInsets.all(12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(children: [
-                      Expanded(child:
-                        Visibility(visible: widget.post?.creatorId != null,
-                            child: GroupMemberProfileInfoWidget(
-                                name: widget.post?.creatorName,
-                                userId: widget.post?.creatorId,
-                                isAdmin: widget.isAdmin,
-                                additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
-                              // updateController: widget.updateController,
-                            ))),
-                      _buildScheduledDateWidget
+                    Row(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child:
+                          Visibility(visible: widget.post?.creatorId != null,
+                              child: GroupMemberProfileInfoWidget(
+                                  name: widget.post?.creatorName,
+                                  userId: widget.post?.creatorId,
+                                  isAdmin: widget.isAdmin,
+                                  additionalInfo:widget.post?.isScheduled != true ? widget.post?.displayDateTime : null,
+                                // updateController: widget.updateController,
+                              ))),
+                        _pinWidget,
+                        _buildScheduledDateWidget,
+
                     ]),
                     Visibility(visible: widget.post?.isPost == true,
                         child: Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -1188,6 +1191,23 @@ class _GroupPostCardState extends State<GroupPostCard> {
             Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
         ))
     ]));
+
+  Widget get _pinWidget => Visibility(visible: widget.post?.isPinned == true, child:
+      InkWell(
+        onTap: _onUnpin ,
+        child: Container(
+          padding: EdgeInsets.only(left: 16, bottom: 16, top: 0, right: 0),
+          child: Styles().images.getImage("pin", size: 16, fit: BoxFit.fitHeight)
+  )));
+
+  void _onUnpin(){
+    //TBD hook BB
+    widget.post?.unpinPost();
+    if(widget.post != null)
+    Social().updatePost(post: widget.post!).then((succeeded) {
+
+    });
+  }
 
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
