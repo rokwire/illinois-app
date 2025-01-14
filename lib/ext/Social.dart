@@ -59,6 +59,12 @@ extension PostExt on Post {
     );
     return CollectionUtils.isNotEmpty(creators) ? creators!.first : null;
   }
+
+  //Workaround till BB is hooked
+  static DateTime get workaroundDate =>  DateTime.fromMicrosecondsSinceEpoch(0);
+  void pinPost() => dateActivatedUtc = workaroundDate;
+  void unpinPost() => dateActivatedUtc = DateTime.now();
+  bool get isPinned => dateActivatedUtc?.isAtSameMomentAs(workaroundDate) == true;
 }
 
 extension CommentExt on Comment {

@@ -1393,7 +1393,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                         label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
-                          _onTapCreatePost();
+                          _onTapCreatePost(type: PostType.direct_message);
                         })),
                 Visibility(
                     visible: _canAddEvent,
@@ -1629,10 +1629,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
   }
 
-  void _onTapCreatePost() {
+  void _onTapCreatePost({PostType type =  PostType.post}) {
     Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
     if (_group != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!, type: type))).then((result) {
         if (result is Post) {
           if(result.isScheduled){
             _updateController.add(_GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast);

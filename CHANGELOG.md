@@ -92,8 +92,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+
+## [6.1.39] - 2025-01-14
 ### Changed
 - Updated Home > Sections text styles and spacings [#4470](https://github.com/rokwire/illinois-app/issues/4470).
+- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
 
 ## [6.1.38] - 2025-01-13
 ### Added
