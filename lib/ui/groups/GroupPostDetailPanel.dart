@@ -425,6 +425,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildReplyTextField(){
     return PostInputField(
       key: _postInputKey,
+      title:  Localization().getStringEx('panel.group.detail.post.reply.reply.label.capitalized', "REPLY"),// tbd localize
       text: _replyEditData?.body,
       onBodyChanged: (text) => _replyEditData?.body = text,
     );

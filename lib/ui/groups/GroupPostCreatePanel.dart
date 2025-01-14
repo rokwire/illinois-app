@@ -21,8 +21,9 @@ import 'GroupWidgets.dart';
 
 class GroupPostCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group group;
+  final PostType type;
 
-  GroupPostCreatePanel({required this.group});
+  GroupPostCreatePanel({required this.group, required this.type});
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
@@ -111,9 +112,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                               width: 0.0))),
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
                   PostInputField(
+                    title: widget.type == PostType.post ?  "POST" : "MESSAGE",
                     text: _postData.body,
                     onBodyChanged: (text) => _postData.body = text,
-                    hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
+                    // hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 12),

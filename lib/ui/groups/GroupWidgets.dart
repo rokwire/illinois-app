@@ -1240,7 +1240,7 @@ class GroupReplyCard extends StatefulWidget {
 
 class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
   // static const double _smallImageSize = 64;
-  List<Reaction> _reactions = []; //TBD load
+  // List<Reaction> _reactions = []; //TBD load
 
   @override
   void initState() {
@@ -1558,11 +1558,12 @@ typedef void OnBodyChangedListener(String text);
 
 class PostInputField extends StatefulWidget{
   final EdgeInsets? padding;
+  final String? title;
   final String? hint;
   final String? text;
   final OnBodyChangedListener? onBodyChanged;
 
-  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged}) : super(key: key);
+  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title}) : super(key: key);
   
   @override
   State<StatefulWidget> createState() {
@@ -1582,7 +1583,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
   void initState() {
     super.initState();
     _padding = widget.padding ?? EdgeInsets.only(top: 5);
-    _hint = widget.hint ?? Localization().getStringEx("panel.group.detail.post.reply.create.body.field.hint", "Write a Reply ...");
+    _hint = widget.hint;  /*?? Localization().getStringEx("panel.group.detail.post.reply.create.body.field.hint", "Write a Reply ...");*/
     _bodyController.text = widget.text ?? "";
   }
   
@@ -1611,52 +1612,60 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
   Widget build(BuildContext context) {
     return Container(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
             Padding(
-                padding: _padding!,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Styles().images.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
-                        onPressed: _onTapBold),
-                      Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: IconButton(
-                              icon: Styles().images.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
-                              onPressed: _onTapItalic)),
-                      Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: IconButton(
-                              icon: Styles().images.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
-                              onPressed: _onTapUnderline)),
-                      Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Semantics(button: true, child:
-                          GestureDetector(
-                              onTap: _onTapEditLink,
-                              child: Text(
-                                  Localization().getStringEx(
-                                      'panel.group.detail.post.create.link.label',
-                                      'Link'),
-                                  style: Styles().textStyles.getTextStyle('widget.group.input_field.link')))))
-                    ])),
-            Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 16),
-                child: TextField(
-                    controller: _bodyController,
-                    onChanged: _notifyChanged,
-                    maxLines: 15,
-                    minLines: 1,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                        hintText: _hint,
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Styles().colors.mediumGray,
-                                width: 0.0))),
-                    style: Styles().textStyles.getTextStyle(''))),
+                padding: EdgeInsets.only(top: 8, bottom: 8),
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Styles().colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
+                    ),
+                    child: TextField(
+                      controller: _bodyController,
+                      onChanged: _notifyChanged,
+                      maxLines: 15,
+                      minLines: 7,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration:
+                      InputDecoration(
+                          hintText: _hint,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.all(8)
+                      ),
+                        style: Styles().textStyles.getTextStyle('')))),
+              Padding(
+                  padding: EdgeInsets.zero,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                            icon: Styles().images.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
+                            onPressed: _onTapBold),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: IconButton(
+                                icon: Styles().images.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
+                                onPressed: _onTapItalic)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: IconButton(
+                                icon: Styles().images.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
+                                onPressed: _onTapUnderline)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: Semantics(button: true, child:
+                            GestureDetector(
+                                onTap: _onTapEditLink,
+                                child: Text(
+                                    Localization().getStringEx(
+                                        'panel.group.detail.post.create.link.label',
+                                        'Link'),
+                                    style: Styles().textStyles.getTextStyle('widget.group.input_field.link')))))
+                      ])),
           ],
         )
     );
