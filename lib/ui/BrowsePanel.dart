@@ -334,7 +334,7 @@ class _BrowseSection extends StatelessWidget {
             Row(children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"))
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
                 )
               ),
               Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
@@ -560,7 +560,7 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),)
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
