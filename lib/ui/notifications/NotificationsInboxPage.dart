@@ -130,7 +130,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     if ((_contentList != null) && (0 < _contentList!.length)) {
       int count = _contentList!.length + ((_loadingMore == true) ? 1 : 0);
       return ListView.separated(
-        separatorBuilder: (context, index) => Container(height: 24),
+        separatorBuilder: (context, index) => Container(),
         itemCount: count,
         itemBuilder: _buildListEntry,
         controller: _scrollController);
@@ -147,10 +147,10 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   Widget _buildListEntry(BuildContext context, int index) {
     dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
     if (entry is InboxMessage) {
-      return InboxMessageCard(
-        message: entry,
-        selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
-        onTap: () => _onTapMessage(entry));
+      return Padding(padding: EdgeInsets.only(bottom: 20), child: InboxMessageCard(
+          message: entry,
+          selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
+          onTap: () => _onTapMessage(entry)));
     }
     else if (entry is String) {
       return _buildListHeading(text: entry);
@@ -161,15 +161,15 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   Widget _buildListHeading({String? text}) {
-    return Container(color: Styles().colors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-        Semantics(header: true, child:
-          Text(text ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),)
-        )
-    );
+    return Semantics(
+        header: true,
+        child: Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'))));
   }
 
   Widget _buildListLoadingIndicator() {
-    return Container(padding: EdgeInsets.all(6), child:
+    return Container(padding: EdgeInsets.only(left: 6, top: 6, right: 6, bottom: 20), child:
       Align(alignment: Alignment.center, child:
         SizedBox(width: 24, height: 24, child:
           CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
@@ -947,7 +947,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 4), child:
                         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"))
+                            Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'))
                           ),
                           (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
                             Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
@@ -960,12 +960,12 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.displayBody ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.displayBody ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.displayBody ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.displayBody ?? '']), style: Styles().textStyles.getTextStyle('widget.card.detail.small'))
                       )])) : Container(),
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular"))
+                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle('widget.info.tiny'))
                     )]),
                   ])
                 ),
