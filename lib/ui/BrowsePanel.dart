@@ -325,7 +325,7 @@ class _BrowseSection extends StatelessWidget {
   }
 
   Widget _buildHeading(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(bottom: 4), child:
+    return Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
       InkWell(onTap: () => _onTapHeading(context), child:
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
@@ -400,7 +400,7 @@ class _BrowseSection extends StatelessWidget {
         }
       }
       return entriesList.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 24), child:
-        Column(children: entriesList,)
+        Padding(padding: EdgeInsets.only(bottom: 4), child: Column(children: entriesList))
       ) : Container();
   }
 
@@ -548,8 +548,7 @@ class _BrowseEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(bottom: 4), child:
-      InkWell(onTap: () => _onTap(context), child:
+    return InkWell(onTap: () => _onTap(context), child:
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
@@ -566,8 +565,7 @@ class _BrowseEntry extends StatelessWidget {
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                   child: _iconWidget),
             ],),
-        ),
-      ),
+        )
     );
   }
 
