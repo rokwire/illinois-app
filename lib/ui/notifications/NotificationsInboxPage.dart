@@ -397,9 +397,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
         _buildDoneButton()
       ]);
     }
-    else {
-      contentList.add(_buildEditButton());
-    }
     
     if ((_isEditMode == true) && _isAnyMessageSelected) {
       contentList.insert(0, _buildOptionsButton());
@@ -421,13 +418,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
         ),
       ],)
     );
-  }
-
-  Widget _buildEditButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
-      TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
-      ));
   }
 
   Widget _buildDoneButton() {
