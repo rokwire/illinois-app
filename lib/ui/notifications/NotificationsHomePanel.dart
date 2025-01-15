@@ -20,7 +20,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/ext/InboxMessage.dart';
@@ -41,35 +40,26 @@ class NotificationsHomePanel extends StatefulWidget {
 
   static void present(BuildContext context, {NotificationsContent? content}) {
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
-    }
-    else if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showOfflineMessage(
+          context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
+    } else if (!Auth2().isOidcLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.notifications', 'Notifications'));
-    }
-    else if (ModalRoute.of(context)?.settings.name != routeName) {
+    } else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        useRootNavigator: true,
-        routeSettings: RouteSettings(name: routeName),
-        clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors.background,
-        constraints: BoxConstraints(maxHeight: height, minHeight: height),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-        builder: (context) {
-          return NotificationsHomePanel._(content: content);
-        }
-      );
-
-      /*Navigator.push(context, PageRouteBuilder(
-        settings: RouteSettings(name: routeName),
-        pageBuilder: (context, animation1, animation2) => SettingsNotificationsContentPanel._(content: content),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero
-      ));*/
+          context: context,
+          isScrollControlled: true,
+          isDismissible: true,
+          useRootNavigator: true,
+          routeSettings: RouteSettings(name: routeName),
+          clipBehavior: Clip.antiAlias,
+          backgroundColor: Styles().colors.background,
+          constraints: BoxConstraints(maxHeight: height, minHeight: height),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+          builder: (context) {
+            return NotificationsHomePanel._(content: content);
+          });
     }
   }
 
@@ -124,7 +114,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeProfileMy,
       FirebaseMessaging.payloadTypeProfileWhoAreYou,
       FirebaseMessaging.payloadTypeProfileLogin,
-      FirebaseMessaging.payloadTypeSettingsSections,  //TBD deprecate. Use payloadTypeProfileLogin instead
+      FirebaseMessaging.payloadTypeSettingsSections, //TBD deprecate. Use payloadTypeProfileLogin instead
       FirebaseMessaging.payloadTypeSettingsFoodFilters,
       FirebaseMessaging.payloadTypeSettingsSports,
       FirebaseMessaging.payloadTypeSettingsFavorites,
@@ -141,34 +131,22 @@ class NotificationsHomePanel extends StatefulWidget {
 
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
   late NotificationsContent? _selectedContent;
-  static NotificationsContent? _lastSelectedContent;
-  bool _contentValuesVisible = false;
+
+  static final double _defaultPadding = 16;
 
   final GlobalKey _allContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _sheetHeaderKey = GlobalKey();
-  final GlobalKey _contentDropDownKey = GlobalKey();
-  double _contentWidgetHeight = 300; // default value
-
-  static final double _defaultPadding = 16;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
-    
+
     if (_isContentItemEnabled(widget.content)) {
-      _selectedContent = _lastSelectedContent = widget.content;
-    }
-    else if (_isContentItemEnabled(_lastSelectedContent)) {
-      _selectedContent = _lastSelectedContent;
-    }
-    else  {
+      _selectedContent = widget.content;
+    } else {
       _selectedContent = _initialSelectedContent;
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalContentWidgetHeight();
-    });
 
     super.initState();
   }
@@ -183,169 +161,50 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _updateContentItemIfNeeded();
-    }
+    if (name == Auth2.notifyLoginChanged) {}
   }
 
   @override
   Widget build(BuildContext context) {
-    //return _buildScaffold();
     return _buildSheet(context);
   }
 
-  /*Widget _buildScaffold() {
-    return Scaffold(
-      appBar: RootHeaderBar(key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications')),
-      body: _buildPage(),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: uiuc.TabBar(key: _tabBarKey)
-    );
-  }*/
-
   Widget _buildSheet(BuildContext context) {
-    // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.white, child:
-        Row(key: _sheetHeaderKey, children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child:
-              Semantics(container: true, header: true, child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles.getTextStyle("widget.sheet.title.regular"),))
-            )
-          ),
-          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), container: true, button: true, child:
-            InkWell(onTap : _onTapClose, child:
-              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-              Styles().images.getImage('close-circle', excludeFromSemantics: true),
-              ),
-            ),
-          ),
-
-        ],),
-      ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
-      Expanded(child:
-        _buildPage(context),
-      )
-    ],);
-  }
-
-  Widget _buildPage(BuildContext context) {
-    return Column(children: <Widget>[
-      Expanded(child:
-        SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-          _buildContent()
-        )
-      )
+      Container(
+          color: Styles().colors.white,
+          child: Row(key: _sheetHeaderKey, children: [
+            Expanded(
+                child: Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: Semantics(
+                        container: true,
+                        header: true,
+                        child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'),
+                            style: Styles().textStyles.getTextStyle("widget.sheet.title.regular"))))),
+            Semantics(
+                label: Localization().getStringEx('dialog.close.title', 'Close'),
+                hint: Localization().getStringEx('dialog.close.hint', ''),
+                container: true,
+                button: true,
+                child: InkWell(
+                    onTap: _onTapClose,
+                    child: Container(
+                        padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
+          ])),
+      Container(color: Styles().colors.surfaceAccent, height: 1),
+      Expanded(child: _buildContent())
     ]);
   }
 
   Widget _buildContent() {
-    return Semantics(container: true, child: Container(color: Styles().colors.background, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
-          Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
-          RibbonButton(
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-            rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-            label: _getContentItemName(_selectedContent),
-            onTap: _changeSettingsContentValuesVisibility
-          )
-        )),
-        Container(height: _contentWidgetHeight, child:
-          Stack(children: [
-            Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget),
-            _buildContentValuesContainer()
-          ])
-        )
-      ])
-    ));
-  }
-
-  Widget _buildContentValuesContainer() {
-    return Visibility(visible: _contentValuesVisible, child:
-      Positioned.fill(child:
-        Stack(children: <Widget>[
-          _buildContentDismissLayer(),
-          _buildContentValuesWidget()
-        ])
-      )
-    );
-  }
-
-  Widget _buildContentDismissLayer() {
-    return Positioned.fill(
-        child: BlockSemantics(
-            child: Semantics(excludeSemantics: true, child:
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _contentValuesVisible = false;
-                  });
-                },
-                child: Container(color: Styles().colors.blackTransparent06)))));
-  }
-
-  Widget _buildContentValuesWidget() {
-    List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (NotificationsContent contentItem in NotificationsContent.values) {
-      if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
-        contentList.add(_buildContentItem(contentItem));
-      }
-    }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: _defaultPadding), child: SingleChildScrollView(child: Column(children: contentList)));
-  }
-
-  Widget _buildContentItem(NotificationsContent contentItem) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentItemName(contentItem),
-        onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _onTapContentItem(NotificationsContent contentItem) {
-    Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
-    _selectedContent = _lastSelectedContent = contentItem;
-    _changeSettingsContentValuesVisibility();
-  }
-
-  void _changeSettingsContentValuesVisibility() {
-    _contentValuesVisible = !_contentValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _evalContentWidgetHeight() {
-    double takenHeight = 0;
-    try {
-      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-      takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
-
-      final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
-      if ((contentDropDownRenderBox is RenderBox) && contentDropDownRenderBox.hasSize) {
-        takenHeight += contentDropDownRenderBox.size.height;
-      }
-
-      final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
-      if ((sheetHeaderRenderBox is RenderBox) && sheetHeaderRenderBox.hasSize) {
-        takenHeight += sheetHeaderRenderBox.size.height;
-      }
-    } on Exception catch (e) {
-      print(e.toString());
-    }
-
-    if (mounted) {
-      setState(() {
-        _contentWidgetHeight = MediaQuery.of(context).size.height - takenHeight + _defaultPadding;
-      });
-    }
+    return Semantics(
+        container: true,
+        child: Container(
+            color: Styles().colors.background,
+            padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding),
+            child: _contentWidget));
   }
 
   void _onTapClose() {
@@ -364,25 +223,23 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
   Widget? get _contentWidget {
     switch (_selectedContent) {
-      case NotificationsContent.all: return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
-      case NotificationsContent.unread: return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
-      default: return null;
-    }
-  }
-
-  String? _getContentItemName(NotificationsContent? content) {
-    switch (content) {
-      case NotificationsContent.all: return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
-      case NotificationsContent.unread: return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
-      default: return null;
+      case NotificationsContent.all:
+        return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner);
+      case NotificationsContent.unread:
+        return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+      default:
+        return null;
     }
   }
 
   bool _isContentItemEnabled(NotificationsContent? contentItem) {
     switch (contentItem) {
-      case NotificationsContent.all: return Auth2().isLoggedIn;
-      case NotificationsContent.unread: return Auth2().isLoggedIn;
-      default: return false;
+      case NotificationsContent.all:
+        return Auth2().isLoggedIn;
+      case NotificationsContent.unread:
+        return Auth2().isLoggedIn;
+      default:
+        return false;
     }
   }
 
@@ -393,16 +250,5 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
       }
     }
     return null;
-  }
-
-  void _updateContentItemIfNeeded() {
-    if ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent)) {
-      NotificationsContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
-      if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
-        setState(() {
-          _selectedContent = selectedContent;
-        });
-      }
-    }
   }
 }

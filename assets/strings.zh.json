@@ -1949,8 +1949,6 @@
 	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
 	"panel.settings.profile.header.profile.label": "个人资料",
 
-	"panel.settings.notifications.content.notifications.all.label": "所有通知",
-	"panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
 	"panel.settings.notifications.header.inbox.label": "通知",
 

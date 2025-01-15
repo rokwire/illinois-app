@@ -1962,8 +1962,6 @@
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Perfil",
 
-    "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
-    "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
     "panel.settings.notifications.header.inbox.label": "Notificaciones",
 
