@@ -1210,11 +1210,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onUnpin(){
     //TBD hook BB
-    widget.post?.unpinPost();
-    if(widget.post != null)
-    Social().updatePost(post: widget.post!).then((succeeded) {
+    if(widget.group.currentUserIsAdmin) {
+      widget.post?.unpinPost();
+      if (widget.post != null)
+        Social().updatePost(post: widget.post!).then((succeeded) {
 
-    });
+        });
+    }
   }
 
   void _onTapCard() {
