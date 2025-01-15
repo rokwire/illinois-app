@@ -539,14 +539,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     );
   }
 
-  void _onEdit() {
-    Analytics().logSelect(target: "Edit");
-    setState(() {
-      _isEditMode = true;
-      _selectedMessageIds.clear();
-    });
-  }
-
   void _onDone() {
     Analytics().logSelect(target: "Done");
     setState(() {
