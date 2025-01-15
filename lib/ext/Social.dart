@@ -34,6 +34,8 @@ extension PostExt on Post {
   bool get isMessage => (type == PostType.direct_message);
   bool get isScheduled => (status == PostStatus.draft);
 
+  int get commentsCount => (details?.commentsCount ?? 0);
+
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;

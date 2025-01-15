@@ -1065,7 +1065,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   Widget build(BuildContext context) {
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
-    int visibleRepliesCount = _visibleRepliesCount;
+    int visibleRepliesCount = (widget.post?.commentsCount ?? 0);
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1219,25 +1219,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
     Analytics().logSelect(target: url);
     UrlUtils.launchExternal(url);
   }
-
-  int get _visibleRepliesCount {
-    int result = 0;
-    //TBD: DDGS - implement replies
-    // List<GroupPost>? replies = widget.post?.replies;
-    List<Comment>? replies = null;
-    if (replies != null) {
-      //TBD: DD - implement comments count
-      // bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
-      // for (Comment? reply in replies) {
-      //   if ((reply!.private != true) || (memberOrAdmin == true)) {
-      //     result++;
-      //   }
-      // }
-      result = replies.length;
-    }
-    return result;
-  }
-
 }
 
 //////////////////////////////////////
