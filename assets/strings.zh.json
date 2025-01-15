@@ -3216,6 +3216,7 @@
 
 	"panel.inbox.label.content.empty": "沒有消息",
 	"panel.inbox.mark_all_read.label": "標記為已讀",
+	"panel.inbox.button.filter.title": "篩選",
 	"panel.inbox.label.time.any": "任何時間",
 	"panel.inbox.label.time.today": "今天",
 	"panel.inbox.label.time.yesterday": "昨天",

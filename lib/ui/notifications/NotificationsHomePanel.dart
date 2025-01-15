@@ -132,8 +132,6 @@ class NotificationsHomePanel extends StatefulWidget {
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
   late NotificationsContent? _selectedContent;
 
-  static final double _defaultPadding = 16;
-
   final GlobalKey _allContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _sheetHeaderKey = GlobalKey();
@@ -203,7 +201,6 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
         container: true,
         child: Container(
             color: Styles().colors.background,
-            padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding),
             child: _contentWidget));
   }
 

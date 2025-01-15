@@ -15,7 +15,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -45,6 +44,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   ];
 
   final int _messagesPageSize = 8;
+  static final double _defaultPaddingValue = 16;
 
   String? _selectedCategory;
   _TimeFilter? _selectedTime;
@@ -52,7 +52,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   _FilterType? _selectedFilter;
   bool? _hasMoreMessages;
   
-  bool? _loading, _loadingMore, _processingOption;
+  bool? _loading, _loadingMore;
   List<InboxMessage> _messages = <InboxMessage>[];
   List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
@@ -105,28 +105,24 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
         child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[_buildBanner(), _buildAdditionalButtons(),  _buildFilters(), Expanded(child: _buildContent())]));
+            children: <Widget>[_buildBanner(), _buildHeaderSection(), Expanded(child: _buildContent())]));
   }
 
   // Messages
 
   Widget _buildContent() {
-    return Stack(children: [
-      Visibility(visible: (_loading != true), child:
-        Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())
-      ),
-      Visibility(visible: (_loading == true), child:
-        Align(alignment: Alignment.center, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-        )
-      ),
-      Visibility(visible: (_selectedFilter != null), child:
-        Stack(children:<Widget>[
-          _buildDisabledContentLayer(),
-          _buildFilterValues(),
-        ]),
-      ),
-    ]);
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue),
+        child: Stack(children: [
+          Visibility(visible: (_loading != true), child: Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())),
+          Visibility(
+              visible: (_loading == true),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))),
+          Visibility(visible: (_selectedFilter != null), child: Stack(children: <Widget>[_buildFilterValues()]))
+        ]));
   }
 
   Widget _buildMessagesContent() {
@@ -205,7 +201,38 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     Analytics().logSelect(target: message.subject);
     NotificationsHomePanel.launchMessageDetail(message);
   }
-  
+
+  Widget _buildHeaderSection() {
+    return Container(
+        decoration: BoxDecoration(color: Styles().colors.white),
+        padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10),
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [_buildFilterButton(), _buildReadAllButton()]));
+  }
+
+  Widget _buildFilterButton() {
+    String title = Localization().getStringEx('panel.inbox.button.filter.title', 'Filter');
+    return Semantics(
+        label: title,
+        button: true,
+        child: InkWell(
+            onTap: _onTapFilter,
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Styles().colors.white,
+                    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+                    borderRadius: BorderRadius.circular(18)),
+                child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+                    child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+                      Padding(padding: EdgeInsets.only(right: 6), child: Styles().images.getImage('filters')),
+                      Text(title, style: Styles().textStyles.getTextStyle('widget.button.title.regular'), semanticsLabel: ''),
+                      Padding(padding: EdgeInsets.only(left: 3), child: Styles().images.getImage('chevron-right'))
+                    ])))));
+  }
+
   // Banner
   Widget _buildBanner(){ //TBD localize
     return
@@ -235,69 +262,19 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       ));
   }
 
-  //Buttons
-  Widget _buildAdditionalButtons() {
-    List<Widget> buttons = [];
-    if (widget.unread == true) {
-        buttons.add(_buildReadAllButton());
-    }
-
-    return Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: buttons,
-        ));
-  }
-
+  // Buttons
   Widget _buildReadAllButton() {
-    return Semantics(container: true, child: Container(
-        child: UnderlinedButton(
-            title: Localization().getStringEx("panel.inbox.mark_all_read.label", "Mark all as read"),
-            padding: EdgeInsets.symmetric(vertical: 8),
-            progress: _loadingMarkAllAsRead,
-            onTap: _onTapMarkAllAsRead)));
-  }
-
-  // Filters
-  Widget _buildFilters() {
-    return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-          FilterSelector(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-            title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
-            active: _selectedFilter == _FilterType.Muted,
-            onTap: () { _onFilter(_FilterType.Muted); }
-          ),
-          FilterSelector(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-            title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
-            active: _selectedFilter == _FilterType.Time,
-            onTap: () { _onFilter(_FilterType.Time); }
-          ),
-          _buildEditBar()
-        ],
-    ));
-  }
-
-  void _onFilter(_FilterType? filterType) {
-    setState(() {
-      _selectedFilter = (filterType != _selectedFilter) ? filterType : null;
-    });
+    return Semantics(
+        container: true,
+        child: Container(
+            child: UnderlinedButton(
+                title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
+                padding: EdgeInsets.symmetric(vertical: 8),
+                progress: _loadingMarkAllAsRead,
+                onTap: _onTapMarkAllAsRead)));
   }
 
   // Filters Dropdowns
-
-  Widget _buildDisabledContentLayer() {
-    return Padding(padding: EdgeInsets.only(top: 12), child:
-      BlockSemantics(child:
-        GestureDetector(onTap: (){ _onFilter(null); }, child:
-          Container(color: Color(0x99000000))
-        ),
-      ),
-    );
-  }
 
   Widget _buildFilterValues() {
 
@@ -387,239 +364,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     _loadInitialContent();
   }
 
-  // Header bar
-
-  Widget _buildEditBar() {
-    List<Widget> contentList = <Widget>[];
-    if (_isEditMode == true) {
-      contentList.addAll(<Widget>[
-        _isAllMessagesSelected ? _buildDeselectAllButton() : _buildSelectAllButton(),
-        _buildDoneButton()
-      ]);
-    }
-    
-    if ((_isEditMode == true) && _isAnyMessageSelected) {
-      contentList.insert(0, _buildOptionsButton());
-    }
-
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.end, children: contentList);
-  }
-
-  Widget _buildOptionsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
-      Stack(children: [
-        IconButton(icon: Styles().images.getImage('more') ?? Container(), onPressed: _onOptions),
-        Visibility(visible: (_processingOption == true), child:
-          Container(padding: EdgeInsets.all(13), child:
-            SizedBox(width: 22, height: 22, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white),),
-            ),
-          ),
-        ),
-      ],)
-    );
-  }
-
-  Widget _buildDoneButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
-      TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
-      ));
-  }
-
-  Widget _buildSelectAllButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
-      TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
-      ));
-  }
-
-  Widget _buildDeselectAllButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
-      TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
-      ));
-  }
-
-  Widget _buildOptions(BuildContext context) {
-    String headingText = (_selectedMessageIds.length == 1) ?
-      '1 Message Selected' :
-      '${_selectedMessageIds.length} Messages Selected';
-
-    return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
-      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 16), child:
-          Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
-          )]),
-        ),
-
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
-
-        InkWell(onTap: () => _onDelete(context), child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-            Row(children:<Widget>[
-              Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images.getImage('trash')
-              ),
-              Expanded(child:
-                Text("Delete", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
-              ),
-            ]),
-          )
-        ),
-
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
-
-        InkWell(onTap: () => _onCancelOptions(context), child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-            Row(children:<Widget>[
-              Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images.getImage('close-circle', excludeFromSemantics: true)
-              ),
-              Expanded(child:
-                Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
-              ),
-            ]),
-          )
-        ),
-
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
-      ]),
-    );
-  }
-
-  Widget _buildConfirmationDialog(BuildContext context, {String? title, String? message, String? positiveButtonTitle, String? negativeButtonTitle, void Function()? onPositive}) {
-    return StatefulBuilder(builder: (context, setState) {
-      return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-        Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), ), child:
-          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Row(children: <Widget>[
-              Expanded(child:
-                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Row(children: <Widget>[
-                      Expanded(child:
-                        Text(title!, style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat"),),
-                      ),
-                      Semantics(label: "Close", button: true,  child:
-                        GestureDetector(onTap: () => Navigator.pop(context), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
-                            Center(child:
-                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
-                            ),
-                          )
-                        ),
-                      ),
-                    ],),
-                  ),
-                ),
-              ),
-            ],),
-
-            Padding(padding: const EdgeInsets.all(16), child:
-              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Container(height: 16),
-                Text(message!, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.message.medium"),),
-                Container(height: 32),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                  Expanded(child:
-                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), backgroundColor: Colors.transparent, borderColor: Styles().colors.fillColorPrimary,),
-                  ),
-                  Container(width: 8, ),
-                  Expanded(child:
-                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant2"), backgroundColor: Styles().colors.fillColorSecondaryVariant, borderColor: Styles().colors.fillColorSecondaryVariant),
-                  ),
-                ],)
-              ],)
-            ),
-          ]),
-        ),
-      ); },
-    );
-  }
-
-  void _onDone() {
-    Analytics().logSelect(target: "Done");
-    setState(() {
-      _isEditMode = false;
-      _selectedMessageIds.clear();
-    });
-  }
-
-  void _onSelectAll() {
-    Analytics().logSelect(target: "Select All");
-    setState(() {
-      for (InboxMessage message in _messages) {
-        if (message.messageId != null) {
-          _selectedMessageIds.add(message.messageId!);
-        }
-      }
-    });
-  }
-
-  void _onDeselectAll() {
-    Analytics().logSelect(target: "Deselect All");
-    setState(() {
-      _selectedMessageIds.clear();
-    });
-  }
-
-  void _onOptions() {
-    Analytics().logSelect(target: "Options");
-    showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true, builder: _buildOptions);
-  }
-
-  void _onCancelOptions(BuildContext context) {
-    Analytics().logSelect(target: "Cancel");
-    Navigator.pop(context);
-  }
-
-  void _onDelete(BuildContext context) {
-    Analytics().logSelect(target: "Delete");
-    Navigator.pop(context);
-
-    String message = (_selectedMessageIds.length == 1) ?
-      'Delete 1 message?' :
-      'Delete ${_selectedMessageIds.length} messages?';
-    showDialog(context: context, builder: (context) => _buildConfirmationDialog(context,
-      title: 'Delete',
-      message: message,
-      positiveButtonTitle: 'OK',
-      negativeButtonTitle: 'Cancel',
-      onPositive: () => _onDeleteConfirm(context)
-    ));
-  }
-
-  void _onDeleteConfirm(BuildContext context) {
-    Navigator.pop(context);
-    setState(() {
-      _processingOption = true;
-    });
-    Inbox().deleteMessages(_selectedMessageIds).then((bool result) {
-      if (mounted) {
-        setState(() {
-          _processingOption = false;
-          if (result == true) {
-            _selectedMessageIds.clear();
-            _isEditMode = false;
-          }
-        });
-        if (result == true) {
-          _refreshContent();
-        }
-        else {
-          AppAlert.showDialogResult(this.context, "Failed to delete message(s).");
-        }
-      }
-    });
-  }
-
-  void _onCancelConfirmation({String? message, String? selection}) {
-    Analytics().logAlert(text: "Remove My Information", selection: "No");
-    Navigator.pop(context);
-  }
-
   Future<void> _refreshMessages() async{
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
@@ -643,6 +387,10 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     _refreshMessages();
   }
 
+  void _onTapFilter() {
+    //TBD: DD - implement
+  }
+
   void _onTapMarkAllAsRead() {
     Analytics().logSelect(target: "Mark All As Read");
     _setMarkAllAsReadLoading(true);
@@ -661,14 +409,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     setStateIfMounted(() {
       _loadingMarkAllAsRead = loading;
     });
-  }
-
-  bool get _isAllMessagesSelected {
-    return _selectedMessageIds.length == _messages.length;
-  }
-
-  bool get _isAnyMessageSelected {
-    return 0 < _selectedMessageIds.length;
   }
 
   // Content
