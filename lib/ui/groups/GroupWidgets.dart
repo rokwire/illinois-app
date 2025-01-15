@@ -1221,7 +1221,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   int get _visibleRepliesCount {
-    int result = 2;
+    int result = 0;
     //TBD: DDGS - implement replies
     // List<GroupPost>? replies = widget.post?.replies;
     List<Comment>? replies = null;
