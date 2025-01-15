@@ -1383,9 +1383,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Container(
                 child: StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
                 // AspectRatio(aspectRatio: 1, child:
-                    Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                    Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true),
                 // ),
               ),
+              WebEmbed(body: bodyText),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [

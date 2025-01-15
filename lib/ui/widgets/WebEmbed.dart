@@ -4,7 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 enum WebEmbedType {
   youtube,
   vimeo,
-  kaltura,
+  mediaspace,
   other,
 }
 
@@ -23,9 +23,20 @@ class _WebEmbedState extends State<WebEmbed> {
   double _aspectRatio = 1;
 
   @override
+  void didUpdateWidget(covariant WebEmbed oldWidget) {
+    if(widget.body != oldWidget.body) {
+      initController();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void initState() {
     super.initState();
-    // Parse out a recognized link from body:
+    initController();
+  }
+
+   void initController() {
     final link = _findEmbedLink(widget.body);
     if (link != null) {
       // Determine embed type & build final embed URL:
@@ -74,8 +85,8 @@ class _WebEmbedState extends State<WebEmbed> {
     if (lower.contains("vimeo.com/")) {
       return _extractLink(text, ["vimeo.com/"]);
     }
-    if (lower.contains("kaltura.com/")) {
-      return _extractLink(text, ["kaltura.com/"]);
+    if (lower.contains("mediaspace.illinois.edu")) {
+      return _extractLink(text, ["mediaspace.illinois.edu"]);
     }
     return null;
   }
@@ -113,8 +124,8 @@ class _WebEmbedState extends State<WebEmbed> {
       return WebEmbedType.youtube;
     } else if (lower.contains('vimeo.com')) {
       return WebEmbedType.vimeo;
-    } else if (lower.contains('kaltura.com')) {
-      return WebEmbedType.kaltura;
+    } else if (lower.contains('mediaspace.illinois.edu')) {
+      return WebEmbedType.mediaspace;
     } else {
       return WebEmbedType.other;
     }
@@ -126,7 +137,7 @@ class _WebEmbedState extends State<WebEmbed> {
         return _getYouTubeEmbedUrl(originalUrl);
       case WebEmbedType.vimeo:
         return _getVimeoEmbedUrl(originalUrl);
-      case WebEmbedType.kaltura:
+      case WebEmbedType.mediaspace:
         return _getKalturaEmbedUrl(originalUrl);
       default:
         return null;
@@ -159,20 +170,14 @@ class _WebEmbedState extends State<WebEmbed> {
   String? _getKalturaEmbedUrl(String urlStr) {
     final uri = Uri.tryParse(urlStr);
     if (uri == null) return null;
-    String? entryId;
-    if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'id') {
-      entryId = uri.pathSegments[1];
-    } else {
-      entryId = uri.queryParameters['entry_id'];
-    }
-    if (entryId == null) {
+    if (uri.host.contains('mediaspace.illinois.edu')) {
+      if (uri.pathSegments.length >= 3) {
+        final entryId = uri.pathSegments[2];
+        return 'https://mediaspace.illinois.edu/embed/secure/iframe/entryId/$entryId';
+      }
       return null;
     }
-    const partnerId = '<YOUR_PARTNER_ID>';
-    const uiconfId = '<YOUR_UICONF_ID>';
-    return 'https://cdnapisec.kaltura.com/p/$partnerId/sp/${partnerId}00'
-        '/embedIframeJs/uiconf_id/$uiconfId/partner_id/$partnerId'
-        '?entry_id=$entryId'
-        '&iframeembed=true';
+    return null;
   }
+
 }

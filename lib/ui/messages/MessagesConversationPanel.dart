@@ -12,6 +12,7 @@ import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:link_text/link_text.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -301,6 +302,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                   ),
                 ],),
+                WebEmbed(body: message.message)
               ]),
             ),
           );
