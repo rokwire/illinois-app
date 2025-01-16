@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/notifications/NotificationsFilterPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -388,11 +389,12 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   void _onTapFilter() {
-    //TBD: DD - implement
+    Analytics().logSelect(target: 'Filter');
+    NotificationsFilterPanel.present(context);
   }
 
   void _onTapMarkAllAsRead() {
-    Analytics().logSelect(target: "Mark All As Read");
+    Analytics().logSelect(target: 'Mark All As Read');
     _setMarkAllAsReadLoading(true);
     Inbox().markAllMessagesAsRead().then((succeeded) {
       if (succeeded) {
