@@ -1301,15 +1301,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       additionalInfo: widget.post?.displayDateTime,
                       // updateController: widget.updateController,
                     ))),),
-                Visibility(
-                  visible: Config().showGroupPostReactions &&
-                      (widget.group?.currentUserHasPermissionToSendReactions == true),
-                  child: GroupReaction(
-                    groupId: widget.group?.id,
-                    entityId: widget.reply?.id,
-                    reactionSource: SocialEntityType.comment,
-                  ),
-                ),
+                // Visibility(
+                //   visible: Config().showGroupPostReactions &&
+                //       (widget.group?.currentUserHasPermissionToSendReactions == true),
+                //   child: GroupReaction(
+                //     groupId: widget.group?.id,
+                //     entityId: widget.reply?.id,
+                //     reactionSource: SocialEntityType.comment,
+                //   ),
+                // ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
                     child: Semantics( child:Container(
