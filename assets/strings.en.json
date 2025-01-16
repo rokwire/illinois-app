@@ -3251,6 +3251,11 @@
     "panel.inbox.label.muted.hide": "Hide Muted",
     "panel.inbox.mark_as_read.failed.msg": "Failed to mark all messages as read.",
 
+    "panel.inbox.filter.view.label": "VIEW",
+    "panel.inbox.filter.date.label": "DATE RANGE",
+    "panel.inbox.filter.notifications.toggle.unread.label": "Unread Notifications",
+    "panel.inbox.filter.notifications.toggle.muted.label": "Muted Notifications",
+
     "widget.inbox_message_card.selected.hint": "Selected",
     "widget.inbox_message_card.unselected.hint": "Not Selected",
     "widget.inbox_message_card.status.muted": "Muted",

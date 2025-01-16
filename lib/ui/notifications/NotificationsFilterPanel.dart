@@ -93,7 +93,49 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
   }
 
   Widget _buildContent() {
-    return Semantics(container: true, child: Container(color: Styles().colors.background, child: Center(child: Text('TBD'))));
+    return Semantics(
+        container: true,
+        child: SingleChildScrollView(
+            child: Container(
+                color: Styles().colors.background,
+                padding: EdgeInsets.all(16),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildViewFilters(), _buildDateFilters()]))));
+  }
+
+  Widget _buildViewFilters() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.inbox.filter.view.label', 'VIEW'),
+          style: Styles().textStyles.getTextStyle('widget.title.regular.fat')),
+      Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: _buildToggleWidget(
+              label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.unread.label', 'Unread Notifications'),
+              value: _unread)),
+      Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: _buildToggleWidget(
+              label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.muted.label', 'Muted Notifications'),
+              value: _muted))
+    ]);
+  }
+
+  Widget _buildToggleWidget({required String label, bool? value}) {
+    return Container(
+        decoration: BoxDecoration(color: Styles().colors.white),
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Padding(padding: EdgeInsets.only(left: 10), child: Text(label)),
+          Styles().images.getImage((value == true) ? 'toggle-on' : 'toggle-off') ?? Container()
+        ]));
+  }
+
+  Widget _buildDateFilters() {
+    return Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Column(children: [
+          Text(Localization().getStringEx('panel.inbox.filter.date.label', 'DATE RANGE'),
+              style: Styles().textStyles.getTextStyle('widget.title.regular.fat'))
+        ]));
   }
 
   void _onTapClose() {

@@ -3243,6 +3243,11 @@
     "panel.inbox.label.muted.hide": "Ocultar silenciado",
     "panel.inbox.mark_as_read.failed.msg": "Error al marcar todos los mensajes como leídos",
 
+    "panel.inbox.filter.view.label": "VISTA",
+    "panel.inbox.filter.date.label": "RANGO DE FECHAS",
+    "panel.inbox.filter.notifications.toggle.unread.label": "Notificaciones no leídas",
+    "panel.inbox.filter.notifications.toggle.muted.label": "Notificaciones silenciadas",
+
     "widget.inbox_message_card.selected.hint": "Seleccionada",
     "widget.inbox_message_card.unselected.hint": "No seleccionada",
     "widget.inbox_message_card.status.muted": "Apagada",

@@ -3228,6 +3228,11 @@
 	"panel.inbox.label.muted.hide": "隱藏靜音",
 	"panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
 
+	"panel.inbox.filter.view.label": "看法",
+	"panel.inbox.filter.date.label": "日期範圍",
+	"panel.inbox.filter.notifications.toggle.unread.label": "未讀通知",
+	"panel.inbox.filter.notifications.toggle.muted.label": "靜音通知",
+
 	"widget.inbox_message_card.selected.hint": "已選",
 	"widget.inbox_message_card.unselected.hint": "未選中的",
 	"widget.inbox_message_card.status.muted": "靜音",
