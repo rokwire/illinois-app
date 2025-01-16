@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
@@ -151,7 +152,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
       _messageButton,
     ],);
 
-  Widget  get _messageButton => _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress);
+  Widget  get _messageButton => Visibility(visible: FlexUI().isMessagesAvailable, child: _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress));
   Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.fillColorPrimary);
 
   void _onMessage() async {
