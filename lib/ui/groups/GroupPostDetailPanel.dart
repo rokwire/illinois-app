@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -183,17 +184,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       )
                     )
                   ),
-                  // Visibility(
-                  //   visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
-                  //   child: Padding(
-                  //     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
-                  //     child: GroupReaction(
-                  //       groupId: _groupId,
-                  //       entityId: _post?.id,
-                  //       reactionSource: SocialEntityType.post
-                  //     ),
-                  //   ),
-                  // ),
+                  Visibility(
+                    visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
+                      child: GroupReaction(
+                        groupId: _groupId,
+                        entityId: _post?.id,
+                        reactionSource: SocialEntityType.post
+                      ),
+                    ),
+                  ),
 
                   Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
                     Semantics(container: true, sortKey: OrdinalSortKey(5), child:
@@ -258,7 +259,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           //         textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
                           //     )
                             GroupPostCard(post: _post, group: widget.group, isClickable: false, postReactions: widget.postReactions,
-                              isAdmin: _post?.findCreatorMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
+                              isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
                           visible: _isEditMainPost,
@@ -424,6 +425,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildReplyTextField(){
     return PostInputField(
       key: _postInputKey,
+      title:  Localization().getStringEx('panel.group.detail.post.reply.reply.label.capitalized', "REPLY"),// tbd localize
       text: _replyEditData?.body,
       onBodyChanged: (text) => _replyEditData?.body = text,
     );
@@ -470,7 +472,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 reply: reply,
                 post: widget.post,
                 group: widget.group,
-                creator: widget.post?.findCreatorMember(groupMembers: _allMembersAllowedToPost),
+                creator: reply.creator?.findAsMember(groupMembers: _allMembersAllowedToPost),
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
