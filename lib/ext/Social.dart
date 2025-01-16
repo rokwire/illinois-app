@@ -34,6 +34,8 @@ extension PostExt on Post {
   bool get isMessage => (type == PostType.direct_message);
   bool get isScheduled => (status == PostStatus.draft);
 
+  int get commentsCount => (details?.commentsCount ?? 0);
+
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
@@ -52,13 +54,6 @@ extension PostExt on Post {
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
   bool get createdByUser => creatorId == Auth2().accountId;
-
-  Member? findCreatorMember({List<Member>? groupMembers}){
-    Iterable<Member>? creators = groupMembers?.where((Member member) =>
-    member.userId == creatorId
-    );
-    return CollectionUtils.isNotEmpty(creators) ? creators!.first : null;
-  }
 
   //Workaround till BB is hooked
   static DateTime get workaroundDate =>  DateTime.fromMicrosecondsSinceEpoch(0);
@@ -131,5 +126,14 @@ extension ConversationExt on Conversation {
       return DateFormat("MMM dd, yyyy").format(deviceDateTime);
     }
     return null;
+  }
+}
+
+extension CreatorExt on Creator{
+  Member? findAsMember({List<Member>? groupMembers}){
+    Iterable<Member>? creators = groupMembers?.where((Member member) =>
+      member.userId == accountId
+    );
+    return CollectionUtils.isNotEmpty(creators) ? creators!.first : null;
   }
 }
