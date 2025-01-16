@@ -2015,7 +2015,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
       int limit = _posts.length + (delta ?? 0);
       _refreshingPosts = true;
-      Social().loadPosts(groupId: _groupId, type: PostType.post, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? posts) {
+      Social().loadPosts(groupId: _groupId, type: PostType.post, showCommentsCount: true, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
@@ -2053,6 +2053,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         groupId: _groupId,
         type: PostType.post,
         status: PostStatus.active,
+        showCommentsCount: true,
         offset: _posts.length,
         limit: _GroupDetailPanelState._postsPageSize,
         sortBy: SocialSortBy.date_created);
@@ -2105,6 +2106,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   void _initUpdateListener() => widget.updateController?.stream.listen((command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
       _refreshCurrentPosts();
+      _loadPinnedPosts();
     // } else if(command is String && command == _GroupDetailPostsContent.notifyPostRefresh) {
     //   _refreshCurrentPosts();
     }  else if(command is String && command == _GroupPostsContent.notifyPostRefreshWithScrollToLast) {
@@ -2126,18 +2128,23 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       Post? post = param is Post ? param : null;
       if(post?.isPost == true){
         _refreshCurrentPosts(delta: 1);
+        if(post?.isPinned == true)
+          _loadPinnedPosts();
       }
     }
     else if (name == Social.notifyPostUpdated) {
       Post? post = param is Post ? param : null;
       if(post?.isPost == true){
         _refreshCurrentPosts();
+        _loadPinnedPosts();
       }
     }
     else if (name == Social.notifyPostDeleted) {
       Post? post = param is Post ? param : null;
       if(post?.isPost == true) {
         _refreshCurrentPosts(delta: -1);
+        if(post?.isPinned == true)
+          _loadPinnedPosts();
       }
     }
   }
@@ -2457,7 +2464,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
   }
 
   Future<void> _loadMessagesPage() async {
-    List<Post>? messagesPage = await Social().loadPosts(groupId: _group?.id, type: PostType.direct_message , offset: _messages.length, limit: _GroupDetailPanelState._postsPageSize, order: SocialSortOrder.desc);
+    List<Post>? messagesPage = await Social().loadPosts(groupId: _group?.id, type: PostType.direct_message, offset: _messages.length, limit: _GroupDetailPanelState._postsPageSize, order: SocialSortOrder.desc);
     if (messagesPage != null) {
       _messages.addAll(messagesPage);
       if (messagesPage.length < _GroupDetailPanelState._postsPageSize) {
@@ -2665,6 +2672,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
       _refreshingScheduledPosts = true;
       Social().loadPosts(groupId: _group?.id,
           type: PostType.post,
+          showCommentsCount: true,
           offset: 0,
           limit: limit,
           order: SocialSortOrder.desc,
@@ -2709,6 +2717,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
         offset: _scheduledPosts.length,
         limit: _GroupDetailPanelState._postsPageSize,
         status: PostStatus.draft,
+        showCommentsCount: true,
         sortBy: SocialSortBy.activation_date);
     if (scheduledPostsPage != null) {
       _scheduledPosts.addAll(scheduledPostsPage);

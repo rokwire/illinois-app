@@ -29,6 +29,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -1065,7 +1066,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   Widget build(BuildContext context) {
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
-    int visibleRepliesCount = _visibleRepliesCount;
+    int visibleRepliesCount = (widget.post?.commentsCount ?? 0);
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1128,12 +1129,12 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           //   ),
                           // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
 
-
                         Visibility(visible: StringUtils.isNotEmpty(imageUrl),
                           child: Container(
                             padding: EdgeInsets.only(top: 14),
                             child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
                         )),
+                        WebEmbed(body: htmlBody),
                         // Container(
                         //   constraints: BoxConstraints(maxHeight: 200),
                         //     child: Semantics(
@@ -1229,25 +1230,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
     Analytics().logSelect(target: url);
     UrlUtils.launchExternal(url);
   }
-
-  int get _visibleRepliesCount {
-    int result = 2;
-    //TBD: DDGS - implement replies
-    // List<GroupPost>? replies = widget.post?.replies;
-    List<Comment>? replies = null;
-    if (replies != null) {
-      //TBD: DD - implement comments count
-      // bool? memberOrAdmin = widget.group.currentUserIsMemberOrAdmin;
-      // for (Comment? reply in replies) {
-      //   if ((reply!.private != true) || (memberOrAdmin == true)) {
-      //     result++;
-      //   }
-      // }
-      result = replies.length;
-    }
-    return result;
-  }
-
 }
 
 //////////////////////////////////////
@@ -1319,15 +1301,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       additionalInfo: widget.post?.displayDateTime,
                       // updateController: widget.updateController,
                     ))),),
-                Visibility(
-                  visible: Config().showGroupPostReactions &&
-                      (widget.group?.currentUserHasPermissionToSendReactions == true),
-                  child: GroupReaction(
-                    groupId: widget.group?.id,
-                    entityId: widget.reply?.id,
-                    reactionSource: SocialEntityType.comment,
-                  ),
-                ),
+                // Visibility(
+                //   visible: Config().showGroupPostReactions &&
+                //       (widget.group?.currentUserHasPermissionToSendReactions == true),
+                //   child: GroupReaction(
+                //     groupId: widget.group?.id,
+                //     entityId: widget.reply?.id,
+                //     reactionSource: SocialEntityType.comment,
+                //   ),
+                // ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
                     child: Semantics( child:Container(
@@ -1394,6 +1376,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       padding: EdgeInsets.only(top: 14),
                       child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
               )),
+
+              WebEmbed(body: bodyText),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
