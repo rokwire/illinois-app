@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Hide Connections (messaging) from Sections and Directory [#4622](https://github.com/rokwire/illinois-app/issues/4622).
 - GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
-- GroupDetailPanel UI updates (in progress) [#4483](https://github.com/rokwire/illinois-app/issues/4483).
 ### Added
 - Show post replies count [#4618](https://github.com/rokwire/illinois-app/issues/4618).
 - Link previews for videos in group posts [#4581](https://github.com/rokwire/illinois-app/issues/4581)
