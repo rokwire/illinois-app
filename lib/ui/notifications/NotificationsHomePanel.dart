@@ -132,10 +132,6 @@ class NotificationsHomePanel extends StatefulWidget {
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
   late NotificationsContent? _selectedContent;
 
-  final GlobalKey _allContentKey = GlobalKey();
-  final GlobalKey _unreadContentKey = GlobalKey();
-  final GlobalKey _sheetHeaderKey = GlobalKey();
-
   @override
   void initState() {
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
@@ -171,7 +167,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     return Column(children: [
       Container(
           color: Styles().colors.white,
-          child: Row(key: _sheetHeaderKey, children: [
+          child: Row(children: [
             Expanded(
                 child: Padding(
                     padding: EdgeInsets.only(left: 16),
@@ -221,9 +217,9 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget? get _contentWidget {
     switch (_selectedContent) {
       case NotificationsContent.all:
-        return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner);
+        return NotificationsInboxPage(onTapBanner: _onTapPausedBanner);
       case NotificationsContent.unread:
-        return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+        return NotificationsInboxPage(unread: true, onTapBanner: _onTapPausedBanner);
       default:
         return null;
     }
