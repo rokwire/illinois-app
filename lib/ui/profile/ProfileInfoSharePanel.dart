@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/ext/Auth2.dart';
@@ -14,7 +15,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:share/share.dart';
+//TBD: DDWEB - implement
+// import 'package:share_plus/share_plus.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 
@@ -155,6 +157,11 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
   }
 
   void _onTapShareVirtualCard() async {
+    //TBD: DDWEB - implement
+    if (kIsWeb) {
+      _onTBD();
+      return;
+    }
     Analytics().logSelect(target: 'Share Virtual Card');
     String? vcfContent = widget.profile?.toVCF();
     if ((vcfContent != null) && vcfContent.isNotEmpty) {
@@ -171,10 +178,11 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         setState(() {
           _sharingVirtualCard = false;
         });
-        Share.shareFiles([fullPath],
-          mimeTypes: ['text/vcard'],
-          text: widget.profile?.vcfFullName,
-        );
+        //TBD: DDWEB - implement
+        // Share.shareFiles([fullPath],
+        //   mimeTypes: ['text/vcard'],
+        //   text: widget.profile?.vcfFullName,
+        // );
       }
     }
   }
