@@ -184,17 +184,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       )
                     )
                   ),
-                  Visibility(
-                    visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
-                      child: GroupReaction(
-                        groupId: _groupId,
-                        entityId: _post?.id,
-                        reactionSource: SocialEntityType.post
-                      ),
-                    ),
-                  ),
+                  // Visibility(
+                  //   visible: Config().showGroupPostReactions && (widget.group.currentUserHasPermissionToSendReactions == true),
+                  //   child: Padding(
+                  //     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
+                  //     child: GroupReaction(
+                  //       groupId: _groupId,
+                  //       entityId: _post?.id,
+                  //       reactionSource: SocialEntityType.post
+                  //     ),
+                  //   ),
+                  // ),
 
                   Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
                     Semantics(container: true, sortKey: OrdinalSortKey(5), child:
