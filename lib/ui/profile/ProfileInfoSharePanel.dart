@@ -113,6 +113,11 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     );
 
   void _onTapSaveToPhotos() async {
+    //TBD: DDWEB - implement
+    if (kIsWeb) {
+      _onTBD();
+      return;
+    }
     Analytics().logSelect(target: 'Save to Files');
     RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
     if (boundary != null) {
