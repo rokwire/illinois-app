@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide Connections (messaging) from Sections and Directory [#4622](https://github.com/rokwire/illinois-app/issues/4622).
+### Added
+- Show post replies count [#4618](https://github.com/rokwire/illinois-app/issues/4618).
 
 ## [6.1.40] - 2025-01-15
 ### Changed
