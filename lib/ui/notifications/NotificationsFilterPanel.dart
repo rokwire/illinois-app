@@ -15,9 +15,9 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/AppDateTime.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -98,12 +98,12 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [_buildHeader(), Container(color: Styles().colors.surfaceAccent, height: 1), Expanded(child: _buildContent())]);
+    return Column(children: [_buildHeader(), Expanded(child: _buildContent())]);
   }
 
   Widget _buildHeader() {
     return Container(
-        color: Styles().colors.white,
+        color: Styles().colors.backgroundAccent,
         child: Row(children: [
           Expanded(
               child: Padding(
@@ -111,8 +111,8 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
                   child: Semantics(
                       container: true,
                       header: true,
-                      child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'),
-                          style: Styles().textStyles.getTextStyle("widget.sheet.title.regular"))))),
+                      child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'NOTIFICATIONS'),
+                          style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"))))),
           Semantics(
               label: Localization().getStringEx('dialog.close.title', 'Close'),
               hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -122,7 +122,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
                   onTap: _onTapClose,
                   child: Container(
                       padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                      child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
+                      child: Styles().images.getImage('close-circle-white', excludeFromSemantics: true))))
         ]));
   }
 
@@ -169,7 +169,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 4.0, offset: Offset(2, 2))]),
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.info.small'))),
+          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.info.dark.small'))),
           InkWell(
               onTap: onTapValue,
               child: Padding(
@@ -251,7 +251,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
   Widget _buildDateEntryWidget(
       {String? title, String? description, required bool selected, void Function()? onTap, BorderRadius? borderRadius}) {
     TextStyle? titleTextStyle =
-        selected ? Styles().textStyles.getTextStyle('widget.title.small.fat') : Styles().textStyles.getTextStyle('widget.title.small');
+        selected ? Styles().textStyles.getTextStyle('widget.title.dark.small.fat') : Styles().textStyles.getTextStyle('widget.title.dark.small');
 
     List<Widget> contentList = <Widget>[Expanded(child: Text(StringUtils.ensureNotEmpty(title), style: titleTextStyle))];
     if (StringUtils.isNotEmpty(description)) {
@@ -270,7 +270,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
         child: InkWell(
             onTap: onTap,
             child: Container(
-                decoration: BoxDecoration(color: Styles().colors.white, borderRadius: borderRadius),
+                decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: borderRadius),
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                     child: Row(mainAxisSize: MainAxisSize.max, children: contentList)))));
@@ -281,9 +281,10 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
         padding: EdgeInsets.only(top: 30),
         child: RoundedButton(
             label: Localization().getStringEx('panel.inbox.filter.apply.button', 'Apply'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            backgroundColor: Styles().colors.background,
             padding: EdgeInsets.symmetric(vertical: 4),
             contentWeight: 0.35,
-            fontSize: 16,
             onTap: _onTapApply));
   }
 

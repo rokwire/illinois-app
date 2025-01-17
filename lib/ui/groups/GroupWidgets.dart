@@ -1180,7 +1180,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         ],
                       )
                     ),
-                    Padding(
+Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
                     ),

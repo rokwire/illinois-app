@@ -188,7 +188,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
 
   Widget _buildHeaderSection() {
     return Container(
-        decoration: BoxDecoration(color: Styles().colors.white),
+        decoration: BoxDecoration(color: Styles().colors.background),
         padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10),
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,

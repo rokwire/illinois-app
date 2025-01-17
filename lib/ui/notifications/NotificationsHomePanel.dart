@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:neom/ui/notifications/NotificationsInboxPage.dart';
+import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:neom/ui/widgets/TextTabBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/ext/InboxMessage.dart';
+import 'package:neom/utils/AppUtils.dart';
+import 'package:neom/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -184,7 +184,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with Ti
   Widget _buildSheet(BuildContext context) {
     return Column(children: [
       Container(color: Styles().colors.backgroundAccent, child:
-        Row(key: _sheetHeaderKey, children: [
+        Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
               Semantics(container: true, header: true, child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'NOTIFICATIONS'), style:  Styles().textStyles.getTextStyle("widget.title.light.large.fat"),))
@@ -222,8 +222,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with Ti
           controller: _tabController,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,),
-            NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner),
+            NotificationsInboxPage(onTapBanner: _onTapPausedBanner,),
+            NotificationsInboxPage(unread: true, onTapBanner: _onTapPausedBanner),
           ],
         ),
       ),
