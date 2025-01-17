@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -110,23 +111,44 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
           padding: EdgeInsets.only(top: 10),
           child: _buildToggleWidget(
               label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.unread.label', 'Unread Notifications'),
-              value: _unread)),
+              value: _unread,
+              onTapValue: _onTapUnread)),
       Padding(
-          padding: EdgeInsets.only(top: 8),
+          padding: EdgeInsets.only(top: 10),
           child: _buildToggleWidget(
               label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.muted.label', 'Muted Notifications'),
-              value: _muted))
+              value: _muted,
+              onTapValue: _onTapMuted))
     ]);
   }
 
-  Widget _buildToggleWidget({required String label, bool? value}) {
+  Widget _buildToggleWidget({required String label, bool? value, required void Function()? onTapValue}) {
     return Container(
-        decoration: BoxDecoration(color: Styles().colors.white),
-        padding: EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 4.0, offset: Offset(2, 2))]),
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Padding(padding: EdgeInsets.only(left: 10), child: Text(label)),
-          Styles().images.getImage((value == true) ? 'toggle-on' : 'toggle-off') ?? Container()
+          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.info.small'))),
+          InkWell(
+              onTap: onTapValue,
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Styles().images.getImage((value == true) ? 'toggle-on' : 'toggle-off') ?? Container()))
         ]));
+  }
+
+  void _onTapMuted() {
+    setStateIfMounted(() {
+      _muted = (_muted != null) ? !_muted! : true;
+    });
+  }
+
+  void _onTapUnread() {
+    setStateIfMounted(() {
+      _unread = (_unread != null) ? !_unread! : true;
+    });
   }
 
   Widget _buildDateFilters() {
