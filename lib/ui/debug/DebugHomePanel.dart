@@ -23,6 +23,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
@@ -181,6 +182,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
                 ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
+                ToggleRibbonButton(label: 'Messages/Connections Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
 
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:
@@ -766,6 +768,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     setState(() {
       Storage().debugAutomaticCredentials = (Storage().debugAutomaticCredentials != true);
     });
+  }
+
+  void _onMessagesEnabled() {
+    setState(() {
+      Storage().debugMessagesDisabled = (Storage().debugMessagesDisabled != true);
+    });
+    FlexUI().update();
   }
 
   void _onUseDeviceLocalTimeZoneToggled() {
