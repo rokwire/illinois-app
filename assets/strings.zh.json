@@ -3232,6 +3232,7 @@
 	"panel.inbox.filter.date.label": "日期範圍",
 	"panel.inbox.filter.notifications.toggle.unread.label": "未讀通知",
 	"panel.inbox.filter.notifications.toggle.muted.label": "靜音通知",
+	"panel.inbox.filter.notifications.toggle.muted.description": "查看您已關閉的通知。",
 
 	"widget.inbox_message_card.selected.hint": "已選",
 	"widget.inbox_message_card.unselected.hint": "未選中的",

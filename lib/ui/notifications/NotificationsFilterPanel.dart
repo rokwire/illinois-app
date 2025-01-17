@@ -118,7 +118,13 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
           child: _buildToggleWidget(
               label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.muted.label', 'Muted Notifications'),
               value: _muted,
-              onTapValue: _onTapMuted))
+              onTapValue: _onTapMuted)),
+      Padding(
+          padding: EdgeInsets.only(left: 12, top: 6),
+          child: Text(
+              Localization()
+                  .getStringEx('panel.inbox.filter.notifications.toggle.muted.description', 'View notifications you have turned off.'),
+              style: Styles().textStyles.getTextStyle('panel.inbox.notifications.filter.muted.description')))
     ]);
   }
 

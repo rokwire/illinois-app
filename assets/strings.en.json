@@ -3255,6 +3255,7 @@
     "panel.inbox.filter.date.label": "DATE RANGE",
     "panel.inbox.filter.notifications.toggle.unread.label": "Unread Notifications",
     "panel.inbox.filter.notifications.toggle.muted.label": "Muted Notifications",
+    "panel.inbox.filter.notifications.toggle.muted.description": "View notifications you have turned off.",
 
     "widget.inbox_message_card.selected.hint": "Selected",
     "widget.inbox_message_card.unselected.hint": "Not Selected",

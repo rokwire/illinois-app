@@ -668,6 +668,8 @@
     "panel.settings.privacy_panel.privacy.entry.info.enabled": {"extends": "widget.toggle_button.title.small.thin.enabled"},
     "panel.settings.privacy_panel.privacy.entry.info.disabled": {"extends": "widget.toggle_button.title.small.thin.disabled"},
 
+    "panel.inbox.notifications.filter.muted.description": { "font_family": "regular_italic", "size": 10.0, "color": "textBackground"},
+
     "panel.settings.video_tutorial.caption.detail": {"extends": "widget.dialog.message.medium.thin"},
     "panel.settings.video_tutorial.msg": {"extends": "widget.dialog.message.regular.fat"},
     "panel.settings.video_tutorial.button": {"extends": "widget.colourful_button.title.medium.accent"},
