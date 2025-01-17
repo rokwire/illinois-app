@@ -25,16 +25,16 @@ class ProfileInfoEditPage extends StatefulWidget {
   final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
+  final bool onboarding;
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
-  final bool showProfileCommands;
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
   ProfileInfoEditPage({super.key, required this.contentType,
-    this.profile, this.privacy,
+    this.profile, this.privacy, this.onboarding = false,
     this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
-    this.showProfileCommands = true, this.onFinishEdit
+    this.onFinishEdit
   });
 
   @override
@@ -60,6 +60,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   double _screenInsetsBottom = 0;
   Timer? _onScreenInsetsBottomChangedTimer;
+
+  bool get _showProfileCommands => (widget.onboarding == false);
 
   @override
   void initState() {
@@ -136,7 +138,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _phoneSection,
           _websiteSection,
 
-          if (widget.showProfileCommands)
+          if (_showProfileCommands)
             Padding(padding: EdgeInsets.only(top: 24, bottom: 16), child:
               _commandBar,
             ),
