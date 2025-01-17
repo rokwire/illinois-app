@@ -25,7 +25,7 @@ class _WebEmbedState extends State<WebEmbed> {
   @override
   void didUpdateWidget(covariant WebEmbed oldWidget) {
     if(widget.body != oldWidget.body) {
-      initController();
+     _loadUrl();
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -53,6 +53,21 @@ class _WebEmbedState extends State<WebEmbed> {
     } else {
       // No recognized link => no controller
       _controller = WebViewController();
+    }
+  }
+
+  void _loadUrl() {
+    final link = _findEmbedLink(widget.body);
+    if (link != null) {
+      // Determine embed type & build final embed URL:
+      final type = _determinePlatform(link);
+      _embedUrl = _buildEmbedUrl(link, type) ?? link;
+      // Aspect ratio 16:9 for recognized, else 1:1
+      if (type != WebEmbedType.other) {
+        _aspectRatio = 16 / 9;
+      }
+      // Load the new URL into the existing controller
+      _controller.loadRequest(Uri.parse(_embedUrl!));
     }
   }
 
