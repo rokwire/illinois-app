@@ -92,7 +92,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
       ProfileInfoPage(key: _profileInfoKey,
         contentType: ProfileInfo.directoryInfo,
         onStateChanged: _onProfileStateChanged,
-        showProfileCommands: false,
+        onboarding: true,
       ),
     );
 

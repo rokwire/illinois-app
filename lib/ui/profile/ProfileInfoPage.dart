@@ -31,11 +31,10 @@ class ProfileInfoPage extends StatefulWidget {
 
   final ProfileInfo contentType;
   final Map<String, dynamic>? params;
-  final bool showProfileCommands;
-  final bool showAccountCommands;
+  final bool onboarding;
   final void Function()? onStateChanged;
 
-  ProfileInfoPage({super.key, required this.contentType, this.params, this.showProfileCommands = true, this.showAccountCommands = false, this.onStateChanged});
+  ProfileInfoPage({super.key, required this.contentType, this.params, this.onboarding = false, this.onStateChanged});
 
   @override
   State<StatefulWidget> createState() => ProfileInfoPageState();
@@ -61,6 +60,9 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool _editing = false;
   bool _updatingDirectoryVisibility = false;
   bool _preparingDeleteAccount = false;
+
+  bool get _showProfileCommands => (widget.onboarding == false);
+  bool get _showAccountCommands => (widget.onboarding == false);
 
   bool get isEditing => _editing;
   bool get isLoading => _loading;
@@ -122,7 +124,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
             _editing ? _editContent : _previewContent,
           ]),
 
-        if (widget.showAccountCommands && !_editing)
+        if (_showAccountCommands && !_editing)
           _accountCommands,
       ],);
     }
@@ -140,7 +142,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
         ),
-        if (widget.showProfileCommands)
+        if (_showProfileCommands)
           Padding(padding: EdgeInsets.only(top: 24), child:
             _previewCommandBar,
           ),
@@ -156,7 +158,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       pronunciationAudioData: _pronunciationAudioData,
       photoImageData: _photoImageData,
       photoImageToken: _photoImageToken,
-      showProfileCommands: widget.showProfileCommands,
+      onboarding: widget.onboarding,
       onFinishEdit: _onFinishEditInfo,
   );
 
@@ -509,7 +511,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         _pronunciationAudioData = pronunciationAudioData;
       }
 
-      if (widget.showProfileCommands) {
+      if (_showProfileCommands) {
         _editing = false;
       }
       widget.onStateChanged?.call();
