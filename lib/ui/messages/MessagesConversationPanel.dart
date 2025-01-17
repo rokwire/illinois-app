@@ -12,6 +12,7 @@ import 'package:neom/service/SpeechToText.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/WebEmbed.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:link_text/link_text.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -301,6 +302,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                   ),
                 ],),
+                WebEmbed(body: message.message)
               ]),
             ),
           );

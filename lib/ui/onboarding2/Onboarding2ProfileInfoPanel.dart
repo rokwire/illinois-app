@@ -25,7 +25,6 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
 
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey<ProfileInfoPageState>();
   bool _onboarding2Progress = false;
-  bool _saving = false;
 
   @override
   void initState() {
@@ -69,12 +68,16 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
 
   Widget get _headerWidget => Stack(children: [
     Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-    Positioned(top: 0, left: 0, child:
-      _backImageButton,
-    ),
-    Positioned(top: 0, right: 0, child:
-      _skipLinkSection,
-    )
+      Positioned(top: 0, left: 0, child:
+        SafeArea(child:
+          _backImageButton,
+        ),
+      ),
+      Positioned(top: 0, right: 0, child:
+        SafeArea(child:
+          _skipLinkSection,
+        ),
+      ),
   ],);
 
   Widget get _titleWidget =>
@@ -92,17 +95,24 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
       ProfileInfoPage(key: _profileInfoKey,
         contentType: ProfileInfo.directoryInfo,
         onStateChanged: _onProfileStateChanged,
-        showProfileCommands: false,
+        onboarding: true,
       ),
     );
 
   Widget get _footerWidget => _isLoaded ? _continueCommandSection : Container();
 
-  Widget get _continueCommandSection => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-    _continueCommandButton,
+  Widget get _continueCommandSection => Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+    Column(children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+        Text(Localization().getStringEx('panel.onboarding.profile_info.description.text', 'To adjust your profile information and its visibility at any time, go to My Profile.'), style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+      ),
+      Padding(padding: EdgeInsets.only(bottom: 32), child:
+        _continueCommandButton,
+      ),
+    ],),
   );
 
-  bool get _canContinue => (_onboarding2Progress != true) && (_saving != true);
+  bool get _canContinue => (_onboarding2Progress != true);
 
   Widget get _continueCommandButton => RoundedButton(
       label: Localization().getStringEx('panel.onboarding.profile_info.continue.title', 'Continue'),
@@ -110,7 +120,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
       textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       borderColor: _canContinue ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03,
-      progress: _onboarding2Progress || _saving,
+      progress: _onboarding2Progress,
       enabled: _canContinue,
       onTap: _onTapContinue
   );
@@ -164,35 +174,11 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   }
 
   bool get _isLoaded => (_profileInfoKey.currentState?.isLoading == false);
-  bool get _isEditing => (_profileInfoKey.currentState?.isEditing == true);
-  bool get _isProfilePublic => (_profileInfoKey.currentState?.directoryVisibility == true);
 
   void _onTapContinue() {
     Analytics().logSelect(target: "Continue");
     if (_canContinue) {
-      if (_isProfilePublic) {
-
-        if (_isEditing) {
-          setState(() {
-            _saving = true;
-          });
-          _profileInfoKey.currentState?.saveEdit().then((bool result){
-            if (mounted) {
-              setState(() {
-                _saving = false;
-              });
-              if (result) {
-                _finishProfile();              }
-            }
-          });
-        }
-        else {
-          _profileInfoKey.currentState?.setEditing(true);
-        }
-      }
-      else {
-        _finishProfile();
-      }
+      _finishProfile();
     }
   }
 

@@ -20,10 +20,15 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
   final List<Auth2Identifier>? identifiers;
+  final bool onboarding;
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
-  ProfileInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.identifiers, this.photoImageData, this.photoImageToken, this.pronunciationAudioData });
+
+  ProfileInfoPreviewPage({super.key, required this.contentType,
+    this.profile, this.privacy, this.identifiers, this.onboarding = false,
+    this.photoImageData, this.photoImageToken, this.pronunciationAudioData
+  });
 
   @override
   State<StatefulWidget> createState() => ProfileInfoPreviewPageState();
@@ -91,7 +96,8 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
           DirectoryProfileDetails(_profile, _identifiers, linkTextStyle: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline.dark',),)
         ),
-        _shareButton,
+        if (widget.onboarding == false)
+          _shareButton,
     ],)
   );
 

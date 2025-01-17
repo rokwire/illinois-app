@@ -61,7 +61,10 @@ class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> impleme
   Widget get _myInfoTabPage =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(children: [
-          ProfileInfoPage(contentType: ProfileInfo.directoryInfo, params: widget.params, showAccountCommands: true,)
+        ProfileInfoPage(
+          contentType: ProfileInfo.directoryInfo,
+          params: widget.params,
+        )
       ],),
     );
 

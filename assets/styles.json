@@ -774,6 +774,8 @@
     "panel.settings.privacy_panel.privacy.entry.info.enabled": {"extends": "widget.toggle_button.title.small.thin.enabled"},
     "panel.settings.privacy_panel.privacy.entry.info.disabled": {"extends": "widget.toggle_button.title.small.thin.disabled"},
 
+    "panel.inbox.notifications.filter.muted.description": { "font_family": "regular_italic", "size": 10.0, "color": "textBackground"},
+
     "panel.settings.video_tutorial.caption.detail": {"extends": "widget.dialog.message.medium.thin"},
     "panel.settings.video_tutorial.msg": {"extends": "widget.dialog.message.regular.fat"},
     "panel.settings.video_tutorial.button": {"extends": "widget.colourful_button.title.medium.accent"},
@@ -919,6 +921,8 @@
     "info": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "edit": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "trash": {"src": "0xf2ed", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "trash-blue": {"src": "0xf2ed", "type": "fa.icon", "weight": "regular", "color": "fillColorPrimary", "size": 14},
+    "feedback": {"src": "images/icon-feedback.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "comment": {"src": "0xf075", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "ellipsis-alert": {"src": "0xf141", "type": "fa.icon", "weight": "solid", "color": "alert", "size": 18},
     "posts": {"src": "0xf27a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},

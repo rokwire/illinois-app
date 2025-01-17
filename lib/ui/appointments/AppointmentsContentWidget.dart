@@ -36,6 +36,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppointmentsContentWidget extends StatefulWidget with AnalyticsInfo {
+  static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 16);
+  static const EdgeInsets contentTopPadding = EdgeInsets.only(top: 16);
+  static final EdgeInsets contentPadding = contentHorizontalPadding + contentTopPadding;
 
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
   AppointmentsContentWidget({super.key, this.analyticsFeature});
@@ -104,21 +107,27 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
       return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.zero, child:
-          Text(_providers?.first.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
-        ),
-        _buildAppointmentsContent(),
-      ]);
+      return Padding(
+          padding: AppointmentsContentWidget.contentPadding,
+          child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: EdgeInsets.zero, child:
+            Text(_providers?.first.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
+          ),
+          _buildAppointmentsContent(),
+        ]));
     }
     else {
       return Semantics(container: true, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(padding: EdgeInsets.only(bottom: 8), child:
-          _buildProvidersDropdown(),
+          Padding(padding:  AppointmentsContentWidget.contentPadding,
+            child: _buildProvidersDropdown(),
+          )
         ),
         Expanded(child:
           Stack(children: [
-            _buildAppointmentsContent(),
+            Padding(padding: AppointmentsContentWidget.contentHorizontalPadding,
+              child: _buildAppointmentsContent(),
+            ),
             _buildProvidersDropdownContainer()
           ],)
           
@@ -446,7 +455,7 @@ class AppointmentsListPanel extends StatelessWidget with AnalyticsInfo {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
-      body: Padding(padding: EdgeInsets.all(16), child: AppointmentsContentWidget(analyticsFeature: analyticsFeature,)),
+      body: Padding(padding: EdgeInsets.zero, child: AppointmentsContentWidget(analyticsFeature: analyticsFeature,)),
       backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar()
     );
