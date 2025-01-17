@@ -64,18 +64,8 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showAccountCommands => (widget.onboarding == false);
 
-  bool get isEditing => _editing;
   bool get isLoading => _loading;
   bool get directoryVisibility => (_privacy?.public == true);
-
-  void setEditing(bool value) {
-    if (mounted && (_editing != value)) {
-      setState(() {
-        _editing = value;
-        widget.onStateChanged?.call();
-      });
-    }
-  }
 
   Future<bool> saveEdit() =>
     _profileInfoEditKey.currentState?.saveEdit() ?? Future.value(false);
@@ -117,11 +107,14 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
         if (directoryVisibility == true)
           Column(children: [
-            Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-              Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-            ),
+            if (widget.onboarding == false)
+              Padding(padding: EdgeInsets.only(top: 16), child:
+                Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+              ),
 
-            _editing ? _editContent : _previewContent,
+            Padding(padding: EdgeInsets.only(top: 16), child:
+              _editing ? _editContent : _previewContent,
+            )
           ]),
 
         if (_showAccountCommands && !_editing)
@@ -138,6 +131,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
           contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
+          onboarding: widget.onboarding,
           pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
@@ -155,10 +149,10 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       contentType: widget.contentType,
       profile: _profile,
       privacy: _privacy,
+      onboarding: widget.onboarding,
       pronunciationAudioData: _pronunciationAudioData,
       photoImageData: _photoImageData,
       photoImageToken: _photoImageToken,
-      onboarding: widget.onboarding,
       onFinishEdit: _onFinishEditInfo,
   );
 
@@ -206,9 +200,13 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       Localization().getStringEx('panel.profile.info.directory_visibility.public.text', 'Public') :
       Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private');
 
-    final String messageTemplate = directoryVisibility ?
-      Localization().getStringEx('panel.profile.info.directory_visibility.public.description', 'Your directory visibility is set to $visibilityMacro. Anyone on or off the User Directory can view your account.') :
-      Localization().getStringEx('panel.profile.info.directory_visibility.private.description', 'Your directory visibility is set to $visibilityMacro. Your account is available only to you.');
+    final String messageTemplate = widget.onboarding ?
+      (directoryVisibility ?
+        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.onboarding.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to the users of the ${AppTextUtils.appTitleMacro} App.') :
+        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.onboarding.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.')) :
+      (directoryVisibility ?
+        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.normal.public.description', 'Your directory visibility is set to $visibilityMacro. Anyone on or off the User Directory can view your account.') :
+        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.normal.private.description', 'Your directory visibility is set to $visibilityMacro. Your account is available only to you.'));
 
     final List<String> messages = messageTemplate.split(visibilityMacro);
     List<InlineSpan> spanList = <InlineSpan>[];

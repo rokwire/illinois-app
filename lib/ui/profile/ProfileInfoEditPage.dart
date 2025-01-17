@@ -25,16 +25,16 @@ class ProfileInfoEditPage extends StatefulWidget {
   final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
+  final bool onboarding;
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
-  final bool onboarding;
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
   ProfileInfoEditPage({super.key, required this.contentType,
-    this.profile, this.privacy,
+    this.profile, this.privacy, this.onboarding = false,
     this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
-    this.onboarding = false, this.onFinishEdit
+    this.onFinishEdit
   });
 
   @override
