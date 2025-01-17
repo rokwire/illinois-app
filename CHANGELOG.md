@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Appointments: fix drop down dym layer size [#4480](https://github.com/rokwire/illinois-app/issues/4480).
+### Changed
+- Updated onboarding profile info page [#4612](https://github.com/rokwire/illinois-app/issues/4612).
 
 ## [6.1.41] - 2025-01-16
 ### Changed
