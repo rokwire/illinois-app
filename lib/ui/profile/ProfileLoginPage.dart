@@ -270,8 +270,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
             backgroundColor: Styles().colors.gradientColorPrimary,
+            borderColor: Styles().colors.fillColorSecondary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -319,8 +320,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.code_login.button.disconnect", "Sign Out"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.fillColorSecondary,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
+              backgroundColor: Styles().colors.gradientColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -368,8 +370,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.password_login.button.disconnect", "Sign Out"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.fillColorSecondary,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
+              backgroundColor: Styles().colors.gradientColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -417,8 +420,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           RoundedButton(
               label: Localization().getStringEx("panel.settings.home.passkey_login.button.disconnect", "Sign Out"),
-              textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-              backgroundColor: Styles().colors.fillColorSecondary,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
+              backgroundColor: Styles().colors.gradientColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
               contentWeight: 0.45,
               conentAlignment: MainAxisAlignment.start,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),

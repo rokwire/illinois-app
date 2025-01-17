@@ -1,30 +1,40 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/Onboarding2.dart';
-import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileInfoPage.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2ProfileInfoPanel extends StatefulWidget {
+class Onboarding2ProfileInfoPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
 
   Onboarding2ProfileInfoPanel({super.key, this.onboardingContext});
 
   @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
+
+  @override
+  bool get onboardingCanDisplay {
+    return StringUtils.isEmpty(Auth2().fullName);
+  }
 }
 
 class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
 
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey<ProfileInfoPageState>();
   bool _onboarding2Progress = false;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -54,39 +64,35 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   set onboarding2Progress(bool progress) => setStateIfMounted(() { _onboarding2Progress = progress; });
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Styles().colors.background,
-    body: SingleChildScrollView(child:
-      Column(children: [
-        _headerWidget,
-        _titleWidget,
-        _profileWidget,
-        _footerWidget,
-      ],)
+  Widget build(BuildContext context) => SafeArea(
+    child: Scaffold(
+      backgroundColor: Styles().colors.background,
+      body: SingleChildScrollView(child:
+        Container(
+          constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+          child: Column(
+            crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+            children: [
+              _headerWidget,
+              _titleWidget,
+              _profileWidget,
+              _footerWidget,
+            ],
+          ),
+        )
+      ),
     ),
   );
 
-  Widget get _headerWidget => Stack(children: [
-    Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-      Positioned(top: 0, left: 0, child:
-        SafeArea(child:
-          _backImageButton,
-        ),
-      ),
-      Positioned(top: 0, right: 0, child:
-        SafeArea(child:
-          _skipLinkSection,
-        ),
-      ),
-  ],);
+  Widget get _headerWidget => Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+    Onboarding2TitleWidget()
+  );
 
   Widget get _titleWidget =>
     Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 24, bottom: 16), child:
-      Center(child:
-        Text(Localization().getStringEx('panel.onboarding.profile_info.title', 'User Directory'),
-          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary),
-          textAlign: TextAlign.center,
-        ),
+      Text(Localization().getStringEx('panel.onboarding.profile_info.title', 'PROFILE AND DIRECTORY'),
+        style: Styles().textStyles.getTextStyle('panel.onboarding.profile_info.heading.title'),
+        textAlign: TextAlign.center,
       )
     );
 
@@ -94,6 +100,9 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
       ProfileInfoPage(key: _profileInfoKey,
         contentType: ProfileInfo.directoryInfo,
+        params: {
+          ProfileInfoPage.editParamKey : true,
+        },
         onStateChanged: _onProfileStateChanged,
         onboarding: true,
       ),
@@ -112,58 +121,23 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     ],),
   );
 
-  bool get _canContinue => (_onboarding2Progress != true);
+  bool get _canContinue => (_onboarding2Progress != true) && (_saving != true);
 
-  Widget get _continueCommandButton => RoundedButton(
-      label: Localization().getStringEx('panel.onboarding.profile_info.continue.title', 'Continue'),
-      hint: Localization().getStringEx('panel.onboarding.profile_info.continue.hint', ''),
-      textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      borderColor: _canContinue ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03,
-      progress: _onboarding2Progress,
-      enabled: _canContinue,
-      onTap: _onTapContinue
+  Widget get _continueCommandButton => SlantedWidget(
+    color: Styles().colors.fillColorSecondary,
+    child: RibbonButton(
+        backgroundColor: Styles().colors.fillColorSecondary,
+        label: Localization().getStringEx('panel.onboarding.profile_info.continue.title', 'Continue'),
+        hint: Localization().getStringEx('panel.onboarding.profile_info.continue.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+        textAlign: TextAlign.center,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        progress: _onboarding2Progress || _saving,
+        progressColor: Styles().colors.textLight,
+        onTap: _onTapContinue,
+        rightIconKey: null,
+    ),
   );
-
-  bool get _canSkip => (_onboarding2Progress != true);
-
-  Widget get _skipLinkSection => _onboarding2Progress ?
-    Stack(children: [
-      _skipLinkButton,
-      Positioned.fill(child:
-        Center(child:
-          _skipProgressWidget
-        )
-      ),
-    ],) : _skipLinkButton;
-
-  Widget get _skipLinkButton => Onboarding2UnderlinedButton(
-    title: Localization().getStringEx('panel.onboarding.profile_info.skip.title', 'Skip'),
-    hint: Localization().getStringEx('panel.onboarding.profile_info.skip.hint', ''),
-    padding: EdgeInsets.only(top: 30, bottom: 30, left: 20, right: 20),
-    onTap: _onTapSkip,
-  );
-
-  Widget get _skipProgressWidget => SizedBox(width: 16, height: 16, child:
-    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary,)
-  );
-
-  void _onTapSkip() {
-    Analytics().logSelect(target: "Skip");
-    if (_canSkip) {
-      _finishProfile();
-    }
-  }
-
-  Widget get _backImageButton => OnboardingBackButton(
-    padding: const EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 20),
-    onTap: _onTapBack
-  );
-
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
-  }
 
   void _onProfileStateChanged() {
     if (mounted) {
@@ -174,11 +148,29 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   }
 
   bool get _isLoaded => (_profileInfoKey.currentState?.isLoading == false);
+  bool get _isEditing => (_profileInfoKey.currentState?.isEditing == true);
 
   void _onTapContinue() {
     Analytics().logSelect(target: "Continue");
     if (_canContinue) {
-      _finishProfile();
+      if (_isEditing) {
+        setState(() {
+          _saving = true;
+        });
+        _profileInfoKey.currentState?.saveEdit().then((bool result){
+          if (mounted) {
+            setState(() {
+              _saving = false;
+            });
+            if (result) {
+              _finishProfile();
+            }
+          }
+        });
+      }
+      else {
+        _profileInfoKey.currentState?.setEditing(true);
+      }
     }
   }
 
@@ -192,6 +184,8 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     else if (onContinue != null) {
       onContinue();
     }
+    else {
+      Onboarding().next(context, widget);
+    }
   }
-
 }

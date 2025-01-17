@@ -40,6 +40,7 @@ import 'package:neom/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:neom/ui/RootPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:neom/ui/widgets/FlexContent.dart';
 
@@ -298,6 +299,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     }
     else if (!Storage().onBoardingPassed! || !Auth2().isLoggedIn) {
       return ProfileLoginPasskeyPanel(onboardingContext: _onboardingContext,);
+    }
+    else if (StringUtils.isEmpty(Auth2().fullName)) {
+      return Onboarding2ProfileInfoPanel(onboardingContext: _onboardingContext);
     }
     // else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
     //   return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);

@@ -351,7 +351,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
           Padding(padding: EdgeInsets.only(top: 12), child:
             Align(alignment: Alignment.centerLeft, child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
+                Text(Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
                 DirectoryProfileDetails(_profile, _identifiers),
               ]),
             )
@@ -475,9 +475,8 @@ class DirectoryAccountPopupCard extends StatelessWidget {
 class DirectoryProfileDetails extends StatelessWidget {
   final Auth2UserProfile? profile;
   final List<Auth2PublicAccountIdentifier>? identifiers;
-  final TextStyle? linkTextStyle;
 
-  DirectoryProfileDetails(this.profile, this.identifiers, { super.key, this.linkTextStyle });
+  DirectoryProfileDetails(this.profile, this.identifiers, { super.key });
   
   String? get college => null;
   String? get department => null;
@@ -507,7 +506,7 @@ class DirectoryProfileDetails extends StatelessWidget {
 
   Widget _linkDetail(String text, String url) =>
     InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:
-      Text(text, style: linkTextStyle ?? Styles().textStyles.getTextStyleEx('widget.button.title.small.underline.light',),),
+      Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline',),),
     );
 
   void _onTapLink(String url, { String? analyticsTarget }) {
@@ -760,8 +759,8 @@ class DirectoryProfileCard extends StatelessWidget {
     Container(decoration: _cardDecoration, child: child);
 
   Decoration get _cardDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    color: Styles().colors.gradientColorPrimary,
+    border: Border.all(color: Styles().colors.gradientColorPrimary, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(roundingRadius)),
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
   );

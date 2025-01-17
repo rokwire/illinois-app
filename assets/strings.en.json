@@ -1,8 +1,8 @@
 {
     "app.title":"NEOM U",
     "app.team_name":"NEOM U",
-    "app.univerity_name":"NEOM University",
-    "app.univerity_long_name":"NEOM University",
+    "app.university_name":"NEOM University",
+    "app.university_long_name":"NEOM University",
 
     "dialog.yes.title":"Yes",
     "dialog.yes.hint":"",
@@ -818,7 +818,7 @@
     "panel.onboarding.confirm_phone.validation.invalid.text": "Incorrect code.",
     "panel.onboarding.confirm_phone.link.cancel.text": "Failed to remove phone number from your account.",
 
-    "panel.onboarding.profile_info.title":"User Directory",
+    "panel.onboarding.profile_info.title":"PROFILE AND DIRECTORY",
     "panel.onboarding.profile_info.title.hint":"Header 1",
     "panel.onboarding.profile_info.description.text": "To adjust your profile information and its visibility at any time, go to My Profile.",
     "panel.onboarding.profile_info.continue.title":"Continue",
@@ -2355,7 +2355,7 @@
     "panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the User Directory.",
     "panel.profile.info.connections.edit.description.text": "Choose how your profile displays for your Connections.",
     "panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the User Directory.",
-    "panel.profile.info.command.button.edit.text": "Edit My Info",
+    "panel.profile.info.command.button.edit.text": "Edit my info",
     "panel.profile.info.command.button.swap.text": "Swap Info",
     "panel.profile.info.command.link.sign_out.text": "Sign Out",
     "panel.profile.info.command.link.delete_account.text": "Delete My {{app_title}} App Account",

@@ -66,7 +66,17 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get _showAccountCommands => (widget.onboarding == false);
 
   bool get isLoading => _loading;
+  bool get isEditing => _editing;
   bool get directoryVisibility => (_privacy?.public == true);
+
+  void setEditing(bool value) {
+    if (mounted && (_editing != value)) {
+      setState(() {
+        _editing = value;
+        widget.onStateChanged?.call();
+      });
+    }
+  }
 
   Future<bool> saveEdit() =>
     _profileInfoEditKey.currentState?.saveEdit() ?? Future.value(false);
@@ -107,7 +117,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       return Column(children: [
         _directoryVisibilityControl,
 
-        if (directoryVisibility == true)
+        // if (directoryVisibility == true)
           Column(children: [
             if (widget.onboarding == false)
               Padding(padding: EdgeInsets.only(top: 16), child:
@@ -166,7 +176,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 12), child:
-              Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'), style: Styles().textStyles.getTextStyle('widget.detail.dark.regular.fat'),)
+              Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),)
             ),
           ),
           _updatingDirectoryVisibility ? _directoryVisibilityProgress : _directoryVisibilityToggleButton,
@@ -217,12 +227,12 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: visibilityValue, style : Styles().textStyles.getTextStyle("widget.detail.dark.small.fat"),));
+      spanList.add(TextSpan(text: visibilityValue, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),));
       spanList.add(TextSpan(text: messages[index]));
     }
 
     return RichText(textAlign: TextAlign.left, text:
-      TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.dark.small"), children: spanList)
+      TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
     );
   }
 
@@ -298,13 +308,15 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
   Widget get _editInfoButton => RoundedButton(
     label: _editInfoButtonTitle,
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium'),
+    backgroundColor: Styles().colors.background,
+    borderColor: Styles().colors.fillColorSecondary,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onEditInfo,
   );
 
   String get _editInfoButtonTitle =>
-    Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info');
+    Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit my info');
 
   Widget get _swapInfoButton => RoundedButton(
     label: Localization().getStringEx('panel.profile.info.command.button.swap.text', 'Swap Info'),
@@ -529,7 +541,7 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   // Name Text Style
 
   TextStyle? get nameTextStyle =>
-    Styles().textStyles.getTextStyleEx('widget.message.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
   // Positive and Permitted visibility
 

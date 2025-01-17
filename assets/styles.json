@@ -466,8 +466,6 @@
     "widget.button.title.medium.fat.underline.highlight": { "extends": "widget.button.title.medium.fat.underline", "color": "textDark", "decoration_color": "white" },
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "textDark"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "textPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
-    "widget.button.title.small.underline.light": { "extends": "widget.button.title.small.underline", "color": "textPrimary", "decoration_color":  "textPrimary"},
-    "widget.button.title.small.underline.dark": { "extends": "widget.button.title.small.underline", "color": "textDark", "decoration_color":  "textDark"},
     "widget.button.title.small.medium": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.medium.underline": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.small.medium.underline.highlight": { "extends": "widget.button.title.small.medium.underline", "color": "textPrimary", "decoration_color":  "textPrimary"},
@@ -800,6 +798,8 @@
     "panel.polls.home.card.percentage.title": {"font_family": "regular", "size": 14.0, "color": "textBackground", "weight" :  "w500", "height": 1.29 },
     "panel.polls.home.card.button.create.title": {"font_family": "bold", "size": 16.0, "color": "textPrimary", "height": 1.38 },
 
+    "panel.onboarding.profile_info.heading.title": {"extends": "widget.title.light.huge.fat", "letter_spacing": 5.0},
+
     "panel.onboarding2.heading.title": {"font_family": "bold", "size": 32.0, "color": "white", "letter_spacing" :  1.0},
     "panel.onboarding2.improve.heading.title": {"font_family": "bold", "size": 24.0, "color": "textPrimary", "height": 1.2 },
     "panel.onboarding2.login_passkey.link.title": {"extends": "widget.heading.extra_large.dark", "letter_spacing": 4.0},
@@ -996,6 +996,7 @@
     "mobile": {"src": "0xf3ce", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},
     "shield-halved": {"src": "0xf3ed", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},
     "download": {"src": "0xf019", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+    "asterisk": {"src": "0x2a", "type": "fa.icon", "weight": "solid", "color": "alert", "size": 12},
 
     "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "up-from-bracket": {"src": "0xe590", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},

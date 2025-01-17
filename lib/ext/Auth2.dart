@@ -29,5 +29,5 @@ extension Auth2UserProfileExt on Auth2UserProfile {
   String? get vcfFullName => StringUtils.fullName([title, firstName, lastName]);
   String get _vcfName => "${lastName ?? ''};${firstName ?? ''};${middleName ?? ''};${title ?? ''};";
   String get _vcfOrg => "$_vcfUniversityName;${college ?? ''};${department ?? ''}";
-  String get _vcfUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
+  String get _vcfUniversityName => Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
 }

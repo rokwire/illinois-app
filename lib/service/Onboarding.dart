@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
@@ -64,6 +65,9 @@ class Onboarding extends rokwire.Onboarding  {
     else if (code == 'login_code') {
       return ProfileLoginCodePanel(onboardingContext: context);
     }
+    else if (code == 'profile_info') {
+      return Onboarding2ProfileInfoPanel(onboardingContext: context);
+    }
     else {
       return null;
     }
@@ -94,6 +98,9 @@ class Onboarding extends rokwire.Onboarding  {
     }
     else if (panel is ProfileLoginCodePanel) {
       return 'login_code';
+    }
+    else if (panel is Onboarding2ProfileInfoPanel) {
+      return 'profile_info';
     }
     return null;
   }

@@ -38,7 +38,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
         'panel.onboarding.get_started.label.personalized_recommendations',
         'Get personalized recommendations for the');
     String strUniversityofIllinois = Localization().getStringEx(
-        'app.univerity_name',
+        'app.university_name',
         'University of Illinois');
 
     return Scaffold(body: SwipeDetector(

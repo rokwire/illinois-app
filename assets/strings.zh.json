@@ -1,7 +1,8 @@
 {
-	"app.title":"Illinois",
-	"app.team_name":"Illinois",
-	"app.univerity_name":"伊利諾伊大學",
+	"app.title":"尼歐姆U",
+	"app.team_name":"尼歐姆U",
+	"app.university_name":"尼歐姆大學",
+	"app.university_long_name":"尼歐姆大學",
 
 	"dialog.yes.title":"确认退出",
 	"dialog.yes.hint":"",
@@ -816,7 +817,7 @@
 	"panel.onboarding.confirm_phone.validation.invalid.text": "错误的代码",
 	"panel.onboarding.confirm_phone.link.cancel.text": "无法将此电话从帐户中移除。",
 
-	"panel.onboarding.profile_info.title":"User Directory",
+	"panel.onboarding.profile_info.title":"PROFILE AND DIRECTORY",
 	"panel.onboarding.profile_info.title.hint":"Header 1",
 	"panel.onboarding.profile_info.description.text": "To adjust your profile information and its visibility at any time, go to My Profile.",
 	"panel.onboarding.profile_info.continue.title":"Continue",
@@ -2334,7 +2335,7 @@
  	"panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the User Directory.",
 	"panel.profile.info.connections.edit.description.text": "Choose how your profile displays for your Connections.",
  	"panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the User Directory.",
-	"panel.profile.info.command.button.edit.text": "Edit My Info",
+	"panel.profile.info.command.button.edit.text": "Edit my info",
 	"panel.profile.info.command.button.swap.text": "Swap Info",
 	"panel.profile.info.command.link.sign_out.text": "Sign Out",
 	"panel.profile.info.command.link.delete_account.text": "Delete My {{app_title}} App Account",

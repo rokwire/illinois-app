@@ -139,10 +139,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Padding(padding: EdgeInsets.zero, child:
         Column(children: [
           _photoWidget,
-          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-            _nameWidget,
-          ),
-
+          _nameWidget,
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
@@ -305,12 +302,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     static const double _buttonIconSize = 16;
 
-    Widget get _nameWidget =>
-      Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
-
-    @override
-    TextStyle? get nameTextStyle =>
-        Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
+    //TODO: work on UI
+    Widget get _nameWidget => _textFieldSection(_ProfileField.fullName,
+      headingTitle: Localization().getStringEx('panel.profile.info.title.full_name.text', 'Full Name'),
+      required: true,
+      visibilityToggle: false,
+    );
 
   // Edit: Pronunciation
 
@@ -550,14 +547,18 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     bool autocorrect = true,
     bool enabled = true,
     bool public = false,
+    bool required = false,
+    bool visibilityToggle = true,
   }) => _fieldSection(
     headingTitle: headingTitle,
-    headingHint: headingTitle,
+    headingHint: headingHint,
+    required: required,
     fieldControl: _textFieldControl(profileField: field,
         textInputType: textInputType,
         autocorrect: autocorrect,
         enabled: enabled,
         public: public,
+        visibilityToggle: visibilityToggle,
     )
   );
 
@@ -566,34 +567,38 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     bool autocorrect = true,
     bool enabled = true,
     bool public = false,
+    bool visibilityToggle = true,
     }) => Row(children: [
       Expanded(child:
         _textFieldWidget(profileField: profileField, identifier: identifier, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
       ),
-      Padding(padding: EdgeInsets.only(left: 6), child:
-        _visibilityButton(profileField: profileField, identifier: identifier, public: public),
-      ),
+      if (visibilityToggle)
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          _visibilityButton(profileField: profileField, identifier: identifier, public: public),
+        ),
     ],);
 
   Widget _fieldSection({
     String? headingTitle, String? headingHint,
-    Widget? fieldControl,
+    bool required = false, Widget? fieldControl,
   }) => Padding(padding: EdgeInsets.only(top: 12), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
       if (headingTitle?.isNotEmpty == true)
-        _sectionHeadingWidget(headingTitle ?? '', hint: headingHint),
+        _sectionHeadingWidget(headingTitle ?? '', hint: headingHint, required: required,),
       if (fieldControl != null)
         fieldControl
     ],)
   );
 
-  Widget _sectionHeadingWidget(String? title, { String? hint }) =>
+  Widget _sectionHeadingWidget(String? title, { String? hint, bool required = false }) =>
     Padding(padding: EdgeInsets.only(bottom: 2), child:
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle('widget.title.light.tiny.fat.spaced'), children: [
           TextSpan(text: title?.toUpperCase()),
           if (hint?.isNotEmpty == true)
-            TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.tiny'))
+            TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.light.tiny')),
+          if (required)
+            WidgetSpan(child: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('asterisk'))),
         ]),
       ),
     );
@@ -704,6 +709,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       if (profileField != null) {
         _fieldVisibilities[profileField] = (_permittedVisibility.contains(visibility)) ? Auth2FieldVisibility.private : _positiveVisibility;
       } else if (identifier?.id != null) {
+        _identifierVisibility ??= {};
         _identifierVisibility?[identifier!.id!] = (_permittedVisibility.contains(visibility)) ? Auth2FieldVisibility.private : _positiveVisibility;
       }
     });
@@ -717,7 +723,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _cancelEditButton => RoundedButton(
     label: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium'),
+    backgroundColor: Styles().colors.background,
+    borderColor: Styles().colors.fillColorSecondary,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onCancelEdit,
   );
@@ -763,7 +771,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _saveEditButton => RoundedButton(
     label: Localization().getStringEx('dialog.save.title', 'Save'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium'),
+    backgroundColor: Styles().colors.background,
+    borderColor: Styles().colors.fillColorSecondary,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     progress: _saving,
     onTap: _onSaveEdit,
@@ -783,6 +793,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
     else {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      if (StringUtils.isEmpty(profile.fullName)) {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile.info.dialog.missing.name.text', 'Please enter your full name.'));
+        return false;
+      }
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
@@ -861,7 +875,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
 // NB: Use same naming with Auth2UserProfileScope
 enum _ProfileField {
-  pronouns,
+  fullName, pronouns,
   photoUrl, pronunciationUrl,
   email2, website,
   college, department, major, title,
@@ -872,8 +886,8 @@ extension _ProfileFieldImpl on _ProfileField {
   // static _ProfileField? fromString(String value) => _ProfileField.values.firstWhereOrNull((field) => (field.toString() == value));
 
   static Set<Auth2UserProfileScope> get profileScope => <Auth2UserProfileScope> {
-    Auth2UserProfileScope.pronouns,
-    Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+    Auth2UserProfileScope.firstName, Auth2UserProfileScope.lastName, Auth2UserProfileScope.middleName,
+    Auth2UserProfileScope.pronouns, Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
     Auth2UserProfileScope.email, /*Auth2UserProfileScope.email2,*/ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
     /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
   };
@@ -886,6 +900,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 
   String? fieldValue(_ProfileField field) {
     switch(field) {
+      case _ProfileField.fullName: return fullName;
       case _ProfileField.pronouns: return pronouns;
 
       case _ProfileField.photoUrl: return photoUrl;
@@ -903,28 +918,45 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
     }
   }
 
-  static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) =>
-    Auth2UserProfile.fromOther(other,
+  static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) {
+    String? firstName, lastName, middleName;
+    List<String>? nameParts = fields[_ProfileField.fullName]?.text.trim().split(' ');
+    if (CollectionUtils.isNotEmpty(nameParts)) {
+      if (nameParts!.length >= 1) {
+        firstName = nameParts.first;
+      }
+      if (nameParts.length == 2) {
+        lastName = nameParts.last;
+      }
+      if (nameParts.length > 2) {
+        middleName = nameParts.sublist(1, nameParts.length - 1).join(' ');
+      }
+    }
+    return Auth2UserProfile.fromOther(other,
       override: Auth2UserProfile(
-        pronouns: StringUtils.ensureNotEmpty(fields[_ProfileField.pronouns]?.text),
+          firstName: firstName,
+          lastName: lastName,
+          middleName: middleName,
+          pronouns: StringUtils.ensureNotEmpty(fields[_ProfileField.pronouns]?.text),
 
-        photoUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.photoUrl]?.text),
-        pronunciationUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.pronunciationUrl]?.text),
+          photoUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.photoUrl]?.text),
+          pronunciationUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.pronunciationUrl]?.text),
 
-        // email: StringUtils.ensureNotEmpty(fields[_ProfileField.email]?.text),
-        // phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
-        website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
+          // email: StringUtils.ensureNotEmpty(fields[_ProfileField.email]?.text),
+          // phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
+          website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
 
-        data: {
-          Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.college]?.text),
-          Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department]?.text),
-          Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major]?.text),
-          Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.title]?.text),
-          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
-        }
+          data: {
+            Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.college]?.text),
+            Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department]?.text),
+            Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major]?.text),
+            Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.title]?.text),
+            Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
+          }
       ),
       scope: _ProfileFieldImpl.profileScope,
     );
+  }
 }
 
 ///////////////////////////////////////////

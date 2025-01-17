@@ -94,7 +94,7 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
           ),
         ],),
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
-          DirectoryProfileDetails(_profile, _identifiers, linkTextStyle: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline.dark',),)
+          DirectoryProfileDetails(_profile, _identifiers,),
         ),
         if (widget.onboarding == false)
           _shareButton,
@@ -125,7 +125,7 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
     Expanded(child:
       LinkButton(
         title: AppTextUtils.appTitleString('panel.profile.info.command.link.share.text', 'Share my info outside the ${AppTextUtils.appTitleMacro} app'),
-        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline.dark'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
         textAlign: TextAlign.left,
         padding: EdgeInsets.symmetric(vertical: 16),
         onTap: _onShare,
