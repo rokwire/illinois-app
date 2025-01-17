@@ -32,6 +32,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
 
   DateInterval? _selectedDateInterval;
   bool? _selectedMutedValue;
+  bool? _selectedUnreadValue;
   bool? _hasMoreMessages;
   
   bool? _loading, _loadingMore;
@@ -55,6 +56,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
 
     _scrollController.addListener(_scrollListener);
     _selectedMutedValue = false;
+    _selectedUnreadValue = widget.unread;
     _loadInitialContent();
   }
 
@@ -258,7 +260,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   Future<void> _refreshMessages() async {
     int limit = max(_messages.length, _messagesPageSize);
     List<InboxMessage>? messages = await Inbox().loadMessages(
-        unread: widget.unread,
+        unread: _selectedUnreadValue,
         muted: _selectedMutedValue,
         offset: 0,
         limit: limit,
@@ -284,7 +286,14 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
 
   void _onTapFilter() {
     Analytics().logSelect(target: 'Filter');
-    NotificationsFilterPanel.present(context);
+    NotificationsFilterPanel.present(context, muted: _selectedMutedValue, unread: _selectedUnreadValue, interval: _selectedDateInterval).then((result) {
+      if (result is FilterResult) {
+        _selectedMutedValue = result.muted;
+        _selectedUnreadValue = result.unread;
+        _selectedDateInterval = result.dateInterval;
+        _refreshContent();
+      }
+    });
   }
 
   void _onTapMarkAllAsRead() {
@@ -316,7 +325,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
 
     Inbox()
         .loadMessages(
-            unread: widget.unread,
+            unread: _selectedUnreadValue,
             muted: _selectedMutedValue,
             offset: 0,
             limit: _messagesPageSize,
@@ -344,7 +353,15 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       _loadingMore = true;
     });
 
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: _messages.length, limit: _messagesPageSize, startDate: _selectedDateInterval?.startDate, endDate: _selectedDateInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox()
+        .loadMessages(
+            unread: _selectedUnreadValue,
+            muted: _selectedMutedValue,
+            offset: _messages.length,
+            limit: _messagesPageSize,
+            startDate: _selectedDateInterval?.startDate,
+            endDate: _selectedDateInterval?.endDate)
+        .then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -364,18 +381,25 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     });
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, startDate: _selectedDateInterval?.startDate, endDate: _selectedDateInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox()
+        .loadMessages(
+            unread: _selectedUnreadValue,
+            muted: _selectedMutedValue,
+            offset: 0,
+            limit: limit,
+            startDate: _selectedDateInterval?.startDate,
+            endDate: _selectedDateInterval?.endDate)
+        .then((List<InboxMessage>? messages) {
       setStateIfMounted(() {
         if (messages != null) {
-            _messages = messages;
-            _hasMoreMessages = (_messagesPageSize <= messages.length);
-          }
-          else {
-            _messages.clear();
-            _hasMoreMessages = null;
-          }
-          _contentList = _buildContentList();
-          _loading = false;
+          _messages = messages;
+          _hasMoreMessages = (_messagesPageSize <= messages.length);
+        } else {
+          _messages.clear();
+          _hasMoreMessages = null;
+        }
+        _contentList = _buildContentList();
+        _loading = false;
       });
     });
   }
@@ -385,7 +409,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     Map<TimeFilter, List<InboxMessage>> timesMap = Map<TimeFilter, List<InboxMessage>>();
     List<InboxMessage>? otherList;
     for (InboxMessage? message in _messages) {
-      TimeFilter? timeFilter = _filterTypeFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
+      TimeFilter? timeFilter = _timeFitelrFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
       if (timeFilter != null) {
         List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
@@ -420,7 +444,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     return contentList;
   }
 
-  TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<TimeFilter, DateInterval>? intervals }) {
+  TimeFilter? _timeFitelrFromDate(DateTime? dateTime, { Map<TimeFilter, DateInterval>? intervals }) {
     for (FilterEntry timeEntry in NotificationsFilterPanel.dateFilterEntries) {
       TimeFilter? timeFilter = timeEntry.value;
       DateInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
