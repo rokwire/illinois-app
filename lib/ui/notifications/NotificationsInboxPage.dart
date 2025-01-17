@@ -7,7 +7,6 @@ import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/ext/InboxMessage.dart';
@@ -15,42 +14,24 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class NotificationsInboxPage extends StatefulWidget {
   final bool? unread;
   final void Function()? onTapBanner;
-  NotificationsInboxPage({Key? key, this.unread, this.onTapBanner}) : super(key: key);
+  NotificationsInboxPage({this.unread, this.onTapBanner});
 
   _NotificationsInboxPageState createState() => _NotificationsInboxPageState();
 }
 
 class _NotificationsInboxPageState extends State<NotificationsInboxPage> implements NotificationsListener {
 
-  final List<_FilterEntry> _mutedValues = [
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.hide", "Hide Muted"), value: false), // Show only not muted messages
-  ];
-
-  final List<_FilterEntry> _times = [
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.any", "Any Time"), value: null),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.today", "Today"), value: _TimeFilter.Today),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.yesterday", "Yesterday"), value: _TimeFilter.Yesterday),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.this_week", "This week"), value: _TimeFilter.ThisWeek),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.last_week", "Last week"), value: _TimeFilter.LastWeek),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.this_month", "This month"), value: _TimeFilter.ThisMonth),
-    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.last_month", "Last Month"), value: _TimeFilter.LastMonth),
-  ];
-
   final int _messagesPageSize = 8;
   static final double _defaultPaddingValue = 16;
 
-  String? _selectedCategory;
-  _TimeFilter? _selectedTime;
+  DateInterval? _selectedDateInterval;
   bool? _selectedMutedValue;
-  _FilterType? _selectedFilter;
   bool? _hasMoreMessages;
   
   bool? _loading, _loadingMore;
@@ -121,8 +102,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
               child: Align(
                   alignment: Alignment.center,
                   child: CircularProgressIndicator(
-                      strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))),
-          Visibility(visible: (_selectedFilter != null), child: Stack(children: <Widget>[_buildFilterValues()]))
+                      strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
         ]));
   }
 
@@ -275,107 +255,21 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
                 onTap: _onTapMarkAllAsRead)));
   }
 
-  // Filters Dropdowns
-
-  Widget _buildFilterValues() {
-
-    List<_FilterEntry> filterValues;
-    dynamic selectedFilterValue;
-    List<String>? subLabels;
-    switch(_selectedFilter) {
-      case _FilterType.Muted: filterValues = _mutedValues; selectedFilterValue = _selectedMutedValue; subLabels = null; break;
-      case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
-      default: filterValues = []; break;
-    }
-
-    return Padding(padding: EdgeInsets.only(top: 6, left: 16, right: 16, bottom: 32), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
-        Padding(padding: EdgeInsets.only(top: 2), child:
-          Container(color: Colors.white, child:
-            ListView.separated(
-              shrinkWrap: true,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
-              itemCount: filterValues.length,
-              itemBuilder: (context, index) {
-                return  FilterListItem(
-                  title: filterValues[index].name,
-                  description: (subLabels != null) ? subLabels[index] : null,
-                  selected: selectedFilterValue == filterValues[index].value,
-                  onTap: () { _onFilterValue(_selectedFilter, filterValues[index]); },
-                );
-              }
-            ),
-          ),
-        )
-      )
-    );
-  }
-
-  List<String> _buildTimeDates() {
-    DateTime now = DateTime.now();
-    DateTime today = DateTime(now.year, now.month, now.day);
-    Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
-
-    List<String> timeDates = <String>[];
-    for (_FilterEntry timeEntry in _times) {
-      String? timeDate;
-      _DateInterval? interval = intervals[timeEntry.value];
-      if (interval != null) {
-        DateTime startDate = interval.startDate!;
-        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: 'MM/dd', ignoreTimeZone: true);
-
-        DateTime endDate = interval.endDate ?? today;
-        if (1 < endDate.difference(startDate).inDays) {
-          String? endStr = AppDateTime().formatDateTime(endDate, format: 'MM/dd', ignoreTimeZone: true);  
-          timeDate = "$startStr - $endStr";
-        }
-        else {
-          timeDate = startStr;
-        }
-      }
-      timeDates.add(timeDate ?? '');
-    }
-
-    return timeDates;
-  }
-
-  static Map<_TimeFilter, _DateInterval> _getTimeFilterIntervals() {
-    DateTime now = DateTime.now();
-    return {
-      _TimeFilter.Today:     _DateInterval(startDate: DateTime(now.year, now.month, now.day)),
-      _TimeFilter.Yesterday: _DateInterval(startDate: DateTime(now.year, now.month, now.day - 1), endDate: DateTime(now.year, now.month, now.day)),
-      _TimeFilter.ThisWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
-      _TimeFilter.LastWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1 - 7), endDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
-      _TimeFilter.ThisMonth: _DateInterval(startDate: DateTime(now.year, now.month, 1)),
-      _TimeFilter.LastMonth: _DateInterval(startDate: DateTime(now.year, now.month - 1, 1), endDate: DateTime(now.year, now.month, 0)),
-    };
-  }
-
-  void _onFilterValue(_FilterType? filterType, _FilterEntry filterEntry) {
-    Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
-    setState(() {
-      switch(filterType) {
-        case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
-        case _FilterType.Time: _selectedTime = filterEntry.value; break;
-        default: break;
-      }
-      _selectedFilter = null;
-    });
-
-    _loadInitialContent();
-  }
-
-  Future<void> _refreshMessages() async{
+  Future<void> _refreshMessages() async {
     int limit = max(_messages.length, _messagesPageSize);
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage>? messages = await Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage>? messages = await Inbox().loadMessages(
+        unread: widget.unread,
+        muted: _selectedMutedValue,
+        offset: 0,
+        limit: limit,
+        startDate: _selectedDateInterval?.startDate,
+        endDate: _selectedDateInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
           _messages = messages;
           _hasMoreMessages = (_messagesPageSize <= messages.length);
-        }
-        else {
+        } else {
           _messages.clear();
           _hasMoreMessages = null;
         }
@@ -420,15 +314,21 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       _loading = true;
     });
 
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox()
+        .loadMessages(
+            unread: widget.unread,
+            muted: _selectedMutedValue,
+            offset: 0,
+            limit: _messagesPageSize,
+            startDate: _selectedDateInterval?.startDate,
+            endDate: _selectedDateInterval?.endDate)
+        .then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
             _messages = messages;
             _hasMoreMessages = (_messagesPageSize <= messages.length);
-          }
-          else {
+          } else {
             _messages.clear();
             _hasMoreMessages = null;
           }
@@ -444,8 +344,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       _loadingMore = true;
     });
 
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: _messages.length, limit: _messagesPageSize, startDate: _selectedDateInterval?.startDate, endDate: _selectedDateInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -465,8 +364,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     });
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
-    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, startDate: _selectedDateInterval?.startDate, endDate: _selectedDateInterval?.endDate).then((List<InboxMessage>? messages) {
       setStateIfMounted(() {
         if (messages != null) {
             _messages = messages;
@@ -483,11 +381,11 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   List<dynamic> _buildContentList() {
-    Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
-    Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
+    Map<TimeFilter, DateInterval> intervals = NotificationsFilterPanel.getTimeFilterIntervals();
+    Map<TimeFilter, List<InboxMessage>> timesMap = Map<TimeFilter, List<InboxMessage>>();
     List<InboxMessage>? otherList;
     for (InboxMessage? message in _messages) {
-      _TimeFilter? timeFilter = _filterTypeFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
+      TimeFilter? timeFilter = _filterTypeFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
       if (timeFilter != null) {
         List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
@@ -504,27 +402,28 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     }
 
     List<dynamic> contentList = <dynamic>[];
-    for (_FilterEntry timeEntry in _times) {
-      _TimeFilter? timeFilter = timeEntry.value;
+    List<FilterEntry> dateFilterEntries = NotificationsFilterPanel.dateFilterEntries;
+    for (FilterEntry timeEntry in dateFilterEntries) {
+      TimeFilter? timeFilter = timeEntry.value;
       List<InboxMessage>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
       if (timeList != null) {
         contentList.add(timeEntry.name!.toUpperCase());
         contentList.addAll(timeList);
       }
     }
-    
+
     if (otherList != null) {
-      contentList.add(_FilterEntry.entryInList(_times, null)?.name?.toUpperCase() ?? '');
+      contentList.add(FilterEntry.entryInList(dateFilterEntries, null)?.name?.toUpperCase() ?? '');
       contentList.addAll(otherList);
     }
-    
+
     return contentList;
   }
 
-  _TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<_TimeFilter, _DateInterval>? intervals }) {
-    for (_FilterEntry timeEntry in _times) {
-      _TimeFilter? timeFilter = timeEntry.value;
-      _DateInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
+  TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<TimeFilter, DateInterval>? intervals }) {
+    for (FilterEntry timeEntry in NotificationsFilterPanel.dateFilterEntries) {
+      TimeFilter? timeFilter = timeEntry.value;
+      DateInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
       if ((timeInterval != null) && (timeInterval.contains(dateTime))) {
         return timeFilter;
       }
@@ -550,59 +449,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       // SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
     }
   }
-}
-
-class _FilterEntry {
-  final String? _name;
-  final dynamic _value;
-  
-  String? get name => _name;
-  dynamic get value => _value;
-  
-  _FilterEntry({String? name, dynamic value}) :
-    _name = name ?? value?.toString(),
-    _value = value;
-
-  static _FilterEntry? entryInList(List<_FilterEntry>? entries, dynamic value) {
-    if (entries != null) {
-      for (_FilterEntry entry in entries) {
-        if (entry.value == value) {
-          return entry;
-        }
-      }
-    }
-    return null;
-  }
-}
-
-class _DateInterval {
-  final DateTime? startDate;
-  final DateTime? endDate;
-  
-  _DateInterval({this.startDate, this.endDate});
-
-  bool contains(DateTime? dateTime) {
-    if (dateTime == null) {
-      return false;
-    }
-    else if ((startDate != null) && startDate!.isAfter(dateTime)) {
-      return false;
-    }
-    else if ((endDate != null) && endDate!.isBefore(dateTime)) {
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-}
-
-enum _TimeFilter {
-  Today, Yesterday, ThisWeek, LastWeek, ThisMonth, LastMonth
-}
-
-enum _FilterType {
-  Muted, Time
 }
 
 class InboxMessageCard extends StatefulWidget {
