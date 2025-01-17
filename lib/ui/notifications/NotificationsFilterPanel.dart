@@ -47,7 +47,7 @@ class NotificationsFilterPanel extends StatefulWidget {
         });
   }
 
-
+  //TBD: Rework and optimize notifications filtering. Do not use these static fields
   static final List<FilterEntry> dateFilterEntries = [
     FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.all.label', 'All Notifications'), value: null),
     FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.today.label', 'Today'), value: TimeFilter.Today),
@@ -205,6 +205,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
             itemCount: dateFilterEntries.length,
             itemBuilder: (context, index) {
               FilterEntry filterEntry = dateFilterEntries[index];
+              TimeFilter? timeFilter = (filterEntry.value is TimeFilter) ? (filterEntry.value as TimeFilter) : null;
               BorderRadius? borderRadius;
               if (index == 0) {
                 borderRadius = BorderRadius.only(topLeft: borderRadiusValue, topRight: borderRadiusValue);
@@ -212,7 +213,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
                 borderRadius = BorderRadius.only(bottomLeft: borderRadiusValue, bottomRight: borderRadiusValue);
               }
               return _buildDateEntryWidget(
-                  title: dateFilterEntries[index].name,
+                  title: _dateFilterLabel(timeFilter),
                   description: subLabels[index],
                   borderRadius: borderRadius,
                   onTap: () => _onTapTimeFilter(filterEntry.value),
@@ -357,6 +358,37 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
       }
     }
     return null;
+  }
+
+  String _dateFilterLabel(TimeFilter? timeFilter) {
+    if (timeFilter == null) {
+      return Localization().getStringEx('panel.inbox.filter.time.all.label', 'All Notifications');
+    }
+    late String prefix;
+    switch (timeFilter) {
+      case TimeFilter.Today:
+        prefix = Localization().getStringEx('panel.inbox.filter.time.today.label', 'Today');
+        break;
+      case TimeFilter.Yesterday:
+        prefix = Localization().getStringEx('panel.inbox.filter.time.yesterday.label', 'Yesterday');
+        break;
+      case TimeFilter.ThisWeek:
+        prefix = Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This week');
+        break;
+      case TimeFilter.LastWeek:
+        prefix = Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last week');
+        break;
+      case TimeFilter.ThisMonth:
+        prefix = Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This month');
+        break;
+      case TimeFilter.LastMonth:
+        prefix = Localization().getStringEx('panel.inbox.filter.time.last_month.label', 'Last Month');
+        break;
+      default:
+        prefix = '';
+        break;
+    }
+    return "$prefix's ${Localization().getStringEx('panel.inbox.filter.time.notifications.label', 'Notifications')}";
   }
 }
 

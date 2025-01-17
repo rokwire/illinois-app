@@ -409,7 +409,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     Map<TimeFilter, List<InboxMessage>> timesMap = Map<TimeFilter, List<InboxMessage>>();
     List<InboxMessage>? otherList;
     for (InboxMessage? message in _messages) {
-      TimeFilter? timeFilter = _timeFitelrFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
+      TimeFilter? timeFilter = _timeFilterFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
       if (timeFilter != null) {
         List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
@@ -444,7 +444,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     return contentList;
   }
 
-  TimeFilter? _timeFitelrFromDate(DateTime? dateTime, { Map<TimeFilter, DateInterval>? intervals }) {
+  TimeFilter? _timeFilterFromDate(DateTime? dateTime, { Map<TimeFilter, DateInterval>? intervals }) {
     for (FilterEntry timeEntry in NotificationsFilterPanel.dateFilterEntries) {
       TimeFilter? timeFilter = timeEntry.value;
       DateInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
@@ -461,9 +461,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     }
   }
 
-  bool get _showBanner{
-    return FirebaseMessaging().notificationsPaused ?? false;
-  }
+  bool get _showBanner => FirebaseMessaging().notificationsPaused ?? false;
 
   void _onTapBanner() {
     if (widget.onTapBanner != null) {

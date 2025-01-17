@@ -3227,6 +3227,7 @@
 	"panel.inbox.filter.time.last_week.label": "上個星期",
 	"panel.inbox.filter.time.this_month.label": "這個月",
 	"panel.inbox.filter.time.last_month.label": "上個月",
+	"panel.inbox.filter.time.notifications.label": "通知",
 	"panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
 
 	"panel.inbox.filter.view.label": "看法",

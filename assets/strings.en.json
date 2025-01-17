@@ -3250,6 +3250,7 @@
     "panel.inbox.filter.time.last_week.label": "Last week",
     "panel.inbox.filter.time.this_month.label": "This month",
     "panel.inbox.filter.time.last_month.label": "Last month",
+    "panel.inbox.filter.time.notifications.label": "Notifications",
     "panel.inbox.mark_as_read.failed.msg": "Failed to mark all messages as read.",
 
     "panel.inbox.filter.view.label": "VIEW",
