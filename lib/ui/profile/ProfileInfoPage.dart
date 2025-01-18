@@ -120,8 +120,8 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         // if (directoryVisibility == true)
           Column(children: [
             if (widget.onboarding == false)
-              Padding(padding: EdgeInsets.only(top: 16), child:
-                Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+              Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.info.tiny'), textAlign: TextAlign.center,),
               ),
 
             Padding(padding: EdgeInsets.only(top: 16), child:
