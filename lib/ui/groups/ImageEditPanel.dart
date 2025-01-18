@@ -120,20 +120,44 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                 children: [
                   Expanded(
                   child:
-                    RoundedButton(label: "Ok", onTap: _onFinish),
+                    RoundedButton(
+                      label: "Ok",
+                      textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'),
+                      backgroundColor: Styles().colors.background,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      onTap: _onFinish
+                    ),
                   ),
                   Container(width: 16,),
                   Expanded(
                   child:
-                    RoundedButton(label: "Cancel", onTap: _onBack),
+                    RoundedButton(
+                      label: "Cancel",
+                      textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'),
+                      backgroundColor: Styles().colors.background,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      onTap: _onBack
+                    ),
                   )
                 ],
               ),
               Container(height: 8,),
-              RoundedButton(label: "Choose Image", onTap: showImagePickerDialog),
+              RoundedButton(
+                label: "Choose Image",
+                textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'),
+                backgroundColor: Styles().colors.background,
+                borderColor: Styles().colors.fillColorSecondary,
+                onTap: showImagePickerDialog
+              ),
               Container(height: 10,),
               _imageName!=null?
-                RoundedButton(label: "Edit", onTap: _onEdit)
+                RoundedButton(
+                  label: "Edit",
+                  textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'),
+                  backgroundColor: Styles().colors.background,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  onTap: _onEdit
+                )
               : Container()
         ],)))])),
           _loading?

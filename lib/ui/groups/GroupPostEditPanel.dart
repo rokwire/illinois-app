@@ -100,7 +100,7 @@ class _GroupPostEditPanelState extends State<GroupPostEditPanel> implements Noti
     return Stack(children: [
       SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
         Column(children: [
-          ImageChooserWidget(key: _postImageHolderKey, buttonVisible: true,
+          ImageChooserWidget(key: _postImageHolderKey, // buttonVisible: true,
             imageUrl: _mainPostUpdateData?.imageUrl,
             onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,),
           _buildPostContent(),

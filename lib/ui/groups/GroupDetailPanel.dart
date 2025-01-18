@@ -358,8 +358,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           ),
         ];
       },
-      body: _isMemberOrAdmin ? _buildViewPager() : SingleChildScrollView(scrollDirection: Axis.vertical, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildNonMemberContent(),),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: _isMemberOrAdmin ? _buildViewPager() : Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildNonMemberContent(),),
       ),
     );
   }

@@ -1694,57 +1694,60 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            Padding(
+                padding: EdgeInsets.zero,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          icon: Styles().images.getImage('bold-dark', semanticLabel: 'Bold', color: Styles().colors.iconPrimary) ?? Container(),
+                          onPressed: _onTapBold),
+                      Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: IconButton(
+                              icon: Styles().images.getImage('italic-dark', semanticLabel: 'Italic', color: Styles().colors.iconPrimary) ?? Container(),
+                              onPressed: _onTapItalic)),
+                      Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: IconButton(
+                              icon: Styles().images.getImage('underline-dark', semanticLabel: 'Underline', color: Styles().colors.iconPrimary) ?? Container(),
+                              onPressed: _onTapUnderline)),
+                      Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: Semantics(button: true, child:
+                          GestureDetector(
+                              onTap: _onTapEditLink,
+                              child: Text(
+                                  Localization().getStringEx(
+                                      'panel.group.detail.post.create.link.label',
+                                      'Link'),
+                                  style: Styles().textStyles.getTextStyle('widget.group.input_field.link')?.apply(color: Styles().colors.textAccent)))))
+                    ])),
+            Visibility(
+              visible: widget.title?.isNotEmpty == true,
+              child: Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat"))
+            ),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Container(
-                    decoration: PostInputField.fieldDecoration,
+                    // decoration: PostInputField.fieldDecoration,
                     child: TextField(
                       controller: _bodyController,
                       onChanged: _notifyChanged,
                       maxLines: 15,
                       minLines: 7,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration:
-                      InputDecoration(
+                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
+                      decoration: InputDecoration(
                           hintText: _hint,
                           hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
                           fillColor: Styles().colors.surface,
                           filled: true,
-                          border: InputBorder.none,
+                          border: OutlineInputBorder(borderRadius: const BorderRadius.all(Radius.circular(10.0))),
                           contentPadding: EdgeInsets.all(8)
                       ),
-                        style: Styles().textStyles.getTextStyle('')))),
-              Padding(
-                  padding: EdgeInsets.zero,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            icon: Styles().images.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
-                            onPressed: _onTapBold),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: IconButton(
-                                icon: Styles().images.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
-                                onPressed: _onTapItalic)),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: IconButton(
-                                icon: Styles().images.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
-                                onPressed: _onTapUnderline)),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Semantics(button: true, child:
-                            GestureDetector(
-                                onTap: _onTapEditLink,
-                                child: Text(
-                                    Localization().getStringEx(
-                                        'panel.group.detail.post.create.link.label',
-                                        'Link'),
-                                    style: Styles().textStyles.getTextStyle('widget.group.input_field.link')))))
-                      ])),
+                    ))),
           ],
         )
     );
@@ -2161,12 +2164,12 @@ typedef void OnImageChangedListener(String? imageUrl);
 class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
   final String? imageUrl;
   final bool wrapContent;
-  final bool showSlant;
-  final bool buttonVisible;
   final OnImageChangedListener? onImageChanged;
   final String? imageSemanticsLabel;
+  final Color backgroundColor;
 
-  const ImageChooserWidget({Key? key, this.imageUrl, this.onImageChanged, this.wrapContent = false, this.showSlant = true, this.buttonVisible = false, this.imageSemanticsLabel}) : super(key: key);
+  const ImageChooserWidget({Key? key, this.imageUrl, this.onImageChanged, this.wrapContent = false, this.imageSemanticsLabel,
+  this.backgroundColor = Colors.transparent}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ImageChooserState();
@@ -2178,8 +2181,6 @@ class _ImageChooserState extends State<ImageChooserWidget>{
   Widget build(BuildContext context) {
     final double _imageHeight = 200;
     bool wrapContent = widget.wrapContent;
-    bool explicitlyShowAddButton = widget.buttonVisible;
-    bool showSlant = widget.showSlant;
     String? imageUrl = widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
 
     return Container(
@@ -2188,24 +2189,24 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         ),
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
-              : Container(),
-          StringUtils.isEmpty(imageUrl) || explicitlyShowAddButton
-              ? Container(
-              child: Center(
-                  child: Semantics(
-                      label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
-                      hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
-                      button: true,
-                      excludeSemantics: true,
-                      child: RoundedButton(
-                          label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                          contentWeight: 0.8,
-                          onTap: (){ _onTapAddImage();}
-                      )))):
-          Container()
+          Positioned.fill(child: StringUtils.isNotEmpty(imageUrl) ? ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)) : Container(color: widget.backgroundColor)),
+          Center(
+            child: Semantics(
+                label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
+                hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
+                button: true,
+                excludeSemantics: true,
+                child: RoundedButton(
+                    label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
+                    contentWeight: 0.8,
+                    maxBorderRadius: 6,
+                    backgroundColor: Styles().colors.fillColorSecondary,
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                    onTap: (){ _onTapAddImage();}
+                )
+            )
+          )
         ]));
   }
 
@@ -2863,36 +2864,44 @@ class GroupMemberSettingsLayout extends StatelessWidget{
 
 class GroupScheduleTimeWidget extends StatefulWidget {
   final Location? timeZone;
-
   final DateTime? scheduleTime;
   final bool? enabled;
   final bool enableTimeZone;
+  final bool showOnlyDropdown;
   final Function(DateTime?)? onDateChanged;
 
-  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.scheduleTime, this.onDateChanged, this.enabled = true, this.enableTimeZone = false,});
+  const GroupScheduleTimeWidget({
+    super.key,
+    this.timeZone,
+    this.scheduleTime,
+    this.onDateChanged,
+    this.enabled = true,
+    this.enableTimeZone = false,
+    this.showOnlyDropdown = false,
+  });
 
   @override
   State<StatefulWidget> createState() => _GroupScheduleTimeState();
-
 }
 
-class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
+class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget> {
   bool required = false;
   bool _expanded = false;
+  bool _isChecked = false; // State for the checkbox
 
   late Location _timeZone;
   DateTime? _date;
   TimeOfDay? _time;
 
-  TZDateTime? get _dateTime => _date!= null ? _dateTimeWithDateAndTimeOfDay(_date!, _time) : null;
+  TZDateTime? get _dateTime =>
+      _date != null ? _dateTimeWithDateAndTimeOfDay(_date!, _time) : null;
 
-  // DateTime? get _dateTimeUtc => _date!=null && _time!=null ?
-  //     DateTime.fromMillisecondsSinceEpoch(_dateTimeWithDateAndTimeOfDay(_date!, _time).toUtc().millisecondsSinceEpoch, isUtc: true) : null;
   DateTime? get _dateTimeUtc => _dateTime?.toUtc();
 
   @override
   void initState() {
-    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
+    _timeZone = timeZoneDatabase.locations[widget.timeZone] ??
+        DateTimeLocal.timezoneLocal;
     DateTime? dateTimeUtc = widget.scheduleTime;
     if (dateTimeUtc != null) {
       TZDateTime scheduleTime = TZDateTime.from(dateTimeUtc, _timeZone);
@@ -2905,91 +2914,273 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   @override
   Widget build(BuildContext context) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: EdgeInsets.only(top: 16), child:
-          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.light.title'),)),
-        Expanded(child: _buildDropdown())
-    ]);
+    return widget.showOnlyDropdown ? _buildDropdownViewWithCheckbox() : _buildFullView();
   }
 
-  Widget _buildDropdown(){
-    // String title = (_time != null? DateFormat("EEE, MMM dd, h:mma").format(_dateWithTimeOfDay(_time!)) : "");
-    DateTime? selectedTime = _dateTime?.toLocal();
-    String title = (selectedTime != null? DateFormat("EEE, MMM dd, h:mma").format(selectedTime) : "");
-
-    return Padding(padding: EdgeInsets.zero, child:
-    Column(children: <Widget>[
-      Container(
-        decoration: BoxDecoration(
-            color: widget.enabled == true ? Styles().colors.surface : null,
-            border: Border.all(color: /*widget.enabled == true ? Styles().colors.mediumGray2 :*/ Styles().colors.surfaceAccent, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4))
+  Widget _buildFullView() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: Text(
+            "Schedule: ",
+            style:
+            Styles().textStyles.getTextStyle('widget.group.members.light.title'),
+          ),
         ),
-        child: Column(children: <Widget>[
-          Semantics(button: true, label: title,
-              child: InkWell(
-                onTap: (){
-                  if(widget.enabled == true) {
-                    setStateIfMounted(() {
-                      _expanded = !_expanded;
-                    });
-                  }
-                },
-                child: Padding(padding: sectionHeadingContentPadding, child:
-                Row(children: [
-                  Expanded(child:
-                    Semantics ( label: title, child:
-                      RichText(text:
-                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
-                          TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
-                  ] : null),
-                  ))
-                  ),
-                  Visibility(visible: widget.enabled == true, child:
-                    Padding(padding: EdgeInsets.only(left: 8), child:
-                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down') ?? Container()),)
-                ],),
-                ),
-              )
-          ),
-          Visibility(visible: _expanded, child:
-          Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))),
-            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Container(child: buildBody() ??
-                Container())
-            ),
-          ),
-          ),
-        ],),
-      ),
-    ]),
+        Expanded(child: _buildDropdown())
+      ],
     );
   }
 
-  Widget? buildBody() => Column(children: [
+  Widget _buildDropdownViewWithCheckbox() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Checkbox(
+              value: _isChecked,
+              onChanged: (bool? value) {
+                setState(() {
+                  _isChecked = value ?? false;
+                });
+              },
+            ),
+            Text(
+              "Schedule Post",
+              style: Styles().textStyles.getTextStyle("widget.detail.light.regular"),
+            ),
+          ],
+        ),
+        if (_isChecked) _buildDropdownView(),
+      ],
+    );
+  }
+
+  Widget _buildDropdownView() {
+    return Container(
+      width: 300,
+      decoration: BoxDecoration(
+        color: Styles().colors.surface,
+        border: Border.all(
+          color: Styles().colors.surfaceAccent,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(6.0)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6.0),
+              child: Row(
+                children: [
+                  Text(
+                    Localization().getStringEx("", "DATE"),
+                    style: Styles().textStyles.getTextStyle("widget.title.dark.regular"),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: _buildDropdownButton(
+                      label: (_date != null)
+                          ? DateFormat("EEE, MMM dd, yyyy").format(_date!)
+                          : "-",
+                      onTap: _onDate,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6.0),
+              child: Row(
+                children: [
+                  Text(
+                    Localization().getStringEx("", "TIME"),
+                    style: Styles().textStyles.getTextStyle("widget.title.dark.regular"),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: _buildDropdownButton(
+                      label: (_time != null)
+                          ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!))
+                          : "-",
+                      onTap: _onTime,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdown() {
+    DateTime? selectedTime = _dateTime?.toLocal();
+    String title = selectedTime != null
+        ? DateFormat("EEE, MMM dd, h:mma").format(selectedTime)
+        : "";
+
+    return Padding(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: widget.enabled == true ? Styles().colors.surface : null,
+              border: Border.all(
+                color: Styles().colors.surfaceAccent,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+            ),
+            child: Column(
+              children: <Widget>[
+                Semantics(
+                  button: true,
+                  label: title,
+                  child: InkWell(
+                    onTap: () {
+                      if (widget.enabled == true) {
+                        setStateIfMounted(() {
+                          _expanded = !_expanded;
+                        });
+                      }
+                    },
+                    child: Padding(
+                      padding: sectionHeadingContentPadding,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Semantics(
+                              label: title,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: title,
+                                  style: Styles().textStyles.getTextStyle(
+                                      "widget.title.dark.medium.fat"),
+                                  children: required
+                                      ? <InlineSpan>[
+                                    TextSpan(
+                                      text: ' *',
+                                      style: Styles()
+                                          .textStyles
+                                          .getTextStyle(
+                                          'widget.button.disabled.title.small.fat'),
+                                    ),
+                                  ]
+                                      : null,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: widget.enabled == true,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Styles().images.getImage(
+                                  _expanded ? 'chevron-up' : 'chevron-down') ??
+                                  Container(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: _expanded,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: Styles().colors.mediumGray2,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: buildBody() ?? Container(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget? buildBody() => Column(
+    children: [
       _buildTimeZoneDropdown(),
       Padding(padding: EdgeInsets.only(bottom: 12)),
       Row(
         children: [
-          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
-          Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
-        ],),
+          Expanded(
+            flex: 3,
+            child: buildSectionTitleWidget(
+              Localization().getStringEx("", "DATE"),
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: _buildDropdownButton(
+              label: (_date != null)
+                  ? DateFormat("EEE, MMM dd, yyyy").format(_date!)
+                  : "-",
+              onTap: _onDate,
+            ),
+          )
+        ],
+      ),
       Padding(padding: EdgeInsets.only(bottom: 12)),
       Row(
         children: [
-          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
-          Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
-      ],)
-    ]);
+          Expanded(
+            flex: 3,
+            child: buildSectionTitleWidget(
+              Localization().getStringEx("", "TIME"),
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: _buildDropdownButton(
+              label: (_time != null)
+                  ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!))
+                  : "-",
+              onTap: _onTime,
+            ),
+          )
+        ],
+      ),
+    ],
+  );
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
-    return InkWell(onTap: onTap, child:
-      Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
-          Styles().images.getImage('chevron-down') ?? Container()
-        ],),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: dropdownButtonDecoration,
+        padding: dropdownButtonContentPadding,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              label ?? '-',
+              style: Styles().textStyles.getTextStyle("widget.title.dark.regular"),
+            ),
+            Styles().images.getImage('chevron-down') ?? Container()
+          ],
+        ),
       ),
     );
   }
@@ -3000,8 +3191,12 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = now;
     DateTime maxDate = now.add(Duration(days: 366));
-    DateTime selectedDate = (_date != null) ? DateTimeUtils.min(DateTimeUtils.max(_date!, minDate), maxDate) : minDate;
-    showDatePicker(context: context,
+    DateTime selectedDate = (_date != null)
+        ? DateTimeUtils.min(
+        DateTimeUtils.max(_date!, minDate), maxDate)
+        : minDate;
+    showDatePicker(
+      context: context,
       initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
@@ -3012,7 +3207,6 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
           TZDateTime zoneTime = TZDateTime.from(result, _timeZone);
           _date = DateUtils.dateOnly(zoneTime);
           widget.onDateChanged?.call(_dateTimeUtc);
-          // _errorMap = _buildErrorMap(); //TBD handle error
         });
       }
     });
@@ -3021,44 +3215,66 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   void _onTime() {
     Analytics().logSelect(target: "Time");
     hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _time ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+      context: context,
+      initialTime: _time ?? TimeOfDay(hour: 0, minute: 0),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              dayPeriodColor: Styles().colors.fillColorSecondary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _time = result;
           widget.onDateChanged?.call(_dateTimeUtc);
-          // _errorMap = _buildErrorMap(); //TBD handle error
         });
       }
     });
   }
 
-  //TIMEZONE
-  Widget _buildTimeZoneDropdown(){
-    return Visibility(visible: widget.enableTimeZone, child:
-      Semantics(container: true, child:
-        Row(children: <Widget>[
-          Expanded(flex: 4, child:
-            buildSectionTitleWidget(Localization().getStringEx("", "TIME ZONE")),
-          ),
-          Container(width: 16,),
-          Expanded(flex: 6, child:
-            Container(decoration: dropdownButtonDecoration, child:
-              Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
-                DropdownButtonHideUnderline(child:
-                  DropdownButton<Location>(
+  Widget _buildTimeZoneDropdown() {
+    return Visibility(
+      visible: widget.enableTimeZone,
+      child: Semantics(
+        container: true,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 4,
+              child: buildSectionTitleWidget(
+                Localization().getStringEx("", "TIME ZONE"),
+              ),
+            ),
+            Container(width: 16),
+            Expanded(
+              flex: 6,
+              child: Container(
+                decoration: dropdownButtonDecoration,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12, right: 8),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<Location>(
                       icon: Styles().images.getImage('chevron-down'),
                       isExpanded: true,
-                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                      hint: Text(_timeZone.name,),
+                      style: Styles().textStyles.getTextStyle(
+                          "panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(_timeZone.name),
                       items: _buildTimeZoneDropDownItems(),
-                      onChanged: _onTimeZoneChanged
+                      onChanged: _onTimeZoneChanged,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ])
-      )
+          ],
+        ),
+      ),
     );
   }
 
@@ -3068,7 +3284,12 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
       if (name.startsWith('US/')) {
         menuItems.add(DropdownMenuItem<Location>(
           value: location,
-          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name, style: headingTextStype)),
+          child: Semantics(
+            label: name,
+            excludeSemantics: true,
+            container: true,
+            child: Text(name, style: headingTextStype),
+          ),
         ));
       }
     });
@@ -3090,38 +3311,78 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   DateTime _dateWithTimeOfDay(TimeOfDay time) =>
       _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
 
-  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
-      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
+  TZDateTime _dateTimeWithDateAndTimeOfDay(
+      DateTime date,
+      TimeOfDay? time, {
+        bool inclusive = false,
+      }) =>
+      TZDateTime(
+        _timeZone,
+        date.year,
+        date.month,
+        date.day,
+        time?.hour ?? (inclusive ? 23 : 0),
+        time?.minute ?? (inclusive ? 59 : 0),
+      );
 
-  //Common
-  static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
-      Semantics ( label: title, child:
-        RichText(textScaler: textScaler, text:
-          TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
-            TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
-          ] : null),
-      ));
+  static Widget buildSectionTitleWidget(
+      String title, {
+        bool required = false,
+        TextStyle? textStyle,
+        TextStyle? requiredTextStyle,
+      }) =>
+      Semantics(
+        label: title,
+        child: RichText(
+          textScaler: textScaler,
+          text: TextSpan(
+            text: title,
+            style: textStyle ?? headingTextStype,
+            children: required
+                ? <InlineSpan>[
+              TextSpan(
+                text: ' *',
+                style: requiredTextStyle ??
+                    Styles()
+                        .textStyles
+                        .getTextStyle('widget.label.small.fat'),
+              ),
+            ]
+                : null,
+          ),
+        ),
+      );
 
-  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.dark.small.fat.spaced");
+  static TextStyle? get headingTextStype =>
+      Styles().textStyles.getTextStyle("widget.title.dark.small.fat.spaced");
 
-  static const EdgeInsetsGeometry dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-  static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+  static const EdgeInsetsGeometry dropdownButtonContentPadding =
+  const EdgeInsets.symmetric(horizontal: 12, vertical: 12); // Adjusted padding
+  static const EdgeInsetsGeometry sectionHeadingContentPadding =
+  const EdgeInsets.symmetric(horizontal: 12, vertical: 8); // Adjusted padding
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
-      color: Styles().colors.surface,
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      borderRadius: BorderRadius.all(Radius.circular(4))
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(4)),
   );
 
   static TextScaler get textScaler {
     BuildContext? context = App.instance?.currentContext;
-    return (context != null) ? MediaQuery.of(context).textScaler : TextScaler.noScaling;
+    return (context != null)
+        ? MediaQuery.of(context).textScaler
+        : TextScaler.noScaling;
   }
 
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
   }
 }
+
+
+
+
+
 
 typedef EmojiSelector = void Function(emoji.Emoji);
 class ReactionKeyboard {

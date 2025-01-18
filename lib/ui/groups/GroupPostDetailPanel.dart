@@ -130,7 +130,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               _isEditMainPost /*|| StringUtils.isNotEmpty(_post?.imageUrl)*/
                   ? ImageChooserWidget(
                       key: _postImageHolderKey,
-                      buttonVisible: _isEditMainPost,
+                      // buttonVisible: _isEditMainPost,
                       imageUrl: _isEditMainPost ? _mainPostUpdateData?.imageUrl : _post?.imageUrl,
                       onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url)
                   : Container(),
@@ -414,9 +414,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         padding: EdgeInsets.only(bottom: 12),
         child: ImageChooserWidget(
           imageUrl: _replyEditData?.imageUrl,
-          showSlant: false,
           wrapContent: true,
-          buttonVisible: _editingReply!=null,
+          // buttonVisible: _editingReply!=null,
           onImageChanged: (String? imageUrl) => _replyEditData?.imageUrl = imageUrl,
           imageSemanticsLabel: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"),
         )

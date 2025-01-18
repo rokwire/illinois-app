@@ -81,7 +81,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
             ImageChooserWidget(
               key: _postImageHolderKey,
               imageUrl: _postData.imageUrl,
-              buttonVisible: true ,
+              backgroundColor: Styles().colors.dividerLineAccent,
               onImageChanged: (url) => setStateIfMounted((){_postData.imageUrl = url;})),
             Container(
               padding: EdgeInsets.symmetric(horizontal: _outerPadding),
@@ -95,7 +95,6 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: _groupId, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
                   ),
                   Container(height: 12,),
-                  _buildScheduleWidget(),
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   // Visibility(visible: _isPost,
@@ -122,17 +121,21 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   //   ],)
                   // ),
                   PostInputField(
-                    title: widget.type == PostType.post ?  "POST" : "MESSAGE",
+                    title: widget.type == PostType.post ?  "" : "MESSAGE",
                     text: _postData.body,
+                    hint: "Write a post...",
                     onBodyChanged: (text) => _postData.body = text,
                     // hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
+                  Container(height: 12,),
+                  _buildScheduleWidget(),
+                  Container(height: 12,),
                   Visibility(visible: _isPost,
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 6),
                       child: EnabledToggleButton(
                           label: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(6),
                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                           enabled: CollectionUtils.isEmpty(_selectedMembers),
                           toggled: _pinPost,
@@ -154,7 +157,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         padding: EdgeInsets.symmetric(vertical: 6),
                         child: EnabledToggleButton(
                             label: "Also post to additional groups...",
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(6),
                             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                             enabled: CollectionUtils.isEmpty(_selectedMembers),
                             toggled: _allowSenPostToOtherGroups,
@@ -177,20 +180,25 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.input_field.light.text.regular"),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.surface,
+                        backgroundColor: Styles().colors.black,
+                        maxBorderRadius: 6.0,
                         onTap: _onTapSend)),
-                    Container(width: 20),
+                    Container(width: 16),
                     Flexible(
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.card.title.small"),
                         borderColor: Styles().colors.textDark,
-                        backgroundColor: Styles().colors.surface,
-                        onTap: _onTapCancel))
-                  ])
+                        backgroundColor: Styles().colors.fillColorSecondary,
+                        maxBorderRadius: 6.0,
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                        onTap: _onTapCancel)),
+                    Container(width: 140),
+                  ]),
+                  const SizedBox(height: 16,),
               ],),
             )
 
@@ -240,6 +248,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       child: GroupScheduleTimeWidget(
         scheduleTime: _postData.dateScheduled,
         onDateChanged: (DateTime? dateTimeUtc) => _postData.dateScheduled = dateTimeUtc,
+        showOnlyDropdown: true,
       )
     );
   }
