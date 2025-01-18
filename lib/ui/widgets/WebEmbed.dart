@@ -8,6 +8,7 @@ enum WebEmbedType {
   other,
 }
 
+//TODO: this widget is not supported on web
 class WebEmbed extends StatefulWidget {
   final String? body;
 

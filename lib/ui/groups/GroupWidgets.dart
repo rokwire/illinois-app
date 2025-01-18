@@ -20,6 +20,7 @@ import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -1142,7 +1143,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             padding: EdgeInsets.only(top: 14),
                             child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
                         )),
-                        WebEmbed(body: htmlBody),
+                        if (!kIsWeb)
+                          WebEmbed(body: htmlBody),
                         // Container(
                         //   constraints: BoxConstraints(maxHeight: 200),
                         //     child: Semantics(
@@ -1434,7 +1436,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
               )),
 
-              WebEmbed(body: bodyText),
+              if (!kIsWeb)
+                WebEmbed(body: bodyText),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
