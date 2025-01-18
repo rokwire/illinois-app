@@ -204,7 +204,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       Row(children: <Widget>[
         Expanded(child:
           Text(_appointment!.title!, maxLines: 1, overflow: TextOverflow.ellipsis, style:
-            Styles().textStyles.getTextStyle("widget.title.medium_large")
+            Styles().textStyles.getTextStyle("common.panel.title")
           )
         ),
         Visibility(visible: starVisible, child:

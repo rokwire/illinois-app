@@ -168,7 +168,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
+          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("common.panel.title")),
         ),
         Visibility(visible: starVisible, child:
           GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
