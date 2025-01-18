@@ -51,7 +51,11 @@ class AppointmentsContentWidget extends StatefulWidget with AnalyticsInfo {
 
 class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> implements NotificationsListener {
   static const Map<String, String> providerNameOverride = {'McKinley': 'MyMcKinley'};
-  static Map<String,  Widget? Function()> providerLayoutOverride = {'McKinley': () => WellnessAppointmentsContentWidget()};
+  static Map<String,  Widget? Function()> providerLayoutOverride = {
+    'McKinley': () =>
+      Padding(padding: EdgeInsets.symmetric(vertical: 8),
+          child: WellnessAppointmentsContentWidget())
+  };
 
   List<AppointmentProvider>? _providers;
   bool _isLoadingProviders = false;
