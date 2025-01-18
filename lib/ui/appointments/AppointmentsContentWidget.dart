@@ -24,6 +24,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleUnitPanel.dart';
+import 'package:illinois/ui/wellness/WellnessAppointmentsContentWidget.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -49,6 +50,12 @@ class AppointmentsContentWidget extends StatefulWidget with AnalyticsInfo {
 }
 
 class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> implements NotificationsListener {
+  static const Map<String, String> providerNameOverride = {'McKinley': 'MyMcKinley'};
+  static Map<String,  Widget? Function()> providerLayoutOverride = {
+    'McKinley': () =>
+      Padding(padding: EdgeInsets.symmetric(vertical: 8),
+          child: WellnessAppointmentsContentWidget())
+  };
 
   List<AppointmentProvider>? _providers;
   bool _isLoadingProviders = false;
@@ -111,9 +118,9 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
           padding: AppointmentsContentWidget.contentPadding,
           child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(padding: EdgeInsets.zero, child:
-            Text(_providers?.first.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
+            Text(_getDropDownProviderName(_providers?.first) ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
           ),
-          _buildAppointmentsContent(),
+          _content,
         ]));
     }
     else {
@@ -125,9 +132,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
         ),
         Expanded(child:
           Stack(children: [
-            Padding(padding: AppointmentsContentWidget.contentHorizontalPadding,
-              child: _buildAppointmentsContent(),
-            ),
+              _content,
             _buildProvidersDropdownContainer()
           ],)
           
@@ -144,7 +149,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-        label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
+        label: (_selectedProvider != null) ? (_getDropDownProviderName(_selectedProvider) ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: _onProvidersDropdown
       )
     );
@@ -191,7 +196,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
           backgroundColor: Styles().colors.white,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
-          label: provider.name,
+          label: _getDropDownProviderName(provider),
           onTap: () => _onTapProvider(provider)
         ));
       }
@@ -234,12 +239,14 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
       return _buildLoadingContent();
     }
     else {
-      return RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScheduleButton(),
-            ..._buildAppointmentsList(),
-          ])
+      return Padding(padding: AppointmentsContentWidget.contentHorizontalPadding, child:
+        RefreshIndicator(onRefresh: _onPullToRefresh, child:
+          SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _buildScheduleButton(),
+              ..._buildAppointmentsList(),
+            ])
+          )
         )
       );
     }
@@ -403,11 +410,6 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
     _didLoadCallbacks.clear();
   }
 
-  bool get _canScheduleAppointment {
-    return  (_selectedProvider != null) ? (_selectedProvider?.supportsSchedule == true) :
-      (AppointmentProvider.findInList(_providers, supportsSchedule: true) != null);
-  }
-
   void _onScheduleAppointment() {
     //AppointmentSchedulePanel.present(context);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleUnitPanel(
@@ -443,6 +445,22 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> i
 
   Future<void> _onPullToRefresh() async {
     _initProviders();
+  }
+
+  String?  _getDropDownProviderName(AppointmentProvider? provider) =>
+        provider != null ?
+          providerNameOverride[provider.name] ?? provider.name :
+          null;
+
+  Widget get _content =>
+      (_selectedProvider?.name != null ?
+        providerLayoutOverride[_selectedProvider?.name]?.call() : null) ??
+      _buildAppointmentsContent();
+
+  bool get _canScheduleAppointment {
+    return (_selectedProvider != null) ?
+        (_selectedProvider?.supportsSchedule == true) :
+        (AppointmentProvider.findInList(_providers, supportsSchedule: true) != null);
   }
 }
 
