@@ -68,17 +68,21 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     child: Scaffold(
       backgroundColor: Styles().colors.background,
       body: SingleChildScrollView(child:
-        Container(
-          constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
-          child: Column(
-            crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-            children: [
-              _headerWidget,
-              _titleWidget,
-              _profileWidget,
-              _footerWidget,
-            ],
-          ),
+        Column(
+          children: [
+            _headerWidget,
+            Container(
+              constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+              child: Column(
+                crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                children: [
+                  _titleWidget,
+                  _profileWidget,
+                  _footerWidget,
+                ],
+              ),
+            ),
+          ],
         )
       ),
     ),

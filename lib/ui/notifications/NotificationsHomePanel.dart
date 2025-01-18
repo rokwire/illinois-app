@@ -20,7 +20,6 @@ import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/ui/notifications/NotificationsInboxPage.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:neom/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -131,40 +130,15 @@ class NotificationsHomePanel extends StatefulWidget {
 }
 
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> with TickerProviderStateMixin implements NotificationsListener {
-  late NotificationsContent? _selectedContent;
-
-  late TabController _tabController;
-  int _selectedTab = 0;
-
-  final List<String> _tabNames = [
-    Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications'),
-    Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications'),
-  ];
 
   @override
   void initState() {
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
-
-    if (_isContentItemEnabled(widget.content)) {
-      _selectedContent = widget.content;
-    } else {
-      _selectedContent = _initialSelectedContent;
-    }
-
-    _tabController = TabController(length: 2, initialIndex: _selectedTab, vsync: this);
-    _tabController.addListener(_onTabChanged);
-    if (_selectedContent == NotificationsContent.unread) {
-      _selectedTab = 1;
-    }
-
     super.initState();
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_onTabChanged);
-    _tabController.dispose();
-
     NotificationService().unsubscribe(this);
     super.dispose();
   }
@@ -199,34 +173,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with Ti
           ),
         ],),
       ),
-      Expanded(child:
-        _buildPage(context),
+      Expanded(child: NotificationsInboxPage(onTapBanner: _onTapPausedBanner,),
       )
-    ],);
-  }
-
-  Widget _buildPage(BuildContext context) {
-    // return Column(children: <Widget>[
-    //   Expanded(child:
-    //     SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-    //       _buildContent()
-    //     )
-    //   )
-    // ]);
-
-    List<Widget> tabs = _tabNames.map((e) => TextTabButton(title: e)).toList();
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      TextTabBar(tabs: tabs, controller: _tabController, isScrollable: false, onTap: (index){_onTabChanged();}),
-      Expanded(
-        child: TabBarView(
-          controller: _tabController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            NotificationsInboxPage(onTapBanner: _onTapPausedBanner,),
-            NotificationsInboxPage(unread: true, onTapBanner: _onTapPausedBanner),
-          ],
-        ),
-      ),
     ],);
   }
 
@@ -240,36 +188,5 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with Ti
     if (mounted) {
       SettingsHomeContentPanel.present(context, content: SettingsContent.notifications);
     }
-  }
-
-  void _onTabChanged({bool manual = true}) {
-    if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {
-      setState(() {
-        _selectedTab = _tabController.index;
-        _selectedContent = (_selectedTab == 0) ? NotificationsContent.all : NotificationsContent.unread;
-      });
-    }
-  }
-
-  // Utilities
-
-  bool _isContentItemEnabled(NotificationsContent? contentItem) {
-    switch (contentItem) {
-      case NotificationsContent.all:
-        return Auth2().isLoggedIn;
-      case NotificationsContent.unread:
-        return Auth2().isLoggedIn;
-      default:
-        return false;
-    }
-  }
-
-  NotificationsContent? get _initialSelectedContent {
-    for (NotificationsContent contentItem in NotificationsContent.values) {
-      if (_isContentItemEnabled(contentItem)) {
-        return contentItem;
-      }
-    }
-    return null;
   }
 }

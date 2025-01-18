@@ -1088,7 +1088,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     Analytics().logSelect(target: "Admin settings");
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.white,
+        backgroundColor: Styles().colors.surface,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),

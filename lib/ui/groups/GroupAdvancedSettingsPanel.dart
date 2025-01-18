@@ -75,7 +75,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: Styles().colors.surface,
+    return SafeArea(child: Container( color: Styles().colors.background,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:
@@ -84,8 +84,8 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
             Expanded(
               child: RoundedButton(
                 label: Localization().getStringEx("dialog.ok.title", "Ok"),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                backgroundColor: Colors.white,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+                backgroundColor: Styles().colors.background,
                 borderColor: Styles().colors.fillColorSecondary,
                 onTap: onTapSave,
               ),
@@ -94,8 +94,8 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
             Expanded(
               child: RoundedButton(
                 label: Localization().getStringEx( "dialog.cancel.title","Cancel"),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                backgroundColor: Colors.white,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+                backgroundColor: Styles().colors.background,
                 borderColor: Styles().colors.fillColorSecondary,
                 onTap: onTapCancel,
               ),

@@ -241,7 +241,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     return Column(children: <Widget>[
       TextTabBar(tabs: tabs, controller: _tabController, isScrollable: false, onTap: (index){_onTabChanged();}),
       _buildFunctionalBar(),
-      _isLoading ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ),) : Expanded(
+      _isLoading ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),) : Expanded(
         child: TabBarView(
           controller: _tabController,
           physics: const NeverScrollableScrollPhysics(),

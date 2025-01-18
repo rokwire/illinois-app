@@ -562,7 +562,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
@@ -617,7 +617,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "feedback",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), entityId: reply.id!, entityType: SocialEntityType.comment),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(

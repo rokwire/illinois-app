@@ -172,7 +172,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   Widget _buildLabel(String text, { bool required = false}) => Padding(padding: EdgeInsets.only(top: 12, bottom: 2), child: Row(children: [Expanded(child:
     RichText(text:
-      TextSpan(text: text, style: Styles().textStyles.getTextStyle('widget.title.tiny.fat'), children: <InlineSpan>[
+      TextSpan(text: text, style: Styles().textStyles.getTextStyle('widget.title.dark.tiny'), children: <InlineSpan>[
         TextSpan(text: required ? ' *' : '', style: Styles().textStyles.getTextStyle('widget.label.small.fat'),),
       ])
     )

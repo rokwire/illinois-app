@@ -98,7 +98,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue),
         child: Stack(children: [
-          Visibility(visible: (_loading != true), child: Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())),
+          Visibility(visible: (_loading != true), child: _buildMessagesContent()),
           Visibility(
               visible: (_loading == true),
               child: Align(
@@ -189,7 +189,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   Widget _buildHeaderSection() {
     return Container(
         decoration: BoxDecoration(color: Styles().colors.background),
-        padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 16),
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,8 +205,8 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
             onTap: _onTapFilter,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
-                    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+                    color: Styles().colors.surface,
+                    border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
                     borderRadius: BorderRadius.circular(18)),
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
@@ -254,7 +254,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
             child: UnderlinedButton(
                 title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
                 titleStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.zero,
                 progress: _loadingMarkAllAsRead,
                 onTap: _onTapMarkAllAsRead)));
   }

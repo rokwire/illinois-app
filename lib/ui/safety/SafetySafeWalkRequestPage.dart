@@ -207,7 +207,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     Analytics().logSelect(target: 'SafeWalks Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Styles().colors.surface,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),

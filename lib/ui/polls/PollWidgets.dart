@@ -369,7 +369,7 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
   void _onPollOptionsTap() {
     Analytics().logSelect(target: "Options");
 
-    showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true,
+    showModalBottomSheet(context: context, backgroundColor: Styles().colors.surface, isScrollControlled: true, isDismissible: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),

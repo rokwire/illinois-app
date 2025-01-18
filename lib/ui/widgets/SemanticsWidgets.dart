@@ -37,7 +37,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
         Opacity(opacity: _previousButtonAvailable ? 1 : 0, child:
           Semantics(label: "Previous Page", button: true, child:
             IconButton(onPressed: _onTapPrevious, icon:
-              Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true) ?? Container()
+              Styles().images.getImage('caret-left', size: 14.0, excludeFromSemantics: true) ?? Container()
             )
           )
         ),
@@ -47,7 +47,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
         Opacity(opacity: _nextButtonAvailable ? 1 : 0, child:
           Semantics(label: "Next Page", button: true, child:
             IconButton(onPressed: _onTapNext, icon:
-              Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container()
+              Styles().images.getImage('caret-right', size: 14.0, excludeFromSemantics: true) ?? Container()
             )
           )
         )

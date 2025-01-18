@@ -94,7 +94,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
       body: _buildScaffoldContent(),
     );
   }
@@ -167,7 +167,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
     else if (StringUtils.isNotEmpty(widget.description)) {
       return Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles.getTextStyle("widget.description.regular")),
+        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles.getTextStyle("widget.description.regular.light")),
       );
     }
     else {
@@ -428,10 +428,10 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         Expanded(flex: 1, child: Container()),
         Expanded(flex: 2, child: RoundedButton(
           label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-            textColor: canClearAttributes ? Styles().colors.fillColorPrimary : Styles().colors.textMedium,
-            borderColor: canClearAttributes ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-          backgroundColor: Styles().colors.surface,
-          textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant'),
+          textColor: Styles().colors.fillColorPrimary,
+          borderColor: Styles().colors.fillColorSecondary,
+          backgroundColor: Styles().colors.background,
+          textStyle: canClearAttributes ? Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.medium.fat.variant_two'),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           enabled: canClearAttributes,
           onTap: _onTapClearAttributes
@@ -513,13 +513,13 @@ class _AttributeRibbonButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4))
+          borderRadius: BorderRadius.all(Radius.circular(8))
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
           Semantics(container: true, label: title, hint: hint, excludeSemantics: true, child:
             Row(children: [
               Expanded(child:
-                Padding(padding: EdgeInsets.only(left: 12, top: 18, bottom: 18), child:
+                Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
                   Text(title ?? '', style: textStyle),
                 ),
               ),

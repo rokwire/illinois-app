@@ -201,7 +201,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       if (StringUtils.isNotEmpty(_photoText)) {
         showModalBottomSheet(
           context: context,
-          backgroundColor: Colors.white,
+          backgroundColor: Styles().colors.surface,
           isScrollControlled: true,
           isDismissible: true,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),

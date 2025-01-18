@@ -74,11 +74,11 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       contentMap.forEach((String section, List<ContentAttributeValue> sectionAttributeValues) {
 
         // section heading
-        if (section.isEmpty) {
-          section = widget.attribute.title ?? '';
-        }
-        section = widget.attribute.displayString(section) ?? section;
-        _contentList.add(section); 
+        // if (section.isEmpty) {
+        //   section = widget.attribute.title ?? '';
+        // }
+        // section = widget.attribute.displayString(section) ?? section;
+        // _contentList.add(section);
 
         // section entries
         String? attributeGroup;
@@ -159,9 +159,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       );
     }
     else if (sourceData == _ContentItem.groupSeparator) {
-      return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 0), child:
-        Container(height: 1, color: Styles().colors.fillColorPrimary,)
-      );
+      return Container(height: 2, color: Styles().colors.fillColorPrimary,);
     }
     else if (sourceData == _ContentItem.spacing) {
       return Container(height: 24,);

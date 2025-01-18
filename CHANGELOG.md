@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - NEOM U
 ### Fixed
+- Events filter styling and group details header UI [#35](https://github.com/rokmetro/neom-app/issues/35)
 - Fix onboarding profile name entry [#36](https://github.com/rokmetro/neom-app/issues/36)
 
 ## [0.5.1] = 2025-01-08

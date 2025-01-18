@@ -75,7 +75,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.attributes.filters.time_range.header.title', 'Date & Time'), actions: _isModified ? <Widget>[_buildApplyButton(enabled: _canApply)] : null,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -127,7 +127,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
                 DropdownButton<Location>(
                   icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
-                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.light.regular"),
                   hint: Text(_timeZone.name,),
                   items: _buildTimeZoneDropDownItems(),
                   onChanged: _onTimeZoneChanged
@@ -255,7 +255,20 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+      context: context,
+      initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              dayPeriodColor: Styles().colors.fillColorSecondary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -294,7 +307,20 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+      context: context,
+      initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              dayPeriodColor: Styles().colors.fillColorSecondary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;

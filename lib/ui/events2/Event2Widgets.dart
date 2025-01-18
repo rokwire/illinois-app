@@ -662,7 +662,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Styles().colors.surface,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),

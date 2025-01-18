@@ -194,7 +194,7 @@
 				"wellness_podcast"                        : false,
 				"campus_safety_resources"                 : false,
 				"twitter"                                 : false,
-				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
+				"messages"                                : true,
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
 				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",

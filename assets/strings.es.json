@@ -1302,7 +1302,7 @@
     "panel.events2.home.bar.button.share.title": "Share Event Set",
     "panel.events2.home.bar.button.share.hint": "Tap to share current event set",
     "panel.events2.home.attributes.filters.header.title": "Filtros para los Eventos",
-    "panel.events2.home.attributes.filters.header.description": "Elije uno o más atributos para filtrar los eventos",
+    "panel.events2.home.attributes.filters.header.description": "Elije uno o más atributos para filtrar los eventos.",
     "panel.events2.home.attributes.filter.label.title": "Filtrar: ",
     "panel.events2.home.attributes.sort.label.title": "Ordenar: ",
     "panel.events2.home.attributes.events.label.title": "Eventos: ",

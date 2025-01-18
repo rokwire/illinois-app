@@ -141,11 +141,11 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   Widget _buildSubmit() {
     if (widget.group?.researchProject != true) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.background, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
-            backgroundColor: Styles().colors.surface,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.background,
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

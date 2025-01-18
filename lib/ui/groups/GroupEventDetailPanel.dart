@@ -661,7 +661,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.white,
+        backgroundColor: Styles().colors.surface,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(
@@ -687,7 +687,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           header: true,
                           excludeSemantics: true,
                           child: Text(title,
-                            style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")
+                            style: Styles().textStyles.getTextStyle("widget.title.dark.tiny")
                           ),
                         ),
                         Container(
