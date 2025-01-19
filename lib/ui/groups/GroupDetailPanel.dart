@@ -2071,11 +2071,14 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
           type: PostType.post,
           status: PostStatus.active,
           sortBy: SocialSortBy.date_created).
-            then((List<Post>? posts) =>
-                setStateIfMounted(() =>
-                  _pinedPosts = posts?.where(
-                          (post) => post.isPinned == true
-                  ).toList() ?? []));
+            then((List<Post>? posts) {
+                List<Post> allPinnedPosts = posts?.where(
+                        (post) => post.isPinned == true
+                ).toList() ?? [];
+                setStateIfMounted(() {
+                  _pinedPosts = CollectionUtils.isNotEmpty(allPinnedPosts) ? allPinnedPosts.take(1).toList() : [];
+                });
+              });
 
   // Member?  _getPostCreatorAsMember(Post? post) {
   //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
