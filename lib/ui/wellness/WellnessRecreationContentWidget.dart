@@ -111,15 +111,13 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
 
     String? url = JsonUtils.stringValue(command['url']);
     if (StringUtils.isNotEmpty(url)) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
+          launchUrl(uri,
+              mode: DeepLink().isAppUrl(url) ?
+                LaunchMode.platformDefault :
+                LaunchMode.externalApplication);
         }
-      }
     }
   }
 
