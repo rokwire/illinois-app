@@ -1932,7 +1932,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
 
   Widget _buildPosts() {
     List<Widget> postsContent = _buildPostCardsContent(posts: _posts, lastPostKey: _lastPostKey);
-    List<Widget> pinnedPostsContent =_buildPostCardsContent(posts: _pinedPosts);
+    List<Widget> pinnedPostsContent =_buildPostCardsContent(posts: _pinedPosts, pinned: true);
     if(CollectionUtils.isNotEmpty(_pinedPosts)){
       pinnedPostsContent.add(Container(height: 24,));
     }
@@ -1970,7 +1970,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     ]);
   }
 
-  List<Widget> _buildPostCardsContent({required List<Post> posts, GlobalKey? lastPostKey}){
+  List<Widget> _buildPostCardsContent({required List<Post> posts, GlobalKey? lastPostKey, bool pinned = false}){
     List<Widget> content = [];
     for (int i = 0; i <posts.length ; i++) {
       Post? post = posts[i];
@@ -1982,6 +1982,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
+        pinned: pinned,
         isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
       ));
     }
@@ -2071,11 +2072,14 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
           type: PostType.post,
           status: PostStatus.active,
           sortBy: SocialSortBy.date_created).
-            then((List<Post>? posts) =>
-                setStateIfMounted(() =>
-                  _pinedPosts = posts?.where(
-                          (post) => post.isPinned == true
-                  ).toList() ?? []));
+            then((List<Post>? posts) {
+                List<Post> allPinnedPosts = posts?.where(
+                        (post) => post.isPinned == true
+                ).toList() ?? [];
+                setStateIfMounted(() {
+                  _pinedPosts = CollectionUtils.isNotEmpty(allPinnedPosts) ? allPinnedPosts.take(1).toList() : [];
+                });
+              });
 
   // Member?  _getPostCreatorAsMember(Post? post) {
   //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
