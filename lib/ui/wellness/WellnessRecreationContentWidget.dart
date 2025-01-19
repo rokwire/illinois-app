@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -25,7 +29,7 @@ class WellnessRecreationContentWidget extends StatefulWidget{
 }
 
 class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> implements NotificationsListener {
-  Map<String, dynamic>? _video;
+  Video? _video;
   List<dynamic>? _commands;
   Map<String, dynamic>? _strings;
 
@@ -66,9 +70,48 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
+      _buildVideoContent,
+      Container(height: 16,),
       _buildRegularButtonsContainer(),
+      Container(height: 8,),
+      _buildLargeButtonsContainer()
     ]));
   }
+
+  Widget get _buildVideoContent {
+    if (_video == null) {
+      return Container();
+    }
+    String? imageUrl = _video!.thumbUrl;
+    bool hasImage = StringUtils.isNotEmpty(imageUrl);
+    final Widget emptyImagePlaceholder = Container(height: 102);
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
+        child: Stack(children: [
+          Semantics(button: true,
+              label: "${_video!.title ?? ""} video",
+              child: GestureDetector(
+                  onTap: _onTapVideo,
+                  child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Stack(alignment: Alignment.center, children: [
+                        hasImage
+                            ? ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: Image.network(imageUrl!,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  return (loadingProgress == null) ? child : emptyImagePlaceholder;
+                                }))
+                            : emptyImagePlaceholder,
+                        VideoPlayButton()
+                      ])))),
+          Container(color: Styles().colors.accentColor3, height: 4)
+        ]));
+  }
+
 
   Widget _buildRegularButtonsContainer() {
     List<Widget> widgetList = <Widget>[];
@@ -98,9 +141,47 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
     }
 
     return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
-    Column(children: widgetList)
+      Column(children: widgetList)
     );
+  }
 
+  Widget _buildLargeButtonsContainer() {
+    List<Widget> widgetList = <Widget>[];
+    if (_commands != null) {
+      for (dynamic entry in _commands!) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+        if (command != null) {
+          String? type = JsonUtils.stringValue(command['type']);
+          if (type == 'large') {
+            String? id = JsonUtils.stringValue(command['id']);
+            Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
+            if (widgetList.isNotEmpty) {
+              widgetList.add(Container(height: 8));
+            }
+            widgetList.add(WellnessLargeResourceButton(
+              label: _getString(id),
+              favorite: favorite,
+              hasChevron: JsonUtils.boolValue(command['chevron']),
+              hasExternalLink: JsonUtils.boolValue(command['external_link']) ?? UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
+              onTap: () => _onCommand(command),
+            ));
+          }
+        }
+      }
+    }
+
+    widgetList.add(Container(height: 16,));
+
+    return Column(children: widgetList);
+  }
+
+  void _onTapVideo() {
+    if (_video != null) {
+      Analytics().logSelect(target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: JsonUtils.mapValue(_video!.analyticsAttributes));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          AppHelpVideoTutorialPanel(videoTutorial: _video!, analyticsFeature: AnalyticsFeature.WellnessMentalHealth,)
+      ));
+    }
   }
 
   void _onCommand(Map<String, dynamic> command) {
@@ -124,7 +205,7 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
   void _initContent() async {
     // Map<String, dynamic>? content = Wellness().resources;
     Map<String, dynamic>? content = JsonUtils.mapValue(JsonUtils.mapValue(await _loadContentFromAsset)?[WellnessRecreationContentWidget.wellnessCategoryKey]);
-    _video = (content != null) ? JsonUtils.mapValue(content['video']) : null;
+    _video = (content != null) ? Video.fromJson(JsonUtils.mapValue(content['video'])) : null;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(_commands, category: widget.wellnessCategory);
