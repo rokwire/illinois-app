@@ -269,6 +269,39 @@
 				"environmental.10": "Put out the flame! U of I is a smoke-free campus. If you smoke, now is a good time to consider quitting. Contact <a href='https://mckinley.illinois.edu/health-education/nicotine-cessation'>McKinley Health Education</a> for resources and support."
 			}
 		}
+	},
+	"recreation": {
+		"video": {"url" : "https://campusrecplus-wellbeing.com/?_gl=1*15mdolo*_ga*MTIyMDc2NTgyMy4xNzMzMzUzNTg5*_ga_E44T8KHMFF*MTczMzM1MzU4OS4xLjEuMTczMzM1MzcxNS4wLjAuMA.."},
+		"commands": [
+			{"id":"hours_of_operation", "type": "regular", "url": "https://campusrec.illinois.edu/facilities/hours", "chevron": false},
+			{"id":"program_registration", "type": "regular", "url": "https://active.illinois.edu/program", "chevron": false},
+			{"id":"program_passes", "type": "regular", "url": "https://active.illinois.edu/home/signin?redirect=%252Fmultivisitpass%252Fgetproducts", "chevron":  false},
+			{"id":"reservations", "type": "regular", "url": "https://active.illinois.edu/booking", "chevron": false},
+			{"id":"internal_activities", "type": "regular", "url": "https://linktr.ee/uiucintramurals", "chevron": false},
+			{"id":"facilities", "type": "regular", "url": "https://campusrec.illinois.edu/facilities", "chevron": false},
+			{"id":"memberships", "type": "regular", "url": "https://active.illinois.edu/home/signin?redirect=%252Fmembership", "chevron": false},
+			{"id":"lockers", "type": "regular", "url": "https://campusrec.illinois.edu/membership/lockers", "chevron": false},
+			{"id":"program_calendar", "type": "regular", "url": "https://active.illinois.edu",  "chevron": false},
+			{"id":"group_fitness_calendar", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/events2_query?attributes={\"category\":\"Recreation, Health and Fitness\",\"recreation-health-fitness\":\"Group Fitness\"}", "external_link": false},
+			{"id":"ice_arena", "type": "regular", "url": "https://calendars.illinois.edu/list/2924", "chevron": false},
+			{"id":"employment", "type": "regular", "url": "https://calendars.illinois.edu/list/2924",  "chevron": false}
+		],
+		"strings": {
+			"en": {
+				"hours_of_operation": "Hours of Operation",
+				"program_registration": "Program Registration",
+				"program_passes": "Program Passes",
+				"reservations": "Reservations",
+				"internal_activities": "Intramural Activities",
+				"facilities": "Facilities",
+				"memberships": "Memberships",
+				"lockers": "Lockers",
+				"program_calendar": "Program Calendar",
+				"group_fitness_calendar": "Group Fitness Calendar",
+				"ice_arena": "Ice Arena",
+				"employment": "Employment"
+			}
+		}
 	}
 }
 

@@ -39,8 +39,8 @@ class WellnessResourcesContentWidget extends StatefulWidget {
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
 
-  static void ensureDefaultFavorites(List<dynamic>? commands) {
-    String favoriteKey = WellnessFavorite.favoriteKeyName(category: wellnessCategoryKey);
+  static void ensureDefaultFavorites(List<dynamic>? commands, {String category = wellnessCategoryKey}) {
+    String favoriteKey = WellnessFavorite.favoriteKeyName(category: category);
     if ((Auth2().prefs?.getFavorites(favoriteKey) == null) && (commands != null)) {
 
       List<dynamic> sortedCommands = List.from(commands);
@@ -262,10 +262,11 @@ class WellnessRegularResourceButton extends StatelessWidget {
   final String? label;
   final Favorite? favorite;
   final bool hasExternalLink;
+  final bool hasChevron;
   final bool hasBorder;
   final void Function()? onTap;
 
-  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false, this.hasBorder = false, this.onTap}) : super(key: key);
+  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false, this.hasBorder = false, this.onTap, this.hasChevron = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -286,9 +287,9 @@ class WellnessRegularResourceButton extends StatelessWidget {
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
           Styles().images.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
-        Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
-        ),
+       hasChevron? Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
+            Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
+        ): Container(width: 16,),
       ]),
     );
   }
