@@ -1042,10 +1042,11 @@ class GroupPostCard extends StatefulWidget {
   final Group group;
   final bool? isAdmin;
   final bool? isClickable;
+  final bool? pinned;
   // final Member? creator;
   // final StreamController? updateController;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.postReactions}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.postReactions, this.pinned}) :
     super(key: key);
 
   @override
@@ -1201,7 +1202,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
         ))
     ]));
 
-  Widget get _pinWidget => Visibility(visible: widget.post?.isPinned == true, child:
+  Widget get _pinWidget => Visibility(visible: widget.pinned == true, child:
       InkWell(
         onTap: _onUnpin ,
         child: Container(
