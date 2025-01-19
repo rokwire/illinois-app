@@ -53,4 +53,7 @@ class DeepLink extends rokwire.DeepLink {
   
   @override
   String? get appHost => 'rokwire.illinois.edu';
+
+  @override
+  void launchUri(Uri? uri) => handleUri(uri); //TBD discuss how to invoke handleUri and notifyUiUri
 }
