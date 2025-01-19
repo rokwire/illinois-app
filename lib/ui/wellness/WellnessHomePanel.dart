@@ -26,6 +26,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessRecreationContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSuccessTeamContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessAppointmentsContentWidget.dart';
@@ -43,7 +44,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, struggling, }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, struggling, recreation}
 
 class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'AcademicsHomePanel';
@@ -63,6 +64,7 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
     WellnessContent.successTeam:    AnalyticsFeature.WellnessSuccessTeam,
     WellnessContent.podcast:        AnalyticsFeature.WellnessPodcast,
     WellnessContent.struggling:     AnalyticsFeature.WellnessStruggling,
+    WellnessContent.recreation:     AnalyticsFeature.WellnessRecreation,
   };
 
   WellnessHomePanel({this.content, this.rootTabDisplay = false});
@@ -301,6 +303,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.recreation:
+        return WellnessRecreationContentWidget();
       case WellnessContent.mentalHealth:
         return WellnessMentalHealthContentWidget();
       case WellnessContent.successTeam:
@@ -362,6 +366,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Illini Podcast', language: language);
       case WellnessContent.struggling:
         return _loadContentString('panel.wellness.section.struggling.label', 'I\'m Struggling', language: language);
+      case WellnessContent.recreation:
+        return _loadContentString('panel.wellness.section.recreation.label', 'Campus Recreation', language: language); //TBD localize
     }
   }
 
@@ -390,6 +396,7 @@ class WellnessFavorite extends Favorite {
 extension WellnessContentImpl on WellnessContent {
   static WellnessContent? fromString(String? value) {
     switch (value) {
+      case 'recreation':      return WellnessContent.recreation;
       case 'daily_tips':      return WellnessContent.dailyTips;
       case 'rings':           return WellnessContent.rings;
       case 'todo_list':       return WellnessContent.todo;
