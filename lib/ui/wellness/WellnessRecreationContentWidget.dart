@@ -204,7 +204,9 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
 
   void _initContent() async {
     // Map<String, dynamic>? content = Wellness().resources;
-    Map<String, dynamic>? content = JsonUtils.mapValue(JsonUtils.mapValue(await _loadContentFromAsset)?[WellnessRecreationContentWidget.wellnessCategoryKey]);
+    Map<String, dynamic>? wellnessContent = JsonUtils.mapValue(JsonUtils.mapValue(await _loadWellnessContentFromAsset));
+    Map<String, dynamic>? content = wellnessContent?[WellnessRecreationContentWidget.wellnessCategoryKey];
+
     _video = (content != null) ? Video.fromJson(JsonUtils.mapValue(content['video'])) : null;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
@@ -233,8 +235,8 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
   }
 
   static const String _assetsName   = "wellness.json";
-  String get appAssetsKey => 'assets/extra/$_assetsName';
+  String get appAssetsKey => 'assets/$_assetsName';
 
-  //TBD load from wellness service - content
-  Future<Map<String, dynamic>?> get _loadContentFromAsset async => await loadFromAssets(appAssetsKey);
+  //TBD load from wellness service - content. TBD consider moving to Content BB.
+  Future<Map<String, dynamic>?> get _loadWellnessContentFromAsset async => await loadFromAssets(appAssetsKey);
 }

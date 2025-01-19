@@ -1,0 +1,41 @@
+{
+	"recreation": {
+		"video": {
+			"id": "recreation_video",
+			"title": "3 ways exercise can help you succeed in school",
+			"video_url" : "https://tagging-tool-s3.s3.us-east-2.amazonaws.com/hls/3 Ways Excercise Helps/1659291742803/manifest.m3u8",
+			"image_url" : "https://tagging-tool-s3.s3.us-east-2.amazonaws.com/env/tt-light-prod/uploads/95654d84-8c03-406d-89d9-59bb7f24a13e/4b4af357-4aca-4e21-8a4b-3e1a9d661a41_thumbnail-at-2-seconds.jpg"
+		},
+		"commands": [
+			{"id":"hours_of_operation", "type": "large", "url": "https://campusrec.illinois.edu/facilities/hours"},
+			{"id":"program_registration", "type": "large", "url": "https://active.illinois.edu/program"},
+			{"id":"program_passes", "type": "large", "url": "https://active.illinois.edu/home/signin?redirect=%252Fmultivisitpass%252Fgetproducts"},
+			{"id":"reservations", "type": "large", "url": "https://active.illinois.edu/booking"},
+			{"id":"internal_activities", "type": "large", "url": "https://linktr.ee/uiucintramurals"},
+			{"id":"facilities", "type": "large", "url": "https://campusrec.illinois.edu/facilities"},
+			{"id":"memberships", "type": "large", "url": "https://active.illinois.edu/home/signin?redirect=%252Fmembership"},
+			{"id":"lockers", "type": "large", "url": "https://campusrec.illinois.edu/membership/lockers"},
+			{"id":"program_calendar", "type": "large", "url": "https://active.illinois.edu"},
+			{"id":"group_fitness_calendar", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/events2_query?attributes={\"category\":\"Recreation, Health and Fitness\",\"recreation-health-fitness\":\"Group Fitness\"}", "external_link": false, "chevron":  true},
+			{"id":"ice_arena", "type": "large", "url": "https://calendars.illinois.edu/list/2924"},
+			{"id":"employment", "type": "large", "url": "https://calendars.illinois.edu/list/2924"}
+		],
+		"strings": {
+			"en": {
+				"hours_of_operation": "Hours of Operation",
+				"program_registration": "Program Registration",
+				"program_passes": "Program Passes",
+				"reservations": "Reservations",
+				"internal_activities": "Intramural Activities",
+				"facilities": "Facilities",
+				"memberships": "Memberships",
+				"lockers": "Lockers",
+				"program_calendar": "Program Calendar",
+				"group_fitness_calendar": "Group Fitness Calendar",
+				"ice_arena": "Ice Arena",
+				"employment": "Employment"
+			}
+		}
+	}
+}
+
