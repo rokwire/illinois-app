@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AppointmentsContentWidget: mechanism to override dropdown Title and Layout content for some providers [#4484](https://github.com/rokwire/illinois-app/issues/4484).
 - Update title style for Appointment, AthleticsNews and Dining detail panels [#4487](https://github.com/rokwire/illinois-app/issues/4487).
 - Cleaned up Share Virtual Card, implemented share via QR code [#4605](https://github.com/rokwire/illinois-app/issues/4605).
+- Dining UI updates: card update [#4602](https://github.com/rokwire/illinois-app/issues/4602).
 
 ## [6.1.42] - 2025-01-17
 ### Fixed
