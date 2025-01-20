@@ -540,9 +540,7 @@ class DirectoryProfilePhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ImageProvider<Object>? decorationImage = _decorationImage;
-    return (decorationImage != null) ?
-      Container(
+    return Container(
         width: imageSize + borderSize, height: imageSize + borderSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -555,27 +553,32 @@ class DirectoryProfilePhoto extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Styles().colors.background,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: decorationImage
-              ),
-            )
+            ),
+            child: ClipRRect(child: _profileImage, borderRadius: BorderRadius.circular(imageSize / 2)),
           )
         ),
-      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+      );
   }
 
-    ImageProvider<Object>? get _decorationImage {
-      if (photoData != null) {
-        return Image.memory(photoData ?? Uint8List(0)).image;
-      }
-      else if (photoUrl != null) {
-        return NetworkImage(photoUrl ?? '', headers: photoUrlHeaders);
-      }
-      else {
-        return null;
-      }
-    } 
+  Widget get _profileImage {
+    final BoxFit defaultFit = BoxFit.cover;
+    final Widget placeHolder =
+        (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+
+    if (photoData != null) {
+      return Image.memory(photoData ?? Uint8List(0), fit: defaultFit);
+    } else if (photoUrl != null) {
+      return Image.network(photoUrl ?? '', headers: photoUrlHeaders, fit: defaultFit, errorBuilder: (
+        context,
+        error,
+        stackTrace,
+      ) {
+        return placeHolder;
+      });
+    } else {
+      return placeHolder;
+    }
+  }
 }
 
 // DirectoryProfilePhotoUtils

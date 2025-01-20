@@ -668,6 +668,8 @@
     "panel.settings.privacy_panel.privacy.entry.info.enabled": {"extends": "widget.toggle_button.title.small.thin.enabled"},
     "panel.settings.privacy_panel.privacy.entry.info.disabled": {"extends": "widget.toggle_button.title.small.thin.disabled"},
 
+    "panel.inbox.notifications.filter.muted.description": { "font_family": "regular_italic", "size": 10.0, "color": "textBackground"},
+
     "panel.settings.video_tutorial.caption.detail": {"extends": "widget.dialog.message.medium.thin"},
     "panel.settings.video_tutorial.msg": {"extends": "widget.dialog.message.regular.fat"},
     "panel.settings.video_tutorial.button": {"extends": "widget.colourful_button.title.medium.accent"},
@@ -761,6 +763,7 @@
     "panel.canvas.item.regular":  {"font_family": "regular", "size": 16.0, "color": "textSurfaceAccent"},
     "panel.canvas.item.regular.fat":  {"font_family": "bold", "size": 16.0, "color": "textSurfaceAccent"},
 
+    "common.panel.title": {"font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "common.title.secondary": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "common.body": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
     "common.body.italic": {"extends": "common.body", "font_family": "regular_italic"},
@@ -801,6 +804,7 @@
     "info": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "edit": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "trash": {"src": "0xf2ed", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "trash-blue": {"src": "0xf2ed", "type": "fa.icon", "weight": "regular", "color": "fillColorPrimary", "size": 14},
     "feedback": {"src": "images/icon-feedback.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "posts": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "reply": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},

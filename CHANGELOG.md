@@ -5,6 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Pinned group posts: one pinned post at a time [#4629](https://github.com/rokwire/illinois-app/issues/4629).
+- Pinned group posts: displaying twice [#4630](https://github.com/rokwire/illinois-app/issues/4630).
+- Crash in directory profile photo [#4645](https://github.com/rokwire/illinois-app/issues/4645).
+### Added
+- Campus Recreation page [#4499](https://github.com/rokwire/illinois-app/issues/4499).
+### Changed
+- AppointmentsContentWidget: mechanism to override dropdown Title and Layout content for some providers [#4484](https://github.com/rokwire/illinois-app/issues/4484).
+- Update title style for Appointment, AthleticsNews and Dining detail panels [#4487](https://github.com/rokwire/illinois-app/issues/4487).
+
+## [6.1.42] - 2025-01-17
+### Fixed
+- Appointments: fix drop down dym layer size [#4480](https://github.com/rokwire/illinois-app/issues/4480).
+### Changed
+- Updated onboarding profile info page [#4612](https://github.com/rokwire/illinois-app/issues/4612).
+- Control Messages/Connections availability from app storage settings  [#4631](https://github.com/rokwire/illinois-app/issues/4632).
+- Notifications UI [#4489](https://github.com/rokwire/illinois-app/issues/4489).
+
 ## [6.1.41] - 2025-01-16
 ### Changed
 - Hide Connections (messaging) from Sections and Directory [#4622](https://github.com/rokwire/illinois-app/issues/4622).
