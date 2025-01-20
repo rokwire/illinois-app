@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Pinned group posts: one pinned post at a time [#4629](https://github.com/rokwire/illinois-app/issues/4629).
 - Pinned group posts: displaying twice [#4630](https://github.com/rokwire/illinois-app/issues/4630).
+- Crash in directory profile photo [#4645](https://github.com/rokwire/illinois-app/issues/4645).
 ### Added
 - Campus Recreation page [#4499](https://github.com/rokwire/illinois-app/issues/4499).
 ### Changed
