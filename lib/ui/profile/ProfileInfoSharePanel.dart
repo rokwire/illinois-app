@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -6,15 +5,14 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:share/share.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 
@@ -81,7 +79,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     ),
     _buildCommand(
         icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
-        text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcf.text', 'Share Virtual Card'),
+        text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Share Virtual Card'),
       progress: _sharingVirtualCard,
         onTap: _onTapShareVirtualCard,
     ),
@@ -132,7 +130,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       if (mounted) {
         if (byteData != null) {
           Uint8List buffer = byteData.buffer.asUint8List();
-          String saveFileName = '${widget.profile?.vcfFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
+          String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
           bool? saveResult = await ImageUtils.saveToFs(buffer, saveFileName) ?? false;
           if (mounted) {
             setState(() {
@@ -166,8 +164,17 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   void _onTapShareVirtualCard() async {
     Analytics().logSelect(target: 'Share Virtual Card');
+    QrCodePanel.presentProfile(context,
+      profile: widget.profile,
+      photoImageData: widget.photoImageData,
+      pronunciationAudioData: widget.pronunciationAudioData,
+    );
+  }
 
-    String? vcfContent = widget.profile?.toVCF(
+  /*void _onTapShareVirtualCard1() async {
+    Analytics().logSelect(target: 'Share Virtual Card');
+
+    String? vcfContent = widget.profile?.toVCard(
       photoImageData: widget.photoImageData,
     );
     if ((vcfContent != null) && vcfContent.isNotEmpty) {
@@ -176,7 +183,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       });
 
       final String dir = (await getApplicationDocumentsDirectory()).path;
-      final String saveFileName = '${widget.profile?.vcfFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
+      final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
       final String fullPath = '$dir/$saveFileName.vcf';
       File capturedFile = File(fullPath);
       await capturedFile.writeAsString(vcfContent);
@@ -186,11 +193,11 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         });
         Share.shareFiles([fullPath],
           mimeTypes: ['text/vcard'],
-          text: widget.profile?.vcfFullName,
+          text: widget.profile?.vcardFullName,
         );
       }
     }
-  }
+  }*/
 
   void _onTapShareViaEmail() => _onTBD();
   void _onTapShareViaTextMessage() => _onTBD();
