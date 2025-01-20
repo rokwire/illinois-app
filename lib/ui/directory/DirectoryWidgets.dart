@@ -554,7 +554,7 @@ class DirectoryProfilePhoto extends StatelessWidget {
               shape: BoxShape.circle,
               color: Styles().colors.background,
             ),
-            child: _profileImage,
+            child: ClipRRect(child: _profileImage, borderRadius: BorderRadius.circular(imageSize / 2)),
           )
         ),
       );
