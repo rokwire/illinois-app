@@ -24,6 +24,7 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -528,7 +529,7 @@ void _launchUrl(String? url) {
 
 // DirectoryProfilePhoto
 
-class DirectoryProfilePhoto extends StatelessWidget {
+class DirectoryProfilePhoto extends StatefulWidget {
 
   final String? photoUrl;
   final Map<String, String>? photoUrlHeaders;
@@ -539,9 +540,41 @@ class DirectoryProfilePhoto extends StatelessWidget {
   DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.borderSize = 0, required this.imageSize });
 
   @override
+  State<DirectoryProfilePhoto> createState() => _DirectoryProfilePhotoState();
+}
+
+class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
+  Uint8List? _photoBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _photoBytes = widget.photoData;
+    _loadNetworkPhoto();
+  }
+
+  void _loadNetworkPhoto() {
+    String? photoUrl = widget.photoUrl;
+    if ((_photoBytes == null) && StringUtils.isNotEmpty(photoUrl)) {
+      Network().get(photoUrl, headers: widget.photoUrlHeaders).then((response) {
+        int? responseCode = response?.statusCode;
+        if ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) {
+          setStateIfMounted(() {
+            _photoBytes = response?.bodyBytes;
+          });
+        } else {
+          debugPrint('${responseCode}: Failed to load photo with url: ${widget.photoUrl}');
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-        width: imageSize + borderSize, height: imageSize + borderSize,
+    ImageProvider<Object>? decorationImage = _decorationImage;
+    return (decorationImage != null) ?
+      Container(
+        width: widget.imageSize + widget.borderSize, height: widget.imageSize + widget.borderSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Styles().colors.white,
@@ -549,34 +582,26 @@ class DirectoryProfilePhoto extends StatelessWidget {
         ),
         child: Center(
           child: Container(
-            width: imageSize, height: imageSize,
+            width: widget.imageSize, height: widget.imageSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Styles().colors.background,
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: decorationImage
+              ),
             ),
-            child: ClipRRect(child: _profileImage, borderRadius: BorderRadius.circular(imageSize / 2)),
           )
         ),
-      );
+      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.imageSize + widget.borderSize) ?? Container());
   }
 
-  Widget get _profileImage {
-    final BoxFit defaultFit = BoxFit.cover;
-    final Widget placeHolder =
-        (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
-
-    if (photoData != null) {
-      return Image.memory(photoData ?? Uint8List(0), fit: defaultFit);
-    } else if (photoUrl != null) {
-      return Image.network(photoUrl ?? '', headers: photoUrlHeaders, fit: defaultFit, errorBuilder: (
-        context,
-        error,
-        stackTrace,
-      ) {
-        return placeHolder;
-      });
-    } else {
-      return placeHolder;
+  ImageProvider<Object>? get _decorationImage {
+    if (_photoBytes != null) {
+      return Image.memory(_photoBytes ?? Uint8List(0)).image;
+    }
+    else {
+      return null;
     }
   }
 }
