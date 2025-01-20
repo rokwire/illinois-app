@@ -1,6 +1,9 @@
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -13,6 +16,8 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/places.dart' as places;
@@ -30,7 +35,9 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
   //const Event2QrCodePanel({required this.event});
 
-  final String deepLinkUrl;
+  final String? deepLinkUrl;
+  final String? vcardQrCode;
+  final String? vcardShare;
 
   final String saveFileName;
   final String? saveWatermarkText;
@@ -39,10 +46,13 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   final String? title;
   final String? description;
 
+  final bool modalSheet;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  const QrCodePanel({Key? key,
-    required this.deepLinkUrl,
+  QrCodePanel({Key? key,
+    this.deepLinkUrl,
+    this.vcardQrCode,
+    this.vcardShare,
 
     required this.saveFileName,
     this.saveWatermarkText,
@@ -51,6 +61,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     this.title,
     this.description,
 
+    this.modalSheet = false,
     this.analyticsFeature,
   });
 
@@ -133,6 +144,34 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
   );
 
+  factory QrCodePanel.fromProfile({ Key? key, Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, bool modalSheet = false, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key, modalSheet: modalSheet,
+    vcardQrCode: profile?.toVCard(), // photoImageData: photoImageData
+    vcardShare: profile?.toVCard(photoImageData: photoImageData),
+    saveFileName: profile?.vcardFullName ?? 'Virtual Card',
+    saveWatermarkText: profile?.vcardFullName,
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.virtual_card.title', 'Virtual Card'),
+    description: Localization().getStringEx('panel.qr_code.virtual_card.description.label', 'Scan the QR code image bellow to import your Virtual Card.'),
+  );
+
+  static void presentProfile(BuildContext context, { Key? key, Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, AnalyticsFeature? analyticsFeature}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: Styles().colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (context) => QrCodePanel.fromProfile(
+        profile: profile,
+        photoImageData: photoImageData,
+        pronunciationAudioData: pronunciationAudioData,
+        modalSheet: true,
+      ),
+    );
+  }
+
   @override
   State<StatefulWidget> createState() => _QrCodePanelState();
 }
@@ -145,15 +184,104 @@ class _QrCodePanelState extends State<QrCodePanel> {
   void initState() {
     super.initState();
     _loadQrImageBytes().then((imageBytes) {
-      setState(() {
+      setStateIfMounted(() {
         _qrCodeBytes = imageBytes;
       });
     });
   }
 
+  @override
+  Widget build(BuildContext context) => widget.modalSheet ? _modalSheetContent : _scaffoldContent;
+
+  Widget get _modalSheetContent => Column(mainAxisSize: MainAxisSize.min, children: [
+    Row(children: [
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 24,), child:
+          Text(widget.title ?? '', style: Styles().textStyles.getTextStyle('widget.message.regular.extra_fat'),)
+        )
+      ),
+      Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+        InkWell(onTap : _onTapClose, child:
+          Container(padding: EdgeInsets.only(left: 8, right: 24, top: 16, bottom: 16), child:
+            Styles().images.getImage('close-circle', excludeFromSemantics: true),
+          ),
+        ),
+      ),
+    ],),
+    Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
+      _panelContent,
+    ),
+  ],);
+
+  Widget get _scaffoldContent => Scaffold(
+    appBar: HeaderBar(title: widget.title, textAlign: TextAlign.center,),
+    backgroundColor: Styles().colors.background,
+    body: SingleChildScrollView(child: Padding(padding: EdgeInsets.symmetric(vertical: 24), child: _panelContent)),
+  );
+
+  Widget get _panelContent =>
+    Container(padding: EdgeInsets.symmetric(horizontal: 24), color: _backgroundColor, child:
+      Column(children: [
+        Text(widget.description ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+        Padding(padding: EdgeInsets.only(top: 24), child: (_qrCodeBytes != null) ?
+          Semantics(label: Localization().getStringEx('panel.qr_code.code.hint', "QR code image"), child:
+            Container(
+              decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+              padding: EdgeInsets.all(5),
+              child: Image.memory(_qrCodeBytes!,
+                fit: BoxFit.fitWidth,
+                semanticLabel: Localization().getStringEx("panel.qr_code.primary.heading.title", "Promotion Key"),
+              ),
+            ),
+          ) :
+          Container(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.width - 10, child:
+            Align(alignment: Alignment.center, child:
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+            ),
+          ),
+        ),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          RoundedButton(
+            label: Localization().getStringEx('panel.qr_code.button.save.title', 'Save QR Code'),
+            hint: '',
+            textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+            backgroundColor: _backgroundColor,
+            borderColor: Styles().colors.fillColorSecondary,
+            onTap: _onTapSave,
+          ),
+        ),
+        if (_canShareLink)
+          Padding(padding: EdgeInsets.only(top: 12), child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.qr_code.button.share_link.title', 'Share Link'),
+              hint: '',
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+              backgroundColor: _backgroundColor,
+              borderColor: Styles().colors.fillColorSecondary,
+              onTap: _onTapShareLink,
+            ),
+          ),
+        if (_canShareVCard)
+          Padding(padding: EdgeInsets.only(top: 12), child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.qr_code.button.share_vcard.title', 'Share Virtual Card'),
+              hint: '',
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+              backgroundColor: _backgroundColor,
+              borderColor: Styles().colors.fillColorSecondary,
+              onTap: _onTapShareVCard,
+            ),
+          ),
+          Padding(padding: EdgeInsets.only(top: 12)),
+      ],),
+    );
+
+  Color? get _backgroundColor => widget.modalSheet ?
+    Styles().colors.white : Styles().colors.background;
+
   Future<Uint8List?> _loadQrImageBytes() async {
     return await NativeCommunicator().getBarcodeImageData({
-      'content': _promotionUrl,
+      'content': _promotionUrl ?? widget.vcardQrCode,
       'format': 'qrCode',
       'width': _imageSize,
       'height': _imageSize,
@@ -161,7 +289,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
   }
 
   Future<void> _saveQrCode() async {
-    Analytics().logSelect(target: "Save Event QR Code");
+    Analytics().logSelect(target: "Save QR Code");
 
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.qr_code.alert.no_qr_code.msg", "There is no QR Code"));
@@ -192,97 +320,52 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: widget.title,
-        textAlign: TextAlign.center,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Styles().colors.background,
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                    widget.description ?? '',
-                    style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 24),
-                  child: ((_qrCodeBytes != null)
-                      ? Semantics(
-                    label: Localization().getStringEx('panel.qr_code.code.hint', "QR code image"),
-                    child: Container(
-                      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
-                      padding: EdgeInsets.all(5),
-                      child: Image.memory(
-                        _qrCodeBytes!,
-                        fit: BoxFit.fitWidth,
-                        semanticLabel: Localization().getStringEx("panel.qr_code.primary.heading.title", "Promotion Key"),
-                      ),
-                    ),
-                  )
-                      : Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width - 10,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 24, bottom: 12),
-                  child: RoundedButton(
-                    label: Localization().getStringEx('panel.qr_code.button.save.title', 'Save QR Code'),
-                    hint: '',
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-                    backgroundColor: Styles().colors.background,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    onTap: _onTapSave,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 12),
-                  child: RoundedButton(
-                    label: Localization().getStringEx('panel.qr_code.button.share.title', 'Share Link'),
-                    hint: '',
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    backgroundColor: Styles().colors.background,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    onTap: _onTapShare,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-      backgroundColor: Styles().colors.background,
-    );
-  }
-
   void _onTapSave() {
-    Analytics().logSelect(target: 'Save Event Qr Code');
+    Analytics().logSelect(target: 'Save Qr Code');
     _saveQrCode();
   }
 
-  void _onTapShare() {
-    Analytics().logSelect(target: 'Share Event Qr Code');
-    Share.share(_promotionUrl);
+  String? get _promotionUrl {
+    if (widget.deepLinkUrl?.isNotEmpty == true) {
+      String? redirectUrl = Config().deepLinkRedirectUrl;
+      return ((redirectUrl != null) && redirectUrl.isNotEmpty) ? UrlUtils.buildWithQueryParameters(redirectUrl, <String, String>{
+        'target': widget.deepLinkUrl!
+      }) : widget.deepLinkUrl!;
+    }
+    else {
+      return null;
+    }
   }
 
-  String get _promotionUrl {
-    String? redirectUrl = Config().deepLinkRedirectUrl;
-    return ((redirectUrl != null) && redirectUrl.isNotEmpty) ? UrlUtils.buildWithQueryParameters(redirectUrl, <String, String>{
-      'target': widget.deepLinkUrl
-    }) : widget.deepLinkUrl;
+  bool get _canShareLink => (widget.deepLinkUrl?.isNotEmpty == true);
+
+  void _onTapShareLink() {
+    Analytics().logSelect(target: 'Share QR Code');
+    String? promotionUrl = _promotionUrl;
+    if (promotionUrl != null) {
+      Share.share(promotionUrl);
+    }
   }
+
+  bool get _canShareVCard => (widget.vcardShare?.isNotEmpty == true);
+
+  void _onTapShareVCard() async {
+    Analytics().logSelect(target: 'Share Virtual Card');
+    final String dir = (await getApplicationDocumentsDirectory()).path;
+    final String fullPath = '$dir/${widget.saveFileName}.vcf';
+    File capturedFile = File(fullPath);
+    await capturedFile.writeAsString(widget.vcardShare ?? '');
+    if (mounted) {
+      Share.shareFiles([fullPath],
+        mimeTypes: ['text/vcard'],
+        text: widget.saveWatermarkText,
+      );
+    }
+  }
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
 }

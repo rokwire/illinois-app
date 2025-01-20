@@ -131,7 +131,11 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-    ProfileInfoSharePanel.present(context, profile: _profile);
+    ProfileInfoSharePanel.present(context,
+      profile: _profile,
+      photoImageData: widget.photoImageData,
+      pronunciationAudioData: widget.pronunciationAudioData,
+    );
   }
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
