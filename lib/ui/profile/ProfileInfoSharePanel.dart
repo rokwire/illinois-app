@@ -19,10 +19,16 @@ import 'package:share/share.dart';
 class ProfileInfoSharePanel extends StatefulWidget {
 
   final Auth2UserProfile? profile;
+  final Uint8List? photoImageData;
+  final Uint8List? pronunciationAudioData;
 
-  ProfileInfoSharePanel._({this.profile});
+  ProfileInfoSharePanel._({this.profile, this.photoImageData, this.pronunciationAudioData});
 
-  static void present(BuildContext context, { Auth2UserProfile? profile }) {
+  static void present(BuildContext context, {
+    Auth2UserProfile? profile,
+    Uint8List? photoImageData,
+    Uint8List? pronunciationAudioData,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -30,7 +36,11 @@ class ProfileInfoSharePanel extends StatefulWidget {
       clipBehavior: Clip.antiAlias,
       backgroundColor: Styles().colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-      builder: (context) => ProfileInfoSharePanel._(profile: profile,),
+      builder: (context) => ProfileInfoSharePanel._(
+        profile: profile,
+        photoImageData: photoImageData,
+        pronunciationAudioData: pronunciationAudioData,
+      ),
     );
   }
   
@@ -122,7 +132,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       if (mounted) {
         if (byteData != null) {
           Uint8List buffer = byteData.buffer.asUint8List();
-          String saveFileName = 'Contact Card ${DateTimeUtils.localDateTimeToString(DateTime.now())}';
+          String saveFileName = '${widget.profile?.vcfFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
           bool? saveResult = await ImageUtils.saveToFs(buffer, saveFileName) ?? false;
           if (mounted) {
             setState(() {
@@ -156,14 +166,17 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   void _onTapShareVirtualCard() async {
     Analytics().logSelect(target: 'Share Virtual Card');
-    String? vcfContent = widget.profile?.toVCF();
+
+    String? vcfContent = widget.profile?.toVCF(
+      photoImageData: widget.photoImageData,
+    );
     if ((vcfContent != null) && vcfContent.isNotEmpty) {
       setState(() {
         _sharingVirtualCard = true;
       });
 
       final String dir = (await getApplicationDocumentsDirectory()).path;
-      final String saveFileName = 'Virtual Contact Card ${DateTimeUtils.localDateTimeToString(DateTime.now())}';
+      final String saveFileName = '${widget.profile?.vcfFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
       final String fullPath = '$dir/$saveFileName.vcf';
       File capturedFile = File(fullPath);
       await capturedFile.writeAsString(vcfContent);
