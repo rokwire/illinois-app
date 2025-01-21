@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.44] - 2025-01-21
 ### Changed
 - Connections renamed to Conversations [#4651](https://github.com/rokwire/illinois-app/issues/4651).
+### Added
+- Handled share profile info via email, text message or clipboard [#4605](https://github.com/rokwire/illinois-app/issues/4605).
 
 ## [6.1.43] - 2025-01-20
 ### Fixed
