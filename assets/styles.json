@@ -297,6 +297,7 @@
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
     "widget.item.regular_underline.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline"},
     "widget.item.regular": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
+    "widget.item.regular_underline": { "font_family": "medium", "size": 16.0, "color": "textBackground", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textBackground"},
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
     "widget.item.small.thin": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
