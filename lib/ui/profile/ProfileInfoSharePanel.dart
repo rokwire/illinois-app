@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -33,12 +32,15 @@ class ProfileInfoSharePanel extends StatefulWidget {
     Uint8List? photoImageData,
     Uint8List? pronunciationAudioData,
   }) {
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
       backgroundColor: Styles().colors.white,
+      constraints: BoxConstraints(maxHeight: height),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => ProfileInfoSharePanel._(
         profile: profile,
@@ -62,56 +64,64 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
   bool _preparingClipboardText = false;
 
   @override
-  Widget build(BuildContext context) => Column(mainAxisSize: MainAxisSize.min, children: [
-    Align(alignment: Alignment.centerRight, child:
-      Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-        InkWell(onTap : _onTapClose, child:
-          Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-            Styles().images.getImage('close-circle', excludeFromSemantics: true),
+  Widget build(BuildContext context) => Stack(children: [
+    _panelContent,
+    Align(alignment: Alignment.topRight, child: _closeButton),
+  ],);
+
+  Widget get _panelContent => SingleChildScrollView(child:
+    Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
+      Column(children: [
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          RepaintBoundary(key: _repaintBoundaryKey, child:
+            DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
           ),
         ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+          Container(color: Styles().colors.surfaceAccent, height: 1,),
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('down-to-bracket', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.save.text', 'Save to Photos'),
+          progress: _savingToPhotos,
+          onTap: _onTapSaveToPhotos,
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Share Virtual Card'),
+          progress: _sharingVirtualCard,
+          onTap: _onTapShareVirtualCard,
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('envelope', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share via Email'),
+          progress: _preparingEmail,
+          onTap: _onTapShareViaEmail,
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('message-lines', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.message.text', 'Share via Text Message'),
+          progress: _preparingTextMessage,
+          onTap: _onTapShareViaTextMessage,
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('copy-fa', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.copy.clipboard.text', 'Copy Text to Clipboard'),
+          progress: _preparingClipboardText,
+          onTap: _onTapCopyTextToClipboard,
+        ),
+      ]),
+    ),
+  );
+
+  Widget get _closeButton =>
+    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : _onTapClose, child:
+        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
       ),
-    ),
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      RepaintBoundary(key: _repaintBoundaryKey, child:
-        DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
-      ),
-    ),
-    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
-    ),
-    _buildCommand(
-      icon: Styles().images.getImage('down-to-bracket', size: _commandIconSize),
-      text: Localization().getStringEx('panel.profile.info.share.command.button.save.text', 'Save to Photos'),
-      progress: _savingToPhotos,
-      onTap: _onTapSaveToPhotos,
-    ),
-    _buildCommand(
-      icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
-      text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Share Virtual Card'),
-      progress: _sharingVirtualCard,
-      onTap: _onTapShareVirtualCard,
-    ),
-    _buildCommand(
-      icon: Styles().images.getImage('envelope', size: _commandIconSize),
-      text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share via Email'),
-      progress: _preparingEmail,
-      onTap: _onTapShareViaEmail,
-    ),
-    _buildCommand(
-      icon: Styles().images.getImage('message-lines', size: _commandIconSize),
-      text: Localization().getStringEx('panel.profile.info.share.command.button.share.message.text', 'Share via Text Message'),
-      progress: _preparingTextMessage,
-      onTap: _onTapShareViaTextMessage,
-    ),
-    _buildCommand(
-      icon: Styles().images.getImage('copy-fa', size: _commandIconSize),
-      text: Localization().getStringEx('panel.profile.info.share.command.button.copy.clipboard.text', 'Copy Text to Clipboard'),
-      progress: _preparingClipboardText,
-      onTap: _onTapCopyTextToClipboard,
-    ),
-    Padding(padding: EdgeInsets.only(bottom: 16)),
-  ],);
+    );
 
   final double _commandIconSize = 14;
   
