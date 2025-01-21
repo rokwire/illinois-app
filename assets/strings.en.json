@@ -124,7 +124,12 @@
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
     "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
     "generic.app.feature.messages": "Messages",
-    "generic.app.feature.connections": "Connections",
+    "generic.app.feature.conversations": "Conversations",
+
+    "generic.app.field.phone": "Phone",
+    "generic.app.field.email": "Email",
+    "generic.app.field.email2": "Email2",
+    "generic.app.field.website": "Website",
 
     "generic.time.now": "now",
     "generic.time.minutes": "minutes",
@@ -316,7 +321,7 @@
     "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
     "panel.browse.section.laundry.title": "Laundry",
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
-    "panel.browse.section.messages.title": "Connections",
+    "panel.browse.section.messages.title": "Conversations",
     "panel.browse.section.messages.description": "Connect and send messages to {{university_long_name}} students and employees.",
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
@@ -403,7 +408,7 @@
     "panel.browse.entry.laundry.laundry.title": "Laundry",
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
 
-    "panel.browse.entry.messages.messages.title": "Messages",
+    "panel.browse.entry.messages.messages.title": "Conversations",
 
     "panel.browse.entry.mtd.all_mtd_stops.title": "All Bus Stops",
     "panel.browse.entry.mtd.my_mtd_stops.title": "My Bus Stops",
@@ -2317,10 +2322,6 @@
 
     "panel.profile.info_and_directory.message.signed_out": "To view \"My Info & User Directory\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.profile.info_and_directory.message.signed_out.link.login": "sign in",
-    "panel.profile.info_and_directory.tab.my_info.title": "My Info",
-    "panel.profile.info_and_directory.tab.accounts.title": "User Directory",
-    "panel.profile.info_and_directory.tab.my_info.connections.title": "My Connections Info",
-    "panel.profile.info_and_directory.tab.my_info.directory.title": "My Directory Info",
     "panel.profile.info_and_directory.tab.accounts.connections.title": "My Connections",
     "panel.profile.info_and_directory.tab.accounts.directory.title": "User Directory",
 
@@ -2383,10 +2384,12 @@
     "panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
     "panel.profile.info.share.command.button.share.vcard.text": "Share Virtual Card",
     "panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
-    "panel.profile.info.share.command.save.succeeded": "Contact card image saved successfully",
-    "panel.profile.info.share.command.save.save.failed": "Failed to save contact card image",
-    "panel.profile.info.share.command.save.create.failed": "Failed to create contact card image",
-    "panel.profile.info.share.command.save.unknown.failed": "Unknown problem occured",
+    "panel.profile.info.share.command.save.image.succeeded": "Contact card image saved successfully.",
+    "panel.profile.info.share.command.save.image.failed": "Failed to save contact card image.",
+    "panel.profile.info.share.command.save.vcard.succeeded": "Virtual Card data saved successfully.",
+    "panel.profile.info.share.command.save.vcard.failed": "Failed to save Virtual Card.",
+    "panel.profile.info.share.command.copy.clipboard.succeeded": "Profile details were copied to Clipboard successfully.",
+    "panel.profile.info.share.command.copy.clipboard.failed": "Failed to copy profile detail to Clipboard.",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
@@ -3273,7 +3276,7 @@
     "widget.inbox_message_card.delete.confirm.msg": "Are you sure that you want to delete this message?",
     "widget.inbox_message_card.delete.failed.msg": "Failed to delete message. Please, try again later.",
 
-    "panel.messages.header.connections.label": "Connections",
+    "panel.messages.header.conversations.label": "Conversations",
     "panel.messages.mark_all_read.label": "Mark all as read",
     "panel.messages.label.time.any": "Any Time",
     "panel.messages.label.time.today": "Today",
@@ -3285,7 +3288,7 @@
     "panel.messages.label.muted.show": "Show Muted",
     "panel.messages.label.muted.hide": "Hide Muted",
     "panel.messages.label.content.empty": "No conversations",
-    "panel.messages.button.new.title": "New Connection",
+    "panel.messages.button.new.title": "New Conversation",
     "panel.messages.button.new.hint": "",
     "panel.messages.mark_as_read.failed.msg": "Failed to mark all conversations as read.",
 

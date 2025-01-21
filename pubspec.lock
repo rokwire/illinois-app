@@ -462,6 +462,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  flutter_email_sender:
+    dependency: "direct main"
+    description:
+      name: flutter_email_sender
+      sha256: fb515d4e073d238d0daf1d765e5318487b6396d46b96e0ae9745dbc9a133f97a
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.3"
   flutter_exif_rotation:
     dependency: transitive
     description:
@@ -1405,6 +1413,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  sms_mms:
+    dependency: "direct main"
+    description:
+      name: sms_mms
+      sha256: "56dc55382dab1bbe4c5537138c967c7e4fd8946d663fa1f3d91571b7c71e28e9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   source_span:
     dependency: transitive
     description:
