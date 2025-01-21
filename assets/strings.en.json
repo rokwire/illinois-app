@@ -126,6 +126,11 @@
     "generic.app.feature.messages": "Messages",
     "generic.app.feature.conversations": "Conversations",
 
+    "generic.app.field.phone": "Phone",
+    "generic.app.field.email": "Email",
+    "generic.app.field.email2": "Email2",
+    "generic.app.field.website": "Website",
+
     "generic.time.now": "now",
     "generic.time.minutes": "minutes",
     "generic.time.hours": "hours",
@@ -2379,10 +2384,12 @@
     "panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
     "panel.profile.info.share.command.button.share.vcard.text": "Share Virtual Card",
     "panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
-    "panel.profile.info.share.command.save.succeeded": "Contact card image saved successfully",
-    "panel.profile.info.share.command.save.save.failed": "Failed to save contact card image",
-    "panel.profile.info.share.command.save.create.failed": "Failed to create contact card image",
-    "panel.profile.info.share.command.save.unknown.failed": "Unknown problem occured",
+    "panel.profile.info.share.command.save.image.succeeded": "Contact card image saved successfully.",
+    "panel.profile.info.share.command.save.image.failed": "Failed to save contact card image.",
+    "panel.profile.info.share.command.save.vcard.succeeded": "Virtual Card data saved successfully.",
+    "panel.profile.info.share.command.save.vcard.failed": "Failed to save Virtual Card.",
+    "panel.profile.info.share.command.copy.clipboard.succeeded": "Profile details were copied to Clipboard successfully.",
+    "panel.profile.info.share.command.copy.clipboard.failed": "Failed to copy profile detail to Clipboard.",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",

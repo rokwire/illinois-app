@@ -35,7 +35,45 @@ extension Auth2UserProfileVCard on Auth2UserProfile {
 
   String? get vcardFullName => StringUtils.fullName([firstName, lastName]);
   String get _vcardName => "${lastName ?? ''};${firstName ?? ''};${middleName ?? ''};;";
-  String get _vcardOrg => "$_vcardUniversityName;$_vcardCollegeAndDepartment";
+  String get _vcardOrg => "$_textUniversityName;$_vcardCollegeAndDepartment";
   String get _vcardCollegeAndDepartment => (college?.isNotEmpty == true) ? ((department?.isNotEmpty == true) ? "$college / $department" : (college ?? '')) : (department ?? '');
-  String get _vcardUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
+}
+
+extension Auth2UserProfileDisplayText on Auth2UserProfile {
+  String toDisplayText() {
+    String displayText = "";
+    displayText += _fieldValue(_textFullName, delimiter: '\n\n');
+    displayText += _fieldValue(_textOrgColDept, delimiter: '\n\n');
+    displayText += _fieldValue(phone, label: Localization().getStringEx('generic.app.field.phone', 'Phone'));
+    displayText += _fieldValue(email, label: Localization().getStringEx('generic.app.field.email', 'Email'));
+    displayText += _fieldValue(email2, label: Localization().getStringEx('generic.app.field.email2', 'Email2'));
+    displayText += _fieldValue(website, label: Localization().getStringEx('generic.app.field.website', 'Website'));
+
+    return displayText;
+  }
+
+  String? get _textFullName => StringUtils.fullName([firstName, middleName, lastName]);
+
+  String? get _textOrgColDept => StringUtils.fullName([
+    title,
+    StringUtils.fullName([
+      college,department, _textUniversityName
+    ], delimiter: ' • '),
+  ], delimiter: ' - ');
+
+  String _fieldValue(String? value, { String? label = null, String delimiter = '\n' }) {
+    if ((value != null) && value.isNotEmpty) {
+      if ((label != null) && label.isNotEmpty) {
+        return '$label: $value$delimiter';
+      }
+      else {
+        return '$value$delimiter';
+      }
+    }
+    else {
+      return '';
+    }
+  }
+
+  String get _textUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
 }
