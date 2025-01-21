@@ -50,7 +50,8 @@ dependencies:
   expandable_page_view: ^1.0.10
   package_info_plus: ^8.0.0
   device_calendar: ^4.3.2
-  image_cropping: ^0.0.11
+  image_cropping: ^0.0.11 # used for the native app and does not work for the web app
+  image_cropper: ^8.1.0 # used for the web app
   dropdown_button2: ^2.1.3
   video_player: ^2.3.0
   just_audio: ^0.9.21
