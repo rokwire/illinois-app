@@ -183,7 +183,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
                 ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
-                ToggleRibbonButton(label: 'Messages/Connections Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
+                ToggleRibbonButton(label: 'Messages/Conversations Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
 
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:

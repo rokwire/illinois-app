@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Connections renamed to Conversations [#4651](https://github.com/rokwire/illinois-app/issues/4651).
+
 ## [6.1.43] - 2025-01-20
 ### Fixed
 - Pinned group posts: one pinned post at a time [#4629](https://github.com/rokwire/illinois-app/issues/4629).
