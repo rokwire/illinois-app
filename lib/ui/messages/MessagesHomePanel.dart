@@ -25,7 +25,6 @@ import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -321,18 +320,15 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   //Buttons
   Widget _buildAdditionalButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
-          Spacer(),
-          Flexible(flex: 1, child: _buildNewMessageButton()),
-        ],
-      ),
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), child:
+      Align(alignment: Alignment.centerRight, child:
+        _buildNewMessageButton(),
+      )
+      //Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
+        //Spacer(),
+        //Flexible(flex: 1, child: _buildNewMessageButton()),
+      //],),
     );
   }
 
@@ -345,6 +341,41 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   //           progress: _loadingMarkAllAsRead,
   //           onTap: _onTapMarkAllAsRead)));
   // }
+
+  Widget _buildNewMessageButton() {
+    String title = Localization().getStringEx('panel.messages.button.new.title', 'New Conversation');
+    String hint = Localization().getStringEx('panel.messages.button.new.hint', '');
+    Widget? iconW = Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary);
+    Widget? textW = Text(title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"), maxLines: 1, overflow: TextOverflow.ellipsis);
+    return Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
+      GestureDetector(onTap: _onTapNewMessage, child:
+        Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(8))), child:
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            (iconW != null) ? Row(mainAxisSize: MainAxisSize.min, children: [
+              Padding(padding: const EdgeInsets.only(right: 8), child: iconW),
+              textW,
+            ],) : textW,
+          )
+        ),
+      )
+    );
+  }
+
+  /*Widget _buildNewMessageButton() {
+    return RibbonButton(
+        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Conversation'),
+          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
+        backgroundColor: Styles().colors.fillColorPrimary,
+        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
+        rightIconKey: null,
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        onTap: _onTapNewMessage,
+    );
+  }*/
 
   // Filters
   Widget _buildFilters() {
@@ -534,22 +565,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       TextButton(onPressed: _onEdit, child:
         Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles.getTextStyle("widget.button.light.title.medium"),)
       )
-    );
-  }
-
-  Widget _buildNewMessageButton() {
-    return RibbonButton(
-        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Conversation'),
-          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
-        backgroundColor: Styles().colors.fillColorPrimary,
-        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary),
-        rightIconKey: null,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        onTap: _onTapNewMessage,
     );
   }
 
