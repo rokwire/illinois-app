@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.43] - 2025-01-20
 ### Fixed
 - Pinned group posts: one pinned post at a time [#4629](https://github.com/rokwire/illinois-app/issues/4629).
 - Pinned group posts: displaying twice [#4630](https://github.com/rokwire/illinois-app/issues/4630).
@@ -14,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - AppointmentsContentWidget: mechanism to override dropdown Title and Layout content for some providers [#4484](https://github.com/rokwire/illinois-app/issues/4484).
 - Update title style for Appointment, AthleticsNews and Dining detail panels [#4487](https://github.com/rokwire/illinois-app/issues/4487).
+- Cleaned up Share Virtual Card, implemented share via QR code [#4605](https://github.com/rokwire/illinois-app/issues/4605).
+- Dining UI updates: card update [#4602](https://github.com/rokwire/illinois-app/issues/4602).
 
 ## [6.1.42] - 2025-01-17
 ### Fixed
