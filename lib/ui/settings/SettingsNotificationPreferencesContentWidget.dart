@@ -83,13 +83,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   Widget _buildContent() {
     return Container(
       child: Column(children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(
-            Localization().getStringEx("panel.settings.notifications.label.desctiption", "Don’t miss an event or campus update."),
-            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
-          ),),
-        Container(height: 24,),
+        Container(height: 7,),
         InfoButton(
           title: Localization().getStringEx("panel.settings.notifications.label.notifications", "Push Notifications"),
           description: _notificationsStatus,
