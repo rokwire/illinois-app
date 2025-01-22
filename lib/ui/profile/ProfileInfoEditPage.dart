@@ -521,7 +521,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     bool public = false,
   }) => _fieldSection(
     headingTitle: headingTitle,
-    headingHint: headingTitle,
+    headingHint: headingHint,
     fieldControl: _textFieldControl(field,
         textInputType: textInputType,
         autocorrect: autocorrect,
@@ -562,6 +562,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         TextSpan(style: Styles().textStyles.getTextStyle('widget.title.tiny.fat.spaced'), children: [
           TextSpan(text: title?.toUpperCase()),
           if (hint?.isNotEmpty == true)
+
             TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.tiny'))
         ]),
       ),
