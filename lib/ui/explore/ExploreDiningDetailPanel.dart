@@ -923,13 +923,6 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         }
       }
     }
-    list.add( //TBD remove
-      _StationItem(
-        title: "Test",
-        productItems: [DiningProductItem(category: "test", name: "test"), DiningProductItem(category: "test", name: "test")],
-        defaultExpanded: (list.length < 1),
-      ),
-    );
 
     if (list.isEmpty) {
       list.add(Semantics(
