@@ -777,36 +777,33 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       Column(children: <Widget>[
         Container(color: Styles().colors.background, height: 1,),
         HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        // Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+          // Row(children: <Widget>[
+          //   Expanded(flex: 2, child:
+          //     Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"), style:
+          //         Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+          //     ),
+          //   ),
+          //   Expanded(flex: 5, child:
+          //     Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
+          //       GestureDetector(onTap: _onFoodFilersTapped, child:
+          //         Row(children: <Widget>[
+          //           Expanded(child:
+          //             Text(filtersLabel, textAlign: TextAlign.right, style:
+          //                 Styles().textStyles.getTextStyle("widget.title.regular"),
+          //             )
+          //           ),
+          //           Padding(padding: EdgeInsets.only(left: 4), child:
+          //             Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
+          //           )
+          //         ],),
+          //       ),
+          //     )
+          //   )
+          // ],),
+        // ),
         Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           Row(children: <Widget>[
-            Expanded(flex: 2, child:
-              Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"), style:
-                  Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-              ),
-            ),
-            Expanded(flex: 5, child:
-              Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
-                GestureDetector(onTap: _onFoodFilersTapped, child:
-                  Row(children: <Widget>[
-                    Expanded(child:
-                      Text(filtersLabel, textAlign: TextAlign.right, style:
-                          Styles().textStyles.getTextStyle("widget.title.regular"),
-                      )
-                    ),
-                    Padding(padding: EdgeInsets.only(left: 4), child:
-                      Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
-                    )
-                  ],),
-                ),
-              )
-            )
-          ],),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
-            ),
             Semantics(
               label: Localization().getStringEx("widget.food_detail.button.prev_menu.title", "Previous dining date"),
               hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
@@ -816,7 +813,27 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 onTap: decrementDateFilter,
               ),
             ),
-            Container(width: 15,),
+            Container(width: 8,),
+            Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '',style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+                  Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
+                        GestureDetector(onTap: _onFoodFilersTapped, child:
+                          Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(padding: EdgeInsets.only(right: 4), child:
+                              Styles().images.getImage('settings', excludeFromSemantics: true),
+                              ),
+                              Text(filtersLabel, style:
+                                  Styles().textStyles.getTextStyle("widget.title.regular.underline"),
+                              ),
+                          ],),
+                        ),
+                      )
+                ],)
+            ),
+            Container(width: 8,),
             Semantics(
               label: Localization().getStringEx("widget.food_detail.button.next_menu.title", "Next dining date"),
               hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
@@ -906,6 +923,13 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         }
       }
     }
+    list.add( //TBD remove
+      _StationItem(
+        title: "Test",
+        productItems: [DiningProductItem(category: "test", name: "test"), DiningProductItem(category: "test", name: "test")],
+        defaultExpanded: (list.length < 1),
+      ),
+    );
 
     if (list.isEmpty) {
       list.add(Semantics(
@@ -1118,7 +1142,7 @@ class _StationItemState extends State<_StationItem>{
                 Expanded(child:
                   Text(widget.title!, style: Styles().textStyles.getTextStyle("widget.colourful_button.title.accent")),
                 ),
-                Styles().images.getImage(expanded ? 'chevron-down' : 'chevron-up', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage(expanded ? 'chevron-down-white' : 'chevron-up-white', excludeFromSemantics: true) ?? Container(),
               ],),
             ),
           ),
