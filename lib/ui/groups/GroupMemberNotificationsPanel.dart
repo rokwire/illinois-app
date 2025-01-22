@@ -191,6 +191,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     bool groupEventsNotificationsEnabled = FirebaseMessaging().notifyGroupEventsUpdates == true;
     bool groupInvitationsNotificationsEnabled = FirebaseMessaging().notifyGroupInvitationsUpdates == true;
     bool groupPollsNotificationsEnabled = FirebaseMessaging().notifyGroupPollsUpdates == true;
+    bool groupMessagesNotificationsEnabled = FirebaseMessaging().notifyGroupMessagesUpdates == true;
 
     List<Widget> widgets = [];
     widgets.add(Row(children: [
@@ -227,7 +228,12 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
           toggled:  groupPollsNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
           textStyle: groupPollsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
-      )
+      ),
+      _DisabledToggleButton(
+          toggled:  groupMessagesNotificationsEnabled,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.messages.label", "Messages"),
+          textStyle: groupMessagesNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+      ),
     ]))))]));
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
 

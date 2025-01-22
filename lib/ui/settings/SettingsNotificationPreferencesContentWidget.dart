@@ -253,6 +253,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           toggled: FirebaseMessaging().notifyGroupPollsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPollsToggled: (){},
           textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+      ),
+      _CustomToggleButton(
+          enabled: _groupsSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.messages.label", "Messages"),
+          toggled: FirebaseMessaging().notifyGroupMessagesUpdates,
+          onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesMessagesToggled: (){},
+          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
 //    widgets.add(_CustomToggleButton(
@@ -429,6 +437,13 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       return ;
     Analytics().logSelect(target: "Invitations updates");
     FirebaseMessaging().notifyGroupPollsUpdates = !FirebaseMessaging().notifyGroupPollsUpdates!;
+  }
+
+  void _onGroupsUpdatesMessagesToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics().logSelect(target: "Invitations updates");
+    FirebaseMessaging().notifyGroupMessagesUpdates = !FirebaseMessaging().notifyGroupMessagesUpdates!;
   }
 
   void _onGroupsUpdatesEventsToggled() {

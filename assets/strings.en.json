@@ -2140,6 +2140,7 @@
     "panel.settings.notifications.group_updates.events.label": "Events",
     "panel.settings.notifications.group_updates.invitations.label": "Group membership",
     "panel.settings.notifications.group_updates.polls.label": "Polls",
+    "panel.settings.notifications.group_updates.messages.label": "Messages",
     "panel.settings.notifications.pause_notifications": "Pause all notifications",
 
     "panel.settings.privacy.privacy.label.title": "Choose Your Privacy Level",
