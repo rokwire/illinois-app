@@ -70,8 +70,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _hasMoreMessages = false;
   final int _messagesPageSize = 20;
   Message? _editingMessage;
+  Message? _deletingMessage;
 
   final Set<String> _globalIds = {};
+
+  static const double _photoSize = 20;
 
   @override
   void initState() {
@@ -258,15 +261,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
+    bool hasProgress = (_deletingMessage != null) && (message.globalId == _deletingMessage?.globalId);
+    bool canLongPress = isCurrentUser && (_editingMessage == null) && (_deletingMessage == null);
     Key? contentItemKey = widget.isTargetMessage(message) ? _targetMessageContentItemKey : null;
     Decoration cardDecoration = widget.isTargetMessage(message) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
-    return GestureDetector(onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null, child:
+    Widget cardWidget = GestureDetector(onLongPress: canLongPress ? () => _onMessageLongPress(message) : null, child:
       FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
       builder: (context, snapshot) {
-        Widget avatar = snapshot.data ??
-          (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+        Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
 
         return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
           Padding(padding: EdgeInsets.all(16), child:
@@ -309,6 +313,17 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         },
       ),
     );
+
+    return hasProgress ? Stack(children: [
+      cardWidget,
+      Positioned.fill(child:
+        Center(child:
+          SizedBox(width: _photoSize, height: _photoSize, child:
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+          )
+        )
+      )
+    ]) : cardWidget;
   }
 
   void _onMessageLongPress(Message message) {
@@ -322,31 +337,35 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  setState(() {
-                    _editingMessage = message;
-                    _inputController.text = message.message ?? '';
-                  });
-                  FocusScope.of(context).requestFocus(_inputFieldFocus);
+                  _onEditMessage(message);
                 },
-                child: Text(Localization().getStringEx('', 'Edit'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+                child: Text(Localization().getStringEx('dialog.edit.title', 'Edit'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   _onDeleteMessage(message);
                 },
-                child: Text(Localization().getStringEx('', 'Delete'), style: TextStyle(color: Styles().colors.fillColorSecondary)),
+                child: Text(Localization().getStringEx('dialog.delete.title', 'Delete'), style: TextStyle(color: Styles().colors.fillColorSecondary)),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(Localization().getStringEx('', 'Cancel'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+                child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
               ),
             ],
           );
         }
     );
+  }
+
+  void _onEditMessage(Message message) {
+    setState(() {
+      _editingMessage = message;
+      _inputController.text = message.message ?? '';
+    });
+    FocusScope.of(context).requestFocus(_inputFieldFocus);
   }
 
   Future<void> _onDeleteMessage(Message message) async {
@@ -360,21 +379,29 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       return;
     }
 
+    setState(() {
+      _deletingMessage = message;
+    });
+
     bool success = await Social().deleteConversationMessage(
       conversationId: _conversationId!,
       globalMessageId: globalId,
     );
 
-    if (success) {
+    if (mounted) {
       setState(() {
-        _messages.removeWhere((m) => m.globalId == globalId);
+        _deletingMessage = null;
       });
-      AppToast.showMessage('Message deleted.');
-    } else {
-      AppToast.showMessage('Failed to delete message.');
+      if (success) {
+        setState(() {
+          _messages.removeWhere((m) => m.globalId == globalId);
+        });
+        AppToast.showMessage('Message deleted.');
+      } else {
+        AppToast.showMessage('Failed to delete message.');
+      }
     }
   }
-
 
   void _onTapAccount(Message message) {
     Analytics().logSelect(target: 'View Account');
@@ -404,8 +431,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Uint8List? profilePicture = Auth2().profilePicture;
       if (profilePicture != null) {
         return Container(
-          width: 20,
-          height: 20,
+          width: _photoSize,
+          height: _photoSize,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
