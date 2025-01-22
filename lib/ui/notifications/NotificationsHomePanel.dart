@@ -130,19 +130,21 @@ class NotificationsHomePanel extends StatefulWidget {
 }
 
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
-  late NotificationsContent? _selectedContent;
+  bool? _showUnread;
 
   @override
   void initState() {
+    super.initState();
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
 
-    if (_isContentItemEnabled(widget.content)) {
-      _selectedContent = widget.content;
-    } else {
-      _selectedContent = _initialSelectedContent;
+    // Show unread notifications only if NotificationsContent.unread content is selected.
+    switch (widget.content) {
+      case NotificationsContent.unread:
+        _showUnread = true;
+        break;
+      default:
+        break;
     }
-
-    super.initState();
   }
 
   @override
@@ -215,33 +217,6 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   // Utilities
 
   Widget? get _contentWidget {
-    switch (_selectedContent) {
-      case NotificationsContent.all:
-        return NotificationsInboxPage(onTapBanner: _onTapPausedBanner);
-      case NotificationsContent.unread:
-        return NotificationsInboxPage(unread: true, onTapBanner: _onTapPausedBanner);
-      default:
-        return null;
-    }
-  }
-
-  bool _isContentItemEnabled(NotificationsContent? contentItem) {
-    switch (contentItem) {
-      case NotificationsContent.all:
-        return Auth2().isLoggedIn;
-      case NotificationsContent.unread:
-        return Auth2().isLoggedIn;
-      default:
-        return false;
-    }
-  }
-
-  NotificationsContent? get _initialSelectedContent {
-    for (NotificationsContent contentItem in NotificationsContent.values) {
-      if (_isContentItemEnabled(contentItem)) {
-        return contentItem;
-      }
-    }
-    return null;
+    return NotificationsInboxPage(unread: _showUnread, onTapBanner: _onTapPausedBanner);
   }
 }
