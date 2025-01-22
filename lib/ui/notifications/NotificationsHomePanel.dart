@@ -243,23 +243,23 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildInboxContent() {
     return RefreshIndicator(
         onRefresh: _onPullToRefresh,
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[_buildBanner(), _buildHeaderSection(), Expanded(child: _buildContent())]));
-  }
-
-  Widget _buildContent() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue),
-        child: Stack(children: [
-          Visibility(visible: (_loadingMessages != true), child: Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())),
-          Visibility(
-              visible: (_loadingMessages == true),
-              child: Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          _buildBanner(),
+          _buildMessagesHeaderSection(),
+          Expanded(
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue),
+                  child: Stack(children: [
+                    Visibility(
+                        visible: (_loadingMessages != true),
+                        child: Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())),
+                    Visibility(
+                        visible: (_loadingMessages == true),
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
+                  ])))
         ]));
   }
 
@@ -267,36 +267,31 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     if ((_contentList != null) && (0 < _contentList!.length)) {
       int count = _contentList!.length + ((_loadingMoreMessages == true) ? 1 : 0);
       return ListView.separated(
-          separatorBuilder: (context, index) => Container(),
-          itemCount: count,
-          itemBuilder: _buildListEntry,
-          controller: _scrollController);
-    }
-    else {
+          separatorBuilder: (context, index) => Container(), itemCount: count, itemBuilder: _buildMessagesListEntry, controller: _scrollController);
+    } else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
+        Text(
+          Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'),
+          textAlign: TextAlign.center,
+        ),
         Expanded(child: Container(), flex: 3),
       ]);
     }
   }
 
-  Widget _buildListEntry(BuildContext context, int index) {
+  Widget _buildMessagesListEntry(BuildContext context, int index) {
     dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
     if (entry is InboxMessage) {
-      return Padding(padding: EdgeInsets.only(bottom: 20), child: InboxMessageCard(
-          message: entry,
-          onTap: () => _onTapMessage(entry)));
-    }
-    else if (entry is String) {
-      return _buildListHeading(text: entry);
-    }
-    else {
-      return _buildListLoadingIndicator();
+      return Padding(padding: EdgeInsets.only(bottom: 20), child: InboxMessageCard(message: entry, onTap: () => _onTapMessage(entry)));
+    } else if (entry is String) {
+      return _buildMessagesListHeading(text: entry);
+    } else {
+      return _buildMessagesListLoadingIndicator();
     }
   }
 
-  Widget _buildListHeading({String? text}) {
+  Widget _buildMessagesListHeading({String? text}) {
     return Semantics(
         header: true,
         child: Padding(
@@ -304,19 +299,19 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
             child: Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'))));
   }
 
-  Widget _buildListLoadingIndicator() {
-    return Container(padding: EdgeInsets.only(left: 6, top: 6, right: 6, bottom: 20), child:
-    Align(alignment: Alignment.center, child:
-    SizedBox(width: 24, height: 24, child:
-    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
+  Widget _buildMessagesListLoadingIndicator() {
+    return Container(
+        padding: EdgeInsets.only(left: 6, top: 6, right: 6, bottom: 20),
+        child: Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
   }
 
-  void _onTapMessage(InboxMessage message) {
-    Analytics().logSelect(target: message.subject);
-    NotificationsHomePanel.launchMessageDetail(message);
-  }
-
-  Widget _buildHeaderSection() {
+  Widget _buildMessagesHeaderSection() {
     return Container(
         decoration: BoxDecoration(color: Styles().colors.white),
         padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10),
@@ -396,13 +391,13 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
           child: _buildToggleWidget(
               label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.unread.label', 'Unread Notifications'),
               value: (_unreadPreviewValue == true),
-              onTapValue: _onTapUnread)),
+              onTapValue: _onTapUnreadFilter)),
       Padding(
           padding: EdgeInsets.only(top: 10),
           child: _buildToggleWidget(
               label: Localization().getStringEx('panel.inbox.filter.notifications.toggle.muted.label', 'Muted Notifications'),
               value: (_mutedPreviewValue != false),
-              onTapValue: _onTapMuted)),
+              onTapValue: _onTapMutedFilter)),
       Padding(
           padding: EdgeInsets.only(left: 12, top: 6),
           child: Text(
@@ -535,7 +530,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
             padding: EdgeInsets.symmetric(vertical: 4),
             contentWeight: 0.35,
             fontSize: 16,
-            onTap: _onTapApply));
+            onTap: _onTapApplyFilter));
   }
 
   // Handlers
@@ -549,12 +544,6 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     Analytics().logSelect(target: 'Notifications Paused', source: widget.runtimeType.toString());
     if (mounted) {
       SettingsHomeContentPanel.present(context, content: SettingsContent.notifications);
-    }
-  }
-
-  void _scrollListener() {
-    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreMessages != false) && (_loadingMoreMessages != true) && (_loadingMessages != true)) {
-      _loadMoreMessages();
     }
   }
 
@@ -595,12 +584,6 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     });
   }
 
-  void _setMarkAllAsReadLoading(bool loading) {
-    setStateIfMounted(() {
-      _loadingMarkAllAsRead = loading;
-    });
-  }
-
   void _onTapFilter() {
     Analytics().logSelect(target: 'Filter');
     setStateIfMounted(() {
@@ -611,7 +594,24 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     });
   }
 
-  void _onTapApply() {
+  void _onTapMessage(InboxMessage message) {
+    Analytics().logSelect(target: message.subject);
+    NotificationsHomePanel.launchMessageDetail(message);
+  }
+
+  void _setMarkAllAsReadLoading(bool loading) {
+    setStateIfMounted(() {
+      _loadingMarkAllAsRead = loading;
+    });
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreMessages != false) && (_loadingMoreMessages != true) && (_loadingMessages != true)) {
+      _loadMoreMessages();
+    }
+  }
+
+  void _onTapApplyFilter() {
     Analytics().logSelect(target: 'Apply');
     _unreadSelectedValue = _unreadPreviewValue;
     _mutedSelectedValue = _mutedPreviewValue;
@@ -626,7 +626,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   ///  - false - do not show muted notifications
   ///  - true - show only muted notifications
   ///
-  void _onTapMuted() {
+  void _onTapMutedFilter() {
     setStateIfMounted(() {
       if (_mutedPreviewValue == null) {
         _mutedPreviewValue = false;
@@ -642,7 +642,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   ///  - false - show only read notifications
   ///  - true - show only unread notifications
   ///
-  void _onTapUnread() {
+  void _onTapUnreadFilter() {
     setStateIfMounted(() {
       if (_unreadPreviewValue == true) {
         _unreadPreviewValue = null;
@@ -927,14 +927,6 @@ class _FilterEntry {
     }
     return null;
   }
-}
-
-class FilterResult {
-  final bool? muted;
-  final bool? unread;
-  final _DateInterval? dateInterval;
-
-  FilterResult({this.muted, this.unread, this.dateInterval});
 }
 
 class InboxMessageCard extends StatefulWidget {
