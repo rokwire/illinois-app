@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Profile Edit fixes and updates [#4660](https://github.com/rokwire/illinois-app/issues/4660).
 - Notifications UI updates [#4489](https://github.com/rokwire/illinois-app/issues/4489).
 - Notifications settings updates [#4663](https://github.com/rokwire/illinois-app/issues/4663).
+- UI Updates for Dining [#4602](https://github.com/rokwire/illinois-app/issues/4602).
 - Updated profile visibility description text [#4625](https://github.com/rokwire/illinois-app/issues/4625).
 
 ## [6.1.44] - 2025-01-21
