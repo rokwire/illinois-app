@@ -140,6 +140,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
     _groupUpdatesPollsNotificationSetting : _groupUpdatesPollsNotificationSetting,
+    _groupUpdatesMessagesNotificationSetting : _groupUpdatesMessagesNotificationSetting,
   };
 
   // Settings entry : setting name (User.prefs.setting name)
@@ -148,6 +149,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
     _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
     _groupUpdatesPollsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.polls.enabled',
+    _groupUpdatesMessagesNotificationSetting    : 'edu.illinois.rokwire.settings.inbox.notification.group.messages.enabled',
     _groupUpdatesInvitationsNotificationSetting : 'edu.illinois.rokwire.settings.inbox.notification.group.invitations.enabled',
     _groupUpdatesEventsNotificationSetting      : 'edu.illinois.rokwire.settings.inbox.notification.group.events.enabled',
     _athleticsUpdatesStartNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.start.enabled',
@@ -186,13 +188,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String _groupInvitationsNotificationKey = 'invitations';
   static const String _groupEventsNotificationKey = 'events';
   static const String _groupPollsNotificationKey = 'polls';
+  static const String _groupMessagesNotificationKey = 'messages';
 
-  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey, _groupPollsNotificationKey];
+  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey, _groupPollsNotificationKey, _groupMessagesNotificationKey];
 
   static const String _groupUpdatesPostsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPostsNotificationKey';
   static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
   static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
   static const String _groupUpdatesPollsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPollsNotificationKey';
+  static const String _groupUpdatesMessagesNotificationSetting = '$_groupUpdatesNotificationKey.$_groupMessagesNotificationKey';
 
   // Payload types
   static const String payloadTypeConfigUpdate = 'config_update';
@@ -715,19 +719,22 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   bool? get notifyNewsAthleticsUpdates               { return _getNotifySetting(_athleticsUpdatesNewsNotificationSetting); }
        set notifyNewsAthleticsUpdates(bool? value)   { _setNotifySetting(_athleticsUpdatesNewsNotificationSetting, value); }
 
-  bool? get notifyGroupUpdates             { return _getNotifySetting(_groupUpdatesNotificationKey); }
-  set notifyGroupUpdates(bool? value) { _setNotifySetting(_groupUpdatesNotificationKey, value); }
+  bool? get notifyGroupUpdates               { return _getNotifySetting(_groupUpdatesNotificationKey); }
+  set notifyGroupUpdates(bool? value)        { _setNotifySetting(_groupUpdatesNotificationKey, value); }
 
-  bool? get notifyGroupPostUpdates              { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
-  set notifyGroupPostUpdates(bool? value)  { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
+  bool? get notifyGroupPostUpdates           { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
+  set notifyGroupPostUpdates(bool? value)    { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
 
-  bool? get notifyGroupInvitationsUpdates                { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
+  bool? get notifyGroupInvitationsUpdates           { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
   set notifyGroupInvitationsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesInvitationsNotificationSetting, value); }
 
-  bool? get notifyGroupPollsUpdates                { return _getNotifySetting(_groupUpdatesPollsNotificationSetting); }
+  bool? get notifyGroupPollsUpdates           { return _getNotifySetting(_groupUpdatesPollsNotificationSetting); }
   set notifyGroupPollsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesPollsNotificationSetting, value); }
 
-  bool? get notifyGroupEventsUpdates               { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
+  bool? get notifyGroupMessagesUpdates        { return _getNotifySetting(_groupUpdatesMessagesNotificationSetting); }
+  set notifyGroupMessagesUpdates(bool? value) { _setNotifySetting(_groupUpdatesMessagesNotificationSetting, value); }
+
+  bool? get notifyGroupEventsUpdates          { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
   set notifyGroupEventsUpdates(bool? value)   { _setNotifySetting(_groupUpdatesEventsNotificationSetting, value); }
 
   bool? get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
