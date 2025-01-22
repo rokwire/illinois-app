@@ -156,7 +156,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.messages.header.messages.label', 'MESSAGES'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),)
+              Text(Localization().getStringEx('panel.messages.header.messages.label', 'CONVERSATIONS'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),)
             ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
@@ -539,7 +539,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   Widget _buildNewMessageButton() {
     return RibbonButton(
-        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
+        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Conversation'),
           style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -1000,17 +1000,21 @@ class ConversationCard extends StatefulWidget {
   final Conversation? conversation;
   final bool? selected;
   final void Function()? onTap;
+  final bool isHorizontal;
 
-  ConversationCard({this.conversation, this.selected, this.onTap });
+  const ConversationCard({
+    super.key,
+    this.conversation,
+    this.selected,
+    this.onTap,
+    this.isHorizontal = false
+  });
 
   @override
-  _ConversationCardState createState() {
-    return _ConversationCardState();
-  }
+  _ConversationCardState createState() => _ConversationCardState();
 }
 
 class _ConversationCardState extends State<ConversationCard> implements NotificationsListener {
-
   @override
   void initState() {
     super.initState();
@@ -1021,11 +1025,9 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    super.dispose();
   }
-
-  // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
@@ -1036,74 +1038,172 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
 
   @override
   Widget build(BuildContext context) {
+    return widget.isHorizontal
+        ? _buildHorizontalLayout()
+        : _buildVerticalLayout();
+  }
+
+  Widget _buildVerticalLayout() {
     double leftPadding = (widget.selected != null) ? 12 : 16;
-    // String mutedStatus = Localization().getStringEx('widget.conversation_card.status.muted', 'Muted');
     return Container(
-        color: Styles().colors.surface,
-        clipBehavior: Clip.none,
-        child: Stack(children: [
-          InkWell(onTap: widget.onTap, child:
-            Padding(padding: EdgeInsets.only(left: leftPadding, right: 16, top: 16, bottom: 16), child:
-              Row(children: <Widget>[
-                Visibility(visible: (widget.selected != null), child:
-                  Padding(padding: EdgeInsets.only(right: leftPadding), child:
-                    Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.conversation_card.selected.hint', 'Selected') : Localization().getStringEx('widget.conversation_card.unselected.hint', 'Not Selected'), child:
-                      Styles().images.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
-                    )
+      color: Styles().colors.surface,
+      clipBehavior: Clip.none,
+      child: Stack(children: [
+        InkWell(
+          onTap: widget.onTap,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: leftPadding,
+                right: 16,
+                top: 16,
+                bottom: 16
+            ),
+            child: Row(children: <Widget>[
+              Visibility(
+                visible: (widget.selected != null),
+                child: Padding(
+                  padding: EdgeInsets.only(right: leftPadding),
+                  child: Semantics(
+                    label: (widget.selected == true)
+                        ? Localization().getStringEx('widget.conversation_card.selected.hint', 'Selected')
+                        : Localization().getStringEx('widget.conversation_card.unselected.hint', 'Not Selected'),
+                    child: Styles().images.getImage(
+                      (widget.selected == true)
+                          ? 'check-circle-filled'
+                          : 'check-circle-outline-gray',
+                      excludeFromSemantics: true,
+                    ),
                   ),
                 ),
-
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(right: 8),
-                          child: Styles().images.getImage((widget.conversation?.isGroupConversation ?? false) ? 'messages-group-dark-blue' : 'person-circle-dark-blue') ?? Container(),
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Styles().images.getImage(
+                              (widget.conversation?.isGroupConversation ?? false)
+                                  ? 'messages-group-dark-blue'
+                                  : 'person-circle-dark-blue'
+                          ) ?? Container(),
                         ),
                         Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(widget.conversation?.membersString),
+                          child: Text(
+                              StringUtils.ensureNotEmpty(widget.conversation?.membersString),
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 2,  //TODO: allow multiple lines?
+                              maxLines: 2,
                               style: Styles().textStyles.getTextStyle('widget.card.title.small')
                           ),
                         ),
                         if (widget.conversation?.mute == true)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Styles().images.getImage('notification-off'),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Icon(Icons.notifications_off, size: 20),
                           ),
-                        _buildDisplayDateWidget,
+                        _buildDisplayDateWidget(),
                       ],
                     ),
-                    Container(height: 16.0),
-                    StringUtils.isNotEmpty(widget.conversation?.lastMessage) ?
-                    Row(children: [
-                      Expanded(child:
-                        Text(widget.conversation?.lastMessage ?? '',
-                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
-                        )
-                      )]) : Container(),
-                  ])
+                    if (StringUtils.isNotEmpty(widget.conversation?.lastMessage))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                            widget.conversation?.lastMessage ?? '',
+                            semanticsLabel: sprintf(
+                                Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'),
+                                [widget.conversation?.lastMessage ?? '']
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
+                        ),
+                      ),
+                  ],
                 ),
-              ],)
-            ),
+              ),
+            ]),
           ),
-        ],)
+        ),
+      ]),
     );
   }
 
-  Widget get _buildDisplayDateWidget {
+  Widget _buildHorizontalLayout() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors.surface,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: InkWell(
+        onTap: widget.onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeaderSection(),
+              const SizedBox(height: 12),
+              _buildMessagePreview(),
+              Spacer(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _buildDisplayDateWidget(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: Styles().images.getImage(
+            (widget.conversation?.isGroupConversation ?? false)
+                ? 'messages-group-dark-blue'
+                : 'person-circle-dark-blue',
+            excludeFromSemantics: true,
+          ) ?? Container(),
+        ),
+        Expanded(
+          child: Text(
+            StringUtils.ensureNotEmpty(widget.conversation?.membersString),
+            style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ),
+        if (widget.conversation?.mute == true)
+          const Padding(
+            padding: EdgeInsets.only(left: 4),
+            child: Icon(Icons.notifications_off, size: 20),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildMessagePreview() {
+    return Text(
+      widget.conversation?.lastMessage ?? '',
+      style: Styles().textStyles.getTextStyle(widget.isHorizontal ? "widget.card.detail.medium" : "widget.card.detail.tiny.medium_fat"),
+      maxLines: widget.isHorizontal ? 3 : 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildDisplayDateWidget() {
     String displayDateTime = StringUtils.ensureNotEmpty(widget.conversation?.displayDateTime);
     bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
-    return Semantics(child: Text(noSuffix ? displayDateTime : "$displayDateTime ago",
-        semanticsLabel: "Updated ${widget.conversation?.displayDateTime ?? ""} ago",
-        textAlign: TextAlign.right,
-        style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')));
+    return Text(
+      noSuffix ? displayDateTime : "$displayDateTime ago",
+      style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat'),
+    );
   }
 }

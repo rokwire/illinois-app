@@ -5,7 +5,7 @@
 			"tabbar.default": "favorites",
 
 			"home": [
-				"all_groups", "my_groups", "event_feed", "my_events", "public_surveys", "recent_polls"
+				"all_groups", "my_groups", "event_feed", "my_events", "public_surveys", "recent_polls", "my_messages"
 			],
 			"home.system": ["tout", "connect"],
 			"home.connect": ["phone_or_email"],
@@ -15,8 +15,10 @@
 			"home.events": ["event_feed", "my_events"],
 			"home.surveys": ["public_surveys"],
 			"home.polls": ["recent_polls"],
+			"home.messages": ["my_messages"],
 
 			"home.all_groups": ["groups"],
+			"home.my_messages": ["messages"],
 			"home.my_groups": ["groups"],
 			"home.event_feed": ["events"],
 			"home.my_events": ["events"],
@@ -31,7 +33,7 @@
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.surveys": ["public_surveys"],
 			"browse.polls": ["recent_polls"],
-            "browse.messages": ["messages"],
+            "browse.messages": ["my_messages"],
 
 			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
 
@@ -211,7 +213,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["all_groups", "my_groups", "event_feed", "my_events", "public_surveys", "recent_polls"]
+				"home": ["all_groups", "my_groups", "event_feed", "my_events", "public_surveys", "recent_polls", "my_messages"]
 			},
 			"rules": {
 			}

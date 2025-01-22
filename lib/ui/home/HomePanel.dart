@@ -45,6 +45,7 @@ import 'package:neom/ui/home/HomeEvent2Widget.dart';
 import 'package:neom/ui/home/HomeFavoritesWidget.dart';
 import 'package:neom/ui/home/HomeInboxWidget.dart';
 import 'package:neom/ui/home/HomeLaundryWidget.dart';
+import 'package:neom/ui/home/HomeMessagesSectionWidget.dart';
 import 'package:neom/ui/home/HomePollsWidget.dart';
 import 'package:neom/ui/home/HomePublicSurveysWidget.dart';
 import 'package:neom/ui/home/HomeResearchProjectsWidget.dart';
@@ -288,6 +289,15 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeLaundryWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeLaundryWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'messages') {
+      if (title) {
+        return HomeMessagesSectionWidget.title;
+      } else if (handle) {
+        return HomeMessagesSectionWidget.handle(favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeMessagesSectionWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'groups') {
