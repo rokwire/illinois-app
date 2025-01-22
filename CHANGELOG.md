@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Always show profile preview, even if it is private [#4658](https://github.com/rokwire/illinois-app/issues/4658).
 - Profile Edit fixes and updates [#4660](https://github.com/rokwire/illinois-app/issues/4660).
 - Notifications UI updates [#4489](https://github.com/rokwire/illinois-app/issues/4489).
+- Notifications settings updates [#4663](https://github.com/rokwire/illinois-app/issues/4663).
 
 ## [6.1.44] - 2025-01-21
 ### Changed
