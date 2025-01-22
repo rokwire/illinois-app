@@ -29,6 +29,10 @@
     "dialog.deselect_all.hint":"",
     "dialog.success.title":"Success",
     "dialog.success.hint":"",
+    "dialog.edit.title":"Edit",
+    "dialog.edit.hint":"",
+    "dialog.delete.title":"Delete",
+    "dialog.delete.hint":"",
 
     "tabbar.home.title":"Inicio",
     "tabbar.home.hint":"Página de inicio",
@@ -2112,7 +2116,6 @@
 
     "widget.settings.dialog.button.cancel.title": "Cancelar",
 
-    "panel.settings.notifications.label.desctiption":"No se pierda ningún evento o actualización del campus.",
     "panel.settings.notifications.label.notifications":"Notificaciones push",
     "panel.settings.notifications.label.info":"Para recibir notificaciones, habilite en la configuración de su dispositivo.",
     "panel.settings.notifications.appointments.new":"Nueva cita de MyMcKinley",
@@ -2134,6 +2137,7 @@
     "panel.settings.notifications.group_updates.events.label": "Eventos",
     "panel.settings.notifications.group_updates.invitations.label": "Membresía en grupos",
     "panel.settings.notifications.group_updates.polls.label": "Encuestas",
+    "panel.settings.notifications.group_updates.messages.label": "Messages",
     "panel.settings.notifications.pause_notifications": "Pausar todas las notificaciones",
 
     "panel.settings.privacy.privacy.label.title": "Elija su nivel de privacidad",
@@ -3244,10 +3248,10 @@
     "panel.inbox.filter.time.all.label": "Todas las notificaciones",
     "panel.inbox.filter.time.today.label": "Hoy dia",
     "panel.inbox.filter.time.yesterday.label": "El dia de ayer",
-    "panel.inbox.filter.time.this_week.label": "Esta semana",
-    "panel.inbox.filter.time.last_week.label": "La semana pasada",
-    "panel.inbox.filter.time.this_month.label": "Este mes",
-    "panel.inbox.filter.time.last_month.label": "El mes pasado",
+    "panel.inbox.filter.time.this_week.label": "Esta Semana",
+    "panel.inbox.filter.time.last_week.label": "La Semana Pasada",
+    "panel.inbox.filter.time.this_month.label": "Este Mes",
+    "panel.inbox.filter.time.last_month.label": "El Mes Pasado",
     "panel.inbox.filter.time.notifications.label": "Notificaciones",
     "panel.inbox.mark_as_read.failed.msg": "Error al marcar todos los mensajes como leídos",
 

@@ -49,13 +49,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   late String? _photoImageToken;
 
   final Map<_ProfileField, Auth2FieldVisibility?> _fieldVisibilities = {};
-  final Map<_ProfileField, TextEditingController?> _fieldTextControllers = {};
-  final Map<_ProfileField, FocusNode?> _fieldFocusNodes = {};
+  final Map<_ProfileField, TextEditingController> _fieldTextControllers = {};
+  final Map<_ProfileField, bool> _fieldTextNotEmpty = {};
+  final Map<_ProfileField, FocusNode> _fieldFocusNodes = {};
 
   bool _saving = false;
   bool _clearingUserPhoto = false;
   bool _clearingUserPronunciation = false;
   bool _initializingAudioPlayer = false;
+
+  UniqueKey _photoKey = UniqueKey();
   AudioPlayer? _audioPlayer;
 
   double _screenInsetsBottom = 0;
@@ -76,6 +79,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     for (_ProfileField field in _ProfileField.values) {
       _fieldTextControllers[field] = TextEditingController(text: widget.profile?.fieldValue(field) ?? '');
+      _fieldTextNotEmpty[field] = (widget.profile?.fieldValue(field)?.isNotEmpty == true);
       _fieldFocusNodes[field] = FocusNode();
     }
 
@@ -159,6 +163,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     Widget get _photoWidget => Stack(children: [
       Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
         DirectoryProfilePhoto(
+          key: _photoKey,
           photoUrl: _photoImageUrl,
           photoUrlHeaders: _photoAuthHeaders,
           photoData: _photoImageData,
@@ -211,6 +216,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         if (mounted && (imageUploadResult is ImagesResult)) {
           if (imageUploadResult.resultType == ImagesResultType.succeeded) {
             setState(() {
+              _photoKey = UniqueKey();
               _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
               _photoImageToken = DirectoryProfilePhotoUtils.newToken;
               _photoImageData = imageUploadResult.imageData;
@@ -249,7 +255,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           });
           if (deleteImageResult.resultType == ImagesResultType.succeeded) {
             setState(() {
+              _photoKey = UniqueKey();
               _photoText = '';
+              _photoImageToken = DirectoryProfilePhotoUtils.newToken;
               _photoImageData = null;
             });
           }
@@ -265,8 +273,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
 
     Widget get _togglePhotoVisibilityButton =>
-      _photoIconButton(_visibilityIcon(_fieldVisibilities[_ProfileField.photoUrl]),
-        onTap: () => _onToggleFieldVisibility(_ProfileField.photoUrl)
+      _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
+        onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
       );
 
     Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
@@ -497,7 +505,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
-    enabled: false, public: true,
+    enabled: false, locked: true,
   );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
@@ -518,15 +526,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
-    bool public = false,
+    bool locked = false,
   }) => _fieldSection(
     headingTitle: headingTitle,
-    headingHint: headingTitle,
+    headingHint: headingHint,
     fieldControl: _textFieldControl(field,
         textInputType: textInputType,
         autocorrect: autocorrect,
         enabled: enabled,
-        public: public,
+        locked: locked,
     )
   );
 
@@ -534,13 +542,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
-    bool public = false,
+    bool locked = false,
     }) => Row(children: [
       Expanded(child:
         _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
       ),
       Padding(padding: EdgeInsets.only(left: 6), child:
-        _visibilityButton(field, public: public),
+        _visibilityButton(field, locked: locked),
       ),
     ],);
 
@@ -562,6 +570,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         TextSpan(style: Styles().textStyles.getTextStyle('widget.title.tiny.fat.spaced'), children: [
           TextSpan(text: title?.toUpperCase()),
           if (hint?.isNotEmpty == true)
+
             TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.tiny'))
         ]),
       ),
@@ -585,11 +594,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
               keyboardType: textInputType,
               autocorrect: autocorrect,
               readOnly: (enabled != true),
+              onChanged: (String text) => _onTextChanged(field, text),
             )
           )
         ),
         if (enabled)
-          InkWell(onTap: () => _onToggleTextEditing(field), child:
+          InkWell(onTap: () => _onTextEdit(field), child:
             Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
               Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
             )
@@ -597,10 +607,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       ])
     );
 
-  Widget _visibilityButton(_ProfileField field, { bool public = false}) =>
+  Widget _visibilityButton(_ProfileField field, { bool locked = false}) =>
     _iconButton(
-      icon: _visibilityIcon(_fieldVisibilities[field], public: public),
-      onTap: public ? null : () => _onToggleFieldVisibility(field),
+      icon: _visibilityIcon(field, locked: locked),
+      onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
     );
 
   Widget _iconButton({ Widget? icon, bool progress = false, void Function()? onTap}) =>
@@ -614,10 +624,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       )
     );
 
-  Widget? _visibilityIcon(Auth2FieldVisibility? visibility, { bool public = false} ) {
-    if (public) {
+  Widget? _visibilityIcon(_ProfileField field, { bool locked = false} ) {
+    if (locked) {
       return _lockIcon;
-    } else if (_permittedVisibility.contains(visibility)) {
+    } else if (_permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true)) {
       return _publicIcon;
     } else {
       return _privateIcon;
@@ -641,12 +651,28 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
 
   String? get _photoText => _fieldTextControllers[_ProfileField.photoUrl]?.text;
-  set _photoText(String? value) => (_fieldTextControllers[_ProfileField.photoUrl] ??= TextEditingController()).text = value ?? '';
+  set _photoText(String? value) {
+    (_fieldTextControllers[_ProfileField.photoUrl] ??= TextEditingController()).text = value ?? '';
+    _onTextChanged(_ProfileField.photoUrl, value ?? '');
+  }
 
   String? get _pronunciationText => _fieldTextControllers[_ProfileField.pronunciationUrl]?.text;
-  set _pronunciationText(String? value) => (_fieldTextControllers[_ProfileField.pronunciationUrl] ??= TextEditingController()).text = value ?? '';
+  set _pronunciationText(String? value) {
+    (_fieldTextControllers[_ProfileField.pronunciationUrl] ??= TextEditingController()).text = value ?? '';
+    _onTextChanged(_ProfileField.pronunciationUrl, value ?? '');
+  }
 
-  void _onToggleTextEditing(_ProfileField field) {
+  void _onTextChanged(_ProfileField field, String value) {
+    bool wasNotEmpty = (_fieldTextNotEmpty[field] == true);
+    bool isNotEmpty = value.isNotEmpty;
+    if (wasNotEmpty != isNotEmpty) {
+      setState(() {
+        _fieldTextNotEmpty[field] = isNotEmpty;
+      });
+    }
+  }
+
+  void _onTextEdit(_ProfileField field) {
     FocusNode? focusNode = _fieldFocusNodes[field];
     if (focusNode?.hasFocus == true) {
       focusNode?.unfocus();
