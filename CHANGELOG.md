@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.45] - 2025-01-22
 ### Fixed
 -  Messaging fixes and tweaks [#4621](https://github.com/rokwire/illinois-app/issues/4621)
 ### Changed
