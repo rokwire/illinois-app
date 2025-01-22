@@ -2116,7 +2116,6 @@
 
     "widget.settings.dialog.button.cancel.title": "Cancelar",
 
-    "panel.settings.notifications.label.desctiption":"No se pierda ningún evento o actualización del campus.",
     "panel.settings.notifications.label.notifications":"Notificaciones push",
     "panel.settings.notifications.label.info":"Para recibir notificaciones, habilite en la configuración de su dispositivo.",
     "panel.settings.notifications.appointments.new":"Nueva cita de MyMcKinley",
@@ -2138,6 +2137,7 @@
     "panel.settings.notifications.group_updates.events.label": "Eventos",
     "panel.settings.notifications.group_updates.invitations.label": "Membresía en grupos",
     "panel.settings.notifications.group_updates.polls.label": "Encuestas",
+    "panel.settings.notifications.group_updates.messages.label": "Messages",
     "panel.settings.notifications.pause_notifications": "Pausar todas las notificaciones",
 
     "panel.settings.privacy.privacy.label.title": "Elija su nivel de privacidad",

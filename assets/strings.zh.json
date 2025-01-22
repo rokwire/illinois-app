@@ -2104,7 +2104,6 @@
 
 	"widget.settings.dialog.button.cancel.title": "取消",
 
-	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
 	"panel.settings.notifications.label.notifications":"推送通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
 	"panel.settings.notifications.appointments.new":"新的 MyMcKinley 預約",
@@ -2126,6 +2125,7 @@
 	"panel.settings.notifications.group_updates.events.label": "活动",
 	"panel.settings.notifications.group_updates.invitations.label": "群组会员",
 	"panel.settings.notifications.group_updates.polls.label": "投票",
+	"panel.settings.notifications.group_updates.messages.label": "Messages",
 	"panel.settings.notifications.pause_notifications": "暂停所有通知",
 
 	"panel.settings.privacy.privacy.label.title": "选择您的隐私级别",
