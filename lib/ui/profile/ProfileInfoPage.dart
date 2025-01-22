@@ -105,17 +105,14 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       return Column(children: [
         _directoryVisibilityControl,
 
-        if (directoryVisibility == true)
-          Column(children: [
-            if (widget.onboarding == false)
-              Padding(padding: EdgeInsets.only(top: 16), child:
-                Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-              ),
+        if (widget.onboarding == false)
+          Padding(padding: EdgeInsets.only(top: 16), child:
+            Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+          ),
 
-            Padding(padding: EdgeInsets.only(top: 16), child:
-              _editing ? _editContent : _previewContent,
-            )
-          ]),
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          _editing ? _editContent : _previewContent,
+        ),
 
         if (_showAccountCommands && !_editing)
           _accountCommands,

@@ -28,7 +28,11 @@
 	"dialog.deselect_all.title":"Deselect All",
 	"dialog.deselect_all.hint":"",
 	"dialog.success.title":"Success",
- "dialog.success.hint":"",
+	"dialog.success.hint":"",
+	"dialog.edit.title":"Edit",
+	"dialog.edit.hint":"",
+	"dialog.delete.title":"Delete",
+	"dialog.delete.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
