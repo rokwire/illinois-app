@@ -40,9 +40,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
 
-  bool _isEditMode = false;
-  Set<String> _selectedMessageIds = Set<String>();
-
   bool _loadingMarkAllAsRead = false;
 
   @override
@@ -131,7 +128,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     if (entry is InboxMessage) {
       return Padding(padding: EdgeInsets.only(bottom: 20), child: InboxMessageCard(
           message: entry,
-          selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
           onTap: () => _onTapMessage(entry)));
     }
     else if (entry is String) {
@@ -158,29 +154,6 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   void _onTapMessage(InboxMessage message) {
-    if (_isEditMode == true) {
-      _handleSelectionTap(message);
-    } else {
-      _handleRedirectTap(message);
-    }
-  }
-
-  void _handleSelectionTap(InboxMessage message) {
-    Analytics().logSelect(target: message.subject);
-    setState(() {
-      if (message.messageId != null) {
-        if (_selectedMessageIds.contains(message.messageId)) {
-          _selectedMessageIds.remove(message.messageId);
-          AppSemantics.announceMessage(context, "Deselected");
-        } else {
-          _selectedMessageIds.add(message.messageId!);
-          AppSemantics.announceMessage(context, "Selected");
-        }
-      }
-    });
-  }
-
-  void _handleRedirectTap(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
     NotificationsHomePanel.launchMessageDetail(message);
   }
