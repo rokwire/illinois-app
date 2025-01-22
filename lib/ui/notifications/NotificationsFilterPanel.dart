@@ -169,7 +169,7 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 4.0, offset: Offset(2, 2))]),
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.info.small'))),
+          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.title.small'))),
           InkWell(
               onTap: onTapValue,
               child: Padding(
