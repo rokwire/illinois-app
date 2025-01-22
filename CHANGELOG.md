@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add loading video for web [#4628](https://github.com/rokwire/illinois-app/issues/4628).
+### Fixed
+-  Messaging fixes and tweaks [#4621](https://github.com/rokwire/illinois-app/issues/4621)
+### Changed
+- Always show profile preview, even if it is private [#4658](https://github.com/rokwire/illinois-app/issues/4658).
+- Notifications UI updates [#4489](https://github.com/rokwire/illinois-app/issues/4489).
 
 ## [6.1.44] - 2025-01-21
 ### Changed
