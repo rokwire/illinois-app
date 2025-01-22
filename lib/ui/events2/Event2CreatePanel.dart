@@ -45,7 +45,6 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2CreatePanel extends StatefulWidget {

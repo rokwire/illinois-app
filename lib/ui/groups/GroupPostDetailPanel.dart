@@ -258,7 +258,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           //         textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
                           //     )
                             GroupPostCard(post: _post, group: widget.group, isClickable: false, postReactions: widget.postReactions,
-                              isAdmin: _post?.findCreatorMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
+                              isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
                           visible: _isEditMainPost,
@@ -424,6 +424,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildReplyTextField(){
     return PostInputField(
       key: _postInputKey,
+      title:  Localization().getStringEx('panel.group.detail.post.reply.reply.label.capitalized', "REPLY"),// tbd localize
       text: _replyEditData?.body,
       onBodyChanged: (text) => _replyEditData?.body = text,
     );
@@ -470,7 +471,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 reply: reply,
                 post: widget.post,
                 group: widget.group,
-                creator: widget.post?.findCreatorMember(groupMembers: _allMembersAllowedToPost),
+                creator: reply.creator?.findAsMember(groupMembers: _allMembersAllowedToPost),
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
@@ -23,6 +24,7 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -151,7 +153,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
       _messageButton,
     ],);
 
-  Widget  get _messageButton => _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress);
+  Widget  get _messageButton => Visibility(visible: FlexUI().isMessagesAvailable, child: _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress));
   Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.fillColorPrimary);
 
   void _onMessage() async {
@@ -262,17 +264,18 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
 
 // DirectoryAccountBusinessCard
 
-class DirectoryAccountBusinessCard extends StatefulWidget {
+class DirectoryAccountContactCard extends StatefulWidget {
   final Auth2PublicAccount? account;
   final String? accountId;
+  final bool printMode;
 
-  DirectoryAccountBusinessCard({super.key, this.account, this.accountId });
+  DirectoryAccountContactCard({super.key, this.account, this.accountId, this.printMode = false });
 
   @override
-  State<StatefulWidget> createState() => _DirectoryAccountBusinessCardState();
+  State<StatefulWidget> createState() => _DirectoryAccountContactCardState();
 }
 
-class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessCard> {
+class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCard> {
 
   Auth2PublicAccount? _account;
   bool _loadingAccount = false;
@@ -280,9 +283,10 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
   Auth2UserProfile? get _profile => _account?.profile;
 
   String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(accountId: _account?.id, type: UserProfileImageType.medium) : null;
+    Content().getUserPhotoUrl(accountId: _account?.id, type: _photoImageType) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
+  UserProfileImageType get _photoImageType => widget.printMode ? UserProfileImageType.defaultType : UserProfileImageType.medium;
 
   Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
@@ -366,7 +370,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
         Expanded(child:
           Center(child:
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
                 DirectoryPronunciationButton.spacer(),
               Column(mainAxisSize: MainAxisSize.min, children: [
                 Padding(padding: EdgeInsets.only(top: 16), child:
@@ -375,7 +379,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
                 if (_profile?.pronouns?.isNotEmpty == true)
                   Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
               ]),
-              if (_profile?.pronunciationUrl?.isNotEmpty == true)
+              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
                 DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
             ],),
           ),
@@ -392,7 +396,7 @@ class _DirectoryAccountBusinessCardState extends State<DirectoryAccountBusinessC
         if (_profile?.pronouns?.isNotEmpty == true)
           Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
       ]),
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
+      if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
         DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
     ],),
   ]);
@@ -445,7 +449,7 @@ class DirectoryAccountPopupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(children: [
-    DirectoryAccountBusinessCard(account: account, accountId: accountId,),
+    DirectoryAccountContactCard(account: account, accountId: accountId,),
     Positioned.fill(child:
       Align(alignment: Alignment.topRight, child:
         InkWell(onTap: () => _onTapClose(context), child:
@@ -525,7 +529,7 @@ void _launchUrl(String? url) {
 
 // DirectoryProfilePhoto
 
-class DirectoryProfilePhoto extends StatelessWidget {
+class DirectoryProfilePhoto extends StatefulWidget {
 
   final String? photoUrl;
   final Map<String, String>? photoUrlHeaders;
@@ -536,11 +540,41 @@ class DirectoryProfilePhoto extends StatelessWidget {
   DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.borderSize = 0, required this.imageSize });
 
   @override
+  State<DirectoryProfilePhoto> createState() => _DirectoryProfilePhotoState();
+}
+
+class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
+  Uint8List? _photoBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _photoBytes = widget.photoData;
+    _loadNetworkPhoto();
+  }
+
+  void _loadNetworkPhoto() {
+    String? photoUrl = widget.photoUrl;
+    if ((_photoBytes == null) && StringUtils.isNotEmpty(photoUrl)) {
+      Network().get(photoUrl, headers: widget.photoUrlHeaders).then((response) {
+        int? responseCode = response?.statusCode;
+        if ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) {
+          setStateIfMounted(() {
+            _photoBytes = response?.bodyBytes;
+          });
+        } else {
+          debugPrint('${responseCode}: Failed to load photo with url: ${widget.photoUrl}');
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     ImageProvider<Object>? decorationImage = _decorationImage;
     return (decorationImage != null) ?
       Container(
-        width: imageSize + borderSize, height: imageSize + borderSize,
+        width: widget.imageSize + widget.borderSize, height: widget.imageSize + widget.borderSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Styles().colors.white,
@@ -548,31 +582,28 @@ class DirectoryProfilePhoto extends StatelessWidget {
         ),
         child: Center(
           child: Container(
-            width: imageSize, height: imageSize,
+            width: widget.imageSize, height: widget.imageSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Styles().colors.background,
               image: DecorationImage(
-                fit: BoxFit.cover,
-                image: decorationImage
+                  fit: BoxFit.cover,
+                  image: decorationImage
               ),
-            )
+            ),
           )
         ),
-      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: imageSize + borderSize) ?? Container());
+      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.imageSize + widget.borderSize) ?? Container());
   }
 
-    ImageProvider<Object>? get _decorationImage {
-      if (photoData != null) {
-        return Image.memory(photoData ?? Uint8List(0)).image;
-      }
-      else if (photoUrl != null) {
-        return NetworkImage(photoUrl ?? '', headers: photoUrlHeaders);
-      }
-      else {
-        return null;
-      }
-    } 
+  ImageProvider<Object>? get _decorationImage {
+    if (_photoBytes != null) {
+      return Image.memory(_photoBytes ?? Uint8List(0)).image;
+    }
+    else {
+      return null;
+    }
+  }
 }
 
 // DirectoryProfilePhotoUtils

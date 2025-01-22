@@ -17,10 +17,15 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
+  final bool onboarding;
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
-  ProfileInfoPreviewPage({super.key, required this.contentType, this.profile, this.privacy, this.photoImageData, this.photoImageToken, this.pronunciationAudioData });
+
+  ProfileInfoPreviewPage({super.key, required this.contentType,
+    this.profile, this.privacy, this.onboarding = false,
+    this.photoImageData, this.photoImageToken, this.pronunciationAudioData
+  });
 
   @override
   State<StatefulWidget> createState() => ProfileInfoPreviewPageState();
@@ -87,7 +92,8 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
           DirectoryProfileDetails(_profile)
         ),
-        _shareButton,
+        if (widget.onboarding == false)
+          _shareButton,
     ],)
   );
 
@@ -125,7 +131,11 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-    ProfileInfoSharePanel.present(context, profile: _profile);
+    ProfileInfoSharePanel.present(context,
+      profile: _profile,
+      photoImageData: widget.photoImageData,
+      pronunciationAudioData: widget.pronunciationAudioData,
+    );
   }
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>

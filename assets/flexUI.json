@@ -5,7 +5,7 @@
 			"tabbar.default": "favorites",
 
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
-				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
+				"wellness_resources", "wellness_mental_health", "wellness_recreation", "wellness_todo", "wellness_rings", "wellness_tips",
 				"daily_illini", "will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio",
 				"twitter", "all_groups", "my_groups",
 				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 
@@ -51,7 +51,7 @@
 			"browse.surveys": ["public_surveys"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
-			"browse.wellness": ["wellness_resources", "wellness_mental_health", "wellness_success_team","wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_podcast", "wellness_struggling"],
+			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_podcast", "wellness_struggling"],
 
 			"wallet": ["illini_id", "illini_id_faq", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
 
@@ -74,7 +74,7 @@
 			"academics.skills_self_evaluation.features": ["authentication", "login"],
 			"academics.essential_skills_coach.features": ["authentication", "netid_login"],
 
-			"wellness": ["daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "success_team", "struggling"],
+			"wellness": ["recreation", "daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "success_team", "struggling"],
 			"wellness.appointments.features": ["authentication", "netid_login"],
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
@@ -153,7 +153,7 @@
 				"features.location_services"         	    : 2,
 				"features.personalization"        	      : 3,
 				"features.notifications"          	      : 4,
-				"features.messages"          	      	  : 4,
+				"features.messages"                       : 4,
 				"features.payment_information"         	  : 4,
 				"features.authentication"                 : 4,
 				"features.sharing"                	      : 5,
@@ -243,6 +243,7 @@
 				"wellness_podcast"                        : false,
 				"campus_safety_resources"                 : false,
 				"twitter"                                 : false,
+				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
 				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",
