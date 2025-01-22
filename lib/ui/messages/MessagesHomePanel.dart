@@ -43,6 +43,7 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   // 1) Add a field to hold the search text
   final String? search;
   final List<Conversation>? conversations;
+  static bool enableMute = false;
 
   // Make the constructor private, but accept the new param
   MessagesHomePanel._({Key? key, this.search, this.conversations}) : super(key: key);
@@ -79,10 +80,10 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProviderStateMixin implements NotificationsListener {
-  final List<_FilterEntry> _mutedValues = [
-    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted conversations
-    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.hide", "Hide Muted"), value: false), // Show only not muted conversations
-  ];
+  final List<_FilterEntry> _mutedValues = MessagesHomePanel.enableMute ? [
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.show", "Show Muted"), value: null),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.hide", "Hide Muted"), value: false),
+  ] : [];
 
   final List<_FilterEntry> _times = [
     _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.any", "Any Time"), value: null),
@@ -383,7 +384,8 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        FilterSelector(
+        if (MessagesHomePanel.enableMute)
+          FilterSelector(
             padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
             titleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
@@ -399,7 +401,10 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
             active: _selectedFilter == _FilterType.Time,
             onTap: () { _onFilter(_FilterType.Time); }
         ),
-        _buildEditBar(),
+        Visibility(
+          visible: MessagesHomePanel.enableMute == true,
+          child: _buildEditBar()
+        ),
       ],
       )),
     );
@@ -604,7 +609,8 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
-      InkWell(onTap: () => _onToggleMute(mute: true), child:
+    if (MessagesHomePanel.enableMute) ...[
+    InkWell(onTap: () => _onToggleMute(mute: true), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
           Row(children:<Widget>[
             Padding(padding: EdgeInsets.only(right: 8), child:
@@ -616,6 +622,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
           ]),
         )
       ),
+    ],
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
@@ -1085,7 +1092,7 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                               style: Styles().textStyles.getTextStyle('widget.card.title.small')
                           ),
                         ),
-                        if (widget.conversation?.mute == true)
+                        if (MessagesHomePanel.enableMute && widget.conversation?.mute == true)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Styles().images.getImage('notification-off'),

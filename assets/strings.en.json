@@ -30,6 +30,10 @@
     "dialog.deselect_all.hint":"",
     "dialog.success.title":"Success",
     "dialog.success.hint":"",
+    "dialog.edit.title":"Edit",
+    "dialog.edit.hint":"",
+    "dialog.delete.title":"Delete",
+    "dialog.delete.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",
