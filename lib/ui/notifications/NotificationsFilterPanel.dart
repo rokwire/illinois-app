@@ -52,9 +52,9 @@ class NotificationsFilterPanel extends StatefulWidget {
     FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.all.label', 'All Notifications'), value: null),
     FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.today.label', 'Today'), value: TimeFilter.Today),
     FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.yesterday.label', 'Yesterday'), value: TimeFilter.Yesterday),
-    FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This week'), value: TimeFilter.ThisWeek),
-    FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last week'), value: TimeFilter.LastWeek),
-    FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This month'), value: TimeFilter.ThisMonth),
+    FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This Week'), value: TimeFilter.ThisWeek),
+    FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last Week'), value: TimeFilter.LastWeek),
+    FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This Month'), value: TimeFilter.ThisMonth),
     FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.last_month.label', 'Last Month'), value: TimeFilter.LastMonth),
   ];
 
@@ -373,13 +373,13 @@ class _NotificationsFilterPanelState extends State<NotificationsFilterPanel> {
         prefix = Localization().getStringEx('panel.inbox.filter.time.yesterday.label', 'Yesterday');
         break;
       case TimeFilter.ThisWeek:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This week');
+        prefix = Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This Week');
         break;
       case TimeFilter.LastWeek:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last week');
+        prefix = Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last Week');
         break;
       case TimeFilter.ThisMonth:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This month');
+        prefix = Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This Month');
         break;
       case TimeFilter.LastMonth:
         prefix = Localization().getStringEx('panel.inbox.filter.time.last_month.label', 'Last Month');
