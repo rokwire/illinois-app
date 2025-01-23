@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated profile visibility description formatting [#4625](https://github.com/rokwire/illinois-app/issues/4625).
+- UI Updates for Dining [#4602](https://github.com/rokwire/illinois-app/issues/4602).
 
 ## [6.1.45] - 2025-01-22
 ### Fixed
