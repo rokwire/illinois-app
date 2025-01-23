@@ -126,13 +126,15 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
             }
             String? id = JsonUtils.stringValue(command['id']);
             Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
-            bool? externalLink = JsonUtils.boolValue(command['external_link']);
-            bool? chevron = JsonUtils.boolValue(command['chevron']);
+            bool externalLink = JsonUtils.boolValue(command['external_link']) ?? UrlUtils.isWebScheme(JsonUtils.stringValue(command['url']));
+            bool chevron = JsonUtils.boolValue(command['chevron']) ?? true;
+            bool canFavorite = JsonUtils.boolValue(command['can_favorite']) ?? true;
             widgetList.add(WellnessRegularResourceButton(
               label: _getString(id),
               favorite: favorite,
-              hasChevron: chevron ?? true,
-              hasExternalLink: externalLink ?? UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
+              canFavorite: canFavorite ,
+              hasChevron: chevron,
+              hasExternalLink: externalLink,
               onTap: () => _onCommand(command),
             ));
           }
@@ -161,7 +163,8 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
             widgetList.add(WellnessLargeResourceButton(
               label: _getString(id),
               favorite: favorite,
-              hasChevron: JsonUtils.boolValue(command['chevron']),
+              canFavorite: JsonUtils.boolValue(command['can_favorite']) ?? true,
+              hasChevron: JsonUtils.boolValue(command['chevron']) ?? false,
               hasExternalLink: JsonUtils.boolValue(command['external_link']) ?? UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
               onTap: () => _onCommand(command),
             ));
