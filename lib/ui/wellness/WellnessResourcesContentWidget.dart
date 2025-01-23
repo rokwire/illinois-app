@@ -232,10 +232,12 @@ class WellnessLargeResourceButton extends StatelessWidget {
   final String? label;
   final Favorite? favorite;
   final bool hasExternalLink;
-  final bool? hasChevron;
+  final bool hasChevron;
+  final bool canFavorite;
   final void Function()? onTap;
 
-  WellnessLargeResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false, this.onTap, this.hasChevron = false}) : super(key: key);
+  WellnessLargeResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false,
+    this.onTap, this.hasChevron = false, this.canFavorite = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +256,9 @@ class WellnessLargeResourceButton extends StatelessWidget {
             Visibility(visible: hasChevron == true,
                 child: Padding(padding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16), child:
                 Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
-            FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),),
+            Visibility(visible: canFavorite == true,
+                child: FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),),
+            ),
             Container(width: 8,)
           ]),
         ),
@@ -269,9 +273,11 @@ class WellnessRegularResourceButton extends StatelessWidget {
   final bool hasExternalLink;
   final bool hasChevron;
   final bool hasBorder;
+  final bool canFavorite;
   final void Function()? onTap;
 
-  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false, this.hasBorder = false, this.onTap, this.hasChevron = true}) : super(key: key);
+  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false,
+    this.hasBorder = false, this.onTap, this.hasChevron = true, this.canFavorite = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +289,9 @@ class WellnessRegularResourceButton extends StatelessWidget {
   Widget _buildInterior() {
     return InkWell(onTap: onTap, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
+        Visibility(visible: canFavorite,
+          child: FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16))
+        ),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
             Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
