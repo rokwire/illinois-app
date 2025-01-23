@@ -353,6 +353,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
     if (widget.course != null) {
       _course = widget.course;
     }
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
