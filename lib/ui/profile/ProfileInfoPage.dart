@@ -193,23 +193,17 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   Widget get _directoryVisibilityDescription {
 
     final String visibilityMacro = "{{visibility}}";
-    final String highlightMacro = "{{highlight}}";
 
     String messageTemplate = directoryVisibility ?
-      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to $highlightMacro.') :
+      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to ${AppTextUtils.appTitleMacro} app users signed in with their NetIDs.') :
       AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.');
 
     final String visibilityValue = directoryVisibility ?
       Localization().getStringEx('panel.profile.info.directory_visibility.public.text', 'Public') :
       Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private');
 
-    String highlightValue = directoryVisibility ?
-      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.public.highlight', '${AppTextUtils.appTitleMacro} app users signed in with their NetIDs') :
-      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.highlight', '');
-
     List<InlineSpan> spanList = _directoryVisibilitySpanList(messageTemplate, <Pair<String, String>>[
       Pair<String, String>(visibilityMacro, visibilityValue),
-      Pair<String, String>(highlightMacro, highlightValue)
     ]);
 
     return RichText(textAlign: TextAlign.left, text:
