@@ -28,6 +28,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
@@ -280,6 +281,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     else if (item is Appointment) {
       return AppointmentCard(
         appointment: item,
+      );
+    }
+    else if (item is Dining) {
+      return DiningCard(
+          item,
+          onTap: (_) =>_onTapItem(item),
       );
     }
 
