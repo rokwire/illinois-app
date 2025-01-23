@@ -514,9 +514,11 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
                 Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
                   Text("${Localization().getStringEx('panel.explore_building_detail.detail.fllor_plan_and_amenities', 'Floor Plans & Amenities')}:", style: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'))
                 ),
-                ...floors.map((floor) => Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
-                  InkWell(onTap: () => _onFloor(floor), child:
-                    Text("Floor ${floor}", style: Styles().textStyles.getTextStyle("widget.description.small.underline"))))).toList()
+                ...floors.map((floor) => InkWell(onTap: () => _onFloor(floor), child:
+                  Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
+                    Text("Floor ${floor}", style: Styles().textStyles.getTextStyle("widget.description.small.underline")))
+                  )
+                ).toList()
               ])
             )
           )
