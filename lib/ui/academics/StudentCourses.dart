@@ -337,21 +337,19 @@ class StudentCoursesListPanel extends StatelessWidget with AnalyticsInfo {
   }
 }
 
-class StudentCourseDetailPanel extends StatefulWidget {
+class StudentCourseDetailPanel extends StatefulWidget with AnalyticsInfo {
   final StudentCourse? course;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
   StudentCourseDetailPanel({super.key, this.course, this.analyticsFeature});
   @override
   _StudentCourseDetailPanelState createState() => _StudentCourseDetailPanelState();
 }
-class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> with AnalyticsInfo {
+class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   StudentCourse? _course;
-  AnalyticsFeature? _analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
   bool _roomExpanded = false;
 
-
   void initState() {
-    _analyticsFeature = widget.analyticsFeature;
     if (widget.course != null) {
       _course = widget.course;
     }
