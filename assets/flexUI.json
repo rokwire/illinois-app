@@ -5,7 +5,7 @@
 			"tabbar.default": "favorites",
 
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
-				"wellness_resources", "wellness_mental_health", "wellness_recreation", "wellness_todo", "wellness_rings", "wellness_tips",
+				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
 				"daily_illini", "will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio",
 				"twitter", "all_groups", "my_groups",
 				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 

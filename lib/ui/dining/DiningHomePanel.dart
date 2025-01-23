@@ -62,6 +62,7 @@ class DiningHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _DiningHomePanelState extends State<DiningHomePanel> implements NotificationsListener {
+  static const EdgeInsets cardPadding = EdgeInsets.symmetric(horizontal: 16);
   
   List<Dining>? _dinings;
   List<DiningSpecial>? _diningSpecials;
@@ -320,8 +321,8 @@ class _DiningHomePanelState extends State<DiningHomePanel> implements Notificati
     int realIndex = _hasDiningSpecials ? index - 1 : index;
     Dining? dining = _dinings![realIndex];
 
-    return Padding(padding: EdgeInsets.only(top: 16), child:
-      DiningCard(dining, onTap: () => _onTapDining(dining))
+    return Padding(padding: cardPadding, child:
+      DiningCard(dining, onTap: (_) => _onTapDining(dining))
     );
   }
 
