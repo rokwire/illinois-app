@@ -17,6 +17,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
+import '../explore/DisplayFloorPlanPanel.dart';
+
 class StudentCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   StudentCoursesContentWidget();
 
@@ -335,12 +337,25 @@ class StudentCoursesListPanel extends StatelessWidget with AnalyticsInfo {
   }
 }
 
-class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
+class StudentCourseDetailPanel extends StatefulWidget {
   final StudentCourse? course;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
-
   StudentCourseDetailPanel({super.key, this.course, this.analyticsFeature});
+  @override
+  _StudentCourseDetailPanelState createState() => _StudentCourseDetailPanelState();
+}
+class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> with AnalyticsInfo {
+  StudentCourse? _course;
+  AnalyticsFeature? _analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+  bool _roomExpanded = false;
 
+
+  void initState() {
+    _analyticsFeature = widget.analyticsFeature;
+    if (widget.course != null) {
+      _course = widget.course;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -389,6 +404,7 @@ class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
                                                       _buildInstructor(),
                                                       _buildSchedule(),
                                                       _buildLocation(),
+                                                      _buildRoom(),
                                                     ]
                                                 )),
                                           ],
@@ -420,7 +436,7 @@ class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
           children: <Widget>[
             Expanded(
               child: Text(
-                course?.title ?? "",
+                _course?.title ?? "",
                 style: Styles().textStyles.getTextStyle("widget.student_courses.title.extra_large")
               ),
             ),
@@ -429,11 +445,11 @@ class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
   }
 
   Widget _buildDisplayInfo(){
-    return  course?.displayInfo != null?
+    return  _course?.displayInfo != null?
     Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text(
-          course?.displayInfo ?? "",
+          _course?.displayInfo ?? "",
           style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
         )) :
     Container();
@@ -443,13 +459,13 @@ class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(children: [Expanded(child:
-          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course?.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),)
+          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [_course?.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),)
         )]),
     );
   }
 
   Widget _buildSchedule(){
-    String courseSchedule = course?.section?.displaySchedule ?? '';
+    String courseSchedule = _course?.section?.displaySchedule ?? '';
     return Visibility(visible: courseSchedule.isNotEmpty, child:
       Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Row(children: [
@@ -466,16 +482,16 @@ class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
   }
 
   Widget _buildLocation(){
-    String courseLocation = course?.section?.displayLocation ?? '';
+    String courseLocation = _course?.section?.building?.fullAddress ?? '';
     return Visibility(visible: courseLocation.isNotEmpty, child:
-      InkWell(onTap: (course?.hasValidLocation ?? false) ? _onLocation : null, child:
+      InkWell(onTap: (_course?.hasValidLocation ?? false) ? _onLocation : null, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
               Styles().images.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(courseLocation, style: (course?.hasValidLocation ?? false) ?
+              Text(courseLocation, style: (_course?.hasValidLocation ?? false) ?
                 Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
                 Styles().textStyles.getTextStyle("widget.button.light.title.medium")
               ),
@@ -486,8 +502,50 @@ class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
     );
   }
 
+  Widget _buildRoom() {
+    String room = _course?.section?.room ?? '';
+    List<String> floors = _course?.section?.building?.floors ?? [];
+    return Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4), child:
+      InkWell(onTap: _onRoom, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Padding(padding: EdgeInsets.only(right: 6), child:
+            (_roomExpanded)
+              ? Styles().images.getImage('chevron-up', excludeFromSemantics: true) ?? Container()
+              : Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container()
+            ),
+            Text("Room ${room}", style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline"))
+          ]),
+          Visibility(visible: _roomExpanded, child:
+            Padding(padding: EdgeInsets.only(left: 17), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Text("${Localization().getStringEx('panel.explore_building_detail.detail.fllor_plan_and_amenities', 'Floor Plans & Amenities')}:", style: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'))
+                ),
+                ...floors.map((floor) => Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
+                  InkWell(onTap: () => _onFloor(floor), child:
+                    Text("Floor ${floor}", style: Styles().textStyles.getTextStyle("widget.description.small.underline"))))).toList()
+              ])
+            )
+          )
+        ])
+      )
+    );
+  }
+
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
-    course?.launchDirections();
+    _course?.launchDirections();
+  }
+
+  void _onFloor(String floor) {
+    Analytics().logSelect(target: "Floor Plan");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DisplayFloorPlanPanel(building: _course?.section?.building, startingFloor: floor)));
+  }
+
+  void _onRoom() {
+    setState(() {
+      _roomExpanded = !_roomExpanded;
+    });
   }
 }
