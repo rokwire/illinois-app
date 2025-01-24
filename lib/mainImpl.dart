@@ -273,20 +273,41 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   Widget build(BuildContext context) {
     return NotificationListener<Notification>(
       onNotification: AppNotification().handleNotification,
-      child: MaterialApp(
-        key: _key,
-        navigatorKey: widget.navigatorKey,
-        localizationsDelegates: [
-          AppLocalizationsDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: Localization().supportedLocales(),
-        navigatorObservers:[AppNavigation()],
-        //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-        title: Localization().getStringEx('app.title', 'Illinois'),
-        theme: ThemeData(
+      child: _buildContent()
+    );
+  }
+
+  Widget _buildContent() {
+    Widget appWidget = _buildMaterialApp();
+    if (kIsWeb) {
+      return _buildWebCenterContainer(child: appWidget);
+    } else {
+      return appWidget;
+    }
+  }
+
+  Widget _buildWebCenterContainer({required Widget child}) {
+    return Container(color: Styles().colors.fillColorPrimary, child: Center(child: LayoutBuilder(builder: (context, constraints) {
+      double maxWidth = 1092;
+      return ConstrainedBox(constraints: BoxConstraints(maxWidth: maxWidth), child: child);
+    })));
+  }
+
+  Widget _buildMaterialApp() {
+    return MaterialApp(
+      key: _key,
+      navigatorKey: widget.navigatorKey,
+      localizationsDelegates: [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: Localization().supportedLocales(),
+      navigatorObservers:[AppNavigation()],
+      //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+      title: Localization().getStringEx('app.title', 'Illinois'),
+      theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
           dialogTheme: DialogTheme(
             backgroundColor: Styles().colors.surface,
@@ -298,8 +319,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
           ),
           primaryColor: Styles().colors.fillColorPrimaryVariant,
           fontFamily: Styles().fontFamilies.regular),
-        home: _homePanel,
-      ),
+      home: _homePanel,
     );
   }
 
