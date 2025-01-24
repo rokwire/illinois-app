@@ -697,7 +697,6 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
       case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
       case "wellness.wellness_podcast":         _onTapWellnessPodcast(context); break;
-      case "wellness.wellness_struggling":      _onTapWellnessStruggling(context); break;
     }
   }
 
@@ -1163,11 +1162,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapWellnessPodcast(BuildContext context) {
     Analytics().logSelect(target: "Healthy Illini Podcast");
     _launchUrl(context, Wellness().getResourceUrl(resourceId: 'podcast'));
-  }
-
-  static void _onTapWellnessStruggling(BuildContext context) {
-    Analytics().logSelect(target: "I'm Struggling");
-    _launchUrl(context, Wellness().getResourceUrl(resourceId: 'where_to_start'));
   }
 
   static void _notImplemented(BuildContext context) {

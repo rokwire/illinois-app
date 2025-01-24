@@ -96,7 +96,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessHealthScreenerNotification         = "$notifyBase.wellness.health_screener";
   static const String notifyWellnessPodcastNotification                = "$notifyBase.wellness.podcast";
   static const String notifyWellnessResourcesNotification              = "$notifyBase.wellness.resources";
-  static const String notifyWellnessStrugglingNotification             = "$notifyBase.wellness.struggling";
   static const String notifyWellnessMentalHealthNotification           = "$notifyBase.wellness.mental_health";
   static const String notifyWalletNotification                         = "$notifyBase.wallet";
   static const String notifyWalletIlliniIdNotification                 = "$notifyBase.wallet.illini_id";
@@ -248,7 +247,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeWellnessHealthScreener = 'wellness.health_screener';
   static const String payloadTypeWellnessPodcast = 'wellness.podcast';
   static const String payloadTypeWellnessResources = 'wellness.resources';
-  static const String payloadTypeWellnessStruggling = 'wellness.struggling';
   static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
   static const String payloadTypeWallet = 'wallet';
   static const String payloadTypeWalletIlliniId = 'wallet.illini_id';
@@ -547,9 +545,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWellnessRings) {
       NotificationService().notify(notifyWellnessRingsNotification, data);
-    }
-    else if (type == payloadTypeWellnessStruggling) {
-      NotificationService().notify(notifyWellnessStrugglingNotification, data);
     }
     else if (type == payloadTypeWellnessTodoList) {
       NotificationService().notify(notifyWellnessTodoListNotification, data);
