@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deleted "I'm Struggling..." from Wellness content [#4673](https://github.com/rokwire/illinois-app/issues/4673).
 ### Changed
 - Show progress indicator when uploading profile picture.
+### Fixed
+- Enable privacy prompt flow if its content cannot be scrolled [#4486](https://github.com/rokwire/illinois-app/issues/4486).
 
 ## [6.1.46] - 2025-01-23
 ### Changed
