@@ -172,7 +172,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessPodcastNotification,
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
-      FirebaseMessaging.notifyWellnessStrugglingNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
@@ -491,9 +490,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWellnessRingsNotification) {
       _onFirebaseWellnessNotification(WellnessContent.rings);
-    }
-    else if (name == FirebaseMessaging.notifyWellnessStrugglingNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.struggling);
     }
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContent.todo);
