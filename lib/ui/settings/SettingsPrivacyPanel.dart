@@ -76,6 +76,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         _data = PrivacyData.fromJson(JsonUtils.mapValue(value));
         _loading = false;
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollListener());
     });
 
   }
