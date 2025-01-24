@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class DiningCard extends StatefulWidget {
   final Dining? dining;
-  final GestureTapCallback? onTap;
+  final void Function(BuildContext context)? onTap;
 
   DiningCard(this.dining, {super.key, this.onTap, });
 
@@ -40,6 +40,12 @@ class DiningCard extends StatefulWidget {
 }
 
 class _DiningCardState extends State<DiningCard> implements NotificationsListener {
+  static Decoration get _listContentDecoration => BoxDecoration(
+      color: Styles().colors.surface,
+      // borderRadius: _listContentBorderRadius,
+      // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
+  );
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
   static const EdgeInsets _sectionPadding = EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16);
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
@@ -70,16 +76,12 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
   @override
   Widget build(BuildContext context) {
     return Semantics(label: semanticLabel, button: true, child:
-      GestureDetector(behavior: HitTestBehavior.opaque, onTap: widget.onTap, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      GestureDetector(behavior: HitTestBehavior.opaque, onTap: ()=> widget.onTap?.call(context), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 0), child:
               ClipRRect(borderRadius: _listContentBorderRadius, child:
                 Container(
                   padding: EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    // borderRadius: BorderRadius.all(Radius.circular(8)),
-                    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
-                  ),
+                  decoration: _listContentDecoration,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     _buildImage,
                     _exploreTop(),

@@ -474,33 +474,29 @@ class DirectoryProfileDetails extends StatelessWidget {
 
   DirectoryProfileDetails(this.profile, { super.key });
   
-  String? get college => null;
-  String? get department => null;
-  String? get major => null;
-  
-  String? get email => null;
-  String? get email2 => null;
-  String? get phone => null;
-  String? get website => null;
-  
   @override
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (profile?.title?.isNotEmpty == true)
+          _textDetail(profile?.title ?? ''),
         if (profile?.college?.isNotEmpty == true)
-          Text(profile?.college ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+          _textDetail(profile?.college ?? ''),
         if (profile?.department?.isNotEmpty == true)
-          Text(profile?.department ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+          _textDetail(profile?.department ?? ''),
         if (profile?.major?.isNotEmpty == true)
-          Text(profile?.major ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'),),
+          _textDetail(profile?.major ?? ''),
         if (profile?.email?.isNotEmpty == true)
-          _linkDetail(profile?.email ?? '', 'mailto:${email}'),
+          _linkDetail(profile?.email ?? '', 'mailto:${profile?.email}'),
         if (profile?.email2?.isNotEmpty == true)
-          _linkDetail(profile?.email2 ?? '', 'mailto:${email2}'),
+          _linkDetail(profile?.email2 ?? '', 'mailto:${profile?.email2}'),
         if (profile?.phone?.isNotEmpty == true)
-          _linkDetail(profile?.phone ?? '', 'tel:${phone}'),
+          _linkDetail(profile?.phone ?? '', 'tel:${profile?.phone}'),
         if (profile?.website?.isNotEmpty == true)
           _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? ''),
       ],);
+
+  Widget _textDetail(String text) =>
+    Text(text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
 
   Widget _linkDetail(String text, String url) =>
     InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:

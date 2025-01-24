@@ -452,8 +452,6 @@
     "panel.browse.entry.wellness.wellness_mental_health.title": "Mental Health Resources",
     "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
     "panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
-    "panel.browse.entry.wellness.wellness_struggling.title": "I'm Struggling",
-    "panel.browse.entry.wellness.wellness_recreation.title": "Campus Recreation",
 
     "panel.assistant.header.title": "Illinois Assistant",
     "panel.assistant.offline.label": "The Illinois Assistant is not available while offline.",
@@ -1232,7 +1230,7 @@
     "panel.explore_detail.label.event_preview":"Event Preview",
     "panel.explore_detail.label.related_tags":"Related Tags:",
     "panel.explore_detail.label.contacts": "Contacts:",
-    "panel.explore_detail.label.accepted_payment":"Accepted Payment",
+    "panel.explore_detail.label.accepted_payment":"Accepted payment details",
     "panel.explore_detail.label.accepted_payment_details":"Details",
     "panel.explore_detail.recurring_event.schedule.heading.title": "Available Times",
     "panel.explore_detail.super_event.schedule.heading.title": "Event Schedule",
@@ -1242,7 +1240,7 @@
     "panel.explore_detail.label.privacy.private.title":"Uploaded Guest List Only",
     "panel.explore_detail.label.privacy.group_members.title":"Group Members Only",
     "panel.explore_detail.label.privacy.public.title":"Public Event",
-    "panel.explore_detail.button.order_online":"Order Online",
+    "panel.explore_detail.button.order_online":"Order Online with Order Ahead App",
     "panel.explore_detail.event_type.online": "Online Event",
     "panel.explore_detail.event_type.in_person": "In-person event",
     "panel.explore_detail.label.text_and_tell": "Text and tell us about your dining experience!",
@@ -2119,7 +2117,6 @@
 
     "widget.settings.dialog.button.cancel.title": "Cancel",
 
-    "panel.settings.notifications.label.desctiption":"Don’t miss an event or campus update.",
     "panel.settings.notifications.label.notifications":"Push Notifications",
     "panel.settings.notifications.label.info":"To receive notifications, enable them in your device's settings.",
     "panel.settings.notifications.appointments.new":"New MyMcKinley Appointment",
@@ -2141,6 +2138,7 @@
     "panel.settings.notifications.group_updates.events.label": "Events",
     "panel.settings.notifications.group_updates.invitations.label": "Group membership",
     "panel.settings.notifications.group_updates.polls.label": "Polls",
+    "panel.settings.notifications.group_updates.messages.label": "Messages",
     "panel.settings.notifications.pause_notifications": "Pause all notifications",
 
     "panel.settings.privacy.privacy.label.title": "Choose Your Privacy Level",
@@ -2375,10 +2373,8 @@
     "panel.profile.info.save.failed.text": "Failed to update profile and privacy settings.",
     "panel.profile.info.playback.failed.text": "Failed to play audio stream.",
     "panel.profile.info.directory_visibility.command.toggle.title": "Directory Visibility",
-    "panel.profile.info.directory_visibility.normal.public.description": "Your directory visibility is set to {{visibility}}. Anyone on or off the User Directory can view your account.",
-    "panel.profile.info.directory_visibility.normal.private.description": "Your directory visibility is set to {{visibility}}. Your account is available only to you.",
-    "panel.profile.info.directory_visibility.onboarding.public.description": "Your directory visibility is set to {{visibility}}. The information below will be visible to the users of the {{app_title}} App.",
-    "panel.profile.info.directory_visibility.onboarding.private.description": "Your directory visibility is set to {{visibility}}. Your profile is visible only to you.",
+    "panel.profile.info.directory_visibility.public.description": "Your directory visibility is set to {{visibility}}. The information below will be visible to {{app_title}} app users signed in with their NetIDs.",
+    "panel.profile.info.directory_visibility.private.description": "Your directory visibility is set to {{visibility}}. Your profile is visible only to you.",
     "panel.profile.info.directory_visibility.public.text": "Public",
     "panel.profile.info.directory_visibility.private.text": "Private",
     "panel.profile.info.directory_visibility.toggle.failed.text": "Failed to update directory visibility.",
@@ -2556,7 +2552,6 @@
     "panel.wellness.section.mental_health.label": "Mental Health Resources",
     "panel.wellness.section.success_team.label": "My Success Team",
     "panel.wellness.section.podcast.label": "Healthy Illini Podcast",
-    "panel.wellness.section.struggling.label": "I'm Struggling",
 
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
     "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving toward enhancing your ",

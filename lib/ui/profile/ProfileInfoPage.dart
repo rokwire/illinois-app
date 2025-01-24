@@ -191,32 +191,44 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     );
 
   Widget get _directoryVisibilityDescription {
+
     final String visibilityMacro = "{{visibility}}";
+
+    String messageTemplate = directoryVisibility ?
+      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to ${AppTextUtils.appTitleMacro} app users signed in with their NetIDs.') :
+      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.');
 
     final String visibilityValue = directoryVisibility ?
       Localization().getStringEx('panel.profile.info.directory_visibility.public.text', 'Public') :
       Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private');
 
-    final String messageTemplate = widget.onboarding ?
-      (directoryVisibility ?
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.onboarding.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to the users of the ${AppTextUtils.appTitleMacro} App.') :
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.onboarding.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.')) :
-      (directoryVisibility ?
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.normal.public.description', 'Your directory visibility is set to $visibilityMacro. Anyone on or off the User Directory can view your account.') :
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.normal.private.description', 'Your directory visibility is set to $visibilityMacro. Your account is available only to you.'));
-
-    final List<String> messages = messageTemplate.split(visibilityMacro);
-    List<InlineSpan> spanList = <InlineSpan>[];
-    if (0 < messages.length)
-      spanList.add(TextSpan(text: messages.first));
-    for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: visibilityValue, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),));
-      spanList.add(TextSpan(text: messages[index]));
-    }
+    List<InlineSpan> spanList = _directoryVisibilitySpanList(messageTemplate, <Pair<String, String>>[
+      Pair<String, String>(visibilityMacro, visibilityValue),
+    ]);
 
     return RichText(textAlign: TextAlign.left, text:
       TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
     );
+  }
+
+  List<InlineSpan> _directoryVisibilitySpanList(String message, List<Pair<String, String>> macros) {
+    if (macros.isNotEmpty) {
+      Pair<String, String> head = macros.first;
+      List<Pair<String, String>> trail = macros.sublist(1);
+
+      List<InlineSpan> spanList = <InlineSpan>[];
+      final List<String> messages = message.split(head.left);
+      if (0 < messages.length)
+        spanList.addAll(_directoryVisibilitySpanList(messages.first, trail));
+      for (int index = 1; index < messages.length; index++) {
+        spanList.add(TextSpan(text: head.right, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),));
+        spanList.addAll(_directoryVisibilitySpanList(messages[index], trail));
+      }
+      return spanList;
+    }
+    else {
+      return <InlineSpan>[TextSpan(text: message)];
+    }
   }
 
   void _onToggleDirectoryVisibility() {

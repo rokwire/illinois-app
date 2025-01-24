@@ -107,7 +107,6 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeWellnessPodcast,
       FirebaseMessaging.payloadTypeWellnessResources,
       FirebaseMessaging.payloadTypeWellnessRings,
-      FirebaseMessaging.payloadTypeWellnessStruggling,
       FirebaseMessaging.payloadTypeWellnessTodoList,
       FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeEventDetail,

@@ -5,11 +5,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Deleted
+- Deleted "I'm Struggling..." from Wellness content [#4673](https://github.com/rokwire/illinois-app/issues/4673).
+### Changed
+- Show progress indicator when uploading profile picture.
+### Fixed
+- Enable privacy prompt flow if its content cannot be scrolled [#4486](https://github.com/rokwire/illinois-app/issues/4486).
+
+## [6.1.46] - 2025-01-23
+### Changed
+- Updated profile visibility description formatting [#4625](https://github.com/rokwire/illinois-app/issues/4625).
+- UI Updates for Dining [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+- Campus Recreation page hide favorites button [#4499](https://github.com/rokwire/illinois-app/issues/4499).
+
+## [6.1.45] - 2025-01-22
 ### Fixed
 -  Messaging fixes and tweaks [#4621](https://github.com/rokwire/illinois-app/issues/4621)
 ### Changed
 - Always show profile preview, even if it is private [#4658](https://github.com/rokwire/illinois-app/issues/4658).
+- Profile Edit fixes and updates [#4660](https://github.com/rokwire/illinois-app/issues/4660).
 - Notifications UI updates [#4489](https://github.com/rokwire/illinois-app/issues/4489).
+- Notifications settings updates [#4663](https://github.com/rokwire/illinois-app/issues/4663).
+- UI Updates for Dining [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+- Updated profile visibility description text [#4625](https://github.com/rokwire/illinois-app/issues/4625).
 
 ## [6.1.44] - 2025-01-21
 ### Changed

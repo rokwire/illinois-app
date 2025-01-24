@@ -40,7 +40,6 @@ Map<String, String> deeplinkNameMap = {
   'wellness.health_screener': 'Illinois Health Screener',
   'wellness.podcast': 'Healthy Illini Podcast',
   'wellness.resources': 'Wellness Resources',
-  'wellness.struggling': 'I\'m Struggling',
   'wellness.mental_health': 'Mental Health Resources',
   'inbox': 'Inbox Panel',
   'appointment': 'Appointment',
