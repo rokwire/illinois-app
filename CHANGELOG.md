@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.47] - 2025-01-24
 ### Deleted
 - Deleted "I'm Struggling..." from Wellness content [#4673](https://github.com/rokwire/illinois-app/issues/4673).
 ### Changed
