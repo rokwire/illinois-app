@@ -899,17 +899,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   //Actions
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Directions: ${_event?.name}");
+    Analytics().logSelect(target: "Location Directions", attributes: _event?.analyticsAttributes);
     _event?.launchDirections();
   }
 
   void _onOnline() {
-    Analytics().logSelect(target: "Online Url: ${_event?.name}");
+    Analytics().logSelect(target: "Online Url", attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.onlineDetails?.url, updateProgress: (bool value) => setStateDelayedIfMounted(() { _onlineLaunching = value; }));
   }
 
   void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: ${_event?.name}");
+    Analytics().logSelect(target: "Favorite", attributes: _event?.analyticsAttributes);
     Auth2().prefs?.toggleFavorite(_event);
   }
 
@@ -936,12 +936,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onWebsiteButton() {
-    Analytics().logSelect(target: 'Website');
+    Analytics().logSelect(target: 'Website', attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.eventUrl, updateProgress: (bool value) => setStateDelayedIfMounted(() { _websiteLaunching = value; }));
   }
 
   void _onLinkedEvent(Event2 event) {
-    Analytics().logSelect(target: event.name);
+    Analytics().logSelect(target: "Linked Event", attributes: event?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
       userLocation: _userLocation,
       eventSelector:  widget.eventSelector,
@@ -951,7 +951,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSuperEvent() {
-    Analytics().logSelect(target: _superEvent?.name);
+    Analytics().logSelect(target: "Super Event", attributes: _superEvent?.analyticsAttributes);
     if (widget.superEvent?.id == _superEvent?.id) {
       Navigator.of(context).pop();
     }
@@ -965,7 +965,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onRegister() {
-    Analytics().logSelect(target: 'Register me');
+    Analytics().logSelect(target: 'Register me', attributes: _event?.analyticsAttributes);
     _performRegistration(Events2().registerToEvent, onSuccess: (Event2 event) {
       if (Auth2().isFavorite(event)) {
         Event2Popup.showMessage(context,
@@ -989,7 +989,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onUnregister() {
-    Analytics().logSelect(target: 'Unregister me');
+    Analytics().logSelect(target: 'Unregister me', attributes: _event?.analyticsAttributes);
     _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
       Event2Popup.showMessage(context,
         title: Localization().getStringEx("dialog.success.title", "Success"),
@@ -1028,12 +1028,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onExternalRegistration(){
-    Analytics().logSelect(target: 'Register me');
+    Analytics().logSelect(target: 'Register me', attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.registrationDetails?.externalLink, updateProgress: (bool value) => setStateDelayedIfMounted(() { _registrationLaunching = value; }));
   }
 
   void _onFollowUpSurvey(){
-    Analytics().logSelect(target: "Follow up survey");
+    Analytics().logSelect(target: "Follow up survey", attributes: _event?.analyticsAttributes);
     Survey displaySurvey = Survey.fromOther(_survey!);
     displaySurvey.replaceKey('event_name', _event?.name);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1057,6 +1057,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     }
   }  
   void _onAddToCalendar(){
+    Analytics().logSelect(target: "Add to Calendar", attributes: _event?.analyticsAttributes);
     DeviceCalendar().addToCalendar(context, _event);
   }
 
@@ -1086,7 +1087,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onAdminCommands(){
-    Analytics().logSelect(target: "Admin settings");
+    Analytics().logSelect(target: "Admin settings", attributes: _event?.analyticsAttributes);
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1099,7 +1100,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingEditEvent(){
-    Analytics().logSelect(target: "Edit event");
+    Analytics().logSelect(target: "Edit event", attributes: _event?.analyticsAttributes);
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) =>
       Event2CreatePanel(event: _event, survey: _survey)))
         .then((Event2SetupSurveyParam? result) {
@@ -1115,7 +1116,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingAdditionalSettings() {
-    Analytics().logSelect(target: "Additional Settings");
+    Analytics().logSelect(target: "Additional Settings", attributes: _event?.analyticsAttributes);
     if (_event != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
         event: _event,
@@ -1124,7 +1125,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingEventRegistration(){
-    Analytics().logSelect(target: "Event Registration");
+    Analytics().logSelect(target: "Event Registration", attributes: _event?.analyticsAttributes);
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       event: _event,
       analyticsFeature: widget.analyticsFeature,
@@ -1138,7 +1139,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingAttendance(){
-    Analytics().logSelect(target: "Event Attendance");
+    Analytics().logSelect(target: "Event Attendance", attributes: _event?.analyticsAttributes);
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
       event: _event,
     ))).then((dynamic event) {
@@ -1151,7 +1152,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingSurvey(){
-    Analytics().logSelect(target: "Event Survey");
+    Analytics().logSelect(target: "Event Survey", attributes: _event?.analyticsAttributes);
     Event2SetupSurveyPanel.push(context,
       surveyParam: Event2SetupSurveyParam(
         event: _event,
@@ -1171,7 +1172,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingSurveyResponses() {
-    Analytics().logSelect(target: "Event Survey Responses");
+    Analytics().logSelect(target: "Event Survey Responses", attributes: _event?.analyticsAttributes);
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
       surveyId: _survey?.id,
       eventName: _event?.name,
@@ -1180,7 +1181,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingDeleteEvent(){
-    Analytics().logSelect(target: 'Delete Event');
+    Analytics().logSelect(target: 'Delete Event', attributes: _event?.analyticsAttributes);
 
     if (_eventId != null) {
       Event2Popup.showPrompt(context,
@@ -1228,7 +1229,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onTapTakeAttendance() {
-    Analytics().logSelect(target: 'Take Attendance');
+    Analytics().logSelect(target: 'Take Attendance', attributes: _event?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
       Event2AttendanceTakerPanel(_event, analyticsFeature: widget.analyticsFeature,)));
   }
