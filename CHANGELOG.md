@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed filters behavior in Map panel [#4485](https://github.com/rokwire/illinois-app/issues/4485).
+- Log Analytics event when "Add to Calendar" is selected from event detail page [#4502](https://github.com/rokwire/illinois-app/issues/4502).
 
 ## [6.1.47] - 2025-01-24
 ### Deleted
