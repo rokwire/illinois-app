@@ -941,7 +941,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onLinkedEvent(Event2 event) {
-    Analytics().logSelect(target: "Linked Event", attributes: event?.analyticsAttributes);
+    Analytics().logSelect(target: "Linked Event", attributes: event.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
       userLocation: _userLocation,
       eventSelector:  widget.eventSelector,
