@@ -1445,6 +1445,7 @@
 	"panel.event2.create.survey.update.failed.msg": "Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.",
 	"panel.event2.create.exit.prompt.title": "退出",
 	"panel.event2.create.exit.prompt.message": "退出并不保留变更纪录？",
+	"panel.event2.create.recurring_event.failed.msg": "無法建立重複事件。原因：",
 
 	"panel.event2.setup.registration.header.title": "活动注册",
 	"panel.event2.setup.registration.type.title": "强制要求注册",

@@ -1457,6 +1457,7 @@
     "panel.event2.create.survey.update.failed.msg": "Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.",
     "panel.event2.create.exit.prompt.title": "Exit",
     "panel.event2.create.exit.prompt.message": "Exit and lose your changes?",
+    "panel.event2.create.recurring_event.failed.msg": "Failed to create recurring event. Reason: ",
 
     "panel.event2.setup.registration.header.title": "Event Registration",
     "panel.event2.setup.registration.type.title": "REQUIRE REGISTRATION",

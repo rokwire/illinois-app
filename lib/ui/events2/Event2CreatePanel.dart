@@ -2465,6 +2465,27 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       if (result is Event2) {
         Survey? survey = widget.survey;
         if (widget.isCreate) {
+          if (_shouldCreateRecurringEvents) {
+            List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: result);
+            if (CollectionUtils.isNotEmpty(recurringEvents)) {
+              // Create each event separately until we have
+              for (Event2 recurringEvent in recurringEvents!) {
+                dynamic recurringResult = await Events2().createEvent(recurringEvent);
+                if (recurringResult is Event2) {
+                  debugPrint('Successfully created recurring event: ${recurringResult.id}');
+                } else {
+                  String errMsg = StringUtils.isNotEmptyString(recurringResult)
+                      ? recurringResult
+                      : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred');
+                  Event2Popup.showErrorResult(
+                      context,
+                      Localization()
+                              .getStringEx('panel.event2.create.recurring_event.failed.msg', 'Failed to create recurring event. Reason: ') +
+                          errMsg);
+                }
+              }
+            }
+          }
           if (_survey != null) {
             bool? success = await Surveys().createEvent2Survey(_survey!, result);
             if (mounted) {
@@ -2614,7 +2635,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       meetingPasscode: _onlinePasscodeController.text,
     ) : null;
 
-
+  bool get _shouldCreateRecurringEvents =>
+      ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat));
   bool get _hasRecurrenceEndDate => (_recurrenceEndDate != null);
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
@@ -2786,7 +2808,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       location: _constructLocation(),
       onlineDetails: _onlineDetails,
 
-      grouping: widget.event?.grouping,
+      grouping: widget.event?.grouping,//TBD: DD - implement grouping for new event
       attributes: _attributes,
       authorizationContext: authorizationContext,
       context: event2Context,
@@ -2806,6 +2828,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       speaker: _speaker,
       contacts: _contacts,
     );
+  }
+
+  List<Event2>? _buildRecurringEventsFrom({required Event2 mainEvent}) {
+    if (StringUtils.isEmpty(mainEvent.id)) {
+      return null;
+    }
+    //TBD: DD - implement
+    return null;
   }
 }
 

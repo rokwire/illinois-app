@@ -1455,6 +1455,7 @@
     "panel.event2.create.survey.update.failed.msg": "No se pudo configurar la encuesta del evento, pero se guardó la configuración de las horas. Otros administradores del evento pueden haber modificado la encuesta.",
     "panel.event2.create.exit.prompt.title": "Salir",
     "panel.event2.create.exit.prompt.message": "¿Quieres salir y perder tus cambios?",
+    "panel.event2.create.recurring_event.failed.msg": "No se pudo crear el evento recurrente. Motivo:",
 
     "panel.event2.setup.registration.header.title": "Registro del Evento",
     "panel.event2.setup.registration.type.title": "REQUIERE EL REGISTRO",
