@@ -1501,6 +1501,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (!DeepCollectionEquality().equals(lastSelectedIndexes, selectedIndexes)) {
       _initExplores();
     }
+    else {
+      setState(() {});
+    }
   }
 
   List<String?> _buildFilterEventDateSubLabels() {
@@ -1641,18 +1644,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     
   }
 
-  void _clearActiveFilter() {
+  void _clearActiveFilter({ExploreFilter? skipFilter }) {
     List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
     if (itemFilters != null && itemFilters.isNotEmpty) {
       for (ExploreFilter filter in itemFilters) {
-        filter.active = false;
+        if (filter != skipFilter) {
+          filter.active = false;
+        }
       }
     }
     _filtersDropdownVisible = false;
   }
 
   void _toggleActiveFilter(ExploreFilter selectedFilter) {
-    _clearActiveFilter();
+    _clearActiveFilter(skipFilter: selectedFilter);
     selectedFilter.active = _filtersDropdownVisible = !selectedFilter.active;
   }
 
