@@ -42,11 +42,12 @@ class DiningCard extends StatefulWidget {
 class _DiningCardState extends State<DiningCard> implements NotificationsListener {
   static Decoration get _listContentDecoration => BoxDecoration(
       color: Styles().colors.surface,
-      // borderRadius: _listContentBorderRadius,
+      borderRadius: _listContentBorderRadius,
       // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
+  static const EdgeInsets _listContentMargin =  EdgeInsets.symmetric(vertical: 4, horizontal: 4);
   static const EdgeInsets _sectionPadding = EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16);
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
   static const EdgeInsets _iconPadding = EdgeInsets.only(right: 6);
@@ -77,11 +78,12 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
   Widget build(BuildContext context) {
     return Semantics(label: semanticLabel, button: true, child:
       GestureDetector(behavior: HitTestBehavior.opaque, onTap: ()=> widget.onTap?.call(context), child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 0), child:
-              ClipRRect(borderRadius: _listContentBorderRadius, child:
+          Container(decoration: _listContentDecoration,
+              padding: EdgeInsets.symmetric(horizontal: 0),
+              margin: _listContentMargin,
+              child: ClipRRect(borderRadius: _listContentBorderRadius, child:
                 Container(
                   padding: EdgeInsets.only(bottom: 8),
-                  decoration: _listContentDecoration,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     _buildImage,
                     _exploreTop(),

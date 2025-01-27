@@ -140,7 +140,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                 RoundedButton(label: "Edit", onTap: _onEdit)
               : Container()
         ],)))])),
-          _loading || true ?
+          _loading ?
           Positioned.fill(child:
             Center(child:
                 Container(
