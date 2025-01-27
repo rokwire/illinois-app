@@ -42,6 +42,8 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
+import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -164,6 +166,9 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
     else if (param is ExploreMapSearchEventsParam) {
       return ExploreMapType.Events2;
     }
+    else if (param is ExploreMapSearchMTDStopsParam) {
+      return ExploreMapType.MTDStops;
+    }
     else {
       return null;
     }
@@ -187,6 +192,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   late LinkedHashSet<Event2TypeFilter> _event2Types;
   late Map<String, dynamic> _event2Attributes;
   String? _event2SearchText;
+
+  String? _mtdStopSearchText;
 
   List<StudentCourseTerm>? _studentCourseTerms;
   
@@ -274,7 +281,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _event2CustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
-    _event2SearchText = _intialEvent2SearchParam?.searchText;
+    _event2SearchText = _initialEvent2SearchParam?.searchText;
+
+    _mtdStopSearchText = _initialMTDStopsSearchParam?.searchText;
 
     _initFilters();
     _initMapStyles();
@@ -371,6 +380,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             _initExplores();
           }
         }
+        else if (param is ExploreMapSearchMTDStopsParam) {
+          if ((_selectedMapType != ExploreMapType.MTDStops) || (_mtdStopSearchText != param.searchText)) {
+            setState(() {
+              _selectedMapType = widget._lastSelectedExploreType = ExploreMapType.MTDStops;
+              _mtdStopSearchText = param.searchText;
+            });
+            _initExplores();
+          }
+        }
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
@@ -443,22 +461,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Expanded(child:
         Stack(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Visibility(visible: (_selectedMapType == ExploreMapType.Events2), child:
+            if (_selectedMapType == ExploreMapType.Events2)
               Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
                 _buildEvents2HeaderBar(),
               ),
-            ),
-            Visibility(visible: (_selectedMapType == ExploreMapType.Buildings), child:
+            if (_selectedMapType == ExploreMapType.Buildings)
               Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
                 _buildBuildingsHeaderBar(),
               ),
-            ),
+            if (_selectedMapType == ExploreMapType.MTDStops)
+              _buildMTDStopsHeaderBar(),
             Expanded(child:
               Stack(children: [
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                    Wrap(children: _buildFilters()),
-                  ),
+                  _buildFiltersBar(),
                   Expanded(child:
                     Container(key: _mapContainerKey, color: Styles().colors.background, child:
                       _buildContent(),
@@ -1019,16 +1035,92 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         onTap: _onBuildingsSearch
     ),
   ],);
-  // Events2 - Data
 
   void _onBuildingsSearch() {
     Analytics().logSelect(target: 'Search');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingsSearchPanel()));
   }
 
+  Widget _buildMTDStopsHeaderBar() => Row(children: [
+    Expanded(child:
+      _buildMtdStopsContentDescription(),
+    ),
+    LinkButton(
+      title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'),
+      hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
+      onTap: _onMTDStopsListView,
+      padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+    ),
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+      label: Localization().getStringEx('panel.explore.button.search.buildings.title', 'Search'),
+      hint: Localization().getStringEx('panel.explore.button.search.buildings.hint', 'Tap to search buildings'),
+      contentPadding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
+      onTap: _onMTDStopsSearch
+    ),
+  ],);
+
+  Widget _buildMtdStopsContentDescription() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+
+    if (StringUtils.isNotEmpty(_mtdStopSearchText)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _mtdStopSearchText ?? '' , style: regularStyle,));
+    }
+
+    if (descriptionList.isNotEmpty) {
+      descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+    }
+    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.locations.label.title', 'Locations: ') , style: boldStyle,));
+    descriptionList.add(TextSpan(text: _exploreProgress ? '...' : (_totalExploreLocations()?.toString() ?? '-') , style: regularStyle,));
+    descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+
+    if (descriptionList.isNotEmpty) {
+      return Container(padding: EdgeInsets.only(left: 16, right: 16), child:
+          Row(children: [ Expanded(child:
+            RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+          ),],)
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  void _onMTDStopsSearch() {
+    Analytics().logSelect(target: 'Search');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel(searchText: _mtdStopSearchText, searchContext: MTDStopSearchContext.Map))).then((result) {
+      if (result is String) {
+        String? mtdStopSearchText = result.isNotEmpty ? result : null;
+        if (_mtdStopSearchText != mtdStopSearchText) {
+          setStateIfMounted(() {
+            _mtdStopSearchText = mtdStopSearchText;
+          });
+          if ((mtdStopSearchText != null) && mtdStopSearchText.isNotEmpty) {
+            Analytics().logSearch(mtdStopSearchText);
+          }
+          _initExplores();
+        }
+      }
+    });
+  }
+
+  void _onMTDStopsListView() {
+    Analytics().logSelect(target: 'List View');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));;
+  }
+
+  // Events2 - Data
+
   Widget _buildEvents2HeaderBar() => Column(children: [
     _buildEvents2CommandButtons(),
     _buildEvents2ContentDescription(),
+    Padding(padding: EdgeInsets.only(bottom: 12)),
   ],);
   
   Widget _buildEvents2CommandButtons() {
@@ -1397,13 +1489,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   // Filter Widgets
 
-  List<Widget> _buildFilters() {
+  Widget _buildFiltersBar() {
     List<Widget> filterTypeWidgets = [];
     List<ExploreFilter>? visibleFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
-    if ((visibleFilters == null ) || visibleFilters.isEmpty) {
-      filterTypeWidgets.add(Container());
-    }
-    else {
+    if ((visibleFilters != null ) && visibleFilters.isNotEmpty) {
       for (int i = 0; i < visibleFilters.length; i++) {
         ExploreFilter selectedFilter = visibleFilters[i];
         List<String> filterValues = _getFilterValues(selectedFilter.type)!;
@@ -1416,8 +1505,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           onTap: () => _onFilterType(filterHeaderLabel, selectedFilter),
         ));
       }
+
+      return Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
+        Wrap(children: filterTypeWidgets),
+      );
     }
-    return filterTypeWidgets;
+    else {
+      return Container();
+    }
   }
 
   void _onFilterType(String? filterName, ExploreFilter selectedFilter) {
@@ -1568,9 +1663,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  ExploreMapSearchEventsParam? get _intialEvent2SearchParam => _paramSearchEvents2(widget.params[ExploreMapPanel.selectParamKey]);
-
+  ExploreMapSearchEventsParam? get _initialEvent2SearchParam => _paramSearchEvents2(widget.params[ExploreMapPanel.selectParamKey]);
   static ExploreMapSearchEventsParam? _paramSearchEvents2(dynamic param) => (param is ExploreMapSearchEventsParam) ? param : null;
+
+  ExploreMapSearchMTDStopsParam? get _initialMTDStopsSearchParam => _paramSearchMTDStops(widget.params[ExploreMapPanel.selectParamKey]);
+  static ExploreMapSearchMTDStopsParam? _paramSearchMTDStops(dynamic param) => (param is ExploreMapSearchMTDStopsParam) ? param : null;
 
   static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
@@ -2014,7 +2111,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     List<Explore>? result;
     if (MTD().stops != null) {
-      _collectBusStops(result = <Explore>[], stops: MTD().stops?.stops);
+      _collectBusStops(result = <Explore>[], stops: (_mtdStopSearchText?.isNotEmpty == true) ?
+        MTD().stops?.searchStop(_mtdStopSearchText) : MTD().stops?.stops);
     }
     return result;
   }
@@ -2562,6 +2660,11 @@ String? _exploreMapTypeToString(ExploreMapType? value) {
 class ExploreMapSearchEventsParam {
   final String searchText;
   ExploreMapSearchEventsParam(this.searchText);
+}
+
+class ExploreMapSearchMTDStopsParam {
+  final String searchText;
+  ExploreMapSearchMTDStopsParam(this.searchText);
 }
 
 class ExploreMessagePopup extends StatelessWidget {

@@ -9,10 +9,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -93,33 +96,35 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
  
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) =>
+    _buildScaffoldContent();
+
+  Widget _buildScaffoldContent() =>
+    Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'Bus Stops'), leading: RootHeaderBarLeading.Back,),
-      body: _buildScaffoldContent(),
+      body: _buildPanelContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
-  }
 
-  Widget _buildScaffoldContent() {
-    return Column(children: [
+  Widget _buildPanelContent() =>
+    Column(children: [
       _buildContentTypeDropdownButton(),
       Expanded(child:
         Stack(children: [
-          Semantics( container: true,
-            child: Column(children: [
-            Expanded(child:
-              _processing ? _buildLoading() : RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                _buildContent()
+          Semantics( container: true, child:
+            Column(children: [
+              Expanded(child:
+                _processing ? _buildLoading() : RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                  _buildBusStopsContent()
+                ),
               ),
-            ),
-          ],)),
+            ],),
+          ),
           _buildContentTypesDropdownContainer()
         ],)
       ),
     ],);
-  }
 
   // Content Type Dropdown
 
@@ -160,7 +165,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: null,
       label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Bus Stops'),
-      onTap: _onTapSearch
+      onTap: _onSearch
     ),);
 
     return Semantics(container: true, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -211,18 +216,25 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
-
-  void _onTapSearch() {
-    Analytics().logSelect(target: "Search Bus Stop");
-    setState(() {
-      _contentTypesDropdownExpanded = false;
-    });
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel()));
-  }
-
   // Content Widget
 
-  Widget _buildContent() {
+  Widget _buildCommandBar() => Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, children: [
+    LinkButton(
+      title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'),
+      hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+      padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
+      onTap: _onMapView,
+    ),
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+      label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
+      hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
+      contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+      onTap: _onSearch
+    ),
+  ],);
+
+  Widget _buildBusStopsContent() {
     if (_refreshing) {
       return Container();
     }
@@ -237,20 +249,26 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
-  Widget _buildStops() {
-    return ListView.separated(
-      itemBuilder: (context, index) => MTDStopCard(
-        stop: ListUtils.entry(_stops, index),
-        expanded: _expanded,
-        onDetail: _onSelectStop,
-        onExpand: _onExpandStop,
-        currentPosition: _currentPosition,
+  Widget _buildStops() =>
+    Column(children: [
+      Align(alignment: Alignment.centerRight, child:
+        _buildCommandBar(),
       ),
-      separatorBuilder: (context, index) => Container(),
-      itemCount: _stops?.length ?? 0,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-    );
-  }
+      Expanded(child:
+        ListView.separated(
+          itemBuilder: (context, index) => MTDStopCard(
+            stop: ListUtils.entry(_stops, index),
+            expanded: _expanded,
+            onDetail: _onSelectStop,
+            onExpand: _onExpandStop,
+            currentPosition: _currentPosition,
+          ),
+          separatorBuilder: (context, index) => Container(),
+          itemCount: _stops?.length ?? 0,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+        ),
+      )
+    ],);
 
   Widget _buildLoading() {
     return Align(alignment: Alignment.center, child:
@@ -365,6 +383,19 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     if (FlexUI().isLocationServicesAvailable && !_processing) {
       _updateStops();
     }
+  }
+
+  void _onSearch() {
+    Analytics().logSelect(target: "Search Bus Stop");
+    setState(() {
+      _contentTypesDropdownExpanded = false;
+    });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel()));
+  }
+
+  void _onMapView() {
+    Analytics().logSelect(target: 'Map View');
+    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(''));
   }
 }
 
