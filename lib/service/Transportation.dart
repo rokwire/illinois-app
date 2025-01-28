@@ -103,7 +103,7 @@ class Transportation /* with Service */ {
         'ibeacon_data': iBeaconData,
       };
       String body = json.encode(data);
-      final response = await Network().get(url, auth: Auth2(), body:body);
+      final response = await Network().post(url, auth: Auth2(), body: body);
       if (response != null) {
         if (response.statusCode == 200) {
           String responseBody = response.body;
