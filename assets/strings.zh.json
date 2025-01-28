@@ -2343,7 +2343,7 @@
 	"panel.profile.info.command.button.swap.text": "Swap Info",
 	"panel.profile.info.command.link.sign_out.text": "Sign Out",
 	"panel.profile.info.command.link.delete_account.text": "Delete My {{app_title}} App Account",
-	"panel.profile.info.command.link.share.text": "Share my info outside the {{app_title}} app",
+	"panel.profile.info.command.link.share.text": "Share My Info",
 	"panel.profile.info.command.button.photo.edit.text": "Edit Photo",
 	"panel.profile.info.command.button.photo.clear.text": "Clear Photo",
 	"panel.profile.info.command.link.pronunciation.text": "Add name pronunciation and how you prefer to be addressed (Ex: \"Please call me Dr. Last Name, First Name or Nickname\")",
