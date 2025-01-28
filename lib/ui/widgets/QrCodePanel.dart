@@ -36,8 +36,8 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //const Event2QrCodePanel({required this.event});
 
   final String? deepLinkUrl;
-  final String? vcardQrCode;
-  final String? vcardShare;
+  final String? digitalCardQrCode;
+  final String? digitalCardShare;
 
   final String saveFileName;
   final String? saveWatermarkText;
@@ -51,8 +51,8 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   QrCodePanel({Key? key,
     this.deepLinkUrl,
-    this.vcardQrCode,
-    this.vcardShare,
+    this.digitalCardQrCode,
+    this.digitalCardShare,
 
     required this.saveFileName,
     this.saveWatermarkText,
@@ -146,13 +146,13 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   factory QrCodePanel.fromProfile({ Key? key, Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, bool modalSheet = false, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key, modalSheet: modalSheet,
-    vcardQrCode: profile?.toVCard(), // photoImageData: photoImageData
-    vcardShare: profile?.toVCard(photoImageData: photoImageData),
-    saveFileName: profile?.vcardFullName ?? 'Virtual Card',
+    digitalCardQrCode: profile?.toDigitalCard(), // photoImageData: photoImageData
+    digitalCardShare: profile?.toDigitalCard(photoImageData: photoImageData),
+    saveFileName: profile?.vcardFullName ?? 'Digital Business Card',
     saveWatermarkText: profile?.vcardFullName,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
-    title: Localization().getStringEx('panel.qr_code.virtual_card.title', 'Virtual Card'),
-    description: Localization().getStringEx('panel.qr_code.virtual_card.description.label', 'Scan the QR code image bellow to import your Virtual Card.'),
+    title: Localization().getStringEx('panel.qr_code.digital_card.title', 'Digital Business Card'),
+    description: Localization().getStringEx('panel.qr_code.digital_card.description.label', 'Scan the QR code image bellow to import your Digital Business Card.'),
   );
 
   static void presentProfile(BuildContext context, { Key? key, Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, AnalyticsFeature? analyticsFeature}) {
@@ -261,15 +261,15 @@ class _QrCodePanelState extends State<QrCodePanel> {
               onTap: _onTapShareLink,
             ),
           ),
-        if (_canShareVCard)
+        if (_canShareDigitalCard)
           Padding(padding: EdgeInsets.only(top: 12), child:
             RoundedButton(
-              label: Localization().getStringEx('panel.qr_code.button.share_vcard.title', 'Share Virtual Card'),
+              label: Localization().getStringEx('panel.qr_code.button.share_digital_card.title', 'Share Digital Business Card'),
               hint: '',
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
               backgroundColor: _backgroundColor,
               borderColor: Styles().colors.fillColorSecondary,
-              onTap: _onTapShareVCard,
+              onTap: _onTapShareDigitalCard,
             ),
           ),
           Padding(padding: EdgeInsets.only(top: 12)),
@@ -281,7 +281,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   Future<Uint8List?> _loadQrImageBytes() async {
     return await NativeCommunicator().getBarcodeImageData({
-      'content': _promotionUrl ?? widget.vcardQrCode,
+      'content': _promotionUrl ?? widget.digitalCardQrCode,
       'format': 'qrCode',
       'width': _imageSize,
       'height': _imageSize,
@@ -347,14 +347,14 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
   }
 
-  bool get _canShareVCard => (widget.vcardShare?.isNotEmpty == true);
+  bool get _canShareDigitalCard => (widget.digitalCardShare?.isNotEmpty == true);
 
-  void _onTapShareVCard() async {
-    Analytics().logSelect(target: 'Share Virtual Card');
+  void _onTapShareDigitalCard() async {
+    Analytics().logSelect(target: 'Share Digital Card');
     final String dir = (await getApplicationDocumentsDirectory()).path;
     final String fullPath = '$dir/${widget.saveFileName}.vcf';
     File capturedFile = File(fullPath);
-    await capturedFile.writeAsString(widget.vcardShare ?? '');
+    await capturedFile.writeAsString(widget.digitalCardShare ?? '');
     if (mounted) {
       Share.shareFiles([fullPath],
         mimeTypes: ['text/vcard'],
