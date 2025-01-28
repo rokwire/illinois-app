@@ -87,12 +87,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           onTap: _onTapSaveToPhotos,
         ),
         _buildCommand(
-          icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Add to Device Contacts'),
-          progress: _sharingVirtualCard,
-          onTap: _onTapShareVirtualCard,
-        ),
-        _buildCommand(
           icon: Styles().images.getImage('envelope', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share Digital Business Card'),
           progress: _preparingEmail,
@@ -103,6 +97,12 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           text: Localization().getStringEx('panel.profile.info.share.command.button.share.message.text', 'Share via Text Message'),
           progress: _preparingTextMessage,
           onTap: _onTapShareViaTextMessage,
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Add to Device Contacts'),
+          progress: _sharingVirtualCard,
+          onTap: _onTapShareVirtualCard,
         ),
         _buildCommand(
           icon: Styles().images.getImage('copy-fa', size: _commandIconSize),
