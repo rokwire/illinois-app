@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Cleaned up UI of Buses search and Map/List link [#4479](https://github.com/rokwire/illinois-app/issues/4479).
+### Fixed
+- GroupDetailPanel enhancements [#4483](https://github.com/rokwire/illinois-app/issues/4483).
 
 ## [6.1.48] - 2025-01-27
 ### Fixed
