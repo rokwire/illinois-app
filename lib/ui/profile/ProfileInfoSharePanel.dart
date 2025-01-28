@@ -94,7 +94,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         ),
         _buildCommand(
           icon: Styles().images.getImage('envelope', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share via Email'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share Digital Business Card'),
           progress: _preparingEmail,
           onTap: _onTapShareViaEmail,
         ),
