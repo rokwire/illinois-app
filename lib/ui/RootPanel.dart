@@ -1228,7 +1228,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       if (mapsIndex != _currentTabIndex) {
         _selectTab(mapsIndex);
-        if ((param is ExploreMapType) && !ExploreMapPanel.hasState) {
+        if ((param != null) && !ExploreMapPanel.hasState) {
           Widget? mapsWidget = _panels[RootTab.Maps];
           ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
           mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;

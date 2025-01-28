@@ -908,7 +908,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMTDStops(BuildContext context) {
     Analytics().logSelect(target: "All Bus Stops");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.all,)));
   }
 
   static void _onTapCampusGuide(BuildContext context) {
@@ -999,7 +999,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMyMTDStops(BuildContext context) {
     Analytics().logSelect(target: "My Bus Stops");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.my,)));
   }
 
   static void _onTapMyLocations(BuildContext context) {
