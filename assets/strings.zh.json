@@ -2374,7 +2374,7 @@
 	"panel.profile.info.share.command.button.save.text": "Save to Photos",
 	"panel.profile.info.share.command.button.share.email.text": "Share via Email",
 	"panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
-	"panel.profile.info.share.command.button.share.vcard.text": "Share Virtual Card",
+	"panel.profile.info.share.command.button.share.vcard.text": "Add to Device Contacts",
 	"panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
 	"panel.profile.info.share.command.save.image.succeeded": "Contact card image saved successfully.",
  "panel.profile.info.share.command.save.image.failed": "Failed to save contact card image.",

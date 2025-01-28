@@ -88,7 +88,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         ),
         _buildCommand(
           icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Share Virtual Card'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Add to Device Contacts'),
           progress: _sharingVirtualCard,
           onTap: _onTapShareVirtualCard,
         ),
