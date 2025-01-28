@@ -701,8 +701,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     if (StringUtils.isNotEmpty(members)) {
       contentList.add(GestureDetector(onTap: () => { if (_canViewMembers) {_onTapMembers()} }, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Container(decoration: (_canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
-            Text(members, style:  Styles().textStyles.getTextStyle('widget.title.small'))
+          Container(
+              child: Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.small.underline') : Styles().textStyles.getTextStyle('widget.title.small'))
           ),
         ),
       ));
@@ -760,7 +760,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       }
 
       Tab tabWidget = Tab(
-          text: title,
+          // text: title,
+          child: Container(
+            constraints: BoxConstraints(minWidth: 74),
+            alignment: Alignment.center,
+            child: Text(title)
+          ),
           height: 35,
       );
       tabs.add(tabWidget);
@@ -770,19 +775,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       _tabController = TabController(length: tabs.length, vsync: this);
     }
 
-    return Container(color: Colors.white, child:
-      TabBar(
-        tabs: tabs,
-        indicatorColor: Styles().colors.fillColorSecondary,
-        controller: _tabController,
-        onTap:(index) => _onTab(_tabAtIndex(index)),
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
-        labelStyle: Styles().textStyles.getTextStyle("widget.title.small.fat"),
-        unselectedLabelStyle: Styles().textStyles.getTextStyle("widget.title.small"),
-        indicatorWeight: 4,
-        tabAlignment: TabAlignment.fill,
-    ));
+    return Container(color: Colors.white,
+      padding: EdgeInsets.only(top: 8),
+      child: TabBar(
+          tabs: tabs,
+          indicatorColor: Styles().colors.fillColorSecondary,
+          controller: _tabController,
+          onTap:(index) => _onTab(_tabAtIndex(index)),
+          indicatorSize: TabBarIndicatorSize.tab,
+          labelPadding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.zero,
+          tabAlignment: TabAlignment.center,
+          labelStyle: Styles().textStyles.getTextStyle("widget.title.small.fat"),
+          unselectedLabelStyle: Styles().textStyles.getTextStyle("widget.title.small"),
+          indicatorWeight: 3,
+          isScrollable: true,
+
+          // tabAlignment: TabAlignment.fill,
+      ));
   }
 
   Widget _buildViewPager(){
