@@ -7,7 +7,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 extension Auth2UserProfileVCard on Auth2UserProfile {
-  String toVCard({Uint8List? photoImageData,}) {
+  String toDigitalCard({Uint8List? photoImageData,}) {
     // https://en.wikipedia.org/wiki/VCard
     String vcfContent = "";
     vcfContent += _fieldValue('BEGIN', 'VCARD');
