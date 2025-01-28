@@ -266,8 +266,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         if (byteData != null) {
           Uint8List buffer = byteData.buffer.asUint8List();
           final String dir = (await getApplicationDocumentsDirectory()).path;
-          final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(
-              DateTime.now())}';
+          final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
           final String fullPath = '$dir/$saveFileName.png';
           File capturedFile = File(fullPath);
           await capturedFile.writeAsBytes(buffer);
