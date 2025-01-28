@@ -152,7 +152,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     saveWatermarkText: profile?.vcardFullName,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.digital_card.title', 'Digital Business Card'),
-    description: Localization().getStringEx('panel.qr_code.digital_card.description.label', 'Scan the QR code image bellow to import your Digital Business Card.'),
+    description: Localization().getStringEx('panel.qr_code.digital_card.description.label', 'Scan the QR code image below to import your Digital Business Card.'),
   );
 
   static void presentProfile(BuildContext context, { Key? key, Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, AnalyticsFeature? analyticsFeature}) {
