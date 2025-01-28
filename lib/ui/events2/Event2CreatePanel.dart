@@ -2466,25 +2466,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         Survey? survey = widget.survey;
         if (widget.isCreate) {
           if (_shouldCreateRecurringEvents) {
-            List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: result);
-            if (CollectionUtils.isNotEmpty(recurringEvents)) {
-              // Create each event separately until we have
-              for (Event2 recurringEvent in recurringEvents!) {
-                dynamic recurringResult = await Events2().createEvent(recurringEvent);
-                if (recurringResult is Event2) {
-                  debugPrint('Successfully created recurring event: ${recurringResult.id}');
-                } else {
-                  String errMsg = StringUtils.isNotEmptyString(recurringResult)
-                      ? recurringResult
-                      : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred');
-                  Event2Popup.showErrorResult(
-                      context,
-                      Localization()
-                              .getStringEx('panel.event2.create.recurring_event.failed.msg', 'Failed to create recurring event. Reason: ') +
-                          errMsg);
-                }
-              }
-            }
+            await _createRecurringEventsFrom(mainEvent: result);
           }
           if (_survey != null) {
             bool? success = await Surveys().createEvent2Survey(_survey!, result);
@@ -2790,6 +2772,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         break;
     }
 
+    Event2Grouping? grouping;
+    if (widget.isCreate) {
+      if (_shouldCreateRecurringEvents) {
+        grouping = Event2Grouping.recurrence(null);
+      }
+    } else {
+      grouping = widget.event?.grouping;
+    }
+
     return Event2(
       id: widget.event?.id,
 
@@ -2808,7 +2799,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       location: _constructLocation(),
       onlineDetails: _onlineDetails,
 
-      grouping: widget.event?.grouping,//TBD: DD - implement grouping for new event
+      grouping: grouping,
       attributes: _attributes,
       authorizationContext: authorizationContext,
       context: event2Context,
@@ -2830,10 +2821,51 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     );
   }
 
+  Future<void> _createRecurringEventsFrom({required Event2 mainEvent}) async {
+    // Create each event separately until we have a backend API for that
+    List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: mainEvent);
+    if (CollectionUtils.isNotEmpty(recurringEvents)) {
+      for (Event2 recurringEvent in recurringEvents!) {
+        dynamic recurringResult = await Events2().createEvent(recurringEvent);
+        if (recurringResult is Event2) {
+          debugPrint('Successfully created recurring event: ${recurringResult.id}');
+        } else {
+          String errMsg = StringUtils.isNotEmptyString(recurringResult)
+              ? recurringResult
+              : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred');
+          Event2Popup.showErrorResult(
+              context,
+              Localization().getStringEx('panel.event2.create.recurring_event.failed.msg', 'Failed to create recurring event. Reason: ') +
+                  errMsg);
+        }
+      }
+    }
+  }
+
   List<Event2>? _buildRecurringEventsFrom({required Event2 mainEvent}) {
     if (StringUtils.isEmpty(mainEvent.id)) {
       return null;
     }
+    List<Event2>? recurringEvents;
+    switch (_recurrenceRepeatType) {
+      case _RecurrenceRepeatType.weekly:
+        recurringEvents = _buildWeeklyRecurringEvents(mainEvent: mainEvent);
+        break;
+      case _RecurrenceRepeatType.monthly:
+        recurringEvents = _buildMonthlyRecurringEvents(mainEvent: mainEvent);
+        break;
+      default:
+        break;
+    }
+    return recurringEvents;
+  }
+
+  List<Event2>? _buildWeeklyRecurringEvents({required Event2 mainEvent}) {
+    //TBD: DD - implement
+    return null;
+  }
+
+  List<Event2>? _buildMonthlyRecurringEvents({required Event2 mainEvent}) {
     //TBD: DD - implement
     return null;
   }
