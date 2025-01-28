@@ -3207,7 +3207,6 @@
 	"panel.mtd_stops.home.header_bar.title": "公交车站",
 	"panel.mtd_stops.home.content_type.all.title": "所有公交车站",
 	"panel.mtd_stops.home.content_type.my.title": "我的公交车站",
-	"panel.mtd_stops.home.dropdown.search.title": "搜寻公交车站",
 	"panel.mtd_stops.home.status.error.all.text": "无法加载公交车站。",
 	"panel.mtd_stops.home.status.error.my.text": "无法加载储存的公交车站。",
 	"panel.mtd_stops.home.status.empty.all.text": "没有可用的公交车站。",

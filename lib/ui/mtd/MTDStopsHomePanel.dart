@@ -159,13 +159,6 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
-    contentList.add(RibbonButton(
-      backgroundColor: Styles().colors.white,
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      rightIconKey: null,
-      label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Bus Stops'),
-      onTap: _onSearch
-    ),);
 
     return Semantics(container: true, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
