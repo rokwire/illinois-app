@@ -13,6 +13,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/MTD.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
@@ -193,6 +194,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   late Map<String, dynamic> _event2Attributes;
   String? _event2SearchText;
 
+  MTDStopsScope? _mtdStopScope;
   String? _mtdStopSearchText;
 
   List<StudentCourseTerm>? _studentCourseTerms;
@@ -243,7 +245,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   dynamic _selectedMapExplore;
   Explore? _selectedStoriedSiteExplore;
   AnimationController? _mapExploreBarAnimationController;
-  
+  GestureRecognizer? _clearMTDStopsSearchRecognizer;
+  GestureRecognizer? _clearMTDStopsScopeRecognizer;
+
   String? _loadingMapStopIdRoutes;
   List<MTDRoute>? _selectedMapStopRoutes;
 
@@ -284,6 +288,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _event2SearchText = _initialEvent2SearchParam?.searchText;
 
     _mtdStopSearchText = _initialMTDStopsSearchParam?.searchText;
+    _mtdStopScope = _initialMTDStopsSearchParam?.scope;
 
     _initFilters();
     _initMapStyles();
@@ -297,6 +302,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         });
       });
 
+    // https://stackoverflow.com/a/78750681/3759472
+    _clearMTDStopsSearchRecognizer = TapGestureRecognizer()..onTap = _onMTDStopsClearSearch;
+    _clearMTDStopsScopeRecognizer = TapGestureRecognizer()..onTap = _onMTDStopsClearScope;
+
     super.initState();
   }
 
@@ -304,6 +313,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void dispose() {
      NotificationService().unsubscribe(this);
     _mapExploreBarAnimationController?.dispose();
+     _clearMTDStopsSearchRecognizer?.dispose();
+     _clearMTDStopsScopeRecognizer?.dispose();
     super.dispose();
   }
 
@@ -381,10 +392,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           }
         }
         else if (param is ExploreMapSearchMTDStopsParam) {
-          if ((_selectedMapType != ExploreMapType.MTDStops) || (_mtdStopSearchText != param.searchText)) {
+          if ((_selectedMapType != ExploreMapType.MTDStops) || (_mtdStopSearchText != param.searchText) || (_mtdStopScope != param.scope)) {
             setState(() {
               _selectedMapType = widget._lastSelectedExploreType = ExploreMapType.MTDStops;
               _mtdStopSearchText = param.searchText;
+              _mtdStopScope = param.scope;
             });
             _initExplores();
           }
@@ -1067,18 +1079,27 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
     if (StringUtils.isNotEmpty(_mtdStopSearchText)) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+        descriptionList.add(TextSpan(text: '  ', style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
-      descriptionList.add(TextSpan(text: _mtdStopSearchText ?? '' , style: regularStyle,));
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.search.label.title', 'Search: ') , style: boldStyle, recognizer: _clearMTDStopsSearchRecognizer, ));
+      descriptionList.add(TextSpan(text: _mtdStopSearchText ?? '' , style: regularStyle, recognizer: _clearMTDStopsSearchRecognizer));
+      descriptionList.add(_buildCloseSpan(onTap: _onMTDStopsClearSearch));
+    }
+
+    if ((_mtdStopScope != null) && (_mtdStopScope != MTDStopsScope.all)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '  ', style: regularStyle,),);
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.scope.label.title', 'Scope: ') , style: boldStyle, recognizer: _clearMTDStopsScopeRecognizer, ));
+      descriptionList.add(TextSpan(text: _mtdStopScope?.hint ?? '' , style: regularStyle, recognizer: _clearMTDStopsScopeRecognizer));
+      descriptionList.add(_buildCloseSpan(onTap: _onMTDStopsClearScope));
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      descriptionList.add(TextSpan(text: '  ', style: regularStyle,),);
     }
     descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.locations.label.title', 'Locations: ') , style: boldStyle,));
     descriptionList.add(TextSpan(text: _exploreProgress ? '...' : (_totalExploreLocations()?.toString() ?? '-') , style: regularStyle,));
-    descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
     if (descriptionList.isNotEmpty) {
       return Container(padding: EdgeInsets.only(left: 16, right: 16), child:
@@ -1092,9 +1113,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
+  InlineSpan _buildCloseSpan({void Function()? onTap}) =>
+    WidgetSpan(alignment: PlaceholderAlignment.middle, child:
+      InkWell(onTap: onTap, child:
+        Padding(padding: EdgeInsets.only(left: 1), child:
+          Styles().images.getImage('close-circle', size: 12) ?? Container()
+        )
+      )
+    );
+
   void _onMTDStopsSearch() {
     Analytics().logSelect(target: 'Search');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel(searchText: _mtdStopSearchText, searchContext: MTDStopSearchContext.Map))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel(
+        scope: _mtdStopScope ?? MTDStopsScope.all,
+        searchText: _mtdStopSearchText,
+        searchContext: MTDStopSearchContext.Map,
+    ))).then((result) {
       if (result is String) {
         String? mtdStopSearchText = result.isNotEmpty ? result : null;
         if (_mtdStopSearchText != mtdStopSearchText) {
@@ -1112,7 +1146,23 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onMTDStopsListView() {
     Analytics().logSelect(target: 'List View');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));;
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: _mtdStopScope ?? MTDStopsScope.all,)));;
+  }
+
+  void _onMTDStopsClearSearch() {
+    Analytics().logSelect(target: 'Clear MTD Stops Search');
+    setState(() {
+      _mtdStopSearchText = null;
+    });
+    _initExplores();
+  }
+
+  void _onMTDStopsClearScope() {
+    Analytics().logSelect(target: 'Clear MTD Stops Scope');
+    setState(() {
+      _mtdStopScope = null;
+    });
+    _initExplores();
   }
 
   // Events2 - Data
@@ -2111,10 +2161,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     List<Explore>? result;
     if (MTD().stops != null) {
-      _collectBusStops(result = <Explore>[], stops: (_mtdStopSearchText?.isNotEmpty == true) ?
-        MTD().stops?.searchStop(_mtdStopSearchText) : MTD().stops?.stops);
+      _collectBusStops(result = <Explore>[], stops: _sourceBusStops);
     }
     return result;
+  }
+
+  List<MTDStop>? get _sourceBusStops {
+    List<MTDStop>? stops;
+    switch (_mtdStopScope) {
+      case null:
+      case MTDStopsScope.all: stops = MTD().stops?.stops; break;
+      case MTDStopsScope.my: stops = MTD().favoriteStops; break;
+    }
+    return (_mtdStopSearchText?.isNotEmpty == true) ? MTDStop.searchInList(stops, search: _mtdStopSearchText?.toLowerCase()) : stops;
   }
 
   void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
@@ -2664,7 +2723,8 @@ class ExploreMapSearchEventsParam {
 
 class ExploreMapSearchMTDStopsParam {
   final String searchText;
-  ExploreMapSearchMTDStopsParam(this.searchText);
+  final MTDStopsScope scope;
+  ExploreMapSearchMTDStopsParam({this.searchText = '', this.scope = MTDStopsScope.all});
 }
 
 class ExploreMessagePopup extends StatelessWidget {

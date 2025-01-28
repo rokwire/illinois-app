@@ -1,8 +1,7 @@
-import 'dart:collection';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/MTD.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,13 +25,13 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum MTDStopsContentType { all, my }
+enum MTDStopsScope { all, my }
 
 class MTDStopsHomePanel extends StatefulWidget {
 
-  final MTDStopsContentType? contentType;
+  final MTDStopsScope? scope;
 
-  MTDStopsHomePanel({Key? key, this.contentType}) : super(key: key);
+  MTDStopsHomePanel({Key? key, this.scope}) : super(key: key);
   
   State<MTDStopsHomePanel> createState() => _MTDStopsHomePanelState();
 }
@@ -41,7 +40,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   
   static Color _dimmedBackgroundColor = Color(0x99000000);
 
-  MTDStopsContentType? _selectedContentType;
+  MTDStopsScope? _selectedScope;
   bool _contentTypesDropdownExpanded = false;
   List<MTDStop>? _stops;
   Set<String> _expanded = <String>{};
@@ -58,11 +57,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       LocationServices.notifyStatusChanged,
     ]);
     
-    if (widget.contentType != null) {
-      _selectedContentType = widget.contentType;
+    if (widget.scope != null) {
+      _selectedScope = widget.scope;
     }
     else {
-      _selectedContentType = CollectionUtils.isNotEmpty(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)) ? MTDStopsContentType.my : MTDStopsContentType.all;
+      _selectedScope = CollectionUtils.isNotEmpty(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)) ? MTDStopsScope.my : MTDStopsScope.all;
     }
 
     _updateStops();
@@ -136,7 +135,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
-        label: _getContentTypeName(_selectedContentType),
+        label: _getContentTypeName(_selectedScope),
         onTap: _onTapContentTypeDropdownButton
       )
     );
@@ -155,8 +154,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (MTDStopsContentType contentType in MTDStopsContentType.values) {
-      if ((_selectedContentType != contentType)) {
+    for (MTDStopsScope contentType in MTDStopsScope.values) {
+      if ((_selectedScope != contentType)) {
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
@@ -175,7 +174,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     ));
   }
 
-  Widget _buildContentTypeDropdownItem(MTDStopsContentType contentType) {
+  Widget _buildContentTypeDropdownItem(MTDStopsScope contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -196,11 +195,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     });
   }
 
-  void _onTapContentTypeDropdownItem(MTDStopsContentType contentType) {
+  void _onTapContentTypeDropdownItem(MTDStopsScope contentType) {
     Analytics().logSelect(target: _getContentTypeName(contentType, languageCode: 'en'));
-    if (_selectedContentType != contentType) {
+    if (_selectedScope != contentType) {
       setState(() {
-        _selectedContentType = contentType;
+        _selectedScope = contentType;
         _contentTypesDropdownExpanded = false;
         _stops = _contentList;
       });
@@ -208,13 +207,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
 
-  static String _getContentTypeName(MTDStopsContentType? contentType, {String? languageCode} )  {
-    switch (contentType) {
-      case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.content_type.all.title', 'All Bus Stops');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.content_type.my.title', 'My Bus Stops');
-      default: return '';
-    }
-  }
+  static String _getContentTypeName(MTDStopsScope? contentType, {String? languageCode} ) =>
+      contentType?.titleEx(languageCode: languageCode) ?? '';
 
   // Content Widget
 
@@ -291,17 +285,17 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   String get _errorDisplayStatus {
-    switch(_selectedContentType) {
-      case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.status.error.all.text', 'Failed to load bus stops.');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.status.error.my.text', 'Failed to load saved bus stops.');
+    switch(_selectedScope) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.status.error.all.text', 'Failed to load bus stops.');
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.error.my.text', 'Failed to load saved bus stops.');
       default: return '';
     }
   }
 
   String get _emptyDisplayStatus {
-    switch(_selectedContentType) {
-      case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have no saved bus stops.');
+    switch(_selectedScope) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have no saved bus stops.');
       default: return '';
     }
   }
@@ -337,7 +331,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   List<MTDStop>? get _contentList {
-    if (_selectedContentType == MTDStopsContentType.all) {
+    if (_selectedScope == MTDStopsScope.all) {
       List<MTDStop>? stops = ListUtils.from(MTD().stops?.stops);
       if ((stops != null) && (_currentPosition != null)) {
         stops.sort((MTDStop stop1, MTDStop stop2) {
@@ -355,8 +349,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       }
       return stops;
     }
-    else if (_selectedContentType == MTDStopsContentType.my) {
-      return ListUtils.reversed(MTD().stopsByIds(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName) ?? LinkedHashSet<String>()));
+    else if (_selectedScope == MTDStopsScope.my) {
+      return ListUtils.reversed(MTD().favoriteStops);
     }
     else {
       return null;
@@ -390,12 +384,30 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     setState(() {
       _contentTypesDropdownExpanded = false;
     });
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel(scope: _selectedScope ?? MTDStopsScope.all,)));
   }
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(''));
+    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(scope: _selectedScope ?? MTDStopsScope.all));
   }
 }
 
+extension MTDStopsScopeExt on MTDStopsScope {
+
+  String get title => titleEx();
+  String titleEx({String? languageCode}) {
+    switch (this) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.content_type.all.title', 'All Bus Stops', language: languageCode);
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.content_type.my.title', 'My Bus Stops', language: languageCode);
+    }
+  }
+
+  String get hint => hintEx();
+  String hintEx({String? languageCode}) {
+    switch (this) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.explore.label.mtd_stops.scope.all.title', 'All Stops', language: languageCode);
+      case MTDStopsScope.my: return Localization().getStringEx('panel.explore.label.mtd_stops.scope.my.title', 'My Stops', language: languageCode);
+    }
+  }
+}

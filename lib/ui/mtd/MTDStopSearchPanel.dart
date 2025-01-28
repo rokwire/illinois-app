@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/MTD.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -9,6 +10,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -24,9 +26,10 @@ import 'package:sprintf/sprintf.dart';
 
 class MTDStopSearchPanel extends StatefulWidget {
   final String? searchText;
+  final MTDStopsScope scope;
   final MTDStopSearchContext? searchContext;
 
-  MTDStopSearchPanel({ Key? key, this.searchText, this.searchContext }) : super(key: key);
+  MTDStopSearchPanel({ Key? key, this.scope = MTDStopsScope.all, this.searchText, this.searchContext }) : super(key: key);
 
   @override
   State<MTDStopSearchPanel> createState() => _MTDStopSearchPanelState();
@@ -188,9 +191,18 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
     );
 
   String get _searchLabel {
-    return (_searchText != null) ?
-      sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for', 'Results for %s'), [_searchText!]) :
-      Localization().getStringEx('panel.mtd_stops.search.label.search_for', 'Searching Bus Stops');
+    if (_searchText != null) {
+      switch(widget.scope) {
+        case MTDStopsScope.all: return sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for.all', 'Results for %s'), [_searchText ?? '']);
+        case MTDStopsScope.my: return sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for.my', 'Results for %s'), [_searchText ?? '']);
+      }
+    }
+    else {
+      switch(widget.scope) {
+        case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.search.label.search_for.all', 'Searching Bus Stops');
+        case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.search.label.search_for.my', 'Searching My Bus Stops');
+      }
+    }
   }
 
   String get _resultsCountLabel {
@@ -245,23 +257,33 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   }
 
   List<MTDStop>? _buildStops(String searchValue) {
-    List<MTDStop> stops = MTD().stops?.searchStop(searchValue) ?? <MTDStop>[];
-    if (_currentPosition != null) {
-      stops.sort((MTDStop stop1, MTDStop stop2) {
-        LatLng? position1 = stop1.anyPosition;
-        LatLng? position2 = stop2.anyPosition;
-        if ((position1 != null) && position1.isValid && (position2 != null) && position2.isValid) {
-          double distance1 = Geolocator.distanceBetween(position1.latitude!, position1.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
-          double distance2 = Geolocator.distanceBetween(position2.latitude!, position2.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
-          return distance1.compareTo(distance2);
-        }
-        else {
-          return 0;
-        }
-      });
+
+    if (widget.scope == MTDStopsScope.all) {
+      List<MTDStop> stops = MTD().stops?.searchStop(searchValue) ?? <MTDStop>[];
+
+      if (_currentPosition != null) {
+        stops.sort((MTDStop stop1, MTDStop stop2) {
+          LatLng? position1 = stop1.anyPosition;
+          LatLng? position2 = stop2.anyPosition;
+          if ((position1 != null) && position1.isValid && (position2 != null) && position2.isValid) {
+            double distance1 = Geolocator.distanceBetween(position1.latitude!, position1.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
+            double distance2 = Geolocator.distanceBetween(position2.latitude!, position2.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
+            return distance1.compareTo(distance2);
+          }
+          else {
+            return 0;
+          }
+        });
+      }
+      return stops;
     }
-    return stops;
-  } 
+    else if (widget.scope == MTDStopsScope.my) {
+      return MTDStop.searchInList(MTD().favoriteStops, search: searchValue.toLowerCase());
+    }
+    else {
+      return [];
+    }
+  }
 
   void _clear() {
     _searchController.clear();
@@ -281,7 +303,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
       Navigator.of(context).pop((_searchText?.isNotEmpty == true) ? _searchText : _searchController.text);
     }
     else {
-      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(_searchText ?? ''));
+      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(searchText: _searchText ?? '', scope: widget.scope));
     }
   }
 
