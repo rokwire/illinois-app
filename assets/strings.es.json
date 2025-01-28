@@ -3222,7 +3222,6 @@
     "panel.mtd_stops.home.header_bar.title": "Paradas de Autobús",
     "panel.mtd_stops.home.content_type.all.title": "Todas las Paradas de Autobús",
     "panel.mtd_stops.home.content_type.my.title": "Mis Paradas de Autobús",
-    "panel.mtd_stops.home.dropdown.search.title": "Buscar las Paradas de Autobús",
     "panel.mtd_stops.home.status.error.all.text": "Error al cargar las paradas de autobús.",
     "panel.mtd_stops.home.status.error.my.text": "Error al cargar tus paradas de autobús guardadas.",
     "panel.mtd_stops.home.status.empty.all.text": "No hay paradas de autobús disponibles.",
