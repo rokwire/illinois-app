@@ -1200,6 +1200,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (value != null) {
       setStateIfMounted(() {
         _recurrenceRepeatType = value;
+        _errorMap = _buildErrorMap();
       });
     }
   }
@@ -1222,6 +1223,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       if ((result != null) && mounted) {
         setState(() {
           _recurrenceEndDate = DateUtils.dateOnly(result);
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1326,6 +1328,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       } else {
         _recurrenceWeekDays!.add(day);
       }
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1334,6 +1337,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _weeklyRepeatPeriod = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -2448,6 +2452,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     dynamic result;
     Event2 event = _createEventFromData();
+
+    //////// remove start
+    await _createRecurringEventsFrom(mainEvent: event);
+    setState(() {
+      _creatingEvent = false;
+    });
+    return;
+    //////// remove end
+
     String? eventId = event.id;
     if (eventId == null) {
       result = await Events2().createEvent(event);
@@ -2632,6 +2645,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   DateTime? get _endDateTimeUtc =>
     (_endDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime).millisecondsSinceEpoch) : null;
+
+  DateTime? get _recurrenceEndDateTimeUtc =>
+      _hasRecurrenceEndDate ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59)).millisecondsSinceEpoch) : null;
 
   bool get _private => (_visibility != _Event2Visibility.public);
 
@@ -2843,9 +2859,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   List<Event2>? _buildRecurringEventsFrom({required Event2 mainEvent}) {
-    if (StringUtils.isEmpty(mainEvent.id)) {
-      return null;
-    }
     List<Event2>? recurringEvents;
     switch (_recurrenceRepeatType) {
       case _RecurrenceRepeatType.weekly:
@@ -2862,6 +2875,36 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<Event2>? _buildWeeklyRecurringEvents({required Event2 mainEvent}) {
     //TBD: DD - implement
+    _recurrenceWeekDays?.sort((d1, d2){
+      return d1.index.compareTo(d2.index);
+    });
+    String? recurrenceGroupId = mainEvent.id;
+    DateTime mainStartDateTimeUtc = mainEvent.startTimeUtc!;
+    DateTime mainEndDateTimeUtc = mainEvent.endTimeUtc!;
+    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
+    DateTime startDateUtc = mainStartDateTimeUtc;
+    int startDateDayOfWeekIndex = startDateUtc.weekday;
+    List<DateTime> startDateTimes = <DateTime>[];
+    DateTime nextWeekStartDateUtc = startDateUtc;
+    while (nextWeekStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
+      for(DayOfWeek dayOfWeek in _recurrenceWeekDays!) {
+        if (_weeklyRepeatPeriod != null) {
+          int weekDaysDiff = (dayOfWeek.index + 1) - nextWeekStartDateUtc.weekday;
+          int nextWeekDaysDiff = _weeklyRepeatPeriod! * 7; // every 1, 2, 3 ... weeks
+          nextWeekStartDateUtc = nextWeekStartDateUtc.add(Duration(days: (weekDaysDiff + nextWeekDaysDiff)));
+        }
+        int recurrenceDayOFWeekIndex = (dayOfWeek.index + 1);
+        if (recurrenceDayOFWeekIndex > startDateDayOfWeekIndex) {
+          int daysDiff = (recurrenceDayOFWeekIndex - startDateDayOfWeekIndex);
+          startDateUtc = startDateUtc.add(Duration(days: daysDiff));
+          startDateTimes.add(startDateUtc);
+        }
+      }
+      startDateUtc = nextWeekStartDateUtc;
+    }
+    for(DateTime ddd in startDateTimes) {
+      print('FFFFFFF: $ddd');
+    }
     return null;
   }
 
