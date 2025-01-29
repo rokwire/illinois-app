@@ -2875,35 +2875,32 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<Event2>? _buildWeeklyRecurringEvents({required Event2 mainEvent}) {
     //TBD: DD - implement
-    _recurrenceWeekDays?.sort((d1, d2){
-      return d1.index.compareTo(d2.index);
-    });
+    List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
+    recurrenceWeekDaysIndexes?.sort();
     String? recurrenceGroupId = mainEvent.id;
     DateTime mainStartDateTimeUtc = mainEvent.startTimeUtc!;
     DateTime mainEndDateTimeUtc = mainEvent.endTimeUtc!;
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
-    DateTime startDateUtc = mainStartDateTimeUtc;
-    int startDateDayOfWeekIndex = startDateUtc.weekday;
-    List<DateTime> startDateTimes = <DateTime>[];
-    DateTime nextWeekStartDateUtc = startDateUtc;
-    while (nextWeekStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
-      for(DayOfWeek dayOfWeek in _recurrenceWeekDays!) {
-        if (_weeklyRepeatPeriod != null) {
-          int weekDaysDiff = (dayOfWeek.index + 1) - nextWeekStartDateUtc.weekday;
-          int nextWeekDaysDiff = _weeklyRepeatPeriod! * 7; // every 1, 2, 3 ... weeks
-          nextWeekStartDateUtc = nextWeekStartDateUtc.add(Duration(days: (weekDaysDiff + nextWeekDaysDiff)));
-        }
-        int recurrenceDayOFWeekIndex = (dayOfWeek.index + 1);
-        if (recurrenceDayOFWeekIndex > startDateDayOfWeekIndex) {
-          int daysDiff = (recurrenceDayOFWeekIndex - startDateDayOfWeekIndex);
-          startDateUtc = startDateUtc.add(Duration(days: daysDiff));
-          startDateTimes.add(startDateUtc);
-        }
+    List<DateTime> startDateTimesUtc = <DateTime>[];
+    List<DateTime> endDateTimesUtc = <DateTime>[];
+    // We've already handled the main event date, so we start with the next date
+    DateTime nextStartDateUtc = mainStartDateTimeUtc.add(Duration(days: 1));
+    DateTime nextEndDateUtc = mainEndDateTimeUtc.add(Duration(days: 1));
+    while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
+      if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
+        startDateTimesUtc.add(nextStartDateUtc);
+        endDateTimesUtc.add(nextEndDateUtc);
       }
-      startDateUtc = nextWeekStartDateUtc;
+      int daysToAdd = (nextStartDateUtc.weekday == 7) ? (1 + (_weeklyRepeatPeriod! - 1) * 7) : 1;
+      nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysToAdd));
+      nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
     }
-    for(DateTime ddd in startDateTimes) {
-      print('FFFFFFF: $ddd');
+
+
+    for(int i = 0; i<startDateTimesUtc.length;i++) {
+      DateTime start = startDateTimesUtc[i];
+      DateTime end = endDateTimesUtc[i];
+      print('FFFFFFF: start = $start, end = $end');
     }
     return null;
   }
