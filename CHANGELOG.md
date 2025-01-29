@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Renamed "Scope" to "Filter" label in Map / Bus Stops [#4479](https://github.com/rokwire/illinois-app/issues/4479).
+- Handled size changed notifications in SettingsPrivacyPanel to control continue enabling, applicable for web platform [#4486](https://github.com/rokwire/illinois-app/issues/4486).
 
 ## [6.1.49] - 2025-01-28
 ### Changed
