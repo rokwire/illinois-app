@@ -1090,7 +1090,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: '  ', style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.scope.label.title', 'Scope: ') , style: boldStyle, recognizer: _clearMTDStopsScopeRecognizer, ));
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.scope.label.title', 'Filter: ') , style: boldStyle, recognizer: _clearMTDStopsScopeRecognizer, ));
       descriptionList.add(TextSpan(text: _mtdStopScope?.hint ?? '' , style: regularStyle, recognizer: _clearMTDStopsScopeRecognizer));
       descriptionList.add(_buildCloseSpan(onTap: _onMTDStopsClearScope));
     }
