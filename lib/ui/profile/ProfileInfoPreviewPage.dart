@@ -97,7 +97,25 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
     ],)
   );
 
-  Widget get _cardContentHeading => Center(child:
+  Widget get _cardContentHeading => Column(children: [
+    Padding(padding: EdgeInsets.only(top: (_profile?.pronunciationUrl?.isNotEmpty == true) ? 0 : 12), child:
+      RichText(textAlign: TextAlign.center, text: TextSpan(style: nameTextStyle, children: [
+        TextSpan(text: _profile?.fullName ?? ''),
+        if (_profile?.pronunciationUrl?.isNotEmpty == true)
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child:
+            DirectoryPronunciationButton(
+              url: _profile?.pronunciationUrl,
+              data: widget.pronunciationAudioData,
+              padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+            ),
+          ),
+      ])),
+    ),
+  if (_profile?.pronouns?.isNotEmpty == true)
+    Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+  ],);
+/*
+    Center(child:
     Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (_profile?.pronunciationUrl?.isNotEmpty == true)
         DirectoryPronunciationButton.spacer(),
@@ -112,7 +130,7 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
         DirectoryPronunciationButton(url: _profile?.pronunciationUrl, data: widget.pronunciationAudioData,),
     ],),
   );
-
+*/
   // ignore: unused_element
   Widget get _shareButton => Row(children: [
     Padding(padding: EdgeInsets.only(right: 4), child:
