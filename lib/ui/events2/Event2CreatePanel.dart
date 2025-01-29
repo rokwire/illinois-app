@@ -564,7 +564,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _onlineMeetingIdController.text = widget.event?.onlineDetails?.meetingId ?? '';
     _onlinePasscodeController.text = widget.event?.onlineDetails?.meetingPasscode ?? '';
 
-    // TBD grouping
     _attributes = widget.event?.attributes;
     _visibility = _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public;
 
@@ -2453,13 +2452,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     dynamic result;
     Event2 event = _createEventFromData();
 
-    //////// remove start
-    await _createRecurringEventsFrom(mainEvent: event);
-    setState(() {
-      _creatingEvent = false;
-    });
-    return;
-    //////// remove end
+    //TBD: DD - tmp code for debug purposes
+    // //////// remove start
+    // await _createRecurringEventsFrom(mainEvent: event);
+    // setState(() {
+    //   _creatingEvent = false;
+    // });
+    // return;
+    // //////// remove end
 
     String? eventId = event.id;
     if (eventId == null) {
@@ -2808,7 +2808,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
       timezone: _timeZone.name,
       startTimeUtc: _startDateTimeUtc,
-      endTimeUtc: _endDateTimeUtc,
+      endTimeUtc: (widget.isCreate && _shouldCreateRecurringEvents) ? _recurrenceEndDateTimeUtc : _endDateTimeUtc, // set end date to be the recurrence end date so that the main event is shown until we have recurring events
       allDay: _allDay,
 
       eventType: _eventType,
@@ -2874,16 +2874,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   List<Event2>? _buildWeeklyRecurringEvents({required Event2 mainEvent}) {
-    //TBD: DD - implement
     List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
     recurrenceWeekDaysIndexes?.sort();
-    String? recurrenceGroupId = mainEvent.id;
-    DateTime mainStartDateTimeUtc = mainEvent.startTimeUtc!;
-    DateTime mainEndDateTimeUtc = mainEvent.endTimeUtc!;
+    DateTime mainStartDateTimeUtc = _startDateTimeUtc!;
+    DateTime mainEndDateTimeUtc = _endDateTimeUtc!;
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<DateTime> startDateTimesUtc = <DateTime>[];
     List<DateTime> endDateTimesUtc = <DateTime>[];
-    // We've already handled the main event date, so we start with the next date
     DateTime nextStartDateUtc = mainStartDateTimeUtc.add(Duration(days: 1));
     DateTime nextEndDateUtc = mainEndDateTimeUtc.add(Duration(days: 1));
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
@@ -2896,13 +2893,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
     }
 
-
-    for(int i = 0; i<startDateTimesUtc.length;i++) {
-      DateTime start = startDateTimesUtc[i];
-      DateTime end = endDateTimesUtc[i];
-      print('FFFFFFF: start = $start, end = $end');
+    List<Event2>? events;
+    if (CollectionUtils.isNotEmpty(startDateTimesUtc)) {
+      events = <Event2>[];
+      for (int i = 0; i < startDateTimesUtc.length; i++) {
+        DateTime start = startDateTimesUtc[i];
+        DateTime end = endDateTimesUtc[i];
+        Event2? subEvent = mainEvent.toRecurringEvent(startDateTimeUtc: start, endDateTimeUtc: end);
+        if (subEvent != null) {
+          events.add(subEvent);
+        }
+      }
     }
-    return null;
+    return events;
   }
 
   List<Event2>? _buildMonthlyRecurringEvents({required Event2 mainEvent}) {
