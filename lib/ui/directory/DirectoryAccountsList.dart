@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -275,4 +276,13 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Autom
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
   String? get directoryKey => (profile?.lastName?.isNotEmpty == true) ?
     profile?.lastName?.substring(0, 1).toUpperCase() : null;
+}
+
+extension DirectoryAccountsProfile on DirectoryAccounts {
+  ProfileInfo get profileInfo {
+    switch(this) {
+      case DirectoryAccounts.directory: return ProfileInfo.directoryInfo;
+      case DirectoryAccounts.connections: return ProfileInfo.connectionsInfo;
+    }
+  }
 }

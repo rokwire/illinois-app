@@ -77,3 +77,17 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
 
   String get _textUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
 }
+
+extension Auth2AccountEx on Auth2Account {
+
+  Auth2UserProfile? previewProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) {
+    Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
+      firstName: Auth2FieldVisibility.public,
+      middleName: Auth2FieldVisibility.public,
+      lastName: Auth2FieldVisibility.public,
+      email: Auth2FieldVisibility.public,
+    );
+
+    return Auth2UserProfile.fromFieldsVisibility(profile, profileVisibility, permitted: permitted);
+  }
+}
