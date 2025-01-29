@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated some text descriptions in Home/Sections [#4681](https://github.com/rokwire/illinois-app/issues/4681).
 - Fixed name and pronunciation control layout [#4685](https://github.com/rokwire/illinois-app/issues/4685).
 - Handled size changed notifications in SettingsPrivacyPanel to control continue enabling, applicable for web platform [#4486](https://github.com/rokwire/illinois-app/issues/4486).
+- Updated Directory content heading description to include share profile option [#4695](https://github.com/rokwire/illinois-app/issues/4695).
 
 ## [6.1.49] - 2025-01-28
 ### Changed
