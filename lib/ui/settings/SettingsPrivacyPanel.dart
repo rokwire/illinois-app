@@ -95,7 +95,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   @override
   void onNotification(String name, dynamic param) {
     if (name == AppNotification.notify) {
-      if ((param is SizeChangedLayoutNotification) && mounted && !_disabled) {
+      if ((param is SizeChangedLayoutNotification) && mounted && _disabled) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _scrollListener());
       }
     }
