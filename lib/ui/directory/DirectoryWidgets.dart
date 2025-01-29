@@ -366,40 +366,31 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
         photoUrlHeaders: _photoAuthHeaders,
         imageSize: _photoImageSize,
       ),
-      Row(children: [
-        Expanded(child:
-          Center(child:
-            Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
-                DirectoryPronunciationButton.spacer(),
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_profile?.fullName ?? '', style: _profileNameTextStyle, textAlign: TextAlign.center,),
-                ),
-                if (_profile?.pronouns?.isNotEmpty == true)
-                  Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-              ]),
-              if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
-                DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
-            ],),
-          ),
-        ),
-      ],),
-    ]);
 
-  Widget get _profileTextHeading => Column(mainAxisSize: MainAxisSize.min, children: [
-    Row(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        RichText(textAlign: TextAlign.center, text: TextSpan(style: _profileNameTextStyle, children: [
+          TextSpan(text: _profile?.fullName ?? ''),
+        ])),
+      ),
+
+      if (_profile?.pronouns?.isNotEmpty == true)
+        Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+    ],);
+
+  Widget get _profileTextHeading =>
+    Align(alignment: Alignment.centerLeft, child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.only(top: 16), child:
-          Text(_profile?.fullName ?? '', style: _profileNameTextStyle, textAlign: TextAlign.center,),
+
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          RichText(textAlign: TextAlign.left, text: TextSpan(style: _profileNameTextStyle, children: [
+            TextSpan(text: _profile?.fullName ?? ''),
+          ])),
         ),
+
         if (_profile?.pronouns?.isNotEmpty == true)
-          Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+          Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.left,),
       ]),
-      if (!widget.printMode && (_profile?.pronunciationUrl?.isNotEmpty == true))
-        DirectoryPronunciationButton(url: _profile?.pronunciationUrl),
-    ],),
-  ]);
+    );
 
   Widget get _profileTrailing =>
     Column(mainAxisSize: MainAxisSize.min, children: [
@@ -628,13 +619,16 @@ class DirectoryProfilePhotoUtils {
 class DirectoryPronunciationButton extends StatefulWidget {
   final String? url;
   final Uint8List? data;
+  final EdgeInsetsGeometry padding;
 
-  DirectoryPronunciationButton({super.key, this.url, this.data});
+  DirectoryPronunciationButton({
+    super.key, this.url, this.data,
+    this.padding = const EdgeInsets.symmetric(horizontal: 13, vertical: 18)
+  });
 
   @override
   State<StatefulWidget> createState() => _DirectoryPronunciationButtonState();
 
-  static Widget spacer() => _DirectoryPronunciationButtonState._pronunciationButtonStaticContent();
 }
 
 class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationButton> {
@@ -663,17 +657,14 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
       _initializingAudioPlayer ? _pronunciationButtonInitializingContent : _pronunciationButtonPlaybackContent;
 
     Widget get _pronunciationButtonInitializingContent =>
-      _pronunciationButtonStaticContent(child: DirectoryProgressWidget());
-
-    static Widget _pronunciationButtonStaticContent({Widget? child}) =>
-        Padding(padding: EdgeInsets.symmetric(horizontal: 13, vertical: 18), child:
-          SizedBox(width: _pronunciationButtonIconSize, height: _pronunciationButtonIconSize, child:
-            child
-          ),
-        );
+      Padding(padding: widget.padding, child:
+        SizedBox(width: _pronunciationButtonIconSize, height: _pronunciationButtonIconSize, child:
+          DirectoryProgressWidget()
+        ),
+      );
 
     Widget get _pronunciationButtonPlaybackContent =>
-      Padding(padding: EdgeInsets.symmetric(horizontal: _pronunciationPlaying ? 11 : 12, vertical: 18), child:
+      Padding(padding: widget.padding.add(EdgeInsets.symmetric(horizontal: _pronunciationPlaying ? -2 : -1)) , child:
         Styles().images.getImage(_pronunciationPlaying ? 'volume-high' : 'volume', size: _pronunciationButtonIconSize),
       );
 
