@@ -58,7 +58,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _savingToPhotos = false;
-  bool _sharingVirtualCard = false;
+  bool _sharingDigitalCard = false;
   bool _preparingEmail = false;
   bool _preparingTextMessage = false;
   bool _preparingClipboardText = false;
@@ -87,14 +87,8 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           onTap: _onTapSaveToPhotos,
         ),
         _buildCommand(
-          icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.vcard.text', 'Share Virtual Card'),
-          progress: _sharingVirtualCard,
-          onTap: _onTapShareVirtualCard,
-        ),
-        _buildCommand(
           icon: Styles().images.getImage('envelope', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share via Email'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share Digital Business Card'),
           progress: _preparingEmail,
           onTap: _onTapShareViaEmail,
         ),
@@ -103,6 +97,12 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           text: Localization().getStringEx('panel.profile.info.share.command.button.share.message.text', 'Share via Text Message'),
           progress: _preparingTextMessage,
           onTap: _onTapShareViaTextMessage,
+        ),
+        _buildCommand(
+          icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.digital_card.text', 'Add to Device Contacts'),
+          progress: _sharingDigitalCard,
+          onTap: _onTapShareDigitalCard,
         ),
         _buildCommand(
           icon: Styles().images.getImage('copy-fa', size: _commandIconSize),
@@ -157,8 +157,8 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     }
   }
 
-  void _onTapShareVirtualCard() async {
-    Analytics().logSelect(target: 'Share Virtual Card');
+  void _onTapShareDigitalCard() async {
+    Analytics().logSelect(target: 'Share Digital Card');
     QrCodePanel.presentProfile(context,
       profile: widget.profile,
       photoImageData: widget.photoImageData,
@@ -166,16 +166,16 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     );
   }
 
-  /* void _onTapShareVirtualCard1() async {
-    Analytics().logSelect(target: 'Share Virtual Card');
+  /* void _onTapShareDigitalCard1() async {
+    Analytics().logSelect(target: 'Share Digital Card');
 
     setState(() {
-      _sharingVirtualCard = true;
+      _sharingDigitalCard = true;
     });
-    String? vcardPath = await _saveVirtualCard();
+    String? vcardPath = await _saveDigitalCard();
     if (mounted) {
       setState(() {
-        _sharingVirtualCard = false;
+        _sharingDigitalCard = false;
       });
       if (vcardPath != null) {
         Share.shareFiles([vcardPath],
@@ -184,7 +184,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         );
       }
       else {
-        AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.share.command.save.vcard.failed', 'Failed to save Virtual Card.'));
+        AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.share.command.save.digital_card.failed', 'Failed to save Digital Business Card.'));
       }
     }
   } */
@@ -196,7 +196,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     });
     List<String?> results = await Future.wait(<Future<String?>>[
       _saveImage(),
-      _saveVirtualCard(),
+      _saveDigitalCard(),
     ]);
     String? imageFilePath = (0 < results.length) ? results[0] : null;
     String? vCardFilePath = (1 < results.length) ? results[1] : null;
@@ -266,8 +266,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         if (byteData != null) {
           Uint8List buffer = byteData.buffer.asUint8List();
           final String dir = (await getApplicationDocumentsDirectory()).path;
-          final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(
-              DateTime.now())}';
+          final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
           final String fullPath = '$dir/$saveFileName.png';
           File capturedFile = File(fullPath);
           await capturedFile.writeAsBytes(buffer);
@@ -282,9 +281,9 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     return null;
   }
 
-  Future<String?> _saveVirtualCard() async {
+  Future<String?> _saveDigitalCard() async {
     try {
-      String? vcfContent = widget.profile?.toVCard(
+      String? vcfContent = widget.profile?.toDigitalCard(
         photoImageData: widget.photoImageData,
       );
       if ((vcfContent != null) && vcfContent.isNotEmpty) {

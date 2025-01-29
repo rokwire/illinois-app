@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.49] - 2025-01-28
+### Changed
+- Cleaned up UI of Buses search and Map/List link [#4479](https://github.com/rokwire/illinois-app/issues/4479).
+- Cleaned up Share My Info terms [#4687](https://github.com/rokwire/illinois-app/issues/4687).
+### Fixed
+- GroupDetailPanel enhancements [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
 ## [6.1.48] - 2025-01-27
 ### Fixed
 - Fixed filters behavior in Map panel [#4485](https://github.com/rokwire/illinois-app/issues/4485).
