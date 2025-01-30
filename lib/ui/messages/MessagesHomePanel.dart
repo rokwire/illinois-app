@@ -119,6 +119,8 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     NotificationService().subscribe(this, [
       Social.notifyConversationsUpdated,
       Social.notifyMessageSent,
+      Social.notifyMessageEdited,
+      Social.notifyMessageDeleted,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -142,7 +144,10 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Social.notifyConversationsUpdated || name == Social.notifyMessageSent) {
+    if (name == Social.notifyConversationsUpdated ||
+        name == Social.notifyMessageSent ||
+        name == Social.notifyMessageEdited ||
+        name == Social.notifyMessageDeleted) {
       if (mounted) {
         _loadContent();
       }
