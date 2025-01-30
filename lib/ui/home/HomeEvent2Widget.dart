@@ -391,12 +391,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       contentWidget,
       AccessibleViewPagerNavigationButtons(
         controller: _pageController,
-        pagesCount: () {
-          if ((_events?.length ?? 0) == _cardsPerPage) {
-            return 1;
-          }
-          return (_events?.length ?? 0) ~/ _cardsPerPage + 1;
-        },
+        pagesCount: () => pages.length,
         centerWidget: LinkButton(
           title: Localization().getStringEx('widget.home.events.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.events.button.all.hint', 'Tap to view all events'),

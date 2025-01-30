@@ -286,12 +286,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       contentWidget,
       AccessibleViewPagerNavigationButtons(
         controller: _pageController,
-        pagesCount: () {
-          if ((_messages?.length ?? 0) == _cardsPerPage) {
-            return 1;
-          }
-          return (_messages?.length ?? 0) ~/ _cardsPerPage + 1;
-        },
+        pagesCount: () => pages.length,
         centerWidget: LinkButton(
           title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),

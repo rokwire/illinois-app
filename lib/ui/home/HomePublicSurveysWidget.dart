@@ -54,6 +54,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
+  int _pageCount = 1;
   static const String _progressPageKey = '{{progress}}';
   static double _pageSpacing = 16;
   static double _pageBottomPadding = 0;
@@ -162,12 +163,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
         _surveysContent,
         AccessibleViewPagerNavigationButtons(
           controller: _pageController,
-          pagesCount: () {
-            if ((_contentList?.length ?? 0) == _cardsPerPage) {
-              return 1;
-            }
-            return (_contentList?.length ?? 0) ~/ _cardsPerPage + 1;
-          },
+          pagesCount: () => _pageCount,
           centerWidget: LinkButton(
             title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
             hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
@@ -182,13 +178,16 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   Widget get _surveysContent => (_contentList?.length == 1) ?
     _singleSurveyContent : _multipleSurveysContent;
 
-  Widget get _singleSurveyContent =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
+  Widget get _singleSurveyContent {
+    _pageCount = 1;
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
       Container(
-        constraints: BoxConstraints(maxWidth: _cardWidth),
-        child: PublicSurveyCard.pageCard(_contentList!.first, hasActivity: _activitySurveyIds.contains(_contentList!.first.id), onTap: () => _onSurvey(_contentList!.first),)
+          constraints: BoxConstraints(maxWidth: _cardWidth),
+          child: PublicSurveyCard.pageCard(_contentList!.first, hasActivity: _activitySurveyIds.contains(_contentList!.first.id), onTap: () => _onSurvey(_contentList!.first),)
       )
     );
+  }
+
 
   double get _pageHeight {
 
@@ -269,6 +268,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
       _pageController = PageController(viewportFraction: pageViewport);
     }
 
+    _pageCount = pages.length;
     return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
       ExpandablePageView(
         key: _pageViewKey,

@@ -267,12 +267,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       contentWidget,
       AccessibleViewPagerNavigationButtons(
         controller: _pageController,
-        pagesCount: () {
-          if ((_groups?.length ?? 0) == _cardsPerPage) {
-          return 1;
-          }
-          return (_groups?.length ?? 0) ~/ _cardsPerPage + 1;
-        },
+        pagesCount: () => pages.length,
         centerWidget: LinkButton(
           title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),

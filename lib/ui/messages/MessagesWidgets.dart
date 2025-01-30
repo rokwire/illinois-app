@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/ext/Social.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/ui/messages/MessagesConversationPanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -7,6 +11,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class RecentConversationsPage extends StatefulWidget {
   final String? searchText;
@@ -225,7 +230,7 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
   }
 }
 
-class RecentConversationCard extends StatefulWidget {
+class RecentConversationCard extends StatelessWidget {
   final Conversation conversation;
   final bool expanded;
   final void Function()? onToggleExpanded;
@@ -235,14 +240,8 @@ class RecentConversationCard extends StatefulWidget {
   RecentConversationCard(this.conversation, { super.key, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
-  State<StatefulWidget> createState() => _RecentConversationCardState();
-}
-
-class _RecentConversationCardState extends State<RecentConversationCard> {
-
-  @override
   Widget build(BuildContext context) =>
-      widget.expanded ? _expandedContent : _collapsedContent;
+      expanded ? _expandedContent : _collapsedContent;
 
   Widget get _expandedContent =>
     InkWell(onTap: _onSelect, child:
@@ -251,7 +250,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
         Expanded(child:
           _expandedMembersContent
         ),
-        if (widget.onToggleExpanded != null)
+        if (onToggleExpanded != null)
           Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 16), child:
             Styles().images.getImage('chevron2-up',)
           ),
@@ -265,10 +264,10 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
           Checkbox(
             checkColor: Styles().colors.iconPrimary,
             activeColor: Styles().colors.fillColorPrimary,
-            value: widget.selected,
+            value: selected,
             visualDensity: VisualDensity.compact,
             side: BorderSide(
-              color: widget.selected ? Styles().colors.iconPrimary : Styles().colors.iconLight,
+              color: selected ? Styles().colors.iconPrimary : Styles().colors.iconLight,
               width: 1.0,
             ),
             onChanged: _onToggleSelected,
@@ -278,11 +277,11 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
     );
 
   void _onSelect() =>
-    _onToggleSelected(!widget.selected);
+    _onToggleSelected(!selected);
 
   void _onToggleSelected(bool? value) {
     if (value != null) {
-      widget.onToggleSelected?.call(value);
+      onToggleSelected?.call(value);
     }
   }
 
@@ -300,7 +299,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
               ),
             ),
           ),
-          if (widget.onToggleExpanded != null)
+          if (onToggleExpanded != null)
             Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
               Styles().images.getImage('chevron2-down',)
             )
@@ -309,7 +308,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
 
   Widget get _expandedMembersContent {
     List<Widget> content = [];
-    for (ConversationMember member in widget.conversation.members ?? []) {
+    for (ConversationMember member in conversation.members ?? []) {
       List<TextSpan> nameSpans = [];
       List<String> names = member.name?.split(' ') ?? [];
       if (names.length > 1) {
@@ -334,7 +333,7 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
 
   List<TextSpan> get _nameSpans {
     List<TextSpan> spans = <TextSpan>[];
-    for (ConversationMember member in widget.conversation.members ?? []) {
+    for (ConversationMember member in conversation.members ?? []) {
       List<TextSpan> nameSpans = [];
       List<String> names = member.name?.split(' ') ?? [];
       if (names.length > 1) {
@@ -359,5 +358,200 @@ class _RecentConversationCardState extends State<RecentConversationCard> {
       }
       spans.add(TextSpan(text: name ?? '', style: style));
     }
+  }
+}
+
+class ConversationCard extends StatelessWidget {
+  final Conversation conversation;
+  final bool? selected;
+  final void Function(Conversation)? onTap;
+  final bool isHorizontal;
+
+  const ConversationCard({
+    super.key,
+    required this.conversation,
+    this.selected,
+    this.onTap,
+    this.isHorizontal = false
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return isHorizontal
+        ? _buildHorizontalLayout(context)
+        : _buildVerticalLayout(context);
+  }
+
+  Widget _buildVerticalLayout(BuildContext context) {
+    double leftPadding = (selected != null) ? 12 : 16;
+    return Container(
+      color: Styles().colors.surface,
+      clipBehavior: Clip.none,
+      child: Stack(children: [
+        InkWell(
+          onTap: () => (onTap != null ? onTap!(conversation) : _onTapCard(context)),
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: leftPadding,
+                right: 16,
+                top: 16,
+                bottom: 16
+            ),
+            child: Row(children: <Widget>[
+              Visibility(
+                visible: (selected != null),
+                child: Padding(
+                  padding: EdgeInsets.only(right: leftPadding),
+                  child: Semantics(
+                    label: (selected == true)
+                        ? Localization().getStringEx('widget.conversation_card.selected.hint', 'Selected')
+                        : Localization().getStringEx('widget.conversation_card.unselected.hint', 'Not Selected'),
+                    child: Styles().images.getImage(
+                      (selected == true)
+                          ? 'check-circle-filled'
+                          : 'check-circle-outline-gray',
+                      excludeFromSemantics: true,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Styles().images.getImage(
+                              (conversation.isGroupConversation)
+                                  ? 'messages-group-dark-blue'
+                                  : 'person-circle-dark-blue'
+                          ) ?? Container(),
+                        ),
+                        Expanded(
+                          child: Text(
+                              StringUtils.ensureNotEmpty(conversation.membersString),
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: Styles().textStyles.getTextStyle('widget.card.title.small')
+                          ),
+                        ),
+                        if (conversation.mute == true)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Icon(Icons.notifications_off, size: 20),
+                          ),
+                        _buildDisplayDateWidget(),
+                      ],
+                    ),
+                    if (StringUtils.isNotEmpty(conversation.lastMessage))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                            conversation.lastMessage ?? '',
+                            semanticsLabel: sprintf(
+                                Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'),
+                                [conversation.lastMessage ?? '']
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ]),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildHorizontalLayout(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors.surface,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: InkWell(
+        onTap: () => _onTapCard(context),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: SizedBox(
+            height: 160,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 12),
+                _buildMessagePreview(),
+                Spacer(),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _buildDisplayDateWidget(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: Styles().images.getImage(
+            (conversation.isGroupConversation)
+                ? 'messages-group-dark-blue'
+                : 'person-circle-dark-blue',
+            excludeFromSemantics: true,
+          ) ?? Container(),
+        ),
+        Expanded(
+          child: Text(
+            StringUtils.ensureNotEmpty(conversation.membersString),
+            style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ),
+        if (conversation.mute == true)
+          const Padding(
+            padding: EdgeInsets.only(left: 4),
+            child: Icon(Icons.notifications_off, size: 20),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildMessagePreview() {
+    return Text(
+      conversation.lastMessage ?? '',
+      style: Styles().textStyles.getTextStyle(isHorizontal ? "widget.card.detail.medium" : "widget.card.detail.tiny.medium_fat"),
+      maxLines: isHorizontal ? 3 : 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildDisplayDateWidget() {
+    String displayDateTime = StringUtils.ensureNotEmpty(conversation.displayDateTime);
+    bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
+    return Text(
+      noSuffix ? displayDateTime : "$displayDateTime ago",
+      style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat'),
+    );
+  }
+
+  void _onTapCard(BuildContext context) {
+    Analytics().logSelect(target: conversation.id);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
   }
 }

@@ -320,8 +320,8 @@
 	"panel.browse.section.research_projects.description": "Discover and participate in research projects.",
 	"panel.browse.section.laundry.title": "洗衣房",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
-	"panel.browse.section.messages.title": "連接",
-	"panel.browse.section.messages.description": "Connect and send messages to {{university_long_name}} students and employees.",
+	"panel.browse.section.messages.title": "對話",
+	"panel.browse.section.messages.description": "Connect and send conversations to {{university_long_name}} students and employees.",
 	"panel.browse.section.mtd.title": "MTD 巴士",
 	"panel.browse.section.mtd.description": "查看 MTD 巴士站位置、路线和实时动态。",
 	"panel.browse.section.inbox.title": "通知",
@@ -2664,7 +2664,7 @@
 
 	"panel.debug.header.title":"调试",
 
-	"panel.debug_messaging.header.title":"消息",
+	"panel.debug_messaging.header.title":"對話",
 
 	"panel.web.offline.title": "網頁內容不可用",
 	"panel.web.offline.message": "您需要在線才能訪問網絡內容。 請檢查您的互聯網連接。",
@@ -3252,7 +3252,7 @@
 	"widget.inbox_message_card.delete.confirm.msg": "您確實要刪除該訊息嗎？",
 	"widget.inbox_message_card.delete.failed.msg": "刪除訊息失敗。請稍後再試。",
 
-	"panel.messages.header.connections.label": "連接",
+	"panel.messages.header.messages.label": "對話",
 	"panel.messages.mark_all_read.label": "標記為已讀",
 	"panel.messages.label.time.any": "任何時間",
 	"panel.messages.label.time.today": "今天",
@@ -3264,7 +3264,7 @@
 	"panel.messages.label.muted.show": "顯示靜音",
 	"panel.messages.label.muted.hide": "隱藏靜音",
 	"panel.messages.label.content.empty": "沒有對話",
-	"panel.messages.button.new.title": "新訊息",
+	"panel.messages.button.new.title": "新對話",
 	"panel.messages.button.new.hint": "",
 	"panel.messages.mark_as_read.failed.msg": "無法將所有對話標記為已讀",
 
@@ -3808,7 +3808,9 @@
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
 
-	"widget.home.messages.label.header.title": "MESSAGES",
+	"widget.home.messages.label.header.title": "對話",
+	"widget.home.messages.button.all.title":"查看全部",
+	"widget.home.messages.button.all.hint":"點擊查看所有對話",
 
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
 	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",

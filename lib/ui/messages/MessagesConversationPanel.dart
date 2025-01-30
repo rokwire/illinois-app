@@ -151,46 +151,46 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildContent() {
-    return Stack(children: [
-      RefreshIndicator(
-        onRefresh: _onPullToRefresh,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom),
-          child: _messages.isNotEmpty ? Stack(alignment: Alignment.center, children: [
-            Column(children: [
-              Expanded(
-                child: SingleChildScrollView(
-                    controller: _scrollController,
-                    reverse: true,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16, top:16,),
-                        child: Semantics(
-                            child: Column(children: _buildContentList())
-                        )
-                    )
-                ),
-              )
-            ],),
-            Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
-          ])
-              : _loading
-              ? Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
-              : Center(child: Text((_conversation != null) ? 'No message history' : 'Failed to load conversation', style: Styles().textStyles.getTextStyle('widget.message.light.medium'))
-          )
-        )
-      ),
-      Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-              key: _chatBarKey,
-              color: Styles().colors.background,
-              child: SafeArea(child: _buildChatBar())
-          )
-      )
-    ]);
+    return Column(
+      children: [
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _onPullToRefresh,
+            child: _messages.isNotEmpty
+                ? Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomScrollView(
+                  controller: _scrollController,
+                  // reverse: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(_buildContentList()),
+                      ),
+                    ),
+                  ],),
+                Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary)),
+              ])
+                : _loading
+                ? Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+                : Center(
+              child: Text(
+                (_conversation != null) ? 'No message history' : 'Failed to load conversation',
+                style: Styles().textStyles.getTextStyle('widget.message.light.medium'),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          key: _chatBarKey,
+          color: Styles().colors.background,
+          child: SafeArea(child: _buildChatBar()),
+        ),
+      ],
+    );
   }
 
   List<Widget> _buildContentList() {

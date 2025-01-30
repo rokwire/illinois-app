@@ -16,25 +16,21 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Social.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
-import 'package:neom/ui/messages/MessagesConversationPanel.dart';
 import 'package:neom/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/ui/messages/MessagesWidgets.dart';
 import 'package:neom/ui/widgets/Filters.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:sprintf/sprintf.dart';
 
 class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'messages_home_content_panel';
@@ -156,7 +152,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.messages.header.messages.label', 'MESSAGES'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),)
+              Text(Localization().getStringEx('panel.messages.header.messages.label', 'CONVERSATIONS'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),)
             ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
@@ -238,7 +234,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         child: ConversationCard(
           conversation: entry,
           selected: (_isEditMode == true) ? _selectedConversationIds.contains(entry.id) : null,
-          onTap: () => _onTapConversation(entry),
+          onTap: (_isEditMode == true) ? _handleSelectionTap : null,
         ),
       );
     }
@@ -259,14 +255,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     ),);
   }
 
-  void _onTapConversation(Conversation conversation) {
-    if (_isEditMode == true) {
-      _handleSelectionTap(conversation);
-    } else {
-      _handleRedirectTap(conversation);
-    }
-  }
-
   void _handleSelectionTap(Conversation conversation) {
     Analytics().logSelect(target: conversation.id);
     setState(() {
@@ -280,11 +268,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         }
       }
     });
-  }
-
-  void _handleRedirectTap(Conversation conversation) {
-    Analytics().logSelect(target: conversation.id);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(conversation: conversation,)));
   }
 
   // Banner
@@ -328,7 +311,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
         children: [
           // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
           Spacer(),
-          Flexible(flex: 1, child: _buildNewMessageButton()),
+          SizedBox(width: MediaQuery.textScaleFactorOf(context) * 208, child: _buildNewMessageButton()),  //TODO: figure out how to do this without textScaleFactor
         ],
       ),
     );
@@ -539,7 +522,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   Widget _buildNewMessageButton() {
     return RibbonButton(
-        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Message'),
+        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Conversation'),
           style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -994,116 +977,4 @@ enum _TimeFilter {
 
 enum _FilterType {
   Muted, Time
-}
-
-class ConversationCard extends StatefulWidget {
-  final Conversation? conversation;
-  final bool? selected;
-  final void Function()? onTap;
-
-  ConversationCard({this.conversation, this.selected, this.onTap });
-
-  @override
-  _ConversationCardState createState() {
-    return _ConversationCardState();
-  }
-}
-
-class _ConversationCardState extends State<ConversationCard> implements NotificationsListener {
-
-  @override
-  void initState() {
-    super.initState();
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-    ]);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    NotificationService().unsubscribe(this);
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      setStateIfMounted(() {});
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double leftPadding = (widget.selected != null) ? 12 : 16;
-    // String mutedStatus = Localization().getStringEx('widget.conversation_card.status.muted', 'Muted');
-    return Container(
-        color: Styles().colors.surface,
-        clipBehavior: Clip.none,
-        child: Stack(children: [
-          InkWell(onTap: widget.onTap, child:
-            Padding(padding: EdgeInsets.only(left: leftPadding, right: 16, top: 16, bottom: 16), child:
-              Row(children: <Widget>[
-                Visibility(visible: (widget.selected != null), child:
-                  Padding(padding: EdgeInsets.only(right: leftPadding), child:
-                    Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.conversation_card.selected.hint', 'Selected') : Localization().getStringEx('widget.conversation_card.unselected.hint', 'Not Selected'), child:
-                      Styles().images.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
-                    )
-                  ),
-                ),
-
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 8),
-                          child: Styles().images.getImage((widget.conversation?.isGroupConversation ?? false) ? 'messages-group-dark-blue' : 'person-circle-dark-blue') ?? Container(),
-                        ),
-                        Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(widget.conversation?.membersString),
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,  //TODO: allow multiple lines?
-                              style: Styles().textStyles.getTextStyle('widget.card.title.small')
-                          ),
-                        ),
-                        if (widget.conversation?.mute == true)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Styles().images.getImage('notification-off'),
-                          ),
-                        _buildDisplayDateWidget,
-                      ],
-                    ),
-                    Container(height: 16.0),
-                    StringUtils.isNotEmpty(widget.conversation?.lastMessage) ?
-                    Row(children: [
-                      Expanded(child:
-                        Text(widget.conversation?.lastMessage ?? '',
-                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
-                        )
-                      )]) : Container(),
-                  ])
-                ),
-              ],)
-            ),
-          ),
-        ],)
-    );
-  }
-
-  Widget get _buildDisplayDateWidget {
-    String displayDateTime = StringUtils.ensureNotEmpty(widget.conversation?.displayDateTime);
-    bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
-    return Semantics(child: Text(noSuffix ? displayDateTime : "$displayDateTime ago",
-        semanticsLabel: "Updated ${widget.conversation?.displayDateTime ?? ""} ago",
-        textAlign: TextAlign.right,
-        style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')));
-  }
 }

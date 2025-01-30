@@ -132,7 +132,7 @@ class _MessagesInboxPageState extends State<MessagesInboxPage> implements Notifi
     else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.messaages.label.content.empty', 'No messages'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin')),
+        Text(Localization().getStringEx('panel.messaages.label.content.empty', 'No conversations'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin')),
         Expanded(child: Container(), flex: 3),
       ]);
     }
@@ -213,7 +213,7 @@ class _MessagesInboxPageState extends State<MessagesInboxPage> implements Notifi
             children: [
               Expanded(child:
                 Text(
-                  "Messages Paused",
+                  "Conversations Paused",
                   textAlign: TextAlign.center,
                   style: Styles().textStyles.getTextStyle("widget.detail.regular")
                 ),
@@ -431,10 +431,10 @@ class _MessagesInboxPageState extends State<MessagesInboxPage> implements Notifi
     return SizedBox(
       width: 168,
       child: RibbonButton(
-        textWidget: Text(Localization().getStringEx('panel.messages.new.title', 'New Message'),
+        textWidget: Text(Localization().getStringEx('panel.messages.new.title', 'New Conversation'),
           style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),
         ),
-        label: Localization().getStringEx('panel.messages.new.title', 'New Message'),
+        label: Localization().getStringEx('panel.messages.new.title', 'New Conversation'),
         hint: Localization().getStringEx('panel.messages.new.hint', ''),
         backgroundColor: Styles().colors.fillColorSecondary,
         leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.textDark),
@@ -468,8 +468,8 @@ class _MessagesInboxPageState extends State<MessagesInboxPage> implements Notifi
 
   Widget _buildOptions(BuildContext context) {
     String headingText = (_selectedMessageIds.length == 1) ?
-      '1 Message Selected' :
-      '${_selectedMessageIds.length} Messages Selected';
+      '1 Conversation Selected' :
+      '${_selectedMessageIds.length} Conversations Selected';
 
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -613,8 +613,8 @@ class _MessagesInboxPageState extends State<MessagesInboxPage> implements Notifi
     Navigator.pop(context);
 
     String message = (_selectedMessageIds.length == 1) ?
-      'Delete 1 message?' :
-      'Delete ${_selectedMessageIds.length} messages?';
+      'Delete 1 conversation?' :
+      'Delete ${_selectedMessageIds.length} conversations?';
     showDialog(context: context, builder: (context) => _buildConfirmationDialog(context,
       title: 'Delete',
       message: message,
