@@ -615,9 +615,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget> get _linkedEventsPagerWidget {
-    Event2Grouping? linkedGroupingQuery = _event.linkedEventsGroupingQuery;
-    return (linkedGroupingQuery != null) ? <Widget>[
-      LinkedEvents2Pager(linkedGroupingQuery, contentBuilder: _linkedEventsPagerBuilder, userLocation: widget.userLocation)
+    List<Event2Grouping>? linkedGroupingQueries = _event.linkedEventsGroupingQuery;
+    return (linkedGroupingQueries != null) ? <Widget>[
+      LinkedEvents2Pager(linkedGroupingQueries, contentBuilder: _linkedEventsPagerBuilder, userLocation: widget.userLocation)
     ] : <Widget>[];
   }
 
@@ -708,10 +708,10 @@ enum LinkedEvents2PagerContentStatus { loading, error, empty, content }
 typedef LinkedEvents2PagerContentBuilder = Widget Function(LinkedEvents2PagerContentStatus state, { required Widget child } );
 
 class LinkedEvents2Pager extends StatefulWidget {
-  final Event2Grouping linkedGroupingQuery;
+  final List<Event2Grouping> linkedGroupingQueries;
   final LinkedEvents2PagerContentBuilder? contentBuilder;
   final Position? userLocation;
-  LinkedEvents2Pager(this.linkedGroupingQuery, {super.key, this.contentBuilder, this.userLocation });
+  LinkedEvents2Pager(this.linkedGroupingQueries, {super.key, this.contentBuilder, this.userLocation });
 
   @override
   State<StatefulWidget> createState() => _LinkedEvents2PagerState();
@@ -785,7 +785,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
           padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
           child: Event2Card(event,
             displayMode: Event2CardDisplayMode.cardLink,
-            linkType: widget.linkedGroupingQuery.type,
+            linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
             userLocation: widget.userLocation,
             onTap: () => _onTapEvent2(event),
           )
@@ -823,7 +823,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
       return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
         Event2Card(_events!.first,
           displayMode: Event2CardDisplayMode.cardLink,
-          linkType: widget.linkedGroupingQuery.type,
+          linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
           userLocation: widget.userLocation,
           onTap: () => _onTapEvent2(_events!.first)
         )
@@ -893,7 +893,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
         _loadingEvents = true;
         _extendingEvents = false;
       });
-      dynamic result = await Events2().loadEventsEx(Events2Query(grouping: widget.linkedGroupingQuery, limit: limit));
+      dynamic result = await Events2().loadEventsEx(Events2Query(groupings: widget.linkedGroupingQueries, limit: limit));
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       String? errorTextResult = (result is String) ? result : null;
@@ -916,7 +916,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
         _extendingEvents = true;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(Events2Query(grouping: widget.linkedGroupingQuery, offset: _events?.length ?? 0, limit: _eventsPageLength));
+      Events2ListResult? loadResult = await Events2().loadEvents(Events2Query(groupings: widget.linkedGroupingQueries, offset: _events?.length ?? 0, limit: _eventsPageLength));
       List<Event2>? events = loadResult?.events;
       int? totalCount = loadResult?.totalCount;
 

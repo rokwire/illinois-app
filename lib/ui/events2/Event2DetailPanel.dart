@@ -1283,10 +1283,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         futures.add(Events2().loadEventPeople(eventId));
       }
 
-      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
-      int? linkedEventsIndex = ((linkedEventsGrouping != null) && (_linkedEvents == null)) ? futures.length : null;
+      List<Event2Grouping>? linkedEventsGroupings = _event?.linkedEventsGroupingQuery;
+      int? linkedEventsIndex = ((linkedEventsGroupings != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: _linkedEventsPageLength)));
+        futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, limit: _linkedEventsPageLength)));
         //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
         setState(() {
           _linkedEventsLoading = true;
@@ -1367,10 +1367,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             futures.add(Events2().loadEventPeople(eventId));
           }
 
-          Event2Grouping? linkedEventsGrouping = event.linkedEventsGroupingQuery;
-          int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+          List<Event2Grouping>? linkedEventsGroupings = event.linkedEventsGroupingQuery;
+          int? linkedEventsIndex = (linkedEventsGroupings != null) ? futures.length : null;
           if (linkedEventsIndex != null) {
-            futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
+            futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
           }
 
           int? superEventIndex = event.isSuperEventChild ? futures.length : null;
@@ -1454,12 +1454,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   Future<void> _extendLinkedEvents() async {
-    Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
-    if ((linkedEventsGrouping != null) && !_linkedEventsLoading && !_extendingLinkedEvents) {
+    List<Event2Grouping>? linkedEventsGroupings = _event?.linkedEventsGroupingQuery;
+    if ((linkedEventsGroupings != null) && !_linkedEventsLoading && !_extendingLinkedEvents) {
       setStateIfMounted(() {
         _extendingLinkedEvents = true;
       });
-      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
+      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
       List<Event2>? events = linkedEventsListResult?.events;
       int? totalCount = linkedEventsListResult?.totalCount;
 
