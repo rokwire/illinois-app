@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.51] - 2025-01-30
 ### Changed
 - Updated "Request a SafeWalk" quick action icon for Android [#4363](https://github.com/rokwire/illinois-app/issues/4363). 
 - Hide Skip button when Continue is available in Onboarding2ProfileInfoPanel [#4708](https://github.com/rokwire/illinois-app/issues/4708). 
