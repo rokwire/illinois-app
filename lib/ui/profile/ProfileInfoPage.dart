@@ -202,33 +202,16 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       Localization().getStringEx('panel.profile.info.directory_visibility.public.text', 'Public') :
       Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private');
 
-    List<InlineSpan> spanList = _directoryVisibilitySpanList(messageTemplate, <Pair<String, String>>[
-      Pair<String, String>(visibilityMacro, visibilityValue),
-    ]);
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(messageTemplate,
+      macros: [visibilityMacro],
+      builder: (String entry) => (entry == visibilityMacro) ?
+        TextSpan(text: visibilityValue, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),) :
+        TextSpan(text: entry)
+    );
 
     return RichText(textAlign: TextAlign.left, text:
       TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
     );
-  }
-
-  List<InlineSpan> _directoryVisibilitySpanList(String message, List<Pair<String, String>> macros) {
-    if (macros.isNotEmpty) {
-      Pair<String, String> head = macros.first;
-      List<Pair<String, String>> trail = macros.sublist(1);
-
-      List<InlineSpan> spanList = <InlineSpan>[];
-      final List<String> messages = message.split(head.left);
-      if (0 < messages.length)
-        spanList.addAll(_directoryVisibilitySpanList(messages.first, trail));
-      for (int index = 1; index < messages.length; index++) {
-        spanList.add(TextSpan(text: head.right, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),));
-        spanList.addAll(_directoryVisibilitySpanList(messages[index], trail));
-      }
-      return spanList;
-    }
-    else {
-      return <InlineSpan>[TextSpan(text: message)];
-    }
   }
 
   void _onToggleDirectoryVisibility() {
@@ -536,13 +519,18 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  // Positive and Permitted visibility
+  @override
+  Widget build(BuildContext context) =>
+    throw UnimplementedError();
+}
+
+extension ProfileInfoVisibility on ProfileInfo {
 
   static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
   static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
 
-  Auth2FieldVisibility positiveVisibility(ProfileInfo contentType) {
-    switch(contentType) {
+  Auth2FieldVisibility get positiveVisibility {
+    switch(this) {
       case ProfileInfo.directoryInfo: return _directoryPositiveVisibility;
       case ProfileInfo.connectionsInfo: return _connectionsPositiveVisibility;
     }
@@ -551,14 +539,11 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   static const Set<Auth2FieldVisibility> _directoryPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility };
   static const Set<Auth2FieldVisibility> _connectionsPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility, _connectionsPositiveVisibility };
 
-  Set<Auth2FieldVisibility> permittedVisibility(ProfileInfo contentType) {
-    switch(contentType) {
+  Set<Auth2FieldVisibility> get permitedVisibility {
+    switch(this) {
       case ProfileInfo.directoryInfo: return _directoryPermittedVisibility;
       case ProfileInfo.connectionsInfo: return _connectionsPermittedVisibility;
     }
   }
 
-  @override
-  Widget build(BuildContext context) =>
-    throw UnimplementedError();
 }

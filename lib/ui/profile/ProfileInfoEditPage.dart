@@ -829,10 +829,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
   Auth2FieldVisibility get _positiveVisibility =>
-    super.positiveVisibility(widget.contentType);
+    widget.contentType.positiveVisibility;
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
-    super.permittedVisibility(widget.contentType);
+    widget.contentType.permitedVisibility;
 }
 
 ///////////////////////////////////////////

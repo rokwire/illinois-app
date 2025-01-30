@@ -1997,7 +1997,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         post: post,
         group: _group!,
         pinned: pinned,
-        isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
+        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
       ));
       }
     }

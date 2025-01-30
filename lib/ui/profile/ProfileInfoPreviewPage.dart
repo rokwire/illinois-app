@@ -97,23 +97,24 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
     ],)
   );
 
-  Widget get _cardContentHeading => Center(child:
-    Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton.spacer(),
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        Padding(padding: EdgeInsets.only(top: 16), child:
-          Text(_profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
-        ),
-        if (_profile?.pronouns?.isNotEmpty == true)
-          Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-      ]),
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton(url: _profile?.pronunciationUrl, data: widget.pronunciationAudioData,),
-    ],),
-  );
+  Widget get _cardContentHeading => Column(children: [
+    Padding(padding: EdgeInsets.only(top: (_profile?.pronunciationUrl?.isNotEmpty == true) ? 0 : 12), child:
+      RichText(textAlign: TextAlign.center, text: TextSpan(style: nameTextStyle, children: [
+        TextSpan(text: _profile?.fullName ?? ''),
+        if (_profile?.pronunciationUrl?.isNotEmpty == true)
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child:
+            DirectoryPronunciationButton(
+              url: _profile?.pronunciationUrl,
+              data: widget.pronunciationAudioData,
+              padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+            ),
+          ),
+      ])),
+    ),
+  if (_profile?.pronouns?.isNotEmpty == true)
+    Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+  ],);
 
-  // ignore: unused_element
   Widget get _shareButton => Row(children: [
     Padding(padding: EdgeInsets.only(right: 4), child:
       Styles().images.getImage('share', size: 14) ?? Container()
@@ -139,5 +140,5 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
   }
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
-    super.permittedVisibility(widget.contentType);
+    widget.contentType.permitedVisibility;
 }
