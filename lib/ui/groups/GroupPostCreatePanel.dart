@@ -126,7 +126,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     onBodyChanged: (text) => _postData.body = text,
                     // hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
-                  Visibility(visible: _isPost,
+                  Visibility(visible: _isPost && _canPinPost,
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 6),
                       child: EnabledToggleButton(
@@ -445,6 +445,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   bool get _canSentToOtherAdminGroups{
       return _allowSenPostToOtherGroups && CollectionUtils.isEmpty(_selectedMembers);
   }
+
+  bool get _canPinPost =>  _isAdmin;
+
+  bool get _isAdmin => widget.group.currentUserIsAdmin;
 
   String get _groupId => widget.group.id!;
 
