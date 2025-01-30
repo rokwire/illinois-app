@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Show confirmation dialog when unpin group post [#4639](https://github.com/rokwire/illinois-app/issues/4639).
 ### Fixed
+- Fixed most recent post still appearing in conversation list after being deleted [#4692](https://github.com/rokwire/illinois-app/issues/4692)
 - Fixed admin badge in GroupPostCard [#4636](https://github.com/rokwire/illinois-app/issues/4636).
 ### Changed
 - Renamed "Scope" to "Filter" label in Map / Bus Stops [#4479](https://github.com/rokwire/illinois-app/issues/4479).
