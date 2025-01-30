@@ -564,7 +564,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _onlineMeetingIdController.text = widget.event?.onlineDetails?.meetingId ?? '';
     _onlinePasscodeController.text = widget.event?.onlineDetails?.meetingPasscode ?? '';
 
-    // TBD grouping
     _attributes = widget.event?.attributes;
     _visibility = _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public;
 
@@ -1200,6 +1199,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (value != null) {
       setStateIfMounted(() {
         _recurrenceRepeatType = value;
+        _errorMap = _buildErrorMap();
       });
     }
   }
@@ -1222,6 +1222,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       if ((result != null) && mounted) {
         setState(() {
           _recurrenceEndDate = DateUtils.dateOnly(result);
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1326,6 +1327,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       } else {
         _recurrenceWeekDays!.add(day);
       }
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1334,6 +1336,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _weeklyRepeatPeriod = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1523,6 +1526,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceRepeatMonthlyType = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1531,6 +1535,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _monthlyRepeatPeriod = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1539,6 +1544,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceRepeatDay = day;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1547,6 +1553,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceOrdinalNumber = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1555,6 +1562,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceMonthWeekDay = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -2321,6 +2329,35 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
     }
 
+    if ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat)) {
+      if (_recurrenceRepeatType == _RecurrenceRepeatType.weekly) {
+        if (CollectionUtils.isEmpty(_recurrenceWeekDays)) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.week.weekday', 'recurrence weekday'));
+        } else if (_weeklyRepeatPeriod == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.week.every', 'recurrence week period'));
+        }
+      } else if (_recurrenceRepeatType == _RecurrenceRepeatType.monthly) {
+        if (_recurrenceRepeatMonthlyType == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.on', 'recurrence on'));
+        } else if ((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.daily) && (_recurrenceRepeatDay == null)) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.on.day', 'recurrence on which day'));
+        } else if (_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.weekly) {
+          if (_recurrenceOrdinalNumber == null) {
+            missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.week.ordinal', 'recurrence ordinal weekday'));
+          } else if (_recurrenceMonthWeekDay == null) {
+            missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.week.day', 'recurrence week day'));
+          }
+        } else if (_monthlyRepeatPeriod == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.every', 'recurrence every which month'));
+        }
+      }
+      if (!_hasRecurrenceEndDate) {
+        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.end_date', 'recurrence end date'));
+      } else if (_recurrenceEndDate!.isBefore(_startDate!)) {
+        invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.recurrence.end_date', 'recurrence end date before start date'));
+      }
+    }
+
     if (_eventType == null) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.event_type', 'event type'));
     }
@@ -2424,6 +2461,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     dynamic result;
     Event2 event = _createEventFromData();
+
+    //TBD: DD - tmp code for debug purposes
+    // //////// remove start
+    // await _createRecurringEventsFrom(mainEvent: event);
+    // setState(() {
+    //   _creatingEvent = false;
+    // });
+    // return;
+    // //////// remove end
+
     String? eventId = event.id;
     if (eventId == null) {
       result = await Events2().createEvent(event);
@@ -2441,6 +2488,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       if (result is Event2) {
         Survey? survey = widget.survey;
         if (widget.isCreate) {
+          if (_shouldCreateRecurringEvents) {
+            await _createRecurringEventsFrom(mainEvent: result);
+          }
           if (_survey != null) {
             bool? success = await Surveys().createEvent2Survey(_survey!, result);
             if (mounted) {
@@ -2590,7 +2640,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       meetingPasscode: _onlinePasscodeController.text,
     ) : null;
 
-
+  bool get _shouldCreateRecurringEvents =>
+      ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat));
   bool get _hasRecurrenceEndDate => (_recurrenceEndDate != null);
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
@@ -2604,6 +2655,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   DateTime? get _endDateTimeUtc =>
     (_endDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime).millisecondsSinceEpoch) : null;
+
+  DateTime? get _recurrenceEndDateTimeUtc =>
+      _hasRecurrenceEndDate ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59)).millisecondsSinceEpoch) : null;
 
   bool get _private => (_visibility != _Event2Visibility.public);
 
@@ -2744,6 +2798,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         break;
     }
 
+    Event2Grouping? grouping;
+    if (widget.isCreate) {
+      if (_shouldCreateRecurringEvents) {
+        grouping = Event2Grouping.recurrence(null, individual: true); // set the main event to show as individual
+      }
+    } else {
+      grouping = widget.event?.grouping;
+    }
+
     return Event2(
       id: widget.event?.id,
 
@@ -2755,14 +2818,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
       timezone: _timeZone.name,
       startTimeUtc: _startDateTimeUtc,
-      endTimeUtc: _endDateTimeUtc,
+      endTimeUtc: (widget.isCreate && _shouldCreateRecurringEvents) ? _recurrenceEndDateTimeUtc : _endDateTimeUtc,
       allDay: _allDay,
 
       eventType: _eventType,
       location: _constructLocation(),
       onlineDetails: _onlineDetails,
 
-      grouping: widget.event?.grouping,
+      grouping: grouping,
       attributes: _attributes,
       authorizationContext: authorizationContext,
       context: event2Context,
@@ -2782,6 +2845,82 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       speaker: _speaker,
       contacts: _contacts,
     );
+  }
+
+  Future<void> _createRecurringEventsFrom({required Event2 mainEvent}) async {
+    // Create each event separately until we have a backend API for that
+    List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: mainEvent);
+    if (CollectionUtils.isNotEmpty(recurringEvents)) {
+      for (Event2 recurringEvent in recurringEvents!) {
+        dynamic recurringResult = await Events2().createEvent(recurringEvent);
+        if (recurringResult is Event2) {
+          debugPrint('Successfully created recurring event: ${recurringResult.id}');
+        } else {
+          String errMsg = StringUtils.isNotEmptyString(recurringResult)
+              ? recurringResult
+              : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred');
+          Event2Popup.showErrorResult(
+              context,
+              Localization().getStringEx('panel.event2.create.recurring_event.failed.msg', 'Failed to create recurring event. Reason: ') +
+                  errMsg);
+        }
+      }
+    }
+  }
+
+  List<Event2>? _buildRecurringEventsFrom({required Event2 mainEvent}) {
+    List<Event2>? recurringEvents;
+    switch (_recurrenceRepeatType) {
+      case _RecurrenceRepeatType.weekly:
+        recurringEvents = _buildWeeklyRecurringEvents(mainEvent: mainEvent);
+        break;
+      case _RecurrenceRepeatType.monthly:
+        recurringEvents = _buildMonthlyRecurringEvents(mainEvent: mainEvent);
+        break;
+      default:
+        break;
+    }
+    return recurringEvents;
+  }
+
+  List<Event2>? _buildWeeklyRecurringEvents({required Event2 mainEvent}) {
+    List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
+    recurrenceWeekDaysIndexes?.sort();
+    DateTime mainStartDateTimeUtc = _startDateTimeUtc!;
+    DateTime mainEndDateTimeUtc = _endDateTimeUtc!;
+    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
+    List<DateTime> startDateTimesUtc = <DateTime>[];
+    List<DateTime> endDateTimesUtc = <DateTime>[];
+    DateTime nextStartDateUtc = mainStartDateTimeUtc.add(Duration(days: 1));
+    DateTime nextEndDateUtc = mainEndDateTimeUtc.add(Duration(days: 1));
+    while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
+      if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
+        startDateTimesUtc.add(nextStartDateUtc);
+        endDateTimesUtc.add(nextEndDateUtc);
+      }
+      int daysToAdd = (nextStartDateUtc.weekday == 7) ? (1 + (_weeklyRepeatPeriod! - 1) * 7) : 1;
+      nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysToAdd));
+      nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
+    }
+
+    List<Event2>? events;
+    if (CollectionUtils.isNotEmpty(startDateTimesUtc)) {
+      events = <Event2>[];
+      for (int i = 0; i < startDateTimesUtc.length; i++) {
+        DateTime start = startDateTimesUtc[i];
+        DateTime end = endDateTimesUtc[i];
+        Event2? subEvent = mainEvent.toRecurringEvent(startDateTimeUtc: start, endDateTimeUtc: end);
+        if (subEvent != null) {
+          events.add(subEvent);
+        }
+      }
+    }
+    return events;
+  }
+
+  List<Event2>? _buildMonthlyRecurringEvents({required Event2 mainEvent}) {
+    //TBD: DD - implement
+    return null;
   }
 }
 

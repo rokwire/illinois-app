@@ -1315,7 +1315,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       name: widget.reply?.creatorName,
                       userId: widget.reply?.creatorId,
                       isAdmin: widget.creator?.isAdmin == true,
-                      additionalInfo: widget.post?.displayDateTime,
+                      additionalInfo: widget.reply?.displayDateTime,
                       // updateController: widget.updateController,
                     ))),),
                 // Visibility(

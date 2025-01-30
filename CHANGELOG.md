@@ -6,10 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.1.51] - 2025-01-30
+### Changed
+- Updated "Request a SafeWalk" quick action icon for Android [#4363](https://github.com/rokwire/illinois-app/issues/4363). 
+- Hide Skip button when Continue is available in Onboarding2ProfileInfoPanel [#4708](https://github.com/rokwire/illinois-app/issues/4708). 
+### Fixed
+- Fixed ReplyCard date [#4694](https://github.com/rokwire/illinois-app/issues/4694).
+### Added
+- Create weekly recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
+
 ## [6.1.50] - 2025-01-29
 ### Added
 - Show confirmation dialog when unpin group post [#4639](https://github.com/rokwire/illinois-app/issues/4639).
 ### Fixed
+- Fixed most recent post still appearing in conversation list after being deleted [#4692](https://github.com/rokwire/illinois-app/issues/4692)
 - Fixed admin badge in GroupPostCard [#4636](https://github.com/rokwire/illinois-app/issues/4636).
 ### Changed
 - Renamed "Scope" to "Filter" label in Map / Bus Stops [#4479](https://github.com/rokwire/illinois-app/issues/4479).
