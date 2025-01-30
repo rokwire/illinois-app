@@ -73,11 +73,12 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
           _backImageButton,
         ),
       ),
+    if (_isLoading)
       Positioned(top: 0, right: 0, child:
-        SafeArea(child:
-          _skipLinkSection,
+          SafeArea(child:
+            _skipLinkSection,
+          ),
         ),
-      ),
   ],);
 
   Widget get _titleWidget =>
@@ -173,7 +174,8 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     }
   }
 
-  bool get _isLoaded => (_profileInfoKey.currentState?.isLoading == false);
+  bool get _isLoaded => (_profileInfoKey.currentState?.isLoading != true);
+  bool get _isLoading => (_profileInfoKey.currentState?.isLoading == true);
 
   void _onTapContinue() {
     Analytics().logSelect(target: "Continue");
