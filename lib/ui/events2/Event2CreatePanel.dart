@@ -2808,7 +2808,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
       timezone: _timeZone.name,
       startTimeUtc: _startDateTimeUtc,
-      endTimeUtc: (widget.isCreate && _shouldCreateRecurringEvents) ? _recurrenceEndDateTimeUtc : _endDateTimeUtc, // set end date to be the recurrence end date so that the main event is shown until we have recurring events
+      endTimeUtc: _endDateTimeUtc,
       allDay: _allDay,
 
       eventType: _eventType,

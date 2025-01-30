@@ -413,7 +413,7 @@ extension Event2Ext on Event2 {
     location: this.location,
     onlineDetails: this.onlineDetails,
 
-    grouping: Event2Grouping.recurrence(this.id),
+    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId),
     attributes: this.attributes,
     authorizationContext: this.authorizationContext,
     context: this.context,
