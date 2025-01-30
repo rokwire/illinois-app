@@ -21,7 +21,6 @@ import 'package:neom/ui/groups/GroupsHomePanel.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeRecentItemsWidget.dart';
 import 'package:neom/ui/home/HomeTwitterWidget.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
 import 'package:neom/ui/messages/MessagesHomePanel.dart';
 import 'package:neom/ui/polls/PollsHomePanel.dart';
 import 'package:neom/ui/surveys/PublicSurveysPanel.dart';
@@ -120,6 +119,7 @@ class BrowseContentWidget extends StatefulWidget with AnalyticsInfo {
 class _BrowseContentWidgetState extends State<BrowseContentWidget> implements NotificationsListener {
 
   List<String>? _contentCodes;
+  List<String>? _browseListContentCodes;
 
   @override
   void initState() {
@@ -131,6 +131,7 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
     ]);
 
     _contentCodes = buildContentCodes();
+    _browseListContentCodes = buildBrowseListContentCodes();
 
     super.initState();
   }
@@ -171,14 +172,14 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
 
     if (sectionsGrid != null) {
       contentList.add(
-        HomeSlantWidget(
-          // title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          // titleIconKey: 'browse',
-          childPadding: HomeSlantWidget.defaultChildPadding,
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 32),
           child: sectionsGrid,
         )
       );
     }
+
+    contentList.add(_BrowseSection.buildBrowseList(codes: _browseListContentCodes!));
 
     return Column(children: contentList,);
   }
@@ -200,17 +201,25 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
   static List<String>? buildContentCodes() {
     return JsonUtils.listStringsValue(FlexUI()['browse']);
   }
+
+  static List<String>? buildBrowseListContentCodes() {
+    return JsonUtils.listStringsValue(FlexUI()['browse.list']);
+  }
 }
 
 ///////////////////////////
 // BrowseSection
 
+enum _BrowseSectionLayout { grid, list }
+
 class _BrowseSection extends StatelessWidget {
 
   final String sectionId;
   final Set<String>? _homeRootEntriesCodes;
+  final _BrowseSectionLayout layout;
 
-  _BrowseSection({Key? key, required this.sectionId}) :
+  _BrowseSection({Key? key, required this.sectionId,
+    this.layout = _BrowseSectionLayout.grid}) :
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
@@ -223,6 +232,47 @@ class _BrowseSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _getLayout(context);
+  }
+
+  Widget _getLayout(BuildContext context) {
+    switch (layout) {
+      case _BrowseSectionLayout.grid:
+        return _circularLayout(context);
+      case _BrowseSectionLayout.list:
+        return _listItemLayout(context);
+    }
+  }
+
+  Widget _listItemLayout(BuildContext context) {
+    Widget? icon = _listItemIcon();
+    return GestureDetector(
+      onTap: () => _onTap(context),
+      child: Row(
+        children: <Widget>[
+          if (icon != null)
+            icon,
+          Expanded(
+            child: Text(_title,
+                textAlign: TextAlign.center,
+                style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+          ),
+          Visibility(visible: _hasFavoriteContent, child:
+            Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+              GestureDetector(onTap: () => _onTapSectionFavorite(context), child:
+              FavoriteStarIcon(selected: _isSectionFavorite,
+                padding: EdgeInsets.symmetric(vertical: 16),
+                style: FavoriteIconStyle.Button,
+                color: Styles().colors.fillColorSecondaryVariant,)
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _circularLayout(BuildContext context) {
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildHeading(context));
     return Column(children: contentList,);
@@ -254,7 +304,10 @@ class _BrowseSection extends StatelessWidget {
                         border: Border.all(color: Styles().colors.fillColorSecondaryVariant),
                         borderRadius: BorderRadius.circular(24.0)
                     ),
-                    child: FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button, color: Styles().colors.fillColorSecondaryVariant,)
+                    child: FavoriteStarIcon(selected: _isSectionFavorite,
+                      // TODO: update icon size
+                      style: FavoriteIconStyle.Button,
+                      color: Styles().colors.fillColorSecondaryVariant,)
                   ),
                 ),
               ),
@@ -263,6 +316,19 @@ class _BrowseSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget? _listItemIcon({bool excludeFromSemantics = true, double size = 21}) {
+    switch(sectionId) {
+      case 'polls':
+        return Styles().images.getImage('browse-poll',
+            excludeFromSemantics: excludeFromSemantics, size: size);
+      case 'surveys':
+        return Styles().images.getImage('browse-survey',
+            excludeFromSemantics: excludeFromSemantics, size: size);
+      default:
+        return null;
+    }
   }
 
   String get _title => title(sectionId: sectionId);
@@ -514,6 +580,25 @@ class _BrowseSection extends StatelessWidget {
       gridColumns.add(Expanded(child: Column(children: column,),));
     }
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: gridColumns,);
+  }
+
+  static Widget buildBrowseList({required List<String> codes}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 48),
+      child: Column(
+        children: List.generate(codes.length, (index) =>
+          Column(
+            children: [
+              Divider(height: 1, color: Styles().colors.iconPrimary,),
+              _BrowseSection(sectionId: codes[index],
+                layout: _BrowseSectionLayout.list,),
+              if (index == codes.length - 1)
+                Divider(height: 1, color: Styles().colors.iconPrimary,),
+            ],
+          )
+        ),
+      ),
+    );
   }
 }
 

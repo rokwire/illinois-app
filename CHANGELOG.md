@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased - NEOM U
 ### Added
 - Add Messages section to Favorites [#37](https://github.com/rokmetro/neom-app/issues/37)
+### Changed
+- Redesign More panel [#31](https://github.com/rokmetro/neom-app/issues/31)
+
 ## [0.5.2] = 2025-01-17
 ### Fixed
 - Update User Directory preview styling [#32](https://github.com/rokmetro/neom-app/issues/32)

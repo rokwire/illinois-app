@@ -249,6 +249,7 @@ class HomeSlantWidget extends StatelessWidget {
 
   final double flatHeight;
   final double slantHeight;
+  final TriangleHorzDirection slantHorzDir;
   
   final Widget? child;
   final EdgeInsetsGeometry childPadding;
@@ -263,6 +264,7 @@ class HomeSlantWidget extends StatelessWidget {
     
     this.flatHeight = 40,
     this.slantHeight = 65,
+    this.slantHorzDir = TriangleHorzDirection.rightToLeft,
 
     this.child,
     this.childPadding = EdgeInsets.zero,
@@ -313,7 +315,7 @@ class HomeSlantWidget extends StatelessWidget {
         Column(children: <Widget>[
           Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
           Container(color: Styles().colors.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: this.slantHorzDir), child:
               Container(height: slantHeight,),
             ),
           ),
