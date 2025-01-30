@@ -1526,6 +1526,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceRepeatMonthlyType = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1534,6 +1535,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _monthlyRepeatPeriod = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1542,6 +1544,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceRepeatDay = day;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1550,6 +1553,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceOrdinalNumber = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1558,6 +1562,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceMonthWeekDay = value;
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -2324,7 +2329,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
     }
 
-    //TBD: DD - localize strings
     if ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat)) {
       if (_recurrenceRepeatType == _RecurrenceRepeatType.weekly) {
         if (CollectionUtils.isEmpty(_recurrenceWeekDays)) {
@@ -2335,10 +2339,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       } else if (_recurrenceRepeatType == _RecurrenceRepeatType.monthly) {
         if (_recurrenceRepeatMonthlyType == null) {
           missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.on', 'recurrence on'));
-        } else if (_recurrenceRepeatDay == null) {
-          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.every', 'recurrence every'));
-        } else {
-          //TBD: DD - check the values based on the selection
+        } else if ((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.daily) && (_recurrenceRepeatDay == null)) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.on.day', 'recurrence on which day'));
+        } else if (_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.weekly) {
+          if (_recurrenceOrdinalNumber == null) {
+            missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.week.ordinal', 'recurrence ordinal weekday'));
+          } else if (_recurrenceMonthWeekDay == null) {
+            missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.week.day', 'recurrence week day'));
+          }
+        } else if (_monthlyRepeatPeriod == null) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.monthly.every', 'recurrence every which month'));
         }
       }
       if (!_hasRecurrenceEndDate) {
