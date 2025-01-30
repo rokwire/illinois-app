@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated "Request a SafeWalk" quick action icon for Android [#4363](https://github.com/rokwire/illinois-app/issues/4363). 
+- Hide Skip button when Continue is available in Onboarding2ProfileInfoPanel [#4708](https://github.com/rokwire/illinois-app/issues/4708). 
 
 ## [6.1.50] - 2025-01-29
 ### Added
