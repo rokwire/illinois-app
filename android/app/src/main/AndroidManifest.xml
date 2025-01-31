@@ -115,5 +115,9 @@
 
         <receiver android:name=".rokwire_plugin.GeofenceBroadcastReceiver" android:exported="false"/>
 
+				<provider android:name="androidx.core.content.FileProvider" android:authorities="edu.illinois.rokwire.fileprovider" android:enabled="true" android:exported="false" android:grantUriPermissions="true" tools:replace="android:authorities">
+					<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" tools:replace="android:resource"></meta-data>
+				</provider>
+
     </application>
 </manifest>

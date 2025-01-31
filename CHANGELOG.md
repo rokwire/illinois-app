@@ -104,6 +104,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+## [6.1.51] - 2025-01-30
+### Changed
+- Updated "Request a SafeWalk" quick action icon for Android [#4363](https://github.com/rokwire/illinois-app/issues/4363). 
+- Hide Skip button when Continue is available in Onboarding2ProfileInfoPanel [#4708](https://github.com/rokwire/illinois-app/issues/4708). 
+### Fixed
+- Fixed ReplyCard date [#4694](https://github.com/rokwire/illinois-app/issues/4694).
+### Added
+- Create weekly recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
+
+## [6.1.50] - 2025-01-29
+### Added
+- Show confirmation dialog when unpin group post [#4639](https://github.com/rokwire/illinois-app/issues/4639).
+### Fixed
+- Fixed most recent post still appearing in conversation list after being deleted [#4692](https://github.com/rokwire/illinois-app/issues/4692)
+- Fixed admin badge in GroupPostCard [#4636](https://github.com/rokwire/illinois-app/issues/4636).
+### Changed
+- Renamed "Scope" to "Filter" label in Map / Bus Stops [#4479](https://github.com/rokwire/illinois-app/issues/4479).
+- Updated some text descriptions in Home/Sections [#4681](https://github.com/rokwire/illinois-app/issues/4681).
+- Fixed name and pronunciation control layout [#4685](https://github.com/rokwire/illinois-app/issues/4685).
+- Handled size changed notifications in SettingsPrivacyPanel to control continue enabling, applicable for web platform [#4486](https://github.com/rokwire/illinois-app/issues/4486).
+- Updated Directory content heading description to include share profile option [#4695](https://github.com/rokwire/illinois-app/issues/4695).
+
+## [6.1.49] - 2025-01-28
+### Changed
+- Cleaned up UI of Buses search and Map/List link [#4479](https://github.com/rokwire/illinois-app/issues/4479).
+- Cleaned up Share My Info terms [#4687](https://github.com/rokwire/illinois-app/issues/4687).
+### Fixed
+- GroupDetailPanel enhancements [#4483](https://github.com/rokwire/illinois-app/issues/4483).
+
+## [6.1.48] - 2025-01-27
+### Fixed
+- Fixed filters behavior in Map panel [#4485](https://github.com/rokwire/illinois-app/issues/4485).
+- Log Analytics event when "Add to Calendar" is selected from event detail page [#4502](https://github.com/rokwire/illinois-app/issues/4502).
+- Fixed title of wellness recreation button [#4499](https://github.com/rokwire/illinois-app/issues/4499).
+- Fix DiningCard shadow [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+
+## [6.1.47] - 2025-01-24
+### Deleted
+- Deleted "I'm Struggling..." from Wellness content [#4673](https://github.com/rokwire/illinois-app/issues/4673).
+### Changed
+- Show progress indicator when uploading profile picture.
+### Fixed
+- Enable privacy prompt flow if its content cannot be scrolled [#4486](https://github.com/rokwire/illinois-app/issues/4486).
+
+## [6.1.46] - 2025-01-23
+### Changed
+- Updated profile visibility description formatting [#4625](https://github.com/rokwire/illinois-app/issues/4625).
+- UI Updates for Dining [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+- Campus Recreation page hide favorites button [#4499](https://github.com/rokwire/illinois-app/issues/4499).
+
+## [6.1.45] - 2025-01-22
+### Fixed
+-  Messaging fixes and tweaks [#4621](https://github.com/rokwire/illinois-app/issues/4621)
+### Changed
+- Always show profile preview, even if it is private [#4658](https://github.com/rokwire/illinois-app/issues/4658).
+- Profile Edit fixes and updates [#4660](https://github.com/rokwire/illinois-app/issues/4660).
+- Notifications UI updates [#4489](https://github.com/rokwire/illinois-app/issues/4489).
+- Notifications settings updates [#4663](https://github.com/rokwire/illinois-app/issues/4663).
+- UI Updates for Dining [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+- Updated profile visibility description text [#4625](https://github.com/rokwire/illinois-app/issues/4625).
+
+## [6.1.44] - 2025-01-21
+### Changed
+- Connections renamed to Conversations [#4651](https://github.com/rokwire/illinois-app/issues/4651).
+### Added
+- Handled share profile info via email, text message or clipboard [#4605](https://github.com/rokwire/illinois-app/issues/4605).
+
+## [6.1.43] - 2025-01-20
+### Fixed
+- Pinned group posts: one pinned post at a time [#4629](https://github.com/rokwire/illinois-app/issues/4629).
+- Pinned group posts: displaying twice [#4630](https://github.com/rokwire/illinois-app/issues/4630).
+- Crash in directory profile photo [#4645](https://github.com/rokwire/illinois-app/issues/4645).
+### Added
+- Campus Recreation page [#4499](https://github.com/rokwire/illinois-app/issues/4499).
+### Changed
+- AppointmentsContentWidget: mechanism to override dropdown Title and Layout content for some providers [#4484](https://github.com/rokwire/illinois-app/issues/4484).
+- Update title style for Appointment, AthleticsNews and Dining detail panels [#4487](https://github.com/rokwire/illinois-app/issues/4487).
+- Cleaned up Share Virtual Card, implemented share via QR code [#4605](https://github.com/rokwire/illinois-app/issues/4605).
+- Dining UI updates: card update [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+
 ## [6.1.42] - 2025-01-17
 ### Fixed
 - Appointments: fix drop down dym layer size [#4480](https://github.com/rokwire/illinois-app/issues/4480).

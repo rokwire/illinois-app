@@ -7,11 +7,11 @@ import 'package:neom/ui/profile/ProfileInfoPage.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
-import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -101,30 +101,31 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
     ],)
   );
 
-  Widget get _cardContentHeading => Center(child:
-    Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton.spacer(),
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        Padding(padding: EdgeInsets.only(top: 16), child:
-          Text(_profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,),
-        ),
-        if (_profile?.pronouns?.isNotEmpty == true)
-          Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-      ]),
-      if (_profile?.pronunciationUrl?.isNotEmpty == true)
-        DirectoryPronunciationButton(url: _profile?.pronunciationUrl, data: widget.pronunciationAudioData,),
-    ],),
-  );
+  Widget get _cardContentHeading => Column(children: [
+    Padding(padding: EdgeInsets.only(top: (_profile?.pronunciationUrl?.isNotEmpty == true) ? 0 : 12), child:
+      RichText(textAlign: TextAlign.center, text: TextSpan(style: nameTextStyle, children: [
+        TextSpan(text: _profile?.fullName ?? ''),
+        if (_profile?.pronunciationUrl?.isNotEmpty == true)
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child:
+            DirectoryPronunciationButton(
+              url: _profile?.pronunciationUrl,
+              data: widget.pronunciationAudioData,
+              padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+            ),
+          ),
+      ])),
+    ),
+  if (_profile?.pronouns?.isNotEmpty == true)
+    Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
+  ],);
 
-  // ignore: unused_element
   Widget get _shareButton => Row(children: [
     Padding(padding: EdgeInsets.only(right: 4), child:
       Styles().images.getImage('share', size: 14) ?? Container()
     ),
     Expanded(child:
       LinkButton(
-        title: AppTextUtils.appTitleString('panel.profile.info.command.link.share.text', 'Share my info outside the ${AppTextUtils.appTitleMacro} app'),
+        title: Localization().getStringEx('panel.profile.info.command.link.share.text', 'Share My Info'),
         textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
         textAlign: TextAlign.left,
         padding: EdgeInsets.symmetric(vertical: 16),
@@ -135,9 +136,13 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-    ProfileInfoSharePanel.present(context, profile: _profile);
+    ProfileInfoSharePanel.present(context,
+      profile: _profile,
+      photoImageData: widget.photoImageData,
+      pronunciationAudioData: widget.pronunciationAudioData,
+    );
   }
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
-    super.permittedVisibility(widget.contentType);
+    widget.contentType.permitedVisibility;
 }

@@ -49,6 +49,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   static const String notifyToDoItemsDeleted = "edu.illinois.rokwire.wellness.todo.items.deleted";
 
   static const String notifyResourcesContentChanged = "edu.illinois.rokwire.wellness.content.resources.changed";
+  static const String notifyRecreationContentChanged = "edu.illinois.rokwire.wellness.content.recreation.changed";
   static const String notifyTipsContentChanged = "edu.illinois.rokwire.wellness.content.tops.changed";
   static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
 

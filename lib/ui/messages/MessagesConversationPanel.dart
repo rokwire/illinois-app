@@ -70,8 +70,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _hasMoreMessages = false;
   final int _messagesPageSize = 20;
   Message? _editingMessage;
+  Message? _deletingMessage;
 
   final Set<String> _globalIds = {};
+
+  static const double _photoSize = 20;
 
   @override
   void initState() {
@@ -258,15 +261,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildMessageCard(Message message) {
     String? senderId = message.sender?.accountId;
     bool isCurrentUser = (senderId == _currentUserId);
+    bool hasProgress = (_deletingMessage != null) && (message.globalId == _deletingMessage?.globalId);
+    bool canLongPress = isCurrentUser && (_editingMessage == null) && (_deletingMessage == null);
     Key? contentItemKey = widget.isTargetMessage(message) ? _targetMessageContentItemKey : null;
     Decoration cardDecoration = widget.isTargetMessage(message) ? _highlightedMessageCardDecoration : _messageCardDecoration;
 
-    return GestureDetector(onLongPress: isCurrentUser ? () => _onMessageLongPress(message) : null, child:
+    Widget cardWidget = GestureDetector(onLongPress: canLongPress ? () => _onMessageLongPress(message) : null, child:
       FutureBuilder<Widget>(
       future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
       builder: (context, snapshot) {
-        Widget avatar = snapshot.data ??
-          (Styles().images.getImage('person-circle-white', size: 20.0, color: Styles().colors.fillColorSecondary) ?? Container());
+        Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
 
         return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
           Padding(padding: EdgeInsets.all(16), child:
@@ -302,24 +306,102 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                   ),
                 ],),
-                if (!kIsWeb)
-                  WebEmbed(body: message.message)
+                WebEmbed(body: message.message)
               ]),
             ),
           );
         },
       ),
     );
+
+    return hasProgress ? Stack(children: [
+      cardWidget,
+      Positioned.fill(child:
+        Center(child:
+          SizedBox(width: _photoSize, height: _photoSize, child:
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+          )
+        )
+      )
+    ]) : cardWidget;
   }
 
-  void _onMessageLongPress(Message message) { // NEW CODE
+  void _onMessageLongPress(Message message) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text(Localization().getStringEx('', 'Message Options'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+            content: Text(Localization().getStringEx('', 'Edit or delete this message?'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _onEditMessage(message);
+                },
+                child: Text(Localization().getStringEx('dialog.edit.title', 'Edit'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _onDeleteMessage(message);
+                },
+                child: Text(Localization().getStringEx('dialog.delete.title', 'Delete'), style: TextStyle(color: Styles().colors.fillColorSecondary)),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  void _onEditMessage(Message message) {
     setState(() {
       _editingMessage = message;
       _inputController.text = message.message ?? '';
     });
-    FocusScope.of(context).requestFocus(_inputFieldFocus); // optional: focus the input
+    FocusScope.of(context).requestFocus(_inputFieldFocus);
   }
 
+  Future<void> _onDeleteMessage(Message message) async {
+    String? globalId = message.globalId;
+    if (globalId == null) {
+      debugPrint('Cannot delete this message: missing globalId.');
+      return;
+    }
+    if (_conversationId == null) {
+      debugPrint('Cannot delete message: missing conversationId.');
+      return;
+    }
+
+    setState(() {
+      _deletingMessage = message;
+    });
+
+    bool success = await Social().deleteConversationMessage(
+      conversationId: _conversationId!,
+      globalMessageId: globalId,
+    );
+
+    if (mounted) {
+      setState(() {
+        _deletingMessage = null;
+      });
+      if (success) {
+        setState(() {
+          _messages.removeWhere((m) => m.globalId == globalId);
+        });
+        AppToast.showMessage('Message deleted.');
+      } else {
+        AppToast.showMessage('Failed to delete message.');
+      }
+    }
+  }
 
   void _onTapAccount(Message message) {
     Analytics().logSelect(target: 'View Account');
@@ -349,8 +431,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Uint8List? profilePicture = Auth2().profilePicture;
       if (profilePicture != null) {
         return Container(
-          width: 20,
-          height: 20,
+          width: _photoSize,
+          height: _photoSize,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
@@ -421,48 +503,67 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildChatBar() {
     bool enabled = true; // Always enabled for now, but you can adjust if needed
+    bool isEditing = (_editingMessage != null);
 
     return Semantics(
-        container: true,
-        child: Material(
-            color: Styles().colors.background,
-            child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(mainAxisSize: MainAxisSize.max, children: [
-                  //_buildMessageOptionsWidget(),
-                  SizedBox(width: 32,), //TODO: add image picker handling
-                  Expanded(
-                    child: Semantics(
-                        container: true,
-                        child: TextField(
-                          key: _inputFieldKey,
-                          enabled: enabled,
-                          controller: _inputController,
-                          minLines: 1,
-                          maxLines: 5,
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.send,
-                          focusNode: _inputFieldFocus,
-                          onSubmitted: _submitMessage,
-                          onChanged: (_) => setStateIfMounted(() {}),
-                          cursorColor: Styles().colors.fillColorPrimary,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Styles().colors.textSurface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            hintText: "Message ${_getConversationTitle()}",
-                            hintStyle: Styles().textStyles.getTextStyle('widget.item.small'),
-                          ),
-                          style: Styles().textStyles.getTextStyle('widget.title.dark.regular'),
-                        )
-                    ),
+      container: true,
+      child: Material(
+        color: Styles().colors.background,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            //_buildMessageOptionsWidget(),
+            children: [
+              if (isEditing) ...[
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _editingMessage = null;
+                          _inputController.clear();
+                        });
+                      },
+                      child: Styles().images.getImage('close', size: 32) ?? Container()
                   ),
-                  _buildSendImage(enabled),
-                ])
-            )
-        )
+                ),
+                SizedBox(width: 8),
+              ] else ...[
+                SizedBox(width: 32),
+              ],
+              Expanded(
+                child: Semantics(
+                    container: true,
+                    child: TextField(
+                        key: _inputFieldKey,
+                        enabled: enabled,
+                        controller: _inputController,
+                        minLines: 1,
+                        maxLines: 5,
+                        textCapitalization: TextCapitalization.sentences,
+                        textInputAction: TextInputAction.send,
+                        focusNode: _inputFieldFocus,
+                        onSubmitted: _submitMessage,
+                        onChanged: (_) => setStateIfMounted(() {}),
+                        cursorColor: Styles().colors.fillColorPrimary,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                            fillColor: Styles().colors.surface,
+                            focusColor: Styles().colors.surface,
+                            hoverColor: Styles().colors.surface,
+                            hintText: "Message ${_getConversationTitle()}",
+                            hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                        ),
+                        style: Styles().textStyles.getTextStyle('widget.title.regular')
+                    )
+                ),
+              ),
+              _buildSendImage(enabled),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -717,6 +818,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
                 _editingMessage = null;
                 _submitting = false;
+                _inputController.clear();
                 // _shouldScrollToTarget = _ScrollTarget.bottom;
               });
             } else {

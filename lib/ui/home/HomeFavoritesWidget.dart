@@ -28,6 +28,7 @@ import 'package:neom/service/Sports.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/SavedPanel.dart';
 import 'package:neom/ui/athletics/AthleticsContentPanel.dart';
+import 'package:neom/ui/dining/DiningCard.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
 import 'package:neom/ui/mtd/MTDStopsHomePanel.dart';
@@ -281,6 +282,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     else if (item is Appointment) {
       return AppointmentCard(
         appointment: item,
+      );
+    }
+    else if (item is Dining) {
+      return DiningCard(
+          item,
+          onTap: (_) =>_onTapItem(item),
       );
     }
 
@@ -594,7 +601,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
     //FavoriteExt.launchHome(context, key: widget.favoriteKey);
     if (widget.favoriteKey == MTDStop.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.my)));
     } else if(widget.favoriteKey == Game.favoriteKeyName) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
     } else if(widget.favoriteKey == News.favoriteKeyName) {

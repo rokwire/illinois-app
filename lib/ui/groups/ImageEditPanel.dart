@@ -51,6 +51,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   String? _imageName;
   String? _contentType;
   bool _loading = false;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -125,7 +126,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                       textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'),
                       backgroundColor: Styles().colors.background,
                       borderColor: Styles().colors.fillColorSecondary,
-                      onTap: _onFinish
+                      onTap: _onFinish,
+                      progress: _saving,
+                      progressSize: 24,
                     ),
                   ),
                   Container(width: 16,),
@@ -160,16 +163,18 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                 )
               : Container()
         ],)))])),
-          _loading?
-              Center(child:
+          _loading ?
+          Positioned.fill(child:
+            Center(child:
                 Container(
                   child: Align(alignment: Alignment.center,
                     child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+                      child: CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary, )
                     ),
                   ),
                 ),
-              )
+            ),
+          )
           : Container()
     ]);
   }
@@ -313,12 +318,20 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
 
   void _onFinish() async{
     if(widget.storagePath!=null || widget.isUserPic){
-      _showLoader();
-      Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
-          .then((value) {
-            _hideLoader();
-            Navigator.pop(this.context, value);
-      });
+      if (_saving != true) {
+        setState(() {
+          _saving = true;
+        });
+        Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
+            .then((value) {
+              if (mounted) {
+                setState(() {
+                  _saving = false;
+                });
+                Navigator.pop(this.context, value);
+              }
+        });
+      }
     } else {
       _hideLoader();
       ImagesResult result = (_imageBytes != null) ?  ImagesResult.succeed(imageData: _imageBytes) : ImagesResult.error(ImagesErrorType.contentNotSupplied, "'No file bytes.'");

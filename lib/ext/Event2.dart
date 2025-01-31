@@ -308,12 +308,12 @@ extension Event2Ext on Event2 {
   Game? get game =>
     isSportEvent ? Game.fromJson(data) : null;
 
-  Event2Grouping? get linkedEventsGroupingQuery {
+  List<Event2Grouping>? get linkedEventsGroupingQuery {
     if (isSuperEvent) {
-      return Event2Grouping.superEvent(id);
+      return Event2Grouping.superEvents(superEventId: id);
     }
     else if (isRecurring) {
-      return Event2Grouping.recurrence(grouping?.recurrenceId);
+      return Event2Grouping.recurringEvents(groupId: grouping?.recurrenceId, individual: false);
     }
     else {
       return null;
@@ -396,6 +396,48 @@ extension Event2Ext on Event2 {
       data: this.data,
     );
   }
+
+  Event2? toRecurringEvent({required DateTime startDateTimeUtc, required DateTime endDateTimeUtc}) => Event2(
+    name: this.name,
+    description: this.description,
+    instructions: this.instructions,
+    imageUrl: this.imageUrl,
+    eventUrl: this.eventUrl,
+
+    timezone: this.timezone,
+    startTimeUtc: startDateTimeUtc,
+    endTimeUtc: endDateTimeUtc,
+    allDay: this.allDay,
+
+    eventType: this.eventType,
+    location: this.location,
+    onlineDetails: this.onlineDetails,
+
+    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId, individual: false), // set "sub-events" not to show as individuals
+    attributes: this.attributes,
+    authorizationContext: this.authorizationContext,
+    context: this.context,
+
+    canceled: this.canceled,
+    published: this.published,
+    userRole: this.userRole,
+
+    free: this.free,
+    cost: this.cost,
+
+    registrationDetails: this.registrationDetails,
+    attendanceDetails: this.attendanceDetails,
+    surveyDetails: this.surveyDetails,
+    notificationSettings: this.notificationSettings,
+
+    sponsor: this.sponsor,
+    speaker: this.speaker,
+    contacts: this.contacts,
+
+    source: this.source,
+    data: this.data,
+
+  );
 }
 
 extension Event2GroupingExt on Event2Grouping{

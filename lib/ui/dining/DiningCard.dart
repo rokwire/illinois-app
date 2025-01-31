@@ -26,13 +26,12 @@ import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:neom/model/Dining.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class DiningCard extends StatefulWidget {
   final Dining? dining;
-  final GestureTapCallback? onTap;
+  final void Function(BuildContext context)? onTap;
 
   DiningCard(this.dining, {super.key, this.onTap, });
 
@@ -41,10 +40,17 @@ class DiningCard extends StatefulWidget {
 }
 
 class _DiningCardState extends State<DiningCard> implements NotificationsListener {
-
+  static Decoration get _listContentDecoration => BoxDecoration(
+      color: Styles().colors.surface,
+      borderRadius: _listContentBorderRadius,
+      // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
+  );
+  static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
+  static const EdgeInsets _listContentMargin =  EdgeInsets.symmetric(vertical: 4, horizontal: 4);
+  static const EdgeInsets _sectionPadding = EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16);
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
-  static const EdgeInsets _iconPadding = EdgeInsets.only(right: 8);
-  static const double _smallImageSize = 64;
+  static const EdgeInsets _iconPadding = EdgeInsets.only(right: 6);
 
   @override
   void initState() {
@@ -70,65 +76,68 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = StringUtils.ensureNotEmpty(widget.dining?.imageURL);
-
     return Semantics(label: semanticLabel, button: true, child:
-      GestureDetector(behavior: HitTestBehavior.opaque, onTap: widget.onTap, child:
-        Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-            Stack(alignment: Alignment.topCenter, children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
-              ),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                _exploreTop(),
-                Semantics(excludeSemantics: true, child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Expanded(child:
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          _diningDetails(),
-                        ],)
-                      ),
-                      Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
-                        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 12), child:
-                          SizedBox(width: _smallImageSize, height: _smallImageSize, child:
-                            InkWell(onTap: () => _onTapCardImage(imageUrl), 
-                              child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),
+      GestureDetector(behavior: HitTestBehavior.opaque, onTap: ()=> widget.onTap?.call(context), child:
+          Container(decoration: _listContentDecoration,
+              padding: EdgeInsets.symmetric(horizontal: 0),
+              margin: _listContentMargin,
+              child: ClipRRect(borderRadius: _listContentBorderRadius, child:
+                Container(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    _buildImage,
+                    _exploreTop(),
+                    Semantics(excludeSemantics: true, child:
+                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          Expanded(child:
+                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                              _diningDetails(),
+                            ],)
                           ),
-                        )
-                      ),
-                    ],),
-                    _diningPaymentTypes(),
-                  ]),
-                )
-              ],),),
-              _topBorder(),
-            ]),
+                        ],),
+                        _diningPaymentTypes(),
+                      ]),
+                    )
+                  ],),),)
           ),
-        ],),
       ),
     );
   }
 
-  Widget _exploreTop() {
+  Widget get _buildImage {
+    String? imageUrl = widget.dining?.imageURL;
+    return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
+      Container(decoration: _imageHeadingDecoration, child:
+        AspectRatio(aspectRatio: 2.5, child:
+          Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+        ),
+      )
+    );
+  }
 
+  Decoration get _imageHeadingDecoration => BoxDecoration(
+    border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+  );
+
+  Widget _exploreTop() {
     bool isFavorite = widget.dining?.isFavorite ?? false;
     bool starVisible = Auth2().canFavorite && (widget.dining is Favorite);
     String leftLabel = widget.dining!.title ?? "";
-    TextStyle? leftLabelStyle = Styles().textStyles.getTextStyle('widget.explore.card.title.regular.extra_fat') ;
+    TextStyle? leftLabelStyle = Styles().textStyles.getTextStyle('widget.title.medium.fat') ;
 
-    return Row(
+    return Padding(padding: _sectionPadding, child:
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 19, bottom: 12),
+              padding: EdgeInsets.zero,
               child: Text(
                 leftLabel,
                 style: leftLabelStyle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 semanticsLabel: "",
               )
             ),
@@ -149,8 +158,7 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
                   child:  GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: _onTapDiningCardStar,
-                    child:Container(child: Padding(padding: EdgeInsets.only(
-                      right: 16, top: 12, left: 24, bottom: 5),
+                    child:Container(child: Padding(padding: EdgeInsets.only(left: 16,bottom: 5, top: 5),
                       child: Styles().images.getImage(isFavorite
                           ? 'star-filled'
                           : 'star-outline-gray',
@@ -158,7 +166,7 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
                       ))
                   )),)))
         ],
-    );
+    ));
   }
 
   Widget _diningDetails() {
@@ -171,7 +179,7 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
 
     return (0 < details.length)
         ? Padding(
-        padding: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.only(bottom: 8),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +202,7 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
             ),
             Expanded(
               child: Text(displayTime,
-                  style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')),
+                  style: Styles().textStyles.getTextStyle('common.body')),
             ),
           ],
         ),
@@ -221,12 +229,13 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               _divider(),
+              Container(height: 6,),
               Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: details))
+                padding: _sectionPadding,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: details))
               
             ])
         
@@ -243,26 +252,22 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
     );
   }
 
-  Widget _topBorder() {
-    return Container(height: 7, color: widget.dining?.uiColor);
-  }
-
   void _onTapDiningCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.dining?.title}");
     widget.dining?.toggleFavorite();
   }
 
-  void _onTapCardImage(String? url) {
-    Analytics().logSelect(target: "Explore Image");
-    if (url != null) {
-      Navigator.push(
-          context,
-          PageRouteBuilder(
-              opaque: false,
-              pageBuilder: (context, _, __) =>
-                  ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
-    }
-  }
+  // void _onTapCardImage(String? url) {
+  //   Analytics().logSelect(target: "Explore Image");
+  //   if (url != null) {
+  //     Navigator.push(
+  //         context,
+  //         PageRouteBuilder(
+  //             opaque: false,
+  //             pageBuilder: (context, _, __) =>
+  //                 ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+  //   }
+  // }
 
   // NotificationsListener
 

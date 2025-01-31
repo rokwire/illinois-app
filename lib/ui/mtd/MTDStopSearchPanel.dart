@@ -2,14 +2,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:neom/ext/MTD.dart';
 import 'package:neom/model/Location.dart';
 import 'package:neom/model/MTD.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/MTD.dart';
+import 'package:neom/ui/explore/ExploreMapPanel.dart';
 import 'package:neom/ui/mtd/MTDStopDeparturesPanel.dart';
+import 'package:neom/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:neom/ui/mtd/MTDWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/LinkButton.dart';
+import 'package:neom/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -20,7 +25,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class MTDStopSearchPanel extends StatefulWidget {
-  MTDStopSearchPanel({Key? key }) : super(key: key);
+  final String? searchText;
+  final MTDStopsScope scope;
+  final MTDStopSearchContext? searchContext;
+
+  MTDStopSearchPanel({ Key? key, this.scope = MTDStopsScope.all, this.searchText, this.searchContext }) : super(key: key);
 
   @override
   State<MTDStopSearchPanel> createState() => _MTDStopSearchPanelState();
@@ -29,7 +38,7 @@ class MTDStopSearchPanel extends StatefulWidget {
 class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements NotificationsListener {
 
   TextEditingController _searchController = TextEditingController();
-  String? _searchValue;
+  String? _searchText;
   List<MTDStop>? _stops;
   Set<String> _expanded = <String>{};
 
@@ -46,6 +55,12 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
     ]);
 
     _scrollController.addListener(_scrollListener);
+
+    String? initialSearchText = widget.searchText;
+    if ((initialSearchText != null) && initialSearchText.isNotEmpty) {
+      _searchController.text = _searchText = initialSearchText;
+      _stops = _buildStops(initialSearchText);
+    }
 
     LocationServices().location.then((Position? position) {
       _currentPosition = position;
@@ -81,84 +96,113 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
+
+  Widget _buildScaffoldContent() =>
+    Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.mtd_stops.search.header.title", "Search"),
+        onLeading: _onHeaderBarBack,
       ),
-      body: _buildContent(),
+      body: _buildPanelContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
-  }
 
-  Widget _buildContent() {
-  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Container(height: 48, padding: EdgeInsets.only(left: 16), color: Colors.white, child:
-        Row(children: <Widget>[
-          Flexible(child:
-            Semantics(textField: true, excludeSemantics: true,
-              label: Localization().getStringEx('panel.mtd_stops.search.search.field.title', 'Search'),
-              hint: Localization().getStringEx('panel.mtd_stops.search.search.field.search.hint', ''),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (text) => _onSearchTextChanged(text),
-                onSubmitted: (_) => _onTapSearch(),
-                autofocus: true,
-                cursorColor: Styles().colors.fillColorSecondary,
-                keyboardType: TextInputType.text,
-                style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
-          Semantics(button: true, excludeSemantics: true,
-              label: Localization().getStringEx('panel.mtd_stops.search.clear.button.title', 'Clear'),
-              hint: Localization().getStringEx('panel.mtd_stops.search.clear.button.hint', ''),
-              child: GestureDetector(onTap: _onTapClear, child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage('close', excludeFromSemantics: true)
-                ),
-              )
-          ),
-          /*Semantics(button: true, excludeSemantics: true,
-            label: Localization().getStringEx('panel.mtd_stops.search.search.button.title', 'Search'),
-            hint: Localization().getStringEx('panel.mtd_stops.search.search.button.hint', ''),
-            child: Padding(padding: EdgeInsets.all(12), child:
-              GestureDetector(onTap: _onTapSearch, child:
-                Image.asset('images/icon-search.png', color: Styles().colors.fillColorSecondary),
-              ),
-            ),
-          ),*/
-        ],),
-      ),
-      InkWell(onTap: _onTapInfo, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(padding: EdgeInsets.all(16), child:
-            RichText(text:
-              TextSpan(style: Styles().textStyles.getTextStyle("widget.button.title.large.thin"), children: <TextSpan>[
-                TextSpan(text: _searchLabel, style: Styles().textStyles.getTextStyle("widget.text.semi_fat")),
-              ],),
-            )
-          ),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-            Text(_resultsCountLabel, style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"),
-            ),
-          ),
-        ],),
-      ),
+  Widget _buildPanelContent() =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      _buildSearchBar(),
+      _buildInfoBar(),
       Expanded(child:
         _buildResultsList()
       )
     ],);
-  }
+
+  Widget _buildSearchBar() =>
+    Container(height: 48, padding: EdgeInsets.only(left: 16), color: Colors.white, child:
+      Row(children: <Widget>[
+        Flexible(child:
+          Semantics(textField: true, excludeSemantics: true,
+            label: Localization().getStringEx('panel.mtd_stops.search.search.field.title', 'Search'),
+            hint: Localization().getStringEx('panel.mtd_stops.search.search.field.search.hint', ''),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (text) => _onSearchTextChanged(text),
+              onSubmitted: (_) => _onTapSearch(),
+              autofocus: true,
+              cursorColor: Styles().colors.fillColorSecondary,
+              keyboardType: TextInputType.text,
+              style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ),
+        Semantics(button: true, excludeSemantics: true,
+            label: Localization().getStringEx('panel.mtd_stops.search.clear.button.title', 'Clear'),
+            hint: Localization().getStringEx('panel.mtd_stops.search.clear.button.hint', ''),
+            child: GestureDetector(onTap: _onTapClear, child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Styles().images.getImage('close', excludeFromSemantics: true)
+              ),
+            )
+        ),
+        /*Semantics(button: true, excludeSemantics: true,
+          label: Localization().getStringEx('panel.mtd_stops.search.search.button.title', 'Search'),
+          hint: Localization().getStringEx('panel.mtd_stops.search.search.button.hint', ''),
+          child: Padding(padding: EdgeInsets.all(12), child:
+            GestureDetector(onTap: _onTapSearch, child:
+              Image.asset('images/icon-search.png', color: Styles().colors.fillColorSecondary),
+            ),
+          ),
+        ),*/
+      ],),
+    );
+
+  Widget _buildInfoBar() =>
+    InkWell(onTap: _onTapInfo, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.all(16), child:
+              RichText(text:
+                TextSpan(style: Styles().textStyles.getTextStyle("widget.button.title.large.thin"), children: <TextSpan>[
+                  TextSpan(text: _searchLabel, style: Styles().textStyles.getTextStyle("widget.text.semi_fat")),
+                ],),
+              )
+            ),
+          ),
+          if (_searchText?.isNotEmpty == true)
+            LinkButton(
+              title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'),
+              hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+              textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+              padding: EdgeInsets.only(left: 0, right: 16, top: 12, bottom: 12),
+              onTap: _onMapView,
+            ),
+        ],),
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
+          Text(_resultsCountLabel, style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"),
+          ),
+        ),
+      ],),
+    );
 
   String get _searchLabel {
-    return (_searchValue != null) ?
-      sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for', 'Results for %s'), [_searchValue!]) :
-      Localization().getStringEx('panel.mtd_stops.search.label.search_for', 'Searching Bus Stops');
+    if (_searchText != null) {
+      switch(widget.scope) {
+        case MTDStopsScope.all: return sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for.all', 'Results for %s'), [_searchText ?? '']);
+        case MTDStopsScope.my: return sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for.my', 'Results for %s'), [_searchText ?? '']);
+      }
+    }
+    else {
+      switch(widget.scope) {
+        case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.search.label.search_for.all', 'Searching Bus Stops');
+        case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.search.label.search_for.my', 'Searching My Bus Stops');
+      }
+    }
   }
 
   String get _resultsCountLabel {
@@ -194,53 +238,73 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   }
 
   void _updateSearchResults() {
-    if (mounted && (_searchValue != null)) {
+    if (mounted && (_searchText != null)) {
       setState(() {
-        _stops = _buildStops(_searchValue!);     
+        _stops = _buildStops(_searchText!);
       });
     }
   }
 
   void _search(String searchValue) {
-    if ((0 < searchValue.length) && (searchValue != _searchValue)) {
+    if ((0 < searchValue.length) && (searchValue != _searchText)) {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(0);
       }
       setState(() {
-        _stops = _buildStops(_searchValue = searchValue);
+        _stops = _buildStops(_searchText = searchValue);
       });
     }
   }
 
   List<MTDStop>? _buildStops(String searchValue) {
-    List<MTDStop> stops = MTD().stops?.searchStop(searchValue) ?? <MTDStop>[];
-    if (_currentPosition != null) {
-      stops.sort((MTDStop stop1, MTDStop stop2) {
-        LatLng? position1 = stop1.anyPosition;
-        LatLng? position2 = stop2.anyPosition;
-        if ((position1 != null) && position1.isValid && (position2 != null) && position2.isValid) {
-          double distance1 = Geolocator.distanceBetween(position1.latitude!, position1.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
-          double distance2 = Geolocator.distanceBetween(position2.latitude!, position2.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
-          return distance1.compareTo(distance2);
-        }
-        else {
-          return 0;
-        }
-      });
+
+    if (widget.scope == MTDStopsScope.all) {
+      List<MTDStop> stops = MTD().stops?.searchStop(searchValue) ?? <MTDStop>[];
+
+      if (_currentPosition != null) {
+        stops.sort((MTDStop stop1, MTDStop stop2) {
+          LatLng? position1 = stop1.anyPosition;
+          LatLng? position2 = stop2.anyPosition;
+          if ((position1 != null) && position1.isValid && (position2 != null) && position2.isValid) {
+            double distance1 = Geolocator.distanceBetween(position1.latitude!, position1.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
+            double distance2 = Geolocator.distanceBetween(position2.latitude!, position2.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
+            return distance1.compareTo(distance2);
+          }
+          else {
+            return 0;
+          }
+        });
+      }
+      return stops;
     }
-    return stops;
-  } 
+    else if (widget.scope == MTDStopsScope.my) {
+      return MTDStop.searchInList(MTD().favoriteStops, search: searchValue.toLowerCase());
+    }
+    else {
+      return [];
+    }
+  }
 
   void _clear() {
     _searchController.clear();
     setState(() {
       _stops = null;
-      _searchValue = null;
+      _searchText = null;
     });
   }
 
   void _onTapInfo() {
     FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void _onMapView() {
+    Analytics().logSelect(target: 'Map View');
+    if (widget.searchContext == MTDStopSearchContext.Map) {
+      Navigator.of(context).pop((_searchText?.isNotEmpty == true) ? _searchText : _searchController.text);
+    }
+    else {
+      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(searchText: _searchText ?? '', scope: widget.scope));
+    }
   }
 
   void _scrollListener() {
@@ -307,4 +371,11 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
       });
     }
   }
+
+  void _onHeaderBarBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
+    Navigator.of(context).pop((_searchText?.isNotEmpty == true) ? _searchText : _searchController.text);
+  }
 }
+
+enum MTDStopSearchContext { List, Map }

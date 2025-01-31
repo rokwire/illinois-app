@@ -131,8 +131,8 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     final String urlMacro = '{{mckinley_url}}';
     final String externalLinkIconMacro = '{{external_link_icon}}';
     final String appTitleMacro = '{{app_title}}';
-    String emptyUpcommingContentHtml = Localization().getStringEx("panel.wellness.appointments.home.upcoming.list.empty.msg",
-        "You currently have no upcoming appointments linked within the Illinois app. New appointments made via <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> may take up to 20 minutes to appear in the {{app_title}} app.");
+    String emptyUpcommingContentHtml = Localization().getStringEx("panel.wellness.appointments.home.upcoming.list.empty.msg", //localize
+        "<p>You currently have no upcoming appointments linked within the Illinois app.<p> New appointments made via <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> may take up to 20 minutes to appear in the {{app_title}} app.");
     emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
     emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
     emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
@@ -141,7 +141,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         padding: EdgeInsets.symmetric(vertical: 16),
         child:
         HtmlWidget(
-            "<div style=text-align:center> $emptyUpcommingContentHtml </div>",
+            "<div style=text-align:left> $emptyUpcommingContentHtml </div>",
             onTapUrl : (url) {_onTapSaferMcKinleyUrl(url); return true;},
             textStyle:  Styles().textStyles.getTextStyle("widget.title.medium"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
@@ -179,7 +179,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         child: Text(
             Localization().getStringEx('panel.wellness.appointments.home.past.list.empty.msg',
                 "You don't have recent past appointments linked within the Illinois app."),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
             style:Styles().textStyles.getTextStyle("widget.message.medium.thin")));
   }
 

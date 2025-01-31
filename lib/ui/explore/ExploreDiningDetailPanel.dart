@@ -24,6 +24,7 @@ import 'package:neom/ext/Explore.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:neom/ui/widgets/SmallRoundedButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:neom/model/RecentItem.dart';
@@ -80,6 +81,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   // Dining Worktime
   bool _diningWorktimeExpanded = false;
 
+  // Dining Worktime
+  bool _diningAdditionalInfoExpanded = false;
+
   // Dining Payment Types
   bool _diningPaymentTypesExpanded = false;
 
@@ -111,7 +115,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   // NotificationsListener
-  
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == LocationServices.notifyStatusChanged) {
@@ -140,6 +144,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
           CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
             SliverToutHeaderBar(
               flexImageUrl: _dining?.exploreImageUrl,
+              flexRightToLeftTriangleColor: Styles().colors.white,
             ),
             SliverList(delegate: SliverChildListDelegate([
               Container(color: Colors.white, child:
@@ -148,13 +153,16 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       _exploreTitle(),
                       _exploreDetails(),
-                      _exploreDescription(),
-                      _buildDiningFeedback(),
                     ])
                   ),
-                  _buildDiningDetail(),
                 ],),
               ),
+              Padding(padding: EdgeInsets.only(right: 20, left: 20, top: 16), child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  _exploreOrderOnline() ?? Container(),
+                  _buildDiningFeedback(),
+              ])),
+              _buildDiningDetail(),
             ], addSemanticIndexes:false),),
           ],),
         ),
@@ -165,10 +173,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   Widget _exploreTitle() {
     bool starVisible = Auth2().canFavorite;
     bool isFavorite = Auth2().isFavorite(_dining);
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+    return Padding(padding: EdgeInsets.only(top: 8), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
+          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("common.panel.title")),
         ),
         Visibility(visible: starVisible, child:
           GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
@@ -203,12 +211,12 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       details.add(paymentTypes);
     }
 
-    Widget? orderOnline = _exploreOrderOnline();
-    if (orderOnline != null) {
-      details.add(orderOnline);
+    Widget? additionalInfo =_exploreAdditionalLocationDetail();
+    if(additionalInfo != null){
+      details.add(additionalInfo);
     }
 
-    return (0 < details.length) ? Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+    return (0 < details.length) ? Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
       Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: details)) : Container();
   }
 
@@ -232,17 +240,24 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
     return ((details != null) && (0 < details.length)) ?
         Semantics(excludeSemantics: true, label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ") + paymentsToString(paymentTypes), child:
+          Padding(padding: EdgeInsets.only(bottom: 8), child:
           Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _divider(),
+            // _divider(),
             Row(children: <Widget>[
-              Expanded(child:
-                Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"), style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
+              Padding(padding: EdgeInsets.only(right: 6), child:
+                Styles().images.getImage('cost', excludeFromSemantics: true, size: 17)
               ),
-              FilterSelector(
-                title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
-                padding: EdgeInsets.symmetric(vertical: 5),
-                active: _diningPaymentTypesExpanded,
-                onTap: _onDiningPaymentTypeTapped,
+              // Expanded(child:
+              //   Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"), style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
+              // ),
+              Expanded(
+                child: FilterSelector(
+                  title: Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted payment details"), //Localize
+                  padding: EdgeInsets.zero,
+                  titleTextStyle: Styles().textStyles.getTextStyle("widget.item.regular"),
+                  active: _diningPaymentTypesExpanded,
+                  onTap: _onDiningPaymentTypeTapped,
+                )
               )
             ],),
             _diningPaymentTypesExpanded ? GridView.count(
@@ -251,11 +266,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
               childAspectRatio: 6,
               crossAxisCount: 2,
               children: details
-            )
-            : Padding(padding: EdgeInsets.symmetric(vertical: 10,), child:
-              Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: details)
-            )
-          ])
+            ) : Container(),
+            // : Padding(padding: EdgeInsets.symmetric(vertical: 10,), child:
+            //   Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: details)
+            // )
+            Container(height: 8),
+            _divider(),
+          ]))
         ) : Container();
   }
 
@@ -278,12 +295,15 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (StringUtils.isEmpty(onlineOrderPlatformDetails['deep_link'])) {
       return null;
     }
-    return Align(alignment: Alignment.centerRight, child:
-      RoundedButton(
-        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
+    return Align(alignment: Alignment.center, child:
+      SmallRoundedButton(
+        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online with Order Ahead App'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
         backgroundColor: Styles().colors.surface,
         borderColor: Styles().colors.fillColorSecondary,
+        rightIcon: Container(),
+        rightIconPadding: EdgeInsets.only(right: 12),
+        leftIconPadding: EdgeInsets.only(left: 12),
         onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
       ),
     );
@@ -317,13 +337,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if ((locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(onTap: _onLoacationDetailTapped, child:
         Semantics(label: locationText, hint: locationHint, button: true, excludeSemantics: true, child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          Padding(padding: EdgeInsets.only(bottom: 12), child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child:
+              Padding(padding: EdgeInsets.only(right: 4), child:
                 Styles().images.getImage('location', excludeFromSemantics: true),
               ),
               Expanded(child:
-                Text(locationText, style: Styles().textStyles.getTextStyle("widget.item.regular"))
+                Text(locationText, style: Styles().textStyles.getTextStyle("widget.item.regular_underline"))
               ),],
             ),
           )
@@ -339,18 +359,19 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     String? displayTime = _dining?.displayWorkTime;
     String displayHint = hasAdditionalInformation ? Localization().getStringEx("panel.explore_detail.button.wirking_detail.hint","activate to show more details") : "";
     if ((displayTime != null) && displayTime.isNotEmpty) {
-      return Padding(padding: EdgeInsets.only(bottom: 11), child:
+      return Padding(padding: EdgeInsets.only(bottom: 8), child:
         Semantics(container: true, child:
           Column(children: <Widget>[
             Semantics(excludeSemantics: true, label: displayTime, hint: displayHint, button: hasAdditionalInformation? true : null, child:
-              Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 10), child:
-                  Styles().images.getImage('time', excludeFromSemantics: true)
+              Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                Padding(padding: EdgeInsets.only(right: 6), child:
+                  Styles().images.getImage('time', excludeFromSemantics: true, size: 17)
                 ),
                 Expanded(child:
                   FilterSelector(
                     title: displayTime,
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    titleTextStyle: Styles().textStyles.getTextStyle("widget.item.regular"),
+                    padding: EdgeInsets.zero,
                     expanded: true,
                     active: _diningWorktimeExpanded,
                     onTap: _onDiningWorktimeTapped,
@@ -360,7 +381,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             ),
             Semantics(explicitChildNodes: true, child:
               _exploreWorktimeFullDetail(),
-            )
+            ),
+            Container(height: 8,),
+            _divider(),
           ],)
         ),
       );
@@ -408,6 +431,52 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Container();
   }
 
+  Widget? _exploreAdditionalLocationDetail() {
+    bool hasAdditionalInformation = _dining?.diningSchedules != null && (_dining?.diningSchedules?.isNotEmpty ?? false) && (_dining?.firstOpeningDateSchedules.isNotEmpty?? false);
+    String? title = "More about this location";
+    String displayHint = hasAdditionalInformation ? Localization().getStringEx("panel.explore_detail.button.wirking_detail.hint","activate to show more details") : "";
+    if (StringUtils.isNotEmpty(_dining?.description)) {
+      return Padding(padding: EdgeInsets.only(bottom: 0), child:
+      Semantics(container: true, child:
+      Column(children: <Widget>[
+        Semantics(excludeSemantics: true, label: title, hint: displayHint, button: hasAdditionalInformation? true : null, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Padding(padding: EdgeInsets.only(right: 6), child:
+              Styles().images.getImage('info', excludeFromSemantics: true, size: 17)
+            ),
+            Expanded(child:
+              FilterSelector(
+                title: title,
+                titleTextStyle: Styles().textStyles.getTextStyle("widget.item.regular"),
+                padding: EdgeInsets.zero,
+                expanded: true,
+                active: _diningAdditionalInfoExpanded,
+                onTap: _onDiningAdditionalInfoTapped,
+              )
+            )
+          ],)
+        ),
+        Semantics(explicitChildNodes: true, child:
+          _exploreAdditionalInfoFullDetail(),
+        ),
+        Container(height: 8,),
+        // _divider(),
+      ],)
+      ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _exploreAdditionalInfoFullDetail(){
+    if(_diningAdditionalInfoExpanded == true) {
+      return Container(child: _exploreDescription());
+    }
+
+    return Container();
+  }
+
   Widget _exploreDescription() {
     String? description = _dining?.description;
     bool showDescription = StringUtils.isNotEmpty(description);
@@ -437,30 +506,28 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       return Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
         Column(children: [
           Text(Localization().getStringEx('panel.explore_detail.label.text_and_tell', 'Text and tell us about your dining experience!'), style:
-              Styles().textStyles.getTextStyle("widget.message.regular.fat")),
+              Styles().textStyles.getTextStyle("widget.message.large.fat")),
           Container(height: 10,),
-          Row(children: [
-            Expanded(child:
-              StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? SmallRoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
                 backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+                rightIcon: Container(),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 onTap: () => _onTapTextFeedback(),
-              ) : Container()
-            ),
+              ) : Container(),
             Container(width: 10,),
-            Expanded(child:
-              StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
+              StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? SmallRoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietitian'),
                 backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+                rightIcon: Container(),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 onTap: () => _onTapAskDietician(),
               ) : Container()
-            ),
           ],)
         ],)
       );
@@ -537,6 +604,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     Analytics().logSelect(target: "Dining Work Time");
     setState(() {
       _diningWorktimeExpanded = !_diningWorktimeExpanded;
+    });
+  }
+
+  void _onDiningAdditionalInfoTapped() {
+    Analytics().logSelect(target: "Dining Additional Info");
+    setState(() {
+      _diningAdditionalInfoExpanded = !_diningAdditionalInfoExpanded;
     });
   }
 
@@ -679,7 +753,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   // NotificationsListener
-  
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFoodChanged) {
@@ -692,49 +766,46 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
     bool hasFoodFilterApplied = Auth2().prefs?.hasFoodFilters ?? false;
-    
+
     String filtersLabel = hasFoodFilterApplied
       ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
       : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters");
-    
+
     String filtersHint = hasFoodFilterApplied
       ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
       : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", "");
-    
+
     return hasMenuData ? Container(color: Styles().colors.background, child:
       Column(children: <Widget>[
         Container(color: Styles().colors.background, height: 1,),
         HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        // Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+          // Row(children: <Widget>[
+          //   Expanded(flex: 2, child:
+          //     Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"), style:
+          //         Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+          //     ),
+          //   ),
+          //   Expanded(flex: 5, child:
+          //     Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
+          //       GestureDetector(onTap: _onFoodFilersTapped, child:
+          //         Row(children: <Widget>[
+          //           Expanded(child:
+          //             Text(filtersLabel, textAlign: TextAlign.right, style:
+          //                 Styles().textStyles.getTextStyle("widget.title.regular"),
+          //             )
+          //           ),
+          //           Padding(padding: EdgeInsets.only(left: 4), child:
+          //             Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
+          //           )
+          //         ],),
+          //       ),
+          //     )
+          //   )
+          // ],),
+        // ),
         Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           Row(children: <Widget>[
-            Expanded(flex: 2, child:
-              Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"), style:
-                  Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-              ),
-            ),
-            Expanded(flex: 5, child:
-              Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
-                GestureDetector(onTap: _onFoodFilersTapped, child:
-                  Row(children: <Widget>[
-                    Expanded(child:
-                      Text(filtersLabel, textAlign: TextAlign.right, style:
-                          Styles().textStyles.getTextStyle("widget.title.regular"),
-                      )
-                    ),
-                    Padding(padding: EdgeInsets.only(left: 4), child:
-                      Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
-                    )
-                  ],),
-                ),
-              )
-            )
-          ],),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")),
-            ),
             Semantics(
               label: Localization().getStringEx("widget.food_detail.button.prev_menu.title", "Previous dining date"),
               hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
@@ -744,7 +815,27 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 onTap: decrementDateFilter,
               ),
             ),
-            Container(width: 15,),
+            Container(width: 8,),
+            Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '',style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+                  Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
+                        GestureDetector(onTap: _onFoodFilersTapped, child:
+                          Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(padding: EdgeInsets.only(right: 4), child:
+                              Styles().images.getImage('settings', excludeFromSemantics: true),
+                              ),
+                              Text(filtersLabel, style:
+                                  Styles().textStyles.getTextStyle("widget.title.regular.underline"),
+                              ),
+                          ],),
+                        ),
+                      )
+                ],)
+            ),
+            Container(width: 8,),
             Semantics(
               label: Localization().getStringEx("widget.food_detail.button.next_menu.title", "Next dining date"),
               hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
@@ -756,7 +847,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
             ),
           ],),
         ),
-        Padding(padding: EdgeInsets.all(16), child: 
+        Padding(padding: EdgeInsets.all(16), child:
           SingleChildScrollView(scrollDirection: Axis.horizontal, child:
             Row(children: _buildScheduleTabs(),),
           ),
@@ -1046,7 +1137,7 @@ class _StationItemState extends State<_StationItem>{
                 Expanded(child:
                   Text(widget.title!, style: Styles().textStyles.getTextStyle("widget.colourful_button.title.accent")),
                 ),
-                Styles().images.getImage(expanded ? 'chevron-down' : 'chevron-up', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage(expanded ? 'chevron-down-white' : 'chevron-up-white', excludeFromSemantics: true) ?? Container(),
               ],),
             ),
           ),
@@ -1129,15 +1220,15 @@ class _FeedbackBodyWidget extends StatefulWidget {
   final String? title;
   final String? analyticsTitle;
   final String? message;
-  
+
   _FeedbackBodyWidget({Key? key, this.title, this.analyticsTitle, this.message}) : super(key: key);
-  
+
   @override
   State<StatefulWidget> createState() => _FeedbackBodyWidgetState();
 }
 
 class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
-  
+
   FocusNode _focusNode = FocusNode();
   TextEditingController _textController = TextEditingController();
 

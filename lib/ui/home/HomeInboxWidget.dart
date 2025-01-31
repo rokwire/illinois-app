@@ -8,7 +8,6 @@ import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/notifications/NotificationsInboxPage.dart';
 import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/SemanticsWidgets.dart';

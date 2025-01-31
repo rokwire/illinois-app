@@ -117,17 +117,14 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       return Column(children: [
         _directoryVisibilityControl,
 
-        // if (directoryVisibility == true)
-          Column(children: [
-            if (widget.onboarding == false)
-              Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-                Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.info.tiny'), textAlign: TextAlign.center,),
-              ),
+        if (widget.onboarding == false)
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+            Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.info.tiny'), textAlign: TextAlign.center,),
+          ),
 
-            Padding(padding: EdgeInsets.only(top: 16), child:
-              _editing ? _editContent : _previewContent,
-            )
-          ]),
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          _editing ? _editContent : _previewContent,
+        )
 
         if (_showAccountCommands && !_editing)
           _accountCommands,
@@ -208,28 +205,23 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     );
 
   Widget get _directoryVisibilityDescription {
+
     final String visibilityMacro = "{{visibility}}";
+
+    String messageTemplate = directoryVisibility ?
+      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to ${AppTextUtils.appTitleMacro} app users signed in with their NetIDs.') :
+      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.');
 
     final String visibilityValue = directoryVisibility ?
       Localization().getStringEx('panel.profile.info.directory_visibility.public.text', 'Public') :
       Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private');
 
-    final String messageTemplate = widget.onboarding ?
-      (directoryVisibility ?
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.onboarding.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to the users of the ${AppTextUtils.appTitleMacro} App.') :
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.onboarding.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.')) :
-      (directoryVisibility ?
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.normal.public.description', 'Your directory visibility is set to $visibilityMacro. Anyone on or off the User Directory can view your account.') :
-        AppTextUtils.appTitleString('panel.profile.info.directory_visibility.normal.private.description', 'Your directory visibility is set to $visibilityMacro. Your account is available only to you.'));
-
-    final List<String> messages = messageTemplate.split(visibilityMacro);
-    List<InlineSpan> spanList = <InlineSpan>[];
-    if (0 < messages.length)
-      spanList.add(TextSpan(text: messages.first));
-    for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: visibilityValue, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),));
-      spanList.add(TextSpan(text: messages[index]));
-    }
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(messageTemplate,
+      macros: [visibilityMacro],
+      builder: (String entry) => (entry == visibilityMacro) ?
+        TextSpan(text: visibilityValue, style : Styles().textStyles.getTextStyle("widget.detail.small.fat"),) :
+        TextSpan(text: entry)
+    );
 
     return RichText(textAlign: TextAlign.left, text:
       TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
@@ -543,13 +535,18 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  // Positive and Permitted visibility
+  @override
+  Widget build(BuildContext context) =>
+    throw UnimplementedError();
+}
+
+extension ProfileInfoVisibility on ProfileInfo {
 
   static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
   static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
 
-  Auth2FieldVisibility positiveVisibility(ProfileInfo contentType) {
-    switch(contentType) {
+  Auth2FieldVisibility get positiveVisibility {
+    switch(this) {
       case ProfileInfo.directoryInfo: return _directoryPositiveVisibility;
       case ProfileInfo.connectionsInfo: return _connectionsPositiveVisibility;
     }
@@ -558,14 +555,11 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   static const Set<Auth2FieldVisibility> _directoryPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility };
   static const Set<Auth2FieldVisibility> _connectionsPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility, _connectionsPositiveVisibility };
 
-  Set<Auth2FieldVisibility> permittedVisibility(ProfileInfo contentType) {
-    switch(contentType) {
+  Set<Auth2FieldVisibility> get permitedVisibility {
+    switch(this) {
       case ProfileInfo.directoryInfo: return _directoryPermittedVisibility;
       case ProfileInfo.connectionsInfo: return _connectionsPermittedVisibility;
     }
   }
 
-  @override
-  Widget build(BuildContext context) =>
-    throw UnimplementedError();
 }

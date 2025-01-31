@@ -39,8 +39,8 @@ class WellnessResourcesContentWidget extends StatefulWidget {
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
 
-  static void ensureDefaultFavorites(List<dynamic>? commands) {
-    String favoriteKey = WellnessFavorite.favoriteKeyName(category: wellnessCategoryKey);
+  static void ensureDefaultFavorites(List<dynamic>? commands, {String category = wellnessCategoryKey}) {
+    String favoriteKey = WellnessFavorite.favoriteKeyName(category: category);
     if ((Auth2().prefs?.getFavorites(favoriteKey) == null) && (commands != null)) {
 
       List<dynamic> sortedCommands = List.from(commands);
@@ -232,25 +232,34 @@ class WellnessLargeResourceButton extends StatelessWidget {
   final String? label;
   final Favorite? favorite;
   final bool hasExternalLink;
+  final bool hasChevron;
+  final bool canFavorite;
   final void Function()? onTap;
 
-  WellnessLargeResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false, this.onTap}) : super(key: key);
+  WellnessLargeResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false,
+    this.onTap, this.hasChevron = false, this.canFavorite = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       InkWell(onTap: onTap, child:
         Padding(padding: EdgeInsets.only(left: 16), child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                 Text(label ?? '', style: Styles().textStyles.getTextStyle("panel.wellness.resource.button.title.large")),
               ),
             ),
-            hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
+            Visibility(visible: hasExternalLink, child: Padding(padding: EdgeInsets.only(left: 8, right: 8, top: 18, bottom: 18), child:
               Styles().images.getImage('external-link', excludeFromSemantics: true)
-            ) : Container(),
-            FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
+            )),
+            Visibility(visible: hasChevron == true,
+                child: Padding(padding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16), child:
+                Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
+            Visibility(visible: canFavorite == true,
+                child: FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),),
+            ),
+            Container(width: 8,)
           ]),
         ),
       ),
@@ -262,10 +271,13 @@ class WellnessRegularResourceButton extends StatelessWidget {
   final String? label;
   final Favorite? favorite;
   final bool hasExternalLink;
+  final bool hasChevron;
   final bool hasBorder;
+  final bool canFavorite;
   final void Function()? onTap;
 
-  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false, this.hasBorder = false, this.onTap}) : super(key: key);
+  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false,
+    this.hasBorder = false, this.onTap, this.hasChevron = true, this.canFavorite = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +289,9 @@ class WellnessRegularResourceButton extends StatelessWidget {
   Widget _buildInterior() {
     return InkWell(onTap: onTap, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
+        Visibility(visible: canFavorite,
+          child: FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16))
+        ),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
             Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'))
@@ -286,9 +300,9 @@ class WellnessRegularResourceButton extends StatelessWidget {
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
           Styles().images.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
-        Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
-        ),
+       hasChevron? Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
+            Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
+        ): Container(width: 16,),
       ]),
     );
   }

@@ -82,13 +82,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   Widget _buildContent() {
     return Container(
       child: Column(children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(
-            Localization().getStringEx("panel.settings.notifications.label.desctiption", "Don’t miss an event or campus update."),
-            style: Styles().textStyles.getTextStyle("widget.message.light.regular.fat"),
-          ),),
-        Container(height: 24,),
+        Container(height: 7,),
         InfoButton(
           title: Localization().getStringEx("panel.settings.notifications.label.notifications", "Push Notifications"),
           description: _notificationsStatus,
@@ -266,6 +260,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
           toggled: FirebaseMessaging().notifyGroupPollsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPollsToggled: (){},
+          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+      ),
+      _CustomToggleButton(
+          enabled: _groupsSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.messages.label", "Messages"),
+          toggled: FirebaseMessaging().notifyGroupMessagesUpdates,
+          onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesMessagesToggled: (){},
           textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
@@ -465,6 +467,13 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       return ;
     Analytics().logSelect(target: "Invitations updates");
     FirebaseMessaging().notifyGroupPollsUpdates = !FirebaseMessaging().notifyGroupPollsUpdates!;
+  }
+
+  void _onGroupsUpdatesMessagesToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics().logSelect(target: "Invitations updates");
+    FirebaseMessaging().notifyGroupMessagesUpdates = !FirebaseMessaging().notifyGroupMessagesUpdates!;
   }
 
   void _onGroupsUpdatesEventsToggled() {

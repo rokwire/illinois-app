@@ -130,7 +130,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   Container(height: 12,),
                   _buildScheduleWidget(),
                   Container(height: 12,),
-                  Visibility(visible: _isPost,
+                  Visibility(visible: _isPost && _canPinPost,
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 6),
                       child: EnabledToggleButton(
@@ -449,6 +449,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   bool get _canSentToOtherAdminGroups{
       return _allowSenPostToOtherGroups && CollectionUtils.isEmpty(_selectedMembers);
   }
+
+  bool get _canPinPost =>  _isAdmin;
+
+  bool get _isAdmin => widget.group.currentUserIsAdmin;
 
   String get _groupId => widget.group.id!;
 

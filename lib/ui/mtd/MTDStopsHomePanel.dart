@@ -1,18 +1,20 @@
-import 'dart:collection';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:neom/ext/MTD.dart';
 import 'package:neom/model/Location.dart';
 import 'package:neom/model/MTD.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/MTD.dart';
+import 'package:neom/ui/events2/Event2Widgets.dart';
+import 'package:neom/ui/explore/ExploreMapPanel.dart';
 import 'package:neom/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:neom/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:neom/ui/mtd/MTDWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -23,13 +25,13 @@ import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum MTDStopsContentType { all, my }
+enum MTDStopsScope { all, my }
 
 class MTDStopsHomePanel extends StatefulWidget {
 
-  final MTDStopsContentType? contentType;
+  final MTDStopsScope? scope;
 
-  MTDStopsHomePanel({Key? key, this.contentType}) : super(key: key);
+  MTDStopsHomePanel({Key? key, this.scope}) : super(key: key);
   
   State<MTDStopsHomePanel> createState() => _MTDStopsHomePanelState();
 }
@@ -38,7 +40,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   
   static Color _dimmedBackgroundColor = Color(0x99000000);
 
-  MTDStopsContentType? _selectedContentType;
+  MTDStopsScope? _selectedScope;
   bool _contentTypesDropdownExpanded = false;
   List<MTDStop>? _stops;
   Set<String> _expanded = <String>{};
@@ -55,11 +57,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       LocationServices.notifyStatusChanged,
     ]);
     
-    if (widget.contentType != null) {
-      _selectedContentType = widget.contentType;
+    if (widget.scope != null) {
+      _selectedScope = widget.scope;
     }
     else {
-      _selectedContentType = CollectionUtils.isNotEmpty(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)) ? MTDStopsContentType.my : MTDStopsContentType.all;
+      _selectedScope = CollectionUtils.isNotEmpty(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)) ? MTDStopsScope.my : MTDStopsScope.all;
     }
 
     _updateStops();
@@ -93,33 +95,35 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
  
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) =>
+    _buildScaffoldContent();
+
+  Widget _buildScaffoldContent() =>
+    Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'Bus Stops'), leading: RootHeaderBarLeading.Back,),
-      body: _buildScaffoldContent(),
+      body: _buildPanelContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
-  }
 
-  Widget _buildScaffoldContent() {
-    return Column(children: [
+  Widget _buildPanelContent() =>
+    Column(children: [
       _buildContentTypeDropdownButton(),
       Expanded(child:
         Stack(children: [
-          Semantics( container: true,
-            child: Column(children: [
-            Expanded(child:
-              _processing ? _buildLoading() : RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                _buildContent()
+          Semantics( container: true, child:
+            Column(children: [
+              Expanded(child:
+                _processing ? _buildLoading() : RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                  _buildBusStopsContent()
+                ),
               ),
-            ),
-          ],)),
+            ],),
+          ),
           _buildContentTypesDropdownContainer()
         ],)
       ),
     ],);
-  }
 
   // Content Type Dropdown
 
@@ -131,7 +135,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
-        label: _getContentTypeName(_selectedContentType),
+        label: _getContentTypeName(_selectedScope),
         onTap: _onTapContentTypeDropdownButton
       )
     );
@@ -150,18 +154,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (MTDStopsContentType contentType in MTDStopsContentType.values) {
-      if ((_selectedContentType != contentType)) {
+    for (MTDStopsScope contentType in MTDStopsScope.values) {
+      if ((_selectedScope != contentType)) {
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
-    contentList.add(RibbonButton(
-      backgroundColor: Styles().colors.surface,
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-      rightIconKey: null,
-      label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Bus Stops'),
-      onTap: _onTapSearch
-    ),);
 
     return Semantics(container: true, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
@@ -170,7 +167,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     ));
   }
 
-  Widget _buildContentTypeDropdownItem(MTDStopsContentType contentType) {
+  Widget _buildContentTypeDropdownItem(MTDStopsScope contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -191,11 +188,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     });
   }
 
-  void _onTapContentTypeDropdownItem(MTDStopsContentType contentType) {
+  void _onTapContentTypeDropdownItem(MTDStopsScope contentType) {
     Analytics().logSelect(target: _getContentTypeName(contentType, languageCode: 'en'));
-    if (_selectedContentType != contentType) {
+    if (_selectedScope != contentType) {
       setState(() {
-        _selectedContentType = contentType;
+        _selectedScope = contentType;
         _contentTypesDropdownExpanded = false;
         _stops = _contentList;
       });
@@ -203,26 +200,28 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
 
-  static String _getContentTypeName(MTDStopsContentType? contentType, {String? languageCode} )  {
-    switch (contentType) {
-      case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.content_type.all.title', 'All Bus Stops');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.content_type.my.title', 'My Bus Stops');
-      default: return '';
-    }
-  }
-
-
-  void _onTapSearch() {
-    Analytics().logSelect(target: "Search Bus Stop");
-    setState(() {
-      _contentTypesDropdownExpanded = false;
-    });
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel()));
-  }
+  static String _getContentTypeName(MTDStopsScope? contentType, {String? languageCode} ) =>
+      contentType?.titleEx(languageCode: languageCode) ?? '';
 
   // Content Widget
 
-  Widget _buildContent() {
+  Widget _buildCommandBar() => Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, children: [
+    LinkButton(
+      title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'),
+      hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+      padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
+      onTap: _onMapView,
+    ),
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+      label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
+      hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
+      contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+      onTap: _onSearch
+    ),
+  ],);
+
+  Widget _buildBusStopsContent() {
     if (_refreshing) {
       return Container();
     }
@@ -237,20 +236,26 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
-  Widget _buildStops() {
-    return ListView.separated(
-      itemBuilder: (context, index) => MTDStopCard(
-        stop: ListUtils.entry(_stops, index),
-        expanded: _expanded,
-        onDetail: _onSelectStop,
-        onExpand: _onExpandStop,
-        currentPosition: _currentPosition,
+  Widget _buildStops() =>
+    Column(children: [
+      Align(alignment: Alignment.centerRight, child:
+        _buildCommandBar(),
       ),
-      separatorBuilder: (context, index) => Container(),
-      itemCount: _stops?.length ?? 0,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-    );
-  }
+      Expanded(child:
+        ListView.separated(
+          itemBuilder: (context, index) => MTDStopCard(
+            stop: ListUtils.entry(_stops, index),
+            expanded: _expanded,
+            onDetail: _onSelectStop,
+            onExpand: _onExpandStop,
+            currentPosition: _currentPosition,
+          ),
+          separatorBuilder: (context, index) => Container(),
+          itemCount: _stops?.length ?? 0,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+        ),
+      )
+    ],);
 
   Widget _buildLoading() {
     return Align(alignment: Alignment.center, child:
@@ -273,17 +278,17 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   String get _errorDisplayStatus {
-    switch(_selectedContentType) {
-      case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.status.error.all.text', 'Failed to load bus stops.');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.status.error.my.text', 'Failed to load saved bus stops.');
+    switch(_selectedScope) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.status.error.all.text', 'Failed to load bus stops.');
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.error.my.text', 'Failed to load saved bus stops.');
       default: return '';
     }
   }
 
   String get _emptyDisplayStatus {
-    switch(_selectedContentType) {
-      case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have no saved bus stops.');
+    switch(_selectedScope) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have no saved bus stops.');
       default: return '';
     }
   }
@@ -319,7 +324,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   List<MTDStop>? get _contentList {
-    if (_selectedContentType == MTDStopsContentType.all) {
+    if (_selectedScope == MTDStopsScope.all) {
       List<MTDStop>? stops = ListUtils.from(MTD().stops?.stops);
       if ((stops != null) && (_currentPosition != null)) {
         stops.sort((MTDStop stop1, MTDStop stop2) {
@@ -337,8 +342,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       }
       return stops;
     }
-    else if (_selectedContentType == MTDStopsContentType.my) {
-      return ListUtils.reversed(MTD().stopsByIds(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName) ?? LinkedHashSet<String>()));
+    else if (_selectedScope == MTDStopsScope.my) {
+      return ListUtils.reversed(MTD().favoriteStops);
     }
     else {
       return null;
@@ -366,5 +371,36 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       _updateStops();
     }
   }
+
+  void _onSearch() {
+    Analytics().logSelect(target: "Search Bus Stop");
+    setState(() {
+      _contentTypesDropdownExpanded = false;
+    });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel(scope: _selectedScope ?? MTDStopsScope.all,)));
+  }
+
+  void _onMapView() {
+    Analytics().logSelect(target: 'Map View');
+    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(scope: _selectedScope ?? MTDStopsScope.all));
+  }
 }
 
+extension MTDStopsScopeExt on MTDStopsScope {
+
+  String get title => titleEx();
+  String titleEx({String? languageCode}) {
+    switch (this) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.content_type.all.title', 'All Bus Stops', language: languageCode);
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.content_type.my.title', 'My Bus Stops', language: languageCode);
+    }
+  }
+
+  String get hint => hintEx();
+  String hintEx({String? languageCode}) {
+    switch (this) {
+      case MTDStopsScope.all: return Localization().getStringEx('panel.explore.label.mtd_stops.scope.all.title', 'All Stops', language: languageCode);
+      case MTDStopsScope.my: return Localization().getStringEx('panel.explore.label.mtd_stops.scope.my.title', 'My Stops', language: languageCode);
+    }
+  }
+}

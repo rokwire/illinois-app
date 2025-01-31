@@ -16,15 +16,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/ext/Social.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/ui/messages/MessagesConversationPanel.dart';
 import 'package:neom/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
-import 'package:neom/ui/messages/MessagesWidgets.dart';
 import 'package:neom/ui/widgets/Filters.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -40,6 +40,7 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   // 1) Add a field to hold the search text
   final String? search;
   final List<Conversation>? conversations;
+  static bool enableMute = false;
 
   // Make the constructor private, but accept the new param
   MessagesHomePanel._({Key? key, this.search, this.conversations}) : super(key: key);
@@ -47,7 +48,7 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   // 2) Add an optional `search` param to present()
   static void present(BuildContext context, { String? search, List<Conversation>? conversations }) {
     if (!Auth2().isLoggedIn) {
-      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.connections', 'Connections'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.conversations', 'Conversations'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -76,10 +77,10 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProviderStateMixin implements NotificationsListener {
-  final List<_FilterEntry> _mutedValues = [
-    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted conversations
-    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.hide", "Hide Muted"), value: false), // Show only not muted conversations
-  ];
+  final List<_FilterEntry> _mutedValues = MessagesHomePanel.enableMute ? [
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.show", "Show Muted"), value: null),
+    _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.hide", "Hide Muted"), value: false),
+  ] : [];
 
   final List<_FilterEntry> _times = [
     _FilterEntry(name: Localization().getStringEx("panel.messages.label.time.any", "Any Time"), value: null),
@@ -115,6 +116,8 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     NotificationService().subscribe(this, [
       Social.notifyConversationsUpdated,
       Social.notifyMessageSent,
+      Social.notifyMessageEdited,
+      Social.notifyMessageDeleted,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -138,7 +141,10 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Social.notifyConversationsUpdated || name == Social.notifyMessageSent) {
+    if (name == Social.notifyConversationsUpdated ||
+        name == Social.notifyMessageSent ||
+        name == Social.notifyMessageEdited ||
+        name == Social.notifyMessageDeleted) {
       if (mounted) {
         _loadContent();
       }
@@ -303,17 +309,15 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
   //Buttons
   Widget _buildAdditionalButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
-          Spacer(),
-          SizedBox(width: MediaQuery.textScaleFactorOf(context) * 208, child: _buildNewMessageButton()),  //TODO: figure out how to do this without textScaleFactor
-        ],
-      ),
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), child:
+      Align(alignment: Alignment.centerRight, child:
+        _buildNewMessageButton(),
+      )
+      //Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        // _buildReadAllButton(), //TODO: uncomment once implemented on Social BB
+        //Spacer(),
+        //Flexible(flex: 1, child: _buildNewMessageButton()),
+      //],),
     );
   }
 
@@ -327,13 +331,33 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
   //           onTap: _onTapMarkAllAsRead)));
   // }
 
+  Widget _buildNewMessageButton() {
+    String title = Localization().getStringEx('panel.messages.button.new.title', 'New Conversation');
+    String hint = Localization().getStringEx('panel.messages.button.new.hint', '');
+    Widget? iconW = Styles().images.getImage('plus-circle-white', color: Styles().colors.textColorPrimary);
+    Widget? textW = Text(title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant2"), maxLines: 1, overflow: TextOverflow.ellipsis);
+    return Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
+      GestureDetector(onTap: _onTapNewMessage, child:
+        Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(8))), child:
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            (iconW != null) ? Row(mainAxisSize: MainAxisSize.min, children: [
+              Padding(padding: const EdgeInsets.only(right: 8), child: iconW),
+              textW,
+            ],) : textW,
+          )
+        ),
+      )
+    );
+  }
+
   // Filters
   Widget _buildFilters() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        FilterSelector(
+        if (MessagesHomePanel.enableMute)
+          FilterSelector(
             padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
             titleTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
@@ -349,7 +373,10 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
             active: _selectedFilter == _FilterType.Time,
             onTap: () { _onFilter(_FilterType.Time); }
         ),
-        _buildEditBar(),
+        Visibility(
+          visible: MessagesHomePanel.enableMute == true,
+          child: _buildEditBar()
+        ),
       ],
       )),
     );
@@ -520,22 +547,6 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     );
   }
 
-  Widget _buildNewMessageButton() {
-    return RibbonButton(
-        textWidget: Text(Localization().getStringEx('panel.messages.button.new.title', 'New Conversation'),
-          style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        hint: Localization().getStringEx('panel.messages.button.new.hint', ''),
-        backgroundColor: Styles().colors.fillColorSecondary,
-        leftIcon: Styles().images.getImage('plus-circle-white', color: Styles().colors.fillColorPrimaryVariant),
-        rightIconKey: null,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        onTap: _onTapNewMessage,
-    );
-  }
-
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
     TextButton(onPressed: _onDone, child:
@@ -572,7 +583,8 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 
-      InkWell(onTap: () => _onToggleMute(mute: true), child:
+    if (MessagesHomePanel.enableMute) ...[
+    InkWell(onTap: () => _onToggleMute(mute: true), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
           Row(children:<Widget>[
             Padding(padding: EdgeInsets.only(right: 8), child:
@@ -584,6 +596,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
           ]),
         )
       ),
+    ],
 
       Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimary.withAlpha(38), height: 1))]),
 

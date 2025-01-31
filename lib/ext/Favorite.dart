@@ -225,7 +225,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
     }
     else if (lowerCaseKey == MTDStop.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
       NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MyLocations);

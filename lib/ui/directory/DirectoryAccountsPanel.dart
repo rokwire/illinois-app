@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:neom/ext/Auth2.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/directory/DirectoryAccountsList.dart';
 import 'package:neom/ui/directory/DirectoryAccountsPage.dart';
 import 'package:neom/ui/profile/ProfileInfoPage.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
+import 'package:neom/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -48,7 +51,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile,),
+          DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
         )
       )
     );
@@ -59,6 +62,12 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
       contentParams: {
         ProfileInfoPage.editParamKey : true,
       }
+    );
+  }
+
+  void _onShareProfile(DirectoryAccounts contentType) {
+    ProfileInfoSharePanel.present(context,
+      profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
     );
   }
 

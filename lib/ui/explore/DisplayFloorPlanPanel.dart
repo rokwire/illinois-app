@@ -9,7 +9,8 @@ import '../../model/StudentCourse.dart';
 
 class DisplayFloorPlanPanel extends StatefulWidget {
   final Building? building;
-  const DisplayFloorPlanPanel({super.key, this.building});
+  final String? startingFloor;
+  const DisplayFloorPlanPanel({super.key, this.building, this.startingFloor = null});
 
   @override
   State<DisplayFloorPlanPanel> createState() => _DisplayFloorPlanPanelState();
@@ -30,7 +31,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
     if (widget.building != null) {
       List<String>? floors = widget.building?.floors;
       if (floors != null && floors.isNotEmpty) {
-        _currentFloorCode = floors.first; // Set to the first floor code
+        _currentFloorCode = (widget.startingFloor != null) ? widget.startingFloor! : floors.first; // Set to the first floor code
         loadFloorPlan(_currentFloorCode);
       }
       else {
@@ -133,9 +134,9 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
                 Semantics(
                   container: true,
                   button: true,
-                  child: buildAccountDropDown(
+                  child: Padding(padding: EdgeInsets.only(bottom: 10), child: buildFloorDropDown(
                     '${Localization().getStringEx('panel.display_floor_plan_panel.footer.menu_item', 'Floor')} $_currentFloorCode',
-                  ),
+                  )),
                 ),
               Flexible(child: FractionallySizedBox(widthFactor: 0.5)),
               Padding(
@@ -185,7 +186,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
         [];
   }
 
-  Widget buildAccountDropDown(String currentFloor) {
+  Widget buildFloorDropDown(String currentFloor) {
     return Semantics(
       label: currentFloor,
       hint:

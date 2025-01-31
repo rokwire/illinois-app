@@ -26,6 +26,7 @@ import 'package:neom/ui/WebPanel.dart';
 import 'package:neom/ui/guide/GuideDetailPanel.dart';
 import 'package:neom/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:neom/ui/wellness/WellnessMentalHealthContentWidget.dart';
+import 'package:neom/ui/wellness/WellnessRecreationContentWidget.dart';
 import 'package:neom/ui/wellness/WellnessSuccessTeamContentWidget.dart';
 import 'package:neom/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:neom/ui/wellness/WellnessAppointmentsContentWidget.dart';
@@ -43,7 +44,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, struggling, }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, recreation}
 
 class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'AcademicsHomePanel';
@@ -62,7 +63,7 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
     WellnessContent.mentalHealth:   AnalyticsFeature.WellnessMentalHealth,
     WellnessContent.successTeam:    AnalyticsFeature.WellnessSuccessTeam,
     WellnessContent.podcast:        AnalyticsFeature.WellnessPodcast,
-    WellnessContent.struggling:     AnalyticsFeature.WellnessStruggling,
+    WellnessContent.recreation:     AnalyticsFeature.WellnessRecreation,
   };
 
   WellnessHomePanel({this.content, this.rootTabDisplay = false});
@@ -99,7 +100,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   bool _contentValuesVisible = false;
 
   UniqueKey _podcastKey = UniqueKey();
-  UniqueKey _strugglingKey = UniqueKey();
   ScrollController _contentScrollController = ScrollController();
 
   @override
@@ -249,9 +249,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     if (contentItem == WellnessContent.podcast) {
       launchUrl = Wellness().getResourceUrl(resourceId: 'podcast');
     }
-    else if (contentItem == WellnessContent.struggling) {
-      launchUrl = Wellness().getResourceUrl(resourceId: 'where_to_start');
-    }
 
     if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
       _launchUrl(launchUrl);
@@ -301,6 +298,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.recreation:
+        return WellnessRecreationContentWidget();
       case WellnessContent.mentalHealth:
         return WellnessMentalHealthContentWidget();
       case WellnessContent.successTeam:
@@ -308,9 +307,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.podcast:
         String? guideId = _loadWellcomeResourceGuideId('podcast');
         return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.WellnessPodcast,) : Container();
-      case WellnessContent.struggling:
-        String? guideId = _loadWellcomeResourceGuideId('where_to_start');
-        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.WellnessStruggling) : Container();
       default:
         return Container();
     }
@@ -360,8 +356,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return _loadContentString('panel.wellness.section.success_team.label', 'My Success Team', language: language);
       case WellnessContent.podcast:
         return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Illini Podcast', language: language);
-      case WellnessContent.struggling:
-        return _loadContentString('panel.wellness.section.struggling.label', 'I\'m Struggling', language: language);
+      case WellnessContent.recreation:
+        return _loadContentString('panel.wellness.section.recreation.label', 'Campus Recreation', language: language); //TBD localize
     }
   }
 
@@ -390,6 +386,7 @@ class WellnessFavorite extends Favorite {
 extension WellnessContentImpl on WellnessContent {
   static WellnessContent? fromString(String? value) {
     switch (value) {
+      case 'recreation':      return WellnessContent.recreation;
       case 'daily_tips':      return WellnessContent.dailyTips;
       case 'rings':           return WellnessContent.rings;
       case 'todo_list':       return WellnessContent.todo;
@@ -399,7 +396,6 @@ extension WellnessContentImpl on WellnessContent {
       case 'mental_health':   return WellnessContent.mentalHealth;
       case 'success_team':    return WellnessContent.successTeam;
       case 'podcast':         return WellnessContent.podcast;
-      case 'struggling':      return WellnessContent.struggling;
       default:                return null;
     }
   }

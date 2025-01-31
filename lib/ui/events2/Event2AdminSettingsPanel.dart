@@ -129,7 +129,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       ).then((bool? result) async {
         if (result == true) {
           setStateIfMounted(() {_duplicating = true;});
-          Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(grouping:  _event?.linkedEventsGroupingQuery));
+          Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(groupings: _event?.linkedEventsGroupingQuery));
 
           //TBD  // 1. Acknowledge Event Admins
           Events2().createEvent(_event!.duplicate).then((createdEvent) async {

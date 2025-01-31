@@ -20,6 +20,7 @@ import "package:flutter/material.dart";
 import "package:neom/model/PrivacyData.dart";
 import "package:neom/service/Analytics.dart";
 import 'package:neom/utils/AppUtils.dart';
+import "package:rokwire_plugin/service/app_notification.dart";
 import 'package:rokwire_plugin/service/auth2.dart';
 import "package:neom/service/Config.dart";
 import "package:neom/service/FlexUI.dart";
@@ -62,6 +63,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     super.initState();
 
     NotificationService().subscribe(this,[
+      AppNotification.notify,
       Localization.notifyLocaleChanged,
     ]);
 
@@ -76,6 +78,8 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         _data = PrivacyData.fromJson(JsonUtils.mapValue(value));
         _loading = false;
       });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollListener());
     });
 
   }
@@ -90,10 +94,15 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Localization.notifyLocaleChanged) {
+    if (name == AppNotification.notify) {
+      if ((param is ScrollMetricsNotification) && mounted && _disabled) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollListener());
+      }
+    } else if (name == Localization.notifyLocaleChanged) {
       //We need to refresh because the text fields are preloaded with the locale
-      _data?.reload();
-      setState(() {});
+      setStateIfMounted(() {
+        _data?.reload();
+      });
     }
   }
 

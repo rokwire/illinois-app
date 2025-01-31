@@ -26,6 +26,7 @@ import 'package:neom/model/MTD.dart';
 import 'package:neom/model/Appointment.dart';
 import 'package:neom/service/Appointments.dart';
 import 'package:neom/service/MTD.dart';
+import 'package:neom/ui/dining/DiningCard.dart';
 import 'package:neom/ui/home/HomeFavoritesWidget.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/SmallRoundedButton.dart';
@@ -232,7 +233,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       if (0 < (favorites?.length ?? 0)) {
         for (int index = 0; index < favorites!.length; index++) {
           contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
-            _SavedItem(favorites[index], onTap: widget.onTapFavorite,)
+            _SavedItem.buildCard(favorite: favorites[index], onTap: widget.onTapFavorite,)
           ));
         }
         contentList.add(LinkButton(
@@ -496,7 +497,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       int itemsCount = widget.items!.length;
       int visibleCount = (((widget.limit <= 0) || _showAll) ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
-        widgets.add(_SavedItem(widget.items![i], onTap: widget.onTapFavorite,));
+        widgets.add(_SavedItem.buildCard(favorite: widget.items![i], onTap: widget.onTapFavorite, forceDefaultCard: true));
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
         }
@@ -525,8 +526,18 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 class _SavedItem extends StatelessWidget {
   final Favorite favorite;
   final void Function(Favorite favorite)? onTap;
-  
-  _SavedItem(this.favorite, { this.onTap});
+
+  _SavedItem({required this.favorite, this.onTap});
+
+  static Widget buildCard( {required Favorite favorite, void Function(Favorite favorite)? onTap, bool forceDefaultCard = false}) {
+    if(forceDefaultCard == false) {
+      if (favorite is Dining) {
+        return DiningCard(favorite, onTap: (BuildContext context) =>
+          onTap!=null ? onTap(favorite) : favorite.favoriteLaunchDetail(context));
+      }
+    }
+    return _SavedItem(favorite: favorite, onTap: onTap,);
+  }
 
   @override
   Widget build(BuildContext context) {

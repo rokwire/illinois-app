@@ -172,7 +172,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessPodcastNotification,
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
-      FirebaseMessaging.notifyWellnessStrugglingNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
@@ -491,9 +490,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWellnessRingsNotification) {
       _onFirebaseWellnessNotification(WellnessContent.rings);
-    }
-    else if (name == FirebaseMessaging.notifyWellnessStrugglingNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.struggling);
     }
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContent.todo);
@@ -1236,7 +1232,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       if (mapsIndex != _currentTabIndex) {
         _selectTab(mapsIndex);
-        if ((param is ExploreMapType) && !ExploreMapPanel.hasState) {
+        if ((param != null) && !ExploreMapPanel.hasState) {
           Widget? mapsWidget = _panels[RootTab.Maps];
           ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
           mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
