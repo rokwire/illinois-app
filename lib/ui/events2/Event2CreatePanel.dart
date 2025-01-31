@@ -2901,6 +2901,58 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   List<_RecurringDatesPair>? _buildMonthlyRecurringDates() {
+    List<_RecurringDatesPair>? pairs;
+    switch (_recurrenceRepeatMonthlyType) {
+      case _RecurrenceRepeatMonthlyType.daily:
+        pairs = _buildMonthlyRecurringDatesByOrdinalDay();
+        break;
+      case _RecurrenceRepeatMonthlyType.weekly:
+        pairs = _buildMonthlyRecurringDatesByWeekDay();
+        break;
+      default:
+        break;
+    }
+    return pairs;
+  }
+
+  List<_RecurringDatesPair>? _buildMonthlyRecurringDatesByOrdinalDay() {
+    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
+    List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
+    DateTime nextStartDateUtc = _startDateTimeUtc!;
+    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
+      if ((_recurrenceRepeatDay == 0) || (_recurrenceRepeatDay == nextStartDateUtc.day)) {
+        pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
+      }
+
+      late int daysDiff;
+      if (_recurrenceRepeatDay == 0) {
+        daysDiff = 1;
+      } else {
+        if (nextStartDateUtc.day < _recurrenceRepeatDay!) {
+          daysDiff = (_recurrenceRepeatDay! - nextStartDateUtc.day);
+        } else {
+          DateTime nextDate = DateTime.utc(
+              nextStartDateUtc.year,
+              (nextStartDateUtc.month + _monthlyRepeatPeriod!),
+              _recurrenceRepeatDay!,
+              nextStartDateUtc.hour,
+              nextStartDateUtc.minute,
+              nextStartDateUtc.second,
+              nextStartDateUtc.millisecond,
+              nextStartDateUtc.microsecond);
+          daysDiff = nextDate.difference(nextStartDateUtc).inDays;
+        }
+      }
+
+      Duration duration = Duration(days: daysDiff);
+      nextStartDateUtc = nextStartDateUtc.add(duration);
+      nextEndDateUtc = nextEndDateUtc.add(duration);
+    }
+    return pairs;
+  }
+
+  List<_RecurringDatesPair>? _buildMonthlyRecurringDatesByWeekDay() {
     //TBD: DD - implement
     return null;
   }
