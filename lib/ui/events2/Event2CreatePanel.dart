@@ -2459,12 +2459,26 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       _creatingEvent = true;
     });
 
+    List<_RecurringDatesPair>? recurringDates = _buildRecurringDatesPairs();
+    DateTime? eventStartDate, eventEndDate;
+    if (CollectionUtils.isNotEmpty(recurringDates)) {
+      eventStartDate = recurringDates!.first.startDateTimeUtc;
+      eventEndDate = recurringDates.last.endDateTimeUtc;
+    }
+
     dynamic result;
-    Event2 event = _createEventFromData();
+    // Explicitly set the start date to be the first and end date to be the last - #4599
+    Event2 event = _createEventFromData(recurringStartDateUtc: eventStartDate, recurringEndDateUtc: eventEndDate);
 
     //TBD: DD - tmp code for debug purposes
     // //////// remove start
-    // await _createRecurringEventsFrom(mainEvent: event);
+    // print('TTTTTTTTTTTT: main: start: ${event.startTimeUtc}, end: ${event.endTimeUtc}');
+    // if (CollectionUtils.isNotEmpty(recurringDates)) {
+    //   for (_RecurringDatesPair pair in recurringDates!) {
+    //     print('TTTTTTTTTTTT: recurring: start: ${pair.startDateTimeUtc}, end: ${pair.endDateTimeUtc}');
+    //   }
+    // }
+    //
     // setState(() {
     //   _creatingEvent = false;
     // });
@@ -2488,8 +2502,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       if (result is Event2) {
         Survey? survey = widget.survey;
         if (widget.isCreate) {
-          if (_shouldCreateRecurringEvents) {
-            await _createRecurringEventsFrom(mainEvent: result);
+          if (_shouldCreateRecurringEvents && CollectionUtils.isNotEmpty(recurringDates)) {
+            await _createRecurringEventsFrom(mainEvent: result, recurringDates: recurringDates!);
           }
           if (_survey != null) {
             bool? success = await Surveys().createEvent2Survey(_survey!, result);
@@ -2778,7 +2792,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
-  Event2 _createEventFromData() {
+  Event2 _createEventFromData({DateTime? recurringStartDateUtc, DateTime? recurringEndDateUtc}) {
     List<String>? groupIds = _eventGroups?.map((group) => group.id!).toList();
     Event2AuthorizationContext? authorizationContext;
     Event2Context? event2Context;
@@ -2807,6 +2821,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       grouping = widget.event?.grouping;
     }
 
+    DateTime? eventStartDateUtc = (widget.isCreate && _shouldCreateRecurringEvents && (recurringStartDateUtc != null)) ? recurringStartDateUtc : _startDateTimeUtc;
+    DateTime? eventEndDateUtc = (widget.isCreate && _shouldCreateRecurringEvents && (recurringEndDateUtc != null)) ? recurringEndDateUtc : _endDateTimeUtc;
+
     return Event2(
       id: widget.event?.id,
 
@@ -2817,8 +2834,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       eventUrl: Event2CreatePanel.textFieldValue(_websiteController),
 
       timezone: _timeZone.name,
-      startTimeUtc: _startDateTimeUtc,
-      endTimeUtc: (widget.isCreate && _shouldCreateRecurringEvents) ? _recurrenceEndDateTimeUtc : _endDateTimeUtc,
+      startTimeUtc: eventStartDateUtc,
+      endTimeUtc: eventEndDateUtc,
       allDay: _allDay,
 
       eventType: _eventType,
@@ -2847,9 +2864,63 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     );
   }
 
-  Future<void> _createRecurringEventsFrom({required Event2 mainEvent}) async {
+  List<_RecurringDatesPair>? _buildRecurringDatesPairs() {
+    if (!widget.isCreate || !_shouldCreateRecurringEvents) {
+      return null;
+    }
+    List<_RecurringDatesPair>? recurringDates;
+    switch (_recurrenceRepeatType) {
+      case _RecurrenceRepeatType.weekly:
+        recurringDates = _buildWeeklyRecurringDates();
+        break;
+      case _RecurrenceRepeatType.monthly:
+        recurringDates = _buildMonthlyRecurringDates();
+        break;
+      default:
+        break;
+    }
+    return recurringDates;
+  }
+
+  List<_RecurringDatesPair>? _buildWeeklyRecurringDates() {
+    List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
+    recurrenceWeekDaysIndexes?.sort();
+    DateTime mainStartDateTimeUtc = _startDateTimeUtc!;
+    DateTime mainEndDateTimeUtc = _endDateTimeUtc!;
+    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
+    List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
+    DateTime nextStartDateUtc = mainStartDateTimeUtc.add(Duration(days: 1));
+    DateTime nextEndDateUtc = mainEndDateTimeUtc.add(Duration(days: 1));
+    while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
+      if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
+        pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
+      }
+      int daysToAdd = (nextStartDateUtc.weekday == 7) ? (1 + (_weeklyRepeatPeriod! - 1) * 7) : 1;
+      nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysToAdd));
+      nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
+    }
+    return pairs;
+  }
+
+  List<_RecurringDatesPair>? _buildMonthlyRecurringDates() {
+    //TBD: DD - implement
+    return null;
+  }
+
+  List<Event2>? _buildRecurringEventsFrom({required Event2 mainEvent, required List<_RecurringDatesPair> dates}) {
+    if (CollectionUtils.isEmpty(dates)) {
+      return null;
+    }
+    List<Event2> events = <Event2>[];
+    for (_RecurringDatesPair pair in dates) {
+      events.add(mainEvent.toRecurringEvent(startDateTimeUtc: pair.startDateTimeUtc, endDateTimeUtc: pair.endDateTimeUtc));
+    }
+    return events;
+  }
+
+  Future<void> _createRecurringEventsFrom({required Event2 mainEvent, required List<_RecurringDatesPair> recurringDates}) async {
     // Create each event separately until we have a backend API for that
-    List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: mainEvent);
+    List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: mainEvent, dates: recurringDates);
     if (CollectionUtils.isNotEmpty(recurringEvents)) {
       for (Event2 recurringEvent in recurringEvents!) {
         dynamic recurringResult = await Events2().createEvent(recurringEvent);
@@ -2866,61 +2937,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         }
       }
     }
-  }
-
-  List<Event2>? _buildRecurringEventsFrom({required Event2 mainEvent}) {
-    List<Event2>? recurringEvents;
-    switch (_recurrenceRepeatType) {
-      case _RecurrenceRepeatType.weekly:
-        recurringEvents = _buildWeeklyRecurringEvents(mainEvent: mainEvent);
-        break;
-      case _RecurrenceRepeatType.monthly:
-        recurringEvents = _buildMonthlyRecurringEvents(mainEvent: mainEvent);
-        break;
-      default:
-        break;
-    }
-    return recurringEvents;
-  }
-
-  List<Event2>? _buildWeeklyRecurringEvents({required Event2 mainEvent}) {
-    List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
-    recurrenceWeekDaysIndexes?.sort();
-    DateTime mainStartDateTimeUtc = _startDateTimeUtc!;
-    DateTime mainEndDateTimeUtc = _endDateTimeUtc!;
-    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
-    List<DateTime> startDateTimesUtc = <DateTime>[];
-    List<DateTime> endDateTimesUtc = <DateTime>[];
-    DateTime nextStartDateUtc = mainStartDateTimeUtc.add(Duration(days: 1));
-    DateTime nextEndDateUtc = mainEndDateTimeUtc.add(Duration(days: 1));
-    while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
-      if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
-        startDateTimesUtc.add(nextStartDateUtc);
-        endDateTimesUtc.add(nextEndDateUtc);
-      }
-      int daysToAdd = (nextStartDateUtc.weekday == 7) ? (1 + (_weeklyRepeatPeriod! - 1) * 7) : 1;
-      nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysToAdd));
-      nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
-    }
-
-    List<Event2>? events;
-    if (CollectionUtils.isNotEmpty(startDateTimesUtc)) {
-      events = <Event2>[];
-      for (int i = 0; i < startDateTimesUtc.length; i++) {
-        DateTime start = startDateTimesUtc[i];
-        DateTime end = endDateTimesUtc[i];
-        Event2? subEvent = mainEvent.toRecurringEvent(startDateTimeUtc: start, endDateTimeUtc: end);
-        if (subEvent != null) {
-          events.add(subEvent);
-        }
-      }
-    }
-    return events;
-  }
-
-  List<Event2>? _buildMonthlyRecurringEvents({required Event2 mainEvent}) {
-    //TBD: DD - implement
-    return null;
   }
 }
 
@@ -3007,4 +3023,11 @@ String _recurrenceMonthWeekDayToDisplayString(_RecurrenceMonthWeekDay? value) {
     case _RecurrenceMonthWeekDay.weekend_day: return Localization().getStringEx('panel.event2.create.recurrence.month.weekday.weekend_day.label', 'Weekend Day');
     default: return '-----';
   }
+}
+
+class _RecurringDatesPair {
+  final DateTime startDateTimeUtc;
+  final DateTime endDateTimeUtc;
+
+  _RecurringDatesPair({required this.startDateTimeUtc, required this.endDateTimeUtc});
 }
