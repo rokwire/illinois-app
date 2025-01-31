@@ -239,6 +239,8 @@ class Config extends rokwire.Config {
 
   int get inAppNotificationToastTimeout   => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
 
+  Set<String>? get topLevelDomains => JsonUtils.setStringsValue(settings['top_level_domains']);
+
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
