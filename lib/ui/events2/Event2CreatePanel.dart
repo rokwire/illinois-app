@@ -1540,7 +1540,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   void _onMonthDayChanged(int? day) {
-    Analytics().logSelect(target: "Recurrence Every month: $day");
+    Analytics().logSelect(target: "Recurrence Every month day: $day");
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _recurrenceRepeatDay = day;
@@ -2885,12 +2885,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   List<_RecurringDatesPair>? _buildWeeklyRecurringDates() {
     List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
     recurrenceWeekDaysIndexes?.sort();
-    DateTime mainStartDateTimeUtc = _startDateTimeUtc!;
-    DateTime mainEndDateTimeUtc = _endDateTimeUtc!;
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
-    DateTime nextStartDateUtc = mainStartDateTimeUtc.add(Duration(days: 1));
-    DateTime nextEndDateUtc = mainEndDateTimeUtc.add(Duration(days: 1));
+    DateTime nextStartDateUtc = _startDateTimeUtc!;
+    DateTime nextEndDateUtc = _endDateTimeUtc!;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
