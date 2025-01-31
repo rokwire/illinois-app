@@ -306,7 +306,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                   ),
                 ],),
-                WebEmbed(body: message.message)
+                if (!kIsWeb)
+                  WebEmbed(body: message.message)
               ]),
             ),
           );
@@ -546,14 +547,14 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                         focusNode: _inputFieldFocus,
                         onSubmitted: _submitMessage,
                         onChanged: (_) => setStateIfMounted(() {}),
-                        cursorColor: Styles().colors.fillColorPrimary,
+                        cursorColor: Styles().colors.textLight,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
                             fillColor: Styles().colors.surface,
                             focusColor: Styles().colors.surface,
                             hoverColor: Styles().colors.surface,
                             hintText: "Message ${_getConversationTitle()}",
-                            hintStyle: Styles().textStyles.getTextStyle('widget.item.small')
+                            hintStyle: Styles().textStyles.getTextStyle('widget.item.light.small')
                         ),
                         style: Styles().textStyles.getTextStyle('widget.title.regular')
                     )

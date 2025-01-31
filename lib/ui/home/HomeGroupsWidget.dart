@@ -218,23 +218,24 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     Widget? contentWidget;
     int visibleCount = _groups?.length ?? 0;
     int pageCount = visibleCount ~/ _cardsPerPage;
+    bool extraPage = (visibleCount % _cardsPerPage) > 0;
 
     List<Widget> pages = <Widget>[];
-    for (int index = 0; index < pageCount + 1; index++) {
+    for (int index = 0; index < pageCount + (extraPage ? 1 : 0); index++) {
       List<Widget> pageCards = [];
       for (int groupIndex = 0; groupIndex < _cardsPerPage; groupIndex++) {
-        if (index * _cardsPerPage + groupIndex >= _groups!.length) {
-          break;
+        Widget pageCard = SizedBox(width: _cardWidth);
+        if (index * _cardsPerPage + groupIndex < _groups!.length) {
+          Group group = _groups![index * _cardsPerPage + groupIndex];
+          GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
+          pageCard = Container(
+            constraints: BoxConstraints(maxWidth: _cardWidth),
+            child: GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,)
+          );
         }
-        Group group = _groups![index * _cardsPerPage + groupIndex];
-        GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
         pageCards.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
-          Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-            Container(
-              constraints: BoxConstraints(maxWidth: _cardWidth),
-              child: GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,)
-            ),
-        )));
+          Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child: pageCard,)
+        ));
       }
       if (_cardsPerPage > 1) {
         pages.add(Row(

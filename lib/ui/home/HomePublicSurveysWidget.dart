@@ -227,21 +227,23 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
     int cardCount = _contentList?.length ?? 0;
     int pageCount = cardCount ~/ _cardsPerPage;
-    for (int index = 0; index < pageCount + 1; index++) {
+    bool extraPage = (cardCount % _cardsPerPage) > 0;
+    for (int index = 0; index < pageCount + (extraPage ? 1 : 0); index++) {
       List<Widget> pageCards = [];
       for (int cardIndex = 0; cardIndex < _cardsPerPage; cardIndex++) {
-        if (index * _cardsPerPage + cardIndex >= _contentList!.length) {
-          break;
+        Widget pageCard = SizedBox(width: _cardWidth);
+        if (index * _cardsPerPage + cardIndex < _contentList!.length) {
+          Survey survey = _contentList![index * _cardsPerPage + cardIndex];
+          pageCard = Padding(
+              key: _cardKeys[survey.id] ??= GlobalKey(),
+              padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding),
+              child: Container(
+                  constraints: BoxConstraints(maxWidth: _cardWidth),
+                  child: PublicSurveyCard.pageCard(survey, hasActivity: _activitySurveyIds.contains(survey.id), onTap: () => _onSurvey(survey),)
+              )
+          );
         }
-        Survey survey = _contentList![index * _cardsPerPage + cardIndex];
-        pageCards.add(Padding(
-          key: _cardKeys[survey.id] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding),
-          child: Container(
-            constraints: BoxConstraints(maxWidth: _cardWidth),
-            child: PublicSurveyCard.pageCard(survey, hasActivity: _activitySurveyIds.contains(survey.id), onTap: () => _onSurvey(survey),)
-          )
-        ),);
+        pageCards.add(pageCard);
       }
       if (_cardsPerPage > 1) {
         pages.add(Row(

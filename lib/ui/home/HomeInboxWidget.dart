@@ -241,17 +241,19 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     List<Widget> pages = <Widget>[];
     int messagesCount = _messages?.length ?? 0;
     int pageCount = messagesCount ~/ _cardsPerPage;
+    bool extraPage = (messagesCount % _cardsPerPage) > 0;
 
-    for (int index = 0; index < pageCount + 1; index++) {
+    for (int index = 0; index < pageCount + (extraPage ? 1 : 0); index++) {
       List<Widget> pageCards = [];
       for (int messageIndex = 0; messageIndex < _cardsPerPage; messageIndex++) {
-        if (index * _cardsPerPage + messageIndex >= _messages!.length) {
-          break;
+        Widget pageCard = SizedBox(width: _cardWidth);
+        if (index * _cardsPerPage + messageIndex < _messages!.length) {
+          InboxMessage message = _messages![index * _cardsPerPage + messageIndex];
+          pageCard = Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
+            Container(constraints: BoxConstraints(maxWidth: _cardWidth), child: InboxMessageCard(message: message, onTap: () => _onTapMessage(message))),
+          );
         }
-        InboxMessage message = _messages![index * _cardsPerPage + messageIndex];
-        pageCards.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-          Container(constraints: BoxConstraints(maxWidth: _cardWidth), child: InboxMessageCard(message: message, onTap: () => _onTapMessage(message))),
-        ));
+        pageCards.add(pageCard);
       }
       if (_cardsPerPage > 1) {
         pages.add(Row(

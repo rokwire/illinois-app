@@ -1845,7 +1845,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
             label: Localization().getStringEx(
                 "panel.group_detail.button.all_events.title", 'See all events'),
             textStyle: Styles().textStyles.getTextStyle(
-                "widget.button.title.medium.fat"),
+                "widget.button.title.medium.fat.dark"),
             backgroundColor: Styles().colors.surface,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             borderColor: Styles().colors.fillColorSecondary,

@@ -1018,7 +1018,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Future<bool?> _showCreateGroupPrompt() {
     String prompt = Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois'));
     return AppAlert.showCustomDialog(context: context,
-      contentWidget: Text(prompt, style: Styles().textStyles.getTextStyle('widget.description.regular.light')),
+      contentWidget: Text(prompt, style: Styles().textStyles.getTextStyle('widget.description.regular.dark')),
       actions: <Widget>[
         TextButton(
           child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),

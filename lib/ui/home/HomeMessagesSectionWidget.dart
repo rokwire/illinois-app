@@ -117,28 +117,30 @@ class _HomeMessagesSectionWidgetState extends State<HomeMessagesSectionWidget> i
     Widget? contentWidget;
     int visibleCount = _conversations.length;
     int pageCount = visibleCount ~/ _cardsPerPage;
+    bool extraPage = (visibleCount % _cardsPerPage) > 0;
 
     List<Widget> pages = <Widget>[];
-    for (int index = 0; index < pageCount + 1; index++) {
+    for (int index = 0; index < pageCount + (extraPage ? 1 : 0); index++) {
       List<Widget> pageCards = [];
       for (int conversationIndex = 0; conversationIndex < _cardsPerPage; conversationIndex++) {
-        if (index * _cardsPerPage + conversationIndex >= _conversations.length) {
-          break;
+        Widget pageCard = SizedBox(width: _cardWidth);
+        if (index * _cardsPerPage + conversationIndex < _conversations.length) {
+          Conversation conversation = _conversations[index * _cardsPerPage + conversationIndex];
+          GlobalKey conversationKey = (_conversationCardKeys[conversation.id!] ??= GlobalKey());
+          pageCard = Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
+            Semantics(/* excludeSemantics: !(_pageController?.page == _conversations?.indexOf(conversation)),*/ child:
+              Container(
+                  constraints: BoxConstraints(maxWidth: _cardWidth),
+                  child: ConversationCard(
+                    key: conversationKey,
+                    conversation: conversation,
+                    isHorizontal: true,
+                  )
+              ),
+            )
+          );
         }
-        Conversation conversation = _conversations[index * _cardsPerPage + conversationIndex];
-        GlobalKey conversationKey = (_conversationCardKeys[conversation.id!] ??= GlobalKey());
-        pageCards.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
-          Semantics(/* excludeSemantics: !(_pageController?.page == _conversations?.indexOf(conversation)),*/ child:
-            Container(
-                constraints: BoxConstraints(maxWidth: _cardWidth),
-                child: ConversationCard(
-                  key: conversationKey,
-                  conversation: conversation,
-                  isHorizontal: true,
-                )
-            ),
-          )
-        ));
+        pageCards.add(pageCard);
       }
       if (_cardsPerPage > 1) {
         pages.add(Row(

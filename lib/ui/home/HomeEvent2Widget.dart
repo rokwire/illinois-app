@@ -330,24 +330,26 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     Widget contentWidget;
     int eventsCount = _events?.length ?? 0;
     int pageCount = eventsCount ~/ _cardsPerPage;
+    bool extraPage = (eventsCount % _cardsPerPage) > 0;
 
     List<Widget> pages = <Widget>[];
-    for (int index = 0; index < pageCount + 1; index++) {
+    for (int index = 0; index < pageCount + (extraPage ? 1 : 0); index++) {
       List<Widget> pageCards = [];
       for (int eventIndex = 0; eventIndex < _cardsPerPage; eventIndex++) {
-        if (index * _cardsPerPage + eventIndex >= _events!.length) {
-          break;
+        Widget pageCard = SizedBox(width: _cardWidth);
+        if (index * _cardsPerPage + eventIndex < _events!.length) {
+          Event2 event = _events![index * _cardsPerPage + eventIndex];
+          String contentKey = "${event.id}-$index";
+          pageCard = Padding(
+              key: _contentKeys[contentKey] ??= GlobalKey(),
+              padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+              child: Container(
+                  constraints: BoxConstraints(maxWidth: _cardWidth),
+                  child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)
+              )
+          );
         }
-        Event2 event = _events![index * _cardsPerPage + eventIndex];
-        String contentKey = "${event.id}-$index";
-        pageCards.add(Padding(
-          key: _contentKeys[contentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-          child: Container(
-            constraints: BoxConstraints(maxWidth: _cardWidth),
-            child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)
-          )
-        ));
+        pageCards.add(pageCard);
       }
       if (_cardsPerPage > 1) {
         pages.add(Row(

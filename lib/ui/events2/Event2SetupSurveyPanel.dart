@@ -304,7 +304,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         child: Text(
           Localization().getStringEx('panel.event2.setup.survey.preview.continue.message',
             'Thank you for testing your event follow-up survey. At this point, the survey would be submitted, and the results would be available to view under the event admin settings.'),
-          style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+          style: Styles().textStyles.getTextStyle('widget.detail.dark.regular.fat'),
         )
       ),
       buttonTitle: Localization().getStringEx("dialog.ok.title", "OK"),

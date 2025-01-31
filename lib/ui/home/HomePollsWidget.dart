@@ -101,6 +101,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
+  final double _pageBottomPadding = 16;
 
   @override
   void initState() {
@@ -210,35 +211,58 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
   Widget _buildPollsContent() {
     Widget contentWidget;
+    int visibleCount = _recentPolls?.length ?? 0;
+    int pageCount = visibleCount ~/ _cardsPerPage;
+    bool extraPage = (visibleCount % _cardsPerPage) > 0;
+
     List<Widget> pages = <Widget>[];
-
-    if (1 < (_recentPolls?.length ?? 0)) {
-
-      for (Poll poll in _recentPolls!) {
-        pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          PollCard(poll: poll, group: _getGroup(poll.groupId)),
-        ));
+    for (int index = 0; index < pageCount + (extraPage ? 1 : 0); index++) {
+      List<Widget> pageCards = [];
+      for (int groupIndex = 0; groupIndex < _cardsPerPage; groupIndex++) {
+        Widget pageCard = SizedBox(width: _cardWidth);
+        if (index * _cardsPerPage + groupIndex < _recentPolls!.length) {
+          Poll poll = _recentPolls![index * _cardsPerPage + groupIndex];
+          GlobalKey pollKey = (_contentKeys[poll.pollId ?? ''] ??= GlobalKey());
+          pageCard = Padding(key: pollKey, padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
+            Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+              Container(
+                constraints: BoxConstraints(maxWidth: _cardWidth),
+                child: PollCard(poll: poll, group: _getGroup(poll.groupId)),
+              ),
+          ));
+        }
+        pageCards.add(pageCard);
       }
+      if (_cardsPerPage > 1) {
+        pages.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: pageCards,
+        ));
+      } else {
+        pages.addAll(pageCards);
+      }
+    }
 
-      if (_loadingPollsPage) {
-        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(5)), child:
-            HomeProgressWidget(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
-              progessSize: Size(24, 24),
-              progressColor: Styles().colors.fillColorPrimary,
-            ),
+    if (_loadingPollsPage) {
+      pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(5)), child:
+          HomeProgressWidget(
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
+            progessSize: Size(24, 24),
+            progressColor: Styles().colors.fillColorPrimary,
           ),
-        ));
-      }
+        ),
+      ));
+    }
 
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-        _pageController = PageController(viewportFraction: pageViewport);
-      }
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
+    }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+    contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
       ExpandablePageView(
         key: _pageViewKey,
         controller: _pageController,
@@ -247,13 +271,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
         allowImplicitScrolling: true,
         children: pages,
       ),
-      );
-    }
-    else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        PollCard(poll: _recentPolls?.first, group: _getGroup(_recentPolls?.first.groupId))
-      );
-    }
+    );
 
     return Column(children: <Widget>[
       contentWidget,
@@ -297,6 +315,25 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     }
 
     return minContentHeight ?? 0;
+  }
+
+  double get _cardWidth {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return (screenWidth - 2 * _cardsPerPage * _pageSpacing) / _cardsPerPage;
+  }
+
+  int get _cardsPerPage {
+    ScreenType screenType = ScreenUtils.getType(context);
+    switch (screenType) {
+      case ScreenType.desktop:
+        return min(5, (_recentPolls?.length ?? 1));
+      case ScreenType.tablet:
+        return min(3, (_recentPolls?.length ?? 1));
+      case ScreenType.phone:
+        return 1;
+      default:
+        return 1;
+    }
   }
 
   void _onTapSeeAll() {
