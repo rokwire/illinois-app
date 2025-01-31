@@ -44,8 +44,8 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
     String displayText = "";
     displayText += _fieldValue(_textFullName, delimiter: '\n\n');
     displayText += _fieldValue(_textOrgColDept, delimiter: '\n\n');
-    displayText += _fieldValue(phone, label: Localization().getStringEx('generic.app.field.phone', 'Phone'));
-    displayText += _fieldValue(email, label: Localization().getStringEx('generic.app.field.email', 'Email'));
+    // displayText += _fieldValue(phone, label: Localization().getStringEx('generic.app.field.phone', 'Phone'));
+    // displayText += _fieldValue(email, label: Localization().getStringEx('generic.app.field.email', 'Email'));
     displayText += _fieldValue(email2, label: Localization().getStringEx('generic.app.field.email2', 'Email2'));
     displayText += _fieldValue(website, label: Localization().getStringEx('generic.app.field.website', 'Website'));
 
@@ -85,7 +85,7 @@ extension Auth2AccountEx on Auth2Account {
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
       lastName: Auth2FieldVisibility.public,
-      email: Auth2FieldVisibility.public,
+      // email: Auth2FieldVisibility.public,
     );
 
     return Auth2UserProfile.fromFieldsVisibility(profile, profileVisibility, permitted: permitted);

@@ -311,7 +311,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
   Widget _buildMessagesHeaderSection() {
     return Container(
-        decoration: BoxDecoration(color: Styles().colors.white),
+        decoration: BoxDecoration(color: Styles().colors.background),
         padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10),
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -328,7 +328,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
             onTap: _onTapFilter,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
                     borderRadius: BorderRadius.circular(18)),
                 child: Padding(
@@ -408,12 +408,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildToggleWidget({required String label, bool? value, required void Function()? onTapValue}) {
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             borderRadius: BorderRadius.all(Radius.circular(8)),
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 4.0, offset: Offset(2, 2))]),
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.title.small'))),
+          Padding(padding: EdgeInsets.only(left: 10), child: Text(label, style: Styles().textStyles.getTextStyle('widget.title.dark.small'))),
           InkWell(
               onTap: onTapValue,
               child: Padding(
@@ -495,12 +495,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildDateEntryWidget(
       {String? title, String? description, required bool selected, void Function()? onTap, BorderRadius? borderRadius}) {
     TextStyle? titleTextStyle =
-    selected ? Styles().textStyles.getTextStyle('widget.title.small.fat') : Styles().textStyles.getTextStyle('widget.title.small');
+    selected ? Styles().textStyles.getTextStyle('widget.title.dark.small.fat') : Styles().textStyles.getTextStyle('widget.title.dark.small');
 
     List<Widget> contentList = <Widget>[Expanded(child: Text(StringUtils.ensureNotEmpty(title), style: titleTextStyle))];
     if (StringUtils.isNotEmpty(description)) {
       contentList.add(Text(StringUtils.ensureNotEmpty(description),
-          maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.title.regular')));
+          maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.title.dark.regular')));
     }
     contentList.add(Padding(
         padding: EdgeInsets.only(left: 10),
@@ -514,7 +514,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
         child: InkWell(
             onTap: onTap,
             child: Container(
-                decoration: BoxDecoration(color: Styles().colors.white, borderRadius: borderRadius),
+                decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: borderRadius),
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                     child: Row(mainAxisSize: MainAxisSize.max, children: contentList)))));
@@ -972,7 +972,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
     String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             borderRadius: BorderRadius.all(Radius.circular(4)),
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
         clipBehavior: Clip.none,

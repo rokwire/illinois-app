@@ -144,7 +144,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
           CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
             SliverToutHeaderBar(
               flexImageUrl: _dining?.exploreImageUrl,
-              flexRightToLeftTriangleColor: Styles().colors.white,
+              flexRightToLeftTriangleColor: Styles().colors.surface,
             ),
             SliverList(delegate: SliverChildListDelegate([
               Container(color: Colors.white, child:

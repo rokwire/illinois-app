@@ -1055,6 +1055,8 @@ class GroupPostCard extends StatefulWidget {
   final bool? isClickable;
   final bool? pinned;
 
+  static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
+
   GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.postReactions, this.pinned, this.isClickable = true, this.showImage = true, this.isReply = false}) :
     super(key: key);
 
@@ -1186,9 +1188,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                           style: Styles().textStyles.getTextStyle('widget.description.small')))
                                 ])),
                           ],
-                      )
+                        )
+                      ),
                     ),
-Padding(
+                    Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
                     ),
@@ -1449,8 +1452,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
               )),
 
-              if (!kIsWeb)
-                WebEmbed(body: bodyText),
+              WebEmbed(body: bodyText),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [

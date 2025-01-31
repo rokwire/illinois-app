@@ -124,7 +124,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
         Padding(padding: EdgeInsets.only(top: 16), child:
           _editing ? _editContent : _previewContent,
-        )
+        ),
 
         if (_showAccountCommands && !_editing)
           _accountCommands,

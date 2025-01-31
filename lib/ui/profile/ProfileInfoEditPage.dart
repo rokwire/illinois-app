@@ -57,6 +57,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Map<String, Auth2FieldVisibility>? _identifierVisibility;
   final Map<Auth2PublicAccountIdentifier, TextEditingController?> _identifierTextControllers = {};
+  final Map<Auth2PublicAccountIdentifier, bool> _identifierTextNotEmpty = {};
   final Map<Auth2PublicAccountIdentifier, FocusNode?> _identifierFocusNodes = {};
   late List<Auth2PublicAccountIdentifier> _identifiers;
 
@@ -92,6 +93,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
     for (Auth2PublicAccountIdentifier identifier in _identifiers) {
       _identifierTextControllers[identifier] = TextEditingController(text: identifier.identifier ?? '');
+      _identifierTextNotEmpty[identifier] = (identifier.identifier?.isNotEmpty == true);
       _identifierFocusNodes[identifier] = FocusNode();
     }
 
@@ -286,7 +288,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
 
     Widget get _togglePhotoVisibilityButton =>
-      _photoIconButton(_visibilityIcon(_fieldVisibilities[_ProfileField.photoUrl]),
+      _photoIconButton(_visibilityIcon(_fieldVisibilities[_ProfileField.photoUrl], _fieldTextNotEmpty[_ProfileField.photoUrl] == true),
         onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(profileField: _ProfileField.photoUrl) : null,
       );
 
@@ -642,11 +644,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       ])
     );
 
-  Widget _visibilityButton({ _ProfileField? profileField, Auth2PublicAccountIdentifier? identifier, bool public = false}) {
+  Widget _visibilityButton({ _ProfileField? profileField, Auth2PublicAccountIdentifier? identifier, bool locked = false}) {
     Auth2FieldVisibility? visibility = _getFieldVisibility(profileField: profileField, identifier: identifier);
+    bool textNotEmpty = profileField != null ? (_fieldTextNotEmpty[profileField] == true) : (identifier != null ? _identifierTextNotEmpty[identifier] == true : false);
     return _iconButton(
-      icon: _visibilityIcon(visibility, public: public),
-      onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(profileField: profileField, identifier: identifier) : null,
+      icon: _visibilityIcon(visibility, textNotEmpty, locked: locked),
+      onTap: (textNotEmpty && !locked) ? () => _onToggleFieldVisibility(profileField: profileField, identifier: identifier) : null,
     );
   }
 
@@ -661,10 +664,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       )
     );
 
-  Widget? _visibilityIcon(Auth2FieldVisibility? visibility, { bool locked = false} ) {
+  Widget? _visibilityIcon(Auth2FieldVisibility? visibility, bool textNotEmpty, { bool locked = false} ) {
     if (locked) {
       return _lockIcon;
-    } else if (_permittedVisibility.contains(visibility) && (_fieldTextNotEmpty[field] == true)) {
+    } else if (_permittedVisibility.contains(visibility) && textNotEmpty) {
       return _publicIcon;
     } else {
       return _privateIcon;
@@ -708,12 +711,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     _onTextChanged(profileField: _ProfileField.pronunciationUrl, value ?? '');
   }
 
-  void _onTextChanged(_ProfileField? profileField, Auth2PublicAccountIdentifier? identifier, String value) {
-    bool wasNotEmpty = (_fieldTextNotEmpty[profileField] == true);
+  void _onTextChanged(String value, {_ProfileField? profileField, Auth2PublicAccountIdentifier? identifier}) {
+    bool wasNotEmpty = profileField != null ? (_fieldTextNotEmpty[profileField] == true) : (identifier != null ? _identifierTextNotEmpty[identifier] == true : false);
     bool isNotEmpty = value.isNotEmpty;
     if (wasNotEmpty != isNotEmpty) {
       setState(() {
-        _fieldTextNotEmpty[profileField] = isNotEmpty;
+        if (profileField != null) {
+          _fieldTextNotEmpty[profileField] = isNotEmpty;
+        } else if (identifier != null) {
+          _identifierTextNotEmpty[identifier] = isNotEmpty;
+        }
       });
     }
   }

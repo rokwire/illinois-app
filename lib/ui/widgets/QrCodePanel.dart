@@ -161,7 +161,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => QrCodePanel.fromProfile(
         profile: profile,
@@ -226,7 +226,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
         Padding(padding: EdgeInsets.only(top: 24), child: (_qrCodeBytes != null) ?
           Semantics(label: Localization().getStringEx('panel.qr_code.code.hint', "QR code image"), child:
             Container(
-              decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+              decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(5))),
               padding: EdgeInsets.all(5),
               child: Image.memory(_qrCodeBytes!,
                 fit: BoxFit.fitWidth,

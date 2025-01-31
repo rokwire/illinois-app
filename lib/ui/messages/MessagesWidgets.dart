@@ -4,6 +4,7 @@ import 'package:neom/ext/Social.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/messages/MessagesConversationPanel.dart';
+import 'package:neom/ui/messages/MessagesHomePanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -439,7 +440,7 @@ class ConversationCard extends StatelessWidget {
                               style: Styles().textStyles.getTextStyle('widget.card.title.small')
                           ),
                         ),
-                        if (conversation.mute == true)
+                        if (MessagesHomePanel.enableMute && conversation.mute == true)
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             child: Icon(Icons.notifications_off, size: 20),
@@ -523,7 +524,7 @@ class ConversationCard extends StatelessWidget {
             maxLines: 2,
           ),
         ),
-        if (conversation.mute == true)
+        if (MessagesHomePanel.enableMute && conversation.mute == true)
           const Padding(
             padding: EdgeInsets.only(left: 4),
             child: Icon(Icons.notifications_off, size: 20),

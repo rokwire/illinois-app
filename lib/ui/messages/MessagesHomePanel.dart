@@ -16,14 +16,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Social.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
-import 'package:neom/ui/messages/MessagesConversationPanel.dart';
 import 'package:neom/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
+import 'package:neom/ui/messages/MessagesWidgets.dart';
 import 'package:neom/ui/widgets/Filters.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
