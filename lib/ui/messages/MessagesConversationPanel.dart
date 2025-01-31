@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -423,7 +422,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       else {
         Uri? uri = Uri.tryParse(url);
         if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+          launchUrl(uri);
         }
       }
     }
