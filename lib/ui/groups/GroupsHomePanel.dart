@@ -404,6 +404,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Visibility(
+          visible: _hasOptions,
+          child: IconButton(
+              padding:
+              EdgeInsets.only(left: defaultIconPadding, top: defaultIconPadding, bottom: defaultIconPadding),
+              constraints: BoxConstraints(),
+              style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              icon: Styles().images.getImage('more', excludeFromSemantics: true) ?? Container(),
+              onPressed: _onTapOptions),
+        ),
+        Visibility(
           visible: _canCreateGroup,
           child: IconButton(
               padding:
@@ -668,6 +678,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
 
+  void _onTapOptions(){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 24,
+                ),
+                Visibility(
+                    visible: _canSyncAuthmanGroups,
+                    child: RibbonButton(
+                        leftIconKey: "info",
+                        label: Localization().getStringEx("", "Sync Authman Groups"),//TBD localize
+                        onTap: () {
+                          _syncAuthmanGroups();
+                          Navigator.pop(context);
+                        })),
+              ]));
+        });
+  }
+
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
     _reloadGroupsContent();
@@ -689,10 +726,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Auth2().authenticateWithOidc();
     }
   }
+
+  void _syncAuthmanGroups() {
+    Analytics().logSelect(target: "Sync Authman Group");
+    //TBD implement when BB API is available
+    AppToast.showMessage("Implementation TBD");
+  }
   
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
   }
+
+  bool get _hasOptions => _canSyncAuthmanGroups;
+
+  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin;
 
   ///////////////////////////////////
   // NotificationsListener
