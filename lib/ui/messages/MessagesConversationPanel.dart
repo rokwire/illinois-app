@@ -71,6 +71,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final int _messagesPageSize = 20;
   Message? _editingMessage;
   Message? _deletingMessage;
+  Message? _draftMessage;
 
   final Set<String> _globalIds = {};
 
@@ -102,6 +103,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   void dispose() {
     NotificationService().unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
+    _draftMessageHandler();
     _scrollController.dispose();
     _inputController.dispose();
     _inputFieldFocus.dispose();
@@ -601,6 +603,26 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
+  Future<void> _draftMessageHandler() async{
+    if(_draftMessage != null) {
+      bool success = await Social().updateConversationMessage(
+        conversationId: _conversationId!,
+        globalMessageId: _draftMessage!.globalId!,
+        newText: _inputController.text,
+      );
+    } else {
+      if(_inputController.text.isNotEmpty) {
+        Social().createConversationMessage(
+          conversationId: _conversationId!,
+          message: _inputController.text,
+          draft: true
+        );
+      }
+
+    }
+  }
+
+
   Future<void> _initConversationAndMessages() async {
     if (_conversationId == null) {
       return;
@@ -633,6 +655,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           _conversation = conversation;
         }
         if (messages != null) {
+          if(messages[0].draft == true) {
+            _draftMessage = messages[0];
+            _inputController.text = _draftMessage?.message ?? "";
+            messages.removeAt(0);
+          }
           Message.sortListByDateSent(messages);
           _globalIds.clear();
           _messages = (_conversation?.isGroupConversation == true) ?
@@ -723,9 +750,25 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Future<void> _submitMessage(String messageText) async {
     messageText = messageText.trim();
     if (StringUtils.isNotEmpty(messageText)) {
+      if(_draftMessage != null) {
+        return _updateDraftMessage(messageText);
+      }
       return (_editingMessage != null) ? _updateEditingMessage(messageText) : _createNewMessage(messageText);
     }
   }
+
+  Future<void> _updateDraftMessage(String messageText) async {
+    if(_draftMessage!= null) {
+      String globalId = _draftMessage?.globalId ?? "";
+      bool success = await Social().deleteConversationMessage(
+        conversationId: _conversationId!,
+        globalMessageId: globalId,
+      );
+      _draftMessage = null;
+      _createNewMessage(messageText);
+    }
+  }
+
 
 
   Future<void> _createNewMessage(String messageText) async {

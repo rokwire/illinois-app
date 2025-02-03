@@ -1127,7 +1127,10 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
 
   Widget get _buildDisplayDateWidget {
     String displayDateTime = StringUtils.ensureNotEmpty(widget.conversation?.displayDateTime);
-    bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
+    if(displayDateTime.contains("9000")) {
+      displayDateTime = "Draft";
+    }
+    bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",") || displayDateTime.toLowerCase().contains("draft");
     return Semantics(child: Text(noSuffix ? displayDateTime : "$displayDateTime ago",
         semanticsLabel: "Updated ${widget.conversation?.displayDateTime ?? ""} ago",
         textAlign: TextAlign.right,
