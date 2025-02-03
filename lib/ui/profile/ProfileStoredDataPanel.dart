@@ -140,58 +140,14 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(children: [
-    _headerBar,
-    _contentSplitter,
-    Expanded(child: _scaffoldContent),
-  ],);
-
-  /*Scaffold(
-    appBar: HeaderBar(
-      title: Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Data"),
-      actions: [HeaderBarActionTextButton(
-        title: Localization().getStringEx("panel.profile.stored_data.button.copy_all.title", "Copy All"),
-        onTap: _onCopyAll,
-      )],
-    ),
-    body: _scaffoldContent,
-    backgroundColor: Styles().colors.background,
-  );*/
-
-  Widget get _headerBar => Row(children: [
-    Expanded(child:
-      Padding(padding: EdgeInsets.only(left: 16), child:
-        Text(Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Information"),
-          style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), // widget.label.regular.fat
-        ),
-      )
-    ),
-    _copyAllButton,
-    _closeButton,
-  ],);
-
-  Widget get _copyAllButton => LinkButton(
-    title: Localization().getStringEx("panel.profile.stored_data.button.copy_all.title", "Copy All"),
-    textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),
-    padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 0),
-    onTap: _onCopyAll,
-  );
-
-  Widget get _closeButton =>
-    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-      InkWell(onTap : _onTapClose, child:
-        Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-          Styles().images.getImage('close-circle', excludeFromSemantics: true),
-        ),
+  Widget build(BuildContext context) =>
+    Column(children: [
+      _headerBar,
+      _contentSplitter,
+      Expanded(child:
+        _scaffoldContent
       ),
-    );
-
-  Widget get _contentSplitter => Container(color: Styles().colors.surfaceAccent, height: 1);
-
-  void _onTapClose() {
-    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
-    Navigator.of(context).pop();
-  }
+    ],);
 
   Widget get _scaffoldContent => SafeArea(child:
     RefreshIndicator(onRefresh: _onRefresh, child:
@@ -568,6 +524,38 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Future<String?> _provideRecentItemsJson() async => RecentItems.loadRecentItemsSource();
 
+  // Header Bar
+
+  Widget get _headerBar => Row(children: [
+    Expanded(child:
+      Padding(padding: EdgeInsets.only(left: 16), child:
+        Text(Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Information"),
+          style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), // widget.label.regular.fat
+        ),
+      )
+    ),
+    _copyAllButton,
+    _closeButton,
+  ],);
+
+  Widget get _copyAllButton => LinkButton(
+    title: Localization().getStringEx("panel.profile.stored_data.button.copy_all.title", "Copy All"),
+    textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),
+    padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 0),
+    onTap: _onCopyAll,
+  );
+
+  Widget get _closeButton =>
+    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : _onTapClose, child:
+        Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  Widget get _contentSplitter => Container(color: Styles().colors.surfaceAccent, height: 1);
+
   // Implementation
 
   String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?
@@ -596,6 +584,12 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       AppToast.showMessage(Localization().getStringEx('panel.profile.stored_data.copied_all.succeeded.message', 'Copied everything to your clipboard!'));
     });
   }
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
 }
 
 
