@@ -101,6 +101,7 @@ dependencies:
   weekday_selector:
     git:
       url: https://github.com/smaho-engineering/weekday_selector.git
+  easy_web_view: ^2.1.0
 
 dev_dependencies:
   flutter_test:

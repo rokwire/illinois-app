@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:easy_web_view/easy_web_view.dart';
 
 enum WebEmbedType {
   youtube,
@@ -81,7 +82,9 @@ class _WebEmbedState extends State<WebEmbed> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: AspectRatio(
         aspectRatio: _aspectRatio,
-        child: WebViewWidget(controller: _controller),
+        child: EasyWebView(
+            src: _embedUrl ?? "",
+        ),
       ),
     );
   }
