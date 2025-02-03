@@ -293,6 +293,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child:
                   CustomLinkText(
+                    key: UniqueKey(),
                     message.message ?? '',
                     textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
                     linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
@@ -410,10 +411,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _onTapLink(String url) {
-    // If the URL does not start with a known scheme, prepend https://
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      url = 'https://$url';
-    }
+    url = UrlUtils.fixUrl(url, scheme: 'https') ?? url;
     Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
