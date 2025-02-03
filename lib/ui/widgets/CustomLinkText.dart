@@ -143,10 +143,9 @@ class _CustomLinkTextState extends State<CustomLinkText> {
       return;
     }
 
-    Uri? uri = Uri.parse(url);
-    UrlUtils.fixUri(uri, scheme: 'https');
+    Uri? uri = UrlUtils.fixUri(Uri.parse(url), scheme: 'https');
 
-    if (await canLaunchUrl(uri)) {
+    if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
       debugPrint('Could not launch $uri');
