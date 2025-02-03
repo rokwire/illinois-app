@@ -38,6 +38,8 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
+import 'GroupAddMembersPanel.dart';
+
 class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
@@ -300,7 +302,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildApproveAllButton(),
-                    _buildSearchButton()
+                    _buildSearchButton(),
+                    _buildAddButton()
                   ],
                 )
               )
@@ -342,6 +345,24 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     );
   }
 
+  Widget _buildAddButton(){
+    return  Visibility( visible: _canAddMembers,
+      child: Semantics(
+        label: Localization().getStringEx('', 'Add members'), //TBD localize
+        hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
+        button: true,
+        excludeSemantics: true,
+        child: Padding(
+          padding: EdgeInsets.only(left: 16, top: 8, bottom: 8),
+          child: GestureDetector(
+            onTap: _onTapAddMembers,
+            child: Styles().images.getImage('plus-circle', excludeFromSemantics: true),
+          ),
+        ),
+      )
+    );
+  }
+
   Widget _buildDateUpdatedFields() {
     if (!_isAdmin) {
       return Container();
@@ -376,6 +397,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _onTapSearch(){
     Analytics().logSelect(target: "Group Members Search", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSearchPanel(group: _group, selectedMemberStatus: _selectedMemberStatus)));
+  }
+
+  void _onTapAddMembers(){
+    Analytics().logSelect(target: "Group Members Add Members", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAddMembersPanel(group: _group, selectedMemberStatus: _selectedMemberStatus))); //TBD
   }
 
   void _onTapApproveAll(){
@@ -534,6 +560,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   bool get _isApproveAllVisible => _isAdmin
         && (_selectedMemberStatus == null /*All*/ || _selectedMemberStatus == GroupMemberStatus.pending);
+
+  bool get _canAddMembers => _isAdmin;
 }
 
 class PendingMemberCard extends StatelessWidget {
