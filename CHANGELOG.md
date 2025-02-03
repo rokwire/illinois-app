@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Hide empty read-only fields from edit profile page [#4720](https://github.com/rokwire/illinois-app/issues/4720).
+### Added
+- Create monthly recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 
 ## [6.1.51] - 2025-01-30
 ### Changed
