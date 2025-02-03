@@ -4324,6 +4324,7 @@
 	"model.event2.event_type.admin": "行政",
 	"model.event2.event_type.favorite": "已加星標",
 
+	"model.event2.event_time.past": "过去",
 	"model.event2.event_time.upcoming": "即将到來",
 	"model.event2.event_time.today": "今日",
 	"model.event2.event_time.tomorrow": "明日",
