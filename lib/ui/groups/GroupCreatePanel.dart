@@ -1076,7 +1076,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
       }
 
-      Groups().createGroup(_group).then((GroupError? error) {
+      Groups().createGroup(_group, adminNetIds: adminNetIds, adminsStatus: adminsStatus).then((GroupError? error) {
         if (mounted) {
           setState(() {
             _creating = false;
