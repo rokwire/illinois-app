@@ -2302,7 +2302,7 @@
     "panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete pronunciation audio. Please try again later.",
     "panel.profile_info.pronunciation.delete.confirmation.msg": "Are you sure you want to remove this pronunciation audio?",
 
-    "panel.profile.stored_data.header.title": "My Stored Data",
+    "panel.profile.stored_data.header.title": "My Stored Information",
     "panel.profile.stored_data.button.copy_all.title": "Copy All",
     "panel.profile.stored_data.copied_all.succeeded.message": "Copied everything to your clipboard!",
     "panel.profile.stored_data.label.this_year": " (this year)",
@@ -2366,6 +2366,8 @@
     "panel.profile.info.command.button.swap.text": "Swap Info",
     "panel.profile.info.command.link.sign_out.text": "Sign Out",
     "panel.profile.info.command.link.delete_account.text": "Delete My {{app_title}} App Account",
+    "panel.profile.info.command.link.view_stored_data.text": "View My Stored Information",
+    "panel.profile.info.command.link.view_stored_data.hint": "See everything we know about you",
     "panel.profile.info.command.link.share.text": "Share My Info",
     "panel.profile.info.command.button.photo.edit.text": "Edit Photo",
     "panel.profile.info.command.button.photo.clear.text": "Clear Photo",

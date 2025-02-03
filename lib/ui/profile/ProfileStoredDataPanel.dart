@@ -18,6 +18,7 @@ import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -33,9 +34,27 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class ProfileStoredDataPanel extends StatefulWidget {
   static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
 
+  ProfileStoredDataPanel._();
+
+  static void present(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: Styles().colors.white,
+      constraints: BoxConstraints(maxHeight: height),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (context) => ProfileStoredDataPanel._(),
+    );
+  }
+
   @override
   State<StatefulWidget> createState() => _ProfileStoredDataPanelState();
 }
+
 
 typedef _StoredDataProvider = Future<String?> Function();
 
@@ -121,7 +140,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => Column(children: [
+    _headerBar,
+    _contentSplitter,
+    Expanded(child: _scaffoldContent),
+  ],);
+
+  /*Scaffold(
     appBar: HeaderBar(
       title: Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Data"),
       actions: [HeaderBarActionTextButton(
@@ -131,7 +156,42 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ),
     body: _scaffoldContent,
     backgroundColor: Styles().colors.background,
+  );*/
+
+  Widget get _headerBar => Row(children: [
+    Expanded(child:
+      Padding(padding: EdgeInsets.only(left: 16), child:
+        Text(Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Information"),
+          style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), // widget.label.regular.fat
+        ),
+      )
+    ),
+    _copyAllButton,
+    _closeButton,
+  ],);
+
+  Widget get _copyAllButton => LinkButton(
+    title: Localization().getStringEx("panel.profile.stored_data.button.copy_all.title", "Copy All"),
+    textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),
+    padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 0),
+    onTap: _onCopyAll,
   );
+
+  Widget get _closeButton =>
+    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : _onTapClose, child:
+        Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  Widget get _contentSplitter => Container(color: Styles().colors.surfaceAccent, height: 1);
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
 
   Widget get _scaffoldContent => SafeArea(child:
     RefreshIndicator(onRefresh: _onRefresh, child:
