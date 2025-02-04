@@ -24,6 +24,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -219,7 +220,7 @@ class Appointments with Service implements NotificationsListener {
     return Appointment.listFromJson(JsonUtils.decodeList(await _loadAppointmentsStringFromCache(timeSource: timeSource)));
   }
 
-  Future<http.Response?> loadAppointmentseResponse({AppointmentsTimeSource? timeSource}) async {
+  Future<http.Response?> _loadAppointmentseResponse({AppointmentsTimeSource? timeSource}) async {
     //TMP: assets shortcut
     //return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
@@ -240,7 +241,7 @@ class Appointments with Service implements NotificationsListener {
   }
 
   Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
-    http.Response? response = await loadAppointmentseResponse(timeSource: timeSource);
+    http.Response? response = await _loadAppointmentseResponse(timeSource: timeSource);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -851,6 +852,11 @@ class Appointments with Service implements NotificationsListener {
     else {
       throw AppointmentsException.notAvailable();
     }
+  }
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().appointmentsUrl != null) ? await Network().get("${Config().appointmentsUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }
 

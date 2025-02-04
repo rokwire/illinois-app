@@ -10,6 +10,7 @@ import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
+import 'package:illinois/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -309,6 +310,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
       Column(children: [
         _signOutButton,
+        _viewStoredDataButton,
         _deleteAccountButton,
     ],),
   );
@@ -327,6 +329,20 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         Auth2().logout();
       }
     });
+  }
+
+  Widget get _viewStoredDataButton =>
+    LinkButton(
+      title: Localization().getStringEx('panel.profile.info.command.link.view_stored_data.text', 'View My Stored Information'),
+      hint: Localization().getStringEx('panel.profile.info.command.link.view_stored_data.hint', 'See everything we know about you'),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
+      padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+      onTap: _onViewStoredData,
+    );
+
+  void _onViewStoredData() {
+    Analytics().logSelect(target: 'View My Stored Information');
+    ProfileStoredDataPanel.present(context);
   }
 
   Widget get _deleteAccountButton => Stack(children: [

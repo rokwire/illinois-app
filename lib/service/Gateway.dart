@@ -1,7 +1,9 @@
 import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -90,6 +92,17 @@ class Gateway with Service implements NotificationsListener {
       return (response?.statusCode == 200) ? Building.listFromJsonMap(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
+  }
+
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    Response? response = (Config().gatewayUrl != null) ? await Network().get("${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}",
+      analyticsUrl: "${Config().gatewayUrl}/person/contactinfo?id=${Analytics.LogAnonymousUin}",
+      auth: Auth2(),
+      headers: externalAuthorizationHeader
+    ) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 
   // DeepLinks

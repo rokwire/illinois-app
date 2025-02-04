@@ -2,6 +2,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -319,4 +320,9 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
 
   bool get _isEnabled => StringUtils.isNotEmpty(Config().aiProxyUrl);
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    Response? response = (Config().aiProxyUrl != null) ? await Network().get("${Config().aiProxyUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+  }
 }

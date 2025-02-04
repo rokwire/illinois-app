@@ -37,6 +37,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:illinois/model/wellness/SuccessTeam.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -171,7 +172,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   // ToDo List
 
-  Future<http.Response?> loadToDoCategoriesResponse() async => isEnabled ?
+  Future<http.Response?> _loadToDoCategoriesResponse() async => isEnabled ?
     Network().get('${Config().wellnessUrl}/user/todo_categories', auth: Auth2()) : null;
 
   Future<List<WellnessToDoCategory>?> loadToDoCategories() async {
@@ -179,7 +180,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
     }
-    http.Response? response = await loadToDoCategoriesResponse();
+    http.Response? response = await _loadToDoCategoriesResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -315,7 +316,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<http.Response?> loadToDoItemsResponse({int? offset, int? limit}) async => isEnabled ?
+  Future<http.Response?> _loadToDoItemsResponse({int? offset, int? limit}) async => isEnabled ?
     Network().get('${Config().wellnessUrl}/user/todo_entries', auth: Auth2()) : null;
 
   Future<List<WellnessToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
@@ -323,7 +324,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
     }
-    http.Response? response = await loadToDoItemsResponse(offset: offset, limit: limit);
+    http.Response? response = await _loadToDoItemsResponse(offset: offset, limit: limit);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -355,6 +356,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       Log.w('Failed to load wellness todo item. Response:\n$responseCode: $responseString');
       return null;
     }
+  }
+
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().wellnessUrl != null) ? await Network().get("${Config().wellnessUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 
   // Success Team
