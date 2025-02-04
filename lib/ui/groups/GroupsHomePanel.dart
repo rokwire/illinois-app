@@ -746,7 +746,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   bool get _hasOptions => _canSyncAuthmanGroups;
 
-  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin; //TBD remove
+  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin; 
 
   ///////////////////////////////////
   // NotificationsListener
