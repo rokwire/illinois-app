@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
 - Bring Admin functionality to UIUC app in progress [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+- Acknowledged the new loadUserDataJson API for stored user information - round I [#4264](https://github.com/rokwire/illinois-app/issues/4264).
 
 ## [6.1.52] - 2025-02-03
 - Hide empty read-only fields from edit profile page [#4720](https://github.com/rokwire/illinois-app/issues/4720).

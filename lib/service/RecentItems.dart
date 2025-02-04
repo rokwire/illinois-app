@@ -124,7 +124,7 @@ class RecentItems with Service implements NotificationsListener {
     return File(cacheFilePath);
   }
 
-  static Future<String?> loadRecentItemsSource() async {
+  static Future<String?> _loadRecentItemsSource() async {
     File cacheFile = await _recentItemsFile;
     if (await cacheFile.exists()) {
       String jsonString = await cacheFile.readAsString();
@@ -137,7 +137,7 @@ class RecentItems with Service implements NotificationsListener {
   }
 
   static Future<Queue<RecentItem>?> _loadRecentItems() async {
-    return RecentItem.queueFromJson(JsonUtils.decodeList(await loadRecentItemsSource()));
+    return RecentItem.queueFromJson(JsonUtils.decodeList(await _loadRecentItemsSource()));
   }
 
   static Future<void> _saveRecentItems(Queue<RecentItem>? recentItems) async {

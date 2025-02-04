@@ -135,7 +135,7 @@ class CustomCourses with Service implements NotificationsListener {
 
 	// UserCourses
 
-  Future<http.Response?> loadUserCoursesResponse({List<String>? ids, List<String>? names, List<String>? keys}) async {
+  Future<http.Response?> _loadUserCoursesResponse({List<String>? ids, List<String>? names, List<String>? keys}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
       Map<String, String> queryParams = {};
       if (CollectionUtils.isNotEmpty(ids)) {
@@ -158,7 +158,7 @@ class CustomCourses with Service implements NotificationsListener {
   }
 
   Future<List<UserCourse>?> loadUserCourses({List<String>? ids, List<String>? names, List<String>? keys}) async {
-    http.Response? response = await loadUserCoursesResponse(ids: ids, names: names, keys: keys);
+    http.Response? response = await _loadUserCoursesResponse(ids: ids, names: names, keys: keys);
     String? responseString = response?.statusCode == 200 ? response?.body : null;
     List<dynamic>? userCourseList = JsonUtils.decodeList(responseString);
 
@@ -312,7 +312,7 @@ class CustomCourses with Service implements NotificationsListener {
   // User history
 
   // use this to load user content history items
-  Future<http.Response?> loadUserContentHistoryResponse({List<String>? ids}) async {
+  Future<http.Response?> _loadUserContentHistoryResponse({List<String>? ids}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
       Map<String, String> queryParams = {};
       if (CollectionUtils.isNotEmpty(ids)) {
@@ -328,7 +328,7 @@ class CustomCourses with Service implements NotificationsListener {
   }
 
   Future<List<UserContent>?> loadUserContentHistory({List<String>? ids}) async {
-    http.Response? response = await loadUserContentHistoryResponse(ids:ids);
+    http.Response? response = await _loadUserContentHistoryResponse(ids:ids);
     return (response?.statusCode == 200) ? UserContent.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
 
