@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create recurring events - done [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 ### Changed
 - Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
+- Bring Admin functionality to UIUC app in progress [#4478](https://github.com/rokwire/illinois-app/issues/4478).
 
 ## [6.1.52] - 2025-02-03
 - Hide empty read-only fields from edit profile page [#4720](https://github.com/rokwire/illinois-app/issues/4720).

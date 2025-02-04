@@ -19,9 +19,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -729,8 +731,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _syncAuthmanGroups() {
     Analytics().logSelect(target: "Sync Authman Group");
-    //TBD implement when BB API is available
-    AppToast.showMessage("Implementation TBD");
+    Groups().syncAuthmanGroupsExt().then(
+          (result) => AppAlert.showDialogResult(context,
+              result.successful ?
+                  Localization().getStringEx("", "Successfully started groups authman sync.") : //TBD localize
+                  Localization().getStringEx("", "Failed to start groups authman sync. Reason: ${result.error}")
+          )
+    );
   }
   
   bool get _canCreateGroup {
@@ -739,7 +746,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   bool get _hasOptions => _canSyncAuthmanGroups;
 
-  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin;
+  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin; 
 
   ///////////////////////////////////
   // NotificationsListener

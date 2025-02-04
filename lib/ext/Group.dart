@@ -245,3 +245,14 @@ extension MemberExt on Member {
   }
 }
 
+extension GroupsExt on Groups {
+  Future<GroupResult> syncAuthmanGroupsExt() async {
+    return syncAuthmanGroups(params: {
+      'group_auto_create_stem_names': [
+        'urb:org:bus:Rokwire_AdHoc',
+        'urb:app:rokwire:service:groups-rosters:gies-rosters'
+      ]
+    });
+  }
+}
+
