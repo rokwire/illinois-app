@@ -397,7 +397,7 @@ extension Event2Ext on Event2 {
     );
   }
 
-  Event2? toRecurringEvent({required DateTime startDateTimeUtc, required DateTime endDateTimeUtc}) => Event2(
+  Event2 toRecurringEvent({required DateTime startDateTimeUtc, required DateTime endDateTimeUtc}) => Event2(
     name: this.name,
     description: this.description,
     instructions: this.instructions,
@@ -543,6 +543,7 @@ String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
 
 String? event2TimeFilterToDisplayString(Event2TimeFilter? value) {
   switch (value) {
+    case Event2TimeFilter.past: return Localization().getStringEx("model.event2.event_time.past", "Past");
     case Event2TimeFilter.upcoming: return Localization().getStringEx("model.event2.event_time.upcoming", "Upcoming");
     case Event2TimeFilter.today: return Localization().getStringEx("model.event2.event_time.today", "Today");
     case Event2TimeFilter.tomorrow: return Localization().getStringEx("model.event2.event_time.tomorrow", "Tomorrow");

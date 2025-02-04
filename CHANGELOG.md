@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Illinois web double initialization [#4715](https://github.com/rokwire/illinois-app/issues/4715).
+### Added
+- Added "Past" event filter [#4714](https://github.com/rokwire/illinois-app/issues/4714)
+- Create recurring events - done [#4599](https://github.com/rokwire/illinois-app/issues/4599).
+### Changed
+- Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
+
+## [6.1.52] - 2025-02-03
+- Hide empty read-only fields from edit profile page [#4720](https://github.com/rokwire/illinois-app/issues/4720).
+- Bring Admin functionality to UIUC app in progress [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+### Added
+- Create monthly recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 
 ## [6.1.51] - 2025-01-30
 ### Changed

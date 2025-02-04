@@ -1,4 +1,3 @@
-import 'package:universal_io/io.dart';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -14,7 +13,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:link_text/link_text.dart';
+import 'package:illinois/ui/widgets/CustomLinkText.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -293,7 +292,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               SizedBox(height: 8),
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child:
-                  LinkText(
+                  CustomLinkText(
+                    key: UniqueKey(),
                     message.message ?? '',
                     textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
                     linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
@@ -411,6 +411,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _onTapLink(String url) {
+    url = UrlUtils.fixUrl(url, scheme: 'https') ?? url;
     Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
@@ -419,7 +420,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       else {
         Uri? uri = Uri.tryParse(url);
         if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+          launchUrl(uri);
         }
       }
     }

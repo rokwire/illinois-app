@@ -527,42 +527,45 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     bool autocorrect = true,
     bool enabled = true,
     bool locked = false,
-  }) => _fieldSection(
-    headingTitle: headingTitle,
-    headingHint: headingHint,
-    fieldControl: _textFieldControl(field,
-        textInputType: textInputType,
-        autocorrect: autocorrect,
-        enabled: enabled,
-        locked: locked,
-    )
-  );
+  }) => ((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) ?
+    _fieldSection(
+      headingTitle: headingTitle,
+      headingHint: headingHint,
+      fieldControl: _textFieldControl(field,
+          textInputType: textInputType,
+          autocorrect: autocorrect,
+          enabled: enabled,
+          locked: locked,
+      )
+    ) : Container();
 
   Widget _textFieldControl(_ProfileField field, {
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
     bool locked = false,
-    }) => Row(children: [
-      Expanded(child:
-        _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
-      ),
-      Padding(padding: EdgeInsets.only(left: 6), child:
-        _visibilityButton(field, locked: locked),
-      ),
-    ],);
+    }) =>
+      Row(children: [
+        Expanded(child:
+          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
+        ),
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          _visibilityButton(field, locked: locked),
+        ),
+      ],);
 
   Widget _fieldSection({
     String? headingTitle, String? headingHint,
     Widget? fieldControl,
-  }) => Padding(padding: EdgeInsets.only(top: 12), child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      if (headingTitle?.isNotEmpty == true)
-        _sectionHeadingWidget(headingTitle ?? '', hint: headingHint),
-      if (fieldControl != null)
-        fieldControl
-    ],)
-  );
+  }) =>
+    Padding(padding: EdgeInsets.only(top: 12), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        if (headingTitle?.isNotEmpty == true)
+          _sectionHeadingWidget(headingTitle ?? '', hint: headingHint),
+        if (fieldControl != null)
+          fieldControl
+      ],)
+    );
 
   Widget _sectionHeadingWidget(String? title, { String? hint }) =>
     Padding(padding: EdgeInsets.only(bottom: 2), child:
