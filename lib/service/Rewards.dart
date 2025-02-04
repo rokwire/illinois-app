@@ -15,13 +15,13 @@
  */
 
 import 'dart:core';
+import 'package:http/http.dart' as http;
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/model/Rewards.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -49,7 +49,7 @@ class Rewards with Service {
 
   // APIs
 
-  Future<http.Response?> loadBalanceResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
+  Future<http.Response?> _loadBalanceResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
     Network().get('${Config().rewardsUrl}/user/balance', auth: Auth2()) : null;
 
   Future<int?> loadBalance() async {
@@ -57,7 +57,7 @@ class Rewards with Service {
       Log.w('Rewards ballance failed to load. Missing rewards url.');
       return null;
     }
-    http.Response? response = await loadBalanceResponse();
+    http.Response? response = await _loadBalanceResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -69,7 +69,7 @@ class Rewards with Service {
     }
   }
 
-  Future<http.Response?> loadHistoryResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
+  Future<http.Response?> _loadHistoryResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
     Network().get('${Config().rewardsUrl}/user/history', auth: Auth2()) : null;
 
   Future<List<RewardHistoryEntry>?> loadHistory() async {
@@ -77,7 +77,7 @@ class Rewards with Service {
       Log.w('Rewards history failed to load. Missing rewards url.');
       return null;
     }
-    http.Response? response = await loadHistoryResponse();
+    http.Response? response = await _loadHistoryResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -87,5 +87,12 @@ class Rewards with Service {
       Log.w('Failed to load user rewards history. Response:\n$responseCode: $responseString');
       return null;
     }
+  }
+
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().coreUrl != null) ? await Network().get("${Config().coreUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }

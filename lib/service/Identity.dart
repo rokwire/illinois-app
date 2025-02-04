@@ -18,6 +18,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -37,7 +38,7 @@ class Identity /* with Service */ {
 
   // Mobile Credential
 
-  Future<Response?> loadMobileCredentialResponse() async =>
+  Future<Response?> _loadMobileCredentialResponse() async =>
     StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
 
   Future<MobileCredential?> loadMobileCredential() async {
@@ -45,7 +46,7 @@ class Identity /* with Service */ {
       Log.e('Identity: Failed to load mobile credential - missing identity url.');
       return null;
     }
-    Response? response = await loadMobileCredentialResponse();
+    Response? response = await _loadMobileCredentialResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -75,7 +76,7 @@ class Identity /* with Service */ {
 
   // Student id
 
-  Future<Response?> loadStudentIdResponse() async =>
+  Future<Response?> _loadStudentIdResponse() async =>
       StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/studentid", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
 
   Future<StudentId?> loadStudentId() async {
@@ -83,7 +84,7 @@ class Identity /* with Service */ {
       Log.e('Identity: loadStudentId - missing identity url.');
       return null;
     }
-    Response? response = await loadStudentIdResponse();
+    Response? response = await _loadStudentIdResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -96,7 +97,7 @@ class Identity /* with Service */ {
 
   // Student classification
 
-  Future<Response?> loadStudentClassificationResponse() async =>
+  Future<Response?> _loadStudentClassificationResponse() async =>
     StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/studentclassification", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
 
   Future<Map<String, dynamic>?> loadStudentClassification() async {
@@ -104,7 +105,7 @@ class Identity /* with Service */ {
       Log.e('Identity: loadStudentId - missing identity url.');
       return null;
     }
-    Response? response = await loadStudentClassificationResponse();
+    Response? response = await _loadStudentClassificationResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -129,5 +130,11 @@ class Identity /* with Service */ {
       Log.e('Identity: Renew mobile id failed. Reason ($responseCode): $responseString');
       return null;
     }
+  }
+
+  // User Data
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    Response? response = (Config().identityUrl != null) ? await Network().get("${Config().identityUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }

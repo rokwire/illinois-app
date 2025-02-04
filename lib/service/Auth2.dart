@@ -271,9 +271,6 @@ class Auth2 extends rokwire.Auth2 {
     await _saveICardStringToCache(iCardString);
   }
 
-  Future<Response?> loadICardResponse() async =>
-    _loadICardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
-
   Future<Response?> _loadICardFromNetEx({String? uin, String? accessToken}) async =>
       (StringUtils.isNotEmpty(Config().iCardUrl) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) ?
       Network().post(Config().iCardUrl, headers: {
