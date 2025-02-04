@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Content.dart';
@@ -48,7 +47,7 @@ class CustomLinkText extends StatefulWidget {
 class _CustomLinkTextState extends State<CustomLinkText> {
 
   /// We hold on to recognizers so we can dispose them properly.
-  final List<TapGestureRecognizer> _gestureRecognizers = [];
+  final Map<String, TapGestureRecognizer> _gestureRecognizers = {};
 
   List<InlineSpan> _textSpans = [];
 
@@ -68,14 +67,14 @@ class _CustomLinkTextState extends State<CustomLinkText> {
 
   @override
   void dispose() {
-    for (final recognizer in _gestureRecognizers) {
-      recognizer.dispose();
-    }
+    _disposeRecognizers();
     super.dispose();
   }
 
   void _initTextSpans() {
     _textSpans.clear();
+    _disposeRecognizers();
+
     // Split text on whitespace
     final words = widget.text.split(RegExp(r' '));
 
@@ -90,8 +89,7 @@ class _CustomLinkTextState extends State<CustomLinkText> {
           }
         }
 
-        final recognizer = TapGestureRecognizer()..onTap = () => _launchUrl(word);
-        _gestureRecognizers.add(recognizer);
+        TapGestureRecognizer recognizer = (_gestureRecognizers[word] ??= (TapGestureRecognizer()..onTap = () => _launchUrl(word)));
 
         _textSpans.add(
           TextSpan(
@@ -134,6 +132,13 @@ class _CustomLinkTextState extends State<CustomLinkText> {
     }
     final tldCandidate = word.substring(lastDotIndex + 1).toLowerCase();
     return Content().topLevelDomains.contains(tldCandidate);
+  }
+
+  void _disposeRecognizers() {
+    for (final recognizer in _gestureRecognizers.values) {
+      recognizer.dispose();
+    }
+    _gestureRecognizers.clear();
   }
 
   void _launchUrl(String url) async {
