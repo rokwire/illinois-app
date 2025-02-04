@@ -2470,21 +2470,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     // Explicitly set the start date to be the first and end date to be the last - #4599
     Event2 event = _createEventFromData(recurringStartDateUtc: eventStartDate, recurringEndDateUtc: eventEndDate);
 
-    //TBD: DD - tmp code for debug purposes
-    // //////// remove start
-    // print('TTTTTTTTTTTT: main: start: ${event.startTimeUtc}, end: ${event.endTimeUtc}');
-    // if (CollectionUtils.isNotEmpty(recurringDates)) {
-    //   for (_RecurringDatesPair pair in recurringDates!) {
-    //     print('TTTTTTTTTTTT: recurring: start: ${pair.startDateTimeUtc}, end: ${pair.endDateTimeUtc}');
-    //   }
-    // }
-    //
-    // setState(() {
-    //   _creatingEvent = false;
-    // });
-    // return;
-    // //////// remove end
-
     String? eventId = event.id;
     if (eventId == null) {
       result = await Events2().createEvent(event);
