@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
+- Create recurring events - done [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 
 ## [6.1.52] - 2025-02-03
 ### Changed
