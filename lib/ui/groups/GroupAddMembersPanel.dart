@@ -4,6 +4,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -117,27 +118,24 @@ class _GroupAddMembersState extends State<GroupAddMembersPanel> {
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() => _uploading = true);
     List<String>? adminNetIds;
-    String msg = "Upload: ";
     if(StringUtils.isNotEmpty(_groupNetIdsController.text)) {
-      adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+      adminNetIds = ListUtils.notEmpty(
+          ListUtils.stripEmptyStrings(
+              _groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
     }
 
-    //TBD remove
-    adminNetIds?.forEach((String netId){
-      msg += "$netId ";
-      if(adminNetIds?.last != netId)
-        msg += "and ";
-    });
-
-    msg += " as ${groupMemberStatusToString(_selectedStatus)}";
-
-    //TBD implement Upload
-    AppToast.showMessage("TBD \n$msg");
-    Future.delayed(const Duration(seconds: 4),
-      () => setStateIfMounted(
-              ()=> _uploading = false)
-    ).then((_){
-      Navigator.of(context).pop();
-    });
+    List<Member>? members = adminNetIds?.map((netId) => Member(id: netId, status: _selectedStatus)).toList();
+    if(CollectionUtils.isNotEmpty(members)){
+        Groups().addMembers(group: widget.group, members: members).
+            then((result){
+                setStateIfMounted(()=> _uploading = false);
+                if(result.successful){
+                  Navigator.of(context).pop();
+                } else {
+                  AppAlert.showDialogResult(context, StringUtils.ensureNotEmpty(result.error, defaultValue: "Error occurred"));
+                }
+              }
+            );
+    }
   }
 }
