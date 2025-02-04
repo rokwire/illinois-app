@@ -2691,9 +2691,37 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
     ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
-    (!_hasSurvey || _hasAttendanceDetails)
-      //TBD: DD - implement for recurrence
+    (!_hasSurvey || _hasAttendanceDetails) &&
+    _recurringConditionsFulfilled
   );
+
+  bool get _recurringConditionsFulfilled {
+    if (widget.isCreate) {
+      if ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat)) {
+        if (!_hasRecurrenceEndDate) {
+          return false;
+        }
+        if (_recurrenceRepeatType == _RecurrenceRepeatType.weekly) {
+          if (CollectionUtils.isEmpty(_recurrenceWeekDays) || (_weeklyRepeatPeriod == null)) {
+            return false;
+          }
+        } else if (_recurrenceRepeatType == _RecurrenceRepeatType.monthly) {
+          if (_recurrenceRepeatMonthlyType == null) {
+            return false;
+          } else if ((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.daily) && (_recurrenceRepeatDay == null)) {
+            return false;
+          } else if (_monthlyRepeatPeriod == null) {
+            return false;
+          } else if (_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.weekly) {
+            if ((_recurrenceOrdinalNumber == null) || (_recurrenceMonthWeekDay == null)) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
 
   void _updateErrorMap() {
     Map<_ErrorCategory, List<String>> errorMap = _buildErrorMap();
