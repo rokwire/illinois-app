@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Add draft message support [#4725](https://github.com/rokwire/illinois-app/issues/4725)
+### Changed
 - Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
 - Create recurring events - done [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 
