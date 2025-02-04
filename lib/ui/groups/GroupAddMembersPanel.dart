@@ -124,7 +124,7 @@ class _GroupAddMembersState extends State<GroupAddMembersPanel> {
               _groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
     }
 
-    List<Member>? members = adminNetIds?.map((netId) => Member(id: netId, status: _selectedStatus)).toList();
+    List<Member>? members = adminNetIds?.map((netId) => Member(netId: netId, status: _selectedStatus)).toList();
     if(CollectionUtils.isNotEmpty(members)){
         Groups().addMembers(group: widget.group, members: members).
             then((result){
