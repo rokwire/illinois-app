@@ -4348,6 +4348,7 @@
     "model.event2.event_type.admin": "Administrador",
     "model.event2.event_type.favorite": "Protagonizado",
 
+    "model.event2.event_time.past": "Pasado",
     "model.event2.event_time.upcoming": "Próximos",
     "model.event2.event_time.today": "Hoy",
     "model.event2.event_time.tomorrow": "Mañana",

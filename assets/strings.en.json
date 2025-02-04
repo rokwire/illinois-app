@@ -4356,6 +4356,7 @@
     "model.event2.event_type.admin": "Admin",
     "model.event2.event_type.favorite": "Starred",
 
+    "model.event2.event_time.past": "Past",
     "model.event2.event_time.upcoming": "Upcoming",
     "model.event2.event_time.today": "Today",
     "model.event2.event_time.tomorrow": "Tomorrow",
