@@ -59,6 +59,7 @@ class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
+  final _groupNetIdsController = TextEditingController();
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
@@ -67,6 +68,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _authManGroupNameController = TextEditingController();
 
   Group? _group;
+
+  GroupMemberStatus _selectedMembersStatus = GroupMemberStatus.admin;
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
 
@@ -82,6 +85,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void dispose() {
+    _groupNetIdsController.dispose();
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _linkController.dispose();
@@ -172,6 +176,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     List<Widget> contentLayout = <Widget>[
       _buildImageSection(),
+      _buildAdminSettingsSection(),
       _buildNameField(),
       _buildDescriptionField(),
     ];
@@ -1063,7 +1068,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.researchConsentStatement = null;
       }
 
-      Groups().createGroup(_group).then((GroupError? error) {
+      //Add members/admins
+      List<String>? adminNetIds;
+      GroupMemberStatus? adminsStatus;
+      if(StringUtils.isNotEmpty(_groupNetIdsController.text)) {
+        adminsStatus = _selectedMembersStatus;
+        adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+      }
+
+      Groups().createGroup(_group, adminNetIds: adminNetIds, adminsStatus: adminsStatus).then((GroupError? error) {
         if (mounted) {
           setState(() {
             _creating = false;
@@ -1083,6 +1096,62 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       });
     }
   }
+
+  //
+  // AdminSection
+  Widget _buildAdminSettingsSection() {
+    return Visibility(
+        visible: true,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(child:
+                      GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false))
+                  ]),
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+                          child: TextField(
+                            controller: _groupNetIdsController,
+                            maxLines: 1,
+                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+                          )),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6),
+                            child: GroupDropDownButton(
+                                initialSelectedValue: _selectedMembersStatus,
+                                constructTitle:
+                                    (dynamic item) => item is GroupMemberStatus ? groupMemberStatusToString(item) : "",
+                                onValueChanged: _onAdminsStatusChanged,
+                                items: _adminsStatusItems))
+                        )
+                    ])
+                  ])
+            ));
+  }
+
+  void _onAdminsStatusChanged(dynamic status) {
+    if (status is GroupMemberStatus)
+      setStateIfMounted(() {
+        _selectedMembersStatus = status;
+      });
+  }
+
+  List<GroupMemberStatus> get _adminsStatusItems => [GroupMemberStatus.admin, GroupMemberStatus.member];
 
   //
   // Common
