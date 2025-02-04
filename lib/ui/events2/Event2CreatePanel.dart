@@ -2470,21 +2470,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     // Explicitly set the start date to be the first and end date to be the last - #4599
     Event2 event = _createEventFromData(recurringStartDateUtc: eventStartDate, recurringEndDateUtc: eventEndDate);
 
-    //TBD: DD - tmp code for debug purposes
-    // //////// remove start
-    // print('TTTTTTTTTTTT: main: start: ${event.startTimeUtc}, end: ${event.endTimeUtc}');
-    // if (CollectionUtils.isNotEmpty(recurringDates)) {
-    //   for (_RecurringDatesPair pair in recurringDates!) {
-    //     print('TTTTTTTTTTTT: recurring: start: ${pair.startDateTimeUtc}, end: ${pair.endDateTimeUtc}');
-    //   }
-    // }
-    //
-    // setState(() {
-    //   _creatingEvent = false;
-    // });
-    // return;
-    // //////// remove end
-
     String? eventId = event.id;
     if (eventId == null) {
       result = await Events2().createEvent(event);
@@ -2691,9 +2676,37 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
     ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
-    (!_hasSurvey || _hasAttendanceDetails)
-      //TBD: DD - implement for recurrence
+    (!_hasSurvey || _hasAttendanceDetails) &&
+    _recurringConditionsFulfilled
   );
+
+  bool get _recurringConditionsFulfilled {
+    if (widget.isCreate) {
+      if ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat)) {
+        if (!_hasRecurrenceEndDate) {
+          return false;
+        }
+        if (_recurrenceRepeatType == _RecurrenceRepeatType.weekly) {
+          if (CollectionUtils.isEmpty(_recurrenceWeekDays) || (_weeklyRepeatPeriod == null)) {
+            return false;
+          }
+        } else if (_recurrenceRepeatType == _RecurrenceRepeatType.monthly) {
+          if (_recurrenceRepeatMonthlyType == null) {
+            return false;
+          } else if ((_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.daily) && (_recurrenceRepeatDay == null)) {
+            return false;
+          } else if (_monthlyRepeatPeriod == null) {
+            return false;
+          } else if (_recurrenceRepeatMonthlyType == _RecurrenceRepeatMonthlyType.weekly) {
+            if ((_recurrenceOrdinalNumber == null) || (_recurrenceMonthWeekDay == null)) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
 
   void _updateErrorMap() {
     Map<_ErrorCategory, List<String>> errorMap = _buildErrorMap();
@@ -2982,31 +2995,39 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   DateTime? _getInitialRecurringDesiredDay({required DateTime nextStartDateUtc, int? nThDayOfMonth}) {
     DateTime? dateTime;
+    // Day
     if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.day) {
       int month = (nThDayOfMonth != null) ? nextStartDateUtc.month : (nextStartDateUtc.month + 1);
       int day = (nThDayOfMonth != null) ? nThDayOfMonth : 0;
       dateTime = DateTime.utc(nextStartDateUtc.year, month, day, nextStartDateUtc.hour, nextStartDateUtc.minute, nextStartDateUtc.second,
           nextStartDateUtc.millisecond, nextStartDateUtc.microsecond);
-    } else if (_isSelectedNamedWeekDay) {
+    }
+    // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+    else if (_isSelectedNamedWeekDay) {
       dateTime = (nThDayOfMonth != null)
           ? _getNthNamedWeekDay(dateTimeUtc: nextStartDateUtc, n: nThDayOfMonth, nextMonth: false, targetWeekDayNumber: _monthWeekDayNumber)
           : _getLastNamedWeekDay(dateTimeUtc: nextStartDateUtc, nextMonth: false, targetWeekDayNumber: _monthWeekDayNumber);
-    } else if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.weekday) {
-      //TBD: DD - implement
-    } else if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.weekend_day) {
-      //TBD: DD - implement
+    }
+    // Weekday, Weekend day
+    else {
+      dateTime = (nThDayOfMonth != null)
+          ? _getNthWeekDay(dateTimeUtc: nextStartDateUtc, n: nThDayOfMonth, nextMonth: false)
+          : _getLastWeekDay(dateTimeUtc: nextStartDateUtc, nextMonth: false);
     }
     return dateTime;
   }
 
   DateTime? _getNextRecurringDesiredDay({required DateTime nextStartDateUtc, int? nThDayOfMonth}) {
     DateTime? dateTime;
+    // Day
     if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.day) {
       int month = ((nThDayOfMonth != null) ? nextStartDateUtc.month : (nextStartDateUtc.month + 1)) + _monthlyRepeatPeriod!;
       int day = (nThDayOfMonth != null) ? nThDayOfMonth : 0;
       dateTime = DateTime.utc(nextStartDateUtc.year, month, day, nextStartDateUtc.hour, nextStartDateUtc.minute, nextStartDateUtc.second,
           nextStartDateUtc.millisecond, nextStartDateUtc.microsecond);
-    } else if (_isSelectedNamedWeekDay) {
+    }
+    // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+    else if (_isSelectedNamedWeekDay) {
       dateTime = (nThDayOfMonth != null)
           ? _getNthNamedWeekDay(
               dateTimeUtc: nextStartDateUtc,
@@ -3016,10 +3037,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               monthsAhead: _monthlyRepeatPeriod)
           : _getLastNamedWeekDay(
               dateTimeUtc: nextStartDateUtc, nextMonth: true, targetWeekDayNumber: _monthWeekDayNumber, monthsAhead: _monthlyRepeatPeriod);
-    } else if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.weekday) {
-      //TBD: DD - implement
-    } else if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.weekend_day) {
-      //TBD: DD - implement
+    }
+    // Weekday, Weekend day
+    else {
+      dateTime = (nThDayOfMonth != null)
+          ? _getNthWeekDay(dateTimeUtc: nextStartDateUtc, n: nThDayOfMonth, nextMonth: true, monthsAhead: _monthlyRepeatPeriod)
+          : _getLastWeekDay(dateTimeUtc: nextStartDateUtc, nextMonth: true, monthsAhead: _monthlyRepeatPeriod);
     }
     return dateTime;
   }
@@ -3063,6 +3086,54 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     int daysUntilTargetDay = (lastDayOfWeek - targetWeekDayNumber + 7) % 7;
     DateTime targetDay = lastDayOfMonth.subtract(Duration(days: daysUntilTargetDay));
     return targetDay;
+  }
+
+  List<DateTime>? _getWeekDaysInMonth({required DateTime dateTimeUtc, bool nextMonth = false, int? monthsAhead}) {
+    if ((_recurrenceMonthWeekDay == null) ||
+        ((_recurrenceMonthWeekDay != _RecurrenceMonthWeekDay.weekday) &&
+            (_recurrenceMonthWeekDay != _RecurrenceMonthWeekDay.weekend_day))) {
+      // Allow only weekday and weekend_day values
+      return null;
+    }
+    List<DateTime> monthDays = <DateTime>[];
+
+    int month = nextMonth ? (dateTimeUtc.month + (monthsAhead ?? 1)) : dateTimeUtc.month;
+
+    DateTime firstDayOfMonth = DateTime.utc(dateTimeUtc.year, month, 1, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
+        dateTimeUtc.millisecond, dateTimeUtc.microsecond);
+    DateTime lastDayOfMonth = DateTime.utc(dateTimeUtc.year, month + 1, 0, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
+        dateTimeUtc.millisecond, dateTimeUtc.microsecond);
+
+    for (DateTime date = firstDayOfMonth; date.isBefore(lastDayOfMonth.add(Duration(days: 1))); date = date.add(Duration(days: 1))) {
+      // Weekday
+      if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.weekday) {
+        if (date.weekday != DateTime.saturday && date.weekday != DateTime.sunday) {
+          monthDays.add(date);
+        }
+      }
+      // Weekend_day
+      else if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.weekend_day) {
+        if ((date.weekday == DateTime.saturday) || (date.weekday == DateTime.sunday)) {
+          monthDays.add(date);
+        }
+      }
+    }
+
+    return monthDays;
+  }
+
+  DateTime? _getNthWeekDay({required DateTime dateTimeUtc, required int n, bool nextMonth = false, int? monthsAhead}) {
+    List<DateTime>? weekdays = _getWeekDaysInMonth(dateTimeUtc: dateTimeUtc, nextMonth: nextMonth, monthsAhead: monthsAhead);
+    if (CollectionUtils.isNotEmpty(weekdays) && (n <= weekdays!.length)) {
+      return weekdays[n - 1];
+    } else {
+      return null;
+    }
+  }
+
+  DateTime? _getLastWeekDay({required DateTime dateTimeUtc, bool nextMonth = false, int? monthsAhead}) {
+    List<DateTime>? weekdays = _getWeekDaysInMonth(dateTimeUtc: dateTimeUtc, nextMonth: nextMonth, monthsAhead: monthsAhead);
+    return CollectionUtils.isNotEmpty(weekdays) ? weekdays!.last : null;
   }
 
   int? get _monthWeekDayNumber {
