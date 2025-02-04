@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add draft message support [#4725](https://github.com/rokwire/illinois-app/issues/4725)
+### Changed
+- Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
+
 ## [6.1.52] - 2025-02-03
 ### Changed
 - Hide empty read-only fields from edit profile page [#4720](https://github.com/rokwire/illinois-app/issues/4720).
