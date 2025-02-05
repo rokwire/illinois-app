@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added section id to my courses [#4482](https://github.com/rokwire/illinois-app/issues/4482). 
 ### Fixed
 - Map button width [#4713](https://github.com/rokwire/illinois-app/issues/4713).
+- Showing event image [#4682](https://github.com/rokwire/illinois-app/issues/4682).
 ### Changed
 - Fixed and cleanup for stored user information - round II [#4264](https://github.com/rokwire/illinois-app/issues/4264).
 
