@@ -333,7 +333,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         if (dataTypeState.widget.title != null) {
           combinedJson += '\n// ${dataTypeState._displayTitle}\n';
         }
-        combinedJson += dataTypeState._displayContent ?? 'NA\n';
+        combinedJson += (dataTypeState._displayContent ?? 'NA') + '\n';
       }
     }
     Clipboard.setData(ClipboardData(text: combinedJson)).then((_) {
@@ -375,8 +375,7 @@ class _ProfileStoredDataWidget extends StatefulWidget {
 
 class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   bool _loading = false;
-  Map<String, dynamic>? _userData;
-  Map<String, String>? _displayUserData;
+  Map<String, String>? _userData;
 
   @override
   void initState() {
@@ -458,7 +457,7 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
             titleKey: widget.titleKey,
             titleText: widget.title,
             hintKey: entryKey,
-            contentText: _displayUserData?[entryKey],
+            contentText: _userData?[entryKey],
           ),
         ));
       }
@@ -474,7 +473,7 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
     Map<String, dynamic>? userData = await widget.dataProvider();
     if (mounted) {
       setState(() {
-        _displayUserData = _toUserData(_userData = userData);
+        _userData = _toUserData(userData);
         _loading = false;
       });
     }
@@ -484,12 +483,12 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
     if (mounted) {
       setState(() {
         _loading = true;
-        _displayUserData = _toUserData(_userData = null);
+        _userData = null;
       });
       Map<String, dynamic>? userData = await widget.dataProvider();
       if (mounted) {
         setState(() {
-          _displayUserData = _toUserData(_userData = userData);
+          _userData = _toUserData(userData);
           _loading = false;
         });
       }
@@ -499,11 +498,14 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   Map<String, String>? _toUserData(Map<String, dynamic>? sourceUserData) =>
     sourceUserData?.map((key, value) => MapEntry(key, JsonUtils.encode(value, prettify: true) ?? ''));
 
+  Map<String, dynamic>? _fromUserData(Map<String, String>? userData) =>
+    userData?.map((key, value) => MapEntry(key, JsonUtils.decode(value)));
+
   String get _displayTitle =>
     widget.title ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
-  String? get _displayContent => JsonUtils.encode(_userData);
-
+  String? get _displayContent =>
+    JsonUtils.encode(_fromUserData(_userData));
 }
 
 class _ProfileStoredDataEntryWidget extends StatefulWidget {
