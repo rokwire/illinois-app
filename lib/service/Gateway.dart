@@ -102,7 +102,7 @@ class Gateway with Service implements NotificationsListener {
       auth: Auth2(),
       headers: externalAuthorizationHeader
     ) : null;
-    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+    return (response?.succeeded == true) ? { 'contact_info' : JsonUtils.decodeMap(response?.body) } : null;
   }
 
   // DeepLinks

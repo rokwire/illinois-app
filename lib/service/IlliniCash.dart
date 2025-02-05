@@ -36,7 +36,6 @@ import 'package:convert/convert.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
@@ -578,10 +577,10 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   /////////////////////////
   // User Data
 
-  Future<Map<String, dynamic>?> loadUserDataJson() async {
-    Response? response = (Config().illiniCashBaseUrl != null) ? await Network().get("${Config().illiniCashBaseUrl}/user-data", auth: Auth2()) : null;
-    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
-  }
+  //Future<Map<String, dynamic>?> loadUserDataJson() async {
+  //  Response? response = (Config().illiniCashBaseUrl != null) ? await Network().get("${Config().illiniCashBaseUrl}/user-data", auth: Auth2()) : null;
+  //  return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+  //}
 
   /////////////////////////
   // Enabled
