@@ -122,7 +122,7 @@ class Transportation /* with Service */ {
   }
 
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    Response? response = (Config().transportationUrl != null) ? await Network().get("${Config().transportationUrl}/user-data", auth: Auth2()) : null;
+    Response? response = ((Config().transportationUrl != null) && (Auth2().accountId != null)) ? await Network().get("${Config().transportationUrl}/user-data/${Auth2().accountId}", auth: Auth2()) : null;
     return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }
