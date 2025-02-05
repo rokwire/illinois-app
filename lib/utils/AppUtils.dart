@@ -485,3 +485,7 @@ class AppTextUtils {
   }
 
 }
+
+class AppScreen {
+  static final double webWidth = 1092;
+}

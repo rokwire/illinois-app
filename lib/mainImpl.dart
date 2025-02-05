@@ -65,6 +65,7 @@ import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
+import 'package:illinois/utils/AppUtils.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
@@ -288,8 +289,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
 
   Widget _buildWebCenterContainer({required Widget child}) {
     return Container(color: Styles().colors.fillColorPrimary, child: Center(child: LayoutBuilder(builder: (context, constraints) {
-      double maxWidth = 1092;
-      return ConstrainedBox(constraints: BoxConstraints(maxWidth: maxWidth), child: child);
+      return ConstrainedBox(constraints: BoxConstraints(maxWidth: AppScreen.webWidth), child: child);
     })));
   }
 
