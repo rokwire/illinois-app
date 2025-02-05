@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
@@ -71,6 +72,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final int _messagesPageSize = 20;
   Message? _editingMessage;
   Message? _deletingMessage;
+  List<PlatformFile> _attachedFiles = [];
 
   final Set<String> _globalIds = {};
 
@@ -512,60 +514,73 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         color: Styles().colors.background,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            //_buildMessageOptionsWidget(),
+          child: Column(
             children: [
-              if (isEditing) ...[
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _editingMessage = null;
-                          _inputController.clear();
-                        });
-                      },
-                      child: Styles().images.getImage('close', size: 32) ?? Container()
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(width: 16),
+                  if (isEditing)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _editingMessage = null;
+                              _inputController.clear();
+                            });
+                          },
+                          child: Styles().images.getImage('close-circle-white', color: Styles().colors.fillColorSecondary) ?? Container()
+                      ),
+                    ),
+                  _buildAttachFileWidget(),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Semantics(
+                        container: true,
+                        child: TextField(
+                            key: _inputFieldKey,
+                            enabled: enabled,
+                            controller: _inputController,
+                            minLines: 1,
+                            maxLines: 5,
+                            textCapitalization: TextCapitalization.sentences,
+                            textInputAction: TextInputAction.send,
+                            focusNode: _inputFieldFocus,
+                            onSubmitted: _submitMessage,
+                            onChanged: (_) => setStateIfMounted(() {}),
+                            cursorColor: Styles().colors.textLight,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                                fillColor: Styles().colors.surface,
+                                focusColor: Styles().colors.surface,
+                                hoverColor: Styles().colors.surface,
+                                hintText: "Message ${_getConversationTitle()}",
+                                hintStyle: Styles().textStyles.getTextStyle('widget.item.light.small')
+                            ),
+                            style: Styles().textStyles.getTextStyle('widget.title.regular')
+                        )
+                    ),
                   ),
-                ),
-                SizedBox(width: 8),
-              ] else ...[
-                SizedBox(width: 32),
-              ],
-              Expanded(
-                child: Semantics(
-                    container: true,
-                    child: TextField(
-                        key: _inputFieldKey,
-                        enabled: enabled,
-                        controller: _inputController,
-                        minLines: 1,
-                        maxLines: 5,
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.send,
-                        focusNode: _inputFieldFocus,
-                        onSubmitted: _submitMessage,
-                        onChanged: (_) => setStateIfMounted(() {}),
-                        cursorColor: Styles().colors.textLight,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
-                            fillColor: Styles().colors.surface,
-                            focusColor: Styles().colors.surface,
-                            hoverColor: Styles().colors.surface,
-                            hintText: "Message ${_getConversationTitle()}",
-                            hintStyle: Styles().textStyles.getTextStyle('widget.item.light.small')
-                        ),
-                        style: Styles().textStyles.getTextStyle('widget.title.regular')
-                    )
-                ),
+                  _buildSendImage(enabled),
+                ],
               ),
-              _buildSendImage(enabled),
+              if (_attachedFiles.isNotEmpty)
+                _buildAttachedFilesListWidget(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildAttachFileWidget() {
+    return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Attach"),
+        child: InkWell(
+            child: Styles().images.getImage('plus-circle'),
+            onTap: _onTapAttachFile
+        )
+    ));
   }
 
   Widget _buildSendImage(bool enabled) {
@@ -600,6 +615,59 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   }
                       : null))));
     }
+  }
+
+  Widget _buildAttachedFilesListWidget() {
+    return Container(
+      height: 80.0,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16.0),
+        separatorBuilder: (context, index) => SizedBox(width: 16.0),
+        itemCount: _attachedFiles.length,
+        itemBuilder: _buildAttachedFileEntry,
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
+
+  Widget _buildAttachedFileEntry(BuildContext context, int index) {
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Container(
+          color: Styles().colors.backgroundAccent,
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            Styles().images.getImage('file') ?? Container(height: 48.0),
+            SizedBox(width: 16.0),
+            Container(
+              width: 120.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      _attachedFiles[index].name,
+                      style: Styles().textStyles.getTextStyle('widget.title.small'),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      _attachedFiles[index].extension?.toUpperCase() ?? '',
+                      style: Styles().textStyles.getTextStyle('widget.title.small'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+        ),
+        Styles().images.getImage('close-circle-white', size: 16.0,) ?? Container(), //TODO: make tappable to remove
+      ],
+    );
   }
 
   Future<void> _initConversationAndMessages() async {
@@ -857,6 +925,19 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _listening = false;
       }
     });
+  }
+
+  Future<void> _onTapAttachFile() async {
+    //TODO: should file attachments be retained for draft messages?
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      dialogTitle: "Select a file to upload", //TODO
+    );
+    if (CollectionUtils.isNotEmpty(result?.files)) {
+      setStateIfMounted(() {
+        _attachedFiles = result!.files;
+      });
+    }
   }
 
   @override
