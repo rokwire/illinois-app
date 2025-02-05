@@ -367,7 +367,7 @@ class _ProfileStoredDataWidget extends StatefulWidget {
     this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
   });
 
-  String get titleKey => this.dataSource.toString();
+  String get titleKey => this.dataSource.name;
 
   @override
   State<StatefulWidget> createState() => _ProfileStoredDataWidgetState();
@@ -591,7 +591,7 @@ class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWi
     widget.titleText ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey ?? '', allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
   String get _displayHint =>
-    widget.hintText ?? Localization().getString('panel.profile.stored_data.source..${widget.titleKey}.${widget.hintKey}.title') ?? StringUtils.capitalize(widget.hintKey ?? '', allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+    widget.hintText ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.${widget.hintKey}.title') ?? StringUtils.capitalize(widget.hintKey ?? '', allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
   Widget get _textContentWidget => TextField(
     maxLines: 5,

@@ -855,7 +855,7 @@ class Appointments with Service implements NotificationsListener {
   }
 
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    http.Response? response = (Config().appointmentsUrl != null) ? await Network().get("${Config().appointmentsUrl}/user-data", auth: Auth2()) : null;
+    http.Response? response = (Config().appointmentsUrl != null) ? await Network().get("${Config().appointmentsUrl}/services/user-data", auth: Auth2()) : null;
     return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }
