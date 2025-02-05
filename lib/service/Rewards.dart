@@ -92,7 +92,7 @@ class Rewards with Service {
   // User Data
 
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    http.Response? response = (Config().coreUrl != null) ? await Network().get("${Config().coreUrl}/user-data", auth: Auth2()) : null;
+    http.Response? response = (Config().rewardsUrl != null) ? await Network().get("${Config().rewardsUrl}/user-data", auth: Auth2()) : null;
     return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }
