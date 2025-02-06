@@ -2345,6 +2345,8 @@
     "panel.profile.stored_data.source.lms.my_unit.title": "Units",
     "panel.profile.stored_data.source.lms.my_contents.title": "Contents",
     "panel.profile.stored_data.source.appointments.title": "Appointments",
+    "panel.profile.stored_data.source.appointments.settings.title": "Settings",
+    "panel.profile.stored_data.source.appointments.my_appointments.title": "My Appointments",
     "panel.profile.stored_data.source.occupations.title": "Occupations",
     "panel.profile.stored_data.source.transportation.title": "Transportation",
     "panel.profile.stored_data.source.transportation.passes.title": "Passes",
@@ -2354,6 +2356,7 @@
     "panel.profile.stored_data.source.wellness.todo_entries.title": "To-Do Items",
     "panel.profile.stored_data.source.wellness.todo_categories.title": "To-Do Categories",
     "panel.profile.stored_data.source.assistant.title": "Assistant",
+    "panel.profile.stored_data.source.assistant.message.title": "Message",
     "panel.profile.stored_data.source.gateway.title": "External Services",
     "panel.profile.stored_data.source.gateway.contact_info.title": "Contact Info",
 
