@@ -19,6 +19,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
 //import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 
@@ -81,12 +82,12 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
           Container(color: Styles().colors.surfaceAccent, height: 1,),
         ),
-        _buildCommand(
+        Visibility(visible: !kIsWeb, child: _buildCommand(
           icon: Styles().images.getImage('down-to-bracket', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.save.text', 'Save to Photos'),
           progress: _savingToPhotos,
           onTap: _onTapSaveToPhotos,
-        ),
+        )),
         _buildCommand(
           icon: Styles().images.getImage('envelope', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share Digital Business Card'),
@@ -143,11 +144,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   void _onTapSaveToPhotos() async {
     Analytics().logSelect(target: 'Save to Files');
-    //TBD: DDWEB - implement
-    if (kIsWeb) {
-      _onTBDWeb();
-      return;
-    }
     setState(() {
       _savingToPhotos = true;
     });
@@ -170,10 +166,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       photoImageData: widget.photoImageData,
       pronunciationAudioData: widget.pronunciationAudioData,
     );
-  }
-
-  void _onTBDWeb() {
-    AppAlert.showDialogResult(context, 'Not supported in for the web app, yet');
   }
 
   /* void _onTapShareDigitalCard1() async {
@@ -211,15 +203,10 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   void _onTapShareViaEmail() async {
     Analytics().logSelect(target: 'Share via Email');
-    //TBD: DDWEB - implement
-    if (kIsWeb) {
-      _onTBDWeb();
-      return;
-    }
     setState(() {
       _preparingEmail = true;
     });
-    List<String?> results = await Future.wait(<Future<String?>>[
+    List<String?> results = kIsWeb ? [] : await Future.wait(<Future<String?>>[
       _saveImage(),
       _saveDigitalCard(),
     ]);
@@ -230,18 +217,38 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         _preparingEmail = false;
       });
 
-      final Email email = Email(
-        body: widget.profile?.toDisplayText() ?? '',
-        attachmentPaths: [
-          if (imageFilePath != null)
-            imageFilePath,
-          if (vCardFilePath != null)
-            vCardFilePath,
-        ],
-        isHTML: false,
-      );
+      String? emailBody = widget.profile?.toDisplayText() ?? '';
 
-      FlutterEmailSender.send(email);
+      if (kIsWeb) {
+        final Map<String, String> parameters = <String, String>{
+          'body': emailBody
+        };
+        // Attachments are not supported in web
+        final Uri emailLaunchUri = Uri(
+          scheme: 'mailto',
+          // Encode symbols so that they appear properly when opened in the email client
+          query: parameters.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&'),
+        );
+        try {
+          launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
+        } catch (e) {
+          print('Failed to launch mail client. Reason: ${e.toString()}');
+          AppAlert.showDialogResult(context, 'Failed to Share Digital Business Card');
+        }
+      } else {
+        final Email email = Email(
+          body: emailBody,
+          attachmentPaths: [
+            if (imageFilePath != null)
+              imageFilePath,
+            if (vCardFilePath != null)
+              vCardFilePath,
+          ],
+          isHTML: false,
+        );
+
+        FlutterEmailSender.send(email);
+      }
     }
   }
 
@@ -250,16 +257,34 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     setState(() {
       _preparingTextMessage = true;
     });
-    String? imagePath = await _saveImage();
+    String? imagePath = kIsWeb ? null : await _saveImage(); // not able to add attachments in web
     if (mounted) {
       setState(() {
         _preparingTextMessage = false;
       });
-      SmsMms.send(
-        recipients: [],
-        message: widget.profile?.toDisplayText() ?? '',
-        filePath: imagePath,
-      );
+      String smsBody = widget.profile?.toDisplayText() ?? '';
+      if (kIsWeb) {
+        final Map<String, String> parameters = <String, String>{
+          'body': smsBody
+        };
+        // Attachments are not supported in web
+        final Uri emailLaunchUri = Uri(
+          scheme: 'sms',
+          query: parameters.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&'),
+        );
+        try {
+          launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
+        } catch (e) {
+          print('Failed to sms client. Reason: ${e.toString()}');
+          AppAlert.showDialogResult(context, 'Failed to Share via Text Message');
+        }
+      } else {
+        SmsMms.send(
+          recipients: [],
+          message: smsBody,
+          filePath: imagePath,
+        );
+      }
     }
   }
 
@@ -284,26 +309,36 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   Future<String?> _saveImage({bool addToGallery = false} ) async {
     try {
-      RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
-      if (boundary != null) {
-        final ui.Image image = await boundary.toImage(pixelRatio: MediaQuery.of(context).devicePixelRatio * 3);
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        if (byteData != null) {
-          Uint8List buffer = byteData.buffer.asUint8List();
-          final String dir = (await getApplicationDocumentsDirectory()).path;
-          final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
-          final String fullPath = '$dir/$saveFileName.png';
-          File capturedFile = File(fullPath);
-          await capturedFile.writeAsBytes(buffer);
-          if (addToGallery) {
-            await Gal.putImage(capturedFile.path);
+      double pixelRatio = MediaQuery.of(context).devicePixelRatio * 3;
+      final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}.png';
+      if (kIsWeb) {
+        //TBD: DD - implement
+        AppAlert.showDialogResult(context, 'Not supported in web.');
+        return null;
+      } else {
+        RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
+        if (boundary != null) {
+          final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+          ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+          if (byteData != null) {
+            Uint8List buffer = byteData.buffer.asUint8List();
+            return await _saveImageNative(fileBytes: buffer, fileName: saveFileName, addToGallery: addToGallery);
           }
-          return capturedFile.path;
         }
       }
-    }
-    catch(e) { debugPrint(e.toString()); }
+    } catch(e) { debugPrint(e.toString()); }
     return null;
+  }
+
+  Future<String?> _saveImageNative({required Uint8List fileBytes, required String fileName, bool addToGallery = false}) async {
+    final String dir = (await getApplicationDocumentsDirectory()).path;
+    final String fullPath = '$dir/$fileName';
+    File capturedFile = File(fullPath);
+    await capturedFile.writeAsBytes(fileBytes);
+    if (addToGallery) {
+      await Gal.putImage(capturedFile.path);
+    }
+    return capturedFile.path;
   }
 
   Future<String?> _saveDigitalCard() async {
