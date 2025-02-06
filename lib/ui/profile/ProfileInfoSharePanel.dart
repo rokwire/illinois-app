@@ -254,7 +254,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       SmsMms.send(
         recipients: [],
         message: widget.profile?.toDisplayText() ?? '',
-        filePath: imagePath,
+        filePath: kIsWeb ? null : imagePath,
       );
     }
   }
