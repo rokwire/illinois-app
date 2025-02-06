@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
 //import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:widgets_to_image/widgets_to_image.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 
@@ -60,7 +59,6 @@ class ProfileInfoSharePanel extends StatefulWidget {
 class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   final GlobalKey _repaintBoundaryKey = GlobalKey();
-  final WidgetsToImageController _repaintBoundaryController = WidgetsToImageController();
   bool _savingToPhotos = false;
   bool _sharingDigitalCard = false;
   bool _preparingEmail = false;
@@ -77,19 +75,19 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
       Column(children: [
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          WidgetsToImage(controller: _repaintBoundaryController, child: RepaintBoundary(key: _repaintBoundaryKey, child:
+          RepaintBoundary(key: _repaintBoundaryKey, child:
             DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
-          )),
+          ),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
           Container(color: Styles().colors.surfaceAccent, height: 1,),
         ),
-        _buildCommand(
+        Visibility(visible: !kIsWeb, child: _buildCommand(
           icon: Styles().images.getImage('down-to-bracket', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.save.text', 'Save to Photos'),
           progress: _savingToPhotos,
           onTap: _onTapSaveToPhotos,
-        ),
+        )),
         _buildCommand(
           icon: Styles().images.getImage('envelope', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share Digital Business Card'),
@@ -314,13 +312,9 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       double pixelRatio = MediaQuery.of(context).devicePixelRatio * 3;
       final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}.png';
       if (kIsWeb) {
-        Uint8List? imageBytes = await _repaintBoundaryController.capture(pixelRatio: pixelRatio);
-        if (imageBytes != null) {
-          return AppWebUtils.downloadFile(fileBytes: imageBytes, fileName: saveFileName);
-        } else {
-          AppAlert.showDialogResult(context, 'Failed to capture image.');
-          return null;
-        }
+        //TBD: DD - implement
+        AppAlert.showDialogResult(context, 'Not supported in web.');
+        return null;
       } else {
         RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
         if (boundary != null) {
