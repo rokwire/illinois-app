@@ -189,7 +189,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(0.0),
+                  padding: EdgeInsets.all(16.0),
                   child: ListView.builder(
                     itemCount: members.length + 1,
                     itemBuilder: (context, index) {
