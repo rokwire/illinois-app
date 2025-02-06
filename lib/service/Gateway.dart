@@ -48,6 +48,20 @@ class Gateway with Service implements NotificationsListener {
   String? get externalAuthorizationHeaderValue => Auth2().uiucToken?.accessToken;
   Map<String, String?> get externalAuthorizationHeader => { externalAuthorizationHeaderKey: externalAuthorizationHeaderValue };
 
+  // Person
+
+  Future<Response?> _loadContactInfoResponse() async => (Config().gatewayUrl?.isNotEmpty == true) ?
+    Network().get("${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}",
+      analyticsUrl: "${Config().gatewayUrl}/person/contactinfo?id=${Analytics.LogAnonymousUin}",
+      auth: Auth2(), headers: externalAuthorizationHeader,
+    ) : null;
+
+  Future<dynamic> loadContactInfo() async {
+    Response? response = await _loadContactInfoResponse();
+    return (response?.statusCode == 200) ? JsonUtils.decode(response?.body) : null;
+  }
+
+
   // Wayfinding
 
   Future<List<Building>?> loadBuildings() async {
@@ -97,13 +111,19 @@ class Gateway with Service implements NotificationsListener {
   // User Data
 
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    Response? response = (Config().gatewayUrl != null) ? await Network().get("${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}",
-      analyticsUrl: "${Config().gatewayUrl}/person/contactinfo?id=${Analytics.LogAnonymousUin}",
-      auth: Auth2(),
-      headers: externalAuthorizationHeader
-    ) : null;
-    return (response?.succeeded == true) ? { 'contact_info' : JsonUtils.decodeMap(response?.body) } : null;
+    List<Response?> responses = await Future.wait<Response?>(<Future<Response?>>[
+      _loadContactInfoResponse(),
+      Auth2().loadICardResponse(),
+    ]);
+
+    return {
+      'contact_info': _responseUserData(ListUtils.entry<Response?>(responses, 0)),
+      'icard': _responseUserData(ListUtils.entry<Response?>(responses, 1)),
+    };
   }
+
+  dynamic _responseUserData(Response? response, { Function(String?) decoder = JsonUtils.decodeMap }) =>
+    (response?.succeeded == true) ? decoder(response?.body) : "${response?.statusCode} ${response?.body}";
 
   // DeepLinks
 
@@ -124,5 +144,4 @@ class Gateway with Service implements NotificationsListener {
       _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
-
 }
