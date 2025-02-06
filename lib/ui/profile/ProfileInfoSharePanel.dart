@@ -235,7 +235,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
         } catch (e) {
           print('Failed to launch mail client. Reason: ${e.toString()}');
-          AppAlert.showDialogResult(context, 'Failed to Share Digital Business Card');//TBD: DD - localize
+          AppAlert.showDialogResult(context, 'Failed to Share Digital Business Card');
         }
       } else {
         final Email email = Email(
@@ -264,11 +264,29 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       setState(() {
         _preparingTextMessage = false;
       });
-      SmsMms.send(
-        recipients: [],
-        message: widget.profile?.toDisplayText() ?? '',
-        filePath: imagePath,
-      );
+      String smsBody = widget.profile?.toDisplayText() ?? '';
+      if (kIsWeb) {
+        final Map<String, String> parameters = <String, String>{
+          'body': smsBody
+        };
+        // Attachments are not supported in web
+        final Uri emailLaunchUri = Uri(
+          scheme: 'sms',
+          query: parameters.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&'),
+        );
+        try {
+          launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
+        } catch (e) {
+          print('Failed to sms client. Reason: ${e.toString()}');
+          AppAlert.showDialogResult(context, 'Failed to Share via Text Message');
+        }
+      } else {
+        SmsMms.send(
+          recipients: [],
+          message: smsBody,
+          filePath: imagePath,
+        );
+      }
     }
   }
 
@@ -300,13 +318,13 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         if (imageBytes != null) {
           return AppWebUtils.downloadFile(fileBytes: imageBytes, fileName: saveFileName);
         } else {
-          AppAlert.showDialogResult(context, 'Failed to capture image.'); //TBD: DD - localize
+          AppAlert.showDialogResult(context, 'Failed to capture image.');
           return null;
         }
       } else {
         RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
         if (boundary != null) {
-          final ui.Image image = await boundary.toImage(pixelRatio: MediaQuery.of(context).devicePixelRatio * 3);
+          final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
           ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
           if (byteData != null) {
             Uint8List buffer = byteData.buffer.asUint8List();
