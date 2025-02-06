@@ -20,6 +20,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
 //import 'package:share/share.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 
@@ -207,15 +208,10 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
 
   void _onTapShareViaEmail() async {
     Analytics().logSelect(target: 'Share via Email');
-    //TBD: DDWEB - implement
-    if (kIsWeb) {
-      _onTBDWeb();
-      return;
-    }
     setState(() {
       _preparingEmail = true;
     });
-    List<String?> results = await Future.wait(<Future<String?>>[
+    List<String?> results = kIsWeb ? [] : await Future.wait(<Future<String?>>[
       _saveImage(),
       _saveDigitalCard(),
     ]);
@@ -226,18 +222,36 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         _preparingEmail = false;
       });
 
-      final Email email = Email(
-        body: widget.profile?.toDisplayText() ?? '',
-        attachmentPaths: [
-          if (imageFilePath != null)
-            imageFilePath,
-          if (vCardFilePath != null)
-            vCardFilePath,
-        ],
-        isHTML: false,
-      );
+      String? emailBody = widget.profile?.toDisplayText() ?? '';
 
-      FlutterEmailSender.send(email);
+      if (kIsWeb) {
+        // Attachments are not supported in web
+        final Uri emailLaunchUri = Uri(
+          scheme: 'mailto',
+          queryParameters: {
+            'body': emailBody
+          },
+        );
+        try {
+          launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
+        } catch (e) {
+          print('Failed to launch mail client. Reason: ${e.toString()}');
+          AppAlert.showDialogResult(context, 'Failed to share Digital Business Card');//TBD: DD - localize
+        }
+      } else {
+        final Email email = Email(
+          body: emailBody,
+          attachmentPaths: [
+            if (imageFilePath != null)
+              imageFilePath,
+            if (vCardFilePath != null)
+              vCardFilePath,
+          ],
+          isHTML: false,
+        );
+
+        FlutterEmailSender.send(email);
+      }
     }
   }
 
