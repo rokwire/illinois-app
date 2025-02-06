@@ -134,7 +134,19 @@ class Identity /* with Service */ {
 
   // User Data
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    Response? response = (Config().identityUrl != null) ? await Network().get("${Config().identityUrl}/user-data", auth: Auth2()) : null;
-    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+    List<Response?> responses = await Future.wait<Response?>(<Future<Response?>>[
+      _loadMobileCredentialResponse(),
+      _loadStudentIdResponse(),
+      _loadStudentClassificationResponse(),
+    ]);
+
+    return {
+      'mobile_credential': _responseUserData(ListUtils.entry<Response?>(responses, 0)),
+      'student_id': _responseUserData(ListUtils.entry<Response?>(responses, 1)),
+      'student_classification': _responseUserData(ListUtils.entry<Response?>(responses, 2)),
+    };
   }
+
+  dynamic _responseUserData(Response? response, { Function(String?) decoder = JsonUtils.decodeMap }) =>
+    (response?.succeeded == true) ? decoder(response?.body) : "${response?.statusCode} ${response?.body}";
 }

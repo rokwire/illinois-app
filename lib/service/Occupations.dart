@@ -73,8 +73,8 @@ class Occupations /* with Service */ {
   // User Data
 
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    Response? response = (Config().occupationsUrl != null) ? await Network().get("${Config().occupationsUrl}/user-data", auth: Auth2()) : null;
-    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+    Response? response = await _getAllOccupationMatchesResponse();
+    return (response?.succeeded == true) ? { 'matches' : JsonUtils.decodeMap(response?.body) } : null;
   }
 
   /////////////////////////

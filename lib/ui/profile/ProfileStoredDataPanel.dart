@@ -113,33 +113,43 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ),
   );
 
-  Widget get _panelContent => Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _coreContent,
-      _identityContent,
-      _rewardsContent,
-      _notificationsContent,
-      _socialContent,
+  Widget get _panelContent {
 
-      _calendarContent,
-      _groupsContent,
-      _pollsContent,
-      _surveysContent,
+    List<Widget> contentList = <Widget>[_splitterLine];
+    for (_StoredDataSource dataSource in _StoredDataSource.values) {
+      contentList.add(_dataSourceContent(dataSource));
+      contentList.add(_splitterLine);
+    }
 
-      _lmsContent,
-      _appointmentsContent,
-      _occupationsContent,
+    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
+    );
+  }
 
-      _transportationContent,
-      _wellnessContent,
-      _assistantContent,
-      _gatewayContent,
+  Widget _dataSourceContent(_StoredDataSource dataSource) {
+    switch (dataSource) {
+      case _StoredDataSource.core: return _coreContent;
+      case _StoredDataSource.identity: return _identityContent;
+      case _StoredDataSource.rewards: return _rewardsContent;
+      case _StoredDataSource.notifications: return _notificationsContent;
+      case _StoredDataSource.social: return _socialContent;
 
-      //..._icardContent,
-      //..._housingContent,
-      //...recentItemsContent,
-    ]),
-  );
+      case _StoredDataSource.calendar: return _calendarContent;
+      case _StoredDataSource.groups: return _groupsContent;
+      case _StoredDataSource.polls: return _pollsContent;
+      case _StoredDataSource.surveys: return _surveysContent;
+
+      case _StoredDataSource.lms: return _lmsContent;
+      case _StoredDataSource.appointments: return _appointmentsContent;
+      case _StoredDataSource.occupations: return _occupationsContent;
+
+      case _StoredDataSource.transportation: return _transportationContent;
+      case _StoredDataSource.wellness: return _wellnessContent;
+      case _StoredDataSource.assistant: return _assistantContent;
+      case _StoredDataSource.gateway: return _gatewayContent;
+    }
+  }
+
 
   Widget get _coreContent =>
     _ProfileStoredDataWidget(
@@ -285,6 +295,14 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       updateController: _updateController,
     );
 
+  // Splitter
+
+  Widget get _splitterLine =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Container(height: 1, color: Styles().colors.surfaceAccent,)
+    );
+
+
   // Header Bar
 
   Widget get _headerBar => Row(children: [
@@ -330,10 +348,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     for (_StoredDataSource dataType in _StoredDataSource.values) {
       _ProfileStoredDataWidgetState? dataTypeState = _storedDataKeys[dataType]?.currentState;
       if (dataTypeState != null) {
-        if (dataTypeState.widget.title != null) {
-          combinedJson += '\n// ${dataTypeState._displayTitle}\n';
-        }
-        combinedJson += (dataTypeState._displayContent ?? 'NA') + '\n';
+        combinedJson += dataTypeState._clipboardText;
       }
     }
     Clipboard.setData(ClipboardData(text: combinedJson)).then((_) {
@@ -354,17 +369,13 @@ class _ProfileStoredDataWidget extends StatefulWidget {
   final _UserDataProvider dataProvider;
   final String? title;
   final StreamController<String>? updateController;
-  final EdgeInsetsGeometry margin;
 
-  _ProfileStoredDataWidget({
-    // ignore: unused_element
-    super.key,
+  // ignore: unused_element
+  _ProfileStoredDataWidget({ super.key,
     required this.dataSource,
     required this.dataProvider,
     this.title,
     this.updateController,
-    // ignore: unused_element
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
   });
 
   String get titleKey => this.dataSource.name;
@@ -375,6 +386,7 @@ class _ProfileStoredDataWidget extends StatefulWidget {
 
 class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   bool _loading = false;
+  bool _expanded = false;
   Map<String, String>? _userData;
 
   @override
@@ -398,61 +410,48 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: widget.margin, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children:
-        _widgetContent
-      ),
-    );
-  }
-
-  List<Widget> get _widgetContent {
     if (_loading) {
       return _loadingContent;
     }
     else if (_userData == null) {
       return _errorContent;
     }
-    else if (_userData?.isEmpty == true) {
-      return _emptyContent;
+    else if (_Utils._isValueNotEmpty(_userData)) {
+      return _dataContent;
     }
     else {
-      return _userDataContent;
+      return _emptyContent;
     }
   }
 
-  List<Widget> get _loadingContent => <Widget>[
-    _ProfileStoredDataEntryWidget(
-      titleKey: widget.titleKey,
-      titleText: widget.title,
-      hintText: '...',
-      progress: true,
-    )
-  ];
+  Widget get _loadingContent => _ProfileStoredDataHeadingWidget(
+    title: _displayTitle, hint: '...', progress: true,
+  );
+  Widget get _errorContent => _ProfileStoredDataHeadingWidget(
+    title: _displayTitle, hint: Localization().getStringEx('widget.profile.stored_data.retrieve.failed.message', 'Failed to retrieve data'),
+  );
 
-  List<Widget> get _errorContent => <Widget>[
-    _ProfileStoredDataEntryWidget(
-      titleKey: widget.titleKey,
-      titleText: widget.title,
-      //hintText: Localization().getStringEx("logic.general.error", "Error"),
-      contentText: Localization().getStringEx('widget.profile.stored_data.retrieve.failed.message', 'Failed to retrieve data.'),
-      error: true,
-    ),
-  ];
+  Widget get _emptyContent => _ProfileStoredDataHeadingWidget(
+    title: _displayTitle, hint: Localization().getStringEx('widget.profile.stored_data.retrieve.empty.message', 'No stored information'),
+  );
 
-  List<Widget> get _emptyContent => <Widget>[
-    _ProfileStoredDataEntryWidget(
-      titleKey: widget.titleKey,
-      titleText: widget.title,
-      contentText: Localization().getStringEx('widget.profile.stored_data.retrieve.empty.message', 'No stored information.'),
-    ),
-  ];
+  Widget get _dataHeadingContent => _ProfileStoredDataHeadingWidget(
+    title: _displayTitle, expanded: _expanded, onExpand: _onExpand, onCopy: _onCopy,
+  );
 
-  List<Widget> get _userDataContent {
+  Widget get _dataContent =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _dataHeadingContent,
+      if (_expanded)
+        ...dataListContent,
+    ],);
+
+  List<Widget> get dataListContent {
     List<Widget> entries = <Widget>[];
     if (_userData != null) {
       for (String entryKey in _userData!.keys) {
 
-        entries.add(Padding(padding: EdgeInsets.only(top: entries.isNotEmpty ? 24 : 0), child:
+        entries.add(Padding(padding: EdgeInsets.only(bottom: 6), child:
           _ProfileStoredDataEntryWidget(
             titleKey: widget.titleKey,
             titleText: widget.title,
@@ -501,11 +500,29 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   Map<String, dynamic>? _fromUserData(Map<String, String>? userData) =>
     userData?.map((key, value) => MapEntry(key, JsonUtils.decode(value)));
 
+  String get _clipboardText => (_Utils._isValueNotEmpty(_userData)) ?
+      "$_displayTitle\n$_displayContent\n\n" : "";
+
   String get _displayTitle =>
     widget.title ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
-  String? get _displayContent =>
-    JsonUtils.encode(_fromUserData(_userData));
+  String get _displayContent =>
+    JsonUtils.encode(_fromUserData(_userData)) ?? 'NA';
+
+  void _onExpand() {
+    Analytics().logSelect(target: _expanded ? 'Colapse' : 'Expand', source: _displayTitle);
+    setState(() {
+      _expanded = !_expanded;
+    });
+  }
+
+  void _onCopy() {
+    Analytics().logSelect(target: 'Copy', source: _displayTitle);
+    Clipboard.setData(ClipboardData(text: _clipboardText)).then((_) {
+      final String _sourceMacro = '{{source}}';
+      AppToast.showMessage(Localization().getStringEx('panel.profile.stored_data.copied_source.succeeded.message', 'Copied $_sourceMacro information to your clipboard!').replaceAll(_sourceMacro, _displayTitle));
+    });
+  }
 }
 
 class _ProfileStoredDataEntryWidget extends StatefulWidget {
@@ -517,17 +534,12 @@ class _ProfileStoredDataEntryWidget extends StatefulWidget {
 
   final String? contentText;
 
-  final bool progress;
-  final bool error;
-
-  _ProfileStoredDataEntryWidget({
-    // ignore: unused_element
-    super.key,
+  // ignore: unused_element
+  _ProfileStoredDataEntryWidget({ super.key,
     this.titleKey, this.titleText,
+    // ignore: unused_element
     this.hintKey, this.hintText,
     this.contentText,
-    this.progress = false,
-    this.error = false,
   });
 
   @override
@@ -536,10 +548,12 @@ class _ProfileStoredDataEntryWidget extends StatefulWidget {
 
 class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWidget> {
   late TextEditingController _contentTextController;
+  late bool _contentTextNotEmpty;
 
   @override
   void initState() {
     _contentTextController = TextEditingController(text: widget.contentText ?? '');
+    _contentTextNotEmpty = _Utils._isValueNotEmpty(widget.contentText);
     super.initState();
   }
 
@@ -552,40 +566,48 @@ class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWi
   @override
   void didUpdateWidget(_ProfileStoredDataEntryWidget oldWidget) {
     _contentTextController.text = widget.contentText ?? '';
+    _contentTextNotEmpty = _Utils._isValueNotEmpty(widget.contentText);
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) =>
-    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      _headingWidget,
-      Stack(children: [
-        _textContentWidget,
-        if (widget.progress)
-          Positioned.fill(child:
-            Align(alignment: Alignment.center, child:
-              _progressWidget,
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        _headingWidget,
+        if (_contentTextNotEmpty)
+          Stack(children: [
+            _textContentWidget,
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                _copyButton,
+              ),
             ),
-          ),
-
-        if (!widget.progress && !widget.error && _contentTextController.text.isNotEmpty)
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              _copyButton,
-            ),
-          ),
-      ],),
-    ]);
+          ]),
+      ])
+    );
 
   Widget get _headingWidget {
-    String title = _displayTitle, hint = _displayHint;
+    List<InlineSpan> headingSpans = <InlineSpan>[];
+
+    String hintText = _displayHint;
+    if (StringUtils.isNotEmpty(hintText)) {
+      headingSpans.add(TextSpan(text: '• '));
+      headingSpans.add(TextSpan(text: hintText));
+    }
+
+    if (_contentTextNotEmpty == false) {
+      if (StringUtils.isNotEmpty(hintText)) {
+        headingSpans.add(TextSpan(text: ' / '));
+      }
+      headingSpans.add(TextSpan(text: Localization().getStringEx('widget.profile.stored_data.retrieve.empty.message', 'No stored information'), style:
+        Styles().textStyles.getTextStyle('widget.title.small.semi_fat.light')
+      ));
+    }
     return RichText(text:
-      TextSpan(style: Styles().textStyles.getTextStyle('widget.title.small.fat'), children: <InlineSpan>[
-        if (StringUtils.isNotEmpty(title))
-          TextSpan(text: StringUtils.isNotEmpty(hint) ? "${title} / "  : title, style: Styles().textStyles.getTextStyle('widget.title.small.fat')),
-        if (StringUtils.isNotEmpty(hint))
-          TextSpan(text: hint, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat.light')),
-      ]),
+      TextSpan(style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'), children:
+        headingSpans
+      ),
     );
   }
 
@@ -600,22 +622,19 @@ class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWi
     readOnly: true,
     controller: _contentTextController,
     decoration: _contentTextDecoration,
-    style: widget.error ? Styles().textStyles.getTextStyle('widget.input_field.text.regular') : Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),
+    style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic'), // Styles().textStyles.getTextStyle('widget.input_field.text.regular')
   );
 
   InputDecoration get _contentTextDecoration => InputDecoration(
     border: _contentTextBorder,
+    enabledBorder: _contentTextBorder,
+    disabledBorder: _contentTextBorder,
     focusedBorder: _contentTextBorder,
     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)
   );
 
   InputBorder get _contentTextBorder =>
-    OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0));
-
-  Widget get _progressWidget =>
-    SizedBox(height: 24, width: 24, child:
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3),
-    );
+    OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray2, width: 1.0));
 
   Widget get _copyButton =>
     InkWell(onTap: _onCopy, child:
@@ -628,8 +647,150 @@ class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWi
     Analytics().logSelect(target: 'Copy', source: "$_displayTitle / $_displayHint");
     if (widget.contentText?.isNotEmpty == true) {
       Clipboard.setData(ClipboardData(text:  widget.contentText ?? '')).then((_) {
-        AppToast.showMessage(Localization().getStringEx('widget.profile.stored_data.copied.succeeded.message', 'Copied to your clipboard!'));
+        AppToast.showMessage(Localization().getStringEx('widget.profile.stored_data.copied.succeeded.message', 'Copied to your clipboard.'));
       });
     }
   }
 }
+
+class _ProfileStoredDataHeadingWidget extends StatelessWidget {
+  final String? title;
+  final String? hint;
+  final bool? progress;
+  final bool? expanded;
+  final Function()? onExpand;
+  final Function()? onCopy;
+  final Offset iconPadding = Offset(16, 12);
+  final Size iconSize = Size(16, 16);
+
+  // ignore: unused_element
+  _ProfileStoredDataHeadingWidget({super.key,
+    this.title, this.hint,
+    this.progress, this.expanded, this.onExpand, this.onCopy,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+    InkWell(onTap: ((expanded != null) && (onExpand != null)) ? onTapExpand : null, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: iconPadding.dx), child:
+          _textContent
+          )
+        ),
+        if (_copyAndExpand)
+          _copyIcon,
+        _iconContent,
+      ],),
+    );
+
+  Widget get _textContent => RichText(text:
+    TextSpan(style: Styles().textStyles.getTextStyle('widget.title.regular.fat'), children: <InlineSpan>[
+      if (StringUtils.isNotEmpty(title))
+        TextSpan(text: StringUtils.isNotEmpty(hint) ? "${title} / "  : title, style: Styles().textStyles.getTextStyle('widget.title.regular.fat')),
+      if (StringUtils.isNotEmpty(hint))
+        TextSpan(text: hint, style: Styles().textStyles.getTextStyle('widget.title.regular.medium_fat.light')),
+    ]),
+  );
+
+  Widget get _iconContent {
+    if (progress == true) {
+      return _progressIcon;
+    }
+    else if (expanded != null) {
+      return _expandIcon;
+    }
+    else if (onCopy != null) {
+      return _copyIcon;
+    }
+    else if (title != null) {
+      return _spacerIcon;
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Widget get _progressIcon =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: iconPadding.dx, vertical: iconPadding.dy), child:
+      SizedBox(width: iconSize.width, height: iconSize.height, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+      )
+    );
+
+  Widget get _expandIcon =>
+    Padding(padding: _expandIconPadding, child:
+      Styles().images.getImage((expanded == true) ? 'chevron-up' : 'chevron-down', size: _expandIconSize), // size = 10
+    );
+  EdgeInsetsGeometry get _expandIconPadding => EdgeInsets.only(
+    left: iconPadding.dx + (iconSize.width - _expandIconSize) / 2 / (_copyAndExpand ? 4 : 1),
+    right: iconPadding.dx + (iconSize.width - _expandIconSize) / 2,
+    top: iconPadding.dy + (iconSize.height - _expandIconSize) / 2,
+    bottom: iconPadding.dy + (iconSize.height - _expandIconSize) / 2,
+  );
+  final double _expandIconSize = 10;
+
+  Widget get _copyIcon =>
+    InkWell(onTap: _onTapCopy, child:
+      Padding(padding: _copyIconPadding, child:
+        Styles().images.getImage('copy', size: _copyIconSize),
+      ),
+    );
+  EdgeInsetsGeometry get _copyIconPadding => EdgeInsets.only(
+    left: iconPadding.dx + (iconSize.width - _copyIconSize) / 2,
+    right: (iconPadding.dx + (iconSize.width - _copyIconSize) / 2) / (_copyAndExpand ? 4 : 1),
+    top: iconPadding.dy + (iconSize.height - _copyIconSize) / 2,
+    bottom: iconPadding.dy + (iconSize.height - _copyIconSize) / 2,
+  );
+  final double _copyIconSize = 18;
+
+  Widget get _spacerIcon =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: iconPadding.dx, vertical: iconPadding.dy), child:
+      SizedBox(width: iconSize.width, height: iconSize.height, child:
+        Container(),
+      )
+    );
+
+  bool get _copyAndExpand => ((onCopy != null) && (expanded != null));
+
+  void onTapExpand() => (expanded != null) ? onExpand?.call() : null;
+  void _onTapCopy() => (onCopy != null) ? onCopy?.call() : null;
+}
+
+class _Utils {
+  static bool _isValueNotEmpty(dynamic value) {
+    if (value is String) {
+      if (value.trim().isNotEmpty) {
+        dynamic json = JsonUtils.decode(value);
+        return  (json != null) ? _isValueNotEmpty(json) : true;
+      }
+      return false;
+    }
+    else if (value is Map) {
+      if (value.isNotEmpty) {
+        // We need at least one not empty value
+        for (dynamic entry in value.values) {
+          if (_isValueNotEmpty(entry)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    else if (value is Iterable) {
+      if (value.isNotEmpty) {
+        // We need at least one not empty value
+        for (dynamic entry in value) {
+          if (_isValueNotEmpty(entry)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    else {
+      return (value != null);
+    }
+  }
+}
+

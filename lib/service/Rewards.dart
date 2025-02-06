@@ -92,7 +92,17 @@ class Rewards with Service {
   // User Data
 
   Future<Map<String, dynamic>?> loadUserDataJson() async {
-    http.Response? response = (Config().rewardsUrl != null) ? await Network().get("${Config().rewardsUrl}/user-data", auth: Auth2()) : null;
-    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+    List<http.Response?> responses = await Future.wait<http.Response?>(<Future<http.Response?>>[
+      _loadBalanceResponse(),
+      _loadHistoryResponse(),
+    ]);
+
+    return {
+      'balance': _responseUserData(ListUtils.entry<http.Response?>(responses, 0)),
+      'history': _responseUserData(ListUtils.entry<http.Response?>(responses, 1), decoder: JsonUtils.decodeList),
+    };
   }
+
+  dynamic _responseUserData(http.Response? response, { Function(String?) decoder = JsonUtils.decodeMap }) =>
+    (response?.succeeded == true) ? decoder(response?.body) : "${response?.statusCode} ${response?.body}";
 }
