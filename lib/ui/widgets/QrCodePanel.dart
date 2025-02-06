@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/foundation.dart';
@@ -30,8 +32,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-//TBD: DDWEB - implement
-// import 'package:share_plus/share_plus.dart';
+import 'package:share/share.dart' as share_native;
+import 'package:share_plus/share_plus.dart' as share_web;
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
@@ -351,41 +353,41 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   void _onTapShareLink() {
     Analytics().logSelect(target: 'Share QR Code');
-    //TBD: DDWEB - implement
-    if (kIsWeb) {
-      _onTBDWeb();
-      return;
-    }
     String? promotionUrl = _promotionUrl;
     if (promotionUrl != null) {
-      //TBD: DDWEB - implement
-      // Share.share(promotionUrl);
+      if (kIsWeb) {
+        share_web.Share.share(promotionUrl);
+      } else {
+        share_native.Share.share(promotionUrl);
+      }
     }
-  }
-
-  void _onTBDWeb() {
-
   }
 
   bool get _canShareDigitalCard => (widget.digitalCardShare?.isNotEmpty == true);
 
   void _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
-    //TBD: DDWEB - implement
+    final String mimeType = 'text/vcard';
+    String contentToShare = widget.digitalCardShare ?? '';
+    final String fileName = '${widget.saveFileName}.vcf';
     if (kIsWeb) {
-      _onTBDWeb();
-      return;
-    }
-    final String dir = (await getApplicationDocumentsDirectory()).path;
-    final String fullPath = '$dir/${widget.saveFileName}.vcf';
-    File capturedFile = File(fullPath);
-    await capturedFile.writeAsString(widget.digitalCardShare ?? '');
-    if (mounted) {
-      //TBD: DDWEB - implement
-      // Share.shareFiles([fullPath],
-      //   mimeTypes: ['text/vcard'],
-      //   text: widget.saveWatermarkText,
-      // );
+      Uint8List fileBytes = utf8.encode(contentToShare);
+      share_web.XFile file = share_web.XFile.fromData(fileBytes, name: fileName, mimeType: mimeType);
+      if (mounted) {
+        share_web.Share.shareXFiles([file], text: widget.saveWatermarkText, fileNameOverrides: [fileName]);
+      }
+    } else {
+      final String dir = (await getApplicationDocumentsDirectory()).path;
+      final String fullPath = '$dir/$fileName';
+      File capturedFile = File(fullPath);
+      await capturedFile.writeAsString(contentToShare);
+      if (mounted) {
+        share_native.Share.shareFiles(
+          [fullPath],
+          mimeTypes: [mimeType],
+          text: widget.saveWatermarkText,
+        );
+      }
     }
   }
 
