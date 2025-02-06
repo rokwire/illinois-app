@@ -1106,22 +1106,33 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                       ],
                     ),
                     Container(height: 16.0),
-                    StringUtils.isNotEmpty(widget.conversation?.lastMessage) ?
-                    Row(children: [
-                      Expanded(child:
-                        Text(widget.conversation?.lastMessage ?? '',
-                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
-                        )
-                      )]) : Container(),
+                    _buildLastMessageWidget(),
                   ])
                 ),
               ],)
             ),
           ),
         ],)
+    );
+  }
+
+  Widget _buildLastMessageWidget() {
+    final lastMessageInfo = widget.conversation?.lastMessageInfo;
+    if (lastMessageInfo == null || !StringUtils.isNotEmpty(lastMessageInfo.message)) {
+      return Container();
+    }
+
+    final sender = lastMessageInfo.sender;
+    final currentUserId = Auth2().account?.id;
+    final senderName = (sender != null && sender.accountId == currentUserId)
+        ? Localization().getStringEx('', 'You') : (sender?.name ?? '');
+
+    return Text(
+      "$senderName: ${lastMessageInfo.message}",
+      semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? ''],),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat"),
     );
   }
 
