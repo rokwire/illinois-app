@@ -495,7 +495,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
         "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
     contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
-    return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
+    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(eventAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Styles().images.getImage('info') ?? Container(),
