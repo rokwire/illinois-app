@@ -311,6 +311,9 @@ class Auth2 extends rokwire.Auth2 {
     return iCard;
   }
 
+  Future<Response?> loadICardResponse() async =>
+    _loadICardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+
 
   // Auth Picture
 
