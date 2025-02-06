@@ -241,8 +241,9 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   final String? title;
   final RootHeaderBarLeading leading;
   final void Function()? onSettings;
+  final void Function()? onTapTitle;
 
-  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings, this.onTapTitle}) : super(key: key);
 
   @override
   State<RootHeaderBar> createState() => _RootHeaderBarState();
@@ -323,7 +324,10 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     return RadioPlayer().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
       _buildHeaderTitleText(),
       _buildHeaderRadioButton(),
-    ],) : _buildHeaderTitleText();
+    ],) : GestureDetector(
+        onTap: widget.onTapTitle,
+        child: _buildHeaderTitleText()
+    );
   }
 
   Widget _buildHeaderTitleText() {

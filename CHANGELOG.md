@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Added 
+- Add name list to conversation [#4751](https://github.com/rokwire/illinois-app/issues/4751)
 ## [6.1.55] - 2025-02-06
 ### Fixed
 - Web and mobile app: Event setting variables [#4684](https://github.com/rokwire/illinois-app/issues/4684).
