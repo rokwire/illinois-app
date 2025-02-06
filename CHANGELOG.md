@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not show web preview for conversation messages [#4739](https://github.com/rokwire/illinois-app/issues/4739).
+- Web and mobile app: Event setting variables [#4684](https://github.com/rokwire/illinois-app/issues/4684).
+### Changed
+- Hide GroupCard reactions for this release [#4696](https://github.com/rokwire/illinois-app/issues/4696). 
+- Fixed and cleanup for stored user information - round III [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+- Implemented new Stored Information panel layout [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+- Hide Filters button in User Directory page [#4474](https://github.com/rokwire/illinois-app/issues/4474).
 
 ## [6.1.54] - 2025-02-05
 ### Added
