@@ -2307,6 +2307,7 @@
     "panel.profile.stored_data.header.title": "My Stored Information",
     "panel.profile.stored_data.button.copy_all.title": "Copy All",
     "panel.profile.stored_data.copied_all.succeeded.message": "Copied everything to your clipboard!",
+    "panel.profile.stored_data.copied_source.succeeded.message": "Copied {{source}} information to your clipboard",
     "panel.profile.stored_data.label.this_year": " (this year)",
     "panel.profile.stored_data.source.core.title": "Core",
     "panel.profile.stored_data.source.core.account.title": "Account",
@@ -2441,9 +2442,9 @@
     "panel.profile.info.share.command.copy.clipboard.succeeded": "Profile details were copied to Clipboard successfully.",
     "panel.profile.info.share.command.copy.clipboard.failed": "Failed to copy profile detail to Clipboard.",
 
-    "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
-    "widget.profile.stored_data.retrieve.empty.message": "No stored information.",
-    "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
+    "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data",
+    "widget.profile.stored_data.retrieve.empty.message": "No stored information",
+    "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard.",
 
     "panel.create_poll.header.title": "Create a Poll",
     "panel.create_poll.description": "People can vote through the {{app_title}} app by asking you for the four-digit poll number.",
