@@ -97,12 +97,9 @@ class Rewards with Service {
       _loadHistoryResponse(),
     ]);
 
-    http.Response? balanceResponse = ListUtils.entry<http.Response?>(responses, 0);
-    http.Response? historyResponse = ListUtils.entry<http.Response?>(responses, 1);
-
     return {
-      'balance': _responseUserData(balanceResponse),
-      'history': _responseUserData(historyResponse, decoder: JsonUtils.decodeList),
+      'balance': _responseUserData(ListUtils.entry<http.Response?>(responses, 0)),
+      'history': _responseUserData(ListUtils.entry<http.Response?>(responses, 1), decoder: JsonUtils.decodeList),
     };
   }
 

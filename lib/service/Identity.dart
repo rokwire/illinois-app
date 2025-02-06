@@ -140,14 +140,10 @@ class Identity /* with Service */ {
       _loadStudentClassificationResponse(),
     ]);
 
-    Response? mobileCredentialResponse = ListUtils.entry<Response?>(responses, 0);
-    Response? studentIdResponse = ListUtils.entry<Response?>(responses, 1);
-    Response? studentClassificationResponse = ListUtils.entry<Response?>(responses, 2);
-
     return {
-      'mobile_credential': _responseUserData(mobileCredentialResponse),
-      'student_id': _responseUserData(studentIdResponse),
-      'student_classification': _responseUserData(studentClassificationResponse),
+      'mobile_credential': _responseUserData(ListUtils.entry<Response?>(responses, 0)),
+      'student_id': _responseUserData(ListUtils.entry<Response?>(responses, 1)),
+      'student_classification': _responseUserData(ListUtils.entry<Response?>(responses, 2)),
     };
   }
 
