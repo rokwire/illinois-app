@@ -473,6 +473,11 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
           ),
           scope: updateProfileScope);
 
+        debugPrint("ProfileInfo: Detected Requred Update:\n" +
+          (updateProfileScope.contains(Auth2UserProfileScope.photoUrl) || true ? "Photo: ${profile.photoUrl} => $profilePhotoUrl\n" : "") +
+          (updateProfileScope.contains(Auth2UserProfileScope.pronunciationUrl) || true ? "Photo: ${profile.pronunciationUrl} => $profilePronunciationUrl\n" : "")
+        );
+
         bool updateResult = await Auth2().saveUserProfile(updatedProfile);
         if (updateResult == true) {
           return updatedProfile;
