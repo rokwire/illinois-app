@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
