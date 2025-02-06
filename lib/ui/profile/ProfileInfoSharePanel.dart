@@ -222,18 +222,20 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       String? emailBody = widget.profile?.toDisplayText() ?? '';
 
       if (kIsWeb) {
+        final Map<String, String> parameters = <String, String>{
+          'body': emailBody
+        };
         // Attachments are not supported in web
         final Uri emailLaunchUri = Uri(
           scheme: 'mailto',
-          queryParameters: {
-            'body': emailBody
-          },
+          // Encode symbols so that they appear properly when opened in the email client
+          query: parameters.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&'),
         );
         try {
           launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
         } catch (e) {
           print('Failed to launch mail client. Reason: ${e.toString()}');
-          AppAlert.showDialogResult(context, 'Failed to share Digital Business Card');//TBD: DD - localize
+          AppAlert.showDialogResult(context, 'Failed to Share Digital Business Card');//TBD: DD - localize
         }
       } else {
         final Email email = Email(
