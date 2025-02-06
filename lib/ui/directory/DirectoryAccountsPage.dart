@@ -126,8 +126,8 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
       key: ValueKey(DirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
       searchText: _searchText,
       onSearchText: _onSearchText,
-      filterAttributes: _filterAttributes,
-      onFilterAttributes: _onFilterAttributes,
+      // [#4474] filterAttributes: _filterAttributes,
+      // [#4474] onFilterAttributes: _onFilterAttributes,
     );
 
   void _onSearchText(String text) {
@@ -137,6 +137,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
     });
   }
 
+  // ignore: unused_element
   void _onFilterAttributes(Map<String, dynamic> filterAttributes) {
     setStateIfMounted((){
       _filterAttributes = filterAttributes;
