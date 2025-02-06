@@ -289,7 +289,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
 
   Widget _buildWebCenterContainer({required Widget child}) {
     return Container(color: Styles().colors.fillColorPrimary, child: Center(child: LayoutBuilder(builder: (context, constraints) {
-      return ConstrainedBox(constraints: BoxConstraints(maxWidth: AppScreen.webWidth), child: child);
+      return ConstrainedBox(constraints: BoxConstraints(maxWidth: AppWebUtils.screenWidth), child: child);
     })));
   }
 

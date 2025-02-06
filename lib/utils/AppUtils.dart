@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -31,6 +32,7 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_html/html.dart' as html;
 
 class AppAlert {
   
@@ -486,6 +488,32 @@ class AppTextUtils {
 
 }
 
-class AppScreen {
-  static final double webWidth = 1092;
+class AppWebUtils {
+  static final double screenWidth = 1092;
+
+  ///
+  /// returns fileName if succeeded and null - otherwise
+  ///
+  static String? downloadFile({required Uint8List fileBytes, required String fileName}) {
+    if (!kIsWeb) {
+      return null;
+    }
+
+    // prepare
+    final blob = html.Blob([fileBytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..style.display = 'none'
+      ..download = fileName;
+    html.document.body?.children.add(anchor);
+
+    // download
+    anchor.click();
+
+    // cleanup
+    html.document.body?.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+    return fileName;
+  }
 }

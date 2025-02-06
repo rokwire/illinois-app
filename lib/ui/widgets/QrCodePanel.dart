@@ -34,6 +34,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart' as share_native;
 import 'package:share_plus/share_plus.dart' as share_web;
+import 'package:universal_html/html.dart' as html;
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
@@ -371,11 +372,9 @@ class _QrCodePanelState extends State<QrCodePanel> {
     String contentToShare = widget.digitalCardShare ?? '';
     final String fileName = '${widget.saveFileName}.vcf';
     if (kIsWeb) {
+      // Download the file on web - share option does not work
       Uint8List fileBytes = utf8.encode(contentToShare);
-      share_web.XFile file = share_web.XFile.fromData(fileBytes, name: fileName, mimeType: mimeType);
-      if (mounted) {
-        share_web.Share.shareXFiles([file], text: widget.saveWatermarkText, fileNameOverrides: [fileName]);
-      }
+      AppWebUtils.downloadFile(fileBytes: fileBytes, fileName: fileName);
     } else {
       final String dir = (await getApplicationDocumentsDirectory()).path;
       final String fullPath = '$dir/$fileName';

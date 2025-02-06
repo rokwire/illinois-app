@@ -326,7 +326,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       canSelect = canDetail = false;
     }
 
-    double screenWidth = kIsWeb ? AppScreen.webWidth : MediaQuery.of(context).size.width;
+    double screenWidth = kIsWeb ? AppWebUtils.screenWidth : MediaQuery.of(context).size.width;
     double buttonWidth = (screenWidth - (40 + 12)) / 2;
 
     double barHeight = _mapExploreBarSize?.height ?? 0;

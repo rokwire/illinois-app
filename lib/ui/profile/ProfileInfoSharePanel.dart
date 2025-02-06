@@ -19,7 +19,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
 //import 'package:share/share.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
@@ -169,10 +168,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     );
   }
 
-  void _onTBDWeb() {
-    AppAlert.showDialogResult(context, 'Not supported in for the web app, yet');
-  }
-
   /* void _onTapShareDigitalCard1() async {
     Analytics().logSelect(target: 'Share Digital Card');
 
@@ -260,7 +255,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     setState(() {
       _preparingTextMessage = true;
     });
-    String? imagePath = await _saveImage();
+    String? imagePath = kIsWeb ? null : await _saveImage(); // not able to add attachments in web
     if (mounted) {
       setState(() {
         _preparingTextMessage = false;
@@ -268,7 +263,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       SmsMms.send(
         recipients: [],
         message: widget.profile?.toDisplayText() ?? '',
-        filePath: kIsWeb ? null : imagePath,
+        filePath: imagePath,
       );
     }
   }
@@ -302,7 +297,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           Uint8List buffer = byteData.buffer.asUint8List();
           final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}.png';
           if (kIsWeb) {
-            return _saveImageWeb(fileBytes: buffer, fileName: saveFileName);
+            return AppWebUtils.downloadFile(fileBytes: buffer, fileName: saveFileName);
           } else {
             return await _saveImageNative(fileBytes: buffer, fileName: saveFileName, addToGallery: addToGallery);
           }
@@ -322,29 +317,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       await Gal.putImage(capturedFile.path);
     }
     return capturedFile.path;
-  }
-
-  String? _saveImageWeb({required Uint8List fileBytes, required String fileName}) {
-    if (!kIsWeb) {
-      return null;
-    }
-
-    // prepare
-    final blob = html.Blob([fileBytes]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.document.createElement('a') as html.AnchorElement
-      ..href = url
-      ..style.display = 'none'
-      ..download = fileName;
-    html.document.body?.children.add(anchor);
-
-    // download
-    anchor.click();
-
-    // cleanup
-    html.document.body?.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
-    return fileName;
   }
 
   Future<String?> _saveDigitalCard() async {
