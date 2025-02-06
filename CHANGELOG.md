@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Web and mobile app: Event setting variables [#4684](https://github.com/rokwire/illinois-app/issues/4684).
+### Changed
+- Hide GroupCard reactions for this release [#4696](https://github.com/rokwire/illinois-app/issues/4696). 
+
 ## [6.1.54] - 2025-02-05
 ### Added
 - Added section id to my courses [#4482](https://github.com/rokwire/illinois-app/issues/4482). 
