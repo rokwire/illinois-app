@@ -306,7 +306,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                   ),
                 ],),
-                WebEmbed(body: message.message)
+                kIsWeb ? Container() : WebEmbed(body: message.message)
               ]),
             ),
           );
