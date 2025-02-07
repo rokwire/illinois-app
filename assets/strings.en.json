@@ -3360,6 +3360,7 @@
     "widget.conversation_card.status.hint": "status: %s ,for: ",
     "widget.conversation_card.subject.hint": "Subject: %s",
     "widget.conversation_card.body.hint": "Message: %s",
+    "widget.conversation_card.sender.me": "You",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 

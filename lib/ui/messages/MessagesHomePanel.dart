@@ -1106,16 +1106,7 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
                       ],
                     ),
                     Container(height: 16.0),
-                    StringUtils.isNotEmpty(widget.conversation?.lastMessage) ?
-                    Row(children: [
-                      Expanded(child:
-                        Text(widget.conversation?.lastMessage ?? '',
-                          semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? '']),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
-                        )
-                      )]) : Container(),
+                    _buildLastMessageWidget(),
                   ])
                 ),
               ],)
@@ -1123,6 +1114,23 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
           ),
         ],)
     );
+  }
+
+  Widget _buildLastMessageWidget() {
+    Message? lastMessage = widget.conversation?.lastMessage;
+    String? messageText = StringUtils.isNotEmpty(lastMessage?.message) ? lastMessage?.message : widget.conversation?.lastMessageText;
+
+    ConversationMember? sender = lastMessage?.sender;
+    String? senderName = (StringUtils.isNotEmpty(sender?.accountId) && (sender?.accountId == Auth2().accountId)) ?
+      Localization().getStringEx('widget.conversation_card.sender.me', 'You') : sender?.name;
+
+    return (StringUtils.isNotEmpty(messageText)) ? Text(
+      StringUtils.isNotEmpty(senderName) ? '$senderName: $messageText' : (messageText ?? ''),
+      semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [messageText ?? ''],),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat"),
+    ) : Container();
   }
 
   Widget get _buildDisplayDateWidget {

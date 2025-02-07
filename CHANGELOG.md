@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added 
 - Add name list to conversation [#4751](https://github.com/rokwire/illinois-app/issues/4751)
+- Add last message name support [#4749](https://github.com/rokwire/illinois-app/issues/4749)
+
 ## [6.1.55] - 2025-02-06
 ### Fixed
 - Web and mobile app: Event setting variables [#4684](https://github.com/rokwire/illinois-app/issues/4684).
