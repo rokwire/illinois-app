@@ -924,7 +924,9 @@
 
     "double-chevron-left": {"src": "0xf100", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
     "double-chevron-right": {"src": "0xf101", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
-    
+    "double-chevron-up": {"src": "0xf102", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+    "double-chevron-down": {"src": "0xf103", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+
     "chevron2-up": {"src": "0xf077", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 12},
     "chevron2-down": {"src": "0xf078", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 12},
 

@@ -14,7 +14,6 @@ import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -80,6 +79,7 @@ enum _StoredDataSource {
 
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
+  final Set<_StoredDataSource> _expandedData = <_StoredDataSource>{};
   final StreamController<String> _updateController = StreamController.broadcast();
   final Map<_StoredDataSource, GlobalKey<_ProfileStoredDataWidgetState>> _storedDataKeys = <_StoredDataSource, GlobalKey<_ProfileStoredDataWidgetState>>{};
 
@@ -115,10 +115,10 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Widget get _panelContent {
 
-    List<Widget> contentList = <Widget>[_splitterLine];
+    List<Widget> contentList = <Widget>[_dataSplitterLine];
     for (_StoredDataSource dataSource in _StoredDataSource.values) {
       contentList.add(_dataSourceContent(dataSource));
-      contentList.add(_splitterLine);
+      contentList.add(_dataSplitterLine);
     }
 
     return Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
@@ -126,178 +126,43 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     );
   }
 
-  Widget _dataSourceContent(_StoredDataSource dataSource) {
+  Widget _dataSourceContent(_StoredDataSource dataSource) =>
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[dataSource] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
+      dataSource: dataSource,
+      dataProvider: _dataSourceProvider(dataSource),
+      expanded: _expandedData.contains(dataSource),
+      onExpand: () => _onTapExpandData(dataSource),
+      updateController: _updateController,
+    );
+
+  _UserDataProvider _dataSourceProvider(_StoredDataSource dataSource) {
     switch (dataSource) {
-      case _StoredDataSource.core: return _coreContent;
-      case _StoredDataSource.identity: return _identityContent;
-      case _StoredDataSource.rewards: return _rewardsContent;
-      case _StoredDataSource.notifications: return _notificationsContent;
-      case _StoredDataSource.social: return _socialContent;
+      case _StoredDataSource.core: return () => Auth2().loadUserDataJson();
+      case _StoredDataSource.identity: return () => Identity().loadUserDataJson();
+      case _StoredDataSource.rewards: return () => Rewards().loadUserDataJson();
+      case _StoredDataSource.notifications: return () => Inbox().loadUserDataJson();
+      case _StoredDataSource.social: return () => Social().loadUserDataJson();
 
-      case _StoredDataSource.calendar: return _calendarContent;
-      case _StoredDataSource.groups: return _groupsContent;
-      case _StoredDataSource.polls: return _pollsContent;
-      case _StoredDataSource.surveys: return _surveysContent;
+      case _StoredDataSource.calendar: return () => Events2().loadUserDataJson();
+      case _StoredDataSource.groups: return () => Groups().loadUserDataJson();
+      case _StoredDataSource.polls: return () => Polls().loadUserDataJson();
+      case _StoredDataSource.surveys: return () => Surveys().loadUserDataJson();
 
-      case _StoredDataSource.lms: return _lmsContent;
-      case _StoredDataSource.appointments: return _appointmentsContent;
-      case _StoredDataSource.occupations: return _occupationsContent;
+      case _StoredDataSource.lms: return () => Canvas().loadUserDataJson();
+      case _StoredDataSource.appointments: return () => Appointments().loadUserDataJson();
+      case _StoredDataSource.occupations: return () => Occupations().loadUserDataJson();
 
-      case _StoredDataSource.transportation: return _transportationContent;
-      case _StoredDataSource.wellness: return _wellnessContent;
-      case _StoredDataSource.assistant: return _assistantContent;
-      case _StoredDataSource.gateway: return _gatewayContent;
+      case _StoredDataSource.transportation: return () => Transportation().loadUserDataJson();
+      case _StoredDataSource.wellness: return () => Wellness().loadUserDataJson();
+      case _StoredDataSource.assistant: return () => Assistant().loadUserDataJson();
+      case _StoredDataSource.gateway: return () => Gateway().loadUserDataJson();
     }
   }
 
-
-  Widget get _coreContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.core] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.core,
-      dataProvider: () => Auth2().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.source.core.title', "Core"),
-      updateController: _updateController,
-    );
-
-  Widget get _identityContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.identity] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.identity,
-      dataProvider: () => Identity().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.source.identity.title', "Identity"),
-      updateController: _updateController,
-    );
-
-  Widget get _rewardsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.rewards] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.rewards,
-      dataProvider: () => Rewards().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.source.rewards.title', "Rewards"),
-      updateController: _updateController,
-    );
-
-  Widget get _notificationsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.notifications] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.notifications,
-      dataProvider: () => Inbox().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.notifications.title', "Notifications"),
-      updateController: _updateController,
-    );
-
-  Widget get _socialContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.social] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.social,
-      dataProvider: () => Social().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.social.title', "Social"),
-      updateController: _updateController,
-    );
-
-  Widget get _calendarContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.calendar] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.calendar,
-      dataProvider: () => Events2().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.calendar.title', "Calendar"),
-      updateController: _updateController,
-    );
-
-  Widget get _groupsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.groups] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.groups,
-      dataProvider: () => Groups().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.groups.title', "Groups"),
-      updateController: _updateController,
-    );
-
-  Widget get _pollsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.polls] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.polls,
-      dataProvider: () => Polls().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.polls.title', "Polls"),
-      updateController: _updateController,
-    );
-
-  Widget get _surveysContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.surveys] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataProvider: () => Surveys().loadUserDataJson(),
-      dataSource: _StoredDataSource.surveys,
-      title: Localization().getStringEx('panel.profile.stored_data.surveys.title', "Surveys"),
-      updateController: _updateController,
-    );
-
-  Widget get _lmsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.lms] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataProvider: () => Canvas().loadUserDataJson(),
-      dataSource: _StoredDataSource.lms,
-      title: Localization().getStringEx('panel.profile.stored_data.lms.title', "Courses"),
-      updateController: _updateController,
-    );
-
-  Widget get _appointmentsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.appointments] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.appointments,
-      dataProvider: () => Appointments().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.appointments.title', "Appointments"),
-      updateController: _updateController,
-    );
-
-  Widget get _occupationsContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.occupations] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.occupations,
-      dataProvider: () => Occupations().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.occupations.title', "Occupations"),
-      updateController: _updateController,
-    );
-
-  Widget get _transportationContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.transportation] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.transportation,
-      dataProvider: () => Transportation().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.transportation.title', "Transportation"),
-      updateController: _updateController,
-    );
-
-  Widget get _wellnessContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.wellness] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.wellness,
-      dataProvider: () => Wellness().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.wellness.title', "Wellness"),
-      updateController: _updateController,
-    );
-
-  Widget get _assistantContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.assistant] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.assistant,
-      dataProvider: () => Assistant().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.assistant.title', "Assistant"),
-      updateController: _updateController,
-    );
-
-  Widget get _gatewayContent =>
-    _ProfileStoredDataWidget(
-      key: _storedDataKeys[_StoredDataSource.gateway] ??= GlobalKey<_ProfileStoredDataWidgetState>(),
-      dataSource: _StoredDataSource.gateway,
-      dataProvider: () => Gateway().loadUserDataJson(),
-      title: Localization().getStringEx('panel.profile.stored_data.gateway.title', "External Services"),
-      updateController: _updateController,
-    );
-
   // Splitter
 
-  Widget get _splitterLine =>
+  Widget get _dataSplitterLine =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Container(height: 1, color: Styles().colors.surfaceAccent,)
     );
@@ -314,21 +179,27 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       )
     ),
     _copyAllButton,
+    _expandAllButton,
     _closeButton,
   ],);
 
-  Widget get _copyAllButton => LinkButton(
-    title: Localization().getStringEx("panel.profile.stored_data.button.copy_all.title", "Copy All"),
-    textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),
-    padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 0),
-    onTap: _onCopyAll,
+  Widget get _copyAllButton => InkWell(onTap: _onTapCopyAll, child:
+    Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+      Styles().images.getImage('copy-fa', size: 24, excludeFromSemantics: true),
+    ),
+  );
+
+  Widget get _expandAllButton => InkWell(onTap: _onTapExpandAll, child:
+    Padding(padding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16), child:
+      Styles().images.getImage(_expandedAll ? 'double-chevron-up' : 'double-chevron-down', size: 24, excludeFromSemantics: true),
+    ),
   );
 
   Widget get _closeButton =>
     Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
       InkWell(onTap : _onTapClose, child:
-        Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', size: 24, excludeFromSemantics: true),
         ),
       ),
     );
@@ -341,7 +212,34 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     _updateController.add(ProfileStoredDataPanel._notifyRefresh);
   }
 
-  void _onCopyAll() {
+  bool _expanded(_StoredDataSource dataSource) => _expandedData.contains(dataSource);
+  bool get _expandedAll => _expandedData.length == _StoredDataSource.values.length;
+
+  void _onTapExpandData(_StoredDataSource dataSource) {
+    Analytics().logSelect(target: (_expanded(dataSource) ? 'Collapse' : 'Expand') + ' ${dataSource.name}');
+    setState(() {
+      if (_expanded(dataSource)) {
+        _expandedData.remove(dataSource);
+      }
+      else {
+        _expandedData.add(dataSource);
+      }
+    });
+  }
+
+  void _onTapExpandAll() {
+    Analytics().logSelect(target: _expandedAll? 'Collapse All' : 'Expand All');
+    setState(() {
+      if (_expandedAll) {
+        _expandedData.clear();
+      }
+      else {
+        _expandedData.addAll(_StoredDataSource.values);
+      }
+    });
+  }
+
+  void _onTapCopyAll() {
     Analytics().logSelect(target: 'Copy All');
 
     String combinedJson = "";
@@ -360,21 +258,21 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     Analytics().logSelect(target: 'Close', source: runtimeType.toString());
     Navigator.of(context).pop();
   }
-
 }
 
 
 class _ProfileStoredDataWidget extends StatefulWidget {
   final _StoredDataSource dataSource;
   final _UserDataProvider dataProvider;
-  final String? title;
+  final bool? expanded;
+  final void Function()? onExpand;
   final StreamController<String>? updateController;
 
   // ignore: unused_element
   _ProfileStoredDataWidget({ super.key,
     required this.dataSource,
     required this.dataProvider,
-    this.title,
+    this.expanded, this.onExpand,
     this.updateController,
   });
 
@@ -386,7 +284,6 @@ class _ProfileStoredDataWidget extends StatefulWidget {
 
 class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   bool _loading = false;
-  bool _expanded = false;
   Map<String, String>? _userData;
 
   @override
@@ -436,13 +333,13 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   );
 
   Widget get _dataHeadingContent => _ProfileStoredDataHeadingWidget(
-    title: _displayTitle, expanded: _expanded, onExpand: _onExpand, onCopy: _onCopy,
+    title: _displayTitle, expanded: widget.expanded, onExpand: widget.onExpand, onCopy: _onCopy,
   );
 
   Widget get _dataContent =>
     Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
       _dataHeadingContent,
-      if (_expanded)
+      if (widget.expanded == true)
         ...dataListContent,
     ],);
 
@@ -454,7 +351,6 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
         entries.add(Padding(padding: EdgeInsets.only(bottom: 6), child:
           _ProfileStoredDataEntryWidget(
             titleKey: widget.titleKey,
-            titleText: widget.title,
             hintKey: entryKey,
             contentText: _userData?[entryKey],
           ),
@@ -504,17 +400,10 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
       "$_displayTitle\n$_displayContent\n\n" : "";
 
   String get _displayTitle =>
-    widget.title ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+    Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
   String get _displayContent =>
     JsonUtils.encode(_fromUserData(_userData)) ?? 'NA';
-
-  void _onExpand() {
-    Analytics().logSelect(target: _expanded ? 'Colapse' : 'Expand', source: _displayTitle);
-    setState(() {
-      _expanded = !_expanded;
-    });
-  }
 
   void _onCopy() {
     Analytics().logSelect(target: 'Copy', source: _displayTitle);
@@ -527,7 +416,6 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
 
 class _ProfileStoredDataEntryWidget extends StatefulWidget {
   final String? titleKey;
-  final String? titleText;
 
   final String? hintKey;
   final String? hintText;
@@ -536,7 +424,7 @@ class _ProfileStoredDataEntryWidget extends StatefulWidget {
 
   // ignore: unused_element
   _ProfileStoredDataEntryWidget({ super.key,
-    this.titleKey, this.titleText,
+    this.titleKey,
     // ignore: unused_element
     this.hintKey, this.hintText,
     this.contentText,
@@ -612,7 +500,7 @@ class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWi
   }
 
   String get _displayTitle =>
-    widget.titleText ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey ?? '', allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+    Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.title') ?? StringUtils.capitalize(widget.titleKey ?? '', allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
 
   String get _displayHint =>
     widget.hintText ?? Localization().getString('panel.profile.stored_data.source.${widget.titleKey}.${widget.hintKey}.title') ?? StringUtils.capitalize(widget.hintKey ?? '', allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
@@ -639,7 +527,7 @@ class _ProfileStoredDataEntryWidgetState extends State<_ProfileStoredDataEntryWi
   Widget get _copyButton =>
     InkWell(onTap: _onCopy, child:
       Padding(padding: EdgeInsets.all(12), child:
-        Styles().images.getImage('copy', excludeFromSemantics: true),
+        Styles().images.getImage('copy-fa', excludeFromSemantics: true),
       ),
     );
 
@@ -658,8 +546,8 @@ class _ProfileStoredDataHeadingWidget extends StatelessWidget {
   final String? hint;
   final bool? progress;
   final bool? expanded;
-  final Function()? onExpand;
-  final Function()? onCopy;
+  final void Function()? onExpand;
+  final void Function()? onCopy;
   final Offset iconPadding = Offset(16, 12);
   final Size iconSize = Size(16, 16);
 
@@ -733,7 +621,7 @@ class _ProfileStoredDataHeadingWidget extends StatelessWidget {
   Widget get _copyIcon =>
     InkWell(onTap: _onTapCopy, child:
       Padding(padding: _copyIconPadding, child:
-        Styles().images.getImage('copy', size: _copyIconSize),
+        Styles().images.getImage('copy-fa', size: _copyIconSize),
       ),
     );
   EdgeInsetsGeometry get _copyIconPadding => EdgeInsets.only(
