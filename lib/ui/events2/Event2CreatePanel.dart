@@ -554,6 +554,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
     //_allDay = (widget.event?.allDay == true);
 
+    _weeklyRepeatPeriod = (widget.isCreate) ? 1 : null; // default 1 week
+    _monthlyRepeatPeriod = (widget.isCreate) ? 1 : null; // default 1 month
+
     _eventType = widget.event?.eventType;
     _locationLatitudeController.text = _printLatLng(widget.event?.exploreLocation?.latitude);
     _locationLongitudeController.text = _printLatLng(widget.event?.exploreLocation?.longitude);
@@ -1301,7 +1304,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<DropdownMenuItem<int?>>? _buildWeeklyRecurrenceDropDownItems() {
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryWeekRecurrencePeriod(null))));
     for (int i = 1; i<= _maxRecurrenceWeeksValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryWeekRecurrencePeriod(i))));
     }
@@ -1509,7 +1511,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<DropdownMenuItem<int?>>? _buildMonthlyRecurrenceDropDownItems() {
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryMonthRecurrencePeriod(null))));
     for (int i = 1; i <= _maxRecurrenceMonthsValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryMonthRecurrencePeriod(i))));
     }
