@@ -1469,7 +1469,28 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       return '-----';
     }
 
-    return '$day ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
+
+    return '$day${_getOrdinalDaySuffix(day)} ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
+  }
+
+  String _getOrdinalDaySuffix(int day) {
+    if (day < 1 || day > _maxRecurrenceRepeatDayValue) {
+      return '';
+    }
+    switch (day) {
+      case 1:
+      case 21:
+      case 31:
+        return 'st';
+      case 2:
+      case 22:
+        return 'nd';
+      case 3:
+      case 23:
+        return 'rd';
+      default:
+        return 'th';
+    }
   }
 
   Widget _buildRecurrenceEveryMonthSectionWidget() {
