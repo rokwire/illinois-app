@@ -1437,7 +1437,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<DropdownMenuItem<int?>>? _buildRecurrenceMonthDayDropDownItems() {
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    for (int i = 0; i <= _maxRecurrenceRepeatDayValue; i++) {
+    for (int i = 1; i <= _maxRecurrenceRepeatDayValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getRecurrenceMonthlyDayLabel(i))));
     }
 
