@@ -559,18 +559,19 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     bool locked = false,
     bool required = false,
     bool visibilityToggle = true,
-  }) => _fieldSection(
-    headingTitle: headingTitle,
-    headingHint: headingHint,
-    required: required,
-    fieldControl: _textFieldControl(profileField: field,
-        textInputType: textInputType,
-        autocorrect: autocorrect,
-        enabled: enabled,
-        locked: locked,
-        visibilityToggle: visibilityToggle,
-    )
-  );
+  }) => ((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) ?
+    _fieldSection(
+      headingTitle: headingTitle,
+      headingHint: headingHint,
+      required: required,
+      fieldControl: _textFieldControl(profileField: field,
+          textInputType: textInputType,
+          autocorrect: autocorrect,
+          enabled: enabled,
+          locked: locked,
+          visibilityToggle: visibilityToggle,
+      )
+    ) : Container();
 
   Widget _textFieldControl({_ProfileField? profileField, Auth2PublicAccountIdentifier? identifier,
     TextInputType textInputType = TextInputType.text,

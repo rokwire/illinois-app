@@ -19,9 +19,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/ext/Group.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -388,6 +390,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Visibility(
+          visible: _hasOptions,
+          child: IconButton(
+              padding:
+              EdgeInsets.only(left: defaultIconPadding, top: defaultIconPadding, bottom: defaultIconPadding),
+              constraints: BoxConstraints(),
+              style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+              icon: Styles().images.getImage('more', excludeFromSemantics: true) ?? Container(),
+              onPressed: _onTapOptions),
+        ),
+        Visibility(
           visible: _canCreateGroup,
           child: IconButton(
               padding:
@@ -605,6 +617,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
 
+  void _onTapOptions(){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 24,
+                ),
+                Visibility(
+                    visible: _canSyncAuthmanGroups,
+                    child: RibbonButton(
+                        leftIconKey: "info",
+                        label: Localization().getStringEx("", "Sync Authman Groups"),//TBD localize
+                        onTap: () {
+                          _syncAuthmanGroups();
+                          Navigator.pop(context);
+                        })),
+              ]));
+        });
+  }
+
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
     _reloadGroupsContent();
@@ -627,7 +666,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     }
   }
 
-
   void _onTabChanged({bool manual = true}) {
     if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {
       setState(() {
@@ -638,9 +676,24 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
   }
 
+  void _syncAuthmanGroups() {
+    Analytics().logSelect(target: "Sync Authman Group");
+    Groups().syncAuthmanGroupsExt().then(
+          (result) => AppAlert.showDialogResult(context,
+              result.successful ?
+                  Localization().getStringEx("", "Successfully started groups authman sync.") : //TBD localize
+                  Localization().getStringEx("", "Failed to start groups authman sync. Reason: ${result.error}")
+          )
+    );
+  }
+
   bool get _canCreateGroup {
     return Auth2().isLoggedIn;
   }
+
+  bool get _hasOptions => _canSyncAuthmanGroups;
+
+  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin;
 
   ///////////////////////////////////
   // NotificationsListener

@@ -248,26 +248,29 @@ class _BrowseSection extends StatelessWidget {
     Widget? icon = _listItemIcon();
     return GestureDetector(
       onTap: () => _onTap(context),
-      child: Row(
-        children: <Widget>[
-          if (icon != null)
-            icon,
-          Expanded(
-            child: Text(_title,
-                textAlign: TextAlign.center,
-                style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
-          ),
-          Visibility(visible: _hasFavoriteContent, child:
-            Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              GestureDetector(onTap: () => _onTapSectionFavorite(context), child:
-              FavoriteStarIcon(selected: _isSectionFavorite,
-                padding: EdgeInsets.symmetric(vertical: 16),
-                style: FavoriteIconStyle.Button,
-                color: Styles().colors.fillColorSecondaryVariant,)
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Row(
+          children: <Widget>[
+            if (icon != null)
+              icon,
+            Expanded(
+              child: Text(_title,
+                  textAlign: TextAlign.center,
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+            ),
+            Visibility(visible: _hasFavoriteContent, child:
+              Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+                GestureDetector(onTap: () => _onTapSectionFavorite(context), child:
+                FavoriteStarIcon(selected: _isSectionFavorite,
+                  padding: EdgeInsets.zero,
+                  style: FavoriteIconStyle.Button,
+                  color: Styles().colors.fillColorSecondaryVariant,)
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

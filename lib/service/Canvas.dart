@@ -23,6 +23,7 @@ import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -265,7 +266,7 @@ class Canvas with Service implements NotificationsListener {
 
   // Canvas Self User
 
-  Future<http.Response?> loadSelfUserResponse() async {
+  Future<http.Response?> _loadSelfUserResponse() async {
     if (_isAvailable) {
       return _useCanvasApi?
         Network().get(_masquerade('${Config().canvasUrl}/api/v1/users/self'), headers: _canvasAuthHeaders) :
@@ -277,7 +278,7 @@ class Canvas with Service implements NotificationsListener {
   }
 
   Future<Map<String, dynamic>?> loadSelfUser() async {
-    http.Response? response = await loadSelfUserResponse();
+    http.Response? response = await _loadSelfUserResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -716,6 +717,11 @@ class Canvas with Service implements NotificationsListener {
       debugPrint('Failed to load canvas courses from net. Reason: $url $responseCode $responseString');
       return null;
     }
+  }
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().lmsUrl != null) ? await Network().get("${Config().lmsUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 
   ///

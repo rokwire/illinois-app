@@ -158,7 +158,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     return _ballance;
   }
 
-  Future<Response?> loadBalanceRequest() async => _enabled ?
+  Future<Response?> _loadBalanceRequest() async => _enabled ?
     Network().get("${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}", auth: this,
       analyticsUrl: "${Config().illiniCashBaseUrl}/Balances/${Analytics.LogAnonymousUin}",
     ) : null;
@@ -172,7 +172,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
         
         bool? eligible = studentSummary.eligibility?.eligible;
         if (eligible == true) {
-          Response? response = await loadBalanceRequest();
+          Response? response = await _loadBalanceRequest();
           if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
             IlliniCashBallance? ballance = IlliniCashBallance.fromJson(JsonUtils.decode(response.body));
             if (ballance != null) {
@@ -251,7 +251,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  Future<Response?> loadTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
+  Future<Response?> _loadTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
     if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
@@ -267,12 +267,12 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   }
 
   Future<List<IlliniCashTransaction>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
-    Response? response = await loadTransactionHistoryResponse(startDate, endDate);
+    Response? response = await _loadTransactionHistoryResponse(startDate, endDate);
     return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
       IlliniCashTransaction.listFromJson(JsonUtils.listValue(response.body)) : null;
   }
 
-  Future<Response?> loadMealPlanTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
+  Future<Response?> _loadMealPlanTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
     if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
@@ -289,12 +289,12 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
   Future<List<MealPlanTransaction>?> loadMealPlanTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
-    Response? response = await loadMealPlanTransactionHistoryResponse(startDate, endDate);
+    Response? response = await _loadMealPlanTransactionHistoryResponse(startDate, endDate);
     return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
       MealPlanTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
   }
 
-  Future<Response?> loadCafeCreditTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
+  Future<Response?> _loadCafeCreditTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
     if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
@@ -311,7 +311,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
   Future<List<CafeCreditTransaction>?> loadCafeCreditTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
-    Response? response = await loadCafeCreditTransactionHistoryResponse(startDate, endDate);
+    Response? response = await _loadCafeCreditTransactionHistoryResponse(startDate, endDate);
     return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
     CafeCreditTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
   }
@@ -572,6 +572,14 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
     return null;
   }
+
+  /////////////////////////
+  // User Data
+
+  //Future<Map<String, dynamic>?> loadUserDataJson() async {
+  //  Response? response = (Config().illiniCashBaseUrl != null) ? await Network().get("${Config().illiniCashBaseUrl}/user-data", auth: Auth2()) : null;
+  //  return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+  //}
 
   /////////////////////////
   // Enabled

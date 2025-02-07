@@ -137,30 +137,8 @@ abstract class CheckList with Service implements NotificationsListener, ContentI
       NotificationService().notify(notifyContentChanged, {_contentName: ""});
   }
 
-  Future<dynamic> loadUserInfo() async {
-    if(_contentName != giesOnboarding){
-      return null;
-    }
-    if (StringUtils.isEmpty(Config().gatewayUrl)) {
-      Log.e('Missing gateway url.');
-      return null;
-    }
-    String? url = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
-    String? analyticsUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Analytics.LogAnonymousUin}";
-    // contactInfoUrl+="123456789"; //Workaround to return dummy data
-
-    Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader, analyticsUrl: analyticsUrl);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
-    if (responseCode == 200) {
-      dynamic jsonResponse = JsonUtils.decode(responseString);
-      return jsonResponse;
-    } else {
-      Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
-      return null;
-    }
-  }
+  Future<dynamic> loadUserInfo() async => (_contentName == giesOnboarding) ?
+    Gateway().loadContactInfo() : null ;
 
   Future<List<dynamic>?> loadCourses() async {
     if(_contentName != giesOnboarding){

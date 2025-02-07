@@ -1,5 +1,6 @@
 import 'package:http/http.dart';
 import 'package:neom/model/StudentCourse.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -7,6 +8,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 
 class Gateway with Service implements NotificationsListener {
 
@@ -45,6 +47,20 @@ class Gateway with Service implements NotificationsListener {
   final String externalAuthorizationHeaderKey = "External-Authorization";
   String? get externalAuthorizationHeaderValue => Auth2().uiucToken?.accessToken;
   Map<String, String?> get externalAuthorizationHeader => { externalAuthorizationHeaderKey: externalAuthorizationHeaderValue };
+
+  // Person
+
+  Future<Response?> _loadContactInfoResponse() async => (Config().gatewayUrl?.isNotEmpty == true) ?
+    Network().get("${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}",
+      analyticsUrl: "${Config().gatewayUrl}/person/contactinfo?id=${Analytics.LogAnonymousUin}",
+      auth: Auth2(), headers: externalAuthorizationHeader,
+    ) : null;
+
+  Future<dynamic> loadContactInfo() async {
+    Response? response = await _loadContactInfoResponse();
+    return (response?.statusCode == 200) ? JsonUtils.decode(response?.body) : null;
+  }
+
 
   // Wayfinding
 
@@ -92,6 +108,23 @@ class Gateway with Service implements NotificationsListener {
     return null;
   }
 
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    List<Response?> responses = await Future.wait<Response?>(<Future<Response?>>[
+      _loadContactInfoResponse(),
+      Auth2().loadICardResponse(),
+    ]);
+
+    return {
+      'contact_info': _responseUserData(ListUtils.entry<Response?>(responses, 0)),
+      'icard': _responseUserData(ListUtils.entry<Response?>(responses, 1)),
+    };
+  }
+
+  dynamic _responseUserData(Response? response, { Function(String?) decoder = JsonUtils.decodeMap }) =>
+    (response?.succeeded == true) ? decoder(response?.body) : "${response?.statusCode} ${response?.body}";
+
   // DeepLinks
 
   static String get buildingDetailUrl => '${DeepLink().appUrl}/gateway/building_detail';
@@ -111,5 +144,4 @@ class Gateway with Service implements NotificationsListener {
       _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
-
 }

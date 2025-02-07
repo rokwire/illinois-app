@@ -34,7 +34,7 @@ class OnCampus with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    super.initService();
+    await super.initService();
     _update();
   }
 

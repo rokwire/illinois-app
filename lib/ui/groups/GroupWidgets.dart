@@ -1172,9 +1172,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
                           children: [
                             Expanded(
-                              child:
-                              // Container(),
-                              GroupReactionsLayout(reactions: _reactions, group: widget.group)
+                              child: Visibility(visible: _reactionsEnabled,
+                                child: GroupReactionsLayout(reactions: _reactions, group: widget.group)
+                              )
                             ),
                             Visibility(
                                 visible: isRepliesLabelVisible,
@@ -1306,6 +1306,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
     Analytics().logSelect(target: url);
     UrlUtils.launchExternal(url);
   }
+
+  bool get _reactionsEnabled => false;
 }
 
 //////////////////////////////////////
@@ -1461,9 +1463,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     Visibility(
                       visible: Config().showGroupPostReactions,
                       child: Expanded(
-                          child:
-                          // Container()
-                          GroupReactionsLayout(reactions: _reactions)
+                          child: Visibility(visible: _reactionsEnabled,
+                              child: GroupReactionsLayout(reactions: _reactions)
+                          )
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                           //       semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
@@ -1489,6 +1491,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
       setStateIfMounted(() {});
     }
   }
+
+  bool get _reactionsEnabled => false;
 }
 
 //////////////////////////////////////
