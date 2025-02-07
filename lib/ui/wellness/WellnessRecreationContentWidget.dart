@@ -51,7 +51,7 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Wellness.notifyResourcesContentChanged) {
+    if (name == Wellness.notifyRecreationContentChanged) {
       if (mounted) {
         setState(() {
           _initContent();
@@ -207,8 +207,8 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
 
   void _initContent() async {
     // Map<String, dynamic>? content = Wellness().resources;
-    Map<String, dynamic>? wellnessContent = JsonUtils.mapValue(JsonUtils.mapValue(await _loadWellnessContentFromAsset));
-    Map<String, dynamic>? content = wellnessContent?[WellnessRecreationContentWidget.wellnessCategoryKey];
+    // Map<String, dynamic>? assetsWellnessContent = JsonUtils.mapValue(JsonUtils.mapValue(await _loadWellnessContentFromAsset));
+    Map<String, dynamic>? content = Wellness().recreation;
 
     _video = (content != null) ? Video.fromJson(JsonUtils.mapValue(content['video'])) : null;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;

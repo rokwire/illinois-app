@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added 
 - Add name list to conversation [#4751](https://github.com/rokwire/illinois-app/issues/4751)
 - Add last message name support [#4749](https://github.com/rokwire/illinois-app/issues/4749)
+- Campus Recreation loads from Content BB [#4499](https://github.com/rokwire/illinois-app/issues/4499).
 
 ## [6.1.55] - 2025-02-06
 ### Fixed
