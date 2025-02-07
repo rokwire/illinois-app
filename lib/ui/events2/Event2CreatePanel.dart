@@ -996,6 +996,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1009,7 +1010,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+      context: context,
+      initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0),
+      builder: (context, child) => _timePickerTransitionBuilder(context, child!),
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -1031,6 +1036,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1044,7 +1050,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+        context: context,
+        initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0),
+        builder: (context, child) => _timePickerTransitionBuilder(context, child!),
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
@@ -1223,6 +1233,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1462,35 +1473,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
 
     return menuItems;
-  }
-
-  String _getRecurrenceMonthlyDayLabel(int? day) {
-    if (day == null) {
-      return '-----';
-    }
-
-
-    return '$day${_getOrdinalDaySuffix(day)} ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
-  }
-
-  String _getOrdinalDaySuffix(int day) {
-    if (day < 1 || day > _maxRecurrenceRepeatDayValue) {
-      return '';
-    }
-    switch (day) {
-      case 1:
-      case 21:
-      case 31:
-        return 'st';
-      case 2:
-      case 22:
-        return 'nd';
-      case 3:
-      case 23:
-        return 'rd';
-      default:
-        return 'th';
-    }
   }
 
   Widget _buildRecurrenceEveryMonthSectionWidget() {
@@ -3229,6 +3211,50 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         }
       }
     }
+  }
+
+  String _getRecurrenceMonthlyDayLabel(int? day) {
+    if (day == null) {
+      return '-----';
+    }
+
+
+    return '$day${_getOrdinalDaySuffix(day)} ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
+  }
+
+  String _getOrdinalDaySuffix(int day) {
+    if (day < 1 || day > _maxRecurrenceRepeatDayValue) {
+      return '';
+    }
+    switch (day) {
+      case 1:
+      case 21:
+      case 31:
+        return 'st';
+      case 2:
+      case 22:
+        return 'nd';
+      case 3:
+      case 23:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  }
+
+  Widget _datePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.white)), child: child);
+  }
+
+  Widget _timePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+                backgroundColor: Styles().colors.white,
+                dialBackgroundColor: Styles().colors.background,
+                hourMinuteColor: Styles().colors.background)),
+        child: child);
   }
 }
 
