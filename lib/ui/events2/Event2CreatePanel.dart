@@ -1469,10 +1469,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       return '-----';
     }
 
-    if (day == 0) {
-      return '1-31';
-    }
-
     return '$day ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
   }
 
