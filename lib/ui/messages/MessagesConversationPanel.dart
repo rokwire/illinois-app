@@ -134,126 +134,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
 
     return Scaffold(
-      appBar: RootHeaderBar(title: _conversation?.membersString, onTapTitle: _onTapTitle, leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: _conversation?.membersString, leading: RootHeaderBarLeading.Back, onTapTitle: _onTapHeaderBarTitle),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
-  }
-
-  void _onTapTitle() {
-    final members = _conversation?.members;
-    if (members == null || members.isEmpty) {
-      return;
-    }
-
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                color: Styles().colors.white,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Text(
-                          Localization().getStringEx('', 'Conversation Members'),
-                          style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
-                        ),
-                      ),
-                    ),
-                    Semantics(
-                      label: Localization().getStringEx('dialog.close.title', 'Close'),
-                      hint: Localization().getStringEx('dialog.close.hint', ''),
-                      inMutuallyExclusiveGroup: true,
-                      button: true,
-                      child: InkWell(
-                        onTap: _onTapClose,
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                          child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: ListView.builder(
-                    itemCount: members.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        final String currentUserName = Auth2().fullName ?? 'You';
-                        return ListTile(
-                          leading: FutureBuilder<Widget>(
-                            future: _buildAvatarWidget(
-                              isCurrentUser: true,
-                              senderId: _currentUserId,
-                            ),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return snapshot.data!;
-                              } else {
-                                return Styles().images.getImage(
-                                  'person-circle-white',
-                                  size: _photoSize,
-                                  color: Styles().colors.fillColorSecondary,
-                                ) ??
-                                    Container();
-                              }
-                            },
-                          ),
-                          title: Text(currentUserName, style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')),
-                        );
-                      } else {
-                        final ConversationMember member = members[index - 1];
-                        final bool isCurrentUser = (member.accountId == _currentUserId);
-                        return ListTile(
-                          leading: FutureBuilder<Widget>(
-                            future: _buildAvatarWidget(
-                              isCurrentUser: isCurrentUser,
-                              senderId: member.accountId,
-                            ),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return snapshot.data!;
-                              } else {
-                                return Styles().images.getImage(
-                                  'person-circle-white',
-                                  size: _photoSize,
-                                  color: Styles().colors.fillColorSecondary,
-                                ) ??
-                                    Container();
-                              }
-                            },
-                          ),
-                          title: Text(member.name ?? 'Unknown', style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _onTapClose(){
-    Navigator.of(context).pop();
   }
 
   String _getConversationTitle() {
@@ -539,6 +424,124 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         }
       }
     }
+  }
+
+  void _onTapHeaderBarTitle() {
+    Analytics().logSelect(target: 'Headerbar Title', source: _conversation?.membersString);
+    final members = _conversation?.members;
+    if (members == null || members.isEmpty) {
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      builder: (BuildContext context) => _buildMembersPopup(context, members),
+    );
+  }
+
+  Widget _buildMembersPopup(BuildContext context, List<ConversationMember> members) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            color: Styles().colors.white,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: Text(
+                      Localization().getStringEx('', 'Conversation Members'),
+                      style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
+                    ),
+                  ),
+                ),
+                Semantics(
+                  label: Localization().getStringEx('dialog.close.title', 'Close'),
+                  hint: Localization().getStringEx('dialog.close.hint', ''),
+                  inMutuallyExclusiveGroup: true,
+                  button: true,
+                  child: InkWell(
+                    onTap: () => _onTapMembersPopupClose(context),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+                      child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(16.0),
+              child: ListView.builder(
+                itemCount: members.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return _buildMembersPopupMember(context,
+                      userName: Auth2().fullName ?? 'You',
+                      isCurrentUser: true,
+                      accountId: _currentUserId,
+                    );
+                  } else {
+                    final ConversationMember member = members[index - 1];
+                    return _buildMembersPopupMember(context,
+                      userName: member.name ?? 'Unknown',
+                      isCurrentUser: (member.accountId == _currentUserId),
+                      accountId: member.accountId,
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMembersPopupMember(BuildContext context, { required String userName, required bool isCurrentUser, String? accountId, }) {
+
+    return ListTile(
+      leading: FutureBuilder<Widget>(
+        future: _buildAvatarWidget(
+          isCurrentUser: isCurrentUser,
+          senderId: accountId,
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          } else {
+            return Styles().images.getImage(
+              'person-circle-white',
+              size: _photoSize,
+              color: Styles().colors.fillColorSecondary,
+            ) ??
+                Container();
+          }
+        },
+      ),
+      title: Text(userName, style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')),
+      onTap: () => _onTapMembersPopupMember(context, accountId),
+    );
+  }
+
+  void _onTapMembersPopupMember(BuildContext context, String? accountId) {
+    Analytics().logSelect(target: 'View Account');
+    showDialog(context: context, builder:(_) => Dialog(child:
+      DirectoryAccountPopupCard(accountId: accountId),
+    ));
+  }
+
+  void _onTapMembersPopupClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
   }
 
   Future<Widget> _buildAvatarWidget({required bool isCurrentUser, String? senderId}) async {
