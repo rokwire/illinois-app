@@ -1117,23 +1117,20 @@ class _ConversationCardState extends State<ConversationCard> implements Notifica
   }
 
   Widget _buildLastMessageWidget() {
-    final lastMessageInfo = widget.conversation?.lastMessageInfo;
-    if (lastMessageInfo == null || !StringUtils.isNotEmpty(lastMessageInfo.message)) {
-      return Container();
-    }
+    Message? lastMessage = widget.conversation?.lastMessage;
+    String? messageText = StringUtils.isNotEmpty(lastMessage?.message) ? lastMessage?.message : widget.conversation?.lastMessageText;
 
-    final sender = lastMessageInfo.sender;
-    final currentUserId = Auth2().account?.id;
-    final senderName = (sender != null && sender.accountId == currentUserId)
-        ? Localization().getStringEx('', 'You') : (sender?.name ?? '');
+    ConversationMember? sender = lastMessage?.sender;
+    String? senderName = (StringUtils.isNotEmpty(sender?.accountId) && (sender?.accountId == Auth2().accountId)) ?
+      Localization().getStringEx('widget.conversation_card.sender.me', 'You') : sender?.name;
 
-    return Text(
-      "$senderName: ${lastMessageInfo.message}",
-      semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [widget.conversation?.lastMessage ?? ''],),
+    return (StringUtils.isNotEmpty(messageText)) ? Text(
+      StringUtils.isNotEmpty(senderName) ? '$senderName: $messageText' : (messageText ?? ''),
+      semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [messageText ?? ''],),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat"),
-    );
+    ) : Container();
   }
 
   Widget get _buildDisplayDateWidget {
