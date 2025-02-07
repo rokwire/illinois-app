@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add last message name support [#4749](https://github.com/rokwire/illinois-app/issues/4749)
 ### Changed
 - Stored user information, round IV: added expand/collapse app, use icon button for copy all [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+- Campus Recreation loads from Content BB [#4499](https://github.com/rokwire/illinois-app/issues/4499).
 - Handled UI updates in recurring events [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 
 ## [6.1.55] - 2025-02-06
