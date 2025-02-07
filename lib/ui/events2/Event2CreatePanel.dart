@@ -857,6 +857,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
+                  dropdownColor: Styles().colors.white,
                   icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
                   style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1132,6 +1133,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                       padding: EdgeInsets.only(left: 12, right: 8),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<_RecurrenceRepeatType>(
+                              dropdownColor: Styles().colors.white,
                               icon: Styles().images.getImage('chevron-down'),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1286,6 +1288,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                       padding: EdgeInsets.only(left: 12, right: 8),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<int?>(
+                              dropdownColor: Styles().colors.white,
                               icon: Styles().images.getImage('chevron-down'),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1371,6 +1374,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                         padding: EdgeInsets.only(left: 12, right: 8),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<int?>(
+                                dropdownColor: Styles().colors.white,
                                 icon: Styles().images.getImage('chevron-down'),
                                 isExpanded: true,
                                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1400,6 +1404,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                         padding: EdgeInsets.only(left: 12, right: 8),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<_RecurrenceOrdinalNumber>(
+                                dropdownColor: Styles().colors.white,
                                 icon: Styles().images.getImage('chevron-down'),
                                 isExpanded: true,
                                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1416,6 +1421,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                         padding: EdgeInsets.only(left: 12, right: 8),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<_RecurrenceMonthWeekDay>(
+                                dropdownColor: Styles().colors.white,
                                 icon: Styles().images.getImage('chevron-down'),
                                 isExpanded: true,
                                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1490,6 +1496,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                           padding: EdgeInsets.only(left: 12, right: 8),
                           child: DropdownButtonHideUnderline(
                               child: DropdownButton<int?>(
+                                  dropdownColor: Styles().colors.white,
                                   icon: Styles().images.getImage('chevron-down'),
                                   isExpanded: true,
                                   style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1623,6 +1630,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Event2Type>(
+                  dropdownColor: Styles().colors.white,
                   icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
                   style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -2187,6 +2195,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<_Event2Visibility>(
+                    dropdownColor: Styles().colors.white,
                     icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
                     style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
