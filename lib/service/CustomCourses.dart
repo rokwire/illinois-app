@@ -61,7 +61,7 @@ class CustomCourses with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _getTimezoneInfo();
-    super.initService();
+    await super.initService();
   }
 
   @override
