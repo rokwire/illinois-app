@@ -3337,6 +3337,7 @@
 	"widget.conversation_card.status.hint": "狀態：%s，用於：",
 	"widget.conversation_card.subject.hint": "主題：%s",
 	"widget.conversation_card.body.hint": "身體：%s",
+	"widget.conversation_card.sender.me": "尤",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
 

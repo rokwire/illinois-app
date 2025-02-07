@@ -555,6 +555,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
     //_allDay = (widget.event?.allDay == true);
 
+    _weeklyRepeatPeriod = (widget.isCreate) ? 1 : null; // default 1 week
+    _monthlyRepeatPeriod = (widget.isCreate) ? 1 : null; // default 1 month
+
     _eventType = widget.event?.eventType;
     _locationLatitudeController.text = _printLatLng(widget.event?.exploreLocation?.latitude);
     _locationLongitudeController.text = _printLatLng(widget.event?.exploreLocation?.longitude);
@@ -858,6 +861,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
+                  dropdownColor: Styles().colors.white,
                   icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
                   style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -993,6 +997,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1006,7 +1011,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+      context: context,
+      initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0),
+      builder: (context, child) => _timePickerTransitionBuilder(context, child!),
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -1028,6 +1037,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1041,7 +1051,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+    showTimePicker(
+        context: context,
+        initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0),
+        builder: (context, child) => _timePickerTransitionBuilder(context, child!),
+    ).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
@@ -1133,6 +1147,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                       padding: EdgeInsets.only(left: 12, right: 8),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<_RecurrenceRepeatType>(
+                              dropdownColor: Styles().colors.white,
                               icon: Styles().images.getImage('chevron-down'),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1219,6 +1234,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1287,6 +1303,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                       padding: EdgeInsets.only(left: 12, right: 8),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<int?>(
+                              dropdownColor: Styles().colors.white,
                               icon: Styles().images.getImage('chevron-down'),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1299,7 +1316,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<DropdownMenuItem<int?>>? _buildWeeklyRecurrenceDropDownItems() {
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryWeekRecurrencePeriod(null))));
     for (int i = 1; i<= _maxRecurrenceWeeksValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryWeekRecurrencePeriod(i))));
     }
@@ -1372,6 +1388,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                         padding: EdgeInsets.only(left: 12, right: 8),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<int?>(
+                                dropdownColor: Styles().colors.white,
                                 icon: Styles().images.getImage('chevron-down'),
                                 isExpanded: true,
                                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1401,6 +1418,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                         padding: EdgeInsets.only(left: 12, right: 8),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<_RecurrenceOrdinalNumber>(
+                                dropdownColor: Styles().colors.white,
                                 icon: Styles().images.getImage('chevron-down'),
                                 isExpanded: true,
                                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1417,6 +1435,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                         padding: EdgeInsets.only(left: 12, right: 8),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<_RecurrenceMonthWeekDay>(
+                                dropdownColor: Styles().colors.white,
                                 icon: Styles().images.getImage('chevron-down'),
                                 isExpanded: true,
                                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1430,7 +1449,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<DropdownMenuItem<int?>>? _buildRecurrenceMonthDayDropDownItems() {
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    for (int i = 0; i <= _maxRecurrenceRepeatDayValue; i++) {
+    for (int i = 1; i <= _maxRecurrenceRepeatDayValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getRecurrenceMonthlyDayLabel(i))));
     }
 
@@ -1457,18 +1476,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return menuItems;
   }
 
-  String _getRecurrenceMonthlyDayLabel(int? day) {
-    if (day == null) {
-      return '-----';
-    }
-
-    if (day == 0) {
-      return '1-31';
-    }
-
-    return '$day ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
-  }
-
   Widget _buildRecurrenceEveryMonthSectionWidget() {
     String? title = Localization().getStringEx('panel.event2.create.label.recurrence.every.label', 'EVERY');
     return Semantics(
@@ -1491,6 +1498,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                           padding: EdgeInsets.only(left: 12, right: 8),
                           child: DropdownButtonHideUnderline(
                               child: DropdownButton<int?>(
+                                  dropdownColor: Styles().colors.white,
                                   icon: Styles().images.getImage('chevron-down'),
                                   isExpanded: true,
                                   style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -1503,7 +1511,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<DropdownMenuItem<int?>>? _buildMonthlyRecurrenceDropDownItems() {
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
-    menuItems.add(DropdownMenuItem<int?>(value: null, child: Text(_getEveryMonthRecurrencePeriod(null))));
     for (int i = 1; i <= _maxRecurrenceMonthsValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(_getEveryMonthRecurrencePeriod(i))));
     }
@@ -1624,6 +1631,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Event2Type>(
+                  dropdownColor: Styles().colors.white,
                   icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
                   style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -2188,6 +2196,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<_Event2Visibility>(
+                    dropdownColor: Styles().colors.white,
                     icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
                     style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -3203,6 +3212,50 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         }
       }
     }
+  }
+
+  String _getRecurrenceMonthlyDayLabel(int? day) {
+    if (day == null) {
+      return '-----';
+    }
+
+
+    return '$day${_getOrdinalDaySuffix(day)} ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
+  }
+
+  String _getOrdinalDaySuffix(int day) {
+    if (day < 1 || day > _maxRecurrenceRepeatDayValue) {
+      return '';
+    }
+    switch (day) {
+      case 1:
+      case 21:
+      case 31:
+        return 'st';
+      case 2:
+      case 22:
+        return 'nd';
+      case 3:
+      case 23:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  }
+
+  Widget _datePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.white)), child: child);
+  }
+
+  Widget _timePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+                backgroundColor: Styles().colors.white,
+                dialBackgroundColor: Styles().colors.background,
+                hourMinuteColor: Styles().colors.background)),
+        child: child);
   }
 }
 

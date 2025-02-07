@@ -61,9 +61,11 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   static const String _tipsContentCategory = "wellness_tips";
   static const String _resourcesContentCategory = "wellness_resources";
+  static const String _recreationContentCategory = "wellness_recreation";
 
   Map<String, dynamic>? _tipsContent;
   Map<String, dynamic>? _resourcesContent;
+  Map<String, dynamic>? _recreationContent;
 
   String? _dailyTipId;
   DateTime? _dailyTipTime;
@@ -96,12 +98,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
     _tipsContent = Content().contentItem(_tipsContentCategory);
     _resourcesContent = Content().contentItem(_resourcesContentCategory);
-    
+    _recreationContent = Content().contentItem(_recreationContentCategory);
+
     _dailyTipId = Storage().wellnessDailyTipId;
     _dailyTipTime = DateTime.fromMillisecondsSinceEpoch(Storage().wellnessDailyTipTime ?? 0);
     _updateDailyTip(notify: false);
 
-    if ((_tipsContent != null) && (_resourcesContent != null)) {
+    if ((_tipsContent != null) && (_resourcesContent != null) && (_recreationContent != null)) {
       await super.initService();
     }
     else {
@@ -144,6 +147,10 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       _resourcesContent = Content().contentItem(_resourcesContentCategory);
       NotificationService().notify(notifyResourcesContentChanged);
     }
+    if (categoriesDiff?.contains(_recreationContentCategory) == true) {
+      _recreationContent = Content().contentItem(_recreationContentCategory);
+      NotificationService().notify(notifyRecreationContentChanged);
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -166,7 +173,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   // ContentItemCategoryClient
 
   @override
-  List<String> get contentItemCategory => <String>[_tipsContentCategory, _resourcesContentCategory];
+  List<String> get contentItemCategory => <String>[_tipsContentCategory, _resourcesContentCategory, _recreationContentCategory];
 
   // APIs
 
@@ -472,9 +479,12 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  //Recreation
+  Map<String, dynamic>? get recreation => _recreationContent ?? Content().contentItem(_recreationContentCategory); //TBD remove when Initial loading bug is fixed
+
   // Resources
 
-  Map<String, dynamic>? get resources => _resourcesContent;
+  Map<String, dynamic>? get resources => _resourcesContent ?? Content().contentItem(_resourcesContentCategory); //TBD remove when Initial loading bug is fixeds;
 
   Map<String, dynamic>? getResource({ String? resourceId }) {
     List<dynamic>? commands = (_resourcesContent != null) ? JsonUtils.listValue(_resourcesContent!['commands']) : null;

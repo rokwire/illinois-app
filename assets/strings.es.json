@@ -3352,6 +3352,7 @@
     "widget.conversation_card.status.hint": "sestado: %s ,para:",
     "widget.conversation_card.subject.hint": "Asignaturas",
     "widget.conversation_card.body.hint": "Cuerpo: %s",
+    "widget.conversation_card.sender.me": "Ya",
 
     "panel.guide_list.label.highlights.heading": "Guía del Campus",
 

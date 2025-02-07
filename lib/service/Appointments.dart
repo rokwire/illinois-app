@@ -97,7 +97,7 @@ class Appointments with Service implements NotificationsListener {
       _initAccount()
     ]);
     
-    super.initService();
+    await super.initService();
   }
 
   @override
