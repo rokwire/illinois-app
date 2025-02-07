@@ -25,7 +25,7 @@ class Content extends rokwire.Content {
   @override
   Future<void> initService() async {
     _initTopLevelDomains();
-    super.initService();
+    await super.initService();
   }
 
   void _initTopLevelDomains() {
