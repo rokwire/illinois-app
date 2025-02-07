@@ -296,7 +296,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   Widget build(BuildContext context) => AppBar(
     backgroundColor: Styles().colors.fillColorPrimaryVariant,
     leading: _buildHeaderLeading(),
-    title: _buildHeaderTitle(),
+    title: _buildHeaderWidget(),
     actions: _buildHeaderActions(),
   );
 
@@ -320,19 +320,35 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
   }
 
-  Widget _buildHeaderTitle() {
+  Widget _buildHeaderWidget() {
     return RadioPlayer().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
-      _buildHeaderTitleText(),
+      Flexible(child: _buildHeaderTitleWidget()),
       _buildHeaderRadioButton(),
-    ],) : GestureDetector(
-        onTap: widget.onTapTitle,
-        child: _buildHeaderTitleText()
+    ],) : _buildHeaderTitleWidget();
+  }
+
+  Widget _buildHeaderTitleWidget() {
+    return (widget.onTapTitle != null) ? _buildHeaderTitleButton() : _buildHeaderTitleLabel();
+  }
+
+  Widget _buildHeaderTitleLabel() {
+    return Semantics(label: widget.title, excludeSemantics: true, child:
+      _buildHeaderTitleText(),
+    );
+  }
+
+  Widget _buildHeaderTitleButton() {
+    return Semantics(label: widget.title, button: true, excludeSemantics: true, child:
+      InkWell(onTap: widget.onTapTitle, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          _buildHeaderTitleText(),
+        )
+      )
     );
   }
 
   Widget _buildHeaderTitleText() {
-    return Semantics(label: widget.title, excludeSemantics: true, child:
-      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),);
+    return Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),);
   }
 
   Widget _buildHeaderRadioButton() {
