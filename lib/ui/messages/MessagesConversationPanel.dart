@@ -72,7 +72,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final int _messagesPageSize = 20;
   Message? _editingMessage;
   Message? _deletingMessage;
-  List<PlatformFile> _attachedFiles = [];
+  Set<PlatformFile> _attachedFiles = {};
 
   final Set<String> _globalIds = {};
 
@@ -619,9 +619,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildAttachedFilesListWidget() {
     return Container(
-      height: 80.0,
+      height: 88.0,
       child: ListView.separated(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         separatorBuilder: (context, index) => SizedBox(width: 16.0),
         itemCount: _attachedFiles.length,
         itemBuilder: _buildAttachedFileEntry,
@@ -631,6 +631,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildAttachedFileEntry(BuildContext context, int index) {
+    PlatformFile file = _attachedFiles.elementAt(index);
     return Stack(
       alignment: Alignment.topRight,
       children: [
@@ -648,7 +649,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      _attachedFiles[index].name,
+                      file.name,
                       style: Styles().textStyles.getTextStyle('widget.title.small'),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -656,7 +657,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      _attachedFiles[index].extension?.toUpperCase() ?? '',
+                      file.extension?.toUpperCase() ?? '',
                       style: Styles().textStyles.getTextStyle('widget.title.small'),
                     ),
                   ),
@@ -665,7 +666,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             ),
           ]),
         ),
-        Styles().images.getImage('close-circle-white', size: 16.0,) ?? Container(), //TODO: make tappable to remove
+        GestureDetector(onTap: () => _onTapRemoveFile(file), child:
+          Styles().images.getImage('close-circle-white',) ?? Container(),
+        ),
       ],
     );
   }
@@ -931,13 +934,19 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     //TODO: should file attachments be retained for draft messages?
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
-      dialogTitle: "Select a file to upload", //TODO
+      dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
     );
     if (CollectionUtils.isNotEmpty(result?.files)) {
       setStateIfMounted(() {
-        _attachedFiles = result!.files;
+        _attachedFiles.addAll(result!.files);
       });
     }
+  }
+
+  void _onTapRemoveFile(PlatformFile file) {
+    setState(() {
+      _attachedFiles.remove(file);
+    });
   }
 
   @override
