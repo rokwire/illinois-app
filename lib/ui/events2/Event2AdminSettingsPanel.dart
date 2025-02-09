@@ -208,6 +208,7 @@ Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
   heading: RibbonButton(
         label: title?? "",
         description: subTitle,
+        descriptionTextColor: Styles().colors.fillColorSecondary,
         progress: progress,
         onTap: () => onTap?.call(),
         borderRadius: BorderRadius.all(Radius.circular(15)),

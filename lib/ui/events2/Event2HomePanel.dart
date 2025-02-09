@@ -1144,6 +1144,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
           _types.add(Event2TypeFilter.favorite);
         }
       });
+      _reload();
     }
     _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
   }

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/DeepLink.dart';
@@ -321,7 +322,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
     );
 
   Decoration get _cardDecoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: Styles().colors.background,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: _cardBorderRadiusGeometry,
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]
@@ -516,11 +517,13 @@ void _launchUrl(String? url) {
   if (StringUtils.isNotEmpty(url)) {
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
-    }
-    else {
+    } else {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        launchUrl(
+          uri,
+          mode: (!kIsWeb && Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault),
+        );
       }
     }
   }

@@ -1176,7 +1176,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     List<DropdownMenuItem<_RecurrenceRepeatType>> menuItems = <DropdownMenuItem<_RecurrenceRepeatType>>[];
 
     for (_RecurrenceRepeatType repeatType in _RecurrenceRepeatType.values) {
-      menuItems.add(DropdownMenuItem<_RecurrenceRepeatType>(value: repeatType, child: Text(_repeatTypeToDisplayString(repeatType) ?? '')));
+      menuItems.add(DropdownMenuItem<_RecurrenceRepeatType>(value: repeatType, child: Text(_repeatTypeToDisplayString(repeatType) ?? '', style: Styles().textStyles.getTextStyle("panel.create_event.widget.regular.dark"),)));
     }
 
     return menuItems;
@@ -1339,7 +1339,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   List<DropdownMenuItem<int?>>? _buildWeeklyRecurrenceDropDownItems({bool selectedItem = false}) {
-    TextStyle? textStyle = _dropDownItemTextStyle(textDark: selectedItem);
+    TextStyle? textStyle = _dropDownItemTextStyle(textDark: true);
     List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
     for (int i = 1; i<= _maxRecurrenceWeeksValue; i++) {
       menuItems.add(DropdownMenuItem<int?>(value: i, child: Text(
@@ -1908,7 +1908,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attributes.title', 'EVENT ATTRIBUTES'),
       subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.attributes.description', 'Choose attributes related to your event.') : null,
-      required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false,
+      //required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false,
+      required: false,
       onTap: _onEventAttributes,
     ),
     body: _buildAttributesSectionBody(),
@@ -2470,9 +2471,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.website_url', 'website URL'));
     }
 
-    if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
-      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
-    }
+    // if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
+    //   missingList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
+    // }
 
     if ((_registrationDetails?.type == Event2RegistrationType.external) && (_registrationDetails?.externalLink?.isEmpty ?? true)) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
@@ -2759,7 +2760,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     (!_onlineEventType || _hasValidOnlineDetails) &&
     (!_hasWebsiteURL || _hasValidWebsiteURL) &&
     (_free || _costController.text.isNotEmpty) &&
-    (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
+    ((_attributes == null || _attributes!.isEmpty) || (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false)) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
     ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
     (!_hasSurvey || _hasAttendanceDetails) &&
@@ -2943,7 +2944,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       onlineDetails: _onlineDetails,
 
       grouping: grouping,
-      attributes: _attributes,
+      attributes: (_attributes == null || _attributes!.isEmpty) ? {"category": "Other"} : _attributes,
       authorizationContext: authorizationContext,
       context: event2Context,
       published: _published,
@@ -3321,7 +3322,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Widget _datePickerTransitionBuilder(BuildContext context, Widget child) {
     return Theme(
-        data: Theme.of(context).copyWith(datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.white)), child: child);
+        data: Theme.of(context).copyWith(
+            datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.background)), child: child);
   }
 
   Widget _timePickerTransitionBuilder(BuildContext context, Widget child) {
@@ -3329,9 +3331,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
                 dayPeriodColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.white,
-                dialBackgroundColor: Styles().colors.background,
-                hourMinuteColor: Styles().colors.background)),
+                backgroundColor: Styles().colors.background,
+                dialBackgroundColor: Styles().colors.backgroundVariant,
+                // hourMinuteColor: Styles().colors.background
+            )),
         child: child);
   }
 }
