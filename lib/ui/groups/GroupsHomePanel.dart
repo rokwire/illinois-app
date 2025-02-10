@@ -225,22 +225,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return
       Column(children: <Widget>[
         _buildGroupsContentSelection(),
-        Expanded(child: Stack(alignment: Alignment.topCenter, children: [
-          Column(children: [
-            _buildFunctionalBar(),
-            Expanded(child: _isLoading
-              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ),)
-              : Container(color: Styles().colors.background, child:
-                  RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                    SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                      Column(children: <Widget>[ _buildGroupsContent(), ],),
+        Expanded(child:
+          Stack(alignment: Alignment.topCenter, children: [
+            _isLoading
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary),)
+              : Column(children: [
+                  if ((_selectedContentType != rokwire.GroupsContentType.my) || Auth2().isLoggedIn)
+                    _buildFunctionalBar(),
+                  Expanded(child:
+                    Container(color: Styles().colors.background, child:
+                      RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                        SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                          Column(children: <Widget>[ _buildGroupsContent(), ],),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-            )
-          ]),
-          _buildContentTypesContainer()
-        ]))
+                ]),
+            _buildContentTypesContainer()
+          ])
+        )
       ]);
   }
 
@@ -602,7 +606,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       spanList.add(TextSpan(text: messages[index]));
     }
 
-    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16), child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 32), child:
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
       )
