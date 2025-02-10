@@ -61,6 +61,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   _TagFilter _selectedTagFilter = _TagFilter.all;
   _FilterType? _activeFilterType;
 
+  GestureRecognizer? _loginRecognizer;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -69,6 +71,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Groups.notifyGroupDeleted,
       Auth2.notifyLoginChanged,
     ]);
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     if (widget.contentType != null) {
       _selectedContentType = widget.contentType;
     }
@@ -80,6 +83,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _loginRecognizer?.dispose();
     super.dispose();
   }
 
@@ -492,7 +496,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(text: Localization().getStringEx("panel.research_projects.home.status.my_projects.logged_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+        recognizer: _loginRecognizer, ));
       spanList.add(TextSpan(text: messages[index]));
     }
 

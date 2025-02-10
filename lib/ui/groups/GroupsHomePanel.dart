@@ -75,6 +75,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   rokwire.GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
 
+  GestureRecognizer? _loginRecognizer;
+  GestureRecognizer? _selectAllRecognizer;
+
   List<Group>? _allGroups;
   List<Group>? _userGroups;
 
@@ -82,7 +85,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   @override
   void initState() {
-    super.initState();
     NotificationService().subscribe(this, [
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
@@ -93,14 +95,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
+    _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
     _selectedContentType = widget.contentType;
     _reloadGroupsContent();
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    _loginRecognizer?.dispose();
+    _selectAllRecognizer?.dispose();
+    super.dispose();
   }
 
   @override
@@ -602,7 +609,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+        recognizer: _loginRecognizer, ));
       spanList.add(TextSpan(text: messages[index]));
     }
 
@@ -625,7 +632,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children:[
           TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
           TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-            recognizer: TapGestureRecognizer()..onTap = _onSelectAllGroups, ),
+            recognizer: _selectAllRecognizer, ),
           TextSpan(text:"."),
         ])
       )

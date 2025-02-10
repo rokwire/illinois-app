@@ -33,11 +33,13 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
   GlobalKey<DirectoryAccountsListState> _accountsListKey = GlobalKey();
   GestureRecognizer? _editInfoRecognizer;
   GestureRecognizer? _shareInfoRecognizer;
+  GestureRecognizer? _signInRecognizer;
 
   @override
   void initState() {
     _editInfoRecognizer = TapGestureRecognizer()..onTap = _onTapEditInfo;
     _shareInfoRecognizer = TapGestureRecognizer()..onTap = _onTapShareInfo;
+    _signInRecognizer = TapGestureRecognizer()..onTap = _onTapSignIn;
     super.initState();
   }
 
@@ -45,6 +47,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
   void dispose() {
     _editInfoRecognizer?.dispose();
     _shareInfoRecognizer?.dispose();
+    _signInRecognizer?.dispose();
     super.dispose();
   }
 
@@ -156,7 +159,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(text: Localization().getStringEx('panel.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
+        recognizer: _signInRecognizer));
       spanList.add(TextSpan(text: messages[index]));
     }
 

@@ -65,6 +65,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   List<SurveyResponse> _responses = [];
 
   late ScrollPagerController _pagerController;
+  GestureRecognizer? _loginRecognizer;
 
   @override
   void initState() {
@@ -78,11 +79,14 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     _pagerController = ScrollPagerController(limit: 20, onPage: _loadPage, onStateChanged: _onPagerStateChanged);
     _pagerController.registerScrollController(widget.scrollController);
 
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
+
     super.initState();
   }
 
   @override
   void dispose() {
+    _loginRecognizer?.dispose();
     _pagerController.deregisterScrollController();
     NotificationService().unsubscribe(this);
     super.dispose();
@@ -420,7 +424,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(text: Localization().getStringEx("panel.wellness.sections.health_screener.message.signed_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("panel.wellness.sections.health_screener.link"),
-        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+        recognizer: _loginRecognizer, ));
       spanList.add(TextSpan(text: messages[index]));
     }
 
