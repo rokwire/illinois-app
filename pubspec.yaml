@@ -75,7 +75,8 @@ dependencies:
   emoji_picker_flutter: ^4.2.0
   flutter_email_sender: ^6.0.3
   sms_mms: ^0.0.3
-  file_picker: ^8.3.1
+  file_picker: ^8.3.3
+  file_saver: ^0.2.14
 
   # Below are the plugins imported alongside web integration
   universal_io: ^2.2.2

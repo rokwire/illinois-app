@@ -24,6 +24,7 @@ import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
@@ -270,50 +271,52 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     Widget cardWidget = GestureDetector(onLongPress: canLongPress ? () => _onMessageLongPress(message) : null, child:
       FutureBuilder<Widget>(
-      future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
-      builder: (context, snapshot) {
-        Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
+        future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
+        builder: (context, snapshot) {
+          Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
 
-        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
-          Padding(padding: EdgeInsets.all(16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Expanded(child:
-                  InkWell(onTap: () => _onTapAccount(message), child:
-                    Row(children: [
-                      avatar,
-                      SizedBox(width: 8),
-                      Expanded(child:
-                        Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
-                      ),
-                    ]),
+          return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
+            Padding(padding: EdgeInsets.all(16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Expanded(child:
+                    InkWell(onTap: () => _onTapAccount(message), child:
+                      Row(children: [
+                        avatar,
+                        SizedBox(width: 8),
+                        Expanded(child:
+                          Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                        ),
+                      ]),
+                    ),
                   ),
-                ),
-                if (message.dateSentUtc != null)
-                  Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
-              ]),
-              SizedBox(height: 8),
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Expanded(child:
-                  LinkText(
-                    message.message ?? '',
-                    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                    linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                    onLinkTap: _onTapLink,
+                  if (message.dateSentUtc != null)
+                    Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+                ]),
+                SizedBox(height: 8),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Expanded(child:
+                    LinkText(
+                      message.message ?? '',
+                      textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                      linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                      onLinkTap: _onTapLink,
+                    ),
                   ),
-                ),
-                // If dateUpdatedUtc is not null, show a small “(edited)” label
-                if (message.dateUpdatedUtc != null)
-                  Padding(padding: EdgeInsets.only(left: 4), child:
-                    Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
-                  ),
+                  // If dateUpdatedUtc is not null, show a small “(edited)” label
+                  if (message.dateUpdatedUtc != null)
+                    Padding(padding: EdgeInsets.only(left: 4), child:
+                      Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                    ),
                 ],),
                 if (!kIsWeb)
-                  WebEmbed(body: message.message)
+                  WebEmbed(body: message.message),
+                if (CollectionUtils.isNotEmpty(message.fileAttachments))
+                  _buildAttachedFilesListWidget(message: message),
               ]),
             ),
           );
-        },
+        }
       ),
     );
 
@@ -617,21 +620,33 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  Widget _buildAttachedFilesListWidget() {
+  Widget _buildAttachedFilesListWidget({Message? message}) {
     return Container(
       height: 88.0,
       child: ListView.separated(
         padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         separatorBuilder: (context, index) => SizedBox(width: 16.0),
-        itemCount: _attachedFiles.length,
-        itemBuilder: _buildAttachedFileEntry,
+        itemCount: message?.fileAttachments?.length ?? _attachedFiles.length,
+        itemBuilder: (context, index) => _buildAttachedFileEntry(context, index, message: message),
         scrollDirection: Axis.horizontal,
       ),
     );
   }
 
-  Widget _buildAttachedFileEntry(BuildContext context, int index) {
-    PlatformFile file = _attachedFiles.elementAt(index);
+  Widget _buildAttachedFileEntry(BuildContext context, int index, {Message? message}) {
+    String? name, extension;
+    GestureTapCallback? onTap;
+    if (message != null) {
+      FileAttachment file = message.fileAttachments![index];
+      name = file.name;
+      extension = file.extension;
+      onTap = () => _onTapDownloadFile(file, message.globalId!);
+    } else {
+      PlatformFile file = _attachedFiles.elementAt(index);
+      name = file.name;
+      extension = file.extension;
+      onTap = () => _onTapRemoveFile(file);
+    }
     return Stack(
       alignment: Alignment.topRight,
       children: [
@@ -641,34 +656,39 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           child: Row(children: [
             Styles().images.getImage('file') ?? Container(height: 48.0),
             SizedBox(width: 16.0),
-            Container(
-              width: 120.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      file.name,
-                      style: Styles().textStyles.getTextStyle('widget.title.small'),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    name ?? '',
+                    style: Styles().textStyles.getTextStyle('widget.title.small'),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      file.extension?.toUpperCase() ?? '',
-                      style: Styles().textStyles.getTextStyle('widget.title.small'),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    extension?.toUpperCase() ?? '',
+                    style: Styles().textStyles.getTextStyle('widget.title.small'),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            if (message != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: GestureDetector(onTap: onTap, child:
+                  Styles().images.getImage('download', size: 48.0),
+                ),
+              ),
           ]),
         ),
-        GestureDetector(onTap: () => _onTapRemoveFile(file), child:
-          Styles().images.getImage('close-circle-white',) ?? Container(),
-        ),
+        if (message == null)
+          GestureDetector(onTap: onTap, child:
+            Styles().images.getImage('close-circle-white'),
+          ),
       ],
     );
   }
@@ -778,7 +798,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
   }
 
-  static List<Message> _removeDuplicateMessagesByGlobalId(List<Message> source, Set<String> globalIds) {
+  List<Message> _removeDuplicateMessagesByGlobalId(List<Message> source, Set<String> globalIds) {
     List<Message> messages = [];
     for (Message message in source) {
       if (message.globalId != null && !globalIds.contains(message.globalId)) {
@@ -810,6 +830,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Message tempMessage = Message(
         sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
         message: messageText,
+        fileAttachments: _messageFileAttachments,
         dateSentUtc: DateTime.now().toUtc(),
       );
 
@@ -826,10 +847,12 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         message: messageText,
       );
 
+      String? messageId;
       if (mounted) {
         if (newMessages != null && newMessages.isNotEmpty) {
           setState(() {
             Message serverMessage = newMessages.first;
+            messageId = serverMessage.globalId;
             // Update the temporary message with the server's message if needed
             int index = _messages.indexOf(tempMessage);
             if (index >= 0) {
@@ -847,7 +870,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
         }
       }
+
+      if (_attachedFiles.isNotEmpty && messageId != null) {
+        _uploadAttachedFiles(messageId);
+      }
     }
+  }
+
+  Future<void> _uploadAttachedFiles(String? messageId) async {
+    List<String>? uploaded = await Content().uploadFileContentItems(_attachedFileData, Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
+    for (String name in uploaded ?? []) {
+      _attachedFiles.removeWhere((file) => file.name == name);
+    }
+
+    setStateIfMounted(() {});
   }
 
   Future<void> _updateEditingMessage(String newText) async {
@@ -949,6 +985,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
   }
 
+  Future<void> _onTapDownloadFile(FileAttachment file, String messageId) async {
+    if (StringUtils.isNotEmpty(file.name)) {
+      Map<String, Uint8List> files = await Content().getFileContentItems([file.name!], Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
+      if (files.isNotEmpty) {
+        //TODO: returns directory path, should it be used?
+        FileSaver.instance.saveFile(
+          name: file.name!,
+          bytes: files[file.name!],
+          ext: file.extension ?? '',
+        );
+      }
+    }
+  }
+
   @override
   void didChangeMetrics() {
     _checkKeyboardVisible.then((visible) {
@@ -1004,4 +1054,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
+  Map<String, Uint8List> get _attachedFileData {
+    Map<String, Uint8List> fileData = {};
+    for (PlatformFile file in _attachedFiles) {
+      if (file.bytes != null) {
+        fileData[file.name] = file.bytes!;
+      }
+    }
+    return fileData;
+  }
+
+  //TODO: figure out how to get accurate file types
+  List<FileAttachment> get _messageFileAttachments => List.generate(_attachedFiles.length, (index) => FileAttachment(name: _attachedFiles.elementAt(index).name, type: 'file'));
 }
