@@ -23,6 +23,7 @@ import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -88,8 +89,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
       Groups.notifyUserGroupsUpdated,
-      Auth2.notifyLoginSucceeded,
-      Auth2.notifyLogout,
+      Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -158,7 +158,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Future<List<Group>?> _loadUserGroups() async =>
-    Groups().loadGroups(contentType: rokwire.GroupsContentType.my);
+    Auth2().isLoggedIn ? Groups().loadGroups(contentType: rokwire.GroupsContentType.my) : null;
 
   Future<List<Group>?> _loadAllGroups() async =>
     Groups().loadGroups(
@@ -591,23 +591,29 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildLoggedOutContent() {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx("panel.groups_home.label.my_groups.logged_out", "You are not logged in. To access your groups, you need to $linkLoginMacro first.");
+    String messageTemplate = Localization().getStringEx("panel.groups_home.label.my_groups.logged_out", "You are not logged in. To access your groups, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.");
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "Login"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
         recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
       spanList.add(TextSpan(text: messages[index]));
     }
 
-    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16), child:
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
       )
     );
   }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login,);
+  }
+
 
   Widget _buildEmptyMyGroupsContent() {
     return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
@@ -718,16 +724,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  void _onTapLogin() {
-    Analytics().logSelect(target: "Login");
-    if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showAuthenticationNAMessage(context);
-    }
-    else {
-      Auth2().authenticateWithOidc();
-    }
-  }
-
   void _syncAuthmanGroups() {
     Analytics().logSelect(target: "Sync Authman Group");
     Groups().syncAuthmanGroupsExt().then(
@@ -780,7 +776,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     else if (name == Groups.notifyUserGroupsUpdated) {
       _applyUserGroups();
     }
-    else if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
+    else if (name == Auth2.notifyLoginChanged) {
       // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
       Future.delayed(Duration(microseconds: 300), () {
         if (mounted) {

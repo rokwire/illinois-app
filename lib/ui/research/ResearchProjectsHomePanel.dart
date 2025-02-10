@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -7,6 +8,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -112,7 +114,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Expanded(child:
         Stack(children: [
           Column(children: [
-            _buildToolBar(),
+            if ((_selectedContentType != ResearchProjectsContentType.my) || Auth2().isLoggedIn)
+              _buildToolBar(),
             Expanded(child: _researchProjectsBusy ?
               _buildLoading() :
               Stack(children: [
@@ -402,7 +405,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   // Content Widget
 
   Widget _buildContent() {
-    if (_researchProjects == null) {
+    if ((_selectedContentType == ResearchProjectsContentType.my) && !Auth2().isLoggedIn) {
+      return _buildLoggedOutContent();
+    }
+    else if (_researchProjects == null) {
       return _buildStatus(_errorDisplayStatus);
     }
     else if (_researchProjects!.isEmpty) {
@@ -477,11 +483,38 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   // Content Data
 
+  Widget _buildLoggedOutContent() {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx("panel.research_projects.home.status.my_projects.logged_out", "You are not logged in. To access your research projects, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.");
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.research_projects.home.status.my_projects.logged_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login,);
+  }
+
+  // Content Data
+
   void _loadInitialContent() {
-    if (_loadingResearchProjects == false) {
+    ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
+    if ((_loadingResearchProjects == false) && ((contentType != ResearchProjectsContentType.my) || Auth2().isLoggedIn)) {
       _loadingResearchProjects = _researchProjectsBusy = true;
       
-      ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
       Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
         if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
           contentType = ResearchProjectsContentType.open;

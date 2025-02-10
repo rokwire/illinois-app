@@ -167,7 +167,10 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
     );
   }
 
-  void _onTapSignIn() => ProfileHomePanel.present(context, content: ProfileContent.login, );
+  void _onTapSignIn() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login, );
+  }
 
   Future<void> refresh() async => _accountsListKey.currentState?.refresh();
 }
