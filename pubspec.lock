@@ -53,10 +53,10 @@ packages:
     dependency: transitive
     description:
       name: audio_session
-      sha256: "343e83bc7809fbda2591a49e525d6b63213ade10c76f15813be9aed6657b3261"
+      sha256: "2b7fff16a552486d078bfc09a8cde19f426dc6d6329262b684182597bec5b1ac"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.21"
+    version: "0.1.25"
   base58check:
     dependency: transitive
     description:
@@ -833,38 +833,34 @@ packages:
   google_maps_flutter_android:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_android"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.13.0"
+      name: google_maps_flutter_android
+      sha256: "1b69fbb3ab76e7a7dfcf25e60f32f81ae5d9b88285343eecb5479116d54be869"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.14.12"
   google_maps_flutter_ios:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_ios"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.12.0"
+      name: google_maps_flutter_ios
+      sha256: "6f798adb0aa1db5adf551f2e39e24bd06c8c0fbe4de912fb2d9b5b3f48147b02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.13.2"
   google_maps_flutter_platform_interface:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_platform_interface"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.9.0"
+      name: google_maps_flutter_platform_interface
+      sha256: "72957351f91656128d8f1090ce9e624486a8a7dada21e615ebc9af9fadffdedd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.10.0"
   google_maps_flutter_web:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_web"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
+      name: google_maps_flutter_web
+      sha256: ff39211bd25d7fad125d19f757eba85bd154460907cd4d135e07e3d0f98a4130
+      url: "https://pub.dev"
+    source: hosted
     version: "0.5.10"
   html:
     dependency: transitive
@@ -1014,26 +1010,26 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: d8e8aaf417d33e345299c17f6457f72bd4ba0c549dc34607abb5183a354edc4d
+      sha256: f978d5b4ccea08f267dae0232ec5405c1b05d3f3cd63f82097ea46c015d5c09e
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.40"
+    version: "0.9.46"
   just_audio_platform_interface:
     dependency: transitive
     description:
       name: just_audio_platform_interface
-      sha256: "0243828cce503c8366cc2090cefb2b3c871aa8ed2f520670d76fd47aa1ab2790"
+      sha256: "271b93b484c6f494ecd72a107fffbdb26b425f170c665b9777a0a24a726f2f24"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.0"
+    version: "4.4.0"
   just_audio_web:
     dependency: transitive
     description:
       name: just_audio_web
-      sha256: "9a98035b8b24b40749507687520ec5ab404e291d2b0937823ff45d92cb18d448"
+      sha256: "58915be64509a7683c44bf11cd1a23c15a48de104927bee116e3c63c8eeea0d4"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.13"
+    version: "0.4.14"
   leak_tracker:
     dependency: transitive
     description:
