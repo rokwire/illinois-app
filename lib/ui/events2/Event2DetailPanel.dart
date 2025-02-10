@@ -753,7 +753,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       else if (_event?.isRecurring == true) {
         // Available Times
         message = (_linkedEvents != null) ?
-          Localization().getStringEx('panel.event2.detail.linked_events.recurrence.failed.message', 'There are no upcoming available times.') :
+          Localization().getStringEx('panel.event2.detail.linked_events.recurrence.empty.message', 'There are no upcoming available times.') :
           Localization().getStringEx('panel.event2.detail.linked_events.recurrence.failed.message', 'Failed to load available times.');
       }
       cardWidgets.add(_linkedEventsMessageCard(message ?? ''));
