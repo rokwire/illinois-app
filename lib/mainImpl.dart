@@ -107,8 +107,9 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     illinois.Services().create([
       // Add highest priority services at top
 
-      FirebaseCore(),
-      FirebaseCrashlytics(),
+      // These were here for the native apps but are move lower for the web app
+      // FirebaseCore(),
+      // FirebaseCrashlytics(),
       AppLivecycle(),
       Connectivity(),
       LocationServices(),
@@ -116,6 +117,9 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Storage(),
 
       Config(defaultEnvironment: configEnvironment),
+      // These are here for the web app because firebase is dependant on the Config
+      FirebaseCore(),
+      FirebaseCrashlytics(),
       AppDateTime(),
       NativeCommunicator(),
       DeepLink(),
