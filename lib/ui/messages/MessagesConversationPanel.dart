@@ -621,10 +621,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildAttachedFilesListWidget({Message? message}) {
+
     return Container(
       height: 88.0,
       child: ListView.separated(
-        padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        padding: EdgeInsets.only(top: 16.0, left: message != null ? 0.0 : 16.0, right: 16.0),
         separatorBuilder: (context, index) => SizedBox(width: 16.0),
         itemCount: message?.fileAttachments?.length ?? _attachedFiles.length,
         itemBuilder: (context, index) => _buildAttachedFileEntry(context, index, message: message),
@@ -636,58 +637,72 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildAttachedFileEntry(BuildContext context, int index, {Message? message}) {
     String? name, extension;
     GestureTapCallback? onTap;
+    Color? entryBackgroundColor;
+    String? textStyleKey;
     if (message != null) {
       FileAttachment file = message.fileAttachments![index];
       name = file.name;
       extension = file.extension;
       onTap = () => _onTapDownloadFile(file, message.globalId!);
+      entryBackgroundColor = Styles().colors.surfaceAccent;
+      textStyleKey = 'widget.title.dark.small';
     } else {
       PlatformFile file = _attachedFiles.elementAt(index);
       name = file.name;
       extension = file.extension;
       onTap = () => _onTapRemoveFile(file);
+      entryBackgroundColor = Styles().colors.backgroundAccent;
+      textStyleKey = 'widget.title.small';
     }
     return Stack(
       alignment: Alignment.topRight,
       children: [
         Container(
-          color: Styles().colors.backgroundAccent,
+          color: entryBackgroundColor,
           padding: const EdgeInsets.all(8.0),
           child: Row(children: [
             Styles().images.getImage('file') ?? Container(height: 48.0),
             SizedBox(width: 16.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    name ?? '',
-                    style: Styles().textStyles.getTextStyle('widget.title.small'),
-                    overflow: TextOverflow.ellipsis,
+            Container(
+              width: 120.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      name ?? '',
+                      style: Styles().textStyles.getTextStyle(textStyleKey),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    extension?.toUpperCase() ?? '',
-                    style: Styles().textStyles.getTextStyle('widget.title.small'),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          extension?.toUpperCase() ?? '',
+                          style: Styles().textStyles.getTextStyle(textStyleKey),
+                        ),
+                        if (message != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: GestureDetector(onTap: onTap, child:
+                              Styles().images.getImage('download'),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            if (message != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: GestureDetector(onTap: onTap, child:
-                  Styles().images.getImage('download', size: 48.0),
-                ),
+                ],
               ),
+            ),
           ]),
         ),
         if (message == null)
           GestureDetector(onTap: onTap, child:
-            Styles().images.getImage('close-circle-white'),
+            Styles().images.getImage('close-circle'),
           ),
       ],
     );
@@ -825,12 +840,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       FocusScope.of(context).requestFocus(FocusNode());
 
       _inputController.text = '';
+      List<FileAttachment> fileAttachments = _messageFileAttachments;
 
       // Create a temporary message and add it immediately
       Message tempMessage = Message(
         sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
         message: messageText,
-        fileAttachments: _messageFileAttachments,
+        fileAttachments: fileAttachments,
         dateSentUtc: DateTime.now().toUtc(),
       );
 
@@ -845,6 +861,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       List<Message>? newMessages = await Social().createConversationMessage(
         conversationId: _conversationId!,
         message: messageText,
+        fileAttachments: fileAttachments,
       );
 
       String? messageId;
@@ -970,6 +987,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     //TODO: should file attachments be retained for draft messages?
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
+      withData: true,
       dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
     );
     if (CollectionUtils.isNotEmpty(result?.files)) {
