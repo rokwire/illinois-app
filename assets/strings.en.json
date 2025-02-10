@@ -2629,6 +2629,8 @@
     "panel.wellness.sections.health_screener.label.screener.subtitle": "Find the right resources",
     "panel.wellness.sections.health_screener.history.clear": "Clear All",
     "panel.wellness.sections.health_screener.history.clear.confirm": "Are you sure you want to clear your history?",
+    "panel.wellness.sections.health_screener.message.signed_out": "You are not logged in. To access Illinois Health Screener, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.wellness.sections.health_screener.message.signed_out.link.login": "sign in",
 
     "panel.wellness.sections.mental_health.video.title": "Mental Health",
 

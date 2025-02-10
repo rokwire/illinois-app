@@ -2614,6 +2614,8 @@
 	"panel.wellness.sections.health_screener.label.screener.subtitle": "找到合適的資源",
 	"panel.wellness.sections.health_screener.history.clear": "全部清除",
 	"panel.wellness.sections.health_screener.history.clear.confirm": "您確定要清除歷史記錄嗎？",
+	"panel.wellness.sections.health_screener.message.signed_out": "You are not logged in. To access Illinois Health Screener, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+	"panel.wellness.sections.health_screener.message.signed_out.link.login": "sign in",
 
 	"panel.wellness.sections.mental_health.video.title": "精神健康",
 
