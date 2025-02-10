@@ -3,7 +3,6 @@ name: Usability report
 about: Report an issue with usability
 title: "[USABILITY]"
 labels: ''
-assignees: pmarkhennessy
 
 ---
 
