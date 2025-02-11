@@ -488,7 +488,11 @@ class AppTextUtils {
       Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
     return message.replaceAll(featureMacro, featureName);
   }
+}
 
+class PlatformUtils {
+  static bool get isWeb => kIsWeb == true;
+  static bool get isMobile => kIsWeb == false;
 }
 
 class AppCsv {

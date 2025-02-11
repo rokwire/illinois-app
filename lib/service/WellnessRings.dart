@@ -682,7 +682,7 @@ class WellnessRings with Service implements NotificationsListener{
 
 //BB APIS RING RECORDS
 
-  Future<http.Response?> requestRingRecordsResponse({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async {
+  Future<http.Response?> _requestRingRecordsResponse({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async {
     //TBD ENABLED
 
     String url = (ringId != null)
@@ -708,7 +708,7 @@ class WellnessRings with Service implements NotificationsListener{
 
   Future<List<WellnessRingRecord>?> _requestGetRingRecord({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async { //TBD Change on backend to avoid multiple requests
 
-    http.Response? response = await requestRingRecordsResponse(ringId: ringId, startPeriod: startPeriod, endPeriod: endPeriod);
+    http.Response? response = await _requestRingRecordsResponse(ringId: ringId, startPeriod: startPeriod, endPeriod: endPeriod);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {

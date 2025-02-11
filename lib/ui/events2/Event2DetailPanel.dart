@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -607,11 +608,16 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _detailSpacerWidget
   ] : null;
 
-  List<Widget>? get _addToCalendarButton => <Widget>[
-    InkWell(onTap: _onAddToCalendar, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
-    _detailSpacerWidget
-  ];
+  List<Widget>? get _addToCalendarButton {
+    if (kIsWeb) {
+      return null;
+    }
+    return <Widget>[
+      InkWell(onTap: _onAddToCalendar, child:
+      _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
+      _detailSpacerWidget
+    ];
+  }
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:neom/model/Occupation.dart';
 import 'package:neom/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -17,11 +18,11 @@ class Occupations /* with Service */ {
 
   Occupations._internal();
 
-  Future<Response?> getAllOccupationMatchesResponse() async => enabled ?
+  Future<Response?> _getAllOccupationMatchesResponse() async => enabled ?
     Network().get('${Config().occupationsUrl}/user-match-results', auth: Auth2()) : null;
 
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
-    Response? response = await getAllOccupationMatchesResponse();
+    Response? response = await _getAllOccupationMatchesResponse();
     Map<String, dynamic>? responseMap = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
     return (responseMap != null) ? OccupationMatch.listFromJson(JsonUtils.listValue(responseMap['matches'])) : null;
   }
@@ -66,6 +67,14 @@ class Occupations /* with Service */ {
   Future<List<OccupationMatch>?> getTop10Occupations() async {
     // TODO: implement getTop10Occupations
     throw UnimplementedError();
+  }
+
+  /////////////////////////
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    Response? response = await _getAllOccupationMatchesResponse();
+    return (response?.succeeded == true) ? { 'matches' : JsonUtils.decodeMap(response?.body) } : null;
   }
 
   /////////////////////////

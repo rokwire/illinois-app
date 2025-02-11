@@ -23,6 +23,13 @@ extension StudentCourseExt on StudentCourse {
       result += "$instructionMethod";
     }
 
+    if (section?.sectionId?.isNotEmpty ?? false) {
+      if (result.isNotEmpty) {
+        result += ' ';
+      }
+      result += "(${section?.sectionId})";
+    }
+
     return result;
   }
   

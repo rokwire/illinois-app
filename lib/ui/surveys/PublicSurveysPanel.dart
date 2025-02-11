@@ -303,6 +303,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProv
         _selectedContentType = _selectedTab == 0 ? PublicSurveysContentType.all : PublicSurveysContentType.completed;
         _dataActivity = null;
       });
+      _refresh();
     }
     _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
   }

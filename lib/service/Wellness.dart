@@ -37,6 +37,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:neom/model/wellness/SuccessTeam.dart';
 import 'package:neom/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -60,9 +61,11 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   static const String _tipsContentCategory = "wellness_tips";
   static const String _resourcesContentCategory = "wellness_resources";
+  static const String _recreationContentCategory = "wellness_recreation";
 
   Map<String, dynamic>? _tipsContent;
   Map<String, dynamic>? _resourcesContent;
+  Map<String, dynamic>? _recreationContent;
 
   String? _dailyTipId;
   DateTime? _dailyTipTime;
@@ -95,12 +98,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
     _tipsContent = Content().contentItem(_tipsContentCategory);
     _resourcesContent = Content().contentItem(_resourcesContentCategory);
-    
+    _recreationContent = Content().contentItem(_recreationContentCategory);
+
     _dailyTipId = Storage().wellnessDailyTipId;
     _dailyTipTime = DateTime.fromMillisecondsSinceEpoch(Storage().wellnessDailyTipTime ?? 0);
     _updateDailyTip(notify: false);
 
-    if ((_tipsContent != null) && (_resourcesContent != null)) {
+    if ((_tipsContent != null) && (_resourcesContent != null) && (_recreationContent != null)) {
       await super.initService();
     }
     else {
@@ -143,6 +147,10 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       _resourcesContent = Content().contentItem(_resourcesContentCategory);
       NotificationService().notify(notifyResourcesContentChanged);
     }
+    if (categoriesDiff?.contains(_recreationContentCategory) == true) {
+      _recreationContent = Content().contentItem(_recreationContentCategory);
+      NotificationService().notify(notifyRecreationContentChanged);
+    }
   }
 
   void _onAppLifecycleStateChanged(AppLifecycleState? state) {
@@ -165,13 +173,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   // ContentItemCategoryClient
 
   @override
-  List<String> get contentItemCategory => <String>[_tipsContentCategory, _resourcesContentCategory];
+  List<String> get contentItemCategory => <String>[_tipsContentCategory, _resourcesContentCategory, _recreationContentCategory];
 
   // APIs
 
   // ToDo List
 
-  Future<http.Response?> loadToDoCategoriesResponse() async => isEnabled ?
+  Future<http.Response?> _loadToDoCategoriesResponse() async => isEnabled ?
     Network().get('${Config().wellnessUrl}/user/todo_categories', auth: Auth2()) : null;
 
   Future<List<WellnessToDoCategory>?> loadToDoCategories() async {
@@ -179,7 +187,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
     }
-    http.Response? response = await loadToDoCategoriesResponse();
+    http.Response? response = await _loadToDoCategoriesResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -315,7 +323,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<http.Response?> loadToDoItemsResponse({int? offset, int? limit}) async => isEnabled ?
+  Future<http.Response?> _loadToDoItemsResponse({int? offset, int? limit}) async => isEnabled ?
     Network().get('${Config().wellnessUrl}/user/todo_entries', auth: Auth2()) : null;
 
   Future<List<WellnessToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
@@ -323,7 +331,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
     }
-    http.Response? response = await loadToDoItemsResponse(offset: offset, limit: limit);
+    http.Response? response = await _loadToDoItemsResponse(offset: offset, limit: limit);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -355,6 +363,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       Log.w('Failed to load wellness todo item. Response:\n$responseCode: $responseString');
       return null;
     }
+  }
+
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().wellnessUrl != null) ? await Network().get("${Config().wellnessUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 
   // Success Team
@@ -464,9 +479,12 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  //Recreation
+  Map<String, dynamic>? get recreation => _recreationContent ?? Content().contentItem(_recreationContentCategory); //TBD remove when Initial loading bug is fixed
+
   // Resources
 
-  Map<String, dynamic>? get resources => _resourcesContent;
+  Map<String, dynamic>? get resources => _resourcesContent ?? Content().contentItem(_resourcesContentCategory); //TBD remove when Initial loading bug is fixeds;
 
   Map<String, dynamic>? getResource({ String? resourceId }) {
     List<dynamic>? commands = (_resourcesContent != null) ? JsonUtils.listValue(_resourcesContent!['commands']) : null;

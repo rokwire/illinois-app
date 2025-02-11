@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -14,7 +13,7 @@ import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/ui/widgets/WebEmbed.dart';
 import 'package:neom/utils/AppUtils.dart';
-import 'package:link_text/link_text.dart';
+import 'package:neom/ui/widgets/CustomLinkText.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -138,7 +137,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
 
     return Scaffold(
-      appBar: RootHeaderBar(title: _conversation?.membersString, leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: _conversation?.membersString, leading: RootHeaderBarLeading.Back, onTapTitle: _onTapHeaderBarTitle),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -168,7 +167,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               children: [
                 CustomScrollView(
                   controller: _scrollController,
-                  // reverse: true,
+                  reverse: true,
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
                     SliverPadding(
@@ -222,7 +221,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
 
     contentList.add(Container(key: _lastContentItemKey, height: 0));
-    return contentList;
+    return contentList.reversed.toList();
   }
 
   Widget _buildLoadingMoreIndicator() {
@@ -296,7 +295,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                 SizedBox(height: 8),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
-                    LinkText(
+                    CustomLinkText(
+                      key: UniqueKey(),
                       message.message ?? '',
                       textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
                       linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
@@ -316,7 +316,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               ]),
             ),
           );
-        }
+        },
       ),
     );
 
@@ -417,6 +417,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _onTapLink(String url) {
+    url = UrlUtils.fixUrl(url, scheme: 'https') ?? url;
     Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
@@ -425,10 +426,128 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       else {
         Uri? uri = Uri.tryParse(url);
         if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+          launchUrl(uri);
         }
       }
     }
+  }
+
+  void _onTapHeaderBarTitle() {
+    Analytics().logSelect(target: 'Headerbar Title', source: _conversation?.membersString);
+    final members = _conversation?.members;
+    if (members == null || members.isEmpty) {
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      builder: (BuildContext context) => _buildMembersPopup(context, members),
+    );
+  }
+
+  Widget _buildMembersPopup(BuildContext context, List<ConversationMember> members) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            color: Styles().colors.white,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: Text(
+                      Localization().getStringEx('', 'Conversation Members'),
+                      style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
+                    ),
+                  ),
+                ),
+                Semantics(
+                  label: Localization().getStringEx('dialog.close.title', 'Close'),
+                  hint: Localization().getStringEx('dialog.close.hint', ''),
+                  inMutuallyExclusiveGroup: true,
+                  button: true,
+                  child: InkWell(
+                    onTap: () => _onTapMembersPopupClose(context),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+                      child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(16.0),
+              child: ListView.builder(
+                itemCount: members.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return _buildMembersPopupMember(context,
+                      userName: Auth2().fullName ?? 'You',
+                      isCurrentUser: true,
+                      accountId: _currentUserId,
+                    );
+                  } else {
+                    final ConversationMember member = members[index - 1];
+                    return _buildMembersPopupMember(context,
+                      userName: member.name ?? 'Unknown',
+                      isCurrentUser: (member.accountId == _currentUserId),
+                      accountId: member.accountId,
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMembersPopupMember(BuildContext context, { required String userName, required bool isCurrentUser, String? accountId, }) {
+
+    return ListTile(
+      leading: FutureBuilder<Widget>(
+        future: _buildAvatarWidget(
+          isCurrentUser: isCurrentUser,
+          senderId: accountId,
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          } else {
+            return Styles().images.getImage(
+              'person-circle-white',
+              size: _photoSize,
+              color: Styles().colors.fillColorSecondary,
+            ) ??
+                Container();
+          }
+        },
+      ),
+      title: Text(userName, style: Styles().textStyles.getTextStyle('widget.title.regular.fat')),
+      onTap: () => _onTapMembersPopupMember(context, accountId),
+    );
+  }
+
+  void _onTapMembersPopupMember(BuildContext context, String? accountId) {
+    Analytics().logSelect(target: 'View Account');
+    showDialog(context: context, builder:(_) => Dialog(child:
+      DirectoryAccountPopupCard(accountId: accountId),
+    ));
+  }
+
+  void _onTapMembersPopupClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
   }
 
   Future<Widget> _buildAvatarWidget({required bool isCurrentUser, String? senderId}) async {

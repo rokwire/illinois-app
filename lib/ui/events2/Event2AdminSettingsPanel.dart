@@ -55,21 +55,31 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                   title: 'SUPER EVENT',
                   subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
                   onTap: _onSuperEvent)),
-              _ButtonWidget(
-                title: 'DOWNLOAD REGISTRANTS .csv',
-                onTap: _onDownloadRegistrants),
-              _ButtonWidget(
-                title: 'UPLOAD REGISTRANTS .csv',
-                onTap: _onUploadRegistrants),
-              _ButtonWidget(
-                  title: 'DOWNLOAD ATTENDANCE .csv',
-                  onTap: _onDownloadAttendance),
-              _ButtonWidget(
-                title: 'UPLOAD ATTENDANCE .csv',
-                onTap: _onUploadAttendance),
-              _ButtonWidget(
-                title: 'DOWNLOAD SURVEY RESULTS',
-                onTap: _onDownloadSurveyResults),
+              Visibility(visible: _canUploadCsv,
+                child: _ButtonWidget(
+                  title: 'DOWNLOAD REGISTRANTS .csv',
+                  onTap: _onDownloadRegistrants)
+              ),
+              Visibility(visible: _canUploadCsv,
+                child: _ButtonWidget(
+                    title: 'UPLOAD REGISTRANTS .csv',
+                    onTap: _onUploadRegistrants),
+              ),
+              Visibility(visible: _canUploadCsv,
+                child: _ButtonWidget(
+                      title: 'DOWNLOAD ATTENDANCE .csv',
+                      onTap: _onDownloadAttendance),
+              ),
+              Visibility(visible: _canUploadCsv,
+                child: _ButtonWidget(
+                    title: 'UPLOAD ATTENDANCE .csv',
+                    onTap: _onUploadAttendance),
+              ),
+              Visibility(visible: _canUploadCsv,
+                child: _ButtonWidget(
+                    title: 'DOWNLOAD SURVEY RESULTS',
+                    onTap: _onDownloadSurveyResults),
+              )
           ]),
         )
     );
@@ -169,6 +179,8 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   Event2? get _event => widget.event;
 
   bool get _showSuperEvent => true /*_event?.isSuperEventChild == false*/;
+
+  bool get _canUploadCsv => PlatformUtils.isWeb;
 }
 
 class _ButtonWidget extends StatelessWidget{
@@ -196,6 +208,7 @@ Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
   heading: RibbonButton(
         label: title?? "",
         description: subTitle,
+        descriptionTextColor: Styles().colors.fillColorSecondary,
         progress: progress,
         onTap: () => onTap?.call(),
         borderRadius: BorderRadius.all(Radius.circular(15)),

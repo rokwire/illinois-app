@@ -232,6 +232,7 @@
     "widget.title.regular.semi_fat": {"font_family": "semi_bold", "size": 16.0, "color": "textPrimary"},
     "widget.title.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "textPrimary"},
     "widget.title.regular.medium_fat": {"font_family": "medium", "size": 16.0, "color": "textPrimary"},
+    "widget.title.regular.medium_fat.light": {"extends": "widget.title.regular.medium_fat", "color": "mediumGray"},
     "widget.title.regular.underline": {"font_family": "regular", "size": 16.0, "color": "textPrimary", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "textPrimary"},
     "widget.title.small.underline": {"font_family": "regular", "size": 14.0, "color": "textPrimary", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -458,6 +459,7 @@
     "widget.button.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.medium.fat.variant2": { "font_family": "bold", "size": 16.0, "color": "surface"},
     "widget.button.title.medium.fat.variant3": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.title.medium.fat.underline": { "extends": "widget.button.title.medium.fat", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textPrimary"},
     "widget.button.title.medium.thin.secondary": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
@@ -1047,6 +1049,8 @@
 
     "double-chevron-left": {"src": "0xf100", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
     "double-chevron-right": {"src": "0xf101", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+    "double-chevron-up": {"src": "0xf102", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+    "double-chevron-down": {"src": "0xf103", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
 
     "chevron2-up": {"src": "0xf077", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 12},
     "chevron2-down": {"src": "0xf078", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 12},

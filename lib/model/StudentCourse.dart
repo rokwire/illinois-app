@@ -97,6 +97,7 @@ class StudentCourseSection {
 
   final String? instructionType;
   final String? instructor;
+  final String? sectionId;
 
   final String? days;
   final String? startTime;
@@ -107,7 +108,7 @@ class StudentCourseSection {
 
   StudentCourseSection({
     this.buildingId, this.buildingName, this.room,
-    this.instructionType, this.instructor,
+    this.instructionType, this.instructor, this.sectionId,
     this.days, this.startTime, this.endTime, this.meetingDates,
     this.building
   });
@@ -120,6 +121,7 @@ class StudentCourseSection {
 
       instructionType: JsonUtils.stringValue(json['instructiontype']),
       instructor: JsonUtils.stringValue(json['instructor']),
+      sectionId: JsonUtils.stringValue(json['course_section']),
 
       days: JsonUtils.stringValue(json['days']),
       startTime: JsonUtils.stringValue(MapUtils.get2(json, ['starttime', 'start_time'])),
@@ -137,6 +139,7 @@ class StudentCourseSection {
 
     'instructiontype': instructionType,
     'instructor': instructor,
+    'course_section': sectionId,
 
     'days': days,
     'starttime': startTime,
@@ -155,6 +158,7 @@ class StudentCourseSection {
 
     (instructionType == other.instructionType) &&
     (instructor == other.instructor) &&
+    (sectionId == other.sectionId) &&
 
     (days == other.days) &&
     (startTime == other.startTime) &&
@@ -169,6 +173,7 @@ class StudentCourseSection {
 
     (instructionType?.hashCode ?? 0) ^
     (instructor?.hashCode ?? 0) ^
+    (sectionId?.hashCode ?? 0) ^
 
     (days?.hashCode ?? 0) ^
     (startTime?.hashCode ?? 0) ^

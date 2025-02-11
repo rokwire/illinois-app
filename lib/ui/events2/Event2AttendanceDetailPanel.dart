@@ -199,7 +199,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
     contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
     return Visibility(
-        visible: _isAdmin && StringUtils.isNotEmpty(eventAttendanceUrl),
+        visible: PlatformUtils.isMobile  &&  _isAdmin && StringUtils.isNotEmpty(eventAttendanceUrl),
         child: Padding(
             padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

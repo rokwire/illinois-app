@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Social.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/messages/MessagesConversationPanel.dart';
 import 'package:neom/ui/messages/MessagesHomePanel.dart';
@@ -445,23 +446,10 @@ class ConversationCard extends StatelessWidget {
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             child: Icon(Icons.notifications_off, size: 20),
                           ),
-                        _buildDisplayDateWidget(),
+                        _buildDisplayDateWidget,
                       ],
                     ),
-                    if (StringUtils.isNotEmpty(conversation.lastMessage))
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                            conversation.lastMessage ?? '',
-                            semanticsLabel: sprintf(
-                                Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'),
-                                [conversation.lastMessage ?? '']
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")
-                        ),
-                      ),
+                    _buildLastMessageWidget()
                   ],
                 ),
               ),
@@ -490,11 +478,11 @@ class ConversationCard extends StatelessWidget {
               children: [
                 _buildHeaderSection(),
                 const SizedBox(height: 12),
-                _buildMessagePreview(),
+                _buildLastMessageWidget(),
                 Spacer(),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: _buildDisplayDateWidget(),
+                  child: _buildDisplayDateWidget,
                 ),
               ],
             ),
@@ -533,22 +521,30 @@ class ConversationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMessagePreview() {
-    return Text(
-      conversation.lastMessage ?? '',
-      style: Styles().textStyles.getTextStyle(isHorizontal ? "widget.card.detail.medium" : "widget.card.detail.tiny.medium_fat"),
-      maxLines: isHorizontal ? 3 : 2,
+  Widget _buildLastMessageWidget() {
+    Message? lastMessage = conversation.lastMessage;
+    String? messageText = StringUtils.isNotEmpty(lastMessage?.message) ? lastMessage?.message : conversation.lastMessageText;
+
+    ConversationMember? sender = lastMessage?.sender;
+    String? senderName = (StringUtils.isNotEmpty(sender?.accountId) && (sender?.accountId == Auth2().accountId)) ?
+    Localization().getStringEx('widget.conversation_card.sender.me', 'You') : sender?.name;
+
+    return (StringUtils.isNotEmpty(messageText)) ? Text(
+      StringUtils.isNotEmpty(senderName) ? '$senderName: $messageText' : (messageText ?? ''),
+      semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [messageText ?? ''],),
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
-    );
+      style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat"),
+    ) : Container();
   }
 
-  Widget _buildDisplayDateWidget() {
+  Widget get _buildDisplayDateWidget {
     String displayDateTime = StringUtils.ensureNotEmpty(conversation.displayDateTime);
     bool noSuffix = displayDateTime.toLowerCase().contains("now") || displayDateTime.toLowerCase().contains(",");
-    return Text(
-      noSuffix ? displayDateTime : "$displayDateTime ago",
-      style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat'),
-    );
+    return Semantics(child: Text(noSuffix ? displayDateTime : "$displayDateTime ago",
+        semanticsLabel: "Updated ${conversation.displayDateTime ?? ""} ago",
+        textAlign: TextAlign.right,
+        style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')));
   }
 
   void _onTapCard(BuildContext context) {

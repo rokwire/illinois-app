@@ -3,7 +3,6 @@ name: Accessibility
 about: Report an issue with accessiblity
 title: "[ACCESSIBILITY]"
 labels: 'Type: Accessibility'
-assignees: pmarkhennessy
 
 ---
 

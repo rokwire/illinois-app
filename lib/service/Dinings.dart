@@ -59,7 +59,7 @@ class Dinings with Service implements ContentItemCategoryClient{
 
   @override
   Future<void> initService() async {
-    super.initService();
+    await super.initService();
   }
 
   @override

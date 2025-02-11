@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - NEOM U
 
+## [0.5.4] = 2025-02-10
+### Fixed
+- UI testing QA report (progress) [#44](https://github.com/rokmetro/neom-app/issues/44)
+
 ## [0.5.3] = 2025-01-31
 ### Added
 - Add Messages section to Favorites [#37](https://github.com/rokmetro/neom-app/issues/37)
@@ -107,6 +111,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+
+## [6.1.56] - 2025-02-07
+### Added 
+- Add name list to conversation [#4751](https://github.com/rokwire/illinois-app/issues/4751)
+- Add last message name support [#4749](https://github.com/rokwire/illinois-app/issues/4749)
+### Changed
+- Stored user information, round IV: added expand/collapse app, use icon button for copy all [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+- Campus Recreation loads from Content BB [#4499](https://github.com/rokwire/illinois-app/issues/4499).
+- Handled UI updates in recurring events [#4599](https://github.com/rokwire/illinois-app/issues/4599).
+### Fixed
+- Make sure to always await for initService completion [#4756](https://github.com/rokwire/illinois-app/issues/4756).
+
+## [6.1.55] - 2025-02-06
+### Fixed
+- Web and mobile app: Event setting variables [#4684](https://github.com/rokwire/illinois-app/issues/4684).
+### Changed
+- Hide GroupCard reactions for this release [#4696](https://github.com/rokwire/illinois-app/issues/4696). 
+- Fixed and cleanup for stored user information - round III [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+- Implemented new Stored Information panel layout [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+- Hide Filters button in User Directory page [#4744](https://github.com/rokwire/illinois-app/issues/4744).
+- Hidе Surveys from Home / Sections [#4746](https://github.com/rokwire/illinois-app/issues/4746).
+
+## [6.1.54] - 2025-02-05
+### Added
+- Added section id to my courses [#4482](https://github.com/rokwire/illinois-app/issues/4482). 
+### Changed
+- Fixed and cleanup for stored user information - round II [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+
+## [6.1.53] - 2025-02-04
+### Added
+- Added "Past" event filter [#4714](https://github.com/rokwire/illinois-app/issues/4714)
+- Create recurring events - done [#4599](https://github.com/rokwire/illinois-app/issues/4599).
+### Changed
+- Improve clickable links in messages [#4693](https://github.com/rokwire/illinois-app/issues/4639)
+- Bring Admin functionality to UIUC app in progress [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+- Acknowledged the new loadUserDataJson API for stored user information - round I [#4264](https://github.com/rokwire/illinois-app/issues/4264).
+
+## [6.1.52] - 2025-02-03
+- Hide empty read-only fields from edit profile page [#4720](https://github.com/rokwire/illinois-app/issues/4720).
+- Bring Admin functionality to UIUC app in progress [#4478](https://github.com/rokwire/illinois-app/issues/4478).
+### Added
+- Create monthly recurring events - task in progress [#4599](https://github.com/rokwire/illinois-app/issues/4599).
 
 ## [6.1.51] - 2025-01-30
 ### Changed
