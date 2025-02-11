@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:neom/ext/Social.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
@@ -10,6 +11,7 @@ import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/SpeechToText.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/ui/widgets/WebEmbed.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -72,7 +74,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final int _messagesPageSize = 20;
   Message? _editingMessage;
   Message? _deletingMessage;
-  Set<PlatformFile> _attachedFiles = {};
+  Set<dynamic> _attachedFiles = {};
 
   final Set<String> _globalIds = {};
 
@@ -455,7 +457,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            color: Styles().colors.white,
+            color: Styles().colors.backgroundVariant,
             child: Row(
               children: [
                 Expanded(
@@ -655,7 +657,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                           child: Styles().images.getImage('close-circle-white', color: Styles().colors.fillColorSecondary) ?? Container()
                       ),
                     ),
-                  _buildAttachFileWidget(),
+                  _buildAttachFileButton(),
                   SizedBox(width: 16),
                   Expanded(
                     child: Semantics(
@@ -696,13 +698,139 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  Widget _buildAttachFileWidget() {
+  Widget _buildAttachFileButton() {
     return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Attach"),
         child: InkWell(
-            child: Styles().images.getImage('plus-circle'),
-            onTap: _onTapAttachFile
+            child: Styles().images.getImage('plus-circle', size: 24, fit: BoxFit.cover),
+            onTap: _openAttachFileMenu
         )
     ));
+  }
+
+  void _openAttachFileMenu() {
+    Analytics().logSelect(target: 'Attach File');
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      useSafeArea: true,
+      builder: _buildAttachFilePopup,
+    );
+  }
+
+  Widget _buildAttachFilePopup(BuildContext context) {
+    return Wrap(
+      children: [
+        Container(
+          color: Styles().colors.backgroundVariant,
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Text(
+                    Localization().getStringEx('', 'Attach Files'),
+                    style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
+                  ),
+                ),
+              ),
+              Semantics(
+                label: Localization().getStringEx('dialog.close.title', 'Close'),
+                hint: Localization().getStringEx('dialog.close.hint', ''),
+                inMutuallyExclusiveGroup: true,
+                button: true,
+                child: InkWell(
+                  onTap: () => _onTapMembersPopupClose(context),
+                  child: Container(
+                    padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+                    child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(children: [
+              RibbonButton(
+                  label: Localization().getStringEx('', 'Upload an image or video'),
+                  leftIconKey: 'image',
+                  backgroundColor: Styles().colors.backgroundVariant,
+                  textColor: Styles().colors.textPrimary,
+                  onTap: _onTapUploadImageOrVideo),
+              SizedBox(height: 4),
+              RibbonButton(
+                  label: Localization().getStringEx('', 'Take a photo'),
+                  leftIconKey: 'camera',
+                  backgroundColor: Styles().colors.backgroundVariant,
+                  textColor: Styles().colors.textPrimary,
+                  onTap: _onTapCamera),
+              SizedBox(height: 4),
+              RibbonButton(
+                  label: Localization().getStringEx('', 'Record a video'),
+                  leftIconKey: 'video-camera',
+                  backgroundColor: Styles().colors.backgroundVariant,
+                  textColor: Styles().colors.textPrimary,
+                  onTap: () => _onTapCamera(isVideo: true)),
+              SizedBox(height: 4),
+              RibbonButton(
+                  label: Localization().getStringEx('', 'Record an audio clip'),
+                  leftIconKey: 'microphone',
+                  backgroundColor: Styles().colors.backgroundVariant,
+                  textColor: Styles().colors.textPrimary,
+                  onTap: _onTapRecordAudio),
+              SizedBox(height: 4),
+              RibbonButton(
+                  label: Localization().getStringEx('', 'Upload a file'),
+                  leftIconKey: 'file',
+                  backgroundColor: Styles().colors.backgroundVariant,
+                  textColor: Styles().colors.textPrimary,
+                  onTap: _onTapAttachFile)
+            ])
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _onTapUploadImageOrVideo() async {
+    List<XFile> media = await ImagePicker().pickMultipleMedia(limit: 10);
+    if (media.isNotEmpty) {
+      setStateIfMounted(() {
+        _attachedFiles.addAll(media);
+      });
+    }
+    Navigator.of(context).pop();
+  }
+
+  void _onTapCamera({bool isVideo = false}) async {
+    XFile? media;
+    if (isVideo) {
+      media = await ImagePicker().pickVideo(source: ImageSource.camera);
+    } else {
+      media = await ImagePicker().pickImage(source: ImageSource.camera);
+    }
+    if (media != null) {
+      setStateIfMounted(() {
+        _attachedFiles.add(media);
+      });
+    }
+    Navigator.of(context).pop();
+  }
+
+  void _onTapRecordAudio() async {
+    // TODO: Capture audio recording
+    // if (media != null) {
+    //   setStateIfMounted(() {
+    //     _attachedFiles.add(media);
+    //   });
+    // }
+    Navigator.of(context).pop();
   }
 
   Widget _buildSendImage(bool enabled) {
@@ -726,7 +854,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   splashRadius: 24,
                   icon: _listening
                       ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop")
-                      : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone"),
+                      : Styles().images.getImage('microphone') ?? SizedBox(),
                   onPressed: enabled
                       ? () {
                     if (_listening) {
@@ -740,9 +868,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildAttachedFilesListWidget({Message? message}) {
-
     return Container(
-      height: 88.0,
+      height: 92.0,
       child: ListView.separated(
         padding: EdgeInsets.only(top: 16.0, left: message != null ? 0.0 : 16.0, right: 16.0),
         separatorBuilder: (context, index) => SizedBox(width: 16.0),
@@ -757,7 +884,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     String? name, extension;
     GestureTapCallback? onTap;
     Color? entryBackgroundColor;
-    String? textStyleKey;
+    String? textStyleKey = 'widget.title.dark.small';
     if (message != null) {
       FileAttachment file = message.fileAttachments![index];
       name = file.name;
@@ -766,62 +893,72 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       entryBackgroundColor = Styles().colors.surfaceAccent;
       textStyleKey = 'widget.title.dark.small';
     } else {
-      PlatformFile file = _attachedFiles.elementAt(index);
-      name = file.name;
-      extension = file.extension;
-      onTap = () => _onTapRemoveFile(file);
+      dynamic file = _attachedFiles.elementAt(index);
       entryBackgroundColor = Styles().colors.backgroundAccent;
       textStyleKey = 'widget.title.small';
+      onTap = () => _onTapRemoveFile(file);
+      if (file is PlatformFile) {
+        name = file.name;
+        extension = file.extension;
+      }
+      else if (file is XFile) {
+        name = file.name;
+        extension = file.mimeType;
+      }
     }
     return Stack(
       alignment: Alignment.topRight,
       children: [
         Container(
-          color: entryBackgroundColor,
+          width: 200,
           padding: const EdgeInsets.all(8.0),
-          child: Row(children: [
-            Styles().images.getImage('file') ?? Container(height: 48.0),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), color: entryBackgroundColor),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+            Styles().images.getImage('file', size: 24) ?? Container(height: 48.0),
             SizedBox(width: 16.0),
-            Container(
-              width: 120.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
+            Expanded(
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       name ?? '',
                       style: Styles().textStyles.getTextStyle(textStyleKey),
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          extension?.toUpperCase() ?? '',
-                          style: Styles().textStyles.getTextStyle(textStyleKey),
-                        ),
-                        if (message != null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: GestureDetector(onTap: onTap, child:
-                              Styles().images.getImage('download'),
-                            ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            extension?.toUpperCase() ?? '',
+                            style: Styles().textStyles.getTextStyle(textStyleKey),
                           ),
-                      ],
+                          if (message != null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: GestureDetector(onTap: onTap, child:
+                                Styles().images.getImage('download'),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ]),
         ),
         if (message == null)
-          GestureDetector(onTap: onTap, child:
-            Styles().images.getImage('close-circle'),
+          Positioned(
+            top: 8.0, right: 8.0,
+            child: GestureDetector(onTap: onTap, child:
+              Styles().images.getImage('close-circle'),
+            ),
           ),
       ],
     );
@@ -1114,9 +1251,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _attachedFiles.addAll(result!.files);
       });
     }
+    Navigator.of(context).pop();
   }
 
-  void _onTapRemoveFile(PlatformFile file) {
+  void _onTapRemoveFile(dynamic file) {
     setState(() {
       _attachedFiles.remove(file);
     });

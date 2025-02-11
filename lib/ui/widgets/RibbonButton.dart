@@ -44,7 +44,7 @@ class RibbonButton extends rokwire.RibbonButton {
 
   Widget? leftIcon,
   String? leftIconKey,
-  EdgeInsetsGeometry leftIconPadding  = const EdgeInsets.only(right: 8),
+  EdgeInsetsGeometry leftIconPadding  = const EdgeInsets.only(right: 12),
   
   Widget? rightIcon,
   String? rightIconKey              = 'chevron-right-bold',
