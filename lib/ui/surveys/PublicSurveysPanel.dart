@@ -3,8 +3,10 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveyCard.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -12,6 +14,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -39,6 +42,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   bool? _lastPageLoaded;
   _DataActivity? _dataActivity;
   Set<String> _activitySurveyIds = <String>{};
+  GestureRecognizer? _loginRecognizer;
 
   static const int _contentPageLength = 16;
   final Color _dropdownShadowColor = Color(0x99000000);
@@ -50,9 +54,11 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     NotificationService().subscribe(this, [
       Surveys.notifySurveyResponseCreated,
       Surveys.notifySurveyResponseDeleted,
+      Auth2.notifyLoginChanged,
     ]);
     _selectedContentType = widget.selectedType;
     _scrollController.addListener(_scrollListener);
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     _init();
     super.initState();
   }
@@ -60,6 +66,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _loginRecognizer?.dispose();
     super.dispose();
   }
 
@@ -67,6 +74,9 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   void onNotification(String name, param) {
     if ((name == Surveys.notifySurveyResponseCreated) ||(name == Surveys.notifySurveyResponseDeleted)) {
       _refresh();
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -101,6 +111,9 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     }
     else if (_dataActivity == _DataActivity.refresh) {
       return _blankContent;
+    }
+    else if (!Auth2().isLoggedIn) {
+      return _loggedOutContent;
     }
     else if (_contentList == null) {
       return _messageContent(Localization().getStringEx('panel.public_surveys.label.description.failed', 'Failed to load surveys.'),
@@ -145,6 +158,31 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   ],);
 
   Widget get _blankContent => Container();
+
+  Widget get _loggedOutContent {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx("panel.public_surveys.message.signed_out", "You are not logged in. To access your research projects, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.");
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.message.signed_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: _loginRecognizer, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login,);
+  }
 
   Widget _messageContent(String message, { String? title }) => Center(child:
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
@@ -214,7 +252,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   }
 
   Future<void> _init({ int limit = _contentPageLength }) async {
-    if ((_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
+    if ((_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh) && Auth2().isLoggedIn && mounted) {
       setStateIfMounted(() {
         _dataActivity = _DataActivity.init;
       });
@@ -232,7 +270,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   }
 
   Future<void> _refresh() async {
-    if ((_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
+    if ((_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh) && Auth2().isLoggedIn && mounted) {
       setStateIfMounted(() {
         _dataActivity = _DataActivity.refresh;
       });
@@ -253,7 +291,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   }
 
   Future<void> _extend() async {
-    if (_dataActivity == null) {
+    if ((_dataActivity == null)  && Auth2().isLoggedIn && mounted) {
       setStateIfMounted(() {
         _dataActivity = _DataActivity.extend;
       });

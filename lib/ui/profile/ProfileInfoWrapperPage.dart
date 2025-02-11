@@ -1,6 +1,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -21,11 +22,14 @@ class ProfileInfoWrapperPage extends StatefulWidget {
 
 class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implements NotificationsListener {
 
+  GestureRecognizer? _signInRecognizer;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
     ]);
+    _signInRecognizer = TapGestureRecognizer()..onTap = _onTapSignIn;
 
     super.initState();
   }
@@ -33,6 +37,7 @@ class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> impleme
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _signInRecognizer?.dispose();
     super.dispose();
   }
 
@@ -79,7 +84,7 @@ class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> impleme
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
       spanList.add(TextSpan(text: Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = _onTapSignIn, ));
+        recognizer: _signInRecognizer, ));
       spanList.add(TextSpan(text: messages[index]));
     }
 
@@ -90,6 +95,9 @@ class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> impleme
     );
   }
 
-  void _onTapSignIn() => NotificationService().notify(ProfileInfoWrapperPage.notifySignIn);
+  void _onTapSignIn() {
+    Analytics().logSelect(target: 'sign in');
+    NotificationService().notify(ProfileInfoWrapperPage.notifySignIn);
+  }
 }
 
