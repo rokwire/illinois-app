@@ -15,10 +15,15 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -60,22 +65,28 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   List<SurveyResponse> _responses = [];
 
   late ScrollPagerController _pagerController;
+  GestureRecognizer? _loginRecognizer;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Surveys.notifySurveyResponseCreated,
+      FlexUI.notifyChanged,
+      Auth2.notifyLoginChanged,
+      Storage.notifySettingChanged,
+    ]);
+
     _pagerController = ScrollPagerController(limit: 20, onPage: _loadPage, onStateChanged: _onPagerStateChanged);
     _pagerController.registerScrollController(widget.scrollController);
 
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
+
     super.initState();
-    NotificationService().subscribe(this, [
-      Storage.notifySettingChanged,
-      Surveys.notifySurveyResponseCreated,
-      FlexUI.notifyChanged
-    ]);
   }
 
   @override
   void dispose() {
+    _loginRecognizer?.dispose();
     _pagerController.deregisterScrollController();
     NotificationService().unsubscribe(this);
     super.dispose();
@@ -87,7 +98,6 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Widget _buildContent() {
-    Widget? accessWidget = AccessCard.builder(resource: resourceName);
     bool showHistory = JsonUtils.stringListValue(FlexUI()[resourceName])?.contains('history') ?? false;
     return SectionSlantHeader(
       titleIconKey: 'health',
@@ -95,7 +105,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       slantColor: Styles().colors.gradientColorPrimary,
       slantPainterHeadingHeight: 0,
       backgroundColor: Styles().colors.background,
-      children: _buildInfoAndSettings(accessWidget, showHistory),
+      children: Auth2().isLoggedIn ? _buildInfoAndSettings(AccessCard.builder(resource: resourceName), showHistory) : null,
       childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       allowOverlap: false,
     );
@@ -103,27 +113,34 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   Widget _buildHeader() {
     Widget content;
-    if (StringUtils.isNotEmpty(Config().healthScreenerSurveyID)) {
-      content = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Not feeling well?'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,),
-        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.subtitle', 'Find the right resources'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
-        Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
-        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-            label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title',
-                'Take the Screener'),
-            textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
-            onTap: _onTapTakeScreener
-        )),
-      ]);
-    } else {
+    if (StringUtils.isEmpty(Config().healthScreenerSurveyID)) {
       content = Column(crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title',
-              'The Illinois Health Screener is currently unavailable. Please check back later.'),
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title', 'The Illinois Health Screener is currently unavailable. Please check back later.'),
           style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'),
         )
       ],);
+    } else if (!Auth2().isLoggedIn) {
+      content = _buildLoggedOutContent();
+    } else {
+      content = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Not feeling well?'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,
+        ),
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.subtitle', 'Find the right resources'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,
+        ),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          _buildDescription()
+        ),
+        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child:
+          RoundedButton(
+            label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title', 'Take the Screener'),
+            textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+            onTap: _onTapTakeScreener
+          )
+        ),
+      ]);
     }
     return Container(
       padding: EdgeInsets.only(top: 32, bottom: 32),
@@ -396,6 +413,33 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
   }
 
+  // Logged Out
+
+  Widget _buildLoggedOutContent() {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx("panel.wellness.sections.health_screener.message.signed_out", "You are not logged in. To access Illinois Health Screener, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.");
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.wellness.sections.health_screener.message.signed_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("panel.wellness.sections.health_screener.link"),
+        recognizer: _loginRecognizer, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("panel.wellness.sections.health_screener.description"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login,);
+  }
+
   // Notifications Listener
 
   @override
@@ -403,9 +447,11 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     if (name == Surveys.notifySurveyResponseCreated) {
       _refreshHistory();
     } else if (name == FlexUI.notifyChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    } else if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted(() {});
     } else if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
-      setState(() {});
+      setStateIfMounted(() {});
     }
   }
 }

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed empty recurrent events list message in Event detail panel.
 ### Changed
+- Improve UX for sections that require a NetID sign-in to view [#4699](https://github.com/rokwire/illinois-app/issues/4699).
 - Set the Web Icon to the Block "I" [#4760](https://github.com/rokwire/illinois-app/issues/4760).
 ### Added
 - Configure and set up Firebase for the web app [#4759](https://github.com/rokwire/illinois-app/issues/4759).
