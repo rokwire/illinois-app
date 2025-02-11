@@ -17,12 +17,14 @@
 import 'dart:ui';
 
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 extension GroupExt on Group {
@@ -216,6 +218,9 @@ Color? groupMemberStatusToColor(GroupMemberStatus? value) {
 }
 
 extension GroupSettingsExt on GroupSettings{
+  static List<DetailTab?>? getDefaultDetailTabs() => GroupContentItemExt.defaultContentCodes.map(
+          (code) => GroupContentItemExt.getDetailTabByCode(code)).toList();
+  
   static GroupSettings initialDefaultSettings({Group? group}){
       //Set Default values to true
     return (group?.researchProject != true) ?
@@ -228,6 +233,47 @@ extension GroupSettingsExt on GroupSettings{
         memberPostPreferences: MemberPostPreferences(allowSendPost: false, sendPostToSpecificMembers: false, sendPostToAll: false, sendPostToAdmins: false, sendPostReplies: false, sendPostReactions: false)
       );
   }
+
+  List<String>? get contentCodes => contentItems?.map<String>(
+          (GroupContentItem item) => item.code ?? 'unknown'
+  ).toList();
+
+  set contentCodes(List<String>? codes) =>
+      contentItems = codes != null ?
+        codes.map((String code) => GroupContentItem(code: code)).toList() :
+        contentItems;
+
+  List<DetailTab?>? get contentDetailTabs =>
+      contentItems?.map((item) => item.detailTab).toList();
+}
+
+extension GroupContentItemExt on GroupContentItem{
+  static final List<String> availableContentCodes =  ["events", "posts",  "scheduled", "messages", "polls"];
+  static final List<String> defaultContentCodes =  ["events", "posts",  "scheduled", "messages", "polls"];
+
+  static String getTitleByCode(String code) {
+    switch(code){
+      case 'events' : return 'Events';
+      case 'posts' : return 'Posts';
+      case 'scheduled' : return 'Scheduled';
+      case 'messages' : return 'Messages';
+      case 'polls' : return 'Polls';
+      default : return "unknown";
+    }
+  }
+  
+  static DetailTab? getDetailTabByCode(String? code){
+    switch(code){
+      case 'events' : return DetailTab.Events;
+      case 'posts' : return DetailTab.Posts;
+      case 'scheduled' : return DetailTab.Scheduled;
+      case 'messages' : return DetailTab.Messages;
+      case 'polls' : return DetailTab.Polls;
+    }
+    return null;
+  }
+
+  DetailTab? get detailTab => getDetailTabByCode(code);
 }
 
 extension MemberExt on Member {
@@ -255,4 +301,3 @@ extension GroupsExt on Groups {
     });
   }
 }
-
