@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+
+## [0.5.5] = 2025-02-11
 ### Added
 - File attachments for conversation messages [#50](https://github.com/rokmetro/neom-app/issues/50)
+### Fixed
+- Removed requirement on web to select debug role to see all features
 
 ## [0.5.4] = 2025-02-10
 ### Fixed

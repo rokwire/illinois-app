@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Social.dart';
@@ -97,6 +99,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     // Load conversation (if needed) and messages from the backend
     _initConversationAndMessages();
+
+    if (kIsWeb) {
+      FilePickerWeb.registerWith(webPluginRegistrar);
+    }
 
     super.initState();
   }
