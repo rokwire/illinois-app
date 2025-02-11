@@ -4,12 +4,15 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -17,12 +20,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GroupContentSettingsPanel extends StatefulWidget {
-  static final List<String> availableContentCodes =  ["events", "posts",  "scheduled", "messages", "polls"];
-  static final List<String> defaultContentCodes =  ["events", "posts"];
+  final Group? group;
+
+  const GroupContentSettingsPanel({super.key, required this.group});
 
   @override
   State<StatefulWidget> createState() => _GroupContentSettingsState();
-
 }
 
 class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implements HomeDragAndDropHost{
@@ -38,14 +41,15 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   Timer? _scrollTimer;
   bool _isDragging = false;
 
+  bool _uploading = false;
+
   List<String> get _unselectedCodes =>
       _availableCodes.where((code) => _selection.contains(code) == false).toList();
 
   @override
   void initState() {
-    _availableCodes = List.from(GroupContentSettingsPanel.availableContentCodes);
-    //TBD init selections from group settings;
-    _selection = List.from(GroupContentSettingsPanel.defaultContentCodes);
+    _availableCodes = List.from(GroupContentItemExt.availableContentCodes);
+    _selection = widget.group?.settings?.contentCodes ?? List.from(GroupContentItemExt.defaultContentCodes);
 
     super.initState();
   }
@@ -61,7 +65,8 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   Widget build(BuildContext context) =>
       Scaffold(
           appBar: HeaderBar(
-            title: Localization().getStringEx("", "Group Content"), //TBD
+            title: Localization().getStringEx("", "Group Content"), //TBD localize
+            actions: _headerBarActions,
           ),
         backgroundColor: Styles().colors.background,
         body: Listener(onPointerMove: _onPointerMove,
@@ -175,8 +180,8 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Semantics(label: _titleFromCode(code), header: true, excludeSemantics: true, child:
-                    Text(_titleFromCode(code), style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+                  Semantics(label: GroupContentItemExt.getTitleByCode(code), header: true, excludeSemantics: true, child:
+                    Text(GroupContentItemExt.getTitleByCode(code), style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
                   )
                 )
               ),
@@ -197,6 +202,11 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
       Center(child: Text(message)); //TBD
 
   //onTap
+  void _onApply(){
+    widget.group?.settings?.contentCodes = _selection.reversed.toList(); // We display reversed so save reversed
+    Navigator.pop(context);
+  }
+
   void _onTapUnstarAll() {
     Analytics().logSelect(source: 'GroupContentSettings', target: 'Unstar All');
     _showUnstarConfirmationDialog(_selection);
@@ -486,17 +496,22 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
       });
     }
   }
-}
 
-String _titleFromCode(String? code){
-  switch(code){
-    case 'events' : return 'Events';
-    case 'posts' : return 'Posts';
-    case 'scheduled' : return 'Scheduled';
-    case 'messages' : return 'Messages';
-    case 'polls' : return 'Polls';
-    default : return "unknown";
+  List<Widget>? get _headerBarActions {
+    if (_uploading) {
+      return [Event2CreatePanel.buildHeaderBarActionProgress()];
+    }
+    else if(_hasChanged) {
+      return [Event2CreatePanel.buildHeaderBarActionButton(
+        title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+        onTap: _onApply,
+      )];
+    }
+    else
+      return null;
   }
+
+  bool get _hasChanged => !CollectionUtils.equals(widget.group?.settings?.contentCodes, _selection);
 }
 
 class _GroupContentSettingsFavoriteButton extends FavoriteButton {

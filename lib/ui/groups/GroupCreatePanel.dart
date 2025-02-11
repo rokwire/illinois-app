@@ -584,7 +584,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Localization().getStringEx("", "Customize your project content type(s) and the order"):
                 Localization().getStringEx("", "Customize your group content type(s) and the order"),
                 onTap: () =>
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupContentSettingsPanel()))
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupContentSettingsPanel(group: _group,)))
             )),
       ]),
     );
