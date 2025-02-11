@@ -88,9 +88,9 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
     if(CollectionUtils.isNotEmpty(_selection)){
       widgets.add(_buildEditingHeader(
           favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
-          title: Localization().getStringEx('', 'Current Favorites'),
+          title: Localization().getStringEx('', 'CURRENT CONTENT'),
           linkButtonTitle: Localization().getStringEx('', 'Unstar All'),
-          description: Localization().getStringEx('', 'Tap, <b>hold</b>, and drag an item to reorder your favorites. To remove an item from Favorites, tap the star.'),
+          description: Localization().getStringEx('', 'Tap, <b>hold</b>, and drag an item item to reorder your group content. To remove an item, tap the star.'),
           onTapLinkButton: CollectionUtils.isNotEmpty(_selection) ? () => _onTapUnstarAll() : null,
       ));
       widgets.addAll(_buildCollectionItemsContent(_selection));
@@ -98,10 +98,10 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
 
     widgets.add(_buildEditingHeader(
       favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
-      title: Localization().getStringEx('', 'Other Items to Favorite'),
+      title: Localization().getStringEx('', 'OTHER CONTENT'),
       linkButtonTitle: Localization().getStringEx('panel.home.edit.unused.star.link.button', 'Star All'),
       onTapLinkButton: _onTapStarAll,
-      description: Localization().getStringEx('', 'Tap the star to add any below items to Favorites.'),
+      description: Localization().getStringEx('', 'Tap the star to add an item.'),
     ));
     widgets.addAll(_buildCollectionItemsContent(_unselectedCodes));
 
@@ -115,30 +115,24 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
         Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat")),
+            Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
           ),
           Expanded(child: Container()),
           Visibility(visible: (onTapLinkButton != null), child: InkWell(onTap: onTapLinkButton, child:
-          Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child:
-          Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles.getTextStyle("widget.home.link_button.regular.accent.underline")))
+            Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child:
+              Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles.getTextStyle("widget.title.small.underline")))
           ))
         ],)),
         Row(children: [
           Expanded(child:
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-          HtmlWidget(
-              StringUtils.ensureNotEmpty(description),
-              onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-              textStyle: Styles().textStyles.getTextStyle("widget.description.regular"),
-              customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
-          )
-            // Html(data: StringUtils.ensureNotEmpty(description),
-            //   onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
-            //   style: {
-            //     "body": Style(color: Styles().colors.textColorPrimaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-            //     "b": Style(fontFamily: Styles().fontFamilies.bold)
-            //   })
-          ),
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+              HtmlWidget(
+                  StringUtils.ensureNotEmpty(description),
+                  onTapUrl : (url) {_onTapHtmlLink(url); return true;},
+                  textStyle: Styles().textStyles.getTextStyle("widget.description.small"),
+                  customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
+              )
+            ),
           )
         ],),
         Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
@@ -169,34 +163,32 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   Widget _buildContentItem({required String code, required int position}){
     return HomeHandleWidget(favoriteId: code, dragAndDropHost: this, position: position,
       key: _globalKey(_handleKeys, code),
-      childBuilder: (_) => _buildContentItemLayout(code),
+      childBuilder: (_) =>
+          Container(color: Styles().colors.background, child:
+            Row(children: <Widget>[
+
+              Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
+                Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                  Styles().images.getImage('drag-white', excludeFromSemantics: true),
+                ),
+              ),
+
+              Expanded(child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                  Semantics(label: _titleFromCode(code), header: true, excludeSemantics: true, child:
+                    Text(_titleFromCode(code), style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+                  )
+                )
+              ),
+
+              _GroupContentSettingsFavoriteButton(
+                toggled: _selection.contains(code),
+                onTap: () => _toggleContentItem(code: code),
+              )
+            ],),
+          ),
     );
   }
-
-  Widget _buildContentItemLayout(String code) =>
-      Container(color: Styles().colors.background, child:
-        Row(children: <Widget>[
-
-          Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
-            Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Styles().images.getImage('drag-white', excludeFromSemantics: true),
-            ),
-          ),
-
-          Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Semantics(label: _titleFromCode(code), header: true, excludeSemantics: true, child:
-                Text(_titleFromCode(code), style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
-              )
-            )
-          ),
-
-          _GroupContentSettingsFavoriteButton(
-            toggled: _selection.contains(code),
-            onTap: () => _toggleContentItem(code: code),
-          )
-        ],),
-      );
 
   Key? _globalKey(Map<String, GlobalKey>? globalKeys, String code) =>
       (globalKeys != null) ? (globalKeys[code] ??= GlobalKey()) : null;
@@ -210,35 +202,34 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
     _showUnstarConfirmationDialog(_selection);
   }
 
-
   void _showUnstarConfirmationDialog(List<String>? selection) {
     AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
     Container(height: 250, decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(15.0)), child:
-    Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-      Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Text(Localization().getStringEx('panel.home.edit.favorites.confirmation.dialog.msg', 'Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.'), textAlign: TextAlign.center, style:
-        Styles().textStyles.getTextStyle("widget.detail.small")
-        )
+      Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+              Text(Localization().getStringEx('panel.home.edit.favorites.confirmation.dialog.msg', 'Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.'), textAlign: TextAlign.center, style:
+                Styles().textStyles.getTextStyle("widget.detail.small")
+              )
+            ),
+            Padding(padding: EdgeInsets.only(top: 40), child:
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
+                Container(width: 16),
+                Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors.fillColorSecondary, onTap: () { _dismissUnstarConfirmationDialog(); _unstarAvailableContentItems(selection);} ))
+              ])
+            )
+          ])
         ),
-        Padding(padding: EdgeInsets.only(top: 40), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
-          Container(width: 16),
-          Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors.fillColorSecondary, onTap: () { _dismissUnstarConfirmationDialog(); _unstarAvailableContentItems(selection);} ))
-        ])
+        Align(alignment: Alignment.topRight, child:
+          GestureDetector(onTap: _dismissUnstarConfirmationDialog, child:
+            Padding(padding: EdgeInsets.all(16), child:
+              Styles().images.getImage('close-circle', excludeFromSemantics: true)
+            )
+          )
         )
       ])
-      ),
-      Align(alignment: Alignment.topRight, child:
-      GestureDetector(onTap: _dismissUnstarConfirmationDialog, child:
-      Padding(padding: EdgeInsets.all(16), child:
-      Styles().images.getImage('close-circle', excludeFromSemantics: true)
-      )
-      )
-      )
-    ])
     )
     );
   }
