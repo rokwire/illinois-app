@@ -141,7 +141,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                           onTap: () {
                             if(mounted){
                               setState(() {
-                                _pinPost = !_pinPost; //TBD hook to BB
+                                _pinPost = !_pinPost;
                               });
                             }
                           }
@@ -357,12 +357,15 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           dateActivatedUtc: scheduleDate?.toUtc(),
           memberAccountIds: memberAccountIds);
     }
-    //TBD TBP hook to BB
-    if(_pinPost)
-      post.pinPost();
 
-    Social().createPost(post: post).then((success) {
-      _onCreateFinished(success ? post : null);
+    Social().createPost(post: post).then((Post? post) {
+      if(_pinPost && StringUtils.isNotEmpty(post?.id)){
+        Social().pinPost(postId: post!.id!).then((Post? pinnedPost){
+          _onCreateFinished(pinnedPost);
+        });
+      } else {
+        _onCreateFinished(post);
+      }
     });
   }
 

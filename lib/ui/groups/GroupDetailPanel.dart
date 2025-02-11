@@ -1910,7 +1910,6 @@ class _GroupPostsContent extends StatefulWidget{
 class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
     implements NotificationsListener {
   List<Post>         _posts = <Post>[];
-  List<Post>         _pinedPosts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
@@ -1931,7 +1930,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     ]);
 
     _loadInitialPosts();
-    _loadPinnedPosts();
+    // _loadPinnedPosts();
     super.initState();
   }
 
@@ -1950,11 +1949,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   }
 
   Widget _buildPosts() {
-    List<Widget> pinnedPostsContent =_buildPostCardsContent(posts: _pinedPosts, pinned: true);
-    List<Widget> postsContent = _buildPostCardsContent(posts: _posts, exclude: _pinedPosts);
-    if(CollectionUtils.isNotEmpty(_pinedPosts)){
-      pinnedPostsContent.add(Container(height: 24,));
-    }
+    List<Widget> postsContent = _buildPostCardsContent(posts: _posts);
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
@@ -1978,7 +1973,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       Column(children: <Widget>[
         Visibility(visible: CollectionUtils.isEmpty(_posts) && _loadingPostsPage == false,
             child: _buildEmptyContent()),
-        ...pinnedPostsContent,
         ...postsContent])),
       _loadingPostsPage == true
         ? Center(
@@ -1989,7 +1983,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     ]);
   }
 
-  List<Widget> _buildPostCardsContent({required List<Post> posts, List<Post>? exclude, GlobalKey? lastPostKey, bool pinned = false}){
+  List<Widget> _buildPostCardsContent({required List<Post> posts, List<Post>? exclude, GlobalKey? lastPostKey,}){
     Iterable<String?>? excludeIds = exclude?.map((post) => post.id);
     List<Widget> content = [];
     for (int i = 0; i <posts.length ; i++) {
@@ -2005,7 +1999,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
-        pinned: pinned,
+        pinned: post.pinned,
         isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
       ));
       }
@@ -2090,20 +2084,20 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
   }
 
-  Future<void> _loadPinnedPosts() async =>
-      Social().loadPosts(
-          groupId: _groupId,
-          type: PostType.post,
-          status: PostStatus.active,
-          sortBy: SocialSortBy.date_created).
-            then((List<Post>? posts) {
-                List<Post> allPinnedPosts = posts?.where(
-                        (post) => post.isPinned == true
-                ).toList() ?? [];
-                setStateIfMounted(() {
-                  _pinedPosts = CollectionUtils.isNotEmpty(allPinnedPosts) ? allPinnedPosts.take(1).toList() : [];
-                });
-              });
+  // Future<void> _loadPinnedPosts() async =>
+  //     Social().loadPosts(
+  //         groupId: _groupId,
+  //         type: PostType.post,
+  //         status: PostStatus.active,
+  //         sortBy: SocialSortBy.date_created).
+  //           then((List<Post>? posts) {
+  //               List<Post> allPinnedPosts = posts?.where(
+  //                       (post) => post.isPinned == true
+  //               ).toList() ?? [];
+  //               setStateIfMounted(() {
+  //                 _pinedPosts = CollectionUtils.isNotEmpty(allPinnedPosts) ? allPinnedPosts.take(1).toList() : [];
+  //               });
+  //             });
 
   // Member?  _getPostCreatorAsMember(Post? post) {
   //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
@@ -2134,13 +2128,13 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   void _initUpdateListener() => widget.updateController?.stream.listen((command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
       _refreshCurrentPosts();
-      _loadPinnedPosts();
+      // _loadPinnedPosts();
     // } else if(command is String && command == _GroupDetailPostsContent.notifyPostRefresh) {
     //   _refreshCurrentPosts();
     }  else if(command is String && command == _GroupPostsContent.notifyPostRefreshWithScrollToLast) {
       _scrollToLastPostAfterRefresh = true;
       if (_refreshingPosts != true) {
-        _refreshCurrentPosts();
+        _refreshCurrentPosts(/*delta: 1*/);
       }
     }
     // else if(command is Map<String, dynamic> && command.containsKey(_GroupDetailPostsContent.notifyPostRefreshWithDelta)){
@@ -2156,23 +2150,23 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       Post? post = param is Post ? param : null;
       if(post?.isPost == true){
         _refreshCurrentPosts(delta: 1);
-        if(post?.isPinned == true)
-          _loadPinnedPosts();
+        // if(post?.isPinned == true)
+        //   _loadPinnedPosts();
       }
     }
     else if (name == Social.notifyPostUpdated) {
       Post? post = param is Post ? param : null;
       if(post?.isPost == true){
-        _refreshCurrentPosts();
-        _loadPinnedPosts();
+        _refreshCurrentPosts(/*delta: post?.pinned == true ? 1 : 0*/);
+        // _loadPinnedPosts();
       }
     }
     else if (name == Social.notifyPostDeleted) {
       Post? post = param is Post ? param : null;
       if(post?.isPost == true) {
         _refreshCurrentPosts(delta: -1);
-        if(post?.isPinned == true)
-          _loadPinnedPosts();
+        // if(post?.isPinned == true)
+        //   _loadPinnedPosts();
       }
     }
   }
