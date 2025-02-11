@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Customization options to choose group modules: Polls, Direct Messaging, Posts, Events [#4697](https://github.com/rokwire/illinois-app/issues/4697).
+
 ## [6.1.56] - 2025-02-07
 ### Added 
 - Add name list to conversation [#4751](https://github.com/rokwire/illinois-app/issues/4751)
