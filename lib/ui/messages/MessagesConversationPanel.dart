@@ -16,13 +16,16 @@ import 'package:neom/utils/AppUtils.dart';
 import 'package:neom/ui/widgets/CustomLinkText.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
@@ -70,6 +73,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final int _messagesPageSize = 20;
   Message? _editingMessage;
   Message? _deletingMessage;
+  Set<PlatformFile> _attachedFiles = {};
 
   final Set<String> _globalIds = {};
 
@@ -267,47 +271,49 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     Widget cardWidget = GestureDetector(onLongPress: canLongPress ? () => _onMessageLongPress(message) : null, child:
       FutureBuilder<Widget>(
-      future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
-      builder: (context, snapshot) {
-        Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
+        future: _buildAvatarWidget(isCurrentUser: isCurrentUser, senderId: senderId),
+        builder: (context, snapshot) {
+          Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
 
-        return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
-          Padding(padding: EdgeInsets.all(16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Expanded(child:
-                  InkWell(onTap: () => _onTapAccount(message), child:
-                    Row(children: [
-                      avatar,
-                      SizedBox(width: 8),
-                      Expanded(child:
-                        Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
-                      ),
-                    ]),
+          return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
+            Padding(padding: EdgeInsets.all(16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Expanded(child:
+                    InkWell(onTap: () => _onTapAccount(message), child:
+                      Row(children: [
+                        avatar,
+                        SizedBox(width: 8),
+                        Expanded(child:
+                          Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                        ),
+                      ]),
+                    ),
                   ),
-                ),
-                if (message.dateSentUtc != null)
-                  Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
-              ]),
-              SizedBox(height: 8),
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Expanded(child:
-                  CustomLinkText(
-                    key: UniqueKey(),
-                    message.message ?? '',
-                    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                    linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                    onLinkTap: _onTapLink,
+                  if (message.dateSentUtc != null)
+                    Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+                ]),
+                SizedBox(height: 8),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Expanded(child:
+                    CustomLinkText(
+                      key: UniqueKey(),
+                      message.message ?? '',
+                      textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                      linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                      onLinkTap: _onTapLink,
+                    ),
                   ),
-                ),
-                // If dateUpdatedUtc is not null, show a small “(edited)” label
-                if (message.dateUpdatedUtc != null)
-                  Padding(padding: EdgeInsets.only(left: 4), child:
-                    Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
-                  ),
+                  // If dateUpdatedUtc is not null, show a small “(edited)” label
+                  if (message.dateUpdatedUtc != null)
+                    Padding(padding: EdgeInsets.only(left: 4), child:
+                      Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                    ),
                 ],),
                 if (!kIsWeb)
-                  WebEmbed(body: message.message)
+                  WebEmbed(body: message.message),
+                if (CollectionUtils.isNotEmpty(message.fileAttachments))
+                  _buildAttachedFilesListWidget(message: message),
               ]),
             ),
           );
@@ -631,60 +637,73 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         color: Styles().colors.background,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            //_buildMessageOptionsWidget(),
+          child: Column(
             children: [
-              if (isEditing) ...[
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _editingMessage = null;
-                          _inputController.clear();
-                        });
-                      },
-                      child: Styles().images.getImage('close', size: 32) ?? Container()
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(width: 16),
+                  if (isEditing)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _editingMessage = null;
+                              _inputController.clear();
+                            });
+                          },
+                          child: Styles().images.getImage('close-circle-white', color: Styles().colors.fillColorSecondary) ?? Container()
+                      ),
+                    ),
+                  _buildAttachFileWidget(),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Semantics(
+                        container: true,
+                        child: TextField(
+                            key: _inputFieldKey,
+                            enabled: enabled,
+                            controller: _inputController,
+                            minLines: 1,
+                            maxLines: 5,
+                            textCapitalization: TextCapitalization.sentences,
+                            textInputAction: TextInputAction.send,
+                            focusNode: _inputFieldFocus,
+                            onSubmitted: _submitMessage,
+                            onChanged: (_) => setStateIfMounted(() {}),
+                            cursorColor: Styles().colors.textLight,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
+                                fillColor: Styles().colors.surface,
+                                focusColor: Styles().colors.surface,
+                                hoverColor: Styles().colors.surface,
+                                hintText: "Message ${_getConversationTitle()}",
+                                hintStyle: Styles().textStyles.getTextStyle('widget.item.light.small')
+                            ),
+                            style: Styles().textStyles.getTextStyle('widget.title.regular')
+                        )
+                    ),
                   ),
-                ),
-                SizedBox(width: 8),
-              ] else ...[
-                SizedBox(width: 32),
-              ],
-              Expanded(
-                child: Semantics(
-                    container: true,
-                    child: TextField(
-                        key: _inputFieldKey,
-                        enabled: enabled,
-                        controller: _inputController,
-                        minLines: 1,
-                        maxLines: 5,
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.send,
-                        focusNode: _inputFieldFocus,
-                        onSubmitted: _submitMessage,
-                        onChanged: (_) => setStateIfMounted(() {}),
-                        cursorColor: Styles().colors.textLight,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Styles().colors.fillColorPrimary)),
-                            fillColor: Styles().colors.surface,
-                            focusColor: Styles().colors.surface,
-                            hoverColor: Styles().colors.surface,
-                            hintText: "Message ${_getConversationTitle()}",
-                            hintStyle: Styles().textStyles.getTextStyle('widget.item.light.small')
-                        ),
-                        style: Styles().textStyles.getTextStyle('widget.title.regular')
-                    )
-                ),
+                  _buildSendImage(enabled),
+                ],
               ),
-              _buildSendImage(enabled),
+              if (_attachedFiles.isNotEmpty)
+                _buildAttachedFilesListWidget(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildAttachFileWidget() {
+    return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Attach"),
+        child: InkWell(
+            child: Styles().images.getImage('plus-circle'),
+            onTap: _onTapAttachFile
+        )
+    ));
   }
 
   Widget _buildSendImage(bool enabled) {
@@ -719,6 +738,94 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   }
                       : null))));
     }
+  }
+
+  Widget _buildAttachedFilesListWidget({Message? message}) {
+
+    return Container(
+      height: 88.0,
+      child: ListView.separated(
+        padding: EdgeInsets.only(top: 16.0, left: message != null ? 0.0 : 16.0, right: 16.0),
+        separatorBuilder: (context, index) => SizedBox(width: 16.0),
+        itemCount: message?.fileAttachments?.length ?? _attachedFiles.length,
+        itemBuilder: (context, index) => _buildAttachedFileEntry(context, index, message: message),
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
+
+  Widget _buildAttachedFileEntry(BuildContext context, int index, {Message? message}) {
+    String? name, extension;
+    GestureTapCallback? onTap;
+    Color? entryBackgroundColor;
+    String? textStyleKey;
+    if (message != null) {
+      FileAttachment file = message.fileAttachments![index];
+      name = file.name;
+      extension = file.extension;
+      onTap = () => _onTapDownloadFile(file, message.globalId!);
+      entryBackgroundColor = Styles().colors.surfaceAccent;
+      textStyleKey = 'widget.title.dark.small';
+    } else {
+      PlatformFile file = _attachedFiles.elementAt(index);
+      name = file.name;
+      extension = file.extension;
+      onTap = () => _onTapRemoveFile(file);
+      entryBackgroundColor = Styles().colors.backgroundAccent;
+      textStyleKey = 'widget.title.small';
+    }
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Container(
+          color: entryBackgroundColor,
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            Styles().images.getImage('file') ?? Container(height: 48.0),
+            SizedBox(width: 16.0),
+            Container(
+              width: 120.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      name ?? '',
+                      style: Styles().textStyles.getTextStyle(textStyleKey),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          extension?.toUpperCase() ?? '',
+                          style: Styles().textStyles.getTextStyle(textStyleKey),
+                        ),
+                        if (message != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: GestureDetector(onTap: onTap, child:
+                              Styles().images.getImage('download'),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+        ),
+        if (message == null)
+          GestureDetector(onTap: onTap, child:
+            Styles().images.getImage('close-circle'),
+          ),
+      ],
+    );
   }
 
   Future<void> _initConversationAndMessages() async {
@@ -826,7 +933,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
   }
 
-  static List<Message> _removeDuplicateMessagesByGlobalId(List<Message> source, Set<String> globalIds) {
+  List<Message> _removeDuplicateMessagesByGlobalId(List<Message> source, Set<String> globalIds) {
     List<Message> messages = [];
     for (Message message in source) {
       if (message.globalId != null && !globalIds.contains(message.globalId)) {
@@ -853,11 +960,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       FocusScope.of(context).requestFocus(FocusNode());
 
       _inputController.text = '';
+      List<FileAttachment> fileAttachments = _messageFileAttachments;
 
       // Create a temporary message and add it immediately
       Message tempMessage = Message(
         sender: ConversationMember(accountId: _currentUserId, name: Auth2().fullName ?? 'You'),
         message: messageText,
+        fileAttachments: fileAttachments,
         dateSentUtc: DateTime.now().toUtc(),
       );
 
@@ -872,12 +981,15 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       List<Message>? newMessages = await Social().createConversationMessage(
         conversationId: _conversationId!,
         message: messageText,
+        fileAttachments: fileAttachments,
       );
 
+      String? messageId;
       if (mounted) {
         if (newMessages != null && newMessages.isNotEmpty) {
           setState(() {
             Message serverMessage = newMessages.first;
+            messageId = serverMessage.globalId;
             // Update the temporary message with the server's message if needed
             int index = _messages.indexOf(tempMessage);
             if (index >= 0) {
@@ -895,7 +1007,20 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
         }
       }
+
+      if (_attachedFiles.isNotEmpty && messageId != null) {
+        _uploadAttachedFiles(messageId);
+      }
     }
+  }
+
+  Future<void> _uploadAttachedFiles(String? messageId) async {
+    List<String>? uploaded = await Content().uploadFileContentItems(_attachedFileData, Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
+    for (String name in uploaded ?? []) {
+      _attachedFiles.removeWhere((file) => file.name == name);
+    }
+
+    setStateIfMounted(() {});
   }
 
   Future<void> _updateEditingMessage(String newText) async {
@@ -978,6 +1103,50 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
   }
 
+  Future<void> _onTapAttachFile() async {
+    //TODO: should file attachments be retained for draft messages?
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      withData: true,
+      dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
+    );
+    if (CollectionUtils.isNotEmpty(result?.files)) {
+      setStateIfMounted(() {
+        _attachedFiles.addAll(result!.files);
+      });
+    }
+  }
+
+  void _onTapRemoveFile(PlatformFile file) {
+    setState(() {
+      _attachedFiles.remove(file);
+    });
+  }
+
+  Future<void> _onTapDownloadFile(FileAttachment file, String messageId) async {
+    //TODO: implement opening files based on type
+    if (StringUtils.isNotEmpty(file.name)) {
+      Map<String, Uint8List> files = await Content().getFileContentItems([file.name!], Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
+      if (await _requestStoragePermissions() && files.isNotEmpty) {
+        Uint8List? data = files[file.name];
+        if (CollectionUtils.isNotEmpty(data)) {
+          bool success = await RokwirePlugin.saveDownloadedFile(file.name!, data!);
+          String message = success ? Localization().getStringEx('', 'File saved') : Localization().getStringEx('', 'Failed to save file');
+          AppToast.showMessage(message);
+        }
+      }
+    }
+  }
+
+  Future<bool> _requestStoragePermissions() async {
+    PermissionStatus status = await Permission.manageExternalStorage.status;
+    if (!status.isGranted) {
+      status = await Permission.manageExternalStorage.request();
+    }
+
+    return status == PermissionStatus.granted;
+  }
+
   @override
   void didChangeMetrics() {
     _checkKeyboardVisible.then((visible) {
@@ -1033,4 +1202,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
+  Map<String, Uint8List> get _attachedFileData {
+    Map<String, Uint8List> fileData = {};
+    for (PlatformFile file in _attachedFiles) {
+      if (file.bytes != null) {
+        fileData[file.name] = file.bytes!;
+      }
+    }
+    return fileData;
+  }
+
+  //TODO: figure out how to get accurate file types
+  List<FileAttachment> get _messageFileAttachments => List.generate(_attachedFiles.length, (index) => FileAttachment(name: _attachedFiles.elementAt(index).name, type: 'file'));
 }
