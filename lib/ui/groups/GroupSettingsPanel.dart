@@ -22,6 +22,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -155,6 +156,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       //  _buildAttendanceLayout(),
       //));
 
+      contentList.add(
+          Padding(padding: EdgeInsets.only(top: 0), child:
+          _buildContentSectionsLayout(),
+          )
+      );
+
       contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
         _buildSettingsLayout(),
       ));
@@ -171,7 +178,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         // _buildResearchConfirmationLayout(),
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
-        _buildMembershipLayout(),
+        _buildContentSectionsLayout(),
         // _buildProjectSettingsLayout(),
         _buildSettingsLayout(),
       ]);
@@ -451,6 +458,26 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
+  }
+
+  //Content Sections
+  Widget _buildContentSectionsLayout(){
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.only(left: 16, right: 16,),
+      child: Column(children: <Widget>[
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildMembershipButton(
+                title: Localization().getStringEx("", "Group Content"), //TBD localize
+                description: _isResearchProject?
+                Localization().getStringEx("", "Customize your project content type(s) and the order"):
+                Localization().getStringEx("", "Customize your group content type(s) and the order"),
+                onTap: () =>
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupContentSettingsPanel(group: _group,)))
+            )),
+      ]),
+    );
   }
 
   //
