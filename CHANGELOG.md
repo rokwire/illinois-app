@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed empty recurrent events list message in Event detail panel.
+### Changed
+- Improve UX for sections that require a NetID sign-in to view [#4699](https://github.com/rokwire/illinois-app/issues/4699).
 
 ## [6.1.56] - 2025-02-07
 ### Added 
