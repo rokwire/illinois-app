@@ -2586,6 +2586,8 @@
     "panel.public_surveys.label.description.empty": "There are no available surveys at the moment.",
     "panel.public_surveys.content_type.all": "All Surveys",
     "panel.public_surveys.content_type.completed": "Completed Surveys",
+    "panel.public_surveys.message.signed_out": "You are not logged in. To access Surveys, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+   	"panel.message.signed_out.link.login": "sign in",
 
     "panel.bus_pass.header.title": "MTD Bus Pass",
     "panel.bus_pass.button.close.title": "close",
@@ -2629,6 +2631,8 @@
     "panel.wellness.sections.health_screener.label.screener.subtitle": "Find the right resources",
     "panel.wellness.sections.health_screener.history.clear": "Clear All",
     "panel.wellness.sections.health_screener.history.clear.confirm": "Are you sure you want to clear your history?",
+    "panel.wellness.sections.health_screener.message.signed_out": "You are not logged in. To access Illinois Health Screener, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.wellness.sections.health_screener.message.signed_out.link.login": "sign in",
 
     "panel.wellness.sections.mental_health.video.title": "Mental Health",
 
@@ -3093,8 +3097,8 @@
     "panel.groups_home.filter.filter.label": "Filters",
     "panel.groups_home.label.my_groups.empty": "You are not a member of any group. To join or create a group, see ",
     "panel.groups_home.label.my_groups.empty.link.all_groups": "All Groups",
-    "panel.groups_home.label.my_groups.logged_out": "You are not logged in. To access your groups, you need to {{link.login}} first.",
-    "panel.groups_home.label.my_groups.logged_out.link.login": "Login",
+    "panel.groups_home.label.my_groups.logged_out": "You are not logged in. To access your groups, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.groups_home.label.my_groups.logged_out.link.login": "sign in",
     "panel.groups_home.label.my_groups.failed": "Failed to load groups.",
     "panel.groups_home.label.all_groups.empty": "There are no groups matching your filters.",
     "panel.groups_home.label.all_groups.failed": "Failed to load groups.",
@@ -3266,6 +3270,8 @@
     "panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
     "panel.research_projects.home.status.empty.open.text": "There are no open research projects at the moment.",
     "panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
+    "panel.research_projects.home.status.my_projects.logged_out": "You are not logged in. To access your research projects, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.research_projects.home.status.my_projects.logged_out.link.login": "sign in",
 
     "panel.content.attributes.button.apply.title": "Apply Attributes",
     "panel.content.attributes.button.filter.title": "Filter",
