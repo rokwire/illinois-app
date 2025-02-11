@@ -2586,6 +2586,8 @@
     "panel.public_surveys.label.description.empty": "There are no available surveys at the moment.",
     "panel.public_surveys.content_type.all": "All Surveys",
     "panel.public_surveys.content_type.completed": "Completed Surveys",
+    "panel.public_surveys.message.signed_out": "You are not logged in. To access Surveys, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+   	"panel.message.signed_out.link.login": "sign in",
 
     "panel.bus_pass.header.title": "MTD Bus Pass",
     "panel.bus_pass.button.close.title": "close",
