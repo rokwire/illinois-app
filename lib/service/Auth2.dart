@@ -35,7 +35,6 @@ class Auth2 extends rokwire.Auth2 {
   static String get notifyPrefsChanged      => rokwire.Auth2.notifyPrefsChanged;
   static String get notifyPrivacyChanged    => rokwire.Auth2.notifyPrivacyChanged;
   static String get notifyUserDeleted       => rokwire.Auth2.notifyUserDeleted;
-  static String get notifyPrepareUserDelete => rokwire.Auth2.notifyPrepareUserDelete;
 
   static const String notifyCardChanged     = "edu.illinois.rokwire.auth2.card.changed";
   static const String notifyProfilePictureChanged  = "edu.illinois.rokwire.auth2.profile.picture.changed";

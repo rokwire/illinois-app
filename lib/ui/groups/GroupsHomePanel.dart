@@ -23,6 +23,7 @@ import 'package:neom/ext/Group.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
+import 'package:neom/ui/profile/ProfileHomePanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -72,6 +73,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
 
   rokwire.GroupsContentType? _selectedContentType;
 
+  GestureRecognizer? _loginRecognizer;
+  GestureRecognizer? _selectAllRecognizer;
+
   List<Group>? _allGroups;
   List<Group>? _userGroups;
 
@@ -101,13 +105,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
       Groups.notifyUserGroupsUpdated,
-      Auth2.notifyLoginSucceeded,
-      Auth2.notifyLogout,
+      Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
+    _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
     _selectedContentType = widget.contentType;
     _reloadGroupsContent();
+    super.initState();
   }
 
   @override
@@ -117,6 +123,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     _scrollController.dispose();
 
     NotificationService().unsubscribe(this);
+    _loginRecognizer?.dispose();
+    _selectAllRecognizer?.dispose();
     super.dispose();
   }
 
@@ -175,7 +183,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   }
 
   Future<List<Group>?> _loadUserGroups() async =>
-    Groups().loadGroups(contentType: rokwire.GroupsContentType.my);
+    Auth2().isLoggedIn ? Groups().loadGroups(contentType: rokwire.GroupsContentType.my) : null;
 
   Future<List<Group>?> _loadAllGroups() async =>
     Groups().loadGroups(
@@ -570,17 +578,23 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     if (0 < messages.length)
       spanList.add(TextSpan(text: messages.first));
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "Login"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = _onTapLogin, ));
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.logged_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: _loginRecognizer, ));
       spanList.add(TextSpan(text: messages[index]));
     }
 
-    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 32), child:
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.light.regular"), children: spanList)
       )
     );
   }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login,);
+  }
+
 
   Widget _buildEmptyMyGroupsContent() {
     return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
@@ -588,7 +602,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.light.regular"), children:[
           TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
           TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-            recognizer: TapGestureRecognizer()..onTap = _onSelectAllGroups, ),
+            recognizer: _selectAllRecognizer, ),
           TextSpan(text:"."),
         ])
       )
@@ -656,16 +670,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     }
   }
 
-  void _onTapLogin() {
-    Analytics().logSelect(target: "Login");
-    if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showAuthenticationNAMessage(context);
-    }
-    else {
-      Auth2().authenticateWithOidc();
-    }
-  }
-
   void _onTabChanged({bool manual = true}) {
     if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {
       setState(() {
@@ -728,7 +732,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     else if (name == Groups.notifyUserGroupsUpdated) {
       _applyUserGroups();
     }
-    else if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
+    else if (name == Auth2.notifyLoginChanged) {
       // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
       Future.delayed(Duration(microseconds: 300), () {
         if (mounted) {

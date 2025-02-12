@@ -237,9 +237,9 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
     return null;
   }
 
-  static const String _assetsName   = "wellness.json";
-  String get appAssetsKey => 'assets/$_assetsName';
+  //static const String _assetsName   = "wellness.json";
+  //String get _appAssetsKey => 'assets/$_assetsName';
 
   //TBD load from wellness service - content. TBD consider moving to Content BB.
-  Future<Map<String, dynamic>?> get _loadWellnessContentFromAsset async => await loadFromAssets(appAssetsKey);
+  //Future<Map<String, dynamic>?> get _loadWellnessContentFromAsset async => await loadFromAssets(appAssetsKey);
 }
