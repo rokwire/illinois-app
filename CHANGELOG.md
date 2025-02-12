@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Acknowledge Social: pinPost API [4629](https://github.com/rokwire/illinois-app/issues/4629).
+- Cleaned up delete user APIs [#4766](https://github.com/rokwire/illinois-app/issues/4766).
 
 ## [6.1.57] - 2025-02-11
 ### Added

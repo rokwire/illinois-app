@@ -2420,6 +2420,7 @@
     "panel.profile.info.cancel.save.privacy.prompt.text": "Save your privacy settings changes?",
     "panel.profile.info.cancel.save.profile.prompt.text": "Save your profile settings changes?",
     "panel.profile.info.cancel.save.profile_and_privacy.prompt.text": "Save your profile and privacy settings changes?",
+    "panel.profile.info.delete.failed.text": "Failed to delete app account.",
     "panel.profile.info.save.failed.text": "Failed to update profile and privacy settings.",
     "panel.profile.info.playback.failed.text": "Failed to play audio stream.",
     "panel.profile.info.directory_visibility.command.toggle.title": "Directory Visibility",
