@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/widgets/VideoPlayButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:universal_io/io.dart';
 import 'package:video_player/video_player.dart';
@@ -10,12 +11,13 @@ class VideoPlayerWidget extends StatefulWidget {
   final String? url;
   final Uri? uri;
   final String? filePath;
+  final VideoPlayerController? controller;
   final bool useAuthHeaders;
   final bool showControls;
   final String? videoID;
   final String? videoTitle;
   final bool muted;
-  VideoPlayerWidget({super.key, this.url, this.uri, this.filePath,
+  VideoPlayerWidget({super.key, this.url, this.uri, this.filePath, this.controller,
     this.useAuthHeaders = false, this.showControls = true, this.muted = false,
     this.videoID, this.videoTitle});
 
@@ -41,7 +43,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   void _initVideoPlayer() {
-    if (widget.filePath != null) {
+    if (widget.controller != null) {
+      _controller = widget.controller;
+    } else if (widget.filePath != null) {
       _controller = VideoPlayerController.file(File(widget.filePath ?? ''));
     } else if (widget.uri != null || widget.url != null) {
       Uri? uri = widget.uri ?? Uri.tryParse(widget.url ?? '');
@@ -51,7 +55,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 ? Auth2().networkAuthHeaders ?? {} : {});
       }
     }
-    if (mounted) {
+    if (mounted && widget.controller == null) {
       setState(() {
         _initializeVideoPlayerFuture = _controller?.initialize().then((_) {
           _controller?.setLooping(true);
@@ -71,6 +75,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               });
             }
           }
+          setStateIfMounted(() { });
         });
       });
     }
@@ -94,7 +99,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     VideoPlayerController? controller = _controller;
-    if (controller == null) {
+    if (controller == null || controller.value.hasError) {
       return _buildErrorWidget();
     }
     return FutureBuilder(
@@ -127,12 +132,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   Widget _buildErrorWidget() => Container(
-    color: Styles().colors.backgroundVariant,
+    color: Styles().colors.surfaceAccent,
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Styles().images.getImage('exclamation') ?? SizedBox(),
+        Styles().images.getImage('exclamation', size: 48) ?? SizedBox(),
         // SizedBox(height: 8),
         // Text(
         //   Localization().getStringEx('panel.essential_skills_coach.video.error.message', 'Failed to load video. Please try again later.'),

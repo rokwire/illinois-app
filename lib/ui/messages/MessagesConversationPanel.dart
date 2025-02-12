@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:collection/collection.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,8 +30,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:file_saver/file_saver.dart';
 import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -109,10 +106,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     // Load conversation (if needed) and messages from the backend
     _initConversationAndMessages();
-
-    if (kIsWeb) {
-      FilePickerWeb.registerWith(webPluginRegistrar);
-    }
 
     super.initState();
   }
@@ -801,12 +794,15 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   textColor: Styles().colors.textPrimary,
                   onTap: () => _onTapCamera(isVideo: true)),
               SizedBox(height: 4),
-              RibbonButton(
-                  label: Localization().getStringEx('', 'Record an audio clip'),
-                  leftIconKey: 'microphone',
-                  backgroundColor: Styles().colors.backgroundVariant,
-                  textColor: Styles().colors.textPrimary,
-                  onTap: _onTapRecordAudio),
+              Opacity(
+                opacity: 0.4,
+                child: RibbonButton(
+                    label: Localization().getStringEx('', 'Record an audio clip'),
+                    leftIconKey: 'microphone',
+                    backgroundColor: Styles().colors.backgroundVariant,
+                    textColor: Styles().colors.textPrimary,
+                    onTap: _onTapRecordAudio),
+              ),
               SizedBox(height: 4),
               RibbonButton(
                   label: Localization().getStringEx('', 'Upload a file'),
@@ -834,7 +830,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     } else {
       media = await ImagePicker().pickImage(source: ImageSource.camera);
     }
-    _addAttachedFiles([media]);
+    if (media != null) {
+      _addAttachedFiles([media]);
+    }
     Navigator.of(context).pop();
   }
 
@@ -884,7 +882,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildAttachedFilesListWidget({Message? message}) {
     return Container(
-      height: 100.0,
+      height: (message?.fileAttachments ?? _attachedFiles.toList()).firstWhereOrNull((e) =>
+        _getFileType(e) != FileType.file) != null ? message != null ? 300.0 : 200.0 : 100.0,
       child: ListView.separated(
         padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         separatorBuilder: (context, index) => SizedBox(width: 8.0),
@@ -918,7 +917,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       dynamic file = _attachedFiles.elementAt(index);
       FileType type = _getFileType(file);
       if (type == FileType.image || type == FileType.video) {
-        return _buildAttachedMediaEntry(context, file, type);
+        return _buildAttachedMediaEntry(context, file, type, removable: true);
       }
       entryBackgroundColor = Styles().colors.backgroundAccent;
       textStyleKey = 'widget.title.small';
@@ -990,51 +989,63 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  Widget _buildAttachedMediaEntry(BuildContext context, dynamic file, FileType type) {
-    String? path = _getFilePath(file);
-    if (path == null) {
+  Widget _buildAttachedMediaEntry(BuildContext context, dynamic file, FileType type,
+      {bool removable = false}) {
+    String? path, url;
+    if (file is FileAttachment) {
+      url = file.url;
+    } else {
+      path = _getFilePath(file);
+    }
+    if (path == null && url == null) {
       return const SizedBox();
     }
     Widget? widget;
     if (type == FileType.image) {
-      if (kIsWeb) {
-        widget = Image.network(path, fit: BoxFit.cover,
+      if (kIsWeb || file is FileAttachment) {
+        widget = Image.network(url ?? path ?? '', fit: BoxFit.cover,
           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
           _imageErrorBuilder,
         );
       } else {
-        widget = Image.file(File(path), fit: BoxFit.cover,
+        widget = Image.file(File(path ?? ''), fit: BoxFit.cover,
           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
           _imageErrorBuilder,
         );
       }
     }
-    else if (type == FileType.image) {
-      widget = VideoPlayerWidget(key: ValueKey(path),
-          filePath: path, showControls: false,
-          muted: true);
+    else if (type == FileType.video) {
+      widget = FittedBox(
+        alignment: Alignment.center,
+        fit: BoxFit.cover,
+        clipBehavior: Clip.hardEdge,
+        child: VideoPlayerWidget(key: ValueKey(path),
+            filePath: path, url: url, showControls: false,
+            muted: true),
+      );
     }
 
     return Stack(children: [
-      AspectRatio(aspectRatio: 16/9, child: widget),
-      Positioned.fill(child:
-        Align(alignment: Alignment.topRight, child:
-          GestureDetector(onTap: () => _removeAttachedFiles([file]),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Styles().images.getImage('close-circle'),
-              ))
+      AspectRatio(aspectRatio: 1/1, child: widget),
+      if (removable)
+        Positioned.fill(child:
+          Align(alignment: Alignment.topRight, child:
+            GestureDetector(onTap: () => _removeAttachedFiles([file]),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Styles().images.getImage('close-circle'),
+                ))
+          )
         )
-      )
     ]);
   }
 
   Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
     Container(color: Styles().colors.surfaceAccent, child:
       Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
-        Center(child:
-          Text(Localization().getStringEx('', 'This image type is not supported'),
-              style: Styles().textStyles.getTextStyle('widget.title.dark.small')),
+        Center(child: Styles().images.getImage('exclamation', size: 48),
+          // Text(Localization().getStringEx('', 'This image type is not supported'),
+          //     style: Styles().textStyles.getTextStyle('widget.title.dark.small')),
         ),
       ),
     )
@@ -1053,8 +1064,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (_conversation == null) {
       futures.add(Social().loadConversation(_conversationId!));
     }
-    futures.add(Social().loadConversationMessages(
-      conversationId: _conversationId!,
+    futures.add(_loadMessages(
       offset: 0, limit: _messagesPageSize,
       // Pass messageId param only if we messageGlobalId is not applied
       extendLimitToMessageId: (widget.targetMessageGlobalId == null) ? widget.targetMessageId : null,
@@ -1091,8 +1101,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     // Use the Social API to load conversation messages
     int messagesCount = max(_messagesLength, _messagesPageSize);
-    List<Message>? messages = await Social().loadConversationMessages(
-      conversationId: _conversationId!,
+    List<Message>? messages = await _loadMessages(
       offset: 0, limit: messagesCount,
     );
 
@@ -1124,8 +1133,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
 
     // Use the Social API to load conversation messages
-    List<Message>? loadedMessages = await Social().loadConversationMessages(
-      conversationId: _conversationId!,
+    List<Message>? loadedMessages = await _loadMessages(
       limit: _messagesPageSize,
       offset: _messagesLength,
     );
@@ -1143,6 +1151,37 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _shouldScrollToTarget = null;
       }
     });
+  }
+
+  Future<List<Message>?> _loadMessages({
+    int offset = 0, int limit = 100,
+    String? extendLimitToMessageId, String? extendLimitToGlobalMessageId,
+    bool loadAttachmentUrls = true}) async {
+    List<Message>? loadedMessages = await Social().loadConversationMessages(
+      conversationId: _conversationId!,
+      limit: limit,
+      offset: offset,
+      extendLimitToGlobalMessageId: extendLimitToGlobalMessageId,
+      extendLimitToMessageId: extendLimitToMessageId,
+    );
+    if (loadAttachmentUrls) {
+      for (Message message in loadedMessages ?? []) {
+        List<String>? filenames = message.fileAttachments?.where((e) => e.type != FileType.file).map((e) => e.name).whereNotNull().toList();
+        if (filenames != null && filenames.isNotEmpty) {
+          Map<String, String>? urls = await Content().getFileContentDownloadUrls(filenames, Content.conversationsContentCategory, entityId: '$_conversationId/${message.globalId}');
+          if (urls != null && urls.isNotEmpty) {
+            for (FileAttachment file in message.fileAttachments ?? []) {
+              for (MapEntry<String, String> urlEntry in urls.entries) {
+                if (urlEntry.value == file.name) {
+                  file.url = urlEntry.key;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return loadedMessages;
   }
 
   List<Message> _removeDuplicateMessagesByGlobalId(List<Message> source, Set<String> globalIds) {
@@ -1467,6 +1506,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   FileType _getFileType(dynamic file) {
+    if (file is FileAttachment) {
+      return _getFileTypeFromString(file.type);
+    }
     FileType type = FileType.file;
     String? path = _getFilePath(file);
     if (FileUtils.isVideo(path)) {
