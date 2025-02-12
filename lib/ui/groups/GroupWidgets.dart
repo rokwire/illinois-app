@@ -766,7 +766,6 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       rowContent.add(Padding(padding: EdgeInsets.only(right: wrapContent.isNotEmpty ? 8 : 0), child:
         _buildHeadingLabel(userStatus!.toUpperCase(),
           color: widget.group?.currentUserStatusColor,
-          textStyle: widget.group?.currentUserStatusTextStyle,
           semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [userStatus.toLowerCase()])
         )      
       ));
@@ -1268,10 +1267,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
         });
   }
 
-  Widget get _pinWidget => Visibility(visible: widget.pinned == true, child:
-  InkWell(
-      onTap: _showUnpinConfirmationDialog,
-      child: Container(
+  Widget get _pinWidget => Visibility(visible: widget.post?.pinned == true, child:
+      InkWell(
+        onTap: _showUnpinConfirmationDialog,
+        child: Container(
           padding: EdgeInsets.only(left: 24, bottom: 16, top: 12, right: 12),
           child: Styles().images.getImage("pin", size: 16, fit: BoxFit.fitHeight)
       )));
@@ -1286,13 +1285,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onUnpin(){
-    //TBD hook BB
     if(widget.group.currentUserIsAdmin) {
-      widget.post?.unpinPost();
-      if (widget.post != null)
-        Social().updatePost(post: widget.post!).then((succeeded) {
-
-        });
+      if (widget.post?.id != null)
+        Social().pinPost(postId: widget.post!.id!, pinned: false);
     }
   }
 

@@ -706,6 +706,7 @@
     "panel.wellness.resource.button.title.regular": {"extends": "widget.button.title.medium.fat"},
 
     "panel.wellness.sections.health_screener.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
+    "panel.wellness.sections.health_screener.link": {"extends": "panel.wellness.sections.health_screener.description", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "surface" },
 
     "panel.athletics.home.heading.regular": {"font_family": "regular", "size": 16.0, "color": "white",  "weight" :  "w900", "letter_spacing" :  1.0},
     "panel.athletics.home.title.large": {"font_family": "regular", "size": 20.0, "color": "textPrimary",  "weight" :  "w900"},

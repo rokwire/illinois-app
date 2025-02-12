@@ -76,7 +76,7 @@ import 'package:sprintf/sprintf.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab {Events, Posts, Scheduled, Messages, Polls, About }
+enum DetailTab {Events, Posts, Scheduled, Messages, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -106,8 +106,6 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   String? get groupId => group?.id ?? groupIdentifier;
 
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
-
-  static List<_DetailTab> get defaultTabs => [_DetailTab.Events, _DetailTab.Posts,  _DetailTab.Scheduled, _DetailTab.Messages, _DetailTab.Polls, _DetailTab.About]; //TBD extract from Groups BB
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -120,13 +118,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Map<String, Uint8List?> _groupMembersImages = {};
   String?                 _postId;
 
-  List<_DetailTab>? _tabs;
+  List<DetailTab?>? _tabs;
   PageController? _pageController;
   TabController?  _tabController;
   StreamController _updateController = StreamController.broadcast();
   final ScrollController _scrollController = ScrollController();
 
-  _DetailTab         _currentTab = _DetailTab.Events;
+  DetailTab         _currentTab = DetailTab.Events;
 
   bool               _confirmationLoading = false;
   bool               _researchProjectConsent = false;
@@ -262,8 +260,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupStatsUpdated,
     ]);
     _initUpdateController();
+    _initTabs();
     _postId = widget.groupPostId;
-    _tabs = GroupDetailPanel.defaultTabs;
+
 
     _loadGroup(loadEvents: true);
     super.initState();
@@ -397,11 +396,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (group != null) {
         _group = group;
         if (_isResearchProject && _isMember) {
-          _currentTab = _DetailTab.About; //TBD
+          _currentTab = DetailTab.About; //TBD
         }
+        _initTabs();
         _trimForbiddenTabs();
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
+
         _updateController.add(GroupDetailPanel.notifyRefresh);
       }
       if (loadEvents) {
@@ -417,6 +418,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         setState(() {
           _group = group;
           _refreshGroupAdmins();
+          _initTabs();
           _trimForbiddenTabs();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
@@ -428,8 +430,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   void _trimForbiddenTabs(){
     if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
-      _tabs?.removeWhere((_DetailTab tab) =>
-          (tab == _DetailTab.Scheduled && _canShowScheduled == false));
+      _tabs?.removeWhere((DetailTab? tab) => tab == null ||
+          (tab == DetailTab.Scheduled && _canShowScheduled == false));
     }
   }
 
@@ -568,6 +570,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
     }
   });
+
+  void _initTabs() =>
+    _tabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
 
   void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
@@ -764,31 +769,32 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   }
 
   PreferredSizeWidget? _buildTabs() {
-    if (CollectionUtils.isEmpty(_tabs) || !_isMemberOrAdmin)
+    if(CollectionUtils.isEmpty(_tabs) || _tabs?.length == 1)
       return null;
 
     List<Widget> tabs = [];
-    for (_DetailTab tab in _tabs!) {
+    for (DetailTab? tab in _tabs! ) {
       String title;
       switch (tab) {
-        case _DetailTab.Events:
+        case DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
           break;
-        case _DetailTab.Posts:
+        case DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
           break;
-        case _DetailTab.Messages:
+        case DetailTab.Messages:
           title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
           break;
-        case _DetailTab.Polls:
+        case DetailTab.Polls:
           title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
           break;
-        case _DetailTab.About:
+        case DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
-        case _DetailTab.Scheduled:
+        case DetailTab.Scheduled:
           title = Localization().getStringEx("panel.group_detail.button.scheduled.title", 'Scheduled'); //localize
           break;
+        default: title = "Unknown";
       }
 
       tabs.add(TextTabButton(title: title));
@@ -811,11 +817,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   Widget _buildViewPager(){
     List<Widget> pages = [];
-    if(CollectionUtils.isNotEmpty(_tabs)){
-      for (_DetailTab tab in _tabs!){
+
+    if(CollectionUtils.isEmpty(_tabs))
+      return Container();
+
+      for (DetailTab? tab in _tabs!){
         pages.add(_buildPageFromTab(tab));
       }
-    }
 
     if (_pageController == null) {
       _pageController = PageController(viewportFraction: 1, initialPage: _indexOfTab(_currentTab), keepPage: true, );
@@ -837,31 +845,31 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       );
   }
 
-  int _indexOfTab(_DetailTab tab) => _tabs?.indexOf(tab) ?? 0;
+  int _indexOfTab(DetailTab tab) => _tabs?.indexOf(tab) ?? 0;
 
-  _DetailTab? _tabAtIndex(int index) {
+  DetailTab? _tabAtIndex(int index) {
     try {
       return _tabs?.elementAt(index);
     } catch (e) {
       Log.d(e.toString());
     }
-
-    return _DetailTab.Events; //TBD consider default
+    
+    return DetailTab.Events; //TBD consider default
   }
 
-  Widget _buildPageFromTab(_DetailTab data){
+  Widget _buildPageFromTab(DetailTab? data){
     switch(data){
-      case _DetailTab.Events:
+      case DetailTab.Events:
         return _GroupEventsContent(group: _group, updateController: _updateController);
-      case _DetailTab.Posts:
+      case DetailTab.Posts:
         return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
-      case _DetailTab.Messages:
+      case DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
-      case _DetailTab.Polls:
+      case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
-      case _DetailTab.Scheduled:
+      case DetailTab.Scheduled:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
-      case _DetailTab.About:
+      case DetailTab.About:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildAbout(), _buildPrivacyDescription(), _buildAdmins()],);
       default: Container();
     }
@@ -973,7 +981,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Widget _buildBadgeWidget() {
     Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
       Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-        Text(_group!.currentUserStatusText!.toUpperCase(), style: _group?.currentUserStatusTextStyle,)
+        Text(_group!.currentUserStatusText!.toUpperCase(), style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
       ),
     );
     return _hasIconOptionButtons ? Row(children: <Widget>[
@@ -1285,7 +1293,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                         label: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
-                          _onTab(_DetailTab.About);
+                          _onTab(DetailTab.About);
                         })),
                 Visibility(
                     visible: _canEditGroup,
@@ -1425,7 +1433,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         });
   }
 
-  void _onTab(_DetailTab? tab) {
+  void _onTab(DetailTab? tab) {
     Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
     if (tab != null /*&& _currentTab != tab*/) {
         _currentTab = tab;
@@ -1666,6 +1674,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           _group = group;
         });
       }
+      _initTabs();
       _trimForbiddenTabs();
       _refreshGroupAdmins();
       _refreshGroupStats();
@@ -1955,7 +1964,6 @@ class _GroupPostsContent extends StatefulWidget{
 class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
     implements NotificationsListener {
   List<Post>         _posts = <Post>[];
-  List<Post>         _pinedPosts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
   bool?              _loadingPostsPage;
@@ -1976,7 +1984,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     ]);
 
     _loadInitialPosts();
-    _loadPinnedPosts();
+    // _loadPinnedPosts();
     super.initState();
   }
 
@@ -1995,11 +2003,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   }
 
   Widget _buildPosts() {
-    List<Widget> pinnedPostsContent =_buildPostCardsContent(posts: _pinedPosts, pinned: true);
-    List<Widget> postsContent = _buildPostCardsContent(posts: _posts, exclude: _pinedPosts);
-    if(CollectionUtils.isNotEmpty(_pinedPosts)){
-      pinnedPostsContent.add(Container(height: 24,));
-    }
+    List<Widget> postsContent = _buildPostCardsContent(posts: _posts);
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
@@ -2023,7 +2027,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       Column(children: <Widget>[
         Visibility(visible: CollectionUtils.isEmpty(_posts) && _loadingPostsPage == false,
             child: _buildEmptyContent()),
-        ...pinnedPostsContent,
         ...postsContent])),
       _loadingPostsPage == true
         ? Center(
@@ -2034,7 +2037,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     ]);
   }
 
-  List<Widget> _buildPostCardsContent({required List<Post> posts, List<Post>? exclude, GlobalKey? lastPostKey, bool pinned = false}){
+  List<Widget> _buildPostCardsContent({required List<Post> posts, List<Post>? exclude, GlobalKey? lastPostKey,}){
     Iterable<String?>? excludeIds = exclude?.map((post) => post.id);
     List<Widget> content = [];
     for (int i = 0; i <posts.length ; i++) {
@@ -2050,7 +2053,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
-        pinned: pinned,
+        pinned: post.pinned,
         isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
       ));
       }
@@ -2135,20 +2138,20 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
     }
   }
 
-  Future<void> _loadPinnedPosts() async =>
-      Social().loadPosts(
-          groupId: _groupId,
-          type: PostType.post,
-          status: PostStatus.active,
-          sortBy: SocialSortBy.date_created).
-            then((List<Post>? posts) {
-                List<Post> allPinnedPosts = posts?.where(
-                        (post) => post.isPinned == true
-                ).toList() ?? [];
-                setStateIfMounted(() {
-                  _pinedPosts = CollectionUtils.isNotEmpty(allPinnedPosts) ? allPinnedPosts.take(1).toList() : [];
-                });
-              });
+  // Future<void> _loadPinnedPosts() async =>
+  //     Social().loadPosts(
+  //         groupId: _groupId,
+  //         type: PostType.post,
+  //         status: PostStatus.active,
+  //         sortBy: SocialSortBy.date_created).
+  //           then((List<Post>? posts) {
+  //               List<Post> allPinnedPosts = posts?.where(
+  //                       (post) => post.isPinned == true
+  //               ).toList() ?? [];
+  //               setStateIfMounted(() {
+  //                 _pinedPosts = CollectionUtils.isNotEmpty(allPinnedPosts) ? allPinnedPosts.take(1).toList() : [];
+  //               });
+  //             });
 
   // Member?  _getPostCreatorAsMember(Post? post) {
   //   Iterable<Member>? creatorProfiles = widget.groupMembers?.where((member) => member.userId == post?.creatorId);
@@ -2179,13 +2182,13 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
   void _initUpdateListener() => widget.updateController?.stream.listen((command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
       _refreshCurrentPosts();
-      _loadPinnedPosts();
+      // _loadPinnedPosts();
     // } else if(command is String && command == _GroupDetailPostsContent.notifyPostRefresh) {
     //   _refreshCurrentPosts();
     }  else if(command is String && command == _GroupPostsContent.notifyPostRefreshWithScrollToLast) {
       _scrollToLastPostAfterRefresh = true;
       if (_refreshingPosts != true) {
-        _refreshCurrentPosts();
+        _refreshCurrentPosts(/*delta: 1*/);
       }
     }
     // else if(command is Map<String, dynamic> && command.containsKey(_GroupDetailPostsContent.notifyPostRefreshWithDelta)){
@@ -2201,23 +2204,23 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
       Post? post = param is Post ? param : null;
       if(post?.isPost == true){
         _refreshCurrentPosts(delta: 1);
-        if(post?.isPinned == true)
-          _loadPinnedPosts();
+        // if(post?.isPinned == true)
+        //   _loadPinnedPosts();
       }
     }
     else if (name == Social.notifyPostUpdated) {
       Post? post = param is Post ? param : null;
       if(post?.isPost == true){
-        _refreshCurrentPosts();
-        _loadPinnedPosts();
+        _refreshCurrentPosts(/*delta: post?.pinned == true ? 1 : 0*/);
+        // _loadPinnedPosts();
       }
     }
     else if (name == Social.notifyPostDeleted) {
       Post? post = param is Post ? param : null;
       if(post?.isPost == true) {
         _refreshCurrentPosts(delta: -1);
-        if(post?.isPinned == true)
-          _loadPinnedPosts();
+        // if(post?.isPinned == true)
+        //   _loadPinnedPosts();
       }
     }
   }

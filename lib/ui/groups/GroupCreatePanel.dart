@@ -21,6 +21,7 @@ import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
+import 'package:neom/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:neom/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -188,7 +189,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
         _buildAttributesLayout(),
         Container(height: 8),
-
         Container(height: 16),
         _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
         Container(height: 8),
@@ -218,6 +218,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       //    _buildAttendanceLayout(),
       //  )
       //);
+      contentLayout.add(
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            _buildContentSectionsLayout(),
+          )
+      );
 
       contentLayout.add(
         Padding(padding: EdgeInsets.only(top: 8), child:
@@ -571,6 +576,26 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }*/
 
+  //Content Sections
+  Widget _buildContentSectionsLayout(){
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.only(left: 16, right: 16,),
+      child: Column(children: <Widget>[
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildSettingButton(
+                title: Localization().getStringEx("", "Group Content"), //TBD localize
+                description: _isResearchProject?
+                Localization().getStringEx("", "Customize your project content type(s) and the order"):
+                Localization().getStringEx("", "Customize your group content type(s) and the order"),
+                onTap: () =>
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupContentSettingsPanel(group: _group,)))
+            )),
+      ]),
+    );
+  }
+
   //
   //Attributes
   Widget _buildAttributesLayout() {
@@ -745,18 +770,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Column(children: <Widget>[
         Container(height: 12),
         Semantics(explicitChildNodes: true, child:
-          _buildMembershipButton(
+          _buildSettingButton(
             title: buttonTitle,
             description: questionsDescription,
             onTap: _onTapQuestions
           )
         ),
-        Container(height: 20),
       ]),
     );
   }
 
-  Widget _buildMembershipButton({required String title, required String description, void onTap()?}) {
+  Widget _buildSettingButton({required String title, required String description, void onTap()?}) {
     return GestureDetector(
         onTap: onTap,
         child: Container(
@@ -845,7 +869,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       child: Column(children: <Widget>[
         Semantics(
             explicitChildNodes: true,
-            child: _buildMembershipButton(
+            child: _buildSettingButton(
                 title: Localization().getStringEx("panel.groups_create.target.audience.title", "Target Audience"),
                 description: questionsDescription,
                 onTap: _onTapResearchProfile)),
