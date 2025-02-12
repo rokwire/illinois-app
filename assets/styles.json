@@ -275,6 +275,7 @@
     "widget.title.dark.regular.medium_fat": {"font_family": "medium", "size": 16.0, "color": "textDark"},
     "widget.title.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textDark"},
     "widget.title.dark.small": {"font_family": "regular", "size": 14.0, "color": "textDark"},
+    "widget.title.dark.small.underline": {"extends": "widget.title.small.underline", "color": "textDark"},
     "widget.title.dark.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "textDark"},
     "widget.title.dark.small.fat": {"font_family": "bold", "size": 14.0, "color": "textDark"},
     "widget.title.dark.small.fat.spaced": {"extends": "widget.title.dark.small.fat", "letter_spacing": 1.0},

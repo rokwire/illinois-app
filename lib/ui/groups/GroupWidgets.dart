@@ -766,6 +766,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       rowContent.add(Padding(padding: EdgeInsets.only(right: wrapContent.isNotEmpty ? 8 : 0), child:
         _buildHeadingLabel(userStatus!.toUpperCase(),
           color: widget.group?.currentUserStatusColor,
+          textStyle: widget.group?.currentUserStatusTextStyle,
           semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [userStatus.toLowerCase()])
         )      
       ));
