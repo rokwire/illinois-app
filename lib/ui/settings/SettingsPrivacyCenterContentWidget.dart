@@ -23,6 +23,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -312,25 +313,27 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
         options:contributeInGroups ? [groupsSwitchTitle] : null,
         initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
-        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
-            progressController(loading: true);
-            if(selectedValues.contains(groupsSwitchTitle)){
-              Groups().deleteUserData();
-              Social().deleteUser();
-            }
-            _deleteUserData().then((_){
-              progressController(loading: false);
-              Navigator.pop(context);
-            });
-
-        },
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) => _deleteAccount(selectedValues.contains(groupsSwitchTitle), progressController),
         longButtonTitle: true
       );
   }
 
-  Future<void> _deleteUserData() async{
+  void _deleteAccount(bool deleteContributions, OnContinueProgressController progressController) async {
     Analytics().logAlert(text: "Remove My Information", selection: "Yes");
-    await Auth2().deleteUser();
+    progressController(loading: true);
+    List<Future<bool?>> futures = [Inbox().deleteUser()];
+    if (deleteContributions) {
+      futures.addAll(<Future<bool?>>[Groups().deleteUserData(), Social().deleteUser()]);
+    }
+    await Future.wait(futures);
+    bool? result = await Auth2().deleteUser();
+    progressController(loading: false);
+    if (result == true) {
+      Navigator.pop(context);
+    }
+    else {
+      AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.delete.failed.text', 'Failed to delete app account.'));
+    }
   }
 
   bool get _showFinishSetupWidget{
