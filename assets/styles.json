@@ -1195,7 +1195,7 @@
     "instagram-logo": {"src": "images/ig-32x32.png", "type": "flutter.asset", "todo": "size?"},
 
     "splash": {"src": "images/splash_image.png", "type": "flutter.asset"},
-    "header-login": {"src": "images/login-header.png", "type": "flutter.asset"},
+    "header-login": {"src": "images/university-logo.png", "size": 56, "type": "flutter.asset"},
     "header-location": {"src": "images/share-location-header.png", "type": "flutter.asset"},
     "header-questionnaire": {"src": "images/questionnaire-header.png", "type": "flutter.asset"},
     "header-privacy": {"src": "images/privacy-header.png", "type": "flutter.asset"},

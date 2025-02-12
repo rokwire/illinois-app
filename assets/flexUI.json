@@ -76,19 +76,7 @@
 	
 				"onboarding.sport_prefs"                   	: ["fan"],
 
-				"features.student"                         	: ["student"],
-
-				"home.all_groups" 							: ["debug"],
-				"home.my_groups" 							: ["debug"],
-				"home.event_feed" 							: ["debug"],
-				"home.my_events" 							: ["debug"],
-				"home.all_notifications" 					: ["debug"],
-				"home.unread_notifications" 				: ["debug"],
-
-				"browse.events" 							: ["debug"],
-				"browse.groups" 							: ["debug"],
-				"browse.inbox" 								: ["debug"],
-				"browse.messages" 							: ["debug"]
+				"features.student"                         	: ["student"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"             : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],
