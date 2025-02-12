@@ -4,14 +4,14 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:illinois/ext/Group.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/events2/Event2CreatePanel.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/ext/Group.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/events2/Event2CreatePanel.dart';
+import 'package:neom/ui/home/HomePanel.dart';
+import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/widgets/FavoriteButton.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -214,7 +214,7 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
 
   void _showUnstarConfirmationDialog(List<String>? selection) {
     AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
-    Container(height: 250, decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(15.0)), child:
+    Container(height: 250, decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(15.0)), child:
       Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
         Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
