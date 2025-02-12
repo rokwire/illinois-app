@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,9 +15,11 @@ import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/VideoPlayerWidget.dart';
 import 'package:neom/ui/widgets/WebEmbed.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:neom/ui/widgets/CustomLinkText.dart';
+import 'package:neom/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -26,7 +30,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
+import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+enum FileType { image, video, audio, file }
 
 class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
@@ -277,45 +284,53 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           Widget avatar = (snapshot.data ?? (Styles().images.getImage('person-circle-white', size: _photoSize, color: Styles().colors.fillColorSecondary) ?? Container()));
 
           return Container(key: contentItemKey, margin: EdgeInsets.only(bottom: 16), decoration: cardDecoration, child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Expanded(child:
-                    InkWell(onTap: () => _onTapAccount(message), child:
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Column(
+                children: [
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [
-                        avatar,
-                        SizedBox(width: 8),
                         Expanded(child:
-                          Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                          InkWell(onTap: () => _onTapAccount(message), child:
+                            Row(children: [
+                              avatar,
+                              SizedBox(width: 8),
+                              Expanded(child:
+                                Text("${message.sender?.name ?? 'Unknown'}", style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+                              ),
+                            ]),
+                          ),
                         ),
+                        if (message.dateSentUtc != null)
+                          Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
                       ]),
-                    ),
+                      SizedBox(height: 8),
+                      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Expanded(child:
+                          CustomLinkText(
+                            key: UniqueKey(),
+                            message.message ?? '',
+                            textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                            linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                            onLinkTap: _onTapLink,
+                          ),
+                        ),
+                        // If dateUpdatedUtc is not null, show a small “(edited)” label
+                        if (message.dateUpdatedUtc != null)
+                          Padding(padding: EdgeInsets.only(left: 4), child:
+                            Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                          ),
+                      ],),
+                      if (!kIsWeb)
+                        WebEmbed(body: message.message),
+
+                    ]),
                   ),
-                  if (message.dateSentUtc != null)
-                    Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
-                ]),
-                SizedBox(height: 8),
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Expanded(child:
-                    CustomLinkText(
-                      key: UniqueKey(),
-                      message.message ?? '',
-                      textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                      linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                      onLinkTap: _onTapLink,
-                    ),
-                  ),
-                  // If dateUpdatedUtc is not null, show a small “(edited)” label
-                  if (message.dateUpdatedUtc != null)
-                    Padding(padding: EdgeInsets.only(left: 4), child:
-                      Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
-                    ),
-                ],),
-                if (!kIsWeb)
-                  WebEmbed(body: message.message),
-                if (CollectionUtils.isNotEmpty(message.fileAttachments))
-                  _buildAttachedFilesListWidget(message: message),
-              ]),
+                  if (CollectionUtils.isNotEmpty(message.fileAttachments))
+                    _buildAttachedFilesListWidget(message: message),
+                ],
+              ),
             ),
           );
         },
@@ -800,11 +815,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   void _onTapUploadImageOrVideo() async {
     List<XFile> media = await ImagePicker().pickMultipleMedia(limit: 10);
-    if (media.isNotEmpty) {
-      setStateIfMounted(() {
-        _attachedFiles.addAll(media);
-      });
-    }
+    _addAttachedFiles(media);
     Navigator.of(context).pop();
   }
 
@@ -815,11 +826,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     } else {
       media = await ImagePicker().pickImage(source: ImageSource.camera);
     }
-    if (media != null) {
-      setStateIfMounted(() {
-        _attachedFiles.add(media);
-      });
-    }
+    _addAttachedFiles([media]);
     Navigator.of(context).pop();
   }
 
@@ -869,10 +876,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Widget _buildAttachedFilesListWidget({Message? message}) {
     return Container(
-      height: 92.0,
+      height: 100.0,
       child: ListView.separated(
-        padding: EdgeInsets.only(top: 16.0, left: message != null ? 0.0 : 16.0, right: 16.0),
-        separatorBuilder: (context, index) => SizedBox(width: 16.0),
+        padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        separatorBuilder: (context, index) => SizedBox(width: 8.0),
         itemCount: message?.fileAttachments?.length ?? _attachedFiles.length,
         itemBuilder: (context, index) => _buildAttachedFileEntry(context, index, message: message),
         scrollDirection: Axis.horizontal,
@@ -886,7 +893,14 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     Color? entryBackgroundColor;
     String? textStyleKey = 'widget.title.dark.small';
     if (message != null) {
-      FileAttachment file = message.fileAttachments![index];
+      FileAttachment? file = message.fileAttachments?[index];
+      if (file == null) {
+        return SizedBox();
+      }
+      FileType type = _getFileTypeFromString(file.type);
+      if (type == FileType.image || type == FileType.video) {
+        return _buildAttachedMediaEntry(context, file, type);
+      }
       name = file.name;
       extension = file.extension;
       onTap = () => _onTapDownloadFile(file, message.globalId!);
@@ -894,75 +908,129 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       textStyleKey = 'widget.title.dark.small';
     } else {
       dynamic file = _attachedFiles.elementAt(index);
+      FileType type = _getFileType(file);
+      if (type == FileType.image || type == FileType.video) {
+        return _buildAttachedMediaEntry(context, file, type);
+      }
       entryBackgroundColor = Styles().colors.backgroundAccent;
       textStyleKey = 'widget.title.small';
-      onTap = () => _onTapRemoveFile(file);
+      onTap = () => _removeAttachedFiles([file]);
       if (file is PlatformFile) {
         name = file.name;
         extension = file.extension;
       }
-      else if (file is XFile) {
-        name = file.name;
-        extension = file.mimeType;
-      }
     }
-    return Stack(
-      alignment: Alignment.topRight,
+    return Column(
       children: [
-        Container(
-          width: 200,
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), color: entryBackgroundColor),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        GestureDetector(
+          onTap: message != null ? onTap : null,
+          child: Container(
+            width: 180,
+            height: 80,
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), color: entryBackgroundColor),
+            child: Stack(
+              alignment: Alignment.topRight,
               children: [
-            Styles().images.getImage('file', size: 24) ?? Container(height: 48.0),
-            SizedBox(width: 16.0),
-            Expanded(
-              child: Container(
-                child: Column(
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name ?? '',
-                      style: Styles().textStyles.getTextStyle(textStyleKey),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, right: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            extension?.toUpperCase() ?? '',
-                            style: Styles().textStyles.getTextStyle(textStyleKey),
-                          ),
-                          if (message != null)
+                    Styles().images.getImage('file', size: 24) ?? Container(height: 48.0),
+                    SizedBox(width: 12.0),
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name ?? '',
+                              style: Styles().textStyles.getTextStyle(textStyleKey),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: GestureDetector(onTap: onTap, child:
-                                Styles().images.getImage('download'),
+                              padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  if (extension != null && extension.isNotEmpty)
+                                    Text(
+                                      extension.toUpperCase(),
+                                      style: Styles().textStyles.getTextStyle(textStyleKey),
+                                    ),
+                                  if (message != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 16.0),
+                                      child: Styles().images.getImage('download'),
+                                    ),
+                                ],
                               ),
                             ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ],
+                  ]
                 ),
-              ),
-            ),
-          ]),
-        ),
-        if (message == null)
-          Positioned(
-            top: 8.0, right: 8.0,
-            child: GestureDetector(onTap: onTap, child:
-              Styles().images.getImage('close-circle'),
+                if (message == null)
+                  GestureDetector(onTap: onTap,
+                      child: Styles().images.getImage('close-circle')),
+              ],
             ),
           ),
+        ),
       ],
     );
   }
+
+  Widget _buildAttachedMediaEntry(BuildContext context, dynamic file, FileType type) {
+    String? path = _getFilePath(file);
+    if (path == null) {
+      return const SizedBox();
+    }
+    Widget? widget;
+    if (type == FileType.image) {
+      if (kIsWeb) {
+        widget = Image.network(path, fit: BoxFit.cover,
+          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
+          _imageErrorBuilder,
+        );
+      } else {
+        widget = Image.file(File(path), fit: BoxFit.cover,
+          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
+          _imageErrorBuilder,
+        );
+      }
+    }
+    else if (type == FileType.image) {
+      widget = VideoPlayerWidget(key: ValueKey(path),
+          filePath: path, showControls: false,
+          muted: true);
+    }
+
+    return Stack(children: [
+      AspectRatio(aspectRatio: 16/9, child: widget),
+      Positioned.fill(child:
+        Align(alignment: Alignment.topRight, child:
+          GestureDetector(onTap: () => _removeAttachedFiles([file]),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Styles().images.getImage('close-circle'),
+              ))
+        )
+      )
+    ]);
+  }
+
+  Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
+    Container(color: Styles().colors.surfaceAccent, child:
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
+        Center(child:
+          Text(Localization().getStringEx('', 'This image type is not supported'),
+              style: Styles().textStyles.getTextStyle('widget.title.dark.small')),
+        ),
+      ),
+    )
+  );
 
   Future<void> _initConversationAndMessages() async {
     if (_conversationId == null) {
@@ -1090,7 +1158,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-
   Future<void> _createNewMessage(String messageText) async {
     if (StringUtils.isNotEmpty(messageText) && _conversationId != null && _currentUserId != null && !_submitting) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -1152,10 +1219,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Future<void> _uploadAttachedFiles(String? messageId) async {
     List<String>? uploaded = await Content().uploadFileContentItems(_attachedFileData, Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
-    for (String name in uploaded ?? []) {
-      _attachedFiles.removeWhere((file) => file.name == name);
-    }
-
+    _removeAttachedFiles(uploaded);
     setStateIfMounted(() {});
   }
 
@@ -1246,17 +1310,47 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       withData: true,
       dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
     );
-    if (CollectionUtils.isNotEmpty(result?.files)) {
-      setStateIfMounted(() {
-        _attachedFiles.addAll(result!.files);
-      });
-    }
+    _addAttachedFiles(result?.files);
     Navigator.of(context).pop();
   }
 
-  void _onTapRemoveFile(dynamic file) {
+  void _addAttachedFiles(List<dynamic>? files) {
+    if (files == null || files.isEmpty) {
+      return;
+    }
+    setStateIfMounted(() {
+      _attachedFiles.addAll(files);
+    });
+  }
+
+  void _removeAttachedFiles(List<dynamic>? files) {
+    if (files == null || files.isEmpty) {
+      return;
+    }
+    List<dynamic> processed = [];
+    for (dynamic file in files) {
+      if (file is String) {
+        dynamic found = _attachedFiles.firstWhereOrNull((e) {
+          if (e is XFile) {
+            return e.name == file;
+          }
+          else if (e is PlatformFile) {
+            return e.name == file;
+          }
+          return false;
+        });
+        if (found != null) {
+          processed.add(found);
+        }
+      } else {
+        processed.add(file);
+      }
+    }
+    if (processed.isEmpty) {
+      return;
+    }
     setState(() {
-      _attachedFiles.remove(file);
+      _attachedFiles.removeAll(processed);
     });
   }
 
@@ -1329,16 +1423,52 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  Map<String, Uint8List> get _attachedFileData {
-    Map<String, Uint8List> fileData = {};
-    for (PlatformFile file in _attachedFiles) {
-      if (file.bytes != null) {
-        fileData[file.name] = file.bytes!;
+  Map<String, FutureOr<Uint8List>> get _attachedFileData {
+    Map<String, FutureOr<Uint8List>> fileData = {};
+    for (dynamic file in _attachedFiles) {
+      if (file is PlatformFile) {
+        if (file.bytes != null) {
+          fileData[file.name] = file.bytes!;
+        }
+      } else if (file is XFile) {
+        Future<Uint8List> bytes = file.readAsBytes();
+        fileData[file.name] = bytes;
       }
     }
     return fileData;
   }
 
-  //TODO: figure out how to get accurate file types
-  List<FileAttachment> get _messageFileAttachments => List.generate(_attachedFiles.length, (index) => FileAttachment(name: _attachedFiles.elementAt(index).name, type: 'file'));
+  String? _getFilePath(dynamic file) {
+    if (file is XFile) {
+      return file.path;
+    }
+    else if (file is PlatformFile) {
+      return file.path;
+    }
+    return null;
+  }
+
+  FileType _getFileType(dynamic file) {
+    FileType type = FileType.file;
+    String? path = _getFilePath(file);
+    if (FileUtils.isVideo(path)) {
+      type = FileType.video;
+    } else if (FileUtils.isImage(path)) {
+      type = FileType.image;
+    } else if (FileUtils.isAudio(path)) {
+      type = FileType.audio;
+    }
+    return type;
+  }
+
+  FileType _getFileTypeFromString(String? type) {
+    return FileType.values.firstWhereOrNull((e) => e.name == type) ?? FileType.file;
+  }
+
+  List<FileAttachment> get _messageFileAttachments =>
+    List.generate(_attachedFiles.length, (index) {
+      dynamic file = _attachedFiles.elementAt(index);
+      FileType type = _getFileType(file);
+      return FileAttachment(name: file.name, type: type.name);
+    });
 }
