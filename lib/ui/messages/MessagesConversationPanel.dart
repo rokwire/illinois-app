@@ -1015,14 +1015,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       }
     }
     else if (type == FileType.video) {
-      widget = FittedBox(
-        alignment: Alignment.center,
-        fit: BoxFit.cover,
-        clipBehavior: Clip.hardEdge,
-        child: VideoPlayerWidget(key: ValueKey(path),
-            filePath: path, url: url, showControls: false,
-            muted: true),
-      );
+      widget = VideoPlayerWidget(key: ValueKey(path),
+          filePath: path, url: url, showControls: false,
+          muted: true, fill: true);
     }
 
     return Stack(children: [

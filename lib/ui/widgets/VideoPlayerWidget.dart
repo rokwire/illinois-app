@@ -17,9 +17,10 @@ class VideoPlayerWidget extends StatefulWidget {
   final String? videoID;
   final String? videoTitle;
   final bool muted;
+  final bool fill;
   VideoPlayerWidget({super.key, this.url, this.uri, this.filePath, this.controller,
     this.useAuthHeaders = false, this.showControls = true, this.muted = false,
-    this.videoID, this.videoTitle});
+    this.videoID, this.videoTitle, this.fill = false});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -112,7 +113,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           double deviceHeight = MediaQuery.of(context).size.height;
           double playerWidth = (deviceOrientation == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
           double playerHeight = (deviceOrientation == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
-          return GestureDetector(
+          Widget player = GestureDetector(
             onTap: _onTapPlayPause,
             child: Center(
               child: SizedBox(
@@ -125,8 +126,19 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               )
             ),
           );
+          if (widget.fill) {
+            return FittedBox(
+              alignment: Alignment.center,
+              fit: BoxFit.cover,
+              clipBehavior: Clip.hardEdge,
+              child: player,
+            );
+          }
+          return player;
         }
-        return const Center(child: CircularProgressIndicator());
+        return Container(
+            color: Styles().colors.surfaceAccent,
+            child: const Center(child: CircularProgressIndicator()));
       }
     );
   }
