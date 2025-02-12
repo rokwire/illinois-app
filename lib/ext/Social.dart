@@ -54,12 +54,6 @@ extension PostExt on Post {
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
   bool get createdByUser => creatorId == Auth2().accountId;
-
-  //Workaround till BB is hooked
-  static DateTime get workaroundDate =>  DateTime.fromMicrosecondsSinceEpoch(0);
-  void pinPost() => dateActivatedUtc = workaroundDate;
-  void unpinPost() => dateActivatedUtc = DateTime.now();
-  bool get isPinned => dateActivatedUtc?.isAtSameMomentAs(workaroundDate) == true;
 }
 
 extension CommentExt on Comment {
