@@ -111,6 +111,10 @@
     "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
 
+    "auth.signed_out.feature.not_available.message": "To access {{feature.text}}, you need to {{login.link}} with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
+    "auth.signed_out.feature.not_available.message.link.login": "sign in",
+    "auth.signed_out.feature.not_available.message.text.feature": "this feature",
+
     "generic.app.feature.illini_cash": "Illini Cash",
     "generic.app.feature.meal_plan": "University Housing Meal Plan",
     "generic.app.feature.bus_pass": "MTD Bus Pass",
