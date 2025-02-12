@@ -25,6 +25,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -321,17 +322,24 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   void _deleteAccount(bool deleteContributions, OnContinueProgressController progressController) async {
     Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     progressController(loading: true);
-    List<Future<bool?>> futures = [Inbox().deleteUser()];
-    if (deleteContributions) {
-      futures.addAll(<Future<bool?>>[Groups().deleteUserData(), Social().deleteUser()]);
-    }
-    await Future.wait(futures);
+    NetworkAuthProvider? authProvider = Auth2().networkAuthProvider; // Store token before
     bool? result = await Auth2().deleteUser();
-    progressController(loading: false);
     if (result == true) {
+      List<Future<bool?>> futures = [
+        Inbox().deleteUser(auth: authProvider)
+      ];
+      if (deleteContributions) {
+        futures.addAll(<Future<bool?>>[
+          Groups().deleteUserData(auth: authProvider),
+          Social().deleteUser(auth: authProvider)
+        ]);
+      }
+      await Future.wait(futures);
+      progressController(loading: false);
       Navigator.pop(context);
     }
     else {
+      progressController(loading: false);
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.delete.failed.text', 'Failed to delete app account.'));
     }
   }
