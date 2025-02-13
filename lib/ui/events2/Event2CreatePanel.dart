@@ -506,6 +506,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   late Map<_ErrorCategory, List<String>> _errorMap;
   bool _creatingEvent = false;
 
+  final TextEditingController _adminNetIdsController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
@@ -606,6 +607,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   @override
   void dispose() {
+    _adminNetIdsController.dispose();
     _titleController.dispose();
     _descriptionController.dispose();
     _websiteController.dispose();
@@ -646,6 +648,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         _buildImageDescriptionSection(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildAdminSettingsSection(),
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildRecurrenceDropdownSection(),
@@ -730,8 +733,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ]));
   }
 
-  // Title and Description
+  //
+  // AdminSection
 
+  Widget _buildAdminSettingsSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('', "Event Admins NetIDs (comma separated)"), required: true),
+    body: Event2CreatePanel.buildTextEditWidget(_adminNetIdsController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
+  );
+
+  // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
     body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
@@ -2478,10 +2488,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     dynamic result;
     // Explicitly set the start date to be the first and end date to be the last - #4599
     Event2 event = _createEventFromData(recurringStartDateUtc: eventStartDate, recurringEndDateUtc: eventEndDate);
+    List<String>? adminNetIds;
+    if(StringUtils.isNotEmpty(_adminNetIdsController.text)) {
+      adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_adminNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+    }
 
     String? eventId = event.id;
     if (eventId == null) {
-      result = await Events2().createEvent(event);
+      result = await Events2().createEvent(event, adminIdentifiers: Event2Ext.constructAdminIdentifiersFromIds(adminNetIds));
     } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {

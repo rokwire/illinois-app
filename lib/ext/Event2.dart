@@ -438,6 +438,12 @@ extension Event2Ext on Event2 {
     data: this.data,
 
   );
+
+  static List<dynamic>? constructAdminIdentifiersFromIds(List<String>? ids) =>
+      CollectionUtils.isEmpty(ids) ? null :
+        ids!.map((_id) =>
+          {"external_id": _id}
+        ).toList();
 }
 
 extension Event2GroupingExt on Event2Grouping{
