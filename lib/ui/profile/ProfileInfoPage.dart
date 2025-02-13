@@ -328,7 +328,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
       Column(children: [
         _signOutButton,
-        _viewStoredDataButton,
+        //_viewStoredDataButton,
         _deleteAccountButton,
     ],),
   );

@@ -39,7 +39,7 @@ class ProfileInfoSharePanel extends StatefulWidget {
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.backgroundVariant,
       constraints: BoxConstraints(maxHeight: height),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => ProfileInfoSharePanel._(

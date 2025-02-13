@@ -364,7 +364,6 @@
 	"panel.browse.entry.academics.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
 	"panel.browse.entry.academics.appointments.title": "約會",
-	"panel.browse.entry.academics.my_illini.title": "myIllini",
 
 	"panel.browse.entry.app_help.video_tutorial.title": "視頻教程",
 	"panel.browse.entry.app_help.feedback.title": "反饋",
@@ -1605,7 +1604,7 @@
 	"panel.event2.detail.survey.button.follow_up_survey.completed.message": "您已完成活动问卷的填写",
 
 	"panel.event2.detail.attendance.header.title": "活动与会人员",
-	"panel.event2.detail.attendance.scan.toggle.title": "扫描 Illini ID",
+	"panel.event2.detail.attendance.scan.toggle.title": "扫描 ID",
 	"panel.event2.detail.attendance.scan.toggle.description": "不需要事先注册。",
 	"panel.event2.detail.attendance.manual.toggle.title": "允许人工签到",
 	"panel.event2.detail.attendance.manual.toggle.description": "需要事先注册。",

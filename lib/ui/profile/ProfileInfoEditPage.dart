@@ -147,7 +147,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _photoWidget,
           _nameWidget,
           _pronunciationSection,
-          _pronounsSection,
+          //_pronounsSection,
           _titleSection,
           _collegeSection,
           _departmentSection,

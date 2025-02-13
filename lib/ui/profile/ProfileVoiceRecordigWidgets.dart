@@ -354,7 +354,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
                             ),
                             Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                child: Text(_hintText, style: Styles().textStyles.getTextStyle("widget.detail.regular"),)
+                                child: Text(_hintText, style: Styles().textStyles.getTextStyle("widget.detail.light.regular"),)
                             ),
                             Container(height: 16,),
                             Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
@@ -366,7 +366,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
                                     onTap: _onTapReset,
                                     enabled: _resetEnabled,
                                     borderColor: _resetEnabled ? null : Styles().colors.textDisabled,
-                                    textColor: _resetEnabled ? null : Styles().colors.textDisabled,
+                                    textColor: _resetEnabled ? Styles().colors.textLight : Styles().colors.textDisabled,
                                   ),
                                   Container(width: 16,),
                                   SmallRoundedButton( rightIcon: Container(),
@@ -376,7 +376,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
                                     onTap: _onTapSave,
                                     enabled: _saveEnabled,
                                     borderColor: _saveEnabled ? null : Styles().colors.textDisabled,
-                                    textColor: _saveEnabled ? null : Styles().colors.textDisabled,
+                                    textColor: _saveEnabled ? Styles().colors.textLight : Styles().colors.textDisabled,
                                   ),
                               ],),
                             ),

@@ -668,9 +668,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                             minLines: 1,
                             maxLines: 5,
                             textCapitalization: TextCapitalization.sentences,
-                            textInputAction: TextInputAction.send,
+                            // textInputAction: TextInputAction.send,
                             focusNode: _inputFieldFocus,
-                            onSubmitted: _submitMessage,
+                            // onSubmitted: _submitMessage,
                             onChanged: (_) => setStateIfMounted(() {}),
                             cursorColor: Styles().colors.textLight,
                             decoration: InputDecoration(

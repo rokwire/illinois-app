@@ -95,18 +95,18 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         child: Semantics(
             toggled: _scanningEnabled,
             excludeSemantics: true,
-            label: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.title', 'Scan Illini ID'),
+            label: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.title', 'Scan ID'),
             hint: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.hint', ''),
             child: ToggleRibbonButton(
                 padding: EdgeInsets.zero,
-                label: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.title', 'Scan Illini ID'),
+                label: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.title', 'Scan ID'),
                 description: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.description', 'Does not require advance registration.'),
                 toggled: _scanningEnabled,
                 onTap: _onTapScanToggle)));
   }
 
   void _onTapScanToggle() {
-    Analytics().logSelect(target: 'Toggle Scan Illini ID');
+    Analytics().logSelect(target: 'Toggle Scan ID');
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _scanningEnabled = !_scanningEnabled;
@@ -230,7 +230,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 39, right: _mainHorizontalPadding),
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
-              label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
+              label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan ID'),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
               onTap: _onTapScanButton,
               backgroundColor: Styles().colors.surface,
@@ -241,7 +241,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   void _onTapScanButton() {
-    Analytics().logSelect(target: 'Scan Illini Id');
+    Analytics().logSelect(target: 'Scan Id');
     if (_scanning) {
       return;
     }

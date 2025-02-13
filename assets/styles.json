@@ -466,7 +466,6 @@
     "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textDark",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium.underline.highlight": { "extends": "widget.button.title.medium.underline", "color": "white", "decoration_color": "fillColorSecondary" },
-    "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "textDark",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
     "widget.button.title.medium.fat.underline.highlight": { "extends": "widget.button.title.medium.fat.underline", "color": "textDark", "decoration_color": "white" },
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "textDark"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "textPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -1274,7 +1273,7 @@
     "icon-recording": {"src": "images/icon-recording.png", "type": "flutter.asset"},
     "icon-play": {"src": "images/icon-play.png", "type": "flutter.asset"},
     "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
-    "volume": {"src": "0xf6a8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "volume": {"src": "0xf027", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "volume-high": {"src": "0xf028", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
 
     "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},

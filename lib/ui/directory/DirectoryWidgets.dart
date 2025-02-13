@@ -158,7 +158,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
     ],);
 
   Widget  get _messageButton => Visibility(visible: FlexUI().isMessagesAvailable, child: _iconButton(icon: _messageIcon, onTap: _onMessage, progress: _messageProgress));
-  Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.fillColorPrimary);
+  Widget? get _messageIcon => Styles().images.getImage('message', size: 20, color: Styles().colors.iconLight);
 
   void _onMessage() async {
     Analytics().logSelect(target: 'Message User');
@@ -965,13 +965,15 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
         ) : null;
     }
 
-    void _onTapClear() {
-      Analytics().logSelect(target: 'Search Clear');
-      if (widget.searchText?.isNotEmpty == true) {
-        _searchFocusNode.unfocus();
-        widget.onSearchText?.call('');
-      }
+
+  void _onTapClear() {
+    Analytics().logSelect(target: 'Search Clear');
+    if(_searchTextController.text.isNotEmpty) {
+      widget.onSearchText?.call('');
     }
+    _searchTextController.clear();
+    _searchFocusNode.unfocus();
+  }
 
     void _onTapSearch() {
       Analytics().logSelect(target: 'Search Text');

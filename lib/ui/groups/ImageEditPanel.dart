@@ -245,7 +245,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     XFile? pickedFile = await ImagePicker().pickImage(source: source, maxWidth: 1920, maxHeight: 1920);
     if(pickedFile != null){
       _imageBytes = await pickedFile.readAsBytes();
-      _imageName = basename(pickedFile.path);
+      _imageName = basename(pickedFile.name);
       _contentType = mime(_imageName);
       _openEditTools();
     } else {

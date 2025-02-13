@@ -111,10 +111,10 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     );
 
   Widget _buildScanToggle() => Semantics(toggled: _scanningEnabled, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
+    label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan ID"),
     hint: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
+      label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan ID"),
       toggled: _scanningEnabled,
       onTap: _onTapScan,
       padding: EdgeInsets.zero,
@@ -124,7 +124,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     ));
 
   void _onTapScan() {
-    Analytics().logSelect(target: "Toggle Scan Illini ID");
+    Analytics().logSelect(target: "Toggle Scan ID");
     Event2CreatePanel.hideKeyboard(context);
     if (_isCreating) {
       setStateIfMounted(() {

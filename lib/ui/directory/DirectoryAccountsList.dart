@@ -162,7 +162,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Autom
       Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
     );
 
-  Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
+  Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.iconMedium,);
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
     Align(alignment: Alignment.center, child:
