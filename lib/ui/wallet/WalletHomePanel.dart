@@ -300,6 +300,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
 
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: _walletContentTypeToDisplayString(contentType), source: widget.runtimeType.toString());
+
     if (!Auth2().isOidcLoggedIn && WalletHomePanel.requireOidcContentTypes.contains(contentType)) {
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.content_type.label', 'To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.').
         replaceAll('{{content_type}}', _walletContentTypeToDisplayString(contentType) ?? Localization().getStringEx('panel.wallet.header.title', 'Wallet')));
