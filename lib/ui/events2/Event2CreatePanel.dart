@@ -1,5 +1,5 @@
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
 import 'package:device_calendar/device_calendar.dart';

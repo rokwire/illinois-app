@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
