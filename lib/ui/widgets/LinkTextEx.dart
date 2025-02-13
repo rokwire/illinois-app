@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Easy to use text widget, which converts inlined urls into clickable links.
 /// This version checks for a TLD from a Set of known TLDs.
-class CustomLinkText extends StatefulWidget {
+class LinkTextEx extends StatefulWidget {
   /// Text, which may contain inlined urls.
   final String text;
 
@@ -31,7 +31,7 @@ class CustomLinkText extends StatefulWidget {
   /// Provides the url that was tapped.
   final void Function(String url)? onLinkTap;
 
-  const CustomLinkText(
+  const LinkTextEx(
       this.text, {
         Key? key,
         this.textStyle,
@@ -42,10 +42,10 @@ class CustomLinkText extends StatefulWidget {
       }) : super(key: key);
 
   @override
-  State<CustomLinkText> createState() => _CustomLinkTextState();
+  State<LinkTextEx> createState() => _LinkTextExState();
 }
 
-class _CustomLinkTextState extends State<CustomLinkText> {
+class _LinkTextExState extends State<LinkTextEx> {
 
   /// Url regular expression, credits to: https://stackoverflow.com/a/63022807/3759472
   final RegExp _urlRegex = RegExp(r"([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?");
@@ -62,7 +62,7 @@ class _CustomLinkTextState extends State<CustomLinkText> {
   }
 
   @override
-  void didUpdateWidget(CustomLinkText oldWidget) {
+  void didUpdateWidget(LinkTextEx oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.text != oldWidget.text) {
       _buildTextSpans();

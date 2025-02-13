@@ -13,7 +13,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/ui/widgets/CustomLinkText.dart';
+import 'package:illinois/ui/widgets/LinkTextEx.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -292,7 +292,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               SizedBox(height: 8),
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child:
-                  CustomLinkText(
+                  LinkTextEx(
                     key: UniqueKey(),
                     message.message ?? '',
                     textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
