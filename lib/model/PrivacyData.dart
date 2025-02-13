@@ -125,13 +125,14 @@ class PrivacyEntry2{
   String? additionalDescriptionKey;
   String? additionalDataUsage;
   String? additionalDataUsageKey;
-  int? additionalDataMinLevel;
-  int? minLevel;
   String? iconRes;
   String? offIconRes;
+  int? minLevel;
+  int? additionalDataMinLevel;
+  bool? hidden;
 
   PrivacyEntry2({this.title, this.titleKey, this.description, this.descriptionKey, this.dataUsage, this.dataUsageKey,this.additionalDescription, this.additionalDescriptionKey, this.additionalDataUsage, this.additionalDataUsageKey,
-    this.iconRes, this.offIconRes, this.minLevel, this.additionalDataMinLevel});
+    this.iconRes, this.offIconRes, this.minLevel, this.additionalDataMinLevel, this.hidden});
 
   static PrivacyEntry2? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? PrivacyEntry2(
@@ -147,6 +148,7 @@ class PrivacyEntry2{
         additionalDataUsageKey: json["additional_dataUsage_key"],
         iconRes: json["icon_resource"],
         offIconRes: json["off_icon_resource"],
+        hidden: json["hidden"],
         minLevel:json["min_level"],
         additionalDataMinLevel:json["additional_min_level"]
     ) : null;

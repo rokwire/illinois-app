@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Reworked url parsing to handle various URL links, not only host names. Some general cleanup and fixes is also applied [#4770](https://github.com/rokwire/illinois-app/issues/4770).
+- Updated privacy.json content in assets, added relevant string resources, added support for hidden PrivacyEntry2 [#4772](https://github.com/rokwire/illinois-app/issues/4772). 
 
 ## [6.1.58] - 2025-02-12
 ### Changed
