@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -93,8 +95,16 @@ class _CustomLinkTextState extends State<CustomLinkText> {
         if (urlMatch.start < urlMatch.end) {
           // URL link
           String url = widget.text.substring(urlMatch.start, urlMatch.end);
+          String displayUrl = url;
+          if (widget.shouldTrimParams) {
+            int pos1 = url.indexOf('?'), pos2 = url.indexOf('#');
+            int pos = (0 < pos1) ? ((0 < pos2) ? min(pos1, pos2) : pos1 ) : pos2;
+            if (0 < pos) {
+              displayUrl = url.substring(0, pos);
+            }
+          }
           TapGestureRecognizer recognizer = (_gestureRecognizers[url] ??= (TapGestureRecognizer()..onTap = () => _launchUrl(url)));
-          _textSpans.add(TextSpan(text: url, style: widget.linkStyle, recognizer: recognizer,));
+          _textSpans.add(TextSpan(text: displayUrl, style: widget.linkStyle, recognizer: recognizer,));
         }
         textPos = urlMatch.end;
       }
