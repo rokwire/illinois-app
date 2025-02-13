@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/service/Content.dart';
 
 // Copied from https://pub.dev/packages/link_text
 
@@ -46,6 +45,9 @@ class CustomLinkText extends StatefulWidget {
 
 class _CustomLinkTextState extends State<CustomLinkText> {
 
+  /// Url regular expression, credits to: https://stackoverflow.com/a/63022807/3759472
+  final RegExp _urlRegex = RegExp(r"([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?");
+
   /// We hold on to recognizers so we can dispose them properly.
   final Map<String, TapGestureRecognizer> _gestureRecognizers = {};
 
@@ -53,7 +55,7 @@ class _CustomLinkTextState extends State<CustomLinkText> {
 
   @override
   void initState() {
-    _initTextSpans();
+    _buildTextSpans();
     super.initState();
   }
 
@@ -61,7 +63,7 @@ class _CustomLinkTextState extends State<CustomLinkText> {
   void didUpdateWidget(CustomLinkText oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.text != oldWidget.text) {
-      _initTextSpans();
+      _buildTextSpans();
     }
   }
 
@@ -71,68 +73,41 @@ class _CustomLinkTextState extends State<CustomLinkText> {
     super.dispose();
   }
 
-  void _initTextSpans() {
+  void _buildTextSpans() {
     _textSpans.clear();
     _disposeRecognizers();
 
-    // Split text on whitespace
-    final words = widget.text.split(RegExp(r' '));
-
-    for (int i = 0; i < words.length; i++) {
-      final word = words[i];
-      if (_isPotentialLink(word)) {
-        String displayLink = word;
-        if (widget.shouldTrimParams) {
-          final questionMarkIndex = displayLink.indexOf('?');
-          if (questionMarkIndex != -1) {
-            displayLink = displayLink.substring(0, questionMarkIndex);
-          }
+    Iterable<RegExpMatch> urls = _urlRegex.allMatches(widget.text);
+    if (urls.isEmpty) {
+      // Entire text is Normal
+      _textSpans.add(TextSpan(text: widget.text, style: widget.textStyle,),);
+    }
+    else {
+      int textPos = 0;
+      for (RegExpMatch urlMatch in urls) {
+        if (textPos < urlMatch.start) {
+          // Normal word
+          String word = widget.text.substring(textPos, urlMatch.start);
+          _textSpans.add(TextSpan(text: word, style: widget.textStyle,),);
         }
-
-        TapGestureRecognizer recognizer = (_gestureRecognizers[word] ??= (TapGestureRecognizer()..onTap = () => _launchUrl(word)));
-
-        _textSpans.add(
-          TextSpan(
-            text: displayLink,
-            style: widget.linkStyle,
-            recognizer: recognizer,
-          ),
-        );
-      } else {
-        // Normal text
-        _textSpans.add(
-          TextSpan(
-            text: word,
-            style: widget.textStyle,
-          ),
-        );
+        if (urlMatch.start < urlMatch.end) {
+          // URL link
+          String url = widget.text.substring(urlMatch.start, urlMatch.end);
+          TapGestureRecognizer recognizer = (_gestureRecognizers[url] ??= (TapGestureRecognizer()..onTap = () => _launchUrl(url)));
+          _textSpans.add(TextSpan(text: url, style: widget.linkStyle, recognizer: recognizer,));
+        }
+        textPos = urlMatch.end;
       }
-
-      // Add a space after each word unless it's the last one.
-      if (i < words.length - 1) {
-        _textSpans.add(const TextSpan(text: ' '));
+      if (textPos < widget.text.length) {
+        String word = widget.text.substring(textPos);
+        _textSpans.add(TextSpan(text: word, style: widget.textStyle,),);
       }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(children: _textSpans),
-      textAlign: widget.textAlign,
-    );
-  }
-
-  /// Checks if a 'word' might be a link by verifying it ends with a known TLD.
-  bool _isPotentialLink(String word) {
-    final lastDotIndex = word.lastIndexOf('.');
-    // Checks if dot doesn't exist or is first char
-    if (lastDotIndex < 1 || lastDotIndex == word.length - 1) {
-      return false;
-    }
-    final tldCandidate = word.substring(lastDotIndex + 1).toLowerCase();
-    return Content().topLevelDomains.contains(tldCandidate);
-  }
+  Widget build(BuildContext context) =>
+    Text.rich(TextSpan(children: _textSpans), textAlign: widget.textAlign,);
 
   void _disposeRecognizers() {
     for (final recognizer in _gestureRecognizers.values) {
