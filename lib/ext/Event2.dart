@@ -6,6 +6,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -439,10 +440,8 @@ extension Event2Ext on Event2 {
 
   );
 
-  Future<List<Event2PersonIdentifier>?> get asyncAdminIdentifiers async{
-    Event2PersonsResult? peopleResult =  id != null ? await Events2().loadEventPeople(id!) : null;
-    return peopleResult?.adminIdentifiers;
-  }
+  Future<List<Event2PersonIdentifier>?> get asyncAdminIdentifiers async =>
+      Events2().loadAdminIdentifiers(this);
 }
 
 extension Event2GroupingExt on Event2Grouping{
@@ -680,4 +679,52 @@ extension Event2PersonsResultExt on Event2PersonsResult{
           ListUtils.append(_admins, person.identifier) :
           _admins
       );
+}
+
+extension Events2Ext on Events2 {
+    Future<List<Event2PersonIdentifier>?> loadAdminIdentifiers(Event2? event) async =>
+      event?.id == null ? null :
+        (await Events2().loadEventPeople(event!.id!))?.adminIdentifiers;
+
+  Future<Event2Result> duplicateEvent(Event2? event, /*{List<Event2PersonIdentifier>? admins}*/) async {
+    List<Event2PersonIdentifier>? _admins = await loadAdminIdentifiers(event);
+    _admins?.removeWhere((identifier) =>  identifier.externalId == Auth2().netId); //exclude self otherwise the BB duplicates it
+    return Events2().createEvent(event!.duplicate, adminIdentifiers: _admins).then((createdEvent) async {
+      if (createdEvent is Event2) {
+
+        if(event.isSuperEvent == false){
+          return Event2Result.success(); //success
+        }
+
+        Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(groupings: event.linkedEventsGroupingQuery));
+        if(CollectionUtils.isEmpty(subEventsLoad?.events)){
+          return Event2Result.fail("Unable to load sub events");
+        }
+        //Duplicate sub events
+        Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
+            events: Event2SuperEventsController.applyCollectionChange(
+                collection: subEventsLoad?.events,
+                change: (subEvent) {
+                  Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
+                  return subEvent.duplicateWith(grouping: subGrouping);}),
+            uploadAPI: (event) => Events2().createEvent(event, adminIdentifiers: _admins));
+
+        return updateResult.successful ? Event2Result.success(data: updateResult.data) : Event2Result.fail(updateResult.error);
+      }
+
+      return Event2Result.fail("Unable to duplicate main event");
+    });
+  }
+}
+
+class Event2Result<T>{
+  String? error;
+  T? data;
+
+  Event2Result({String? this.error, this.data});
+
+  static Event2Result<T> fail<T>(String? error) => Event2Result(error: error ?? "error");
+  static Event2Result<T> success<T>({T? data}) => Event2Result(data: data);
+
+  bool get successful => this.error == null;
 }

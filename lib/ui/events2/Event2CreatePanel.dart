@@ -2518,6 +2518,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if(StringUtils.isNotEmpty(_adminNetIdsController.text)) {
       List<String>? adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_adminNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
       adminIdentifiers =  Event2PersonIdentifierExt.constructAdminIdentifiersFromIds(adminNetIds);
+      adminIdentifiers?.removeWhere((identifier) =>  identifier.externalId == Auth2().netId); //exclude self otherwise the BB duplicates it
     }
 
     String? eventId = event.id;
