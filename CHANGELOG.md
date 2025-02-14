@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.60] - 2025-02-14
 ### Changed
 - Acknowledged new privacy content for App Directory [#4772](https://github.com/rokwire/illinois-app/issues/4772).
 - Do not log to Splunk the actual email/phone/website when using links from App Directory profiles [#4786](https://github.com/rokwire/illinois-app/issues/4786).
 - "Wellness Resources" dropdown item renamed to "General Resources" [#4504](https://github.com/rokwire/illinois-app/issues/4504).
 - Web app icons [#4791](https://github.com/rokwire/illinois-app/issues/4791).
 - Web app name from "illinois_app" to "Illinois".
+- Close up Group Detail heading layout, updated policy info text [#4779](https://github.com/rokwire/illinois-app/issues/4779).
 
 ## [6.1.59] - 2025-02-13
 ### Changed
