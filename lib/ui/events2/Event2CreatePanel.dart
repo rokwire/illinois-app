@@ -498,6 +498,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Set<String>? _initialGroupIds;
   bool _loadingEventGroups = false;
 
+  // List<Event2PersonIdentifier>? _initialAdmins;
+  bool _loadingAdmins = false;
+
   String? _sponsor;
   String? _speaker;
   List<Event2Contact>? _contacts;
@@ -601,6 +604,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _websiteController.addListener(_updateErrorMap);
 
     _initEventGroups();
+    _initEventAdmins();
 
     super.initState();
   }
@@ -736,10 +740,21 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   //
   // AdminSection
 
-  Widget _buildAdminSettingsSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('', "Event Admins NetIDs (comma separated)"), required: true),
-    body: Event2CreatePanel.buildTextEditWidget(_adminNetIdsController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
-  );
+  Widget _buildAdminSettingsSection() => Stack(alignment: Alignment.center ,children: [
+    Event2CreatePanel.buildSectionWidget(
+      heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('', "Event Admins NetIDs (comma separated)"), required: true),
+      body: Event2CreatePanel.buildTextEditWidget(_adminNetIdsController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
+    ),
+    Align(alignment: Alignment.centerLeft, child:
+        Visibility(visible: _loadingAdmins, child:
+          Padding(padding: const EdgeInsets.only(left: 16), child:
+            SizedBox(width: 14, height: 14, child:
+              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+            ),
+          )
+        )
+    )
+  ]);
 
   // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
@@ -2187,6 +2202,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
+  void _initEventAdmins() async {
+    if(widget.event != null) {
+      setStateIfMounted(() => _loadingAdmins = true);
+      widget.event?.asyncAdminIdentifiers.then((admins) =>
+            _adminNetIdsController.text = Event2PersonIdentifierExt.extractNetIdsString(admins) ?? _adminNetIdsController.text
+      ).whenComplete(() =>
+          setStateIfMounted(() => _loadingAdmins = false)
+      );
+    }
+  }
+
   // Visibility
 
   Widget _buildVisibilitySection() {
@@ -2488,18 +2514,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     dynamic result;
     // Explicitly set the start date to be the first and end date to be the last - #4599
     Event2 event = _createEventFromData(recurringStartDateUtc: eventStartDate, recurringEndDateUtc: eventEndDate);
-    List<String>? adminNetIds;
+    List<Event2PersonIdentifier>? adminIdentifiers;
     if(StringUtils.isNotEmpty(_adminNetIdsController.text)) {
-      adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_adminNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+      List<String>? adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_adminNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+      adminIdentifiers =  Event2PersonIdentifierExt.constructAdminIdentifiersFromIds(adminNetIds);
     }
 
     String? eventId = event.id;
     if (eventId == null) {
-      result = await Events2().createEvent(event, adminIdentifiers: Event2Ext.constructAdminIdentifiersFromIds(adminNetIds));
+      result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
     } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {
-        result = await Events2().updateEvent(event, initialGroupIds: _initialGroupIds);
+        result = await Events2().updateEvent(event, adminIdentifiers: adminIdentifiers, initialGroupIds: _initialGroupIds);
       }
       else {
         result = event;
@@ -2700,7 +2727,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
     ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
     (!_hasSurvey || _hasAttendanceDetails) &&
-    _recurringConditionsFulfilled
+    (_recurringConditionsFulfilled) &&
+    (_loadingAdmins == false)
   );
 
   bool get _recurringConditionsFulfilled {

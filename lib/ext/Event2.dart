@@ -439,11 +439,10 @@ extension Event2Ext on Event2 {
 
   );
 
-  static List<dynamic>? constructAdminIdentifiersFromIds(List<String>? ids) =>
-      CollectionUtils.isEmpty(ids) ? null :
-        ids!.map((_id) =>
-          {"external_id": _id}
-        ).toList();
+  Future<List<Event2PersonIdentifier>?> get asyncAdminIdentifiers async{
+    Event2PersonsResult? peopleResult =  id != null ? await Events2().loadEventPeople(id!) : null;
+    return peopleResult?.adminIdentifiers;
+  }
 }
 
 extension Event2GroupingExt on Event2Grouping{
@@ -658,4 +657,27 @@ String? event2UserRegistrationToDisplayString(Event2UserRegistrationType? value)
     case Event2UserRegistrationType.creator: return Localization().getStringEx("model.event2.registrant_type.creator", "Creator");
     default: return null;
   }
+}
+
+extension Event2PersonIdentifierExt on Event2PersonIdentifier{
+  static List<Event2PersonIdentifier>? constructAdminIdentifiersFromIds(List<String>? ids) =>
+      CollectionUtils.isEmpty(ids) ? null :
+        ids!.map((_id) => Event2PersonIdentifier(externalId: _id)
+      ).toList();
+
+  static List<String>? extractNetIds(List<Event2PersonIdentifier>? identifiers) =>
+      identifiers?.fold<List<String>?>([],
+              (ids,identifier) =>  ListUtils.append(ids, identifier.netId));
+
+  static String? extractNetIdsString(List<Event2PersonIdentifier>? identifiers) =>
+      extractNetIds(identifiers)?.join(", ");
+}
+
+extension Event2PersonsResultExt on Event2PersonsResult{
+  List<Event2PersonIdentifier>? get adminIdentifiers =>
+    registrants?.fold<List<Event2PersonIdentifier>?>([], (_admins, person) =>
+      (person.role == Event2UserRole.admin) ?
+          ListUtils.append(_admins, person.identifier) :
+          _admins
+      );
 }
