@@ -1,6 +1,6 @@
 {
-    "name": "illinois_app",
-    "short_name": "illinois_app",
+    "name": "Illinois",
+    "short_name": "Illinois",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
