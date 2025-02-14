@@ -338,6 +338,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAnonymousUin                    = 'UINxxxxxx';
   static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
   static const String   LogAnonymousLastName               = 'LastNameXXXXXX';
+  static const String   LogAnonymousEmail                  = 'email@xxxxxx.xxx';
+  static const String   LogAnonymousPhone                  = 'PhoneXXXXXX';
+  static const String   LogAnonymousWebsite                = 'WebsiteXXXXXX';
 
   // Data
 

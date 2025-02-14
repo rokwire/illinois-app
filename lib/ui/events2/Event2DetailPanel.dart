@@ -1067,12 +1067,14 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onContactEmail(String? email){
+    Analytics().logSelect(target: Analytics.LogAnonymousEmail, attributes: _event?.analyticsAttributes);
     if(StringUtils.isNotEmpty(email)) {
       _launchUrl("mailto:$email");
     }
   }
 
   void _onContactPhone(String? phone){
+    Analytics().logSelect(target: Analytics.LogAnonymousPhone, attributes: _event?.analyticsAttributes);
     if(StringUtils.isNotEmpty(phone)) {
       _launchUrl("tel:$phone");
     }

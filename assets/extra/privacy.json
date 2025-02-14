@@ -133,7 +133,7 @@
                 {
                     "dataUsage": "These features use your personal university credentials.",
                     "dataUsage_key": "privacy.entry.directory.identity.data_usage",
-                    "description": "Publish to the user directory of the App information you wish to share with others.",
+                    "description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
                     "description_key": "privacy.entry.directory.identity.description",
                     "icon_resource": "person-dark",
                     "min_level": 4,
@@ -144,7 +144,7 @@
                 {
                     "dataUsage": "These features use your personal university credentials.",
                     "dataUsage_key": "privacy.entry.directory.personalizations.data_usage",
-                    "description": "Publish to the user directory of the App information you wish to share with others.",
+                    "description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
                     "description_key": "privacy.entry.directory.personalizations.description",
                     "icon_resource": "sliders-dark",
                     "min_level": 4,
@@ -153,21 +153,9 @@
                     "title_key": "privacy.entry.directory.personalizations.title"
                 },
                 {
-                    "dataUsage": "Lorem ipsum donec eget convallis felis.",
-                    "dataUsage_key": "privacy.entry.directory.notifications.data_usage",
-                    "description": "Lorem ipsum dolor sit amet, donec eget convallis felis. Sed maximus laoreet diam, at convallis augue lacinia vel. Etiam faucibus nisl lectus, a mollis erat tincidunt vitae.",
-                    "description_key": "privacy.entry.directory.notifications.description",
-                    "hidden": true,
-                    "icon_resource": "notification-dark",
-                    "min_level": 4,
-                    "off_icon_resource": "notification-disabled-dark",
-                    "title": "Notifications",
-                    "title_key": "privacy.entry.directory.notifications.title"
-                },
-                {
                     "dataUsage": "Your name, email address and other optional information can be shared with others.",
                     "dataUsage_key": "privacy.entry.directory.sharing.data_usage",
-                    "description": "This feature allows to share additional information in the directory beyond your name and email address with others.",
+                    "description": "This feature allows user to share additional information in the directory beyond your name and email address with others.",
                     "description_key": "privacy.entry.directory.sharing.description",
                     "icon_resource": "share-dark",
                     "min_level": 5,

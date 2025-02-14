@@ -2589,7 +2589,7 @@
 	"panel.wellness.section.todo.label": "待辦事項清單",
 	"panel.wellness.section.appointments.label": "MyMcKinley 預約",
 	"panel.wellness.section.screener.label": "Illinois Health Screener",
-	"panel.wellness.section.resources.label": "健康資源",
+	"panel.wellness.section.resources.label": "一般資源",
 	"panel.wellness.section.mental_health.label": "心理健康資源",
 	"panel.wellness.section.podcast.label": "健康Illini播客",
 
@@ -4536,16 +4536,13 @@
 
 	"privacy.category.directory.title": "Directory",
 	"privacy.entry.directory.identity.data_usage": "These features use your personal university credentials.",
-	"privacy.entry.directory.identity.description": "Publish to the user directory of the App information you wish to share with others.",
+	"privacy.entry.directory.identity.description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
 	"privacy.entry.directory.identity.title": "Identity",
 	"privacy.entry.directory.personalizations.data_usage": "These features use your personal university credentials.",
-	"privacy.entry.directory.personalizations.description": "Publish to the user directory of the App information you wish to share with others.",
+	"privacy.entry.directory.personalizations.description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
 	"privacy.entry.directory.personalizations.title": "Personalizations",
-	"privacy.entry.directory.notifications.data_usage": null,
-	"privacy.entry.directory.notifications.description": null,
-	"privacy.entry.directory.notifications.title": "Notifications",
 	"privacy.entry.directory.sharing.data_usage": "Your name, email address and other optional information can be shared with others.",
-	"privacy.entry.directory.sharing.description": "This feature allows to share additional information in the directory beyond your name and email address with others.",
+	"privacy.entry.directory.sharing.description": "This feature allows user to share additional information in the directory beyond your name and email address with others.",
 	"privacy.entry.directory.sharing.title": "Sharing",
 
 	"privacy.category.health.title": "卫生与健康",

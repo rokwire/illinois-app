@@ -266,7 +266,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
     }
     else if (FlexUI().isAuthenticationAvailable) {
       widgets.add(Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
+        padding: EdgeInsets.only(left: 20, right: 20, bottom: 16, top: 16),
         child: RoundedButton(
           label: Localization().getStringEx("panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Sign in to View Your Meal Plan"),
           hint: Localization().getStringEx('panel.settings.meal_plan.button.login_to_view_meal_plan.hint', ''),
@@ -455,7 +455,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+    return Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16), child:
       RichText(text: TextSpan(style: Styles().textStyles.getTextStyle("panel.settings.heading.title.large"), children: [
         TextSpan(text: privacyMsgStart),
         WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
