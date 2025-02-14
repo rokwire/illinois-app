@@ -19,7 +19,6 @@ import 'dart:typed_data';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -287,14 +286,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
 
     return Scaffold(
-      appBar: HeaderBar(
-          title: barTitle,
-      ),
+      appBar: HeaderBar(title: barTitle,),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child: content,),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-      content,
-      ),
     );
   }
 
@@ -654,33 +649,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
 
     List<Widget> commands = [];
-    if (_isMemberOrAdmin) {
-      if (CollectionUtils.isNotEmpty(commands)) {
-        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-      }
-      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
-        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-        commands.add(_buildWebsiteLinkCommand());
-      }
-      commands.add(_buildPrivacyInfoWidget);
+    if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
+      commands.add(_infoSplitter);
+      commands.add(_buildWebsiteLinkCommand());
     }
-    else {
-      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
-        if (CollectionUtils.isNotEmpty(commands)) {
-          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-        }
-        commands.add(_buildWebsiteLinkCommand());
-      }
-
+    if (!_isMemberOrAdmin) {
       List<Widget> attributesList = _buildAttributes();
       if (attributesList.isNotEmpty) {
-        if (commands.isNotEmpty) {
-          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-          commands.add(Container(height: 12,));
-        }
-        commands.addAll(attributesList);
-        commands.add(Container(height: 4,));
+        commands.add(_infoSplitter);
+        commands.add(Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+          Column(children: attributesList,),
+        ));
       }
+    }
+    if (commands.isNotEmpty) {
+      commands.add(_infoSplitter);
     }
 
     List<Widget> contentList = <Widget>[];
@@ -690,7 +673,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           _buildBadgeWidget(),
         ),
 
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
           _buildTitleWidget()
         ),
       ]);
@@ -704,11 +687,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
 
     if (StringUtils.isNotEmpty(members)) {
-      contentList.add(GestureDetector(onTap: () => { if (_canViewMembers) {_onTapMembers()} }, child:
+      contentList.add(GestureDetector(onTap: _canViewMembers ? _onTapMembers : null, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Container(
-              child: Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.small.underline') : Styles().textStyles.getTextStyle('widget.title.small'))
-          ),
+          Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.small.underline') : Styles().textStyles.getTextStyle('widget.title.small'))
         ),
       ));
     }
@@ -725,7 +706,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       ));
     }
 
-    contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+    contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: commands,),
     ));
 
@@ -765,14 +746,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         default: title = "Unknown";
       }
 
-      Tab tabWidget = Tab(
-          // text: title,
-          child: Container(
-            constraints: BoxConstraints(minWidth: 74),
-            alignment: Alignment.center,
-            child: Text(title)
-          ),
-          height: 35,
+      Tab tabWidget = Tab(/* text: title */ child:
+        Container(
+          constraints: BoxConstraints(minWidth: 74),
+          alignment: Alignment.center,
+          child: Text(title)
+        ),
+        height: 35,
       );
       tabs.add(tabWidget);
     }
@@ -781,24 +761,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       _tabController = TabController(length: tabs.length, vsync: this);
     }
 
-    return Container(color: Colors.white,
-      padding: EdgeInsets.only(top: 8),
-      child: TabBar(
-          tabs: tabs,
-          indicatorColor: Styles().colors.fillColorSecondary,
-          controller: _tabController,
-          onTap:(index) => _onTab(_tabAtIndex(index)),
-          indicatorSize: TabBarIndicatorSize.tab,
-          labelPadding: EdgeInsets.symmetric(horizontal: 16.0),
-          padding: EdgeInsets.zero,
-          tabAlignment: TabAlignment.center,
-          labelStyle: Styles().textStyles.getTextStyle("widget.title.small.fat"),
-          unselectedLabelStyle: Styles().textStyles.getTextStyle("widget.title.small"),
-          indicatorWeight: 3,
-          isScrollable: true,
+    return Container(color: Colors.white, child:
+      TabBar(
+        tabs: tabs,
+        indicatorColor: Styles().colors.fillColorSecondary,
+        controller: _tabController,
+        onTap:(index) => _onTab(_tabAtIndex(index)),
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelPadding: EdgeInsets.symmetric(horizontal: 16.0),
+        padding: EdgeInsets.zero,
+        tabAlignment: TabAlignment.center,
+        labelStyle: Styles().textStyles.getTextStyle("widget.title.small.fat"),
+        unselectedLabelStyle: Styles().textStyles.getTextStyle("widget.title.small"),
+        indicatorWeight: 3,
+        isScrollable: true,
 
-          // tabAlignment: TabAlignment.fill,
-      ));
+        // tabAlignment: TabAlignment.fill,
+    ));
   }
 
   Widget _buildViewPager(){
@@ -919,10 +898,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
         rightIconKey: 'external-link',
         leftIconKey: 'web',
-        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+        padding: EdgeInsets.symmetric(vertical: 12),
         onTap: _onWebsite
     );
   }
+
+  Widget get _infoSplitter =>
+      Container(height: 1, color: Styles().colors.surfaceAccent);
 
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
@@ -936,11 +918,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(Row(children: [
               Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+                Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
               ),
               Expanded(child:
               Text(displayAttributeValues.join(', '), maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
               ),
               ),
             ],),);
@@ -975,19 +957,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     ]) : badgeWidget;
   }
 
-  Widget _buildTitleWidget({bool showButtons = false}) {
-    return
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Expanded(child:
-          RichText(textScaler: MediaQuery.of(context).textScaler,
-            text: TextSpan(text: _group?.title ?? '',  style:  Styles().textStyles.getTextStyle('widget.title.medium.fat'),
-              children: [
-                WidgetSpan(alignment: PlaceholderAlignment.middle,
-                    child: _buildManagedBadge),],))
-        ),
-        showButtons ? _buildTitleIconButtons : Container()
-      ]);
-  }
+  Widget _buildTitleWidget({bool showButtons = false}) =>
+    Row(children: <Widget>[
+      Expanded(child:
+        RichText(textScaler: MediaQuery.of(context).textScaler, text:
+          TextSpan(text: _group?.title ?? '',  style:  Styles().textStyles.getTextStyle('widget.title.medium.fat'), children: [
+            if (_isManaged)
+              WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildManagedBadge),
+          ],)
+        )
+      ),
+      showButtons ? _buildTitleIconButtons : Container()
+    ]);
 
   Widget get _buildTitleIconButtons =>
       Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
@@ -996,28 +977,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         ...?_buildSettingsIconButton()
       ]);
 
-  Widget get _buildManagedBadge => _isManaged ?
-  InkWell(onTap: _onTapManagedGroupBadge,
-    child: Padding(padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Styles().images.getImage('group-managed-badge', excludeFromSemantics: true))):
-      Container();
-
-
-  Widget get _buildPrivacyInfoWidget => Padding(padding: EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      children: [
-        Expanded(
-          child: RichText(textScaler: MediaQuery.of(context).textScaler,
-            text: TextSpan(text: Localization().getStringEx("","Your activity in the app is private. Please review the "), style:  Styles().textStyles.getTextStyle("widget.title.tiny"),
-            children: [
-              TextSpan(text: Localization().getStringEx("", "Student Code."), style: Styles().textStyles.getTextStyle("widget.title.tiny.underline.variant"),  recognizer: TapGestureRecognizer()..onTap = () => _onPrivacy()),
-              WidgetSpan(
-                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Styles().images.getImage('external-link', excludeFromSemantics: true)),
-              )
-            ],),
-          ),
-        )
-      ],
+  Widget get _buildManagedBadge => InkWell(onTap: _onTapManagedGroupBadge, child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+      Styles().images.getImage('group-managed-badge', excludeFromSemantics: true)
     )
   );
 
@@ -1439,11 +1401,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
-  }
-
-  void _onPrivacy () {
-    Analytics().logSelect(target: 'Privacy');
-    UrlUtils.launchExternal("https://studentcode.illinois.edu");
   }
 
   void _onTapManagedGroupBadge(){ //TBD
