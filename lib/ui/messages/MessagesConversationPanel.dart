@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neom/ext/Social.dart';
 import 'package:neom/service/Analytics.dart';
@@ -23,16 +24,20 @@ import 'package:neom/ui/widgets/CustomLinkText.dart';
 import 'package:neom/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:neom/platform_impl/stub.dart'
+  if (dart.library.io) 'package:neom/platform_impl/mobile.dart'
+  if (dart.library.html) 'package:neom/platform_impl/web.dart';
 
 enum FileType { image, video, audio, file }
 
@@ -61,6 +66,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   final GlobalKey _targetMessageContentItemKey = GlobalKey();
   final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
+  final FileHelper _fileHelper = FileHelper();
 
   _ScrollTarget? _shouldScrollToTarget;
   Map<String, Uint8List?> _userPhotosCache = {};
@@ -69,6 +75,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   bool _loading = false;
   bool _loadingMore = false;
   bool _submitting = false;
+  Map<String, bool> _uploadingFiles = {};
 
   // Use the actual Auth2 accountId instead of a placeholder.
   String? get _currentUserId => Auth2().accountId;
@@ -106,6 +113,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     // Load conversation (if needed) and messages from the backend
     _initConversationAndMessages();
+
+    _fileHelper.initializePicker();
 
     super.initState();
   }
@@ -924,13 +933,16 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       }
       entryBackgroundColor = Styles().colors.backgroundAccent;
       textStyleKey = 'widget.title.small';
-      onTap = () => _removeAttachedFiles([file]);
+      if (_uploadingFiles[name] != true) {
+        onTap = () => _removeAttachedFiles([file]);
+      }
       if (file is PlatformFile) {
         name = file.name;
         extension = file.extension;
       }
     }
-    return Column(
+    return Stack(
+      alignment: Alignment.center,
       children: [
         GestureDetector(
           onTap: message != null ? onTap : null,
@@ -988,6 +1000,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
             ),
           ),
         ),
+        Visibility(
+          visible: message == null && (_uploadingFiles[name] == true),
+          child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),
+        ),
       ],
     );
   }
@@ -995,26 +1011,40 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildAttachedMediaEntry(BuildContext context, dynamic file, FileType type,
       {bool removable = false}) {
     String? path, url;
+    Uint8List? data;
     if (file is FileAttachment) {
-      url = file.url;
+      if (file.url != null) {
+        url = file.url;
+      } else if (file.data != null) {
+        data = file.data;
+      }
+    } else if (kIsWeb && file is PlatformFile) {
+      data = file.bytes;
     } else {
       path = _getFilePath(file);
     }
-    if (path == null && url == null) {
+    if (path == null && url == null && data == null) {
       return const SizedBox();
     }
     Widget? widget;
     if (type == FileType.image) {
-      if (kIsWeb || file is FileAttachment) {
+      if (url != null || (kIsWeb && path != null)) {
         widget = Image.network(url ?? path ?? '', fit: BoxFit.cover,
           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
           _imageErrorBuilder,
         );
-      } else {
+      } else if (data != null) {
+        widget = Image.memory(data, fit: BoxFit.cover,
+          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
+          _imageErrorBuilder,
+        );
+      } else if (!kIsWeb) {
         widget = Image.file(File(path ?? ''), fit: BoxFit.cover,
           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
           _imageErrorBuilder,
         );
+      } else {
+        return const SizedBox();
       }
     }
     else if (type == FileType.video) {
@@ -1163,15 +1193,19 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       extendLimitToMessageId: extendLimitToMessageId,
     );
     if (loadAttachmentUrls) {
+      List<String> fileIds = [];
       for (Message message in loadedMessages ?? []) {
-        List<String>? filenames = message.fileAttachments?.where((e) => e.type != FileType.file).map((e) => e.name).whereNotNull().toList();
-        if (filenames != null && filenames.isNotEmpty) {
-          Map<String, String>? urls = await Content().getFileContentDownloadUrls(filenames, Content.conversationsContentCategory, entityId: '$_conversationId/${message.globalId}');
-          if (urls != null && urls.isNotEmpty) {
+        fileIds.addAll(message.fileAttachments?.where((e) => e.type != FileType.file).map((e) => e.id).whereNotNull() ?? []);
+      }
+
+      if (CollectionUtils.isNotEmpty(fileIds)) {
+        List<FileContentItemReference>? fileRefs = await Content().getFileContentDownloadUrls(fileIds, Content.conversationsContentCategory, entityId: _conversationId);
+        if (CollectionUtils.isNotEmpty(fileRefs)) {
+          for (Message message in loadedMessages ?? []) {
             for (FileAttachment file in message.fileAttachments ?? []) {
-              for (MapEntry<String, String> urlEntry in urls.entries) {
-                if (urlEntry.value == file.name) {
-                  file.url = urlEntry.key;
+              for (FileContentItemReference ref in fileRefs ?? []) {
+                if (ref.id == file.id) {
+                  file.url = ref.url;
                 }
               }
             }
@@ -1207,8 +1241,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (StringUtils.isNotEmpty(messageText) && _conversationId != null && _currentUserId != null && !_submitting) {
       FocusScope.of(context).requestFocus(FocusNode());
 
+      List<FileContentItemReference>? fileRefs;
+      if (_attachedFiles.isNotEmpty) {
+        fileRefs = await _uploadAttachedFiles();
+      }
+
       _inputController.text = '';
-      List<FileAttachment> fileAttachments = _messageFileAttachments;
+      List<FileAttachment> fileAttachments = await _getMessageFileAttachments(fileRefs);
 
       // Create a temporary message and add it immediately
       Message tempMessage = Message(
@@ -1225,6 +1264,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         _shouldScrollToTarget = _ScrollTarget.bottom; //TBD
       });
 
+      _removeAttachedFiles(fileAttachments);
+
       // Send to the backend
       List<Message>? newMessages = await Social().createConversationMessage(
         conversationId: _conversationId!,
@@ -1232,12 +1273,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         fileAttachments: fileAttachments,
       );
 
-      String? messageId;
       if (mounted) {
         if (newMessages != null && newMessages.isNotEmpty) {
           setState(() {
-            Message serverMessage = newMessages.first;
-            messageId = serverMessage.globalId;
+            Message serverMessage = Message.fromOther(newMessages.first, fileAttachments: fileAttachments);
             // Update the temporary message with the server's message if needed
             int index = _messages.indexOf(tempMessage);
             if (index >= 0) {
@@ -1255,17 +1294,35 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
         }
       }
-
-      if (_attachedFiles.isNotEmpty && messageId != null) {
-        _uploadAttachedFiles(messageId);
-      }
     }
   }
 
-  Future<void> _uploadAttachedFiles(String? messageId) async {
-    List<String>? uploaded = await Content().uploadFileContentItems(_attachedFileData, Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
-    _removeAttachedFiles(uploaded);
-    setStateIfMounted(() {});
+  Future<List<FileContentItemReference>?> _uploadAttachedFiles() async {
+    List<FileContentItemReference>? uploaded = await Content().uploadFileContentItems(_attachedFileData, Content.conversationsContentCategory,
+      entityId: _conversationId, preUpload: _preUploadFile, postUpload: _postUploadFile);
+
+    int failedFileCount = _attachedFileData.length - (uploaded?.length ?? 0);
+    if (failedFileCount > 0) {
+      AppToast.showMessage(sprintf(Localization().getStringEx('', 'Failed to upload %s file(s)'), [failedFileCount]));
+    }
+
+    return uploaded;
+  }
+
+  void _preUploadFile(FileContentItemReference ref) {
+    if (ref.name != null) {
+      setStateIfMounted(() {
+        _uploadingFiles[ref.name!] = true;
+      });
+    }
+  }
+
+  void _postUploadFile(FileContentItemReference ref, Response? response) {
+    if (ref.name != null) {
+      setStateIfMounted(() {
+        _uploadingFiles[ref.name!] = false;
+      });
+    }
   }
 
   Future<void> _updateEditingMessage(String newText) async {
@@ -1374,13 +1431,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
     List<dynamic> processed = [];
     for (dynamic file in files) {
-      if (file is String) {
+      if (file is FileAttachment) {
         dynamic found = _attachedFiles.firstWhereOrNull((e) {
           if (e is XFile) {
-            return e.name == file;
+            return e.name == file.name;
           }
           else if (e is PlatformFile) {
-            return e.name == file;
+            return e.name == file.name;
           }
           return false;
         });
@@ -1402,11 +1459,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Future<void> _onTapDownloadFile(FileAttachment file, String messageId) async {
     //TODO: implement opening files based on type
     if (StringUtils.isNotEmpty(file.name)) {
-      Map<String, Uint8List> files = await Content().getFileContentItems([file.name!], Content.conversationsContentCategory, entityId: '$_conversationId/$messageId');
-      if (await _requestStoragePermissions() && files.isNotEmpty) {
-        Uint8List? data = files[file.name];
+      Map<String, Uint8List> files = await Content().getFileContentItems([file.id!], Content.conversationsContentCategory, entityId: _conversationId);
+      if ((!kIsWeb && await _requestStoragePermissions()) && files.isNotEmpty) {
+        Uint8List? data = files[file.id];
         if (CollectionUtils.isNotEmpty(data)) {
-          bool success = await RokwirePlugin.saveDownloadedFile(file.name!, data!);
+          bool success = await _fileHelper.saveDownload(file.name!, data!);
           String message = success ? Localization().getStringEx('', 'File saved') : Localization().getStringEx('', 'Failed to save file');
           AppToast.showMessage(message);
         }
@@ -1458,14 +1515,6 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
   }
 
-  double get _chatBarHeight {
-    RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
-    double? chatBarHeight = ((chatBarRenderBox is RenderBox) && chatBarRenderBox.hasSize) ? chatBarRenderBox.size.height : null;
-    return chatBarHeight ?? 0;
-  }
-
-  double get _scrollContentPaddingBottom => _chatBarHeight;
-
   Future<bool> get _checkKeyboardVisible async {
     final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
     final double position = checkPosition();
@@ -1503,12 +1552,32 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return null;
   }
 
+  String? _getFileName(dynamic file) {
+    if (file is XFile) {
+      return file.name;
+    }
+    else if (file is PlatformFile) {
+      return file.name;
+    }
+    else if (file is FileAttachment) {
+      return file.name;
+    }
+    else if (file is AudioResult) {
+      return _getAudioFileName(file);
+    }
+    return null;
+  }
+
+  String _getAudioFileName(AudioResult result) {
+    return 'audio_${result.hashCode}';
+  }
+
   FileType _getFileType(dynamic file) {
     if (file is FileAttachment) {
       return _getFileTypeFromString(file.type);
     }
     FileType type = FileType.file;
-    String? path = _getFilePath(file);
+    String? path = kIsWeb ?  _getFileName(file) : _getFilePath(file) ?? _getFileName(file);
     if (FileUtils.isVideo(path)) {
       type = FileType.video;
     } else if (FileUtils.isImage(path)) {
@@ -1523,10 +1592,12 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return FileType.values.firstWhereOrNull((e) => e.name == type) ?? FileType.file;
   }
 
-  List<FileAttachment> get _messageFileAttachments =>
-    List.generate(_attachedFiles.length, (index) {
+  List<FileAttachment> _getMessageFileAttachments(List<FileContentItemReference>? fileRefs) {
+    return fileRefs != null ? List.generate(_attachedFiles.length, (index) {
       dynamic file = _attachedFiles.elementAt(index);
       FileType type = _getFileType(file);
-      return FileAttachment(name: file.name, type: type.name);
-    });
+      FileContentItemReference ref = fileRefs.firstWhere((ref) => ref.name == file.name, orElse: () => FileContentItemReference());
+      return FileAttachment(name: file.name, type: type.name, id: ref.id, data: ref.data);
+    }) : [];
+  }
 }
