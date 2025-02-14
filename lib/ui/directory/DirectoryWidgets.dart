@@ -477,20 +477,20 @@ class DirectoryProfileDetails extends StatelessWidget {
         if (profile?.major?.isNotEmpty == true)
           _textDetail(profile?.major ?? ''),
         if (profile?.email?.isNotEmpty == true)
-          _linkDetail(profile?.email ?? '', 'mailto:${profile?.email}'),
+          _linkDetail(profile?.email ?? '', 'mailto:${profile?.email}', analyticsTarget: Analytics.LogAnonymousEmail),
         if (profile?.email2?.isNotEmpty == true)
-          _linkDetail(profile?.email2 ?? '', 'mailto:${profile?.email2}'),
+          _linkDetail(profile?.email2 ?? '', 'mailto:${profile?.email2}', analyticsTarget: Analytics.LogAnonymousEmail),
         if (profile?.phone?.isNotEmpty == true)
-          _linkDetail(profile?.phone ?? '', 'tel:${profile?.phone}'),
+          _linkDetail(profile?.phone ?? '', 'tel:${profile?.phone}', analyticsTarget: Analytics.LogAnonymousPhone),
         if (profile?.website?.isNotEmpty == true)
-          _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? ''),
+          _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? '', analyticsTarget: Analytics.LogAnonymousWebsite),
       ],);
 
   Widget _textDetail(String text) =>
     Text(text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
 
-  Widget _linkDetail(String text, String url) =>
-    InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:
+  Widget _linkDetail(String text, String url, { String? analyticsTarget } ) =>
+    InkWell(onTap: () => _onTapLink(url, analyticsTarget: analyticsTarget ?? text), child:
       Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline', decorationColor: Styles().colors.fillColorPrimary),),
     );
 
