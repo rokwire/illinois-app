@@ -131,6 +131,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+## [6.1.60] - 2025-02-14
+### Changed
+- Acknowledged new privacy content for App Directory [#4772](https://github.com/rokwire/illinois-app/issues/4772).
+- Do not log to Splunk the actual email/phone/website when using links from App Directory profiles [#4786](https://github.com/rokwire/illinois-app/issues/4786).
+- "Wellness Resources" dropdown item renamed to "General Resources" [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+- Close up Group Detail heading layout, updated policy info text [#4779](https://github.com/rokwire/illinois-app/issues/4779).
+
+## [6.1.59] - 2025-02-13
+### Changed
+- Reworked url parsing to handle various URL links, not only host names. Some general cleanup and fixes is also applied [#4770](https://github.com/rokwire/illinois-app/issues/4770).
+- Updated privacy.json content in assets, added relevant string resources, added support for hidden PrivacyEntry2 [#4772](https://github.com/rokwire/illinois-app/issues/4772). 
+### Fixed
+- Fixed Illini Cash and Meal Plan panels display when the user is not logged in or when the authentication is not available [#4764](https://github.com/rokwire/illinois-app/issues/4764).
+
 ## [6.1.58] - 2025-02-12
 ### Changed
 - Acknowledge Social: pinPost API [4629](https://github.com/rokwire/illinois-app/issues/4629).

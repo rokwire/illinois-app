@@ -23,7 +23,7 @@ import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/ui/widgets/VideoPlayerWidget.dart';
 import 'package:neom/ui/widgets/WebEmbed.dart';
 import 'package:neom/utils/AppUtils.dart';
-import 'package:neom/ui/widgets/CustomLinkText.dart';
+import 'package:neom/ui/widgets/LinkTextEx.dart';
 import 'package:neom/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -321,7 +321,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Expanded(child:
                           SelectionArea(
-                            child: CustomLinkText(
+                            child: LinkTextEx(
                               key: UniqueKey(),
                               message.message ?? '',
                               textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),

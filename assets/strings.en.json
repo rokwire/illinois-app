@@ -2615,7 +2615,7 @@
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.appointments.label": "MyMcKinley Appointments",
     "panel.wellness.section.screener.label": "NEOM U Health Screener",
-    "panel.wellness.section.resources.label": "Wellness Resources",
+    "panel.wellness.section.resources.label": "General Resources",
     "panel.wellness.section.mental_health.label": "Mental Health Resources",
     "panel.wellness.section.success_team.label": "My Success Team",
     "panel.wellness.section.podcast.label": "Healthy Illini Podcast",
@@ -3265,7 +3265,8 @@
 
     "panel.group_detail.button.policy.label": "Policy",
     "panel.group.detail.button.policy.hint": "Tap to read policy statement",
-    "panel.group.detail.policy.text": "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrator(s) about obscene, threatening, or harassing content. Users may also choose to report content in violation of the Student Code to the Office of the Dean of Students.",
+    "panel.group.detail.policy.text": "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrator(s) about obscene, threatening, or harassing content. Users may also choose to report content in violation of the {{student_code}} {{external_link_icon}} to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.",
+    "panel.group.detail.policy.text.student_code": "Student Code",
 
     "panel.groups_all_events.label.heading": "Upcoming Events",
 
@@ -4587,6 +4588,17 @@
     "privacy.entry.wallet.sharing.title": "Identity",
     "privacy.entry.wallet.sharing.description": "Check your Illini ID, MTD bus pass, Illini Cash, and meal plan balances, and see past transactions.",
     "privacy.entry.wallet.sharing.data_usage": "These features use your personal university credentials.",
+
+    "privacy.category.directory.title": "Directory",
+    "privacy.entry.directory.identity.data_usage": "These features use your personal university credentials.",
+    "privacy.entry.directory.identity.description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
+    "privacy.entry.directory.identity.title": "Identity",
+    "privacy.entry.directory.personalizations.data_usage": "These features use your personal university credentials.",
+    "privacy.entry.directory.personalizations.description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
+    "privacy.entry.directory.personalizations.title": "Personalizations",
+    "privacy.entry.directory.sharing.data_usage": "Your name, email address and other optional information can be shared with others.",
+    "privacy.entry.directory.sharing.description": "This feature allows user to share additional information in the directory beyond your name and email address with others.",
+    "privacy.entry.directory.sharing.title": "Sharing",
 
     "privacy.category.health.title": "Health and Wellness",
     "privacy.entry.health.view.only.title": "View Only",

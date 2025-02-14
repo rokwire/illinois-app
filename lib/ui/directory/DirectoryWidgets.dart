@@ -476,7 +476,7 @@ class DirectoryProfileDetails extends StatelessWidget {
   String? get major => null;
 
   String? get website => null;
-  
+
   @override
   Widget build(BuildContext context) {
     List<Auth2PublicAccountIdentifier> emails = Auth2PublicAccountIdentifier.listForType(identifiers, Auth2Identifier.typeEmail);
@@ -491,19 +491,19 @@ class DirectoryProfileDetails extends StatelessWidget {
       if (profile?.major?.isNotEmpty == true)
         _textDetail(profile?.major ?? ''),
       if (emails.isNotEmpty)
-        Column(children: List.generate(emails.length, (index) => _linkDetail(emails[index].identifier ?? '', 'mailto:${emails[index].identifier}')),),
+        Column(children: List.generate(emails.length, (index) => _linkDetail(emails[index].identifier ?? '', 'mailto:${emails[index].identifier}', analyticsTarget: Analytics.LogAnonymousEmail)),),
       if (phones.isNotEmpty)
-        Column(children: List.generate(phones.length, (index) => _linkDetail(phones[index].identifier ?? '', 'tel:${phones[index].identifier}')),),
+        Column(children: List.generate(phones.length, (index) => _linkDetail(phones[index].identifier ?? '', 'tel:${phones[index].identifier}', analyticsTarget: Analytics.LogAnonymousPhone)),),
       if (profile?.website?.isNotEmpty == true)
-        _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? ''),
+        _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? '', analyticsTarget: Analytics.LogAnonymousWebsite),
     ],);
   }
 
   Widget _textDetail(String text) =>
     Text(text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
 
-  Widget _linkDetail(String text, String url) =>
-    InkWell(onTap: () => _onTapLink(url, analyticsTarget: text), child:
+  Widget _linkDetail(String text, String url, { String? analyticsTarget } ) =>
+    InkWell(onTap: () => _onTapLink(url, analyticsTarget: analyticsTarget ?? text), child:
       Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline',),),
     );
 

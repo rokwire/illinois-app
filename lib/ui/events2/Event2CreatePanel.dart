@@ -500,6 +500,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Set<String>? _initialGroupIds;
   bool _loadingEventGroups = false;
 
+  // List<Event2PersonIdentifier>? _initialAdmins;
+  bool _loadingAdmins = false;
+
   String? _sponsor;
   String? _speaker;
   List<Event2Contact>? _contacts;
@@ -508,6 +511,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   late Map<_ErrorCategory, List<String>> _errorMap;
   bool _creatingEvent = false;
 
+  final TextEditingController _adminNetIdsController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
@@ -602,12 +606,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _websiteController.addListener(_updateErrorMap);
 
     _initEventGroups();
+    _initEventAdmins();
 
     super.initState();
   }
 
   @override
   void dispose() {
+    _adminNetIdsController.dispose();
     _titleController.dispose();
     _descriptionController.dispose();
     _websiteController.dispose();
@@ -648,6 +654,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         _buildImageDescriptionSection(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildAdminSettingsSection(),
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildRecurrenceDropdownSection(),
@@ -732,8 +739,26 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ]));
   }
 
-  // Title and Description
+  //
+  // AdminSection
 
+  Widget _buildAdminSettingsSection() => Stack(alignment: Alignment.center ,children: [
+    Event2CreatePanel.buildSectionWidget(
+      heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('', "Event Admins NetIDs (comma separated)"), required: true),
+      body: Event2CreatePanel.buildTextEditWidget(_adminNetIdsController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
+    ),
+    Align(alignment: Alignment.centerLeft, child:
+        Visibility(visible: _loadingAdmins, child:
+          Padding(padding: const EdgeInsets.only(left: 16), child:
+            SizedBox(width: 14, height: 14, child:
+              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+            ),
+          )
+        )
+    )
+  ]);
+
+  // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
     body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
@@ -2249,6 +2274,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
+  void _initEventAdmins() async {
+    if(widget.event != null) {
+      setStateIfMounted(() => _loadingAdmins = true);
+      widget.event?.asyncAdminIdentifiers.then((admins) =>
+            _adminNetIdsController.text = Event2PersonIdentifierExt.extractNetIdsString(admins) ?? _adminNetIdsController.text
+      ).whenComplete(() =>
+          setStateIfMounted(() => _loadingAdmins = false)
+      );
+    }
+  }
+
   // Visibility
 
   Widget _buildVisibilitySection() {
@@ -2556,14 +2592,20 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     dynamic result;
     // Explicitly set the start date to be the first and end date to be the last - #4599
     Event2 event = _createEventFromData(recurringStartDateUtc: eventStartDate, recurringEndDateUtc: eventEndDate);
+    List<Event2PersonIdentifier>? adminIdentifiers;
+    if(StringUtils.isNotEmpty(_adminNetIdsController.text)) {
+      List<String>? adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_adminNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+      adminIdentifiers =  Event2PersonIdentifierExt.constructAdminIdentifiersFromIds(adminNetIds);
+      adminIdentifiers?.removeWhere((identifier) =>  identifier.externalId == Auth2().netId); //exclude self otherwise the BB duplicates it
+    }
 
     String? eventId = event.id;
     if (eventId == null) {
-      result = await Events2().createEvent(event);
+      result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
     } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {
-        result = await Events2().updateEvent(event, initialGroupIds: _initialGroupIds);
+        result = await Events2().updateEvent(event, adminIdentifiers: adminIdentifiers, initialGroupIds: _initialGroupIds);
       }
       else {
         result = event;
@@ -2764,7 +2806,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
     ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
     (!_hasSurvey || _hasAttendanceDetails) &&
-    _recurringConditionsFulfilled
+    (_recurringConditionsFulfilled) &&
+    (_loadingAdmins == false)
   );
 
   bool get _recurringConditionsFulfilled {

@@ -139,38 +139,46 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       ).then((bool? result) async {
         if (result == true) {
           setStateIfMounted(() {_duplicating = true;});
-          Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(groupings: _event?.linkedEventsGroupingQuery));
-
-          //TBD  // 1. Acknowledge Event Admins
-          Events2().createEvent(_event!.duplicate).then((createdEvent) async {
-            if (createdEvent is Event2) {
-              if(CollectionUtils.isEmpty(subEventsLoad?.events)){
-                Navigator.pop(context);
-                Event2Popup.showMessage(context, message: "Successfully duplicated Event");
-                setStateIfMounted((){_duplicating = false;});
-                return;
-              }
-
-              //Duplicate sub events
-             Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
-                  events: Event2SuperEventsController.applyCollectionChange(
-                      collection: subEventsLoad?.events,
-                      change: (subEvent) {
-                        Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
-                        return subEvent.duplicateWith(grouping: subGrouping);}),
-                  uploadAPI: Events2().createEvent);
-
-              if(updateResult.successful){
-                Event2Popup.showMessage(context, message: "Successfully duplicated Super event and ${updateResult.data} sub events");
-              } else {
-                Event2Popup.showErrorResult(context, updateResult.error);
-              }
-              setStateIfMounted((){_duplicating = false;});
+          Events2().duplicateEvent(_event).then((result) {
+            if(result.successful){
+              Event2Popup.showMessage(context, message: "Successfully duplicated Event");
             } else {
-              Event2Popup.showErrorResult(context, createdEvent);
-              setStateIfMounted((){_duplicating = false;});
+              Event2Popup.showErrorResult(context, result.error ?? "Error occurred");
             }
-          });
+          }).whenComplete(() =>
+              setStateIfMounted((){_duplicating = false;}));
+          // Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(groupings: _event?.linkedEventsGroupingQuery));
+          //
+          // // TBD  // 1. Acknowledge Event Admins
+          // Events2().createEvent(_event!.duplicate).then((createdEvent) async {
+          //   if (createdEvent is Event2) {
+          //     if(CollectionUtils.isEmpty(subEventsLoad?.events)){
+          //       Navigator.pop(context);
+          //       Event2Popup.showMessage(context, message: "Successfully duplicated Event");
+          //       setStateIfMounted((){_duplicating = false;});
+          //       // return;
+          //     }
+          //
+          //     //Duplicate sub events
+          //    Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
+          //         events: Event2SuperEventsController.applyCollectionChange(
+          //             collection: subEventsLoad?.events,
+          //             change: (subEvent) {
+          //               Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
+          //               return subEvent.duplicateWith(grouping: subGrouping);}),
+          //         uploadAPI: Events2().createEvent);
+          //
+          //     if(updateResult.successful){
+          //       Event2Popup.showMessage(context, message: "Successfully duplicated Super event and ${updateResult.data} sub events");
+          //     } else {
+          //       Event2Popup.showErrorResult(context, updateResult.error);
+          //     }
+          //     setStateIfMounted((){_duplicating = false;});
+          //   } else {
+          //     Event2Popup.showErrorResult(context, createdEvent);
+          //     setStateIfMounted((){_duplicating = false;});
+          //   }
+          // });
         }
       });
     }

@@ -21,6 +21,8 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
@@ -46,7 +48,6 @@ import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -72,6 +73,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_io/io.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -121,6 +124,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   List<DetailTab?>? _tabs;
   PageController? _pageController;
   TabController?  _tabController;
+  GestureRecognizer? _studentCodeLaunchRecognizer;
   StreamController _updateController = StreamController.broadcast();
   final ScrollController _scrollController = ScrollController();
 
@@ -262,7 +266,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     _initUpdateController();
     _initTabs();
     _postId = widget.groupPostId;
-
+    _studentCodeLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchStudentCode;
 
     _loadGroup(loadEvents: true);
     super.initState();
@@ -275,6 +279,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     _pageController?.dispose();
     _tabController?.dispose();
     _scrollController.dispose();
+    _studentCodeLaunchRecognizer?.dispose();
     super.dispose();
   }
 
@@ -298,14 +303,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
 
     return Scaffold(
-      appBar: HeaderBar(
-          title: barTitle,
-      ),
+      appBar: HeaderBar(title: barTitle,),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child: content,),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh,
-      child: content,
-      ),
     );
   }
 
@@ -684,39 +685,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       } else if (attendedCount == 1) {
         attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.one", "1 Member Attended");
       } else {
-        attendedMembers =
-            sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
+        attendedMembers = sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
       }
     }
 
     List<Widget> commands = [];
-    if (_isMemberOrAdmin) {
-      if (CollectionUtils.isNotEmpty(commands)) {
-        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-      }
-      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
-        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-        commands.add(_buildWebsiteLinkCommand());
-      }
-      commands.add(_buildPrivacyInfoWidget);
+    if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
+      commands.add(_infoSplitter);
+      commands.add(_buildWebsiteLinkCommand());
     }
-    else {
-      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
-        if (CollectionUtils.isNotEmpty(commands)) {
-          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-        }
-        commands.add(_buildWebsiteLinkCommand());
-      }
-
+    if (!_isMemberOrAdmin) {
       List<Widget> attributesList = _buildAttributes();
       if (attributesList.isNotEmpty) {
-        if (commands.isNotEmpty) {
-          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-          commands.add(Container(height: 12,));
-        }
-        commands.addAll(attributesList);
-        commands.add(Container(height: 4,));
+        commands.add(_infoSplitter);
+        commands.add(Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+          Column(children: attributesList,),
+        ));
       }
+    }
+    if (commands.isNotEmpty) {
+      commands.add(_infoSplitter);
     }
 
     List<Widget> contentList = <Widget>[];
@@ -726,7 +714,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           _buildBadgeWidget(),
         ),
 
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
           _buildTitleWidget()
         ),
       ]);
@@ -740,11 +728,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
 
     if (StringUtils.isNotEmpty(members)) {
-      contentList.add(GestureDetector(onTap: () => { if (_canViewMembers) {_onTapMembers()} }, child:
+      contentList.add(GestureDetector(onTap: _canViewMembers ? _onTapMembers : null, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Container(
-              child: Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.dark.small.underline') : Styles().textStyles.getTextStyle('widget.title.dark.small'))
-          ),
+          Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.small.underline') : Styles().textStyles.getTextStyle('widget.title.small'))
         ),
       ));
     }
@@ -761,7 +747,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       ));
     }
 
-    contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+    contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: commands,),
     ));
 
@@ -935,10 +921,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
         rightIconKey: 'external-link',
         leftIconKey: 'web',
-        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+        padding: EdgeInsets.symmetric(vertical: 12),
         onTap: _onWebsite
     );
   }
+
+  Widget get _infoSplitter =>
+      Container(height: 1, color: Styles().colors.surfaceAccent);
 
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
@@ -952,11 +941,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(Row(children: [
               Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+                Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
               ),
               Expanded(child:
               Text(displayAttributeValues.join(', '), maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
               ),
               ),
             ],),);
@@ -991,67 +980,51 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     ]) : badgeWidget;
   }
 
-  Widget _buildTitleWidget({bool showButtons = false}) {
-    return
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Expanded(child:
-          Padding(
-            padding: EdgeInsets.only(top: showButtons ? 8.0 : 0.0),
-            child: RichText(textScaler: MediaQuery.of(context).textScaler,
-              text: TextSpan(text: _group?.title?.toUpperCase() ?? '',  style:  Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'),
-                children: [
-                  WidgetSpan(alignment: PlaceholderAlignment.middle,
-                      child: _buildManagedBadge),],)),
+  Widget _buildTitleWidget({bool showButtons = false}) =>
+    Row(children: <Widget>[
+      Expanded(child:
+        Padding(
+          padding: EdgeInsets.only(top: showButtons ? 8.0 : 0.0),
+          child:
+          RichText(textScaler: MediaQuery.of(context).textScaler, text:
+            TextSpan(text: _group?.title?.toUpperCase() ?? '',  style:  Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'), children: [
+              if (_isManaged)
+                WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildManagedBadge),
+            ],)
           )
-        ),
-        showButtons ? _buildTitleIconButtons : Container()
-      ]);
-  }
+        )
+      ),
+      showButtons ? _buildTitleIconButtons : Container()
+    ]);
 
   Widget get _buildTitleIconButtons =>
-      Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
-        ...?_buildPolicyIconButton(),
-        ...?_buildCreateIconButton(),
-        ...?_buildSettingsIconButton()
-      ]);
+    Row(crossAxisAlignment: CrossAxisAlignment.start,  mainAxisSize: MainAxisSize.min, children: [
+      if (_showPolicyIcon)
+        _buildPolicyIconButton(),
+      if (_hasCreateOptions)
+        _buildCreateIconButton(),
+      if (_hasOptions)
+        _buildSettingsIconButton(),
+    ]);
 
-  Widget get _buildManagedBadge => _isManaged ?
-  InkWell(onTap: _onTapManagedGroupBadge,
-    child: Padding(padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Styles().images.getImage('group-managed-badge', excludeFromSemantics: true))):
-      Container();
-
-
-  Widget get _buildPrivacyInfoWidget => Padding(padding: EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      children: [
-        Expanded(
-          child: RichText(textScaler: MediaQuery.of(context).textScaler,
-            text: TextSpan(text: Localization().getStringEx("","Your activity in the app is private. Please review the "), style:  Styles().textStyles.getTextStyle("widget.title.dark.tiny"),
-            children: [
-              TextSpan(text: Localization().getStringEx("", "Student Code."), style: Styles().textStyles.getTextStyle("widget.title.dark.tiny")),  //recognizer: TapGestureRecognizer()..onTap = () => _onPrivacy()),
-              // WidgetSpan(
-              //     child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Styles().images.getImage('external-link', excludeFromSemantics: true)),
-              // )
-            ],),
-          ),
-        )
-      ],
+  Widget get _buildManagedBadge => InkWell(onTap: _onTapManagedGroupBadge, child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+      Styles().images.getImage('group-managed-badge', excludeFromSemantics: true)
     )
   );
 
-  List<Widget>? _buildPolicyIconButton() => _showPolicyIcon ? <Widget>[
+  Widget _buildPolicyIconButton() =>
     Semantics(button: true, excludeSemantics: true,
       label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
       hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
-      child: InkWell(onTap: _onPolicy, child:
-        Padding(padding: EdgeInsets.all(8), child:
-          Styles().images.getImage('info', excludeFromSemantics: true)
+      child: InkWell(onTap: _onPolicy,
+        child: Padding(padding: EdgeInsets.all(8),
+            child: Styles().images.getImage('info', excludeFromSemantics: true)
         ),
       ),
-    )] : null;
+    );
 
-  List<Widget>? _buildSettingsIconButton() => _hasOptions ? <Widget>[
+  Widget _buildSettingsIconButton() =>
     Semantics(button: true, excludeSemantics: true,
       label: Localization().getStringEx('', 'Settings'),
       hint: Localization().getStringEx('', ''),
@@ -1060,9 +1033,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           Styles().images.getImage('more', excludeFromSemantics: true)
         ),
       ),
-    )] : null;
+    );
 
-  List<Widget>? _buildCreateIconButton() => _hasCreateOptions ? <Widget>[
+  Widget _buildCreateIconButton() =>
     Semantics(button: true, excludeSemantics: true,
       label: Localization().getStringEx('', 'Create'),
       hint: Localization().getStringEx('', ''),
@@ -1071,7 +1044,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           Styles().images.getImage('plus-circle', excludeFromSemantics: true)
         ),
       ),
-    )] : null;
+    );
 
   Widget _buildAdmins() {
     if (CollectionUtils.isEmpty(_groupAdmins)) {
@@ -1474,21 +1447,66 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   void _onPolicy () {
     Analytics().logSelect(target: 'Policy');
-    showDialog(context: context, builder: (_) =>  InfoPopup(
+    showDialog(context: context, builder: (_) => InfoPopup(
       backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
       border: Border.all(color: Styles().colors.textDark, width: 1),
       alignment: Alignment.center,
-      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois')),
-      infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
+      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois')),
+      //infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
+      infoTextWidget: _policyInfoTextWidget,
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+      closeIconMargin: EdgeInsets.only(left: 24, right: 8, top: 8, bottom: 24),
     ),);
   }
 
-  // void _onPrivacy () {
-  //   Analytics().logSelect(target: 'Privacy');
-  //   UrlUtils.launchExternal("https://studentcode.illinois.edu");
-  // }
+  Widget get _policyInfoTextWidget {
+    final String universityMacro = '{{app_university}}';
+    final String studentCodeMacro = '{{student_code}}';
+    final String externalLinkMacro = '{{external_link_icon}}';
+    TextStyle? regilarTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin');
+    TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin.link');
+
+    String infoText = Localization().getStringEx('panel.group.detail.policy.text', 'The $universityMacro takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of $studentCodeMacro $externalLinkMacro to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.').
+      replaceAll(universityMacro, Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+
+    String studentCodeText = Localization().getStringEx('panel.group.detail.policy.text.student_code', 'Student Code');
+
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(infoText, macros: [studentCodeMacro, externalLinkMacro], builder: (String entry){
+      if (entry == studentCodeMacro) {
+        return TextSpan(text: studentCodeText, style : linkTextStyle, recognizer: _studentCodeLaunchRecognizer,);
+      }
+      else if (entry == externalLinkMacro) {
+        return WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images.getImage('external-link', size: 14) ?? Container());
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+    return RichText(textAlign: TextAlign.left, text:
+      TextSpan(style: regilarTextStyle, children: spanList)
+    );
+  }
+
+  void _onLaunchStudentCode() {
+    Analytics().logSelect(target: 'Student Code');
+    //TODO: implement student code
+    _launchUrl(Config().studentCodeUrl);
+  }
+
+  static void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        }
+      }
+    }
+  }
 
   void _onTapManagedGroupBadge(){ //TBD
     Analytics().logSelect(target: 'Managed Group Badge');

@@ -96,6 +96,9 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
   bool _illiniCashLoading = false;
   final int _historyNumberOfDays = 14;
 
+  bool get _isLoggedIn => Auth2().isOidcLoggedIn;
+  bool get _canLogin => FlexUI().isAuthenticationAvailable;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -144,11 +147,15 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
   Widget _buildContentSection() =>
     Container(color: widget.backgroundColor, child:
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-        _buildContentHeader(),
-        _buildPrivacyAlertSection(),
-        _buildBalanceSection(),
+        if (0 < widget.headerHeight)
+          _buildContentHeader(),
+        if (!_canLogin)
+          _buildPrivacyAlertSection(),
+        if (_isLoggedIn || _canLogin)
+          _buildBalanceSection(),
         _buildAddIlliniCashSection(),
-        _buildHistorySection(),
+        if (_isLoggedIn)
+          _buildHistorySection(),
       ],),
     );
 
@@ -179,7 +186,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
     return Container(color: Colors.white, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(children: <Widget>[
-          Expanded(child:
+          Expanded(flex: 60, child:
             Stack(children: <Widget>[
               contentWidget,
               _illiniCashLoading ? Column(children: <Widget>[
@@ -189,8 +196,8 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
               ],) : Container(),
             ],)
           ),
-          (!Auth2().isOidcLoggedIn) ? Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 16), child:
+          (!_isLoggedIn && _canLogin) ? Expanded(flex: 40, child:
+            Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 16, top: 16), child:
               RoundedButton(
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
@@ -198,6 +205,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
                 backgroundColor: Styles().colors.surface,
                 textAlign: TextAlign.center,
                 borderColor: Styles().colors.fillColorSecondary,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 onTap: _onTapLogIn,
               ),
             ),
@@ -283,7 +291,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
     Semantics(label: title, header: true, excludeSemantics: true, child:
       Container(color: Styles().colors.fillColorPrimaryVariant, child:
         Align(alignment: Alignment.centerLeft, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
             Row(children: <Widget>[
               Styles().images.getImage(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'settings'), excludeFromSemantics: true) ?? Container(),
               Expanded(child:
