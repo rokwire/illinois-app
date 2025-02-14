@@ -3230,7 +3230,8 @@
 
 	"panel.group_detail.button.policy.label": "政策",
 	"panel.group.detail.button.policy.hint": "点击以阅读政策",
-	"panel.group.detail.policy.text": "{{app_university}} 以支持言论自由和促进包容和相互尊重为荣。使用者可以向群组的管理员反应关于猥亵、威胁、或骚扰的内容。使用者也可以向Dean of Students反映违反学生规范的内容。",
+	"panel.group.detail.policy.text": "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrator(s) about obscene, threatening, or harassing content. Users may also choose to report content in violation of the {{student_code}} {{external_link_icon}} to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.",
+	"panel.group.detail.policy.text.student_code": "Student Code",
 
 	"panel.groups_all_events.label.heading": "即将举行的活动",
 
