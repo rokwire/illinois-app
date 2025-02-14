@@ -26,24 +26,4 @@ class FileHelper extends BaseFileHelper {
   void initializePicker() {
     FilePickerWeb.registerWith(webPluginRegistrar);
   }
-
-  @override
-  Future<bool> saveDownload(String name, Uint8List data) async {
-    // setup
-    final blob = Blob([data]);
-    final url = Url.createObjectUrlFromBlob(blob);
-    final anchor = document.createElement('a') as AnchorElement
-      ..href = url
-      ..style.display = 'none'
-      ..download = name;
-    document.body?.children.add(anchor);
-
-    // download file
-    anchor.click();
-
-    // cleanup
-    document.body?.children.remove(anchor);
-    Url.revokeObjectUrl(url);
-    return true;
-  }
 }

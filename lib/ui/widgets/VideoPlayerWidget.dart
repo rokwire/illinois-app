@@ -18,9 +18,10 @@ class VideoPlayerWidget extends StatefulWidget {
   final String? videoTitle;
   final bool muted;
   final bool fill;
+  final bool interactive;
   VideoPlayerWidget({super.key, this.url, this.uri, this.filePath, this.controller,
     this.useAuthHeaders = false, this.showControls = true, this.muted = false,
-    this.videoID, this.videoTitle, this.fill = false});
+    this.videoID, this.videoTitle, this.fill = false, this.interactive = true});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -44,14 +45,20 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   void _initVideoPlayer() {
+    VideoPlayerOptions options = VideoPlayerOptions(
+      mixWithOthers: widget.muted,
+    );
     if (widget.controller != null) {
       _controller = widget.controller;
     } else if (widget.filePath != null) {
-      _controller = VideoPlayerController.file(File(widget.filePath ?? ''));
+      _controller = VideoPlayerController.file(File(widget.filePath ?? ''),
+        videoPlayerOptions: options,
+      );
     } else if (widget.uri != null || widget.url != null) {
       Uri? uri = widget.uri ?? Uri.tryParse(widget.url ?? '');
       if (uri != null) {
         _controller = VideoPlayerController.networkUrl(uri,
+            videoPlayerOptions: options,
             httpHeaders: widget.useAuthHeaders
                 ? Auth2().networkAuthHeaders ?? {} : {});
       }
@@ -114,7 +121,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           double playerWidth = (deviceOrientation == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
           double playerHeight = (deviceOrientation == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
           Widget player = GestureDetector(
-            onTap: _onTapPlayPause,
+            onTap: widget.interactive ? _onTapPlayPause : null,
             child: Center(
               child: SizedBox(
                 width: playerWidth,

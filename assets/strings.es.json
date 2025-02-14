@@ -2303,8 +2303,8 @@
     "panel.profile_info.picture.upload.failed.msg":"No se pudo cargar la imagen de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.failed.msg":"Error al eliminar la foto de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.confirmation.msg": "¿Estás seguro/a que deseas eliminar esta imagen de perfil?",
-    "panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload pronunciation audio. Please try again later.",
-    "panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete pronunciation audio. Please try again later.",
+    "panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload audio. Please try again later.",
+    "panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete audio. Please try again later.",
     "panel.profile_info.pronunciation.delete.confirmation.msg": "Are you sure you want to remove this pronunciation audio?",
 
     "panel.profile.stored_data.header.title": "My Stored Information",

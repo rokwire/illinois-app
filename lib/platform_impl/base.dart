@@ -16,5 +16,4 @@ import 'package:flutter/foundation.dart';
 
 abstract class BaseFileHelper {
   void initializePicker();
-  Future<bool> saveDownload(String name, Uint8List data);
 }

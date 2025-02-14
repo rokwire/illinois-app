@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_io/io.dart';
-
+import 'package:http/http.dart' as http;
 
 class ProfileNamePronouncementWidget extends StatefulWidget {
 
@@ -214,7 +214,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         if (mounted) {
           setState(() { _editActivity = false; });
           if (profileResult != true) {
-            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
           }
         }
       }
@@ -237,13 +237,13 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         if (mounted) {
           setState(() => _deleteActivity = false);
           if (profileResult != true) {
-            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete pronunciation audio. Please try again later."));
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete audio. Please try again later."));
           }
         }
       }
       else if (mounted) {
         setState(() => _deleteActivity = false);
-        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete pronunciation audio. Please try again later."));
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete audio. Please try again later."));
       }
     }
   }
@@ -257,9 +257,10 @@ enum _RecorderMode {record, play}
 
 class ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
+  final Future<AudioResult> Function(Uint8List? audioFile)? onSave;
 
   // ignore: unused_element
-  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
+  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes, this.onSave});
 
   @override
   _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
@@ -288,7 +289,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
   void initState() {
     _controller = _ProfileSoundRecorderController(
       initialAudio: widget.initialRecordBytes,
-      notifyChanged: (fn) =>setStateIfMounted(fn)
+      notifyChanged: () => setStateIfMounted()
     );
     _controller.init();
     WidgetsBinding.instance.addPostFrameCallback((_){
@@ -343,9 +344,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
                                   _onStopRecording();
                                 }
                               } ,
-                              child: Container(
-                                child: _playButtonIcon ?? Container()
-                              ),
+                              child: _playButtonIcon ?? Container(),
                             ),
                             Container(height: 8,),
                             Container(
@@ -421,16 +420,16 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
-        if(result.resultType == AudioResultType.succeeded){
+        AudioResult result = await (widget.onSave ?? Content().uploadUserNamePronunciation).call(audioBytes);
+        if (result.resultType == AudioResultType.succeeded) {
           setStateIfMounted(() => _loading = false);
           _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
-          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
         }
       } else {
-        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
       }
     }catch(e){
       Log.e(e.toString());
@@ -448,8 +447,10 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
   }
 
   Widget? get _playButtonIcon {
-    if(_mode == _RecorderMode.play){
-      return Styles().images.getImage('icon-play', excludeFromSemantics: true,);
+    if (_mode == _RecorderMode.play) {
+      return _controller.isPlaying ?
+        Styles().images.getImage('pause-filled-blue', excludeFromSemantics: true, size: 74, fit: BoxFit.cover) :
+        Styles().images.getImage('icon-play', excludeFromSemantics: true,);
         // _controller.isPlaying ?
         // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors.surface,)) : //TBD do we need another icon for stop?
         //Styles().images.getImage('icon-play', excludeFromSemantics: true, size: iconSize);
@@ -505,7 +506,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
 }
 
 class _ProfileSoundRecorderController {
-  final Function(void Function()) notifyChanged;
+  final Function() notifyChanged;
   final Uint8List? initialAudio;
 
   late AudioRecorder _audioRecorder;
@@ -521,7 +522,8 @@ class _ProfileSoundRecorderController {
     _audioRecorder = AudioRecorder();
     _audioPlayer = AudioPlayer();
     _audioPlayer.positionStream.listen((elapsedDuration) {
-      notifyChanged(() => _playerTimer = elapsedDuration);
+      _playerTimer = elapsedDuration;
+      notifyChanged();
     });
     if(initialAudio!= null){
       _audio = initialAudio;
@@ -538,12 +540,13 @@ class _ProfileSoundRecorderController {
   void startRecording() async {
     try {
       Log.d("START RECODING");
+      _recording = true;
       if (await _audioRecorder.hasPermission()) {
-        notifyChanged(() => _recording = true);
+        notifyChanged();
         String? path = await _constructFilePath;
-        if (path != null) {
-          await _audioRecorder.start(const RecordConfig(), path: path);
-          _recording = await _audioRecorder.isRecording();
+        if (kIsWeb || path != null) {
+          await _audioRecorder.start(const RecordConfig(encoder: AudioEncoder.wav), path: path ?? '');
+          // _recording = await _audioRecorder.isRecording();
         }
       }
     } catch (e, stackTrace) {
@@ -555,12 +558,12 @@ class _ProfileSoundRecorderController {
     Log.d("STOP RECODING");
     try {
       String? path = await _audioRecorder.stop();
+      print('audio path: $path');
       _recording = await _audioRecorder.isRecording();
       var audioBytes = await getFileAsBytes(path);
-      notifyChanged(() {
-        _audio = audioBytes;
-        _audioRecordPath = path;
-      });
+      _audio = audioBytes;
+      _audioRecordPath = path;
+      notifyChanged();
       Log.d("STOP RECODING audioPath = $_audioRecordPath");
     } catch (e) {
       Log.d("STOP RECODING: ${e}");
@@ -573,7 +576,7 @@ class _ProfileSoundRecorderController {
     try {
       if(_haveAudio)
         await _audioPlayer.setAudioSource(_audioSource!);
-      notifyChanged(() {});
+      notifyChanged();
     } catch(e){
       Log.d(e.toString());
     }
@@ -614,10 +617,9 @@ class _ProfileSoundRecorderController {
 
   void resetRecord() {
       _deleteRecord();
-      notifyChanged(() {
-        _audioRecordPath = null;
-        _audio = null;
-      });
+      _audioRecordPath = null;
+      _audio = null;
+      notifyChanged();
   }
 
   Future<bool> requestPermission() async => _audioRecorder.hasPermission();
@@ -662,6 +664,14 @@ class _ProfileSoundRecorderController {
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{
     if(StringUtils.isNotEmpty(filePath)){
+      if (kIsWeb) {
+        Uri? uri = Uri.tryParse(filePath!);
+        if (uri != null) {
+          final response = await http.get(uri);
+          return response.bodyBytes;
+        }
+        return null;
+      }
       File file = File(filePath!);
       try{
         if(file.existsSync()){

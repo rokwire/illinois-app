@@ -22,22 +22,4 @@ import 'package:path_provider/path_provider.dart';
 class FileHelper extends BaseFileHelper {
   @override
   void initializePicker() {}
-
-  @override
-  Future<bool> saveDownload(String name, Uint8List data) async {
-    if (Platform.isAndroid) {
-      Directory? downloadsDir = Directory("/storage/emulated/0/Download");
-      if (!await downloadsDir.exists()) {
-        downloadsDir = await getExternalStorageDirectory();
-      }
-      if (downloadsDir != null) {
-        File downloadsFile = File('${downloadsDir.path}/$name');
-        downloadsFile = await downloadsFile.writeAsBytes(data);
-        FileStat stats = await downloadsFile.stat();
-        return stats.size > 0;
-      }
-    }
-    //TODO: implement for iOS
-    return false;
-  }
 }

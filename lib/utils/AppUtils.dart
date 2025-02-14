@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:mime/mime.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:neom/ui/WebPanel.dart';
@@ -36,6 +37,7 @@ import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:http/http.dart' as http;
 
 class AppAlert {
   
@@ -503,21 +505,40 @@ class AppCsv {
 }
 
 class AppFile {
-  static Future<void> downloadFile({required BuildContext context, required String fileContent, required String fileName, required String mimeType}) async {
+  static Future<void> downloadFile({required BuildContext context,
+    String? fileContent, Uint8List? fileBytes, String? url, required String fileName,
+    String? mimeType}) async {
+    if (url != null) {
+      Uri? uri = Uri.tryParse(url);
+      if (uri != null) {
+        final response = await http.get(uri);
+        fileBytes = response.bodyBytes;
+      }
+    }
     if (kIsWeb) {
-      _downLoadInWeb(context: context, fileContent: fileContent, fileName: fileName);
+      if (fileContent != null) {
+        fileBytes ??= utf8.encode(fileContent);
+      }
+      if (fileBytes != null) {
+        _downloadInWeb(context: context, fileContent: fileBytes, fileName: fileName);
+      }
     } else {
-      await _downloadNative(context: context, fileContent: fileContent, fileName: fileName, mimeType: mimeType);
+      if (fileContent != null) {
+        fileBytes ??= Uint8List.fromList(fileContent.codeUnits);
+      }
+      if (fileBytes != null) {
+        await _downloadNative(context: context, fileContent: fileBytes, fileName: fileName, mimeType: mimeType);
+      }
     }
   }
 
-  static void _downLoadInWeb({required BuildContext context, required String fileContent, required String fileName}) {
+  static void _downloadInWeb({required BuildContext context, required Uint8List fileContent, required String fileName}) {
     if (!kIsWeb) {
       return;
     }
 
     // prepare
-    final bytes = utf8.encode(fileContent);
+    final bytes = fileContent;
     final blob = html.Blob([bytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.document.createElement('a') as html.AnchorElement
@@ -534,16 +555,15 @@ class AppFile {
     html.Url.revokeObjectUrl(url);
   }
 
-  static Future<void> _downloadNative({required BuildContext context, required String fileContent, required String fileName, required String mimeType}) async {
+  static Future<void> _downloadNative({required BuildContext context, required Uint8List fileContent, required String fileName, String? mimeType}) async {
     if (!await FlutterFileDialog.isPickDirectorySupported()) {
       return;
     }
     final pickedDirectory = await FlutterFileDialog.pickDirectory();
     if (pickedDirectory != null) {
-      List<int> list = fileContent.codeUnits;
-      Uint8List fileBytes = Uint8List.fromList(list);
+      mimeType ??= lookupMimeType(fileName);
       await FlutterFileDialog.saveFileToDirectory(
-          directory: pickedDirectory, mimeType: mimeType, data: fileBytes, fileName: fileName, replace: true);
+          directory: pickedDirectory, mimeType: mimeType, data: fileContent, fileName: fileName, replace: true);
     } else {
       AppAlert.showDialogResult(context, 'Failed to save file - missing directory.');
     }

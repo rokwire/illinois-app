@@ -2312,8 +2312,8 @@
     "panel.profile_info.picture.upload.failed.msg":"Failed to upload profile picture. Please try again later.",
     "panel.profile_info.picture.delete.failed.msg":"Failed to delete profile picture. Please try again later.",
     "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
-    "panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload pronunciation audio. Please try again later.",
-    "panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete pronunciation audio. Please try again later.",
+    "panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload audio. Please try again later.",
+    "panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete audio. Please try again later.",
     "panel.profile_info.pronunciation.delete.confirmation.msg": "Are you sure you want to remove this pronunciation audio?",
 
     "panel.profile.stored_data.header.title": "My Stored Information",

@@ -20,9 +20,4 @@ class FileHelper extends BaseFileHelper {
   void initializePicker() {
     throw Exception("Unimplemented");
   }
-
-  @override
-  Future<bool> saveDownload(String name, Uint8List data) async {
-    throw Exception("Unimplemented");
-  }
 }

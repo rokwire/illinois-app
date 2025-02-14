@@ -2291,8 +2291,8 @@
 	"panel.profile_info.picture.upload.failed.msg":"上传个人资料图像失败，请稍后再试",
 	"panel.profile_info.picture.delete.failed.msg":"无法删除图像，请稍后再试。",
 	"panel.profile_info.picture.delete.confirmation.msg": "您确定要移除此个人资料图像？",
-	"panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload pronunciation audio. Please try again later.",
-	"panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete pronunciation audio. Please try again later.",
+	"panel.profile_info.pronunciation.upload.failed.msg":"Failed to upload audio. Please try again later.",
+	"panel.profile_info.pronunciation.delete.failed.msg":"Failed to delete audio. Please try again later.",
 	"panel.profile_info.pronunciation.delete.confirmation.msg": "Are you sure you want to remove this pronunciation audio?",
 
 	"panel.profile.stored_data.header.title": "My Stored Information",
