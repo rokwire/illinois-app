@@ -19,6 +19,7 @@ import 'dart:typed_data';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Config.dart';
@@ -58,9 +59,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ui/groups/GroupAllEventsPanel.dart';
+import 'package:neom/ui/groups/GroupMembersPanel.dart';
 import 'package:neom/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:neom/ui/groups/GroupPollListPanel.dart';
 import 'package:neom/ui/groups/GroupPostCreatePanel.dart';
+import 'package:neom/ui/groups/GroupSettingsPanel.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:neom/ui/polls/CreatePollPanel.dart';
 import 'package:neom/ui/widgets/ExpandableText.dart';
@@ -75,9 +78,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
-
-import 'GroupMembersPanel.dart';
-import 'GroupSettingsPanel.dart';
 
 enum DetailTab {Events, Posts, Scheduled, Messages, Polls, About }
 
@@ -730,7 +730,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     if (StringUtils.isNotEmpty(members)) {
       contentList.add(GestureDetector(onTap: _canViewMembers ? _onTapMembers : null, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.small.underline') : Styles().textStyles.getTextStyle('widget.title.small'))
+          Text(members, style: _canViewMembers ? Styles().textStyles.getTextStyle('widget.title.dark.small.underline') : Styles().textStyles.getTextStyle('widget.title.dark.small'))
         ),
       ));
     }
@@ -1464,27 +1464,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     final String universityMacro = '{{app_university}}';
     final String studentCodeMacro = '{{student_code}}';
     final String externalLinkMacro = '{{external_link_icon}}';
-    TextStyle? regilarTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin');
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin');
     TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin.link');
 
     String infoText = Localization().getStringEx('panel.group.detail.policy.text', 'The $universityMacro takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of $studentCodeMacro $externalLinkMacro to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.').
-      replaceAll(universityMacro, Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+      replaceAll(universityMacro, Localization().getStringEx('app.university_name', 'University of Illinois'));
 
     String studentCodeText = Localization().getStringEx('panel.group.detail.policy.text.student_code', 'Student Code');
 
     List<InlineSpan> spanList = StringUtils.split<InlineSpan>(infoText, macros: [studentCodeMacro, externalLinkMacro], builder: (String entry){
+      bool hasStudentCode = StringUtils.isNotEmpty(Config().studentCodeUrl);
       if (entry == studentCodeMacro) {
-        return TextSpan(text: studentCodeText, style : linkTextStyle, recognizer: _studentCodeLaunchRecognizer,);
+        if (hasStudentCode) {
+          return TextSpan(text: studentCodeText, style : linkTextStyle, recognizer: _studentCodeLaunchRecognizer,);
+        }
+        return TextSpan(text: studentCodeText);
       }
       else if (entry == externalLinkMacro) {
-        return WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images.getImage('external-link', size: 14) ?? Container());
+        if (hasStudentCode) {
+          return WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images.getImage('external-link', size: 14) ?? Container());
+        }
+        return TextSpan(text: '');
       }
       else {
         return TextSpan(text: entry);
       }
     });
     return RichText(textAlign: TextAlign.left, text:
-      TextSpan(style: regilarTextStyle, children: spanList)
+      TextSpan(style: regularTextStyle, children: spanList)
     );
   }
 

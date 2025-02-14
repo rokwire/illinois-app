@@ -1,5 +1,5 @@
 
-import 'package:illinois/model/PrivacyData.dart';
+import 'package:neom/model/PrivacyData.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
