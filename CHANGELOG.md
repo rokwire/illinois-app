@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged new privacy content for App Directory [#4772](https://github.com/rokwire/illinois-app/issues/4772).
 - Do not log to Splunk the actual email/phone/website when using links from App Directory profiles [#4786](https://github.com/rokwire/illinois-app/issues/4786).
 - "Wellness Resources" dropdown item renamed to "General Resources" [#4504](https://github.com/rokwire/illinois-app/issues/4504).
+- Close up Group Detail heading layout, updated policy info text [#4779](https://github.com/rokwire/illinois-app/issues/4779).
 
 ## [6.1.59] - 2025-02-13
 ### Changed

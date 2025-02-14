@@ -272,6 +272,7 @@
     "widget.description.medium.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.description.medium.fat.highlight": { "extends": "widget.description.medium.fat", "color": "white"},
     "widget.description.regular.thin": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.description.regular.thin.link": { "extends": "widget.description.regular.thin", "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.description.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular.highlight": { "extends": "widget.description.regular", "color": "white"},
     "widget.description.regular.underline": { "extends": "widget.description.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
