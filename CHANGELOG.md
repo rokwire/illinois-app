@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Web app icons [#4791](https://github.com/rokwire/illinois-app/issues/4791).
+
 ## [6.1.59] - 2025-02-13
 ### Changed
 - Reworked url parsing to handle various URL links, not only host names. Some general cleanup and fixes is also applied [#4770](https://github.com/rokwire/illinois-app/issues/4770).
