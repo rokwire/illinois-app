@@ -21,6 +21,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/ui/home/HomeEmptyFavoritesWidget.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeToutWidget.dart';
 import 'package:neom/ui/home/HomeWelcomeMessageWidget.dart';
@@ -164,11 +165,23 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   }
 
   @override
-  Widget build(BuildContext context) =>
-    Column(children: <Widget>[
+  Widget build(BuildContext context) {
+    bool hasNoFavorites = (_favoriteCodes == null) || _favoriteCodes!.isEmpty;
+
+    List<Widget> children = [
+      if (hasNoFavorites)
+        HomeEmptyFavoritesWidget(
+          favoriteId: null,
+          updateController: widget.updateController,
+        ),
       ..._buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes),
-      ..._buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes),
-    ],);
+      if (!hasNoFavorites)
+        ..._buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes),
+    ];
+
+    return Column(children: children);
+  }
+
 
   List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
     List<Widget> widgets = [];

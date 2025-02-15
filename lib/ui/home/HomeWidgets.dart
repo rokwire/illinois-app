@@ -761,7 +761,11 @@ class HomeMessageHtmlCard extends StatelessWidget {
                     StringUtils.ensureNotEmpty(title),
                     onTapUrl : (url) { _onTapLink(url); return true; },
                     textStyle:  Styles().textStyles.getTextStyle("widget.card.title.medium.fat"),
-                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
+                    customStylesBuilder: (element) => (element.localName == "a") ? {
+                      "color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary),
+                      "text-decoration-color": "currentcolor",
+                      "text-decoration-line": "underline",
+                    } : null
                 )
               ),
             )
@@ -772,7 +776,11 @@ class HomeMessageHtmlCard extends StatelessWidget {
                   StringUtils.ensureNotEmpty(message),
                   onTapUrl : (url) { _onTapLink(url); return true; },
                   textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {
+                    "color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary),
+                    "text-decoration-color": "currentcolor",
+                    "text-decoration-line": "underline",
+                  } : null
                )
             )
           ]) : Container(),

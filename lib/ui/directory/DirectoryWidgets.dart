@@ -226,7 +226,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
   String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
     Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.account.id, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
 
-  double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+  double get _photoImageSize => MediaQuery.of(context).size.width / 6;
 
   Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 

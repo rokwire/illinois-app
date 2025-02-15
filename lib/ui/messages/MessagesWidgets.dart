@@ -449,6 +449,7 @@ class ConversationCard extends StatelessWidget {
                         _buildDisplayDateWidget,
                       ],
                     ),
+                    const SizedBox(height: 12),
                     _buildLastMessageWidget()
                   ],
                 ),
@@ -526,16 +527,33 @@ class ConversationCard extends StatelessWidget {
     String? messageText = StringUtils.isNotEmpty(lastMessage?.message) ? lastMessage?.message : conversation.lastMessageText;
 
     ConversationMember? sender = lastMessage?.sender;
-    String? senderName = (StringUtils.isNotEmpty(sender?.accountId) && (sender?.accountId == Auth2().accountId)) ?
-    Localization().getStringEx('widget.conversation_card.sender.me', 'You') : sender?.name;
+    String? senderName = (StringUtils.isNotEmpty(sender?.accountId) &&
+        (sender?.accountId == Auth2().accountId)) ? Localization().getStringEx('widget.conversation_card.sender.me', 'You')
+        : sender?.name;
 
-    return (StringUtils.isNotEmpty(messageText)) ? Text(
-      StringUtils.isNotEmpty(senderName) ? '$senderName: $messageText' : (messageText ?? ''),
-      semanticsLabel: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s'), [messageText ?? ''],),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat"),
-    ) : Container();
+    if (!StringUtils.isNotEmpty(messageText)) {
+      return Container();
+    }
+
+    return Semantics(
+      label: sprintf(Localization().getStringEx('widget.conversation_card.body.hint', 'Message: %s',), [messageText ?? ''],),
+      child: RichText(
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        text: TextSpan(
+          children: <TextSpan>[
+            if (StringUtils.isNotEmpty(senderName))
+              TextSpan(
+                text: '$senderName: ',
+                style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat"),),
+            TextSpan(
+              text: messageText,
+              style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat"),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget get _buildDisplayDateWidget {

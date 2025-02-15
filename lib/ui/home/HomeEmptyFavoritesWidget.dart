@@ -6,8 +6,6 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/BrowsePanel.dart';
 import 'package:neom/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/profile/ProfileHomePanel.dart';
-import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 
@@ -38,20 +36,20 @@ class HomeFavoritesInstructionsMessageCard extends StatelessWidget {
   static const String _customizeFavsLocalUrlMacro   = '{{customize_favorites_local_url}}';
   static const String _customizeFavsLocalUrl        = 'customize_favorites';
 
-  static const String _signInLocalUrlMacro          = '{{sign_in_local_url}}';
-  static const String _signInLocalUrl               = 'sign_in';
+  // static const String _signInLocalUrlMacro          = '{{sign_in_local_url}}';
+  // static const String _signInLocalUrl               = 'sign_in';
 
-  static const String _privacySettingsLocalUrlMacro = '{{privacy_settings_local_url}}';
-  static const String _privacySettingsLocalUrl      = 'privacy_settings';
+  // static const String _privacySettingsLocalUrlMacro = '{{privacy_settings_local_url}}';
+  // static const String _privacySettingsLocalUrl      = 'privacy_settings';
 
   @override
   Widget build(BuildContext context) =>
     HomeMessageHtmlCard(
-      message: Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_customizeFavsLocalUrlMacro'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
+      message: Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_customizeFavsLocalUrlMacro'>Customize</a> to add shortcuts to Favorites.")
         .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
-        .replaceAll(_customizeFavsLocalUrlMacro, '$_localScheme://$_customizeFavsLocalUrl')
-        .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
-        .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl'),
+        .replaceAll(_customizeFavsLocalUrlMacro, '$_localScheme://$_customizeFavsLocalUrl'),
+        // .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
+        // .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl'),
       margin: EdgeInsets.only(bottom: 16),
       onTapLink : (url) => _onTapLink(context, url),
     );
@@ -67,14 +65,14 @@ class HomeFavoritesInstructionsMessageCard extends StatelessWidget {
         Analytics().logSelect(target: 'Customize', source: runtimeType.toString());
         HomeCustomizeFavoritesPanel.present(context);
       }
-      else if (uri?.host == _signInLocalUrl) {
-        Analytics().logSelect(target: 'Sign In', source: runtimeType.toString());
-        ProfileHomePanel.present(context, content: ProfileContent.login);
-      }
-      else if (uri?.host == _privacySettingsLocalUrl) {
-        Analytics().logSelect(target: 'Privacy Settings', source: runtimeType.toString());
-        SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
-      }
+      // else if (uri?.host == _signInLocalUrl) {
+      //   Analytics().logSelect(target: 'Sign In', source: runtimeType.toString());
+      //   ProfileHomePanel.present(context, content: ProfileContent.login);
+      // }
+      // else if (uri?.host == _privacySettingsLocalUrl) {
+      //   Analytics().logSelect(target: 'Privacy Settings', source: runtimeType.toString());
+      //   SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      // }
     }
   }
 }
