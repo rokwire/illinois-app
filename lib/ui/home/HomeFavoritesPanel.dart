@@ -169,12 +169,12 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     bool hasNoFavorites = (_favoriteCodes == null) || _favoriteCodes!.isEmpty;
 
     List<Widget> children = [
+      ..._buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes),
       if (hasNoFavorites)
         HomeEmptyFavoritesWidget(
           favoriteId: null,
           updateController: widget.updateController,
         ),
-      ..._buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes),
       if (!hasNoFavorites)
         ..._buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes),
     ];
