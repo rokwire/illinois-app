@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
 
@@ -130,7 +130,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
         Container(color: Styles().colors.background, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Column(children: <Widget>[
-              Container(color: Colors.white, child:
+              Container(color: Styles().colors.surface, child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 24, right: 8), child:
                     Row(children: <Widget>[

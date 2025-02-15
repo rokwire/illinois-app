@@ -21,10 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -194,7 +196,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               padding: EdgeInsets.all(15.0),
               child: Text(
                 "Image Source",
-                style: Styles().textStyles.getTextStyle("widget.title.dark.small"),
+                style: Styles().textStyles.getTextStyle("widget.title.small"),
               ),
             ),
             Padding(
@@ -243,14 +245,22 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   void _openImagePicker(source) async {
     _showLoader();
     XFile? pickedFile = await ImagePicker().pickImage(source: source, maxWidth: 1920, maxHeight: 1920);
-    if(pickedFile != null){
+    if (pickedFile != null) {
       _imageBytes = await pickedFile.readAsBytes();
-      _imageName = basename(pickedFile.name);
-      _contentType = mime(_imageName);
-      _openEditTools();
+      _imageName = kIsWeb ? pickedFile.name : basename(pickedFile.path);
+      _contentType = kIsWeb ? pickedFile.mimeType : mime(_imageName);
+      if (kIsWeb) {
+        _showLoader();
+        CroppedFile? croppedImage = await _cropImage(pickedFile);
+        if (croppedImage != null) {
+          _imageBytes = await croppedImage.readAsBytes();
+        }
+        _hideLoader();
+      } else {
+        _openEditTools();
+      }
     } else {
       //No image selected
-
     }
     _hideLoader();
   }
@@ -277,6 +287,22 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         colorForWhiteSpace: Styles().colors.surface,
       );
     }
+  }
+
+  Future<CroppedFile?> _cropImage(XFile? initialImage) async {
+    if (!kIsWeb) {
+      // Use it only for web
+      return null;
+    }
+    if (initialImage == null) {
+      return null;
+    }
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: initialImage.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        uiSettings: [WebUiSettings(context: this.context, presentStyle: WebPresentStyle.page)]);
+    return croppedImage;
   }
 
   /// To display loader with loading text
@@ -308,6 +334,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   void _onEdit(){
+    if (kIsWeb) {
+      //TBD: DDWEB - does not work for web
+    }
     _openEditTools();
   }
 

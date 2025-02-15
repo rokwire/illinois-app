@@ -49,8 +49,8 @@ class DeepLink extends rokwire.DeepLink {
   // Overrides
 
   @override
-  String? get appScheme => _appScheme ?? 'edu.illinois.rokwire';
+  String? get appScheme => _appScheme ?? 'com.rokmetro.university.neom';
   
   @override
-  String? get appHost => 'rokwire.illinois.edu';
+  String? get appHost => 'neom.university.rokmetro.com';
 }

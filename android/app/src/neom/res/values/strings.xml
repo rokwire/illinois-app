@@ -17,7 +17,7 @@
 
 <resources>
     <string name="app_name">NEOM U</string>
-    <string name="app_scheme" translatable="false">edu.neom.rokwire</string>
+    <string name="app_scheme" translatable="false">com.rokmetro.university.neom</string>
 
     <!-- Mobile Access -->
     <string name="mobile_access_notif_content_title">Mobile Access is running</string>
