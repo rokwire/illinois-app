@@ -80,6 +80,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
+  final GlobalKey<ProfileInfoWrapperPageState> _profileInfoKey = GlobalKey();
 
   final ScrollController _scrollController = ScrollController();
 
@@ -129,7 +130,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   @override
   Widget build(BuildContext context) {
     //return _buildScaffold(context);
-    return _buildSheet(context);
+    return _buildSheet();
   }
 
   /*Widget _buildScaffold(BuildContext context) {
@@ -141,43 +142,47 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     );
   }*/
 
-  Widget _buildSheet(BuildContext context) {
+  Widget _buildSheet() {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.white, child:
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
-            )
-          ),
-          Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-            Semantics(label: "debug", child:
-              InkWell(onTap : _onTapDebug, child:
-                Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-                  Styles().images.getImage('bug', excludeFromSemantics: true),
-                ),
-              ),
-            )
-          ),
-          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-            InkWell(onTap : _onTapClose, child:
-              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images.getImage('close-circle', excludeFromSemantics: true),
-              ),
-            ),
-          ),
-
-        ],),
-      ),
+      _buildHeaderBar(),
       Container(color: Styles().colors.surfaceAccent, height: 1,),
       Expanded(child:
-        _buildPage(context),
+        _buildPage(),
       )
     ],);
   }
 
-  Widget _buildPage(BuildContext context) {
+  Widget _buildHeaderBar() {
+    return Container(color: Styles().colors.white, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16), child:
+            Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+          )
+        ),
+        Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+          Semantics(label: "debug", child:
+            InkWell(onTap : _onTapDebug, child:
+              Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+                Styles().images.getImage('bug', excludeFromSemantics: true),
+              ),
+            ),
+          )
+        ),
+        Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+          InkWell(onTap : _onTapClose, child:
+            Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+              Styles().images.getImage('close-circle', excludeFromSemantics: true),
+            ),
+          ),
+        ),
+
+      ],),
+    );
+  }
+
+  Widget _buildPage() {
     return Column(key: _pageKey, children: <Widget>[
       Expanded(child:
         Container(color: Styles().colors.background, child:
@@ -260,8 +265,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
         onTap: () => _onTapContentItem(contentItem));
   }
 
-  void _onTapContentItem(ProfileContent contentItem) {
+  void _onTapContentItem(ProfileContent contentItem) async {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
+    if (_selectedContent == ProfileContent.profile) {
+      await saveModifiedProfile();
+    }
     setState(() {
       _selectedContent = _lastSelectedContent = contentItem;
       _contentValuesVisible = !_contentValuesVisible;
@@ -275,8 +283,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     }
   }
 
-  void _onTapClose() {
+  void _onTapClose() async {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    await saveModifiedProfile();
     Navigator.of(context).pop();
   }
 
@@ -292,6 +301,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     });
   }
 
+  Future<void> saveModifiedProfile() async => _profileInfoKey.currentState?.saveModified();
+
   // Utilities
 
   double? get _contentHeight  {
@@ -306,7 +317,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileInfoWrapperPage(params: widget.contentParams,);
+      case ProfileContent.profile: return ProfileInfoWrapperPage(key: _profileInfoKey, params: widget.contentParams,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
