@@ -731,7 +731,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           );
         }
       }
-      else {
+      else if (shouldSave == false) {
         widget.onFinishEdit?.call(
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
@@ -752,11 +752,31 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       prompt = Localization().getStringEx('panel.profile.info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
     }
 
-    return (prompt != null) ? await AppAlert.showConfirmationDialog(context,
-      message: prompt,
-      positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
-      negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No')
-    ) : null;
+    return (prompt != null) ? await showDialog(context: context, builder: (context) =>
+      AlertDialog(content: Text(prompt ?? ''), actions: <Widget>[
+        TextButton(child:
+          Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: 'Yes');
+            Navigator.pop(context, true);
+          }
+        ),
+        TextButton(child:
+          Text(Localization().getStringEx('dialog.no.title', 'No')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: 'No');
+            Navigator.pop(context, false);
+          }
+        ),
+        TextButton(child:
+          Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: 'Cancel');
+            Navigator.pop(context, null);
+          }
+        ),
+      ])
+    ) : false;
   }
 
   Widget get _saveEditButton => RoundedButton(
@@ -830,14 +850,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
   }
 
-  Future <void> saveModified() async {
+  // Returns true if we can close the UI, false if canceled.
+  Future<bool> saveModified() async {
     FocusScope.of(context).unfocus();
 
     if (mounted && (_saving == false)) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
-            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+          profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
         )
       );
 
@@ -845,6 +866,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       if (shouldSave == true) {
         await _saveEdit(profile, privacy);
       }
+      return (shouldSave != null);
+    }
+    else {
+      return true;
     }
   }
 

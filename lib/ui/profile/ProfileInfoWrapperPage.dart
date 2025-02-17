@@ -25,7 +25,7 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implemen
   GestureRecognizer? _signInRecognizer;
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey();
 
-  Future<void> saveModified() async => _profileInfoKey.currentState?.saveModified();
+  Future<bool?> saveModified() async => _profileInfoKey.currentState?.saveModified();
 
   @override
   void initState() {
