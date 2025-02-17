@@ -710,13 +710,38 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     Analytics().logSelect(target: 'Cancel Edit');
     FocusScope.of(context).unfocus();
 
-    Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-    Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-      fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
-          profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-      )
-    );
+    if (_saving == false) {
+      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+        )
+      );
 
+      bool? shouldSave = await _shouldSaveModified(profile, privacy);
+      if (shouldSave == true) {
+        _ProfileSaveResult result = await _saveEdit(profile, privacy);
+        if (result.succeeded) {
+          widget.onFinishEdit?.call(
+            profile: (result.profile == true) ? profile : null,
+            privacy: (result.privacy == true) ? privacy : null,
+            pronunciationAudioData: _pronunciationAudioData,
+            photoImageData: _photoImageData,
+            photoImageToken: _photoImageToken,
+          );
+        }
+      }
+      else {
+        widget.onFinishEdit?.call(
+          photoImageData: _photoImageData,
+          photoImageToken: _photoImageToken,
+          pronunciationAudioData: _pronunciationAudioData,
+        );
+      }
+    }
+  }
+
+  Future<bool?> _shouldSaveModified(Auth2UserProfile profile, Auth2UserPrivacy privacy) async {
     String? prompt;
     if (widget.profile != profile) {
       prompt = (widget.privacy != privacy) ?
@@ -727,21 +752,11 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       prompt = Localization().getStringEx('panel.profile.info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
     }
 
-    bool shouldSave = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
+    return (prompt != null) ? await AppAlert.showConfirmationDialog(context,
       message: prompt,
       positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
       negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No')
-    ) : false;
-    if (shouldSave) {
-      _onSaveEdit();
-    }
-    else {
-      widget.onFinishEdit?.call(
-        photoImageData: _photoImageData,
-        photoImageToken: _photoImageToken,
-        pronunciationAudioData: _pronunciationAudioData,
-      );
-    }
+    ) : null;
   }
 
   Widget get _saveEditButton => RoundedButton(
@@ -752,19 +767,11 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     onTap: _onSaveEdit,
   );
 
-  void _onSaveEdit() {
+  void _onSaveEdit() async {
     Analytics().logSelect(target: 'Save Edit');
-    saveEdit();
-  }
-
-  Future<bool> saveEdit() async {
     FocusScope.of(context).unfocus();
 
-    if (_saving == true) {
-      // Operation in progress
-      return false;
-    }
-    else {
+    if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
@@ -772,61 +779,71 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         )
       );
 
-      List<Future> futures = [];
+      _ProfileSaveResult result = await _saveEdit(profile, privacy);
 
-      int? profileIndex = (widget.profile != profile) ? futures.length : null;
-      if (profileIndex != null) {
-        futures.add(Auth2().saveUserProfile(profile));
-      }
-
-      int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
-      if (privacyIndex != null) {
-        futures.add(Auth2().saveUserPrivacy(privacy));
-      }
-
-      if (futures.length == 0) {
-        // Nothing to save
+      if (result.succeeded) {
         widget.onFinishEdit?.call(
+          profile: (result.profile == true) ? profile : null,
+          privacy: (result.privacy == true) ? privacy : null,
           pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
         );
-        return true;
       }
-      else {
-        setState(() {
-          _saving = true;
-        });
+    }
+  }
 
-        List<dynamic> results = await Future.wait(futures);
+  Future<_ProfileSaveResult> _saveEdit(Auth2UserProfile profile, Auth2UserPrivacy privacy) async {
 
-        if (mounted == false) {
-          // Already stalled
-          return false;
-        }
-        else {
-          bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
-          bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+    List<Future> futures = [];
 
-          setState(() {
-            _saving = false;
-          });
+    int? profileIndex = (widget.profile != profile) ? futures.length : null;
+    if (profileIndex != null) {
+      futures.add(Auth2().saveUserProfile(profile));
+    }
 
-          if ((profileResult ?? true) && (privacyResult ?? true)) {
-            widget.onFinishEdit?.call(
-              profile: (profileResult == true) ? profile : null,
-              privacy: (privacyResult == true) ? privacy : null,
-              pronunciationAudioData: _pronunciationAudioData,
-              photoImageData: _photoImageData,
-              photoImageToken: _photoImageToken,
-            );
-            return true; // Succeeded
-          }
-          else {
-            AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.save.failed.text', 'Failed to update profile and privacy settings.'));
-            return false; // Failed
-          }
-        }
+    int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
+    if (privacyIndex != null) {
+      futures.add(Auth2().saveUserPrivacy(privacy));
+    }
+
+    if (futures.length == 0) {
+      return _ProfileSaveResult();
+    }
+    else {
+      setStateIfMounted(() {
+        _saving = true;
+      });
+
+      List<dynamic> results = await Future.wait(futures);
+
+      setStateIfMounted(() {
+        _saving = false;
+      });
+
+      bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
+      bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+      if ((profileResult == false) || (privacyResult == false)) {
+        await AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.save.failed.text', 'Failed to update profile and privacy settings.'));
+      }
+      return _ProfileSaveResult(profile: profileResult, privacy: privacyResult);
+    }
+  }
+
+  Future <void> saveModified() async {
+    FocusScope.of(context).unfocus();
+
+    if (mounted && (_saving == false)) {
+      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+        )
+      );
+
+      bool? shouldSave = await _shouldSaveModified(profile, privacy);
+      if (shouldSave == true) {
+        await _saveEdit(profile, privacy);
       }
     }
   }
@@ -836,6 +853,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
     widget.contentType.permitedVisibility;
+}
+
+///////////////////////////////////////////
+// _ProfileSaveResult
+
+class _ProfileSaveResult {
+  bool? profile;
+  bool? privacy;
+  _ProfileSaveResult({this.profile, this.privacy});
+
+  bool get succeeded => (profile ?? true) && (privacy ?? true);
 }
 
 ///////////////////////////////////////////
