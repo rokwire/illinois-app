@@ -24,6 +24,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoWrapperPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -144,13 +145,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildSheet() {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
-    return Column(children: [
-      _buildHeaderBar(),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
-      Expanded(child:
-        _buildPage(),
-      )
-    ],);
+    return PopScopeFix(onClose: _onTapClose, child:
+      Column(children: [
+        _buildHeaderBar(),
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        Expanded(child:
+          _buildPage(),
+        )
+      ],),
+    );
   }
 
   Widget _buildHeaderBar() {
