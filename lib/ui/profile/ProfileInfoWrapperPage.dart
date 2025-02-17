@@ -17,12 +17,15 @@ class ProfileInfoWrapperPage extends StatefulWidget {
   ProfileInfoWrapperPage({super.key, this.params});
 
   @override
-  _ProfileInfoWrapperPageState createState() => _ProfileInfoWrapperPageState();
+  ProfileInfoWrapperPageState createState() => ProfileInfoWrapperPageState();
 }
 
-class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implements NotificationsListener {
+class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implements NotificationsListener {
 
   GestureRecognizer? _signInRecognizer;
+  final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey();
+
+  Future<bool?> saveModified() async => _profileInfoKey.currentState?.saveModified();
 
   @override
   void initState() {
@@ -67,6 +70,7 @@ class _ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> impleme
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(children: [
         ProfileInfoPage(
+          key: _profileInfoKey,
           contentType: ProfileInfo.directoryInfo,
           params: widget.params,
         )

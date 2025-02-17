@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.61] - 2025-02-17
+### Changed
+- Prompt to save profile on close [#4776](https://github.com/rokwire/illinois-app/issues/4776).
+
 ## [6.1.60] - 2025-02-14
 ### Changed
 - Acknowledged new privacy content for App Directory [#4772](https://github.com/rokwire/illinois-app/issues/4772).
