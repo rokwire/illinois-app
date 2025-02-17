@@ -70,7 +70,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get isLoading => _loading;
   bool get directoryVisibility => (_privacy?.public == true);
 
-  Future<void> saveModified() async => _profileInfoEditKey.currentState?.saveModified();
+  Future<bool?> saveModified() async => _profileInfoEditKey.currentState?.saveModified();
 
   @override
   void initState() {
