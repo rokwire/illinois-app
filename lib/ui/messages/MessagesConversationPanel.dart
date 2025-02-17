@@ -448,7 +448,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _onTapLink(String url) {
-    url = UrlUtils.fixUrl(url, scheme: 'https') ?? url;
+    if (url.contains('@')) {
+      url = UrlUtils.fixEmail(url) ?? url;
+    } else {
+      url = UrlUtils.fixUrl(url, scheme: 'https') ?? url;
+    }
     Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {

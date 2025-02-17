@@ -48,7 +48,7 @@ class LinkTextEx extends StatefulWidget {
 class _LinkTextExState extends State<LinkTextEx> {
 
   /// Url regular expression, credits to: https://stackoverflow.com/a/63022807/3759472
-  final RegExp _urlRegex = RegExp(r"([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?");
+  final RegExp _urlRegex = RegExp(r"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?)");
 
   /// We hold on to recognizers so we can dispose them properly.
   final Map<String, TapGestureRecognizer> _gestureRecognizers = {};
@@ -133,12 +133,20 @@ class _LinkTextExState extends State<LinkTextEx> {
       return;
     }
 
-    Uri? uri = UrlUtils.fixUri(Uri.parse(url), scheme: 'https');
-
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      debugPrint('Could not launch $uri');
+    bool isEmail = url.contains('@');
+    if (isEmail) {
+      url = UrlUtils.fixEmail(url) ?? url;
+    }
+    Uri? uri = Uri.tryParse(url);
+    if (uri != null) {
+      if (!isEmail) {
+        uri = UrlUtils.fixUri(uri, scheme: 'https');
+      }
+      if (uri != null && await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else {
+        debugPrint('Could not launch $uri');
+      }
     }
   }
 }
