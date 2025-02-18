@@ -1629,6 +1629,9 @@
 	"panel.event2.detail.attendance.prompt.event_capacity_reached.description": "Mark as attended?",
 	"panel.event2.detail.attendance.prompt.attendee_already_registered.description": "Already marked as attended.",
 
+	"panel.event2.detail.admin_settings.header.title": "此活動沒有調查。",
+	"panel.event2.detail.admin_settings.survey.responses.missing.msg": "尚無可用的調查回覆。",
+
 	"panel.event2.detail.button.register.title": "注册",
 	"panel.event2.detail.button.login.register.title": "请登入以注册",
 	"panel.event2.detail.button.unregister.title": "取消注册",

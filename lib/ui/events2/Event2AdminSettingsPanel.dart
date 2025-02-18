@@ -5,10 +5,15 @@ import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import '../../service/Analytics.dart';
@@ -18,8 +23,9 @@ import 'Event2CreatePanel.dart';
 
 class Event2AdminSettingsPanel extends StatefulWidget{
   final Event2? event;
+  final String? surveyId;
 
-  const Event2AdminSettingsPanel({super.key, this.event});
+  const Event2AdminSettingsPanel({super.key, this.event, this.surveyId});
 
   @override
   State<StatefulWidget> createState() => Event2AdminSettingsState();
@@ -27,6 +33,7 @@ class Event2AdminSettingsPanel extends StatefulWidget{
 
 class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   bool _duplicating = false;
+  bool _loadingSurveyResponses = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +82,11 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                     title: 'UPLOAD ATTENDANCE .csv',
                     onTap: _onUploadAttendance),
               ),
-              Visibility(visible: _canUploadCsv,
+              Visibility(visible: (_canUploadCsv && _hasSurvey),
                 child: _ButtonWidget(
                     title: 'DOWNLOAD SURVEY RESULTS',
-                    onTap: _onDownloadSurveyResults),
+                    onTap: _onDownloadSurveyResults,
+                    progress: _loadingSurveyResponses),
               )
           ]),
         )
@@ -124,9 +132,37 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     AppToast.showMessage("TBD");
   }
 
-  void _onDownloadSurveyResults() {
+  void _onDownloadSurveyResults() async {
     Analytics().logSelect(target: "Download Survey Results");
-    AppToast.showMessage("TBD");
+    String? surveyId = widget.surveyId;
+    if (StringUtils.isEmpty(surveyId)) {
+      AppAlert.showDialogResult(context,
+          Localization().getStringEx('panel.event2.detail.admin_settings.survey.missing.msg', 'There is no survey for this event.'));
+      return;
+    }
+    setStateIfMounted(() {
+      _loadingSurveyResponses = true;
+    });
+    List<SurveyResponse>? responses = await Surveys().loadAllSurveyResponses(surveyId!);
+    if (CollectionUtils.isEmpty(responses)) {
+      setStateIfMounted(() {
+        _loadingSurveyResponses = false;
+      });
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.event2.detail.admin_settings.survey.responses.missing.msg', 'There are no survey responses available.'));
+      return;
+    }
+    List<String>? accountIds = responses!.map((response) => StringUtils.ensureNotEmpty(response.userId)).toList();
+    List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(ids: accountIds);
+    if (CollectionUtils.isEmpty(accounts)) {
+      debugPrint('Download survey responses - failed to load public accounts.');
+    }
+    //TBD: DD - continue implementation
+    setStateIfMounted(() {
+      _loadingSurveyResponses = false;
+    });
   }
 
   void _onSettingDuplicateEvent() {
@@ -189,6 +225,8 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   bool get _showSuperEvent => true /*_event?.isSuperEventChild == false*/;
 
   bool get _canUploadCsv => PlatformUtils.isWeb;
+
+  bool get _hasSurvey => StringUtils.isNotEmpty(widget.surveyId);
 }
 
 class _ButtonWidget extends StatelessWidget{

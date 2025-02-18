@@ -1642,6 +1642,9 @@
     "panel.event2.detail.attendance.prompt.event_capacity_reached.description": "Mark as attended?",
     "panel.event2.detail.attendance.prompt.attendee_already_registered.description": "Already marked as attended.",
 
+    "panel.event2.detail.admin_settings.header.title": "No hay ninguna encuesta para este evento.",
+    "panel.event2.detail.admin_settings.survey.responses.missing.msg": "No hay respuestas de encuesta disponibles.",
+
     "panel.event2.detail.button.register.title": "Registrarse",
     "panel.event2.detail.button.login.register.title": "Iniciar Sesión para Registrarse",
     "panel.event2.detail.button.unregister.title": "Cancelar el Registro",

@@ -1121,6 +1121,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     if (_event != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
         event: _event,
+        surveyId: _survey?.id,
       )));
     }
   }
