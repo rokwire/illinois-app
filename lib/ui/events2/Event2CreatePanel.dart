@@ -63,8 +63,11 @@ class Event2CreatePanel extends StatefulWidget {
 
   // Shared Helpers
 
-  static const EdgeInsetsGeometry sectionPadding = const EdgeInsets.only(bottom: 24);
-  static const EdgeInsetsGeometry innerSectionPadding = const EdgeInsets.only(bottom: 12);
+  static const double sectionPaddingHeight = 24;
+  static const EdgeInsetsGeometry sectionPadding = const EdgeInsets.only(bottom: sectionPaddingHeight);
+
+  static const double innerSectionPaddingHeight = 12;
+  static const EdgeInsetsGeometry innerSectionPadding = const EdgeInsets.only(bottom: innerSectionPaddingHeight);
 
   static const EdgeInsetsGeometry sectionHeadingPadding = const EdgeInsets.only(bottom: 8);
   static const EdgeInsetsGeometry innerSectionHeadingPadding = const EdgeInsets.only(bottom: 4);
@@ -1615,6 +1618,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       _buildEventTypeDropdown(),
     ];
 
+    if (_eventType == Event2Type.hybrid) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: Event2CreatePanel.sectionPaddingHeight), child: _innerSectionSplitter));
+    }
+
     if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
@@ -1624,14 +1631,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       ]);
     }
 
+    if (_eventType == Event2Type.hybrid) {
+      contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: Event2CreatePanel.innerSectionPaddingHeight), child: _innerSectionSplitter));
+    }
+
     if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
+        _buildSelectLocationButton(),
         _buildLocationBuildingInnerSection(),
         _buildLocationAddressInnerSection(),
         _buildLocationLatitudeInnerSection(),
         _buildLocationLongitudeInnerSection(),
-        _buildSelectLocationButton()
       ]);
     }
 
@@ -1735,7 +1746,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           onTap: _onTapSelectLocation,
           backgroundColor: Styles().colors.white,
           borderColor: Styles().colors.fillColorSecondary,
-          contentWeight: 0.80,
         )
       ),
     );
@@ -1781,6 +1791,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
     });
   }
+
+  Widget get _innerSectionSplitter => Container(color: Styles().colors.surfaceAccent, height: 1);
 
   // Cost
 
