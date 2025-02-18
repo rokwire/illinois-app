@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated hour after event label text in Event2SetupSurveyPanel [#4784](https://github.com/rokwire/illinois-app/issues/4784).
+- Show additional attendance takers control in create event / setup attendance [#4777](https://github.com/rokwire/illinois-app/issues/4777).
 
 ## [6.1.61] - 2025-02-17
 ### Changed
