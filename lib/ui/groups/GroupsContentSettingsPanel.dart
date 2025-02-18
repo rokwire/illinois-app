@@ -49,7 +49,7 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   @override
   void initState() {
     _availableCodes = List.from(GroupContentItemExt.availableContentCodes);
-    _selection = widget.group?.settings?.contentCodes ?? List.from(GroupContentItemExt.defaultContentCodes);
+    _selection = (widget.group?.settings?.contentCodes ?? List.from(GroupContentItemExt.defaultContentCodes)).reversed.toList(); //We draw in reverse order, so reverse again to match GroupContent
 
     super.initState();
   }
@@ -203,7 +203,7 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
 
   //onTap
   void _onApply(){
-    widget.group?.settings?.contentCodes = _selection.reversed.toList(); // We display reversed so save reversed
+    widget.group?.settings?.contentCodes = _selection.reversed.toList(); // We display reversed so reverse again before save
     Navigator.pop(context);
   }
 
