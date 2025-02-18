@@ -77,6 +77,7 @@ dependencies:
 
   # Below are the plugins imported alongside web integration
   universal_io: ^2.2.2
+  csv: ^6.0.0
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:

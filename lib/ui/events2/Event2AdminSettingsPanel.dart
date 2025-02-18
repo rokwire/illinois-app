@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -8,6 +9,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -159,10 +161,45 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     if (CollectionUtils.isEmpty(accounts)) {
       debugPrint('Download survey responses - failed to load public accounts.');
     }
-    //TBD: DD - continue implementation
-    setStateIfMounted(() {
-      _loadingSurveyResponses = false;
-    });
+    final String defaultEmptyValue = '---';
+    String eventName = StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: defaultEmptyValue);
+    String eventStartDate = StringUtils.ensureNotEmpty(
+        AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'yyyy-MM-dd'),
+        defaultValue: defaultEmptyValue);
+    String eventStartTime = StringUtils.ensureNotEmpty(
+        AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'HH:mm'),
+        defaultValue: defaultEmptyValue);
+    bool hasAccounts = CollectionUtils.isNotEmpty(accounts);
+    List<List<dynamic>> rows = <List<dynamic>>[];
+    for (SurveyResponse response in responses) {
+      String? accountId = response.userId;
+      Auth2PublicAccount? account =
+          ((accountId != null) && hasAccounts) ? accounts!.firstWhereOrNull((account) => (account.id == accountId)) : null;
+      Map<String, SurveyData> data = response.survey.data;
+      for (String key in data.keys) {
+        SurveyData? value = data[key];
+        if (value != null) {
+          String question = value.text;
+          String answer = value.response;
+          rows.add([
+            eventName,
+            eventStartDate,
+            eventStartTime,
+            StringUtils.ensureNotEmpty(account?.profile?.firstName, defaultValue: defaultEmptyValue),
+            StringUtils.ensureNotEmpty(account?.profile?.lastName, defaultValue: defaultEmptyValue),
+            question,
+            answer
+          ]);
+        }
+      }
+      String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: 'yyyy-MM-dd-HH-mm');
+      String fileName = 'event_survey_results_$dateExported.csv';
+      AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+        setStateIfMounted(() {
+          _loadingSurveyResponses = false;
+        });
+      });
+    }
   }
 
   void _onSettingDuplicateEvent() {

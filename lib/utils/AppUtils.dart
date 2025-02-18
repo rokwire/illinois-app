@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import 'dart:convert';
+
+import 'package:csv/csv.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -494,7 +497,9 @@ class PlatformUtils {
 
 class AppWebUtils {
   static final double screenWidth = 1092;
+}
 
+class AppFile {
   ///
   /// returns fileName if succeeded and null - otherwise
   ///
@@ -519,5 +524,11 @@ class AppWebUtils {
     html.document.body?.children.remove(anchor);
     html.Url.revokeObjectUrl(url);
     return fileName;
+  }
+
+  static Future<void> exportCsv({required List<List<dynamic>> rows, required String fileName, String? fieldDelimiter}) async {
+    String csvContent = const ListToCsvConverter().convert(rows, fieldDelimiter: fieldDelimiter);
+    final fileBytesContent = utf8.encode(csvContent);
+    await downloadFile(fileBytes: fileBytesContent, fileName: fileName);
   }
 }
