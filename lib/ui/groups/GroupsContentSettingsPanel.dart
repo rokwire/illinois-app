@@ -31,6 +31,7 @@ class GroupContentSettingsPanel extends StatefulWidget {
 class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implements HomeDragAndDropHost{
   static const String _favoritesHeaderId = 'edit.favorites';
   static const String _unfavoritesHeaderId = 'edit.unfavorites';
+  static const int _min_content_count = 1;
 
   List<String> _selection = <String>[];
   List<String> _availableCodes = [];
@@ -49,7 +50,7 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   @override
   void initState() {
     _availableCodes = List.from(GroupContentItemExt.availableContentCodes);
-    _selection = widget.group?.settings?.contentCodes ?? List.from(GroupContentItemExt.defaultContentCodes);
+    _selection = (widget.group?.settings?.contentCodes ?? List.from(GroupContentItemExt.defaultContentCodes)).reversed.toList(); //We draw in reverse order, so reverse again to match GroupContent
 
     super.initState();
   }
@@ -94,9 +95,9 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
       widgets.add(_buildEditingHeader(
           favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
           title: Localization().getStringEx('', 'CURRENT CONTENT'),
-          linkButtonTitle: Localization().getStringEx('', 'Unstar All'),
+          // linkButtonTitle: Localization().getStringEx('', 'Unstar All'),
           description: Localization().getStringEx('', 'Tap, <b>hold</b>, and drag an item item to reorder your group content. To remove an item, tap the star.'),
-          onTapLinkButton: CollectionUtils.isNotEmpty(_selection) ? () => _onTapUnstarAll() : null,
+          // onTapLinkButton: CollectionUtils.isNotEmpty(_selection) ? () => _onTapUnstarAll() : null,
       ));
       widgets.addAll(_buildCollectionItemsContent(_selection));
     }
@@ -203,10 +204,11 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
 
   //onTap
   void _onApply(){
-    widget.group?.settings?.contentCodes = _selection.reversed.toList(); // We display reversed so save reversed
+    widget.group?.settings?.contentCodes = _selection.reversed.toList(); // We display reversed so reverse again before save
     Navigator.pop(context);
   }
 
+  // ignore: unused_element
   void _onTapUnstarAll() {
     Analytics().logSelect(source: 'GroupContentSettings', target: 'Unstar All');
     _showUnstarConfirmationDialog(_selection);
@@ -278,7 +280,8 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   void _toggleContentItem({required String code}){
     setStateIfMounted(() {
       if (_selection.contains(code)) {
-        _selection.remove(code);
+        if(_canRemove)
+          _selection.remove(code);
       } else {
         _selection.add(code);
       }
@@ -291,7 +294,8 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
         if(!_selection.contains(code))
           _selection.add(code);
       } else if(_selection.contains(code)) {
-        _selection.remove(code);
+        if(_canRemove)
+          _selection.remove(code);
       }
     });
   }
@@ -512,6 +516,8 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   }
 
   bool get _hasChanged => !CollectionUtils.equals(widget.group?.settings?.contentCodes, _selection);
+
+  bool get _canRemove => _selection.length > _min_content_count;
 }
 
 class _GroupContentSettingsFavoriteButton extends FavoriteButton {
