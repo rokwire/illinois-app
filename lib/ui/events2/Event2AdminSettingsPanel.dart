@@ -86,7 +86,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
               ),
               Visibility(visible: (_canUploadCsv && _hasSurvey),
                 child: _ButtonWidget(
-                    title: 'DOWNLOAD SURVEY RESULTS',
+                    title: 'DOWNLOAD SURVEY RESULTS .csv',
                     onTap: _onDownloadSurveyResults,
                     progress: _loadingSurveyResponses),
               )
