@@ -25,6 +25,7 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -192,7 +193,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Expanded( child:
           Container(color: Styles().colors.background, child:
             CustomScrollView( scrollDirection: Axis.vertical, slivers: <Widget>[
-              SliverHeaderBar(title: barTitle),
+              SliverHeaderBar(title: barTitle, onLeading: _onCloseTap,),
               SliverList(delegate: SliverChildListDelegate([
                 Container(color: Styles().colors.background, child:
                   Column(children: contentList),
@@ -983,36 +984,57 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-           Row(children: [
+           Row(crossAxisAlignment: CrossAxisAlignment.center ,children: [
             Expanded(
-              child: RoundedButton(
-                label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
-                textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: Colors.white,
-                borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                progress: _updating,
-                enabled: _canUpdate,
-                onTap: _onUpdateTap,
-              ),
+              child: Align(alignment: Alignment.center, child:
+                SmallRoundedButton(
+                  label: Localization().getStringEx("", "Save"), //TBD localize
+                  textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+                  backgroundColor: Colors.white,
+                  borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                  progress: _updating,
+                  enabled: _canUpdate,
+                  onTap: _onUpdateTap,
+                  rightIcon: Container(),
+                  padding: EdgeInsets.symmetric(horizontal: 48, vertical: 8),
+                )),
             ),
-            Container(width: 16,),
-            Expanded(
-              child: RoundedButton(
-                label: _isResearchProject ?
-                  Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
-                  Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
-                textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: Colors.white,
-                borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                progress: _deleting,
-                enabled: _canUpdate,
-                onTap: _onDeleteTap,
-              ),
-            ),
+            // Container(width: 16,),
+            // Expanded(
+            //   child: RoundedButton(
+            //     label: _isResearchProject ?
+            //       Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
+            //       Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
+            //     textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+            //     backgroundColor: Colors.white,
+            //     borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+            //     progress: _deleting,
+            //     enabled: _canUpdate,
+            //     onTap: _onDeleteTap,
+            //   ),
+            // ),
           ],)
         ],),
       )
       ,),);
+  }
+
+  _onCloseTap() {
+    Analytics().logSelect(target: "Close", attributes: _group?.analyticsAttributes);
+
+    showDialog(context: context,builder: (context) => _buildConfirmationDialog(
+        confirmationTextMsg: Localization().getStringEx("", "Would you like to save your changes?"),
+        positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+        negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+        onNegativeTap: () {
+          Navigator.pop(context);// close dialog
+          Navigator.pop(context);// close the panel
+        },
+        onPositiveTap: () {
+          _onUpdateTap();
+          Navigator.pop(context);
+        },
+    ));
   }
 
   void _onUpdateTap() {
@@ -1082,6 +1104,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
+  // ignore: unused_element
   void _onDeleteTap() {
     Analytics().logSelect(target: "Delete this group", attributes: _group?.analyticsAttributes);
 
@@ -1274,7 +1297,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     String? positiveButtonLabel,
     int positiveButtonFlex = 1,
     Function? onPositiveTap,
-    
+    Function? onNegativeTap,
+
     String? negativeButtonLabel,
     int negativeButtonFlex = 1,
     
@@ -1300,7 +1324,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
-                        Navigator.pop(context);
+                        onNegativeTap?.call() ?? Navigator.pop(context);
                       }),),
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(

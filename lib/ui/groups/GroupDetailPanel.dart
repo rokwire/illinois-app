@@ -126,7 +126,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   GestureRecognizer? _studentCodeLaunchRecognizer;
   StreamController _updateController = StreamController.broadcast();
 
-  DetailTab         _currentTab = DetailTab.Events;
+  DetailTab?         _currentTab;
 
   bool               _confirmationLoading = false;
   bool               _researchProjectConsent = false;
@@ -814,7 +814,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       );
   }
 
-  int _indexOfTab(DetailTab tab) => _tabs?.indexOf(tab) ?? 0;
+  int _indexOfTab(DetailTab? tab) => _tabs?.indexOf(tab) ?? 0;
   
   DetailTab? _tabAtIndex(int index) {
     try {
@@ -823,7 +823,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Log.d(e.toString());
     }
     
-    return DetailTab.Events; //TBD consider default
+    return null; //TBD consider default
   }
 
   Widget _buildPageFromTab(DetailTab? data){
