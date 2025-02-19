@@ -505,8 +505,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (_diningFeedback?.isNotEmpty ?? false) {
       return Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
         Column(children: [
-          Text(Localization().getStringEx('panel.explore_detail.label.text_and_tell', 'Text and tell us about your dining experience!'), style:
-              Styles().textStyles.getTextStyle("widget.message.large.fat")),
+          Text(Localization().getStringEx('panel.explore_detail.label.text_and_tell', 'Text and tell us about your dining experience!'), textAlign: TextAlign.center, style:
+              Styles().textStyles.getTextStyle("widget.message.regular.fat")),
           Container(height: 10,),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? SmallRoundedButton(

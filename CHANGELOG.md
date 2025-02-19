@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- GroupDetailPanel: remove events section for non members [#4806](https://github.com/rokwire/illinois-app/issues/4806).
+### Changed
+- Center text and make it smaller in Dining detail [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+- Prompt to save only modified group admin settings [#4783](https://github.com/rokwire/illinois-app/issues/4783).
+### Added
+- GroupAboutContentWidget with showPanel [#4778](https://github.com/rokwire/illinois-app/issues/4778).
 
 ## [6.1.62] - 2025-02-18
 ### Changed
