@@ -6,8 +6,10 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -19,8 +21,9 @@ import 'GroupWidgets.dart';
 
 class GroupPostCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group group;
+  final PostType type;
 
-  GroupPostCreatePanel({required this.group});
+  GroupPostCreatePanel({required this.group, required this.type});
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
@@ -36,6 +39,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   static final double _outerPadding = 16;
 
   bool _allowSenPostToOtherGroups = false;
+  bool _pinPost = false;
   PostDataModel _postData = PostDataModel();
   List<GroupPostNudge>? _postNudges;
   GroupPostNudge? _selectedNudge;
@@ -86,53 +90,86 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   Container(height: 12,),
                   Visibility(
                     visible: _canSelectMembers,
-                    child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
+                    child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: _groupId, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
                   ),
                   Container(height: 12,),
                   _buildScheduleWidget(),
                   _buildNudgesWidget(),
                   Container(height: 12,),
-                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
-                    style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                    child: TextField(
-                      controller: TextEditingController(text: _postData.subject),
-                      onChanged: (msg)=> _postData.subject = msg,
-                      maxLines: 1,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                        hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray,
-                              width: 0.0))),
-                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
+                  Visibility(visible: _isPost,
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
+                          style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+                        Container(
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
+                            decoration: PostInputField.fieldDecoration,
+                            child: TextField(
+                                controller: TextEditingController(text: _postData.subject),
+                                onChanged: (msg)=> _postData.subject = msg,
+                                maxLines: 1,
+                                textCapitalization: TextCapitalization.sentences,
+                                decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    // hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.all(8)
+                                ),
+                                style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
+                        Container(height: 12,),
+                    ],)
+                  ),
                   PostInputField(
+                    title: widget.type == PostType.post ?  "POST" : "MESSAGE",
                     text: _postData.body,
                     onBodyChanged: (text) => _postData.body = text,
-                    hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
+                    // hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: EnabledToggleButton(
-                        label: "Also send to additional groups...",
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                        enabled: CollectionUtils.isEmpty(_selectedMembers),
-                        toggled: _allowSenPostToOtherGroups,
-                        textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
-                          Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
-                          Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
-                        onTap: () {
-                          if(mounted){
-                            setState(() {
-                              _allowSenPostToOtherGroups = !_allowSenPostToOtherGroups;
-                            });
+                  Visibility(visible: _isPost && _canPinPost,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 6),
+                      child: EnabledToggleButton(
+                          label: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                          enabled: CollectionUtils.isEmpty(_selectedMembers),
+                          toggled: _pinPost,
+                          textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
+                            Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
+                            Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
+                          onTap: () {
+                            if(mounted){
+                              setState(() {
+                                _pinPost = !_pinPost;
+                              });
+                            }
                           }
-                        }
-                    ),
+                      ),
+                    )
                   ),
+                  Visibility(visible: _isPost,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 6),
+                        child: EnabledToggleButton(
+                            label: "Also post to additional groups...",
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                            enabled: CollectionUtils.isEmpty(_selectedMembers),
+                            toggled: _allowSenPostToOtherGroups,
+                            textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
+                            Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
+                            Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
+                            onTap: () {
+                              if(mounted){
+                                setState(() {
+                                  _allowSenPostToOtherGroups = !_allowSenPostToOtherGroups;
+                                });
+                              }
+                            }
+                        ),
+                      )
+                  ),
+                  Container(height: 16,),
                   Row(children: [
                     Flexible(
                       flex: 1,
@@ -245,11 +282,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _showPollConfirmationDialogIfNeeded() {
     if (_selectedNudge?.canPoll ?? false) {
-      AppAlert.showConfirmationDialog(
-          buildContext: context,
-          message: Localization()
-              .getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
-          positiveCallback: _onCreatePollConfirmed);
+      AppAlert.showConfirmationDialog(context,
+        message: Localization().getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
+        positiveCallback: _onCreatePollConfirmed
+      );
     }
   }
 
@@ -279,7 +315,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
     DateTime? scheduleDate = _postData.dateScheduled;
-    if (StringUtils.isEmpty(subject)) {
+    if (_isPost && StringUtils.isEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
       return;
     }
@@ -296,53 +332,43 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
-
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers, dateScheduledUtc: scheduleDate); // if no parentId then this is a new post for the group.
-
-    Groups().createPost(widget.group.id, post).then((success) {
-      if(success){
-          if(_canSentToOtherAdminCroups){
-            _processPostToOtherAdminGroups(post).then((success){
-              _onCreateFinished(post); //Finished posting to other groups
-            }).onError((error, stackTrace){
-              _onCreateFinished(null); //Failed posting to other groups
-            });
-          } else {// Don't want to post to other groups
-            _onCreateFinished(post); //Successfully posted single post
-          }
-      } else { // Fail
-        _onCreateFinished(null); //Failed posting to original group
+    List<Group>? selectedGroups;
+    if (_canSentToOtherAdminGroups) {
+      selectedGroups = [];
+      List<Group>? otherGroups = await _loadOtherAdminUserGroups();
+      if (CollectionUtils.isNotEmpty(otherGroups)) {
+        selectedGroups = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups));
       }
-    }).onError((error, stackTrace) {
-      _onCreateFinished(null);//Failed posting to original group
+    }
+    late Post post;
+    if (CollectionUtils.isNotEmpty(selectedGroups)) {
+      List<String> groupIds = selectedGroups!.map((group) => group.id!).toList(growable: true);
+      groupIds.add(_groupId); // add current group id.
+      post = Post.forGroups(
+          groupIds: groupIds, subject: subject, body: htmlModifiedBody, imageUrl: imageUrl, dateActivatedUtc: scheduleDate?.toUtc());
+    } else {
+      List<String>? memberAccountIds = MemberExt.extractUserIds(_selectedMembers);
+      post = Post.forGroup(
+          groupId: _groupId,
+          subject: subject,
+          body: htmlModifiedBody,
+          imageUrl: imageUrl,
+          dateActivatedUtc: scheduleDate?.toUtc(),
+          memberAccountIds: memberAccountIds);
+    }
+
+    Social().createPost(post: post).then((Post? post) {
+      if(_pinPost && StringUtils.isNotEmpty(post?.id)){
+        Social().pinPost(postId: post!.id!).then((Post? pinnedPost){
+          _onCreateFinished(pinnedPost);
+        });
+      } else {
+        _onCreateFinished(post);
+      }
     });
   }
 
-  Future<bool> _processPostToOtherAdminGroups(post) async{
-    // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
-    //If post has membersSelection then do not allow linking to other groups
-    List<Group> selectedGroups = [];
-    List<Group>? otherGroups = await _loadOtherAdminUserGroups();
-    if (CollectionUtils.isNotEmpty(otherGroups)) {
-      selectedGroups = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));
-    }
-
-    if(CollectionUtils.isEmpty(selectedGroups)){
-      return true; //No selection
-    }
-
-    //process with selection
-    List<Future<bool>> futures = [];
-    for(Group group in selectedGroups){
-      futures.add(Groups().createPost(group.id, post));
-    }
-
-    List<bool> results = await Future.wait(futures);
-
-    return !results.contains(false);
-  }
-
-  void _onCreateFinished(GroupPost? post) {
+  void _onCreateFinished(Post? post) {
     _decreaseProgress();
     if (post != null) {
       Navigator.of(context).pop(post);
@@ -353,7 +379,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _loadMembersAllowedToPost() {
     _increaseProgress();
-    Groups().loadMembersAllowedToPost(groupId: widget.group.id).then((members) {
+    Groups().loadMembersAllowedToPost(groupId: _groupId).then((members) {
       _allMembersAllowedToPost = members;
       _decreaseProgress();
     });
@@ -379,9 +405,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     List<Group>? userAdminGroups;
     if (CollectionUtils.isNotEmpty(userGroups)) {
       userAdminGroups = [];
-      String? currentGroupId = widget.group.id;
       for (Group? group in userGroups!) {
-        if (group!.currentUserIsAdmin && (group.id != currentGroupId)) {
+        if (group!.currentUserIsAdmin && (group.id != _groupId)) {
           userAdminGroups.add(group);
         }
       }
@@ -410,16 +435,26 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   }
 
   bool get _canSelectMembers {
-    return (widget.group.currentUserIsAdmin == true) ||
-        (widget.group.currentUserIsMember &&
-            widget.group.isMemberAllowedToPostToSpecificMembers);
+    return _isMessage && _userCanSelectMembers;
   }
 
-  bool get _canSchedule {
-    return CollectionUtils.isEmpty(_selectedMembers);
-  }
+  bool get _userCanSelectMembers => (widget.group.currentUserIsAdmin == true) ||
+  (widget.group.currentUserIsMember &&
+  widget.group.isMemberAllowedToPostToSpecificMembers);
 
-  bool get _canSentToOtherAdminCroups{
+  bool get _canSchedule =>  _isPost && CollectionUtils.isEmpty(_selectedMembers);
+
+  bool get _canSentToOtherAdminGroups{
       return _allowSenPostToOtherGroups && CollectionUtils.isEmpty(_selectedMembers);
   }
+
+  bool get _canPinPost =>  _isAdmin;
+
+  bool get _isAdmin => widget.group.currentUserIsAdmin;
+
+  String get _groupId => widget.group.id!;
+
+  bool get _isMessage => widget.type ==  PostType.direct_message;
+
+  bool get _isPost => widget.type ==  PostType.post;
 }

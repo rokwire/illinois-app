@@ -29,7 +29,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
@@ -39,7 +38,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -54,7 +52,6 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -240,7 +237,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   void _onClearAll() {
     Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
-    AppAlert.showConfirmationDialog(buildContext: context,
+    AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
       positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
       negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
@@ -404,7 +401,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
 
   void _onClearAll() {
     Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
-    AppAlert.showConfirmationDialog(buildContext: context,
+    AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
       positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
       negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
@@ -584,10 +581,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
   static Widget _getDetailPanel(RecentItem item) {
     dynamic sourceItem = item.source;
 
-    if (sourceItem is Event) {
-      return sourceItem.isComposite ? CompositeEventsDetailPanel(parentEvent: sourceItem) : ExploreEventDetailPanel(event: sourceItem,);
-    }
-    else if (sourceItem is Event2) {
+    if (sourceItem is Event2) {
       if (sourceItem.hasGame) {
         return AthleticsGameDetailPanel(game: sourceItem.game,);
       } else {

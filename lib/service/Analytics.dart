@@ -164,6 +164,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAlertTextName                   = "text";
   static const String   LogAlertSelectionName              = "selection";
 
+  // Search Event
+  // {  "event" : { "name":"search", "page":"...", "term":"..." }}
+  static const String   LogSearchEventName                 = "search";
+  static const String   LogSearchTermName                  = "term";
+
   // Http Response Event
   // "event" : { "name":"http_response", "http_request_url":"...", "http_request_method":"...", "http_response_code":... }
   static const String   LogHttpResponseEventName           = "http_response";
@@ -333,6 +338,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAnonymousUin                    = 'UINxxxxxx';
   static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
   static const String   LogAnonymousLastName               = 'LastNameXXXXXX';
+  static const String   LogAnonymousEmail                  = 'email@xxxxxx.xxx';
+  static const String   LogAnonymousPhone                  = 'PhoneXXXXXX';
+  static const String   LogAnonymousWebsite                = 'WebsiteXXXXXX';
 
   // Data
 
@@ -717,10 +725,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
         else if (attributeName == LogStdAuthCardRoleName) {
-          analyticsEvent[LogStdAuthCardRoleName] = Auth2().authCard?.role;
+          analyticsEvent[LogStdAuthCardRoleName] = Auth2().iCard?.role;
         }
         else if (attributeName == LogStdAuthCardStudentLevel) {
-          analyticsEvent[LogStdAuthCardStudentLevel] = Auth2().authCard?.studentLevel;
+          analyticsEvent[LogStdAuthCardStudentLevel] = Auth2().iCard?.studentLevel;
         }
         else if (attributeName == LogStdStudentTermCode) {
           analyticsEvent[LogStdStudentTermCode] = IlliniCash().studentClassification?.termCode;
@@ -859,6 +867,22 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogEventName          : LogAlertEventName,
       LogAlertTextName      : text,
       LogAlertSelectionName : selection,
+    };
+
+    // Add optional attribute, if applied
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+
+    // Log the event
+    logEvent(event);
+  }
+
+  void logSearch(String term, { Map<String, dynamic>? attributes }) {
+    // Build event data
+    Map<String, dynamic> event = {
+      LogEventName          : LogSearchEventName,
+      LogSearchTermName     : term,
     };
 
     // Add optional attribute, if applied

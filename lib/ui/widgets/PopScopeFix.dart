@@ -12,27 +12,44 @@ class PopScopeFix extends StatelessWidget {
 
   final Widget child;
   final void Function()? onBack;
+  final void Function()? onClose;
 
-  const PopScopeFix({super.key, required this.child, this.onBack});
+  const PopScopeFix({super.key, required this.child, this.onBack, this.onClose});
 
   @override
   Widget build(BuildContext context) => PopScope(
     canPop: false,
-    onPopInvoked: (bool didPop) => _onPopInvoked(context, didPop),
-    child: Platform.isIOS ?
-      BackGestureDetector(onBack: () => _onBack(context), child: child,) :
-      child,
+    onPopInvokedWithResult: (bool didPop, Object? result) => _onPopInvoked(context, didPop),
+    child: Platform.isIOS ? PopGestureDetector(
+      onBack: () => _onBack(context),
+      onClose: () => _onClose(context),
+      child: child,
+    ) : child,
     );
 
   void _onPopInvoked(BuildContext context, bool didPop) {
     if (!didPop) {
-      _onBack(context);
+      if (onBack != null) {
+        _onBack(context);
+      }
+      if (onClose != null) {
+        _onClose(context);
+      }
     }
   }
 
   void _onBack(BuildContext context) {
     if (onBack != null) {
       onBack?.call();
+    }
+    else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _onClose(BuildContext context) {
+    if (onClose != null) {
+      onClose?.call();
     }
     else {
       Navigator.of(context).pop();

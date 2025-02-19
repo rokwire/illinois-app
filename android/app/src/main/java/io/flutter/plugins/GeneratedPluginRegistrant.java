@@ -41,6 +41,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin device_info, io.flutter.plugins.deviceinfo.DeviceInfoPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.fintasys.emoji_picker_flutter.EmojiPickerFlutterPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin emoji_picker_flutter, com.fintasys.emoji_picker_flutter.EmojiPickerFlutterPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin firebase_core, io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin", e);
@@ -64,6 +69,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.gonoter.flutter_beep.FlutterBeepPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin flutter_beep, com.gonoter.flutter_beep.FlutterBeepPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.sidlatau.flutteremailsender.FlutterEmailSenderPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_email_sender, com.sidlatau.flutteremailsender.FlutterEmailSenderPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.flutterexifrotation.FlutterExifRotationPlugin());
@@ -141,9 +151,14 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.quickactions.QuickActionsPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin quick_actions_android, io.flutter.plugins.quickactions.QuickActionsPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.llfbandit.record.RecordPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin record, com.llfbandit.record.RecordPlugin", e);
+      Log.e(TAG, "Error registering plugin record_android, com.llfbandit.record.RecordPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new edu.illinois.rokwire.rokwire_plugin.RokwirePlugin());
@@ -159,6 +174,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin shared_preferences_android, io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.example.sms_mms.SmsMmsPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin sms_mms, com.example.sms_mms.SmsMmsPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.csdcorp.speech_to_text.SpeechToTextPlugin());

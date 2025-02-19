@@ -51,16 +51,16 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   void initState() {
     _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeLocal.timezoneLocal;
     
-    DateTime now = DateTime.now();
-    if (widget.startTime != null) {
-      DateTime startDateTime = DateTimeUtils.max(widget.startTime!, now);
+    DateTime? startDateTime = widget.startTime;
+    if (startDateTime != null) {
       _startDate = DateUtils.dateOnly(startDateTime);
       _startTime = TimeOfDay.fromDateTime(startDateTime);
     }
     
-    if ((widget.endTime != null) && now.isBefore(widget.endTime!)) {
-      _endDate = DateUtils.dateOnly(widget.endTime!);
-      _endTime = TimeOfDay.fromDateTime(widget.endTime!);
+    DateTime? endDateTime = widget.endTime;
+    if (endDateTime != null) {
+      _endDate = DateUtils.dateOnly(endDateTime);
+      _endTime = TimeOfDay.fromDateTime(endDateTime);
     }
     super.initState();
   }
@@ -209,33 +209,11 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
-  Widget _buildApplyButton({bool enabled = true}) => _buildHeaderBarButton(
+  Widget _buildApplyButton({bool enabled = true}) => HeaderBarActionTextButton(
     title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
     enabled: enabled,
     onTap: _onTapApply,
   );
-
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap, bool enabled = true, double horizontalPadding = 16}) {
-    return Semantics(label: title, button: true, excludeSemantics: true, child: 
-      InkWell(onTap: onTap, child:
-        Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-            Column(mainAxisSize: MainAxisSize.min, children: [
-              Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.white : Styles().colors.whiteTransparent06, width: 1.5, ))),
-                child: Text(title ?? '',
-                  style: Styles().textStyles.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled")
-                ),
-              ),
-            ],)
-          ),
-        ),
-        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
-        //),
-      ),
-    );
-  }
 
   void _onTimeZoneChanged(Location? value) {
     Analytics().logSelect(target: "Time Zone selected: $value");
@@ -248,11 +226,21 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onStartDate() {
     Analytics().logSelect(target: "Start Date");
-    DateTime now = DateUtils.dateOnly(DateTime.now());
-    DateTime minDate = now;
-    DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
+    final DateTime now = DateUtils.dateOnly(DateTime.now());
+    final Duration aYear = const Duration(days: 366);
+    DateTime minDate = (_endDate != null) ? DateTimeUtils.min(_endDate!, now).subtract(aYear) : now.subtract(aYear);
+    DateTime maxDate = (_endDate != null) ? _endDate! : now.add(aYear);
+    DateTime? selDate = _startDate;
+    if (selDate != null) {
+      minDate = DateTimeUtils.min(minDate, selDate);
+      maxDate = DateTimeUtils.max(maxDate, selDate);
+    }
+    else {
+      selDate = DateTimeUtils.min(now, maxDate);
+    }
+
     showDatePicker(context: context,
-      initialDate: _startDate ?? minDate,
+      initialDate: selDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -278,11 +266,20 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onEndDate() {
     Analytics().logSelect(target: "End Date");
-    DateTime now = DateUtils.dateOnly(DateTime.now());
-    DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
-    DateTime maxDate = minDate.add(Duration(days: 366));
+    final DateTime now = DateUtils.dateOnly(DateTime.now());
+    final Duration aYear = const Duration(days: 366);
+    DateTime minDate = (_startDate != null) ? _startDate! : now.subtract(aYear);
+    DateTime maxDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now).add(aYear) : now.add(aYear);
+    DateTime? selDate = _endDate;
+    if (selDate != null) {
+      minDate = DateTimeUtils.min(minDate, selDate);
+      maxDate = DateTimeUtils.max(maxDate, selDate);
+    }
+    else {
+      selDate = DateTimeUtils.max(now, minDate);
+    }
     showDatePicker(context: context,
-      initialDate: _endDate ?? minDate,
+      initialDate: selDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -323,27 +320,17 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   }
 
   bool get _canApply {
-    TZDateTime now = TZDateTime.now(_timeZone);
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
     TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
-    return ((startTime != null) || (endTime != null)) &&
-      ((startTime == null) || startTime.isAfter(now)) &&
-      ((endTime == null) || endTime.isAfter(startTime ?? now));
+    return ((startTime != null) || (endTime != null));
   }
 
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
-    TZDateTime now = TZDateTime.now(_timeZone);
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
     TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
     if ((startTime == null) && (endTime == null)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.select.message', 'You must select start or end time.'));
-    }
-    else if ((startTime != null) && startTime.isBefore(now)) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.start_in_past.message', 'Start time must not be past.'));
-    }
-    else if ((endTime != null) && endTime.isBefore(now)) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.end_in_past.message', 'End time must not be past.'));
     }
     else if ((startTime != null) && (endTime != null) && endTime.isBefore(startTime)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.end_before_start.message', 'End time must be after start time.'));

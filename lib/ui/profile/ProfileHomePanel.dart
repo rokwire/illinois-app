@@ -21,10 +21,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoWrapperPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -36,13 +38,14 @@ class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
 
   final ProfileContent? content;
+  final Map<String, dynamic>? contentParams;
 
-  ProfileHomePanel._({this.content});
+  ProfileHomePanel._({this.content, this.contentParams});
 
   @override
   _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, {ProfileContent? content}) {
+  static void present(BuildContext context, {ProfileContent? content, Map<String, dynamic>? contentParams}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -57,7 +60,7 @@ class ProfileHomePanel extends StatefulWidget {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return ProfileHomePanel._(content: content);
+          return ProfileHomePanel._(content: content, contentParams: contentParams,);
         }
       );
 
@@ -78,6 +81,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
+  final GlobalKey<ProfileInfoWrapperPageState> _profileInfoKey = GlobalKey();
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -85,6 +91,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
+      ProfileInfoWrapperPage.notifySignIn,
     ]);
 
     if (_isContentItemEnabled(widget.content)) {
@@ -108,16 +115,23 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   @override
   void onNotification(String name, param) {
-    if ((name == Auth2.notifyLoginChanged) ||
-        (name == FlexUI.notifyChanged)) {
+    if (name == Auth2.notifyLoginChanged) {
       _updateContentItemIfNeeded();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateContentItemIfNeeded();
+    }
+    else if (name == ProfileInfoWrapperPage.notifySignIn) {
+      setStateIfMounted(() {
+        _selectedContent = _lastSelectedContent = ProfileContent.login;
+      });
     }
   }
   
   @override
   Widget build(BuildContext context) {
     //return _buildScaffold(context);
-    return _buildSheet(context);
+    return _buildSheet();
   }
 
   /*Widget _buildScaffold(BuildContext context) {
@@ -129,47 +143,53 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     );
   }*/
 
-  Widget _buildSheet(BuildContext context) {
+  Widget _buildSheet() {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
-    return Column(children: [
-      Container(color: Styles().colors.white, child:
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
-            )
-          ),
-          Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-            Semantics(label: "debug", child:
-              InkWell(onTap : _onTapDebug, child:
-                Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-                  Styles().images.getImage('bug', excludeFromSemantics: true),
-                ),
-              ),
-            )
-          ),
-          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-            InkWell(onTap : _onTapClose, child:
-              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images.getImage('close-circle', excludeFromSemantics: true),
-              ),
-            ),
-          ),
-
-        ],),
-      ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
-      Expanded(child:
-        _buildPage(context),
-      )
-    ],);
+    return PopScopeFix(onClose: _closeSheet, child:
+      Column(children: [
+        _buildHeaderBar(),
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        Expanded(child:
+          _buildPage(),
+        )
+      ],),
+    );
   }
 
-  Widget _buildPage(BuildContext context) {
+  Widget _buildHeaderBar() {
+    return Container(color: Styles().colors.white, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16), child:
+            Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+          )
+        ),
+        Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+          Semantics(label: "debug", child:
+            InkWell(onTap : _onTapDebug, child:
+              Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+                Styles().images.getImage('bug', excludeFromSemantics: true),
+              ),
+            ),
+          )
+        ),
+        Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+          InkWell(onTap : _onTapClose, child:
+            Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+              Styles().images.getImage('close-circle', excludeFromSemantics: true),
+            ),
+          ),
+        ),
+
+      ],),
+    );
+  }
+
+  Widget _buildPage() {
     return Column(key: _pageKey, children: <Widget>[
       Expanded(child:
         Container(color: Styles().colors.background, child:
-          SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
+          SingleChildScrollView(controller: _scrollController, physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
@@ -248,12 +268,17 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
         onTap: () => _onTapContentItem(contentItem));
   }
 
-  void _onTapContentItem(ProfileContent contentItem) {
+  void _onTapContentItem(ProfileContent contentItem) async {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
-    setState(() {
-      _selectedContent = _lastSelectedContent = contentItem;
-      _contentValuesVisible = !_contentValuesVisible;
-    });
+    bool? modifiedResult = (_selectedContent == ProfileContent.profile) ? await saveModifiedProfile() : null;
+    if (mounted) {
+      setState(() {
+        if (modifiedResult != false) {
+          _selectedContent = _lastSelectedContent = contentItem;
+        }
+        _contentValuesVisible = !_contentValuesVisible;
+      });
+    }
   }
 
   void _onTapDebug() {
@@ -262,9 +287,17 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     }
   }
-  void _onTapClose() {
+
+  void _onTapClose() async {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
-    Navigator.of(context).pop();
+    _closeSheet();
+  }
+
+  void _closeSheet() async {
+    bool? modifiedResult = await saveModifiedProfile();
+    if (modifiedResult != false) {
+      Navigator.of(context).pop();
+    }
   }
 
   void _onTapContentSwitch() {
@@ -278,6 +311,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       _contentValuesVisible = false;
     });
   }
+
+  Future<bool?> saveModifiedProfile() async => _profileInfoKey.currentState?.saveModified();
 
   // Utilities
 
@@ -293,7 +328,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
+      case ProfileContent.profile: return ProfileInfoWrapperPage(key: _profileInfoKey, params: widget.contentParams,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
@@ -311,10 +346,10 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   bool _isContentItemEnabled(ProfileContent? contentItem) {
     switch (contentItem) {
-      case ProfileContent.profile: return Auth2().isLoggedIn;
+      case ProfileContent.profile: return true;
       case ProfileContent.who_are_you: return true;
-      case ProfileContent.login: return FlexUI().hasFeature('authentication');
-      default: return false;
+      case ProfileContent.login: return true;
+      case null: return false;
     }
   }
 
@@ -328,7 +363,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   }
 
   void _updateContentItemIfNeeded() {
-    if ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent)) {
+    if (mounted && ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent))) {
       ProfileContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
       if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
         setState(() {

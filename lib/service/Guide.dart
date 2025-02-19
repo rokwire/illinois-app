@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -34,6 +35,7 @@ class Guide with Service implements NotificationsListener {
   static const String campusHighlightContentType = "campus-highlight";
   static const String campusSafetyResourceContentType = "campus-safety-resource";
   static const String wellnessMentalHealthContentType = "mental-health";
+  static const String wellnessCampusRecreationContentType = "campus-recreation";
 
   static const String _cacheFileName = "guide.json";
 
@@ -43,8 +45,6 @@ class Guide with Service implements NotificationsListener {
 
   File?          _cacheFile;
   DateTime?      _pausedDateTime;
-
-  List<Uri>? _guideUriCache;
 
   static final Guide _service = Guide._internal();
   Guide._internal();
@@ -61,14 +61,15 @@ class Guide with Service implements NotificationsListener {
       Auth2.notifyLoginChanged,
       Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
     ]);
-    _guideUriCache = <Uri>[];
+    super.createService();
   }
 
   @override
   void destroyService() {
     NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
@@ -107,11 +108,6 @@ class Guide with Service implements NotificationsListener {
   }
   
   @override
-  void initServiceUI() {
-    _processGuideUriCache();
-  }
-
-  @override
   Set<Service> get serviceDependsOn {
     return Set.from([Storage(), Config(), Auth2()]);
   }
@@ -128,7 +124,7 @@ class Guide with Service implements NotificationsListener {
       }
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
-    } else if (name == DeepLink.notifyUri) {
+    } else if (name == DeepLink.notifyUiUri) {
       _processDeepLinkUri(param);
     }
   }
@@ -472,12 +468,12 @@ class Guide with Service implements NotificationsListener {
     Map<String, dynamic>? card = (promotion != null) ? JsonUtils.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !BoolExpr.eval(cardRole, (dynamic role) { return (role is String) ? (Auth2().authCard?.role?.toLowerCase() == role.toLowerCase()) : null; })) {
+      if ((cardRole != null) && !BoolExpr.eval(cardRole, (dynamic role) { return (role is String) ? (Auth2().iCard?.role?.toLowerCase() == role.toLowerCase()) : null; })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (dynamic studentLevel) { return (studentLevel is String) ? (Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel.toLowerCase()) : null; })) {
+      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (dynamic studentLevel) { return (studentLevel is String) ? (Auth2().iCard?.studentLevel?.toLowerCase() == studentLevel.toLowerCase()) : null; })) {
         return false;
       }
     }
@@ -707,8 +703,12 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
-  String get guideListUrl => '${DeepLink().appUrl}/guide_list';
+  String get listBaseUrl => '${DeepLink().appUrl}/guide_list';
+
+  String get detailBaseUrl => '${DeepLink().appUrl}/guide_detail';
+
+  String detailUrl(String? guideId, {AnalyticsFeature? analyticsFeature}) =>
+    "$detailBaseUrl?guide_id=$guideId" + ((analyticsFeature != null) ? "&analytics_feature=$analyticsFeature" : "");
 
   String? detailIdFromUrl(String? url) {
     return (url != null) ? detailIdFromUri(Uri.tryParse(url)) : null;
@@ -738,50 +738,16 @@ class Guide with Service implements NotificationsListener {
       {
 
         if (uri.path == '/guide') {
-          if (_guideUriCache != null) {
-            _guideUriCache?.add(uri);
-          }
-          else {
-            NotificationService().notify(notifyGuide, null);
-          }
+          NotificationService().notify(notifyGuide, null);
         }
         else if (uri.path == '/guide_detail') {
-          if (_guideUriCache != null) {
-            _guideUriCache?.add(uri);
-          }
-          else {
-            try { _processGuideDetail(uri.queryParameters.cast<String, dynamic>()); }
-            catch (e) { print(e.toString()); }
-          }
+          try { NotificationService().notify(notifyGuideDetail, uri.queryParameters.cast<String, dynamic>()); }
+          catch (e) { print(e.toString()); }
         }
         else if (uri.path == '/guide_list') {
-          if (_guideUriCache != null) {
-            _guideUriCache?.add(uri);
-          }
-          else {
-            try { _processGuideList(uri.queryParameters.cast<String, dynamic>()); }
-            catch (e) { print(e.toString()); }
-          }
+          try { NotificationService().notify(notifyGuideList, uri.queryParameters.cast<String, dynamic>()); }
+          catch (e) { print(e.toString()); }
         }
-      }
-    }
-  }
-
-  void _processGuideDetail(Map<String, dynamic> params) {
-    NotificationService().notify(notifyGuideDetail, params);
-  }
-
-  void _processGuideList(Map<String, dynamic> params) {
-    NotificationService().notify(notifyGuideList, params);
-  }
-
-  void _processGuideUriCache() {
-    if (_guideUriCache != null) {
-      List<Uri> guideUriCache = _guideUriCache!;
-      _guideUriCache = null;
-
-      for (Uri uri in guideUriCache) {
-        _processDeepLinkUri(uri);
       }
     }
   }

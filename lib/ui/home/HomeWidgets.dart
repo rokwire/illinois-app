@@ -32,8 +32,9 @@ class HomeHandleWidget extends StatefulWidget {
 
   final String? favoriteId;
   final HomeDragAndDropHost? dragAndDropHost;
+  final Widget Function(BuildContext)? childBuilder;
 
-  const HomeHandleWidget({Key? key, this.title, this.position, this.crossAxisAlignment = CrossAxisAlignment.center, this.favoriteId, this.dragAndDropHost}): super(key: key);
+  const HomeHandleWidget({Key? key, this.title, this.position, this.crossAxisAlignment = CrossAxisAlignment.center, this.favoriteId, this.dragAndDropHost, this.childBuilder}): super(key: key);
 
   @override
   _HomeHandleWidgetState createState() => _HomeHandleWidgetState();
@@ -99,8 +100,8 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         feedback: HomeDragFeedback(title: widget.title),
         // We need to set hitTestBehavior: HitTestBehavior.opaque here in order to resolve [#4120](https://github.com/rokwire/illinois-app/issues/4120).
         // There is a fix of [this](https://github.com/flutter/flutter/issues/78443) issue that is not available in the latest stable Flutter version.
-        // As a workaround we use the Container bellow with a background color until the Flutter fix gets available.
-        child: Container(color: Styles().colors.background, child:
+        // As a workaround we use the Container below with a background color until the Flutter fix gets available.
+        child: widget.childBuilder?.call(context) ?? Container(color: Styles().colors.background, child:
           Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
             Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:

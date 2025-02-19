@@ -28,7 +28,9 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -42,7 +44,9 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
+import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -80,6 +84,7 @@ import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widget_builders/actions.dart';
@@ -87,6 +92,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+import 'package:quick_actions/quick_actions.dart';
 
 enum RootTab { Home, Favorites, Browse, Maps, Academics, Wellness, Wallet, Assistant }
 
@@ -109,6 +116,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   TabController?  _tabBarController;
   int            _currentTabIndex = 0;
 
+  late QuickActions quickActions;
+
   _RootPanelState();
 
   @override
@@ -125,6 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsTeam,
       FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifySocialMessageNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyHomeFavoritesNotification,
@@ -162,7 +172,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessPodcastNotification,
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
-      FirebaseMessaging.notifyWellnessStrugglingNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
@@ -179,7 +188,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyProfileWhoAreYouNotification,
       FirebaseMessaging.notifyProfileLoginNotification,
       FirebaseMessaging.notifySettingsSectionsNotification, //TBD deprecate. Use notifyProfileLoginNotification
-      FirebaseMessaging.notifySettingsInterestsNotification,
       FirebaseMessaging.notifySettingsFoodFiltersNotification,
       FirebaseMessaging.notifySettingsSportsNotification,
       FirebaseMessaging.notifySettingsFavoritesNotification,
@@ -200,14 +208,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
+      Social.notifyMessageDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
+      Safety.notifySafeWalkDetail,
       Places.notifyPlacesDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
+      Wellness.notifyCategorySelect,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -224,6 +235,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
     _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
     _updatePanels(_tabs);
+
+    quickActions = const QuickActions();
+    quickActions.initialize(_onQuickAction);
+    quickActions.setShortcutItems(<ShortcutItem>[
+      ShortcutItem(
+        type: Safety.safeWalkRequestAction,
+        localizedTitle: Localization().getStringEx('model.safety.safewalks.request.action.text', 'Request a SafeWalk'),
+        icon: Platform.isAndroid ? 'paper_plane' : 'paper-plane',
+      ),
+  ]);
 
     Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
 
@@ -289,6 +310,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
     }
+    else if (name == Social.notifyMessageDetail) {
+      _onSocialMessageDetail(param);
+    }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
     }
@@ -301,6 +325,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Guide.notifyGuideList) {
       _onGuideList(param);
     }
+    else if (name == Wellness.notifyCategorySelect) {
+      _onWellnessCategorySelect(param);
+    }
     else if (name == Canvas.notifyCanvasEventDetail) {
       _onCanvasEventDetail(param);
     }
@@ -309,6 +336,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Gateway.notifyBuildingDetail) {
       _onGatewayBuildingDetail(param);
+    }
+    else if (name == Safety.notifySafeWalkDetail) {
+      _onSafetySafeWalkDetail(param);
     }
     else if (name == Places.notifyPlacesDetail) {
       _onPlaceDetail(param);
@@ -334,6 +364,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifySocialMessageNotification) {
+      _onFirebaseSocialMessageNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
@@ -458,9 +491,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessRingsNotification) {
       _onFirebaseWellnessNotification(WellnessContent.rings);
     }
-    else if (name == FirebaseMessaging.notifyWellnessStrugglingNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.struggling);
-    }
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContent.todo);
     }
@@ -509,9 +539,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifySettingsSectionsNotification) { //TBD deprecate use notifyProfileLoginNotification instead
       _onFirebaseProfileNotification(profileContent: ProfileContent.login);
-    }
-    else if (name == FirebaseMessaging.notifySettingsInterestsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.interests);
     }
     else if (name == FirebaseMessaging.notifySettingsFoodFiltersNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.food_filters);
@@ -731,6 +758,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
+  void _onQuickAction(String action) {
+    if (action == Safety.safeWalkRequestAction) {
+      _onSafetySafeWalkDetail(null);
+    }
+  }
+
   void _showPanel(Map<String, dynamic> content) {
     switch (content['panel']) {
       case "GuideDetailPanel":
@@ -831,6 +864,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _presentGroupDetailPanel(groupId: groupId);
   }
 
+  Future<void> _onSocialMessageDetail(Map<String, dynamic>? content) async {
+    if ((content != null)) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(content['conversation_id']) ?? JsonUtils.stringValue(content['entity_id']),
+        messageId: JsonUtils.stringValue(content['message_id']),
+        messageGlobalId: JsonUtils.stringValue(content['message_global_id']),
+      );
+    }
+  }
+
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
     String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) ?? JsonUtils.stringValue(content['entity_id']) : null;
     if (StringUtils.isNotEmpty(appointmentId)) {
@@ -880,6 +923,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  Future<void> _onWellnessCategorySelect(Map<String, dynamic>? content) async {
+    String? categoryCode = (content != null) ? JsonUtils.stringValue(content['id']) : null;
+    WellnessContent? category = WellnessContentImpl.fromString(categoryCode);
+    if (category != null) {
+      _onFirebaseWellnessNotification(category);
+    }
+  }
+
   Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(eventId)) {
@@ -897,6 +948,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
       ));
     }
+  }
+
+  Future<void> _onSafetySafeWalkDetail(Map<String, dynamic>? content) async {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        SafetyHomePanel(
+          contentType: SafetyContentType.safeWalkRequest,
+          safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
+          safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
+        )
+    ));
   }
 
   Future<void> _onPlaceDetail(Map<String, dynamic>? content) async {
@@ -1068,6 +1129,28 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseSocialMessageNotification(param) {
+    if (param is Map<String, dynamic>) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(param["entity_id"]),
+        messageId: JsonUtils.stringValue(param["message_id"]),
+        messageGlobalId: JsonUtils.stringValue(param["message_global_id"]),
+      );
+    }
+  }
+
+  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
+    if (StringUtils.isNotEmpty(conversationId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+        conversationId: conversationId,
+        targetMessageId: messageId,
+        targetMessageGlobalId: messageGlobalId,
+      )));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
+    }
+  }
+
   void _onFirebaseAthleticsNewsNotification(param) {
     if (param is Map<String, dynamic>) {
       String? newsId = param["news_id"];
@@ -1145,7 +1228,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       if (mapsIndex != _currentTabIndex) {
         _selectTab(mapsIndex);
-        if ((param is ExploreMapType) && !ExploreMapPanel.hasState) {
+        if ((param != null) && !ExploreMapPanel.hasState) {
           Widget? mapsWidget = _panels[RootTab.Maps];
           ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
           mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;

@@ -36,6 +36,12 @@
 @import device_info;
 #endif
 
+#if __has_include(<emoji_picker_flutter/EmojiPickerFlutterPlugin.h>)
+#import <emoji_picker_flutter/EmojiPickerFlutterPlugin.h>
+#else
+@import emoji_picker_flutter;
+#endif
+
 #if __has_include(<firebase_core/FLTFirebaseCorePlugin.h>)
 #import <firebase_core/FLTFirebaseCorePlugin.h>
 #else
@@ -64,6 +70,12 @@
 #import <flutter_beep/FlutterBeepPlugin.h>
 #else
 @import flutter_beep;
+#endif
+
+#if __has_include(<flutter_email_sender/FlutterEmailSenderPlugin.h>)
+#import <flutter_email_sender/FlutterEmailSenderPlugin.h>
+#else
+@import flutter_email_sender;
 #endif
 
 #if __has_include(<flutter_exif_rotation/FlutterExifRotationPlugin.h>)
@@ -150,10 +162,16 @@
 @import path_provider_foundation;
 #endif
 
-#if __has_include(<record/RecordPlugin.h>)
-#import <record/RecordPlugin.h>
+#if __has_include(<quick_actions_ios/QuickActionsPlugin.h>)
+#import <quick_actions_ios/QuickActionsPlugin.h>
 #else
-@import record;
+@import quick_actions_ios;
+#endif
+
+#if __has_include(<record_darwin/RecordPlugin.h>)
+#import <record_darwin/RecordPlugin.h>
+#else
+@import record_darwin;
 #endif
 
 #if __has_include(<rokwire_plugin/RokwirePlugin.h>)
@@ -172,6 +190,12 @@
 #import <shared_preferences_foundation/SharedPreferencesPlugin.h>
 #else
 @import shared_preferences_foundation;
+#endif
+
+#if __has_include(<sms_mms/SmsMmsPlugin.h>)
+#import <sms_mms/SmsMmsPlugin.h>
+#else
+@import sms_mms;
 #endif
 
 #if __has_include(<speech_to_text/SpeechToTextPlugin.h>)
@@ -224,11 +248,13 @@
   [ConnectivityPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"ConnectivityPlusPlugin"]];
   [DeviceCalendarPlugin registerWithRegistrar:[registry registrarForPlugin:@"DeviceCalendarPlugin"]];
   [FLTDeviceInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTDeviceInfoPlugin"]];
+  [EmojiPickerFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"EmojiPickerFlutterPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
   [SwiftFlutterBarcodeScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterBarcodeScannerPlugin"]];
   [FlutterBeepPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterBeepPlugin"]];
+  [FlutterEmailSenderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterEmailSenderPlugin"]];
   [FlutterExifRotationPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterExifRotationPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FLTPDFViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPDFViewFlutterPlugin"]];
@@ -243,10 +269,12 @@
   [FLTPackageInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPackageInfoPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
+  [QuickActionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"QuickActionsPlugin"]];
   [RecordPlugin registerWithRegistrar:[registry registrarForPlugin:@"RecordPlugin"]];
   [RokwirePlugin registerWithRegistrar:[registry registrarForPlugin:@"RokwirePlugin"]];
   [FLTSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
+  [SmsMmsPlugin registerWithRegistrar:[registry registrarForPlugin:@"SmsMmsPlugin"]];
   [SpeechToTextPlugin registerWithRegistrar:[registry registrarForPlugin:@"SpeechToTextPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
   [UniLinksPlugin registerWithRegistrar:[registry registrarForPlugin:@"UniLinksPlugin"]];

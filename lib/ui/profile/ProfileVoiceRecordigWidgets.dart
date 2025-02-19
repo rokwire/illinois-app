@@ -11,6 +11,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/Log.dart';
@@ -34,20 +35,21 @@ class ProfileNamePronouncementWidget extends StatefulWidget {
 }
 
 class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> implements NotificationsListener {
-  late AudioPlayer _audioPlayer;
-  bool _loading = false;
+  AudioPlayer? _audioPlayer;
+  bool _playbackActivity = false;
+  bool _editActivity = false;
+  bool _deleteActivity = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [Auth2.notifyProfileNamePronunciationChanged]);
     super.initState();
-    NotificationService().subscribe(this, [Auth2.notifyVoiceRecordChanged]);
-    _audioPlayer = AudioPlayer();
   }
 
   @override
   void dispose() {
+    _audioPlayer?.dispose();
     super.dispose();
-    _audioPlayer.dispose();
   }
 
   @override
@@ -56,7 +58,9 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   );
 
   Widget get _pronouncementContent => Row(children: [
-    _loading ? _progressIndicator : _pronouncementIcon,
+    Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+      _playbackActivity ? _progressIndicator : _playIcon,
+    ),
 
     Expanded(child:
       InkWell(onTap:  _onPlayNamePronouncement, child:
@@ -68,20 +72,22 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
 
     InkWell(onTap: _onEditRecord, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
-        Styles().images.getImage('edit', size: 16, excludeFromSemantics: true)
+        _editActivity ? _progressIndicator : _editIcon
       )
     ),
 
     InkWell(onTap: _onDeleteNamePronouncement, child:
       Padding(padding: EdgeInsets.only(left: 8, right: widget.margin.right, top: 8, bottom: 8), child:
-        Styles().images.getImage('trash', size: 16, excludeFromSemantics: true)
+      _deleteActivity ? _progressIndicator : _trashIcon
       )
     ),
 
   ],);
 
-  Widget get _addPronouncementContent => Row(children: [
-    _loading ? _progressIndicator : _addPronouncementIcon,
+  Widget get _addPronouncementContent => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8, top: 4), child:
+      _addIcon,
+    ),
 
     Expanded(child:
       Padding(padding: EdgeInsets.only(right: widget.margin.right), child:
@@ -97,98 +103,184 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
 
   @override
   void onNotification(String name, param) {
-    if(name == Auth2.notifyVoiceRecordChanged){
+    if(name == Auth2.notifyProfileNamePronunciationChanged){
       setStateIfMounted(() { });
     }
   }
 
-  Widget get _progressIndicator => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
-    SizedBox(width: 16, height: 16, child:
-      CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
-    )
+  Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
+    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
   );
 
-  Widget get _pronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
-    Styles().images.getImage('icon-soundbyte', excludeFromSemantics: true),
-  );
-
-  Widget get _addPronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
-    Styles().images.getImage('plus-circle', excludeFromSemantics: true)
-  );
+  Widget? get _playIcon => (_audioPlayer?.playing == true) ? _highVolumeIcon : _volumeIcon;
+  Widget? get _highVolumeIcon => Styles().images.getImage('volume', size: 16, excludeFromSemantics: true);
+  Widget? get _volumeIcon => Styles().images.getImage('volume', size: 16, excludeFromSemantics: true);
+  Widget? get _addIcon => Styles().images.getImage('plus-circle', size: 16, excludeFromSemantics: true);
+  Widget? get _trashIcon => Styles().images.getImage('trash', size: 16, excludeFromSemantics: true);
+  Widget? get _editIcon => Styles().images.getImage('edit', size: 16, excludeFromSemantics: true);
 
   void _onPlayNamePronouncement() async {
-    try {
-      if (_audioPlayer.playing) {
-        await _audioPlayer.stop();
-      } else {
-        _prepareAudioPlayer();
-        await _audioPlayer.play();
+    if (_audioPlayer == null) {
+      if (_playbackActivity == false) {
+        setState(() {
+          _playbackActivity = true;
+        });
+
+        AudioResult? result = await Content().loadUserNamePronunciation();
+
+        if (mounted) {
+          Uint8List? audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
+          if (audioData != null) {
+            _audioPlayer = AudioPlayer();
+
+            _audioPlayer?.playerStateStream.listen((PlayerState state) {
+              if ((state.processingState == ProcessingState.completed) && mounted) {
+                setState(() {
+                  _audioPlayer?.dispose();
+                  _audioPlayer = null;
+                });
+              }
+            });
+
+            Duration? duration;
+            try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
+            catch(e) {}
+
+            if (mounted) {
+              if ((duration != null) && (duration.inMilliseconds > 0)) {
+                setState(() {
+                  _playbackActivity = false;
+                  _audioPlayer?.play();
+                });
+              }
+              else {
+                _handlePronunciationPlaybackError();
+              }
+            }
+          }
+          else {
+            _handlePronunciationPlaybackError();
+          }
+        }
       }
-    } catch (e){
-      Log.e(e.toString());
+      else {
+        // ignore taps while initializing
+      }
+    }
+    else if (_audioPlayer?.playing == true) {
+      setState(() {
+        _audioPlayer?.pause();
+      });
+    }
+    else {
+      setState(() {
+        _audioPlayer?.play();
+      });
     }
   }
 
-  void _prepareAudioPlayer() async {
-    Log.d("AUDIO PREPARING");
-    if(_hasStoredPronouncement) {
-      await _audioPlayer.setAudioSource(Uint8ListAudioSource(_storedAudioPronouncement!));
-    }
+  void _handlePronunciationPlaybackError() {
+    setState(() {
+      _playbackActivity = false;
+      _audioPlayer?.dispose();
+      _audioPlayer = null;
+    });
+    AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }
 
   void _onRecordNamePronouncement(){
-    _ProfileSoundRecorderDialog.show(context);
+    ProfileSoundRecorderDialog.show(context);
   }
 
-  void _onEditRecord(){
-    _ProfileSoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
-  }
+  void _onEditRecord() async {
+    Uint8List? audioData;
+    if (_hasStoredPronouncement && !_editActivity) {
+      setStateIfMounted(() { _editActivity = true; });
 
-  void _onDeleteNamePronouncement(){
-    _ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
-      if (mounted && (result == true)) {
-        setStateIfMounted(() => _loading = true);
-        Content().deleteVoiceRecord().then((result) {
-          setStateIfMounted(() => _loading = false);
-          if(result?.resultType != AudioResultType.succeeded){
-            AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+      AudioResult? audioResult = await Content().loadUserNamePronunciation();
+      audioData = (audioResult?.resultType == AudioResultType.succeeded) ? audioResult?.audioData : null;
+
+      setStateIfMounted(() { _editActivity = false; });
+    }
+    if (mounted) {
+      AudioResult? audioResult = await ProfileSoundRecorderDialog.show(context, initialRecordBytes: audioData);
+      if (mounted && (audioResult?.resultType == AudioResultType.succeeded)) {
+        setState(() { _editActivity = true; });
+        Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
+          override: Auth2UserProfile(
+            pronunciationUrl: Content().getUserNamePronunciationUrl(accountId: Auth2().accountId),
+          ),
+          scope: { Auth2UserProfileScope.pronunciationUrl }
+        );
+        bool profileResult = await Auth2().saveUserProfile(profile);
+        if (mounted) {
+          setState(() { _editActivity = false; });
+          if (profileResult != true) {
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
           }
-        });
+        }
       }
-    });
+    }
   }
 
-  bool get _hasStoredPronouncement => CollectionUtils.isNotEmpty(_storedAudioPronouncement);
+  void _onDeleteNamePronouncement() async {
+    bool? promptResult = await ProfileNamePronouncementConfirmDeleteDialog.show(context);
+    
+    if (mounted && (promptResult == true)) {
+      setState(() => _deleteActivity = true);
+      
+      AudioResult? audioResult = await Content().deleteUserNamePronunciation(); 
+      if (audioResult?.resultType == AudioResultType.succeeded) {
+        Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
+          override: Auth2UserProfile(),
+          scope: { Auth2UserProfileScope.pronunciationUrl }
+        );
+        bool profileResult = await Auth2().saveUserProfile(profile);
+        if (mounted) {
+          setState(() => _deleteActivity = false);
+          if (profileResult != true) {
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete pronunciation audio. Please try again later."));
+          }
+        }
+      }
+      else if (mounted) {
+        setState(() => _deleteActivity = false);
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.delete.failed.msg", "Failed to delete pronunciation audio. Please try again later."));
+      }
+    }
+  }
 
-  Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
+  bool get _hasStoredPronouncement => StringUtils.isNotEmpty(Auth2().profile?.pronunciationUrl);
+
+  //Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
 }
 
 enum _RecorderMode {record, play}
 
-class _ProfileSoundRecorderDialog extends StatefulWidget {
+class ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
 
   // ignore: unused_element
-  const _ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
+  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
 
   @override
   _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
 
   // ignore: unused_element
-  static Future show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
-    return showDialog(
+  static Future<AudioResult?> show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
+    return showDialog<AudioResult?>(
         context: context,
         builder: (_) =>
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: _ProfileSoundRecorderDialog(initialRecordBytes: initialRecordBytes),
+              child: ProfileSoundRecorderDialog(initialRecordBytes: initialRecordBytes),
             )
     );
   }
 }
 
-class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog> {
+class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog> {
   late _ProfileSoundRecorderController _controller;
   bool _loading = false;
 
@@ -331,18 +423,16 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadVoiceRecord(audioBytes);
+        AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
-          Log.d(result.data ?? "");
-          _closeModal();
+          _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
-          AppAlert.showMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
+          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
         }
       } else {
-        AppAlert.showMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
-        Log.d("No File to save");
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
       }
     }catch(e){
       Log.e(e.toString());
@@ -354,9 +444,9 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
     _closeModal();
   }
 
-  void _closeModal() {
+  void _closeModal({ AudioResult? result }) {
     _controller.stopRecord();
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(result);
   }
 
   Widget? get _playButtonIcon {
@@ -420,7 +510,7 @@ class _ProfileSoundRecorderController {
   final Function(void Function()) notifyChanged;
   final Uint8List? initialAudio;
 
-  late Record _audioRecord;
+  late AudioRecorder _audioRecorder;
   late AudioPlayer _audioPlayer;
   Duration? _playerTimer;
   String? _audioRecordPath = ""; //The path of the tmp audio Record so we can delete it.
@@ -430,7 +520,7 @@ class _ProfileSoundRecorderController {
   _ProfileSoundRecorderController({required this.notifyChanged, this.initialAudio});
 
   void init() {
-    _audioRecord = Record();
+    _audioRecorder = AudioRecorder();
     _audioPlayer = AudioPlayer();
     _audioPlayer.positionStream.listen((elapsedDuration) {
       notifyChanged(() => _playerTimer = elapsedDuration);
@@ -443,17 +533,17 @@ class _ProfileSoundRecorderController {
 
   void dispose() {
     _deleteRecord(); //clean the tmp file
-    _audioRecord.dispose();
+    _audioRecorder.dispose();
     _audioPlayer.dispose();
   }
 
   void startRecording() async {
     try {
       Log.d("START RECODING");
-      if (await _audioRecord.hasPermission()) {
+      if (await _audioRecorder.hasPermission()) {
         notifyChanged(() => _recording = true);
-        await _audioRecord.start(path: await _constructFilePath);
-        _recording = await _audioRecord.isRecording();
+        await _audioRecorder.start(const RecordConfig(), path: await _constructFilePath);
+        _recording = await _audioRecorder.isRecording();
       }
     } catch (e, stackTrace) {
       Log.d("START RECODING: ${e} - ${stackTrace}");
@@ -463,8 +553,8 @@ class _ProfileSoundRecorderController {
   Future<void> stopRecording() async {
     Log.d("STOP RECODING");
     try {
-      String? path = await _audioRecord.stop();
-      _recording = await _audioRecord.isRecording();
+      String? path = await _audioRecorder.stop();
+      _recording = await _audioRecorder.isRecording();
       var audioBytes = await getFileAsBytes(path);
       notifyChanged(() {
         _audio = audioBytes;
@@ -529,7 +619,7 @@ class _ProfileSoundRecorderController {
       });
   }
 
-  Future<bool> requestPermission() async => _audioRecord.hasPermission();
+  Future<bool> requestPermission() async => _audioRecorder.hasPermission();
 
   Future<void> _deleteRecord() async {
     if (_audioRecordPath?.isNotEmpty == true) {
@@ -564,10 +654,9 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
-  Future<String?> get _constructFilePath async {
+  Future<String> get _constructFilePath async {
     Directory dir = await getApplicationDocumentsDirectory();
-
-    return dir.existsSync() ? Path.join(dir.path, "tmp_audio.m4a") : null;
+    return Path.join(dir.path, "tmp_audio.m4a");
   }
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{
@@ -586,49 +675,40 @@ class _ProfileSoundRecorderController {
   }
 }
 
-class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
-  // ignore: unused_element
-  static Future<bool?> show(BuildContext context) => showDialog<bool?>(context: context, builder: (_) => _ProfileNamePronouncementConfirmDeleteDialog());
+class ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
+
+  static Future<bool?> show(BuildContext context) => showDialog<bool?>(context: context, builder: (_) => ProfileNamePronouncementConfirmDeleteDialog());
 
   @override
-  Widget build(BuildContext context) => Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(5)), child:
+  Widget build(BuildContext context) => Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(8)), child:
     SafeArea(child:
-      Container(alignment: Alignment.center, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22), child:
-        Container(padding: EdgeInsets.all(5), decoration: BoxDecoration(color: Styles().colors.background, borderRadius: BorderRadius.all(Radius.circular(5)),), child:
-          Stack( alignment: Alignment.topRight, children:[
-            Row(mainAxisSize: MainAxisSize.min, children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Container(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16), child:
-                  Column(children: [
-                    Container(height: 8,),
-                    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
-                      Text(Localization().getStringEx("", "Delete current recording?"), style:
-                        Styles().textStyles.getTextStyle("widget.detail.regular"),)
-                      ),
-                      Container(height: 16,),
-                      Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
-                        Row(children: [
-                          SmallRoundedButton( rightIcon: Container(),
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                            label: Localization().getStringEx("", "Yes"),
-                            onTap: () => Navigator.pop(context, true),
-                          ),
-                          Container(width: 16,),
-                          SmallRoundedButton( rightIcon: Container(),
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                            label: Localization().getStringEx("", "No"),
-                            onTap: () => Navigator.pop(context, false),
-                          ),
-                        ],),
-                      ),
-                    ],)
-                  )
-                ]),
-              ]),
-            ])
-          )
+      Container(alignment: Alignment.center, padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
+        Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), decoration: BoxDecoration(color: Styles().colors.background, borderRadius: BorderRadius.all(Radius.circular(5)),), child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            Container(height: 8,),
+              Text(Localization().getStringEx("panel.profile_info.pronunciation.delete.confirmation.msg", "Are you sure you want to remove this pronunciation audio?"), textAlign: TextAlign.center, style:
+                Styles().textStyles.getTextStyle("widget.detail.regular"),
+              ),
+            Container(height: 16,),
+            Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                SmallRoundedButton( rightIcon: Container(),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  label: Localization().getStringEx("", "Yes"),
+                  onTap: () => Navigator.pop(context, true),
+                ),
+                Container(width: 16,),
+                SmallRoundedButton( rightIcon: Container(),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  label: Localization().getStringEx("", "No"),
+                  onTap: () => Navigator.pop(context, false),
+                ),
+              ],),
+            ),
+          ],)
         )
       )
-    );
+    )
+  );
 }
 

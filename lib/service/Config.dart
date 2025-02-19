@@ -55,6 +55,18 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
+  Map<String, dynamic> get safety => JsonUtils.mapValue(content['safety']) ?? {};
+  Map<String, dynamic> get safeRides => JsonUtils.mapValue(safety['safeRides']) ?? {};
+  Map<String, dynamic> get safeWalk  => JsonUtils.mapValue(safety['safeWalk']) ?? {};
+  String? get safeRidesGuideId       => JsonUtils.stringValue(safeRides['guide_id']);
+  String? get safeRidesAboutUrl      => JsonUtils.stringValue(safeRides['about_url']);
+  String? get safeWalkPhoneNumber    => JsonUtils.stringValue(safeWalk['phone_number']);
+  String? get safeWalkTextNumber     => JsonUtils.stringValue(safeWalk['text_number']);
+  String? get safeWalkStartTime      => JsonUtils.stringValue(safeWalk['start_time']);
+  String? get safeWalkEndTime        => JsonUtils.stringValue(safeWalk['end_time']);
+  String? get safeWalkOrderInterval  => JsonUtils.stringValue(safeWalk['order_interval']);
+  String? get safeWalkAboutUrl       => JsonUtils.stringValue(safeWalk['about_url']);
+
   Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
   Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
 
@@ -108,14 +120,15 @@ class Config extends rokwire.Config {
   String? get willFmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willfm_radio_url']);
   String? get willHdRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willhd_radio_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
-  String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
-  String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
+  String? get studentCodeUrl         => JsonUtils.stringValue(otherUniversityServices['student_code_url']);
   String? get universityHomepageUrl  => JsonUtils.stringValue(otherUniversityServices['university_homepage_url']);
   String? get dailyIlliniHomepageUrl => JsonUtils.stringValue(otherUniversityServices['daily_illini_homepage_url']);
   String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
   String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
   String? get eventsPublishingInfoUrl => JsonUtils.stringValue(otherUniversityServices['events_publishing_info_url']); // ?? 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=addingevents';
+  String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
+  String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
 
 
   // Getters: Platform Building Blocks

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Occupation.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -187,10 +188,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                   });
                 }, icon: Styles().images.getImage('close', excludeFromSemantics: true) ?? Container()),
               ),
-              IconButton(onPressed: () => setState(() {
-                _searchTerm = _searchController.text;
-                _filterOccupationList();
-              }),
+              IconButton(onPressed: _onTapSearch,
               icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container()),
             ],
           ),
@@ -245,6 +243,15 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
     } else {// descending
       _occupationMatchesFiltered.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
     }
+  }
+
+  void _onTapSearch() {
+    Analytics().logSelect(target: "Search");
+    setState(() {
+      Analytics().logSearch(_searchController.text);
+      _searchTerm = _searchController.text;
+      _filterOccupationList();
+    });
   }
 
   void _onTapToggleSortMatchPercentage() {

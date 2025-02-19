@@ -79,6 +79,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
+  static const AnalyticsFeature   Messages                       = AnalyticsFeature("Messages");
   static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});
   static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
   static const AnalyticsFeature   Onboarding                     = AnalyticsFeature("Onboarding");
@@ -86,6 +87,8 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
   static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
+  static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
+
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
   static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
 
@@ -105,7 +108,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Success Team", key: {"WellnessSuccessTeam"}, priority: 1);
   static const AnalyticsFeature   WellnessPodcast                = AnalyticsFeature("Wellness: Podcast", priority: -1);
-  static const AnalyticsFeature   WellnessStruggling             = AnalyticsFeature("Wellness: Struggling", priority: -1);
+  static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
 
   static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
 
@@ -167,12 +170,14 @@ class AnalyticsFeature {
     AppHelp,
     Buildings,
     MTD,
+    Messages,
     News,
     Polls,
     Laundry,
-    Recent,
-    Debug,
     Radio,
+    Recent,
+    Safety,
+    Debug,
     StateFarmCenter,
     Onboarding,
 
@@ -192,8 +197,6 @@ class AnalyticsFeature {
     WellnessMentalHealth,
     WellnessSuccessTeam,
     WellnessPodcast,
-    WellnessStruggling,
-
   ];
 
   final String name;
@@ -214,6 +217,9 @@ class AnalyticsFeature {
     name.hashCode ^
     priority.hashCode ^
     DeepCollectionEquality().hash(key);
+
+  @override
+  String toString() => name;
 
   static AnalyticsFeature? fromClass(dynamic classInstance) {
     AnalyticsFeature? feature;

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:illinois/model/Occupation.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -17,20 +18,13 @@ class Occupations /* with Service */ {
 
   Occupations._internal();
 
+  Future<Response?> _getAllOccupationMatchesResponse() async => enabled ?
+    Network().get('${Config().occupationsUrl}/user-match-results', auth: Auth2()) : null;
+
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
-    if (enabled) {
-      String url = '${Config().occupationsUrl}/user-match-results';
-      Response? response = await Network().get(url, auth: Auth2());
-      int responseCode = response?.statusCode ?? -1;
-      String? responseBody = response?.body;
-      if (responseCode == 200) {
-        Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
-        if (responseMap != null) {
-          return OccupationMatch.listFromJson(responseMap['matches']);
-        }
-      }
-    }
-    return null;
+    Response? response = await _getAllOccupationMatchesResponse();
+    Map<String, dynamic>? responseMap = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+    return (responseMap != null) ? OccupationMatch.listFromJson(JsonUtils.listValue(responseMap['matches'])) : null;
   }
 
   Future<Occupation?> getOccupation({required String occupationCode}) async {
@@ -73,6 +67,14 @@ class Occupations /* with Service */ {
   Future<List<OccupationMatch>?> getTop10Occupations() async {
     // TODO: implement getTop10Occupations
     throw UnimplementedError();
+  }
+
+  /////////////////////////
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    Response? response = await _getAllOccupationMatchesResponse();
+    return (response?.succeeded == true) ? { 'matches' : JsonUtils.decodeMap(response?.body) } : null;
   }
 
   /////////////////////////

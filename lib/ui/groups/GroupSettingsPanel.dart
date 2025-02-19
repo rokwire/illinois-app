@@ -18,13 +18,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -67,7 +68,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
   final _researchConsentDetailsController = TextEditingController();
-  final _researchConsentStatementController = TextEditingController();
   final _authManGroupNameController = TextEditingController();
 
   final List<GroupPrivacy>? _groupPrivacyOptions = GroupPrivacy.values;
@@ -76,7 +76,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   bool _updating = false;
   bool _deleting = false;
   bool _confirmationProgress = false;
-  bool _researchRequiresConsentConfirmation = false;
 
   Group? _group; // edit settings here until submit
 
@@ -87,11 +86,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
-    _researchConsentStatementController.text = StringUtils.isNotEmpty(_group?.researchConsentStatement) ? _group!.researchConsentStatement! : 'I have read and I understand the consent details. I certify that I am 18 years old or older. By clicking the "Request to participate" button, I indicate my willingness to voluntarily take part in this study.';
     _linkController.text = _group?.webURL ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
-
-    _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement) ;
 
     _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     super.initState();
@@ -102,7 +98,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _researchConsentDetailsController.dispose();
-    _researchConsentStatementController.dispose();
     _linkController.dispose();
     _authManGroupNameController.dispose();
     super.dispose();
@@ -156,6 +151,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       //  _buildAttendanceLayout(),
       //));
 
+      contentList.add(
+          Padding(padding: EdgeInsets.only(top: 0), child:
+          _buildContentSectionsLayout(),
+          )
+      );
+
       contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
         _buildSettingsLayout(),
       ));
@@ -168,11 +169,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         ),
         //_buildResearchOptionLayout(),
         _buildResearchConsentDetailsField(),
-        // #2626: Hide consent checkbox and edit control.
-        // _buildResearchConfirmationLayout(),
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
-        _buildMembershipLayout(),
+        _buildContentSectionsLayout(),
         // _buildProjectSettingsLayout(),
         _buildSettingsLayout(),
       ]);
@@ -186,7 +185,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Expanded( child:
           Container(color: Styles().colors.background, child:
             CustomScrollView( scrollDirection: Axis.vertical, slivers: <Widget>[
-              SliverHeaderBar(title: barTitle),
+              SliverHeaderBar(title: barTitle, onLeading: _onCloseTap,),
               SliverList(delegate: SliverChildListDelegate([
                 Container(color: Styles().colors.background, child:
                   Column(children: contentList),
@@ -251,12 +250,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
     Analytics().logSelect(target: "Add Image");
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
-    if(result?.succeeded == true &&  _group!.imageURL != result?.stringData){
+    if (result?.succeeded == true &&  _group!.imageURL != result?.imageUrl) {
       setStateIfMounted(() {
-        _group!.imageURL = result?.stringData;
+        _group!.imageURL = result?.imageUrl;
       });
+      Log.d("Image Url: ${result?.imageUrl}]");
     }
-    Log.d("Image Url: ${result?.stringData}]");
   }
   //
   //Name
@@ -452,6 +451,26 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
+  }
+
+  //Content Sections
+  Widget _buildContentSectionsLayout(){
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.only(left: 16, right: 16,),
+      child: Column(children: <Widget>[
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildMembershipButton(
+                title: Localization().getStringEx("", "Group Content"), //TBD localize
+                description: _isResearchProject?
+                Localization().getStringEx("", "Customize your project content type(s) and the order"):
+                Localization().getStringEx("", "Customize your group content type(s) and the order"),
+                onTap: () =>
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupContentSettingsPanel(group: _group,)))
+            )),
+      ]),
+    );
   }
 
   //
@@ -785,50 +804,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  // #2626: Hide consent checkbox and edit control.
-  /* Widget _buildResearchConfirmationLayout() {
-    String? title = "PARTICIPANT CONSENT";
-    String? fieldTitle = "PARTICIPANT CONSENT FIELD";
-    String? fieldHint = "";
-
-    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-      Column(children: [
-        _buildSwitch(
-          title: "Require participant consent",
-          value: _researchRequiresConsentConfirmation,
-          onTap: _onTapResearchConfirmation
-        ),
-        Visibility(visible: _researchRequiresConsentConfirmation, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
-              Row(children: [
-                Expanded(child:
-                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
-                    TextField(
-                        controller: _researchConsentStatementController,
-                        maxLines: 5,
-                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                    )
-                  ),
-                )
-              ])
-            ),
-          ],),
-        ),
-      ]),
-    );
-  }
-
-  void _onTapResearchConfirmation() {
-    if (mounted) {
-      setState(() {
-        _researchRequiresConsentConfirmation = !_researchRequiresConsentConfirmation;
-      });
-    }
-  }*/
-
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;
     String questionsDescription = (0 < questionsCount) ?
@@ -957,107 +932,127 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-           Row(children: [
+           Row(crossAxisAlignment: CrossAxisAlignment.center ,children: [
             Expanded(
-              child: RoundedButton(
-                label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
-                textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: Colors.white,
-                borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                progress: _updating,
-                enabled: _canUpdate,
-                onTap: _onUpdateTap,
-              ),
+              child: Align(alignment: Alignment.center, child:
+                SmallRoundedButton(
+                  label: Localization().getStringEx("", "Save"), //TBD localize
+                  textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+                  backgroundColor: Colors.white,
+                  borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                  progress: _updating,
+                  enabled: _canUpdate,
+                  onTap: _onUpdateTap,
+                  rightIcon: Container(),
+                  padding: EdgeInsets.symmetric(horizontal: 48, vertical: 8),
+                )),
             ),
-            Container(width: 16,),
-            Expanded(
-              child: RoundedButton(
-                label: _isResearchProject ?
-                  Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
-                  Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
-                textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: Colors.white,
-                borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                progress: _deleting,
-                enabled: _canUpdate,
-                onTap: _onDeleteTap,
-              ),
-            ),
+            // Container(width: 16,),
+            // Expanded(
+            //   child: RoundedButton(
+            //     label: _isResearchProject ?
+            //       Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
+            //       Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
+            //     textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+            //     backgroundColor: Colors.white,
+            //     borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+            //     progress: _deleting,
+            //     enabled: _canUpdate,
+            //     onTap: _onDeleteTap,
+            //   ),
+            // ),
           ],)
         ],),
       )
       ,),);
   }
 
-  void _onUpdateTap() {
-    if (_updating || !_canUpdate) {
-      return;
-    }
+  void _onCloseTap() async {
+    Analytics().logSelect(target: "Close", attributes: _group?.analyticsAttributes);
+    FocusScope.of(context).unfocus();
 
-    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
-      AppAlert.showDialogResult(context, 'Please enter participant consent text.');
-      return;
+    if (!_updating) {
+      if (_canUpdate) {
+        if (Group.fromOther(widget.group) != _group) {
+          // Group modified
+          bool? promptResult = await showDialog(context: context, builder: (context) => _buildConfirmationDialog(
+              confirmationTextMsg: Localization().getStringEx("", "Would you like to save your changes?"),
+              positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+              negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+          ));
+          if (mounted) {
+            if (promptResult == true) {
+              // propt answered Yes
+              bool? updateResult = await _updateGroup();
+              if (mounted && (updateResult == true)) {
+                Navigator.pop(context); // save succeeded => close the panel
+              }
+              else {
+                // save failed or not mounted => preserve the panel
+              }
+            }
+            else if (promptResult == false) {
+              Navigator.pop(context); // propt answered No => close the panel
+            }
+            else {
+              // propt canceled => preserve the panel
+            }
+          }
+        }
+        else {
+          // Group not modified
+          Navigator.pop(context); // close the panel without prompt
+        }
+      }
+      else {
+        // Cant's update group => close the panel without prompt
+      }
     }
     else {
-      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
-
+      // currently updateing => keep the panel
     }
+  }
 
+  void _onUpdateTap() async {
     Analytics().logSelect(target: 'Update Settings');
-    setState(() {
-      _updating = true;
-    });
+    FocusScope.of(context).unfocus();
 
-    // control research groups options
-    if (_group?.researchProject == true) {
-      _group?.privacy = GroupPrivacy.public;
-      _group?.hiddenForSearch = false;
-      _group?.authManEnabled = false;
-      _group?.authManGroupName = null;
-      _group!.attendanceGroup = false;
-      //Unlocked Advanced setting
-      // _group?.canJoinAutomatically = false;
-      // _group?.onlyAdminsCanCreatePolls = true;
+    bool? result = await _updateGroup();
+    if (mounted && (result == true)) {
+      Navigator.pop(context);
     }
-    else {
-      _group?.researchOpen = null;
-      _group?.researchConsentDetails = null;
-      _group?.researchConsentStatement = null;
-      _group?.researchProfile = null;
-    }
+  }
 
-    // if the group is not authman then clear authman group name
-    if (_group?.authManEnabled != true) {
-      _group!.authManGroupName = null;
-    }
-
-    // if the group is not research or if it does not require confirmation then clear consent statement text
-    if ((_group?.researchProject != true) || (_researchRequiresConsentConfirmation != true)) {
-      _group?.researchConsentStatement = null;
-    }
-
-    Groups().updateGroup(_group).then((GroupError? error){
+  Future<bool?> _updateGroup() async {
+    if (_canUpdate && !_updating) {
+      setState(() {
+        _updating = true;
+      });
+      _group?.validate();
+      GroupError? error = await Groups().updateGroup(_group);
       if (mounted) {
-        setState(() {
-          _updating = false;
-        });
         if (error == null) { //ok
-          Navigator.pop(context);
-        } else { //not ok
+          return true;
+        }
+        else {
           String? message;
           switch (error.code) {
             case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
             case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
             default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s."), [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
           }
-          AppAlert.showDialogResult(context, message);
+          await AppAlert.showDialogResult(context, message);
+          return false;
         }
       }
-    });
+    }
+    return null;
   }
 
-  void _onDeleteTap() {
+  // ignore: unused_element
+  void _onDeleteTap() async {
     Analytics().logSelect(target: "Delete this group", attributes: _group?.analyticsAttributes);
+    FocusScope.of(context).unfocus();
 
     if (!_deleting) {
       int membersCount = widget.groupStats?.activeMembersCount ?? 0;
@@ -1065,11 +1060,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           ? sprintf(Localization().getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"), [membersCount])
           : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
 
-      showDialog(context: context,builder: (context) => _buildConfirmationDialog(
+      bool? result = await showDialog(context: context,builder: (context) => _buildConfirmationDialog(
         confirmationTextMsg: confirmMsg,
         positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
         negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
-        onPositiveTap: _deleteGroup));
+      ));
+      if (result == true) {
+        _deleteGroup();
+      }
     }
   }
 
@@ -1177,7 +1175,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Semantics(container: true, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Semantics(label: title, header: true, excludeSemantics: true, child:
-            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny")),
+            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
           ),
           ((description != null) && description.isNotEmpty) ? Container(padding: EdgeInsets.only(top: 2), child:
               Text(description, style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
@@ -1247,8 +1245,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     
     String? positiveButtonLabel,
     int positiveButtonFlex = 1,
-    Function? onPositiveTap,
-    
+
     String? negativeButtonLabel,
     int negativeButtonFlex = 1,
     
@@ -1274,7 +1271,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
-                        Navigator.pop(context);
+                        Navigator.pop(context, false);
                       }),),
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
@@ -1286,7 +1283,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     progress: _confirmationProgress,
                     onTap: () {
                       Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
-                      onPositiveTap!();
+                      Navigator.pop(context, true);
                     },
                   ),),
                 ])
@@ -1346,3 +1343,28 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 }
 
+extension _GroupValidation on Group {
+  void validate() {
+    // control research groups options
+    if (researchProject == true) {
+      privacy = GroupPrivacy.public;
+      hiddenForSearch = false;
+      authManEnabled = false;
+      authManGroupName = null;
+      attendanceGroup = false;
+      //Unlocked Advanced setting
+      // canJoinAutomatically = false;
+      // onlyAdminsCanCreatePolls = true;
+    }
+    else {
+      researchOpen = null;
+      researchConsentDetails = null;
+      researchProfile = null;
+    }
+
+    // if the group is not authman then clear authman group name
+    if (authManEnabled != true) {
+      authManGroupName = null;
+    }
+  }
+}

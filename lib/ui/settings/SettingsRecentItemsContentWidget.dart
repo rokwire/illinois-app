@@ -78,7 +78,7 @@ class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsCo
   void _onRecentItemsEnabeldToggled() {
     Analytics().logSelect(target: 'Display recently viewed app content');
     if (RecentItems().recentItemsEnabled) {
-      AppAlert.showConfirmationDialog(buildContext: context,
+      AppAlert.showConfirmationDialog(context,
         message: Localization().getStringEx('panel.settings.home.recent_items.disable.toggle.prompt', 'This will clear your browsing history. Proceed?'),
         positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
         negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),

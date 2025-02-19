@@ -1,7 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 extension SurveyExt on Survey {
   String? get displayTitle {
@@ -15,15 +19,47 @@ extension SurveyExt on Survey {
       return null;
     }
   }
+
+  String? get displayEndDate => displayDate(endDate);
+
+  int? get endDateDiff => (endDate != null) ? displayDateDiff(endDate!) : null;
+
+  static String? displayDate(DateTime? dateTime, { String format = 'MMM d' }) {
+    if (dateTime != null) {
+      int daysDiff = displayDateDiff(dateTime);
+      switch(daysDiff) {
+        case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');
+        case 1: return Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
+        default: return DateFormat(format).format(dateTime);
+      }
+    }
+    return null;
+  }
+
+  static int displayDateDiff(DateTime dateTime) {
+    TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+    TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
+
+    TZDateTime dateTimeLocal = dateTime.toLocalTZ();
+    TZDateTime dateTimeMidnightLocal = TZDateTimeUtils.dateOnly(dateTimeLocal);
+
+    return dateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
+  }
+
+  bool get isCompleted => (stats?.isSurveyCompleted == true);
+}
+
+extension SurveyStatsExt on SurveyStats {
+  bool get isSurveyCompleted => (complete > 0) && (total == complete);
 }
 
 extension Event2SurveysExt on Surveys {
 
   Future<List<Survey>?> loadEvent2SurveyTemplates() =>
-    loadSurveys(types: [Survey.templateSurveyPrefix + Event2.followUpSurveyType]);
+    loadSurveys(SurveysQueryParam.fromType(Survey.templateSurveyPrefix + Event2.followUpSurveyType));
 
   Future<Survey?> loadEvent2Survey(String eventId) async {
-    List<Survey>? surveys = await loadSurveys(calendarEventID: eventId);
+    List<Survey>? surveys = await loadSurveys(SurveysQueryParam.fromCalendarEventID(eventId));
     return (0 < (surveys?.length ?? 0)) ? surveys?.first : null;
   }
 

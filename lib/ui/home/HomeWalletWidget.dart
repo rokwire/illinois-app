@@ -382,7 +382,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
     if (!Auth2().isOidcLoggedIn) {
       message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.bus_pass', 'MTD Bus Pass'));
     }
-    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (Auth2().authCard?.expirationDateTimeUtc == null)) {
+    else if (StringUtils.isEmpty(Auth2().iCard?.cardNumber) || (Auth2().iCard?.expirationDateTimeUtc == null)) {
       message = Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.');
     }
     return GestureDetector(onTap: _onTap, child:
@@ -407,9 +407,9 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
-                          title: (message != null) ? message : Auth2().authCard?.role ?? '',
+                          title: (message != null) ? message : Auth2().iCard?.role ?? '',
                           titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
-                          value: (message != null) ? null : StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
+                          value: (message != null) ? null : StringUtils.isNotEmpty(Auth2().iCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().iCard?.expirationDate ?? '']) : '',
                           valueTextStyle: (message != null) ? null : Styles().textStyles.getTextStyle("widget.detail.small"),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
@@ -475,17 +475,17 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
     if (!Auth2().isOidcLoggedIn) {
       message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.illini_id', 'Illini ID'));
     }
-    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
+    else if (StringUtils.isEmpty(Auth2().iCard?.cardNumber)) {
       message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.');
     }
     else {
-      int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
+      int? expirationDays = Auth2().iCard?.expirationIntervalInDays;
       if (expirationDays != null) {
         if (expirationDays <= 0) {
-          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'), [Auth2().iCard?.expirationDate ?? '']);
         }
         else if ((0 < expirationDays) && (expirationDays < 30)) {
-          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().iCard?.expirationDate ?? '']);
         }
       }
     }
@@ -512,9 +512,9 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
-                          title: (message != null) ? message : StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
+                          title: (message != null) ? message : StringUtils.isNotEmpty(Auth2().iCard?.fullName) ? Auth2().iCard?.fullName : Auth2().fullName,
                           titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : null,
-                          value: (message != null) ? null : Auth2().authCard?.uin,
+                          value: (message != null) ? null : Auth2().iCard?.uin,
                           valueTextStyle: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
                           hint: (warning != null) ? warning : null,
                           hintTextStyle: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),
@@ -584,7 +584,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
     if (!Auth2().isOidcLoggedIn) {
       message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.library_card', 'Library Card'));
     }
-    else if (StringUtils.isEmpty(Auth2().authCard?.libraryNumber)) {
+    else if (StringUtils.isEmpty(Auth2().iCard?.libraryNumber)) {
       message = Localization().getStringEx('panel.browse.label.no_card.library_card', 'You need a valid Illini Identity card to access Library Card.');
     }
 
@@ -624,7 +624,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                                     image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode! ,) : null,    
                                   )),
                                   Padding(padding: EdgeInsets.only(top: 8), child:
-                                    Row(children: [Expanded(child: Text(Auth2().authCard?.libraryNumber ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,))]),
+                                    Row(children: [Expanded(child: Text(Auth2().iCard?.libraryNumber ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,))]),
                                   )
                                 ],),
                               ),
@@ -647,7 +647,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
   }
 
   void _loadLibraryBarcode() {
-    String? libraryCode = Auth2().authCard?.libraryNumber;
+    String? libraryCode = Auth2().iCard?.libraryNumber;
     if (0 < (libraryCode?.length ?? 0)) {
       NativeCommunicator().getBarcodeImageData({
         'content': libraryCode,
@@ -670,7 +670,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
   }
 
   void _updateLibraryBarcode() {
-    String? libraryCode = Auth2().authCard?.libraryNumber;
+    String? libraryCode = Auth2().iCard?.libraryNumber;
     if (((_libraryCode == null) && (libraryCode != null)) ||
         ((_libraryCode != null) && (_libraryCode != libraryCode)))
     {

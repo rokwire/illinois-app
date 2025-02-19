@@ -17,15 +17,19 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -65,39 +69,73 @@ class AppAlert {
   }
 
   static Future<void> showLoggedOutFeatureNAMessage(BuildContext context, String featureName, { bool verbose = true }) async =>
-    showMessage(context, AppTextUtils.loggedOutFeatureNA(featureName, verbose: verbose));
+    showTextMessage(context, AppTextUtils.loggedOutFeatureNA(featureName, verbose: verbose));
 
   static Future<void> showOfflineMessage(BuildContext context, String? message) async =>
-    showMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
+    showTextMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
 
-  static Future<void> showMessage(BuildContext context, String? message) async {
-    return showDialog(context: context, builder: (context) {
+  static Future<void> showTextMessage(BuildContext context, String? message) =>
+    showWidgetMessage(context, Text(message!, textAlign: TextAlign.center,), analyticsMessage: message);
+
+  static Future<void> showAuthenticationNAMessage(BuildContext context) async {
+    final String linkSettingsMacro = "{{link.settings}}";
+    return showLinkedTextMessage(context,
+      message: Localization().getStringEx('common.message.login.not_available', 'To sign in, $linkSettingsMacro to 4 or 5 under Settings'),
+      linkMacro: linkSettingsMacro,
+      linkText: Localization().getStringEx('common.message.login.not_available.link.settings', 'set your privacy level'),
+      linkAction: () { Navigator.pop(context); SettingsHomeContentPanel.present(context, content: SettingsContent.privacy); },
+    );
+  }
+
+  static Future<void> showLinkedTextMessage(BuildContext context, { required String message, required String linkMacro, required String linkText, void Function()? linkAction }) {
+    List<InlineSpan> spanList = <InlineSpan>[];
+    List<String> messages = message.split(linkMacro);
+    if (0 < messages.length) {
+      spanList.add(TextSpan(text: messages.first));
+    }
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: linkText, style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: TapGestureRecognizer()..onTap = linkAction, )
+      );
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return showWidgetMessage(context,
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.regular"), children: spanList)
+      ),
+      buttonTextStyle: Styles().textStyles.getTextStyle("widget.message.regular"),
+      analyticsMessage: message.replaceAll(linkMacro, linkText)
+    );
+  }
+
+  static Future<void> showWidgetMessage(BuildContext context, Widget messageWidget, { TextStyle? buttonTextStyle, String? analyticsMessage }) =>
+    showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(message!, textAlign: TextAlign.center,),
+          messageWidget,
         ],),
         actions: <Widget>[
           TextButton(
-              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
-              onPressed: (){
-                Analytics().logAlert(text: message, selection: "OK");
-                  Navigator.pop(context);
+              child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style: buttonTextStyle,),
+              onPressed: () {
+                Analytics().logAlert(text: analyticsMessage, selection: "OK");
+                Navigator.pop(context);
               }
           ) //return dismissed 'true'
         ],
       );
     },);
-  }
 
-  static Future<bool> showConfirmationDialog(
-      {required BuildContext buildContext,
+  static Future<bool> showConfirmationDialog(BuildContext context, {
       required String message,
       String? positiveButtonLabel,
       VoidCallback? positiveCallback,
+      String? negativeButtonLabel,
       VoidCallback? negativeCallback,
-      String? negativeButtonLabel}) async {
+  }) async {
     bool alertDismissed = await showDialog(
-        context: buildContext,
+        context: context,
         builder: (context) {
           return AlertDialog(content: Text(message), actions: <Widget>[
             TextButton(
@@ -396,13 +434,59 @@ extension StateExt on State {
 }
 
 class AppTextUtils {
-  static const String _featureMacro = '{{feature}}';
+
+  // App Title
+
+  static const String appTitleMacro = "{{app_title}}";
+
+  static String get appTitle => appTitleEx();
+  static String appTitleEx({String? language}) =>
+    Localization().getStringEx('app.title', 'Illinois', language: language);
+
+  static String appTitleString(String key, String defaults, {String? language}) =>
+    Localization().getStringEx(key, defaults, language: language).replaceAll(appTitleMacro, appTitleEx(language: language));
+
+  // University Name
+
+  static const String universityNameMacro = "{{university_name}}";
+  static String get universityName => universityNameEx();
+  static String universityNameEx({String? language}) =>
+    Localization().getStringEx('app.univerity_name', 'University of Illinois', language: language);
+
+  static String appUniversityNameString(String key, String defaults, {String? language}) =>
+    Localization().getStringEx(key, defaults, language: language).replaceAll(universityNameMacro, universityNameEx(language: language));
+
+  // University Long Name
+
+  static const String universityLongNameMacro = "{{university_long_name}}";
+  static String get universityLongName => universityLongNameEx();
+  static String universityLongNameEx({String? language}) =>
+    Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: language);
+
+  static String appUniversityLongNameString(String key, String defaults, {String? language}) =>
+    Localization().getStringEx(key, defaults, language: language).replaceAll(universityLongNameMacro, universityLongNameEx(language: language));
+
+  // App Title / University (Long) Name
+
+  static String appBrandString(String key, String defaults, {String? language}) =>
+    Localization().getStringEx(key, defaults, language: language)
+      .replaceAll(appTitleMacro, appTitleEx(language: language))
+      .replaceAll(universityNameMacro, universityNameEx(language: language))
+      .replaceAll(universityLongNameMacro, universityLongNameEx(language: language));
+
+  // Logged Out Feature NA
+
+  static const String featureMacro = '{{feature}}';
 
   static loggedOutFeatureNA(String featureName, { bool verbose = false }) {
     String message = verbose ?
       Localization().getStringEx('auth.logged_out.feature.not_available.message.verbose', 'To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.') :
       Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
-    return message.replaceAll(_featureMacro, featureName);
+    return message.replaceAll(featureMacro, featureName);
   }
+}
 
+class PlatformUtils {
+  static bool get isWeb => kIsWeb == true;
+  static bool get isMobile => kIsWeb == false;
 }

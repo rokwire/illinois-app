@@ -24,14 +24,11 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
@@ -49,19 +46,8 @@ class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
     _analyticsFeature = analyticsFeature;
 
   static Widget? contentPanel({Explore? explore, Position? initialLocationData, AnalyticsFeature? analyticsFeature, Group? browseGroup}) {
-    if (explore is Event) {
-      if (explore.isGameEvent) {
-        return AthleticsGameDetailPanel(gameId: explore.speaker, sportName: explore.registrationLabel,);
-      }
-      else if (explore.isComposite) {
-        return CompositeEventsDetailPanel(parentEvent: explore);
-      }
-      else {
-        return ExploreEventDetailPanel(event: explore, initialLocationData: initialLocationData, browseGroup: browseGroup);
-      }
-    }
-    else if (explore is Dining) {
-      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
+    if (explore is Dining) {
+      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature);
     }
     else if (explore is LaundryRoom) {
       return LaundryRoomDetailPanel(room: explore, analyticsFeature: analyticsFeature);

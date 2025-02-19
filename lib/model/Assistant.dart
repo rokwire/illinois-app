@@ -1,5 +1,11 @@
+import 'package:geolocator/geolocator.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+///
+/// Deep link name map
+///
 Map<String, String> deeplinkNameMap = {
   'home': 'Home',
   'browse': 'Browse',
@@ -34,7 +40,6 @@ Map<String, String> deeplinkNameMap = {
   'wellness.health_screener': 'Illinois Health Screener',
   'wellness.podcast': 'Healthy Illini Podcast',
   'wellness.resources': 'Wellness Resources',
-  'wellness.struggling': 'I\'m Struggling',
   'wellness.mental_health': 'Mental Health Resources',
   'inbox': 'Inbox Panel',
   'appointment': 'Appointment',
@@ -59,6 +64,9 @@ Map<String, String> deeplinkNameMap = {
   'poll': 'Poll Detail',
 };
 
+///
+/// Message
+///
 class Message {
   static final String _unknownAnswerValue = "I don't know";
 
@@ -73,12 +81,14 @@ class Message {
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
+  AssistantProvider? provider;
+
   bool? sourcesExpanded;
   FeedbackResponseType? feedbackResponseType;
   bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation,
+    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
     this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
@@ -144,8 +154,14 @@ class Message {
   bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
 }
 
+///
+/// FeedbackResponseType
+///
 enum FeedbackResponseType { positive, negative }
 
+///
+/// Link
+///
 class Link {
   final String name;
   final String link;
@@ -175,4 +191,83 @@ class Link {
   }
 }
 
+///
+/// AssistantLocation
+///
+class AssistantLocation {
+  final double? latitude;
+  final double? longitude;
+
+  AssistantLocation({this.latitude, this.longitude});
+
+  static AssistantLocation? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: JsonUtils.doubleValue(json['latitude']), longitude: JsonUtils.doubleValue(json['longitude']));
+  }
+
+  static AssistantLocation? fromPosition(Position? position) {
+    if (position == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: position.latitude, longitude: position.longitude);
+  }
+
+  static AssistantLocation? fromExploreLocation(ExploreLocation? exploreLocation) {
+    if (exploreLocation == null) {
+      return null;
+    }
+    return AssistantLocation(latitude: exploreLocation.latitude, longitude: exploreLocation.longitude);
+  }
+
+  Map<String, dynamic> toJson() => {'latitude': latitude, 'longitude': longitude};
+
+  ExploreLocation toExploreLocation() => ExploreLocation(latitude: latitude, longitude: longitude);
+
+  @override
+  bool operator ==(Object other) => (other is AssistantLocation) && (latitude == other.latitude) && (longitude == other.longitude);
+
+  @override
+  int get hashCode => (latitude?.hashCode ?? 0) ^ (longitude?.hashCode ?? 0);
+}
+
+///
+/// MessageFeedback
+///
 enum MessageFeedback { good, bad }
+
+///
+/// AssistantProvider
+///
+enum AssistantProvider { uiuc, google, azure, grok }
+
+String? assistantProviderToKeyString(AssistantProvider? provider) {
+  switch (provider) {
+    case AssistantProvider.uiuc:
+      return 'uiuc';
+    case AssistantProvider.google:
+      return 'google';
+    case AssistantProvider.azure:
+      return 'azure';
+    case AssistantProvider.grok:
+      return 'grok';
+    default:
+      return null;
+  }
+}
+
+String assistantProviderToDisplayString(AssistantProvider? provider) {
+  switch (provider) {
+    case AssistantProvider.uiuc:
+      return Localization().getStringEx('model.assistant.provider.uiuc.label', 'Illinois');
+    case AssistantProvider.google:
+      return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
+    case AssistantProvider.azure:
+      return Localization().getStringEx('model.assistant.provider.azure.label', 'Azure');
+    case AssistantProvider.grok:
+      return Localization().getStringEx('model.assistant.provider.grok.label', 'Grok');
+    default:
+      return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
+  }
+}

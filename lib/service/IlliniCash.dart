@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -157,6 +158,11 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     return _ballance;
   }
 
+  Future<Response?> _loadBalanceRequest() async => _enabled ?
+    Network().get("${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}", auth: this,
+      analyticsUrl: "${Config().illiniCashBaseUrl}/Balances/${Analytics.LogAnonymousUin}",
+    ) : null;
+
   Future<void> updateBalance() async {
     if(_enabled) {
       dynamic studentSummary = await _loadStudentSummary();
@@ -166,13 +172,9 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
         
         bool? eligible = studentSummary.eligibility?.eligible;
         if (eligible == true) {
-          String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
-          String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${Analytics.LogAnonymousUin}";
-          Response? response = await Network().get(url, auth: this, analyticsUrl: analyticsUrl);
+          Response? response = await _loadBalanceRequest();
           if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-            String responseBody = response.body;
-            Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
-            IlliniCashBallance? ballance = (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
+            IlliniCashBallance? ballance = IlliniCashBallance.fromJson(JsonUtils.decode(response.body));
             if (ballance != null) {
               _applyBallance(ballance);
             }
@@ -191,7 +193,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  Future<dynamic> _loadStudentSummary() async {
+  Future<dynamic> loadStudentSummaryResponse() async {
     String? uin = Auth2().uin;
     String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
     String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
@@ -201,17 +203,21 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this); } on Exception catch(e) { print(e.toString()); }
-      int responseCode = response?.statusCode ?? -1;
-      if ((response != null) && responseCode >= 200 && responseCode <= 301) {
-        String responseString = response.body;
-        return IlliniStudentSummary.fromJson(JsonUtils.decodeMap(responseString)); // request succeeded
-      }
-      else {
-        return null; // request failed, eligible not determined
-      }
+      return response;
     }
     else {
       return false; // eligible not available
+    }
+  }
+
+  Future<dynamic> _loadStudentSummary() async {
+    dynamic result = await loadStudentSummaryResponse();
+    if (result is Response) {
+      return ((result.statusCode >= 200) && (result.statusCode <= 301)) ?
+         IlliniStudentSummary.fromJson(JsonUtils.decodeMap(result.body)) : null; // "request succeeded" vs "request failed, eligible not determined"
+    }
+    else {
+      return result; // eligible not available
     }
   }
 
@@ -245,101 +251,69 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  Future<List<IlliniCashTransaction>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
-
-    if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
+  Future<Response?> _loadTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
+    if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
+      String uin = Auth2().uin ?? "";
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
+      return result;
+    }
+    else {
       return null;
     }
-    
-    String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-    String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+  }
 
-    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl );
-    if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
-      String responseBody = response.body;
-      List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
-      if (jsonListData != null) {
-        List<IlliniCashTransaction> transactions = <IlliniCashTransaction>[];
-        for (var jsonData in jsonListData) {
-          IlliniCashTransaction? transaction = IlliniCashTransaction.fromJson(
-              jsonData);
-          if (transaction != null) {
-            transactions.add(transaction);
-          }
-        }
-        return transactions;
-      }
+  Future<List<IlliniCashTransaction>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
+    Response? response = await _loadTransactionHistoryResponse(startDate, endDate);
+    return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
+      IlliniCashTransaction.listFromJson(JsonUtils.listValue(response.body)) : null;
+  }
+
+  Future<Response?> _loadMealPlanTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
+    if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
+      String uin = Auth2().uin ?? "";
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
+      return result;
     }
-
-    return null;
+    else {
+      return null;
+    }
   }
 
   Future<List<MealPlanTransaction>?> loadMealPlanTransactionHistory(DateTime? startDate, DateTime? endDate) async {
-    if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
-      return null;
-    }
-    String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-    String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
-
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
-
-    if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
-      String responseBody = response.body;
-      List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
-      if (jsonListData != null) {
-        List<MealPlanTransaction> transactions = <MealPlanTransaction>[];
-        for (var jsonData in jsonListData) {
-          MealPlanTransaction? transaction = MealPlanTransaction.fromJson(
-              jsonData);
-          if (transaction != null) {
-            transactions.add(transaction);
-          }
-        }
-        return transactions;
-      }
-    }
-
-    return null;
+    Response? response = await _loadMealPlanTransactionHistoryResponse(startDate, endDate);
+    return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
+      MealPlanTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
   }
 
-  Future<List<CafeCreditTransaction>?> loadCafeCreditTransactionHistory(DateTime? startDate,
-      DateTime? endDate) async {
-    if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
+  Future<Response?> _loadCafeCreditTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
+    if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
+      String uin = Auth2().uin ?? "";
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
+      return result;
+    }
+    else {
       return null;
     }
-    String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-    String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+  }
 
-    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
-
+  Future<List<CafeCreditTransaction>?> loadCafeCreditTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
-
-    if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
-      String responseBody = response.body;
-      List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
-      if (jsonListData != null) {
-        List<CafeCreditTransaction> transactions = <CafeCreditTransaction>[];
-        for (var jsonData in jsonListData) {
-          CafeCreditTransaction? transaction = CafeCreditTransaction.fromJson(jsonData);
-          if (transaction != null) {
-            transactions.add(transaction);
-          }
-        }
-        return transactions;
-      }
-    }
-
-    return null;
+    Response? response = await _loadCafeCreditTransactionHistoryResponse(startDate, endDate);
+    return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
+    CafeCreditTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
   }
 
   Future<void> _saveCreditCard(_TransactionContext context) async{
@@ -598,6 +572,14 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
     return null;
   }
+
+  /////////////////////////
+  // User Data
+
+  //Future<Map<String, dynamic>?> loadUserDataJson() async {
+  //  Response? response = (Config().illiniCashBaseUrl != null) ? await Network().get("${Config().illiniCashBaseUrl}/user-data", auth: Auth2()) : null;
+  //  return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+  //}
 
   /////////////////////////
   // Enabled

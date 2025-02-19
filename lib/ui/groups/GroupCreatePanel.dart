@@ -20,11 +20,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
-import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -60,6 +60,7 @@ class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
+  final _groupNetIdsController = TextEditingController();
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
@@ -68,6 +69,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _authManGroupNameController = TextEditingController();
 
   Group? _group;
+
+  GroupMemberStatus _selectedMembersStatus = GroupMemberStatus.admin;
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
 
@@ -83,6 +86,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void dispose() {
+    _groupNetIdsController.dispose();
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _linkController.dispose();
@@ -173,6 +177,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     List<Widget> contentLayout = <Widget>[
       _buildImageSection(),
+      _buildAdminSettingsSection(),
       _buildNameField(),
       _buildDescriptionField(),
     ];
@@ -186,7 +191,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
         _buildAttributesLayout(),
         Container(height: 8),
-
         Container(height: 16),
         _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
         Container(height: 8),
@@ -216,6 +220,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       //    _buildAttendanceLayout(),
       //  )
       //);
+      contentLayout.add(
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            _buildContentSectionsLayout(),
+          )
+      );
 
       contentLayout.add(
         Padding(padding: EdgeInsets.only(top: 8), child:
@@ -314,11 +323,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
     ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
-    if(result?.succeeded == true)
-    setStateIfMounted(() {
-      _group!.imageURL = result?.stringData;
-    });
-    Log.d("Image Url: ${result?.stringData}");
+    if (result?.succeeded == true) {
+      setStateIfMounted(() {
+        _group!.imageURL = result?.imageUrl;
+      });
+      Log.d("Image Url: ${result?.imageUrl}");
+    }
   }
 
   //Name
@@ -427,7 +437,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   padding: EdgeInsets.only(bottom: 8, top:24),
                   child: Text(
                     labelTitle,
-                    style: Styles().textStyles.getTextStyle("widget.title.tiny")
+                    style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")
                   ),
                 ),
                 Padding(
@@ -559,6 +569,26 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       });
     }
   }*/
+
+  //Content Sections
+  Widget _buildContentSectionsLayout(){
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.only(left: 16, right: 16,),
+      child: Column(children: <Widget>[
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildSettingButton(
+                title: Localization().getStringEx("", "Group Content"), //TBD localize
+                description: _isResearchProject?
+                Localization().getStringEx("", "Customize your project content type(s) and the order"):
+                Localization().getStringEx("", "Customize your group content type(s) and the order"),
+                onTap: () =>
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupContentSettingsPanel(group: _group,)))
+            )),
+      ]),
+    );
+  }
 
   //
   //Attributes
@@ -732,18 +762,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Column(children: <Widget>[
         Container(height: 12),
         Semantics(explicitChildNodes: true, child:
-          _buildMembershipButton(
+          _buildSettingButton(
             title: buttonTitle,
             description: questionsDescription,
             onTap: _onTapQuestions
           )
         ),
-        Container(height: 20),
       ]),
     );
   }
 
-  Widget _buildMembershipButton({required String title, required String description, void onTap()?}) {
+  Widget _buildSettingButton({required String title, required String description, void onTap()?}) {
     return GestureDetector(
         onTap: onTap,
         child: Container(
@@ -832,7 +861,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       child: Column(children: <Widget>[
         Semantics(
             explicitChildNodes: true,
-            child: _buildMembershipButton(
+            child: _buildSettingButton(
                 title: Localization().getStringEx("panel.groups_create.target.audience.title", "Target Audience"),
                 description: questionsDescription,
                 onTap: _onTapResearchProfile)),
@@ -1063,7 +1092,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.researchConsentStatement = null;
       }
 
-      Groups().createGroup(_group).then((GroupError? error) {
+      //Add members/admins
+      List<String>? adminNetIds;
+      GroupMemberStatus? adminsStatus;
+      if(StringUtils.isNotEmpty(_groupNetIdsController.text)) {
+        adminsStatus = _selectedMembersStatus;
+        adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
+      }
+
+      Groups().createGroup(_group, adminNetIds: adminNetIds, adminsStatus: adminsStatus).then((GroupError? error) {
         if (mounted) {
           setState(() {
             _creating = false;
@@ -1083,6 +1120,62 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       });
     }
   }
+
+  //
+  // AdminSection
+  Widget _buildAdminSettingsSection() {
+    return Visibility(
+        visible: true,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(child:
+                      GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false))
+                  ]),
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+                          child: TextField(
+                            controller: _groupNetIdsController,
+                            maxLines: 1,
+                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+                          )),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6),
+                            child: GroupDropDownButton(
+                                initialSelectedValue: _selectedMembersStatus,
+                                constructTitle:
+                                    (dynamic item) => item is GroupMemberStatus ? groupMemberStatusToString(item) : "",
+                                onValueChanged: _onAdminsStatusChanged,
+                                items: _adminsStatusItems))
+                        )
+                    ])
+                  ])
+            ));
+  }
+
+  void _onAdminsStatusChanged(dynamic status) {
+    if (status is GroupMemberStatus)
+      setStateIfMounted(() {
+        _selectedMembersStatus = status;
+      });
+  }
+
+  List<GroupMemberStatus> get _adminsStatusItems => [GroupMemberStatus.admin, GroupMemberStatus.member];
 
   //
   // Common

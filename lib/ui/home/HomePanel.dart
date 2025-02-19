@@ -45,8 +45,11 @@ import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
+import 'package:illinois/ui/home/HomePublicSurveysWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
+import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
+import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -96,7 +99,14 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _HomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
+  String? get analyticsPageName =>
+    _contentWidget.runtimeType.toString();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    JsonUtils.cast<AnalyticsInfo>(_contentWidget)?.analyticsFeature;
+
+  Widget get _contentWidget => _HomePanelState()._buildContentWidget(initialContentType ?? _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites);
 
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
@@ -173,15 +183,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeMyEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
       }
     }
-    /*else if (code == 'suggested_events') {
-      if (title) {
-        return HomeSuggestedEventsWidget.title;
-      } else if (handle) {
-        return HomeSuggestedEventsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeSuggestedEventsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }*/
     else if (code == 'recent_items') {
       if (title) {
         return HomeRecentItemsWidget.title;
@@ -189,6 +190,15 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRecentItemsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeRecentItemsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'public_surveys') {
+      if (title) {
+        return HomePublicSurveysWidget.title;
+      } else if (handle) {
+        return HomePublicSurveysWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomePublicSurveysWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'campus_highlights') {
@@ -517,6 +527,34 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
+    else if (code == 'safewalk_request') {
+      if (title) {
+        return HomeSafeWalkRequestWidget.title;
+      } else if (handle) {
+        return HomeSafeWalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafeWalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'saferides') {
+      if (title) {
+        return HomeSafeRidesRequestWidget.title;
+      } else if (handle) {
+        return HomeSafeRidesRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafeRidesRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'safety_resources') {
+      if (title) {
+        return HomeSafetyResourcesWidget.title;
+      } else if (handle) {
+        return HomeSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+
     else if (code == 'wellness_resources') {
       if (title) {
         return HomeWellnessResourcesWidget.title;
@@ -580,6 +618,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   GlobalKey _browseKey = GlobalKey();
   GlobalKey _favoritesKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
+  Map<HomeContentType, double> contentScrollPositions = <HomeContentType, double>{};
 
   @override
   void initState() {
@@ -600,7 +639,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     Analytics().logPageWidget(_contentWidget);
 
-    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
+    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI().defaultSourceContent['home.system']) ?? <String>{};
     _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
 
     super.initState();
@@ -691,8 +730,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   void _updateContentType(HomeContentType? contentType) {
     if (mounted && (contentType != null) && (contentType != _contentType)) {
+      contentScrollPositions[_contentType] = _scrollController.offset;
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.jumpTo(contentScrollPositions[contentType] ?? 0);
       });
       Analytics().logPageWidget(_contentWidget);
     }
@@ -774,16 +817,20 @@ class _HomeContentTab extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
-      child: Center(child:
-        Row(mainAxisSize: MainAxisSize.min, children: [
-          _iconWidget,
-          _textWidget,
-        ],)
-      ), 
-    ),
+    Semantics(label: "$_text tab", button: true,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
+        child: Center(child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            _iconWidget,
+            Semantics(excludeSemantics: true, child:
+              _textWidget,
+            )
+          ],)
+        ),
+      ),
+    )
   );
 
   Widget get _iconWidget {

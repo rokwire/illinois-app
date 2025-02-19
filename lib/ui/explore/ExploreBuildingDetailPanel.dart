@@ -12,13 +12,15 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
 
 class ExploreBuildingDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Building? building;
   final String? buildingNumber;
+  final ExploreSelectLocationBuilder? selectLocationBuilder;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  ExploreBuildingDetailPanel({super.key, this.building, this.buildingNumber, this.analyticsFeature});
+  ExploreBuildingDetailPanel({super.key, this.building, this.buildingNumber, this.analyticsFeature, this.selectLocationBuilder });
 
   @override
   State<StatefulWidget> createState() => _ExploreBuildingDetailPanelState();
@@ -93,7 +95,10 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       _buildTitle(),
       _buildLocation(),
       _buildShare(),
-      // _buildFloorPlansAndAmenities(),
+      _buildFloorPlansAndAmenities(),
+      _buildSelectLocation(),
+      if (_building?.features?.isNotEmpty == true)
+        _buildFeatureList(),
     ]);
 
   Widget _buildTitle() =>
@@ -128,7 +133,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
-            Styles().images.getImage('share', excludeFromSemantics: true),
+            Styles().images.getImage('share-nodes', excludeFromSemantics: true),
           ),
           Expanded(child:
             Text(Localization().getStringEx('panel.explore_building_detail.detail.share', 'Share This Location'), style:
@@ -139,7 +144,6 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       ),
     );
 
-  // ignore: unused_element
   Widget _buildFloorPlansAndAmenities() =>
     Visibility(visible: _canFloorPlansAndAmenities(), child:
       InkWell(onTap: _onFloorPlansAndAmenities, child:
@@ -157,6 +161,24 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
         ),
       ),
     );
+
+  Widget _buildSelectLocation() {
+    Widget? selectorWidget = widget.selectLocationBuilder?.call(context, ExploreSelectLocationContext.detail, explore: _building);
+    return (selectorWidget != null) ? Padding(padding: EdgeInsets.only(top: 32), child: selectorWidget) : Container();
+  }
+
+  Widget _buildFeatureList() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        Text(Localization().getStringEx('panel.explore_building_detail.detail.heading.amenities', 'Amenities include:'), style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))
+      ),
+      Padding(padding: EdgeInsets.only(left: 16.0), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: _building?.features?.map((feature) =>
+          (feature.value?.name?.isNotEmpty == true) ? Text(feature.detailText, style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"),) : Container()
+        ).toList() ?? [],)
+      )
+    ]);
+  }
 
   Widget _buildLoadingContent() => Center(child:
     Padding(padding: EdgeInsets.zero, child:
@@ -195,5 +217,27 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   void _onFloorPlansAndAmenities() {
     Analytics().logSelect(target: "Floor Plans & Amenities");
     // TODO: present the relevant UI
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DisplayFloorPlanPanel(building: _building)));
   }
+}
+
+extension _BuildingFeatureExt on BuildingFeature {
+
+  String get detailText {
+    String resourcePatern;
+    final String nameMacro = '{{name}}';
+    final String floorsMacro = '{{floors}}';
+    int floorsCount = value?.floors?.length ?? 0;
+    if (floorsCount > 1) {
+      resourcePatern = Localization().getStringEx('panel.explore_building_detail.detail.entry.amenity.floors', '• $nameMacro: Floors $floorsMacro');
+    } else if (floorsCount == 1) {
+      resourcePatern = Localization().getStringEx('panel.explore_building_detail.detail.entry.amenity.floor', '• $nameMacro: Floor $floorsMacro');
+    } else {
+      resourcePatern = Localization().getStringEx('panel.explore_building_detail.detail.entry.amenity', '• $nameMacro');
+    }
+    return resourcePatern
+      .replaceAll(nameMacro, value?.name ?? '')
+      .replaceAll(floorsMacro, value?.floors?.join(", ") ?? '');
+  }
+
 }

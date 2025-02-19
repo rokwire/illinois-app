@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Game.dart';
@@ -17,13 +16,11 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -33,7 +30,6 @@ import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -76,10 +72,7 @@ extension FavoriteExt on Favorite {
   }
   
   String? get favoriteDetailText {
-    if (this is Event) {
-      return (this as Event).displayDateTime;
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return (this as Event2).shortDisplayDateAndTime;
     }
     else if (this is Dining) {
@@ -120,10 +113,7 @@ extension FavoriteExt on Favorite {
   }
 
   Widget? get favoriteDetailIcon {
-    if (this is Event) {
-      return Styles().images.getImage('events', excludeFromSemantics: true);
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
@@ -182,15 +172,7 @@ extension FavoriteExt on Favorite {
 
 
   void favoriteLaunchDetail(BuildContext context) {
-    if (this is Event) {
-      if ((this as Event).isComposite) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event)));
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
-      }
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       Event2 event2 = (this as Event2);
       if (event2.hasGame) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, event: event2)));
@@ -227,14 +209,11 @@ extension FavoriteExt on Favorite {
   static void launchHome(BuildContext context, { String? key }) {
     // Work in lowercase as key can come from an URL
     String? lowerCaseKey = key?.toLowerCase();
-    if (lowerCaseKey == Event.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-    }
-    else if (lowerCaseKey == Event2.favoriteKeyName.toLowerCase()) {
+    if (lowerCaseKey == Event2.favoriteKeyName.toLowerCase()) {
       Event2HomePanel.present(context);
     }
     else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return DiningHomePanel(); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
@@ -246,7 +225,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
     }
     else if (lowerCaseKey == MTDStop.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
       NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MyLocations);

@@ -13,8 +13,11 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/ui/SyrveyPanel.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
+import 'package:illinois/ui/events2/Event2AdminSettingsPanel.dart';
+import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -22,7 +25,7 @@ import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
-import 'package:illinois/ui/events2/Event2SurveyResponsesPanel.dart';
+import 'package:illinois/ui/surveys/SurveyResponsesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -446,7 +449,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')));
 
   List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
-    _buildTextDetailWidget(_publishedStatus, 'eye'),
+    _buildTextDetailWidget(_publishedStatus, 'eye', iconColor: Styles().colors.fillColorPrimary),
     _detailSpacerWidget
   ] : null;
 
@@ -613,7 +616,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share This Event'), 'share', underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share This Event'), 'share-nodes', underlined: true)),
     _detailSpacerWidget
   ];
 
@@ -640,16 +643,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       onTap: _onWebsiteButton,
     )] : null;
 
-  List<Widget>? get _logInButtonWidget{
-    if(Auth2().isLoggedIn == true)
-      return null;
-
-    return _isInternalRegistrationAvailable ? <Widget>[_buildButtonWidget(
-        title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
-        onTap: _onLogIn,
-        progress: _authLoading
+  List<Widget>? get _logInButtonWidget =>
+    (_isInternalRegistrationAvailable && (Auth2().isLoggedIn != true)) ? <Widget>[_buildButtonWidget(
+      title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
+      onTap: _onLogIn,
+      progress: _authLoading
     )] : null;
-  }
 
   List<Widget>? get _registrationButtonWidget{
     if (Auth2().isLoggedIn == false) //We can register only if logged in
@@ -754,7 +753,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       else if (_event?.isRecurring == true) {
         // Available Times
         message = (_linkedEvents != null) ?
-          Localization().getStringEx('panel.event2.detail.linked_events.recurrence.failed.message', 'There are no upcoming available times.') :
+          Localization().getStringEx('panel.event2.detail.linked_events.recurrence.empty.message', 'There are no upcoming available times.') :
           Localization().getStringEx('panel.event2.detail.linked_events.recurrence.failed.message', 'Failed to load available times.');
       }
       cardWidgets.add(_linkedEventsMessageCard(message ?? ''));
@@ -797,6 +796,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
           _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: "Additional Settings", onTap: _onSettingAdditionalSettings),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -811,6 +811,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget _buildTextDetailWidget(String text, String iconKey, {
     TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
     int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
+    Color? iconColor,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true, bool showProgress = false, bool underlined = false,
@@ -822,6 +823,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         overflow: overflow,
       ),
       iconKey,
+      iconColor: iconColor,
       detailPadding: detailPadding,
       iconPadding: iconPadding,
       iconVisible: iconVisible,
@@ -829,13 +831,14 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
+    Color? iconColor,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true,
     bool showProgress = false,
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true, color: iconColor);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child: showProgress ?
         Stack(children: [
@@ -896,17 +899,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   //Actions
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Directions: ${_event?.name}");
+    Analytics().logSelect(target: "Location Directions", attributes: _event?.analyticsAttributes);
     _event?.launchDirections();
   }
 
   void _onOnline() {
-    Analytics().logSelect(target: "Online Url: ${_event?.name}");
+    Analytics().logSelect(target: "Online Url", attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.onlineDetails?.url, updateProgress: (bool value) => setStateDelayedIfMounted(() { _onlineLaunching = value; }));
   }
 
   void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: ${_event?.name}");
+    Analytics().logSelect(target: "Favorite", attributes: _event?.analyticsAttributes);
     Auth2().prefs?.toggleFavorite(_event);
   }
 
@@ -933,12 +936,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onWebsiteButton() {
-    Analytics().logSelect(target: 'Website');
+    Analytics().logSelect(target: 'Website', attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.eventUrl, updateProgress: (bool value) => setStateDelayedIfMounted(() { _websiteLaunching = value; }));
   }
 
   void _onLinkedEvent(Event2 event) {
-    Analytics().logSelect(target: event.name);
+    Analytics().logSelect(target: "Linked Event", attributes: event.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
       userLocation: _userLocation,
       eventSelector:  widget.eventSelector,
@@ -948,7 +951,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSuperEvent() {
-    Analytics().logSelect(target: _superEvent?.name);
+    Analytics().logSelect(target: "Super Event", attributes: _superEvent?.analyticsAttributes);
     if (widget.superEvent?.id == _superEvent?.id) {
       Navigator.of(context).pop();
     }
@@ -962,7 +965,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onRegister() {
-    Analytics().logSelect(target: 'Register me');
+    Analytics().logSelect(target: 'Register me', attributes: _event?.analyticsAttributes);
     _performRegistration(Events2().registerToEvent, onSuccess: (Event2 event) {
       if (Auth2().isFavorite(event)) {
         Event2Popup.showMessage(context,
@@ -986,7 +989,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onUnregister() {
-    Analytics().logSelect(target: 'Unregister me');
+    Analytics().logSelect(target: 'Unregister me', attributes: _event?.analyticsAttributes);
     _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
       Event2Popup.showMessage(context,
         title: Localization().getStringEx("dialog.success.title", "Success"),
@@ -1025,12 +1028,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onExternalRegistration(){
-    Analytics().logSelect(target: 'Register me');
+    Analytics().logSelect(target: 'Register me', attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.registrationDetails?.externalLink, updateProgress: (bool value) => setStateDelayedIfMounted(() { _registrationLaunching = value; }));
   }
 
   void _onFollowUpSurvey(){
-    Analytics().logSelect(target: "Follow up survey");
+    Analytics().logSelect(target: "Follow up survey", attributes: _event?.analyticsAttributes);
     Survey displaySurvey = Survey.fromOther(_survey!);
     displaySurvey.replaceKey('event_name', _event?.name);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1039,7 +1042,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onLogIn(){
     Analytics().logSelect(target: "Log in");
-    if (_authLoading != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
         setStateIfMounted(() { _authLoading = false; });
@@ -1051,6 +1057,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     }
   }  
   void _onAddToCalendar(){
+    Analytics().logSelect(target: "Add to Calendar", attributes: _event?.analyticsAttributes);
     DeviceCalendar().addToCalendar(context, _event);
   }
 
@@ -1060,12 +1067,14 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onContactEmail(String? email){
+    Analytics().logSelect(target: Analytics.LogAnonymousEmail, attributes: _event?.analyticsAttributes);
     if(StringUtils.isNotEmpty(email)) {
       _launchUrl("mailto:$email");
     }
   }
 
   void _onContactPhone(String? phone){
+    Analytics().logSelect(target: Analytics.LogAnonymousPhone, attributes: _event?.analyticsAttributes);
     if(StringUtils.isNotEmpty(phone)) {
       _launchUrl("tel:$phone");
     }
@@ -1080,7 +1089,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onAdminCommands(){
-    Analytics().logSelect(target: "Admin settings");
+    Analytics().logSelect(target: "Admin settings", attributes: _event?.analyticsAttributes);
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1093,7 +1102,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingEditEvent(){
-    Analytics().logSelect(target: "Edit event");
+    Analytics().logSelect(target: "Edit event", attributes: _event?.analyticsAttributes);
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) =>
       Event2CreatePanel(event: _event, survey: _survey)))
         .then((Event2SetupSurveyParam? result) {
@@ -1108,8 +1117,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         });
   }
 
+  void _onSettingAdditionalSettings() {
+    Analytics().logSelect(target: "Additional Settings", attributes: _event?.analyticsAttributes);
+    if (_event != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
+        event: _event,
+      )));
+    }
+  }
+
   void _onSettingEventRegistration(){
-    Analytics().logSelect(target: "Event Registration");
+    Analytics().logSelect(target: "Event Registration", attributes: _event?.analyticsAttributes);
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       event: _event,
       analyticsFeature: widget.analyticsFeature,
@@ -1123,7 +1141,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingAttendance(){
-    Analytics().logSelect(target: "Event Attendance");
+    Analytics().logSelect(target: "Event Attendance", attributes: _event?.analyticsAttributes);
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
       event: _event,
     ))).then((dynamic event) {
@@ -1136,7 +1154,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingSurvey(){
-    Analytics().logSelect(target: "Event Survey");
+    Analytics().logSelect(target: "Event Survey", attributes: _event?.analyticsAttributes);
     Event2SetupSurveyPanel.push(context,
       surveyParam: Event2SetupSurveyParam(
         event: _event,
@@ -1156,8 +1174,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingSurveyResponses() {
-    Analytics().logSelect(target: "Event Survey Responses");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
+    Analytics().logSelect(target: "Event Survey Responses", attributes: _event?.analyticsAttributes);
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
       surveyId: _survey?.id,
       eventName: _event?.name,
       analyticsFeature: widget.analyticsFeature,
@@ -1165,30 +1183,46 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onSettingDeleteEvent(){
-    Analytics().logSelect(target: 'Delete Event');
+    Analytics().logSelect(target: 'Delete Event', attributes: _event?.analyticsAttributes);
 
     if (_eventId != null) {
       Event2Popup.showPrompt(context,
         title: Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
-        message: Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+        message: _event?.isSuperEvent == true?
+          Localization().getStringEx('', 'You are about to delete the following event "${_event?.name}" and its sub-events.') : //TBD localize
+          Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
       ).then((bool? result) {
         if (result == true) {
           setStateIfMounted(() {
             _eventProcessing = true;
           });
 
-          Events2().deleteEvent(eventId: _eventId!, groupIds: widget.event?.groupIds).then((result) {
-            if (mounted) {
-              setState(() {
-                _eventProcessing = false;
-              });
-                
-              if (result == true) {
-                Navigator.pop(context);
+          Events2().deleteEvent(eventId: _eventId!, groupIds: widget.event?.groupIds).then((result) async {
+            if (result == true) {
+              bool subDeleteResultSuccess = true; //Delete sub events if any
+              if (_event?.isSuperEvent == true && CollectionUtils.isNotEmpty(_linkedEvents)) {//TBD check if there are more to load
+                subDeleteResultSuccess = (await Event2SuperEventsController.multiUpload(events: _linkedEvents,
+                    uploadAPI: (event) => event.id != null ? Events2().deleteEvent(eventId: event.id!) : Future.value("missing id"))).successful;
+                // for (Event2 subEvent in _linkedEvents!) {
+                //   var subDeleteResult = await Events2().deleteEvent(eventId: subEvent.id ?? "");
+                //   subDeleteResultSuccess &= (subDeleteResult is bool) ? subDeleteResult : false;
+                // }
               }
-              else {
-                Event2Popup.showErrorResult(context, result);
+              if (mounted) {
+                setState(() {
+                  _eventProcessing = false;
+                });
+
+                if (subDeleteResultSuccess == true) {
+                  Navigator.pop(context);
+                } else {
+                  Event2Popup.showErrorResult(
+                      context, "Unable to delete sub events");
+                }
               }
+            } else {
+              Event2Popup.showErrorResult(
+                  context, "Unable to delete event");
             }
           });
         }
@@ -1197,7 +1231,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _onTapTakeAttendance() {
-    Analytics().logSelect(target: 'Take Attendance');
+    Analytics().logSelect(target: 'Take Attendance', attributes: _event?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
       Event2AttendanceTakerPanel(_event, analyticsFeature: widget.analyticsFeature,)));
   }
@@ -1251,10 +1285,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         futures.add(Events2().loadEventPeople(eventId));
       }
 
-      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
-      int? linkedEventsIndex = ((linkedEventsGrouping != null) && (_linkedEvents == null)) ? futures.length : null;
+      List<Event2Grouping>? linkedEventsGroupings = _event?.linkedEventsGroupingQuery;
+      int? linkedEventsIndex = ((linkedEventsGroupings != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: _linkedEventsPageLength)));
+        futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, limit: _linkedEventsPageLength)));
         //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
         setState(() {
           _linkedEventsLoading = true;
@@ -1335,10 +1369,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             futures.add(Events2().loadEventPeople(eventId));
           }
 
-          Event2Grouping? linkedEventsGrouping = event.linkedEventsGroupingQuery;
-          int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+          List<Event2Grouping>? linkedEventsGroupings = event.linkedEventsGroupingQuery;
+          int? linkedEventsIndex = (linkedEventsGroupings != null) ? futures.length : null;
           if (linkedEventsIndex != null) {
-            futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
+            futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
           }
 
           int? superEventIndex = event.isSuperEventChild ? futures.length : null;
@@ -1422,12 +1456,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   Future<void> _extendLinkedEvents() async {
-    Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
-    if ((linkedEventsGrouping != null) && !_linkedEventsLoading && !_extendingLinkedEvents) {
+    List<Event2Grouping>? linkedEventsGroupings = _event?.linkedEventsGroupingQuery;
+    if ((linkedEventsGroupings != null) && !_linkedEventsLoading && !_extendingLinkedEvents) {
       setStateIfMounted(() {
         _extendingLinkedEvents = true;
       });
-      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
+      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
       List<Event2>? events = linkedEventsListResult?.events;
       int? totalCount = linkedEventsListResult?.totalCount;
 

@@ -24,9 +24,11 @@ import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -35,6 +37,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:illinois/model/wellness/SuccessTeam.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -47,17 +50,22 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   static const String notifyToDoItemsDeleted = "edu.illinois.rokwire.wellness.todo.items.deleted";
 
   static const String notifyResourcesContentChanged = "edu.illinois.rokwire.wellness.content.resources.changed";
+  static const String notifyRecreationContentChanged = "edu.illinois.rokwire.wellness.content.recreation.changed";
   static const String notifyTipsContentChanged = "edu.illinois.rokwire.wellness.content.tops.changed";
   static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
+
+  static const String notifyCategorySelect = "edu.illinois.rokwire.wellness.category.select";
 
   static final String _userAccessedToDoListSetting = 'edu.illinois.rokwire.settings.wellness.todo.list.accessed';
   static final String _userAccessedRingsSetting = 'edu.illinois.rokwire.settings.wellness.rings.accessed';
 
   static const String _tipsContentCategory = "wellness_tips";
   static const String _resourcesContentCategory = "wellness_resources";
+  static const String _recreationContentCategory = "wellness_recreation";
 
   Map<String, dynamic>? _tipsContent;
   Map<String, dynamic>? _resourcesContent;
+  Map<String, dynamic>? _recreationContent;
 
   String? _dailyTipId;
   DateTime? _dailyTipTime;
@@ -75,7 +83,14 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
       AppLivecycle.notifyStateChanged,
+      DeepLink.notifyUiUri,
     ]);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
@@ -83,12 +98,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
     _tipsContent = Content().contentItem(_tipsContentCategory);
     _resourcesContent = Content().contentItem(_resourcesContentCategory);
-    
+    _recreationContent = Content().contentItem(_recreationContentCategory);
+
     _dailyTipId = Storage().wellnessDailyTipId;
     _dailyTipTime = DateTime.fromMillisecondsSinceEpoch(Storage().wellnessDailyTipTime ?? 0);
     _updateDailyTip(notify: false);
 
-    if ((_tipsContent != null) && (_resourcesContent != null)) {
+    if ((_tipsContent != null) && (_resourcesContent != null) && (_recreationContent != null)) {
       await super.initService();
     }
     else {
@@ -103,7 +119,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Content()]);
+    return Set.from([Storage(), Content(), DeepLink()]);
   }
 
   // NotificationsListener
@@ -115,6 +131,9 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     }
   }
 
@@ -128,6 +147,10 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       _resourcesContent = Content().contentItem(_resourcesContentCategory);
       NotificationService().notify(notifyResourcesContentChanged);
     }
+    if (categoriesDiff?.contains(_recreationContentCategory) == true) {
+      _recreationContent = Content().contentItem(_recreationContentCategory);
+      NotificationService().notify(notifyRecreationContentChanged);
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -136,22 +159,35 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  // DeepLinks
+
+  static String get _wellnessCategoryUrl => '${DeepLink().appUrl}/wellness/category';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(_wellnessCategoryUrl))) {
+      try { NotificationService().notify(notifyCategorySelect, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
+    }
+  }
+
   // ContentItemCategoryClient
 
   @override
-  List<String> get contentItemCategory => <String>[_tipsContentCategory, _resourcesContentCategory];
+  List<String> get contentItemCategory => <String>[_tipsContentCategory, _resourcesContentCategory, _recreationContentCategory];
 
   // APIs
 
   // ToDo List
+
+  Future<http.Response?> _loadToDoCategoriesResponse() async => isEnabled ?
+    Network().get('${Config().wellnessUrl}/user/todo_categories', auth: Auth2()) : null;
 
   Future<List<WellnessToDoCategory>?> loadToDoCategories() async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/user/todo_categories';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await _loadToDoCategoriesResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -287,33 +323,19 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  Future<http.Response?> _loadToDoItemsResponse({int? offset, int? limit}) async => isEnabled ?
+    Network().get('${Config().wellnessUrl}/user/todo_entries', auth: Auth2()) : null;
+
   Future<List<WellnessToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/user/todo_entries';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await _loadToDoItemsResponse(offset: offset, limit: limit);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
-    if (url.isNotEmpty) {
-      Map<String, String> queryParams = {};
-      if (limit != null) {
-        queryParams['limit'] = limit.toString();
-      }
-      if (offset != null) {
-        queryParams['offset'] = offset.toString();
-      }
-
-      // if (startDate != null) {
-      //   String? startDateFormatted = AppDateTime().dateTimeLocalToJson(startDate);
-      //   queryParams['start_date'] = startDateFormatted!;
-      // }
-
-    }
     if (responseCode == 200) {
       List<WellnessToDoItem>? items = WellnessToDoItem.listFromJson(JsonUtils.decodeList(responseString));
-
       return items;
     } else {
       Log.w('Failed to load wellness todo items. Response:\n$responseCode: $responseString');
@@ -343,6 +365,13 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().wellnessUrl != null) ? await Network().get("${Config().wellnessUrl}/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+  }
+
   // Success Team
 
   Future<List<SuccessTeamMember?>> getPrimaryCareProviders() async {
@@ -370,10 +399,8 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   }
 
   Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
-    String classificationUrl = '${Config().identityUrl}/studentclassification';
-    http.Response? classificationResponse = await Network().get(classificationUrl, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
-    Map<String, dynamic>? responseMap = (classificationResponse?.statusCode == 200) ? JsonUtils.decodeMap(classificationResponse?.body) : null;
-    String? departmentCode = (responseMap != null) ? JsonUtils.stringValue(responseMap['DepartmentCode']) : null;
+    Map<String, dynamic>? studentClassificationMap = await Identity().loadStudentClassification();
+    String? departmentCode = (studentClassificationMap != null) ? JsonUtils.stringValue(studentClassificationMap['DepartmentCode']) : null;
     if ((departmentCode != null) && departmentCode.isNotEmpty) {
       String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${departmentCode}';
       http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
@@ -394,7 +421,6 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       }
     }
     else {
-      Log.w('Failed to load student classification. Response:\n${classificationResponse?.statusCode}: ${classificationResponse?.body}');
       return [];
     }
   }
@@ -453,9 +479,12 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  //Recreation
+  Map<String, dynamic>? get recreation => _recreationContent ?? Content().contentItem(_recreationContentCategory); //TBD remove when Initial loading bug is fixed
+
   // Resources
 
-  Map<String, dynamic>? get resources => _resourcesContent;
+  Map<String, dynamic>? get resources => _resourcesContent ?? Content().contentItem(_resourcesContentCategory); //TBD remove when Initial loading bug is fixeds;
 
   Map<String, dynamic>? getResource({ String? resourceId }) {
     List<dynamic>? commands = (_resourcesContent != null) ? JsonUtils.listValue(_resourcesContent!['commands']) : null;

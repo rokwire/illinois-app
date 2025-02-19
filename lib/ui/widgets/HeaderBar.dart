@@ -241,8 +241,9 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   final String? title;
   final RootHeaderBarLeading leading;
   final void Function()? onSettings;
+  final void Function()? onTapTitle;
 
-  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings, this.onTapTitle}) : super(key: key);
 
   @override
   State<RootHeaderBar> createState() => _RootHeaderBarState();
@@ -259,7 +260,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     NotificationService().subscribe(this, [
       RadioPlayer.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
-      Auth2.notifyPictureChanged,
+      Auth2.notifyProfilePictureChanged,
     ]);
     super.initState();
   }
@@ -284,7 +285,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
         setState(() {});
       }
     }
-    else if (name == Auth2.notifyPictureChanged) {
+    else if (name == Auth2.notifyProfilePictureChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -295,7 +296,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   Widget build(BuildContext context) => AppBar(
     backgroundColor: Styles().colors.fillColorPrimaryVariant,
     leading: _buildHeaderLeading(),
-    title: _buildHeaderTitle(),
+    title: _buildHeaderWidget(),
     actions: _buildHeaderActions(),
   );
 
@@ -319,16 +320,35 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
   }
 
-  Widget _buildHeaderTitle() {
+  Widget _buildHeaderWidget() {
     return RadioPlayer().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
-      _buildHeaderTitleText(),
+      Flexible(child: _buildHeaderTitleWidget()),
       _buildHeaderRadioButton(),
-    ],) : _buildHeaderTitleText();
+    ],) : _buildHeaderTitleWidget();
+  }
+
+  Widget _buildHeaderTitleWidget() {
+    return (widget.onTapTitle != null) ? _buildHeaderTitleButton() : _buildHeaderTitleLabel();
+  }
+
+  Widget _buildHeaderTitleLabel() {
+    return Semantics(label: widget.title, excludeSemantics: true, child:
+      _buildHeaderTitleText(),
+    );
+  }
+
+  Widget _buildHeaderTitleButton() {
+    return Semantics(label: widget.title, button: true, excludeSemantics: true, child:
+      InkWell(onTap: widget.onTapTitle, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          _buildHeaderTitleText(),
+        )
+      )
+    );
   }
 
   Widget _buildHeaderTitleText() {
-    return Semantics(label: widget.title, excludeSemantics: true, child:
-      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),);
+    return Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),);
   }
 
   Widget _buildHeaderRadioButton() {
@@ -376,11 +396,11 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
-        CollectionUtils.isNotEmpty(Auth2().authPicture) ?
+        CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
           Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
+                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
               )
             )
           ) :
@@ -434,3 +454,32 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   }
 }
 
+class HeaderBarActionTextButton extends StatelessWidget {
+  final String? title;
+  final bool enabled;
+  final void Function()? onTap;
+  HeaderBarActionTextButton({super.key, this.title, this.enabled = true, this.onTap, });
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: title, button: true, child:
+      InkWell(onTap: onTap, child:
+        Align(alignment: Alignment.center, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.white : Styles().colors.whiteTransparent06, width: 1.5, ))),
+                child: Text(title ?? '',
+                  style: Styles().textStyles.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled"),
+                  semanticsLabel: "",
+                ),
+              ),
+            ],)
+          ),
+        ),
+        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
+        //),
+      ),
+    );
+}

@@ -24,6 +24,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -61,8 +62,6 @@ class Appointments with Service implements NotificationsListener {
   AppointmentsAccount? _account;
   bool? _isLastAccountResponseSuccessful;
 
-  List<Map<String, dynamic>>? _appointmentDetailsCache;
-
   // Singletone
 
   static final Appointments _service = Appointments._internal();
@@ -74,11 +73,10 @@ class Appointments with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      DeepLink.notifyUri,
+      DeepLink.notifyUiUri,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged
     ]);
-    _appointmentDetailsCache = <Map<String, dynamic>>[];
     super.createService();
   }
 
@@ -98,25 +96,20 @@ class Appointments with Service implements NotificationsListener {
       _initAccount()
     ]);
     
-    super.initService();
-  }
-
-  @override
-  void initServiceUI() {
-    _processCachedAppointmentDetails();
+    await super.initService();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), Auth2()]);
+    return Set.from([Storage(), Config(), Auth2(), DeepLink()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
@@ -227,30 +220,36 @@ class Appointments with Service implements NotificationsListener {
     return Appointment.listFromJson(JsonUtils.decodeList(await _loadAppointmentsStringFromCache(timeSource: timeSource)));
   }
 
-  Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
+  Future<http.Response?> _loadAppointmentseResponse({AppointmentsTimeSource? timeSource}) async {
     //TMP: assets shortcut
     //return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String url = "${Config().appointmentsUrl}/services/appointments";
-      switch (timeSource) {
-        case AppointmentsTimeSource.upcoming:
-          url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
-          break;
-        case AppointmentsTimeSource.past:
-          url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
-          break;
+      if (timeSource != null) {
+        switch (timeSource) {
+          case AppointmentsTimeSource.upcoming:
+            url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
+            break;
+          case AppointmentsTimeSource.past:
+            url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
+            break;
+        }
       }
-      http.Response? response = await Network().get(url, auth: Auth2());
-      int? responseCode = response?.statusCode;
-      String? responseString = response?.body;
-      if (responseCode == 200) {
-        return responseString;
-      } else {
-        debugPrint('Failed to load appointments ($url) from net. Reason: $responseCode, $responseString');
-        return null;
-      }
+      return Network().get(url, auth: Auth2());
     }
     return null;
+  }
+
+  Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
+    http.Response? response = await _loadAppointmentseResponse(timeSource: timeSource);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return responseString;
+    } else {
+      debugPrint('Failed to load appointments ($url) from net. Reason: $responseCode, $responseString');
+      return null;
+    }
   }
 
   Future<List<Appointment>?> _initAppointments({required AppointmentsTimeSource timeSource}) async {
@@ -442,50 +441,11 @@ class Appointments with Service implements NotificationsListener {
   String get appointmentDetailUrl => '${DeepLink().appUrl}/appointment';
 
   void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      Uri? appointmentUri = Uri.tryParse(appointmentDetailUrl);
-      if ((appointmentUri != null) &&
-          (appointmentUri.scheme == uri.scheme) &&
-          (appointmentUri.authority == uri.authority) &&
-          (appointmentUri.path == uri.path)) {
-        try {
-          _handleAppointmentDetail(uri.queryParameters.cast<String, dynamic>());
-        } catch (e) {
-          print(e.toString());
-        }
-      }
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(appointmentDetailUrl))) {
+      try { NotificationService().notify(notifyAppointmentDetail, uri.queryParameters.cast<String, dynamic>()); }
+      catch (e) { print(e.toString()); }
     }
   }
-
-  void _handleAppointmentDetail(Map<String, dynamic>? params) {
-    if ((params != null) && params.isNotEmpty) {
-      if (_appointmentDetailsCache != null) {
-        _cacheAppointmentDetail(params);
-      } else {
-        _processAppointmentDetail(params);
-      }
-    }
-  }
-
-  void _processAppointmentDetail(Map<String, dynamic> params) {
-    NotificationService().notify(notifyAppointmentDetail, params);
-  }
-
-  void _cacheAppointmentDetail(Map<String, dynamic> params) {
-    _appointmentDetailsCache?.add(params);
-  }
-
-  void _processCachedAppointmentDetails() {
-    if (_appointmentDetailsCache != null) {
-      List<Map<String, dynamic>> appointmentDetailsCache = _appointmentDetailsCache!;
-      _appointmentDetailsCache = null;
-
-      for (Map<String, dynamic> appointmentDetail in appointmentDetailsCache) {
-        _processAppointmentDetail(appointmentDetail);
-      }
-    }
-  }
-
 
   // Service
 
@@ -892,6 +852,11 @@ class Appointments with Service implements NotificationsListener {
     else {
       throw AppointmentsException.notAvailable();
     }
+  }
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    http.Response? response = (Config().appointmentsUrl != null) ? await Network().get("${Config().appointmentsUrl}/services/user-data", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }
 

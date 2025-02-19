@@ -45,8 +45,9 @@ class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
   final ExploreMapType? exploreMapType;
   final Position? initialLocationData;
   final AnalyticsFeature? _analyticsFeature;
+  final ExploreSelectLocationBuilder? selectLocationBuilder;
 
-  ExploreListPanel({this.explores, this.exploreMapType, this.initialLocationData, AnalyticsFeature? analyticsFeature}) :
+  ExploreListPanel({this.explores, this.exploreMapType, this.initialLocationData, AnalyticsFeature? analyticsFeature, this.selectLocationBuilder}) :
     _analyticsFeature = analyticsFeature;
 
   @override
@@ -143,14 +144,18 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
     }
     else {
       return Padding(padding: EdgeInsets.only(top: 16, bottom: isLast ? 16 : 0), child:
-        ExploreCard(explore: explore, onTap: () => _onTapExplore(explore), locationData: widget.initialLocationData, showTopBorder: true),
+        ExploreCard(explore: explore,
+          locationData: widget.initialLocationData,
+          selectLocationBuilder: widget.selectLocationBuilder,
+          onTap: () => _onTapExplore(explore)
+        ),
       );
     }
   }
 
   void _onTapExplore(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
-    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData, analyticsFeature: widget._analyticsFeature);
+    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData, analyticsFeature: widget._analyticsFeature, selectLocationBuilder: widget.selectLocationBuilder);
   }
 
   void _onTapMTDStop(MTDStop? stop) {

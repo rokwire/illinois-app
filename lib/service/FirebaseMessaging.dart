@@ -58,6 +58,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyAthleticsTeamRoster                        = "$notifyBase.athletics.team.roster";
   static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
   static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
+  static const String notifySocialMessageNotification                  = "$notifyBase.conversation";
   static const String notifyHomeNotification                           = "$notifyBase.home";
   static const String notifyHomeFavoritesNotification                  = "$notifyBase.home.favorites";
   static const String notifyHomeBrowseNotification                     = "$notifyBase.home.browse";
@@ -95,7 +96,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessHealthScreenerNotification         = "$notifyBase.wellness.health_screener";
   static const String notifyWellnessPodcastNotification                = "$notifyBase.wellness.podcast";
   static const String notifyWellnessResourcesNotification              = "$notifyBase.wellness.resources";
-  static const String notifyWellnessStrugglingNotification             = "$notifyBase.wellness.struggling";
   static const String notifyWellnessMentalHealthNotification           = "$notifyBase.wellness.mental_health";
   static const String notifyWalletNotification                         = "$notifyBase.wallet";
   static const String notifyWalletIlliniIdNotification                 = "$notifyBase.wallet.illini_id";
@@ -111,7 +111,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
   static const String notifyProfileLoginNotification                        = "$notifyBase.profile.login";
   static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";  //TBD deprecate and delete. Use profile.login instead
-  static const String notifySettingsInterestsNotification              = "$notifyBase.settings.interests";
   static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
   static const String notifySettingsSportsNotification                 = "$notifyBase.settings.sports";
   static const String notifySettingsFavoritesNotification              = "$notifyBase.settings.favorites";
@@ -140,6 +139,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
     _groupUpdatesPollsNotificationSetting : _groupUpdatesPollsNotificationSetting,
+    _groupUpdatesMessagesNotificationSetting : _groupUpdatesMessagesNotificationSetting,
   };
 
   // Settings entry : setting name (User.prefs.setting name)
@@ -148,6 +148,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
     _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
     _groupUpdatesPollsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.polls.enabled',
+    _groupUpdatesMessagesNotificationSetting    : 'edu.illinois.rokwire.settings.inbox.notification.group.messages.enabled',
     _groupUpdatesInvitationsNotificationSetting : 'edu.illinois.rokwire.settings.inbox.notification.group.invitations.enabled',
     _groupUpdatesEventsNotificationSetting      : 'edu.illinois.rokwire.settings.inbox.notification.group.events.enabled',
     _athleticsUpdatesStartNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.start.enabled',
@@ -186,13 +187,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String _groupInvitationsNotificationKey = 'invitations';
   static const String _groupEventsNotificationKey = 'events';
   static const String _groupPollsNotificationKey = 'polls';
+  static const String _groupMessagesNotificationKey = 'messages';
 
-  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey, _groupPollsNotificationKey];
+  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey, _groupPollsNotificationKey, _groupMessagesNotificationKey];
 
   static const String _groupUpdatesPostsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPostsNotificationKey';
   static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
   static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
   static const String _groupUpdatesPollsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPollsNotificationKey';
+  static const String _groupUpdatesMessagesNotificationSetting = '$_groupUpdatesNotificationKey.$_groupMessagesNotificationKey';
 
   // Payload types
   static const String payloadTypeConfigUpdate = 'config_update';
@@ -207,6 +210,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAthleticsTeam = 'athletics.team';
   static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
+  static const String payloadTypeSocialMessage = 'conversation';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeHomeFavorites = 'home.favorites';
   static const String payloadTypeHomeBrowse = 'home.browse';
@@ -243,7 +247,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeWellnessHealthScreener = 'wellness.health_screener';
   static const String payloadTypeWellnessPodcast = 'wellness.podcast';
   static const String payloadTypeWellnessResources = 'wellness.resources';
-  static const String payloadTypeWellnessStruggling = 'wellness.struggling';
   static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
   static const String payloadTypeWallet = 'wallet';
   static const String payloadTypeWalletIlliniId = 'wallet.illini_id';
@@ -260,7 +263,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
   static const String payloadTypeProfileLogin = 'profile.login';
   static const String payloadTypeSettingsSections = 'settings.sections';
-  static const String payloadTypeSettingsInterests = 'settings.interests';
   static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
   static const String payloadTypeSettingsSports = 'settings.sports';
   static const String payloadTypeSettingsFavorites = 'settings.favorites';
@@ -433,6 +435,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
         NotificationService().notify(notifyGroupsNotification, data);
       }
     }
+    else if (type == payloadTypeSocialMessage) {
+      NotificationService().notify(notifySocialMessageNotification, data);
+    }
     else if (type == payloadTypeHome) {
       NotificationService().notify(notifyHomeNotification, data);
     }
@@ -541,9 +546,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeWellnessRings) {
       NotificationService().notify(notifyWellnessRingsNotification, data);
     }
-    else if (type == payloadTypeWellnessStruggling) {
-      NotificationService().notify(notifyWellnessStrugglingNotification, data);
-    }
     else if (type == payloadTypeWellnessTodoList) {
       NotificationService().notify(notifyWellnessTodoListNotification, data);
     }
@@ -588,12 +590,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeSettingsSections) { //TBD deprecate. Use payloadTypeProfileLogin instead
       NotificationService().notify(notifySettingsSectionsNotification, data);
-    }
-    else if (type == payloadTypeSettingsInterests) {
-      NotificationService().notify(notifySettingsInterestsNotification, data);
-    }
-    else if (type == payloadTypeSettingsInterests) {
-      NotificationService().notify(notifySettingsInterestsNotification, data);
     }
     else if (type == payloadTypeSettingsFoodFilters) {
       NotificationService().notify(notifySettingsFoodFiltersNotification, data);
@@ -718,19 +714,22 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   bool? get notifyNewsAthleticsUpdates               { return _getNotifySetting(_athleticsUpdatesNewsNotificationSetting); }
        set notifyNewsAthleticsUpdates(bool? value)   { _setNotifySetting(_athleticsUpdatesNewsNotificationSetting, value); }
 
-  bool? get notifyGroupUpdates             { return _getNotifySetting(_groupUpdatesNotificationKey); }
-  set notifyGroupUpdates(bool? value) { _setNotifySetting(_groupUpdatesNotificationKey, value); }
+  bool? get notifyGroupUpdates               { return _getNotifySetting(_groupUpdatesNotificationKey); }
+  set notifyGroupUpdates(bool? value)        { _setNotifySetting(_groupUpdatesNotificationKey, value); }
 
-  bool? get notifyGroupPostUpdates              { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
-  set notifyGroupPostUpdates(bool? value)  { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
+  bool? get notifyGroupPostUpdates           { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
+  set notifyGroupPostUpdates(bool? value)    { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
 
-  bool? get notifyGroupInvitationsUpdates                { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
+  bool? get notifyGroupInvitationsUpdates           { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
   set notifyGroupInvitationsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesInvitationsNotificationSetting, value); }
 
-  bool? get notifyGroupPollsUpdates                { return _getNotifySetting(_groupUpdatesPollsNotificationSetting); }
+  bool? get notifyGroupPollsUpdates           { return _getNotifySetting(_groupUpdatesPollsNotificationSetting); }
   set notifyGroupPollsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesPollsNotificationSetting, value); }
 
-  bool? get notifyGroupEventsUpdates               { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
+  bool? get notifyGroupMessagesUpdates        { return _getNotifySetting(_groupUpdatesMessagesNotificationSetting); }
+  set notifyGroupMessagesUpdates(bool? value) { _setNotifySetting(_groupUpdatesMessagesNotificationSetting, value); }
+
+  bool? get notifyGroupEventsUpdates          { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
   set notifyGroupEventsUpdates(bool? value)   { _setNotifySetting(_groupUpdatesEventsNotificationSetting, value); }
 
   bool? get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 

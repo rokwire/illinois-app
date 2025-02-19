@@ -18,7 +18,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Occupations.dart';
-import 'package:illinois/ui/SyrveyPanel.dart';
+import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -187,7 +187,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         onTap: _onTapSettings,
       ),
       RibbonButton(
-        leftIconKey: "share",
+        leftIconKey: 'share-nodes',
         label: Localization().getStringEx('panel.skills_self_evaluation.get_started.body.share.label', 'Share this feature'),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -7,6 +8,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -59,6 +61,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   _TagFilter _selectedTagFilter = _TagFilter.all;
   _FilterType? _activeFilterType;
 
+  GestureRecognizer? _loginRecognizer;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -67,6 +71,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Groups.notifyGroupDeleted,
       Auth2.notifyLoginChanged,
     ]);
+    _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     if (widget.contentType != null) {
       _selectedContentType = widget.contentType;
     }
@@ -78,6 +83,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _loginRecognizer?.dispose();
     super.dispose();
   }
 
@@ -112,7 +118,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Expanded(child:
         Stack(children: [
           Column(children: [
-            _buildToolBar(),
+            if ((_selectedContentType != ResearchProjectsContentType.my) || Auth2().isLoggedIn)
+              _buildToolBar(),
             Expanded(child: _researchProjectsBusy ?
               _buildLoading() :
               Stack(children: [
@@ -168,22 +175,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
-    if (_canCreateResearchProject) {
-      contentList.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
-        onTap: _onTapCreate
-      ),);
-    }
-    contentList.add(RibbonButton(
-      backgroundColor: Styles().colors.white,
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-      label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
-      onTap: _onTapSearch
-    ),);
+
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
         Column(children: contentList)
@@ -238,8 +230,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   Widget _buildToolBar() {
     String createTitle = Localization().getStringEx("panel.research_projects.home.button.create.title", "Create");
     String searchTitle = Localization().getStringEx("panel.research_projects.home.button.search.title", "Search");
-    
-    return Row(children: [
+    const double defaultIconPadding = 10;
+    const double innerIconPadding = 8;
+
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Visibility(visible: false /*_selectedContentType == ResearchProjectsContentType.open*/, child:
         FilterSelector(
           padding: EdgeInsets.only(left: 16, top: 12, bottom: 12),
@@ -257,27 +251,24 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         ),
       ),
       Expanded(child: Container()),
-      Visibility(visible: false /*_canCreateResearchProject*/, child:
+      Visibility(visible: _canCreateResearchProject, child:
         Semantics(label: createTitle, button: true, child:
-          InkWell(onTap: _onTapCreate, child: 
-            Padding(padding: EdgeInsets.only(left: 0, right: 4, top: 12, bottom: 12), child:
-              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(createTitle, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")),
-                Padding(padding: EdgeInsets.only(left: 5), child:
-                  Styles().images.getImage('plus-circle')
-                )
-              ])
-            ),
-          ),
+          IconButton(
+            padding: EdgeInsets.only(left: defaultIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: innerIconPadding),
+            constraints: BoxConstraints(),
+            style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            icon: Styles().images.getImage('plus-circle', excludeFromSemantics: true) ?? Container(),
+            onPressed: _onTapCreate),
         ),
       ),
-      Visibility(visible: false, child:
+      Visibility(visible: true, child:
         Semantics(label: searchTitle, button: true, child:
-          InkWell(onTap: _onTapSearch, child: 
-            Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
-              Styles().images.getImage('search', excludeFromSemantics: true),
-            ),
-          ),
+          IconButton(
+            padding: EdgeInsets.only(left: innerIconPadding, top: defaultIconPadding, bottom: defaultIconPadding, right: (defaultIconPadding + innerIconPadding)),
+            constraints: BoxConstraints(),
+            style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(),
+            onPressed: _onTapSearch),
         ),
       ),
     ],);
@@ -418,7 +409,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   // Content Widget
 
   Widget _buildContent() {
-    if (_researchProjects == null) {
+    if ((_selectedContentType == ResearchProjectsContentType.my) && !Auth2().isLoggedIn) {
+      return _buildLoggedOutContent();
+    }
+    else if (_researchProjects == null) {
       return _buildStatus(_errorDisplayStatus);
     }
     else if (_researchProjects!.isEmpty) {
@@ -493,11 +487,38 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   // Content Data
 
+  Widget _buildLoggedOutContent() {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx("panel.research_projects.home.status.my_projects.logged_out", "You are not logged in. To access your research projects, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.");
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx("panel.research_projects.home.status.my_projects.logged_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: _loginRecognizer, ));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16), child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapLogin() {
+    Analytics().logSelect(target: "sign in");
+    ProfileHomePanel.present(context, content: ProfileContent.login,);
+  }
+
+  // Content Data
+
   void _loadInitialContent() {
-    if (_loadingResearchProjects == false) {
+    ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
+    if ((_loadingResearchProjects == false) && ((contentType != ResearchProjectsContentType.my) || Auth2().isLoggedIn)) {
       _loadingResearchProjects = _researchProjectsBusy = true;
       
-      ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
       Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
         if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
           contentType = ResearchProjectsContentType.open;

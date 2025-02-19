@@ -40,7 +40,7 @@ class CreateStadiumPollPanel extends StatefulWidget {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.stadium_polls', 'Stadium Polls'));
     }
     else if (!Auth2().isStadiumPollManager) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_rights.create_stadium_poll', 'You have no rights to create a Stadium Poll.'));
+      AppAlert.showTextMessage(context, Localization().getStringEx('panel.browse.label.no_rights.create_stadium_poll', 'You have no rights to create a Stadium Poll.'));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));

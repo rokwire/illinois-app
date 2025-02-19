@@ -15,13 +15,13 @@
  */
 
 import 'dart:core';
+import 'package:http/http.dart' as http;
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/model/Rewards.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -49,13 +49,15 @@ class Rewards with Service {
 
   // APIs
 
+  Future<http.Response?> _loadBalanceResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
+    Network().get('${Config().rewardsUrl}/user/balance', auth: Auth2()) : null;
+
   Future<int?> loadBalance() async {
     if (StringUtils.isEmpty(Config().rewardsUrl)) {
       Log.w('Rewards ballance failed to load. Missing rewards url.');
       return null;
     }
-    String url = '${Config().rewardsUrl}/user/balance';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await _loadBalanceResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -67,13 +69,15 @@ class Rewards with Service {
     }
   }
 
+  Future<http.Response?> _loadHistoryResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
+    Network().get('${Config().rewardsUrl}/user/history', auth: Auth2()) : null;
+
   Future<List<RewardHistoryEntry>?> loadHistory() async {
     if (StringUtils.isEmpty(Config().rewardsUrl)) {
       Log.w('Rewards history failed to load. Missing rewards url.');
       return null;
     }
-    String url = '${Config().rewardsUrl}/user/history';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await _loadHistoryResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -84,4 +88,21 @@ class Rewards with Service {
       return null;
     }
   }
+
+  // User Data
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    List<http.Response?> responses = await Future.wait<http.Response?>(<Future<http.Response?>>[
+      _loadBalanceResponse(),
+      _loadHistoryResponse(),
+    ]);
+
+    return {
+      'balance': _responseUserData(ListUtils.entry<http.Response?>(responses, 0)),
+      'history': _responseUserData(ListUtils.entry<http.Response?>(responses, 1), decoder: JsonUtils.decodeList),
+    };
+  }
+
+  dynamic _responseUserData(http.Response? response, { Function(String?) decoder = JsonUtils.decodeMap }) =>
+    (response?.succeeded == true) ? decoder(response?.body) : "${response?.statusCode} ${response?.body}";
 }

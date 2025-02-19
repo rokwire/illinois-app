@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+  <root-path name="root" path="." />
+
+  <!-- From origo-sdk/res/xml/diagnostic_file_path -->
+  <files-path name="origo_diagnostic_files" path="origo_dispatchables"/>
+</paths>

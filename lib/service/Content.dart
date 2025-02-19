@@ -16,6 +16,11 @@ class Content extends rokwire.Content {
 
   factory Content() => ((rokwire.Content.instance is Content) ? (rokwire.Content.instance as Content) : (rokwire.Content.instance = Content.internal()));
 
+  @override
+  Future<void> initService() async {
+    await super.initService();
+  }
+
   // Content Items
 
   @override

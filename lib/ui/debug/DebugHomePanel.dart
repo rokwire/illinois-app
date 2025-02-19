@@ -18,15 +18,20 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -42,7 +47,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
 import 'package:illinois/ui/debug/DebugGuidePanel.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -178,6 +182,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
                 ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
+                ToggleRibbonButton(label: 'Messages/Conversations Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
 
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:
@@ -315,16 +320,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                  RoundedButton(
-                    label: "Create Event",
-                    backgroundColor: Styles().colors.background,
-                    fontSize: 16.0,
-                    textColor: Styles().colors.fillColorPrimary,
-                    borderColor: Styles().colors.fillColorPrimary,
-                    onTap: _onCreateEventClicked
-                  ),
-                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Message",
@@ -509,6 +504,21 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       onTap: _onTapClearEssentialSkillsCoachData
                   )
                 ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: 'Set Assistant Location',
+                    backgroundColor: Styles().colors.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapSetAssistantLocation
+                  )
+                ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -760,6 +770,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
+  void _onMessagesEnabled() {
+    setState(() {
+      Storage().debugMessagesDisabled = (Storage().debugMessagesDisabled != true);
+    });
+    FlexUI().update();
+  }
+
   void _onUseDeviceLocalTimeZoneToggled() {
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
@@ -789,10 +806,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     }
   }
 
-  void _onCreateEventClicked() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
-  }
-
   void _onTapCreateSurvey({Survey? survey}) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(survey: survey, tabBar: uiuc.TabBar())));
   }
@@ -810,7 +823,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onUserCardInfoClicked() {
-    String? cardInfo = JsonUtils.encode(Auth2().authCard?.toShortJson(), prettify: true);
+    String? cardInfo = JsonUtils.encode(Auth2().iCard?.toShortJson(), prettify: true);
     if (StringUtils.isNotEmpty(cardInfo)) {
       showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
     }
@@ -963,6 +976,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       CustomCourses().deleteUserCourse(Config().essentialSkillsCoachKey!);
     }
+  }
+
+  void _onTapSetAssistantLocation() {
+    ExploreLocation? location = Storage().debugAssistantLocation?.toExploreLocation();
+    ExploreMapSelectLocationPanel.push(
+      context,
+      selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
+    ).then((Explore? explore) {
+      ExploreLocation? newLocation = explore?.exploreLocation;
+      Storage().debugAssistantLocation = AssistantLocation.fromExploreLocation(newLocation);
+    });
   }
 
   String get _refreshTokenTitle {

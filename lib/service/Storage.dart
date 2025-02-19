@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -137,7 +138,8 @@ class Storage extends rokwire.Storage {
 
   // Recent Items - backward compatability
   static const String recentItemsKey  = '_recent_items_json_string';
-  List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
+  String? get recentItemsSource => getStringWithName(recentItemsKey);
+  List<dynamic>? get recentItems => JsonUtils.decodeList(recentItemsSource);
 //set recentItems(List<dynamic>? recentItems) => setStringWithName(recentItemsKey, JsonUtils.encode(recentItems));
 
   String get recentItemsEnabledKey => 'edu.illinois.rokwire.recent_items.enabled';
@@ -191,6 +193,14 @@ class Storage extends rokwire.Storage {
   static const String debugAutomaticCredentialsKey  = 'debug_mobile_icard_automatic_credentials';
   bool? get debugAutomaticCredentials => getBoolWithName(debugAutomaticCredentialsKey);
   set debugAutomaticCredentials(bool? value) => setBoolWithName(debugAutomaticCredentialsKey, value);
+
+  static const String debugAssistantLocationKey  = 'debug_assistant_location';
+  AssistantLocation? get debugAssistantLocation => AssistantLocation.fromJson(JsonUtils.decodeMap(getStringWithName(debugAssistantLocationKey)));
+  set debugAssistantLocation(AssistantLocation? location) => setStringWithName(debugAssistantLocationKey, JsonUtils.encode(location?.toJson()));
+
+  static const String debugMessagesDisabledKey  = 'debugMessagesDisabled';
+  bool? get debugMessagesDisabled => getBoolWithName(debugMessagesDisabledKey);
+  set debugMessagesDisabled(bool? value) => setBoolWithName(debugMessagesDisabledKey, value);
 
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';

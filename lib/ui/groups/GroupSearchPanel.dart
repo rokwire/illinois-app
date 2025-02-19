@@ -257,6 +257,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
     if (StringUtils.isEmpty(searchValue)) {
       return;
     }
+    Analytics().logSearch(searchValue);
     _setLoading(true);
     Groups().searchGroups(searchValue, researchProjects: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
       _groups = _buildVisibleGroups(groups);

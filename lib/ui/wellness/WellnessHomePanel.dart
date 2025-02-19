@@ -26,6 +26,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessRecreationContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSuccessTeamContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessAppointmentsContentWidget.dart';
@@ -43,7 +44,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, struggling, }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, recreation}
 
 class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'AcademicsHomePanel';
@@ -62,7 +63,7 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
     WellnessContent.mentalHealth:   AnalyticsFeature.WellnessMentalHealth,
     WellnessContent.successTeam:    AnalyticsFeature.WellnessSuccessTeam,
     WellnessContent.podcast:        AnalyticsFeature.WellnessPodcast,
-    WellnessContent.struggling:     AnalyticsFeature.WellnessStruggling,
+    WellnessContent.recreation:     AnalyticsFeature.WellnessRecreation,
   };
 
   WellnessHomePanel({this.content, this.rootTabDisplay = false});
@@ -99,7 +100,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   bool _contentValuesVisible = false;
 
   UniqueKey _podcastKey = UniqueKey();
-  UniqueKey _strugglingKey = UniqueKey();
   ScrollController _contentScrollController = ScrollController();
 
   @override
@@ -227,7 +227,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     if (contentCodes != null) {
       contentValues = [];
       for (String code in contentCodes) {
-        WellnessContent? value = _getContentValueFromCode(code);
+        WellnessContent? value = WellnessContentImpl.fromString(code);
         if (value != null) {
           contentValues.add(value);
         }
@@ -249,9 +249,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     if (contentItem == WellnessContent.podcast) {
       launchUrl = Wellness().getResourceUrl(resourceId: 'podcast');
     }
-    else if (contentItem == WellnessContent.struggling) {
-      launchUrl = Wellness().getResourceUrl(resourceId: 'where_to_start');
-    }
 
     if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
       _launchUrl(launchUrl);
@@ -267,32 +264,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   void _changeSettingsContentValuesVisibility() {
     _contentValuesVisible = !_contentValuesVisible;
     setStateIfMounted(() { });
-  }
-
-  WellnessContent? _getContentValueFromCode(String? code) {
-    if (code == 'daily_tips') {
-      return WellnessContent.dailyTips;
-    } else if (code == 'rings') {
-      return WellnessContent.rings;
-    } else if (code == 'todo_list') {
-      return WellnessContent.todo;
-    } else if (code == 'appointments') {
-      return WellnessContent.appointments;
-    } else if (code == 'health_screener') {
-      return WellnessContent.healthScreener;
-    } else if (code == 'podcast') {
-      return WellnessContent.podcast;
-    } else if (code == 'resources') {
-      return WellnessContent.resources;
-    } else if (code == 'mental_health') {
-      return WellnessContent.mentalHealth;
-    } else if (code == 'success_team') {
-      return WellnessContent.successTeam;
-    } else if (code == 'struggling') {
-      return WellnessContent.struggling;
-    } else {
-      return null;
-    }
   }
 
   PreferredSizeWidget get _headerBar {
@@ -327,6 +298,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.recreation:
+        return WellnessRecreationContentWidget();
       case WellnessContent.mentalHealth:
         return WellnessMentalHealthContentWidget();
       case WellnessContent.successTeam:
@@ -334,9 +307,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.podcast:
         String? guideId = _loadWellcomeResourceGuideId('podcast');
         return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.WellnessPodcast,) : Container();
-      case WellnessContent.struggling:
-        String? guideId = _loadWellcomeResourceGuideId('where_to_start');
-        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.WellnessStruggling) : Container();
       default:
         return Container();
     }
@@ -379,15 +349,15 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.healthScreener:
         return _loadContentString('panel.wellness.section.screener.label', 'Illinois Health Screener');
       case WellnessContent.resources:
-        return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
+        return _loadContentString('panel.wellness.section.resources.label', 'General Resources', language: language);
       case WellnessContent.mentalHealth:
         return _loadContentString('panel.wellness.section.mental_health.label', 'Mental Health Resources', language: language);
       case WellnessContent.successTeam:
         return _loadContentString('panel.wellness.section.success_team.label', 'My Success Team', language: language);
       case WellnessContent.podcast:
         return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Illini Podcast', language: language);
-      case WellnessContent.struggling:
-        return _loadContentString('panel.wellness.section.struggling.label', 'I\'m Struggling', language: language);
+      case WellnessContent.recreation:
+        return _loadContentString('panel.wellness.section.recreation.label', 'Campus Recreation', language: language); //TBD localize
     }
   }
 
@@ -409,4 +379,24 @@ class WellnessFavorite extends Favorite {
   static String favoriteKeyName({String? category}) => (category != null) ? "wellness.$category.widgetIds" : "wellness.widgetIds";
   @override String get favoriteKey => favoriteKeyName(category: category);
   @override String? get favoriteId => id;
+}
+
+// WellnessContentImpl
+
+extension WellnessContentImpl on WellnessContent {
+  static WellnessContent? fromString(String? value) {
+    switch (value) {
+      case 'recreation':      return WellnessContent.recreation;
+      case 'daily_tips':      return WellnessContent.dailyTips;
+      case 'rings':           return WellnessContent.rings;
+      case 'todo_list':       return WellnessContent.todo;
+      case 'appointments':    return WellnessContent.appointments;
+      case 'health_screener': return WellnessContent.healthScreener;
+      case 'resources':       return WellnessContent.resources;
+      case 'mental_health':   return WellnessContent.mentalHealth;
+      case 'success_team':    return WellnessContent.successTeam;
+      case 'podcast':         return WellnessContent.podcast;
+      default:                return null;
+    }
+  }
 }

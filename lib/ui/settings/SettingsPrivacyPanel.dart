@@ -17,9 +17,11 @@
 import 'dart:math';
 
 import "package:flutter/material.dart";
+import "package:illinois/ext/PrivacyData.dart";
 import "package:illinois/model/PrivacyData.dart";
 import "package:illinois/service/Analytics.dart";
 import 'package:illinois/utils/AppUtils.dart';
+import "package:rokwire_plugin/service/app_notification.dart";
 import 'package:rokwire_plugin/service/auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
@@ -62,6 +64,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     super.initState();
 
     NotificationService().subscribe(this,[
+      AppNotification.notify,
       Localization.notifyLocaleChanged,
     ]);
 
@@ -76,6 +79,8 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         _data = PrivacyData.fromJson(JsonUtils.mapValue(value));
         _loading = false;
       });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollListener());
     });
 
   }
@@ -90,10 +95,15 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Localization.notifyLocaleChanged) {
+    if (name == AppNotification.notify) {
+      if ((param is ScrollMetricsNotification) && mounted && _disabled) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollListener());
+      }
+    } else if (name == Localization.notifyLocaleChanged) {
       //We need to refresh because the text fields are preloaded with the locale
-      _data?.reload();
-      setState(() {});
+      setStateIfMounted(() {
+        _data?.reload();
+      });
     }
   }
 
@@ -663,8 +673,10 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
   List<Widget> _buildCategoryEntries(PrivacyCategory category){
     List<Widget> entries = [];
     if(category.entries2?.isNotEmpty??false){
-      category.entries2!.forEach((entry) {
-        entries.add(_PrivacyEntry(data: entry, currentPrivacyLevel: widget.selectedPrivacyLevel?.round()??0,));
+      category.entries2?.forEach((entry) {
+        if (entry.isVisible) {
+          entries.add(_PrivacyEntry(data: entry, currentPrivacyLevel: widget.selectedPrivacyLevel?.round()??0,));
+        }
       });
     }
     return entries;
@@ -722,54 +734,54 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
-    PrivacyEntry2 data = widget.data!;
-    String title = Localization().getString(data.titleKey, defaults: data.title)!;
-    String? description = Localization().getString(data.descriptionKey, defaults: data.description)?.replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
-    String? dataUsageInfo = Localization().getString(data.dataUsageKey, defaults: data.dataUsage);
-    String iconKey = data.iconRes!;
-    String iconKeyOff = data.offIconRes!;
-    int minLevel = data.minLevel!;
-    //The additional data is needed for the Wallet section (personalization)
-    String? additionalDescription = Localization().getString(data.additionalDescriptionKey, defaults: data.additionalDescription);
-    String? additionalDataUsageInfo = Localization().getString(data.additionalDataUsageKey, defaults: data.additionalDataUsage);
-    int? additionalMinLevel = data.additionalDataMinLevel;
+    PrivacyEntry2? data = widget.data;
+    String? title = data?.displayTitle;
+    String? iconKey = data?.iconRes;
+    String? iconKeyOff = data?.offIconRes;
+    int? minLevel = data?.minLevel;
+    bool? hidden = data?.hidden;
 
-    bool isEnabled = widget.currentPrivacyLevel!>=minLevel;
+    if ((data != null) && (title != null) && (iconKey != null) && (iconKeyOff != null) && (minLevel != null) && (hidden != true)) {
+      bool isEnabled = widget.currentPrivacyLevel!>=minLevel;
 
-    return
-      Semantics( container: true,
-        child: Container(
-        padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
-        color: Styles().colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 4),
-              child: PrivacyIcon(enabledIconKey: iconKey, disabledIconKey: iconKeyOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
-            Container(width: 10,),
-            Expanded(
-             child: Column(
-               mainAxisAlignment: MainAxisAlignment.start,
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: <Widget>[
-                 Padding(padding: EdgeInsets.only(right: 20), child: Text(title,
-                  style:  isEnabled?  Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),
-                 )),
-                 Container(height: 2,),
-                 Semantics( explicitChildNodes: false,
-                  child: _buildInfo(description, dataUsageInfo, minLevel, false)),
-                 Container(height: (additionalDescription?.isNotEmpty ?? false) ? 26: 0),
-                 Semantics( explicitChildNodes: false,
-                  child: _buildInfo(additionalDescription, additionalDataUsageInfo, additionalMinLevel, true))
-               ],
+      return
+        Semantics( container: true,
+          child: Container(
+          padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
+          color: Styles().colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(top: 4),
+                child: PrivacyIcon(enabledIconKey: iconKey, disabledIconKey: iconKeyOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
+              Container(width: 10,),
+              Expanded(
+               child: Column(
+                 mainAxisAlignment: MainAxisAlignment.start,
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: <Widget>[
+                   Padding(padding: EdgeInsets.only(right: 20), child: Text(title,
+                    style:  isEnabled?  Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),
+                   )),
+                   Container(height: 2,),
+                   Semantics( explicitChildNodes: false,
+                    child: _buildInfo(data.displayDescription, data.displayDataUsageInfo, minLevel, false)),
+                   Container(height: (data.displayAdditionalDescription?.isNotEmpty ?? false) ? 26: 0),
+                   Semantics( explicitChildNodes: false,
+                    child: _buildInfo(data.displayAdditionalDescription, data.displayAdditionalDataUsageInfo, data.additionalDataMinLevel, true))
+                 ],
+               ),
              ),
-           ),
-          ],
-        ),
-      )
-    );
+            ],
+          ),
+        )
+      );
+    }
+    else {
+      return Container();
+    }
   }
 
   _buildInfo(String? description, String? dataUsageInfo, int? minLevel, bool additionalInfo){

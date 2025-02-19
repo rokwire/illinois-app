@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -88,8 +89,8 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
       ],);
   }
 
-  Widget _buildButtons(){
-    return _canCreatePoll?
+  Widget _buildButtons() {
+    return _canCreatePoll ?
     RoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
@@ -122,7 +123,10 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   void _onLogin(){
     Analytics().logSelect(target: "Login", source: widget.runtimeType.toString());
-    if (_authLoading != true) {
+    if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {

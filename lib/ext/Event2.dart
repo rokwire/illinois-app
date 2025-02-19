@@ -6,14 +6,18 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+
+import '../utils/Utils.dart';
 
 // Event2
 
@@ -305,17 +309,152 @@ extension Event2Ext on Event2 {
   Game? get game =>
     isSportEvent ? Game.fromJson(data) : null;
 
-  Event2Grouping? get linkedEventsGroupingQuery {
+  List<Event2Grouping>? get linkedEventsGroupingQuery {
     if (isSuperEvent) {
-      return Event2Grouping.superEvent(id);
+      return Event2Grouping.superEvents(superEventId: id);
     }
     else if (isRecurring) {
-      return Event2Grouping.recurrence(grouping?.recurrenceId);
+      return Event2Grouping.recurringEvents(groupId: grouping?.recurrenceId, individual: false);
     }
     else {
       return null;
     }
   }
+
+  Event2 get duplicate => duplicateWith();
+
+  Event2 get copy => copyWithNullable();
+
+  Event2 duplicateWith({Event2Grouping? grouping}) => copyWithNullable(
+    id: NullableValue.empty(),
+    name: NullableValue('${name} copy'),
+    published: NullableValue(false), //Explicitly set published to false - #612. This is comment from Admin app
+    grouping: grouping != null ? NullableValue(grouping) : null, //Expose nullable if we want to be able to clear(pass null) not just update
+  );
+
+  Event2 copyWithNullable({ // We can pass null to skip the value, NullableValue(null) to explicitly pass null
+    NullableValue<String>? id,
+    NullableValue<String>? name,
+    NullableValue<String>? description,
+    NullableValue<String>? instructions,
+    NullableValue<String>? imageUrl,
+    NullableValue<String>? eventUrl,
+    NullableValue<bool>? canceled,
+    NullableValue<bool>? published,
+    NullableValue<String>? timezone,
+    NullableValue<DateTime>? startTimeUtc,
+    NullableValue<DateTime>? endTimeUtc,
+    NullableValue<bool>? allDay,
+    NullableValue<bool>? free,
+    NullableValue<Event2Type>? eventType,
+    NullableValue<Event2OnlineDetails>? onlineDetails,
+    NullableValue<Event2Grouping>? grouping,
+    NullableValue<Event2RegistrationDetails>? registrationDetails,
+    NullableValue<Event2AttendanceDetails>? attendanceDetails,
+    NullableValue<Event2SurveyDetails>? surveyDetails,
+    NullableValue<Event2AuthorizationContext>? authorizationContext,
+    NullableValue<Event2Context>? context,
+    NullableValue<Map<String, dynamic>>? attributes,
+    NullableValue<ExploreLocation>? location,
+    NullableValue<String>? sponsor,
+    NullableValue<String>? speaker,
+    NullableValue<List<Event2Contact>>? contacts,
+    NullableValue<Event2UserRole>? userRole,
+    NullableValue<String>? cost,
+    NullableValue<List<Event2NotificationSetting>>? notificationSettings,
+  }){
+    return Event2(
+      id: id != null ?  id.value : this.id,
+      name: name != null ? name.value : this.name,
+      description: description != null ? description.value : this.description,
+      instructions: instructions  != null ? instructions.value : this.instructions,
+      imageUrl: imageUrl != null ? imageUrl.value : this.imageUrl,
+      eventUrl: eventUrl != null ? eventUrl.value : this.eventUrl,
+      canceled: canceled  != null ? canceled.value : this.canceled,
+      published: published  != null ? published.value : this.published,
+      timezone: timezone != null ?  timezone.value : this.timezone,
+      startTimeUtc: startTimeUtc != null ? startTimeUtc.value : this.startTimeUtc,
+      endTimeUtc: endTimeUtc != null ? endTimeUtc.value : this.endTimeUtc,
+      allDay: allDay != null ? allDay.value : this.allDay,
+      free: free != null ? free.value : this.free,
+      eventType: eventType != null ? eventType.value : this.eventType,
+      onlineDetails: onlineDetails != null ? onlineDetails.value : this.onlineDetails,
+      grouping: grouping != null ? grouping.value : this.grouping,
+      registrationDetails: registrationDetails != null ? registrationDetails.value : this.registrationDetails,
+      attendanceDetails: attendanceDetails != null ? attendanceDetails.value : this.attendanceDetails,
+      surveyDetails: surveyDetails != null ? surveyDetails.value : this.surveyDetails,
+      authorizationContext: authorizationContext != null ? authorizationContext.value : this.authorizationContext,
+      context: context != null ? context.value : this.context,
+      attributes: attributes != null ? attributes.value : this.attributes,
+      location: location != null ? location.value : this.location,
+      sponsor: sponsor != null ? sponsor.value : this.sponsor,
+      speaker: speaker != null ? speaker.value : this.speaker,
+      contacts: contacts != null ? contacts.value : this.contacts,
+      userRole: userRole != null ? userRole.value : this.userRole,
+      cost: cost != null ? cost.value : this.cost,
+      notificationSettings: notificationSettings != null ? notificationSettings.value : this.notificationSettings,
+      source: this.source,
+      data: this.data,
+    );
+  }
+
+  Event2 toRecurringEvent({required DateTime startDateTimeUtc, required DateTime endDateTimeUtc}) => Event2(
+    name: this.name,
+    description: this.description,
+    instructions: this.instructions,
+    imageUrl: this.imageUrl,
+    eventUrl: this.eventUrl,
+
+    timezone: this.timezone,
+    startTimeUtc: startDateTimeUtc,
+    endTimeUtc: endDateTimeUtc,
+    allDay: this.allDay,
+
+    eventType: this.eventType,
+    location: this.location,
+    onlineDetails: this.onlineDetails,
+
+    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId, individual: false), // set "sub-events" not to show as individuals
+    attributes: this.attributes,
+    authorizationContext: this.authorizationContext,
+    context: this.context,
+
+    canceled: this.canceled,
+    published: this.published,
+    userRole: this.userRole,
+
+    free: this.free,
+    cost: this.cost,
+
+    registrationDetails: this.registrationDetails,
+    attendanceDetails: this.attendanceDetails,
+    surveyDetails: this.surveyDetails,
+    notificationSettings: this.notificationSettings,
+
+    sponsor: this.sponsor,
+    speaker: this.speaker,
+    contacts: this.contacts,
+
+    source: this.source,
+    data: this.data,
+
+  );
+
+  Future<List<Event2PersonIdentifier>?> get asyncAdminIdentifiers async =>
+      Events2().loadAdminIdentifiers(this);
+}
+
+extension Event2GroupingExt on Event2Grouping{
+
+    bool? get canDisplayAsIndividual => displayAsIndividual is bool ? displayAsIndividual : null;
+
+    Event2Grouping copyWith({Event2GroupingType? type, String? superEventId, String? recurrenceId, displayAsIndividual}) =>
+      Event2Grouping(
+        type: type ?? this.type,
+        recurrenceId: recurrenceId ?? this.recurrenceId,
+        displayAsIndividual: displayAsIndividual ?? this.displayAsIndividual,
+        superEventId: superEventId ?? this.superEventId
+      );
 }
 
 extension Event2ContactExt on Event2Contact {
@@ -408,6 +547,7 @@ String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
 
 String? event2TimeFilterToDisplayString(Event2TimeFilter? value) {
   switch (value) {
+    case Event2TimeFilter.past: return Localization().getStringEx("model.event2.event_time.past", "Past");
     case Event2TimeFilter.upcoming: return Localization().getStringEx("model.event2.event_time.upcoming", "Upcoming");
     case Event2TimeFilter.today: return Localization().getStringEx("model.event2.event_time.today", "Today");
     case Event2TimeFilter.tomorrow: return Localization().getStringEx("model.event2.event_time.tomorrow", "Tomorrow");
@@ -516,4 +656,75 @@ String? event2UserRegistrationToDisplayString(Event2UserRegistrationType? value)
     case Event2UserRegistrationType.creator: return Localization().getStringEx("model.event2.registrant_type.creator", "Creator");
     default: return null;
   }
+}
+
+extension Event2PersonIdentifierExt on Event2PersonIdentifier{
+  static List<Event2PersonIdentifier>? constructAdminIdentifiersFromIds(List<String>? ids) =>
+      CollectionUtils.isEmpty(ids) ? null :
+        ids!.map((_id) => Event2PersonIdentifier(externalId: _id)
+      ).toList();
+
+  static List<String>? extractNetIds(List<Event2PersonIdentifier>? identifiers) =>
+      identifiers?.fold<List<String>?>([],
+              (ids,identifier) =>  ListUtils.append(ids, identifier.netId));
+
+  static String? extractNetIdsString(List<Event2PersonIdentifier>? identifiers) =>
+      extractNetIds(identifiers)?.join(", ");
+}
+
+extension Event2PersonsResultExt on Event2PersonsResult{
+  List<Event2PersonIdentifier>? get adminIdentifiers =>
+    registrants?.fold<List<Event2PersonIdentifier>?>([], (_admins, person) =>
+      (person.role == Event2UserRole.admin) ?
+          ListUtils.append(_admins, person.identifier) :
+          _admins
+      );
+}
+
+extension Events2Ext on Events2 {
+    Future<List<Event2PersonIdentifier>?> loadAdminIdentifiers(Event2? event) async =>
+      event?.id == null ? null :
+        (await Events2().loadEventPeople(event!.id!))?.adminIdentifiers;
+
+  Future<Event2Result> duplicateEvent(Event2? event, /*{List<Event2PersonIdentifier>? admins}*/) async {
+    List<Event2PersonIdentifier>? _admins = await loadAdminIdentifiers(event);
+    _admins?.removeWhere((identifier) =>  identifier.externalId == Auth2().netId); //exclude self otherwise the BB duplicates it
+    return Events2().createEvent(event!.duplicate, adminIdentifiers: _admins).then((createdEvent) async {
+      if (createdEvent is Event2) {
+
+        if(event.isSuperEvent == false){
+          return Event2Result.success(); //success
+        }
+
+        Events2ListResult? subEventsLoad = await Events2().loadEvents(Events2Query(groupings: event.linkedEventsGroupingQuery));
+        if(CollectionUtils.isEmpty(subEventsLoad?.events)){
+          return Event2Result.fail("Unable to load sub events");
+        }
+        //Duplicate sub events
+        Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
+            events: Event2SuperEventsController.applyCollectionChange(
+                collection: subEventsLoad?.events,
+                change: (subEvent) {
+                  Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);
+                  return subEvent.duplicateWith(grouping: subGrouping);}),
+            uploadAPI: (event) => Events2().createEvent(event, adminIdentifiers: _admins));
+
+        return updateResult.successful ? Event2Result.success(data: updateResult.data) : Event2Result.fail(updateResult.error);
+      }
+
+      return Event2Result.fail("Unable to duplicate main event");
+    });
+  }
+}
+
+class Event2Result<T>{
+  String? error;
+  T? data;
+
+  Event2Result({String? this.error, this.data});
+
+  static Event2Result<T> fail<T>(String? error) => Event2Result(error: error ?? "error");
+  static Event2Result<T> success<T>({T? data}) => Event2Result(data: data);
+
+  bool get successful => this.error == null;
 }

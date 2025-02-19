@@ -159,7 +159,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                     ],),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 24), child:
-                    Text(_article?.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.extra_large"),
+                    Text(_article?.title ?? '', style: Styles().textStyles.getTextStyle("common.panel.title"),
                     ),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 24), child:

@@ -17,8 +17,10 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:http/http.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -117,5 +119,10 @@ class Transportation /* with Service */ {
       Log.e(e.toString());
     }
     return null;
+  }
+
+  Future<Map<String, dynamic>?> loadUserDataJson() async {
+    Response? response = ((Config().transportationUrl != null) && (Auth2().accountId != null)) ? await Network().get("${Config().transportationUrl}/user-data/${Auth2().accountId}", auth: Auth2()) : null;
+    return (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
   }
 }

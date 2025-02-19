@@ -17,7 +17,6 @@
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
@@ -27,6 +26,7 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
@@ -43,24 +43,18 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class SavedPanel extends StatefulWidget with AnalyticsInfo {
 
   static const List<String> allFavoriteCategories = <String>[
-    Event.favoriteKeyName,
     Event2.favoriteKeyName,
     Dining.favoriteKeyName,
     Game.favoriteKeyName,
@@ -72,8 +66,9 @@ class SavedPanel extends StatefulWidget with AnalyticsInfo {
   ];
 
   final List<String> favoriteCategories;
+  final void Function(Favorite favorite)? onTapFavorite;
 
-  SavedPanel({this.favoriteCategories = allFavoriteCategories});
+  SavedPanel({this.favoriteCategories = allFavoriteCategories, this.onTapFavorite});
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -81,7 +76,7 @@ class SavedPanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature {
     String? favoriteCategory = (favoriteCategories.length == 1) ? favoriteCategories.first : null;
-    if ((favoriteCategory == Event.favoriteKeyName) || (favoriteCategory == Event2.favoriteKeyName)) {
+    if (favoriteCategory == Event2.favoriteKeyName) {
       return AnalyticsFeature.Events;
     }
     else if (favoriteCategory == Dining.favoriteKeyName) {
@@ -226,8 +221,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       for (String favoriteCategory in widget.favoriteCategories) {
         contentList.add(_SavedItemsList(headingTitle: _favoriteCategoryTitle(favoriteCategory),
           headingIconKey: _favoriteCategoryIconKey(favoriteCategory),
-          items: _favorites[favoriteCategory])
-        );
+          items: _favorites[favoriteCategory],
+          onTapFavorite: widget.onTapFavorite,
+        ),);
       }
       padding = EdgeInsets.zero;
     }
@@ -237,7 +233,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       if (0 < (favorites?.length ?? 0)) {
         for (int index = 0; index < favorites!.length; index++) {
           contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
-            _SavedItem(favorites[index])
+            _SavedItem.buildCard(favorite: favorites[index], onTap: widget.onTapFavorite,)
           ));
         }
         contentList.add(LinkButton(
@@ -300,7 +296,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> Function(LinkedHashSet<String>?) _favoriteCategoryLoader(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName: return _loadFavoriteEvents;
       case Event2.favoriteKeyName: return _loadFavoriteEvents2;
       case Dining.favoriteKeyName: return _loadFavoriteDinings;
       case Game.favoriteKeyName: return _loadFavoriteGames;
@@ -315,9 +310,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   Future<List<Favorite>?> _loadNOP(LinkedHashSet<String>? favoriteIds) async => null;
-
-  Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsByIds(eventIds: favoriteIds?.toList()), favoriteIds) : null;
@@ -403,7 +395,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
       case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Big 10 Events');
@@ -419,7 +410,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName:         return 'events';
       case Event2.favoriteKeyName:        return 'events';
       case Dining.favoriteKeyName:        return 'dining';
       case Game.favoriteKeyName:          return 'athletics';
@@ -467,9 +457,10 @@ class _SavedItemsList extends StatefulWidget {
   final String? headingIconKey;
   final String slantImageKey;
   final Color? slantColor;
+  final void Function(Favorite favorite)? onTapFavorite;
 
   // ignore: unused_element
-  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor});
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor, this.onTapFavorite});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -506,7 +497,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       int itemsCount = widget.items!.length;
       int visibleCount = (((widget.limit <= 0) || _showAll) ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
-        widgets.add(_SavedItem(widget.items![i]));
+        widgets.add(_SavedItem.buildCard(favorite: widget.items![i], onTap: widget.onTapFavorite, forceDefaultCard: true));
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
         }
@@ -534,14 +525,23 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
 class _SavedItem extends StatelessWidget {
   final Favorite favorite;
-  
-  _SavedItem(this.favorite, {Key ? key}) : super(key: key);
+  final void Function(Favorite favorite)? onTap;
 
-  Event? get _favoriteEvent => (favorite is Event) ? (favorite as Event) : null;
+  _SavedItem({required this.favorite, this.onTap});
+
+  static Widget buildCard( {required Favorite favorite, void Function(Favorite favorite)? onTap, bool forceDefaultCard = false}) {
+    if(forceDefaultCard == false) {
+      if (favorite is Dining) {
+        return DiningCard(favorite, onTap: (BuildContext context) =>
+          onTap!=null ? onTap(favorite) : favorite.favoriteLaunchDetail(context));
+      }
+    }
+    return _SavedItem(favorite: favorite, onTap: onTap,);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  (_favoriteEvent?.isComposite ?? false) ? _buildCompositEventCard(context) : _buildFavoriteCard(context);
+    return  _buildFavoriteCard(context);
   }
 
   Widget _buildFavoriteCard(BuildContext context) {
@@ -604,23 +604,13 @@ class _SavedItem extends StatelessWidget {
         )),);
   }
 
-  Widget _buildCompositEventCard(BuildContext context) {
-      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        onTap:() => _onTapCompositeEvent(context));
-  }
-
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: favorite.favoriteTitle);
-    favorite.favoriteLaunchDetail(context);
-  }
-
-  void _onTapCompositeEvent(BuildContext context) {
-    Analytics().logSelect(target: favorite.favoriteTitle);
-    if (_favoriteEvent?.isComposite ?? false) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: _favoriteEvent)));
+    if (onTap != null) {
+      onTap?.call(favorite);
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _favoriteEvent)));
+      favorite.favoriteLaunchDetail(context);
     }
   }
 }

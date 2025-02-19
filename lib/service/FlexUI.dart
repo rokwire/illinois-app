@@ -87,6 +87,7 @@ class FlexUI extends rokwire.FlexUI {
 
   bool get isSaferAvailable => hasFeature('safer');
   bool get isMTDBusPassAvailable => hasFeature('mtd_bus_pass');
+  bool get isMessagesAvailable => hasFeature('messages');
 
   // Local Build
 
@@ -126,13 +127,13 @@ class FlexUI extends rokwire.FlexUI {
       authRule.forEach((dynamic key, dynamic value) {
         if (key is String) {
           if ((key == 'iCard') && (value is bool)) {
-            result = result && ((Auth2().authCard != null) == value);
+            result = result && ((Auth2().iCard != null) == value);
           }
           else if ((key == 'iCardNum') && (value is bool)) {
-            result = result && ((0 < (Auth2().authCard?.cardNumber?.length ?? 0)) == value);
+            result = result && ((0 < (Auth2().iCard?.cardNumber?.length ?? 0)) == value);
           }
           else if ((key == 'iCardLibraryNum') && (value is bool)) {
-            result = result && ((0 < (Auth2().authCard?.libraryNumber?.length ?? 0)) == value);
+            result = result && ((0 < (Auth2().iCard?.libraryNumber?.length ?? 0)) == value);
           }
         }
       });
