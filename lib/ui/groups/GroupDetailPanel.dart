@@ -152,6 +152,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return _group?.currentMember?.isPendingMember ?? false;
   }
 
+  //ignore: unused_element
   bool get _isPublic {
     return _group?.privacy == GroupPrivacy.public;
   }
@@ -359,9 +360,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     content.add(_buildAbout());
     content.add(_buildPrivacyDescription());
     content.add(_buildAdmins());
-    if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD
-      content.add(_GroupEventsContent(group: _group, updateController: _updateController));
-    }
+    // if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD do we want to show events for non members when specific settings are applied?
+    //   content.add(_GroupEventsContent(group: _group, updateController: _updateController));
+    // }
     content.add(_buildResearchProjectMembershipRequest());
 
     return content;
