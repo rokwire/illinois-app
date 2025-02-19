@@ -31,6 +31,7 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/groups/GroupAboutContentWidget.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
@@ -63,7 +64,6 @@ import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
-import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -78,7 +78,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum DetailTab {Events, Posts, Scheduled, Messages, Polls, About }
+enum DetailTab {Events, Posts, Scheduled, Messages, Polls }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -357,9 +357,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
 
   List<Widget> _buildNonMemberContent(){
     List<Widget> content = [];
-    content.add(_buildAbout());
-    content.add(_buildPrivacyDescription());
-    content.add(_buildAdmins());
+    content.add(GroupAboutContentWidget(group: _group, admins: _groupAdmins,));
+    // content.add(_buildAbout());
+    // content.add(_buildPrivacyDescription());
+    // content.add(_buildAdmins());
     // if (_isPublic /*&& CollectionUtils.isNotEmpty(_groupEvents)*/ ) { //TBD do we want to show events for non members when specific settings are applied?
     //   content.add(_GroupEventsContent(group: _group, updateController: _updateController));
     // }
@@ -386,9 +387,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     if (mounted) {
       if (group != null) {
         _group = group;
-        if (_isResearchProject && _isMember) {
-          _currentTab = DetailTab.About; //TBD
-        }
+        // if (_isResearchProject && _isMember) {
+        //   _currentTab = DetailTab.About; //TBD
+        // }
         _initTabs();
         _trimForbiddenTabs();
         _redirectToGroupPostIfExists();
@@ -743,9 +744,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         case DetailTab.Polls:
           title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
           break;
-        case DetailTab.About:
-          title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
-          break;
+        // case DetailTab.About:
+        //   title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
+        //   break;
         case DetailTab.Scheduled:
           title = Localization().getStringEx("", 'Scheduled'); //localize
           break;
@@ -845,60 +846,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return Container();
   }
 
-  Widget _buildAbout() {
-    List<Widget> contentList = <Widget>[];
-
-    if (!_isResearchProject) {
-      contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
-      Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
-      );
-    }
-
-    if (StringUtils.isNotEmpty(_group?.description)) {
-      contentList.add(ExpandableText(_group?.description ?? '',
-        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
-        trimLinesCount: 4,
-        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
-      );
-    }
-
-    if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
-      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
-      ExpandableText(_group?.researchConsentDetails ?? '',
-        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
-        trimLinesCount: 12,
-        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
-        footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
-      ),
-      ),);
-    }
-
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
-    );
-  }
-
-  Widget _buildPrivacyDescription() {
-    String? title, description;
-    if (_group?.privacy == GroupPrivacy.private) {
-      title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
-      description = Localization().getStringEx("panel.group_detail.label.description.private", '\u2022 This group is only visible to members.\n\u2022 Anyone can search for the group with the exact name.\n\u2022 Only admins can see members.\n\u2022 Only members can see posts and group events.\n\u2022 All users can see group events if they are marked public.\n\u2022 All users can see admins.');
-    }
-    else if (_group?.privacy == GroupPrivacy.public) {
-      title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');
-      description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
-    }
-
-    return (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(description) && !_isResearchProject) ?
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 4), child:
-        Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
-        Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.regular'), ),
-      ],),) :
-    Container(width: 0, height: 0);
-  }
-
   Widget _buildWebsiteLinkCommand() {
     return RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
@@ -937,17 +884,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       }
     }
     return attributesList;
-  }
-
-  Widget _buildWebsiteLinkButton() {
-    return RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
-        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-        rightIconKey: 'external-link',
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        onTap: _onWebsite
-    );
   }
 
   Widget _buildBadgeWidget() {
@@ -1024,43 +960,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       ),
       ),
     );
-
-  Widget _buildAdmins() {
-    if (CollectionUtils.isEmpty(_groupAdmins)) {
-      return Container();
-    }
-
-    List<Widget> content = [];
-    content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
-    for (Member? officer in _groupAdmins!) {
-      if (1 < content.length) {
-        content.add(Padding(padding: EdgeInsets.only(left: 8), child: Container()));
-      }
-      content.add(_OfficerCard(groupMember: officer));
-    }
-    content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
-
-    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
-
-    return Stack(children: [
-      Container(
-          height: 112,
-          color: Styles().colors.backgroundVariant,
-          child: Column(children: [
-            Container(height: 80),
-            Container(height: 32, child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container()))
-          ])),
-      Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                child: Text(headingText,
-                    style:   Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
-            SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
-          ]))
-    ]);
-  }
 
   Widget _buildMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
@@ -1229,8 +1128,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                         leftIconKey: "info",
                         label: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
                         onTap: () {
-                          Navigator.pop(context);
-                          setStateIfMounted(()=> _currentTab = DetailTab.About);
+                          Analytics().logSelect(target: "Group About", attributes: _group?.analyticsAttributes);
+                          GroupAboutContentWidget.showPanel(context: context, group: _group, admins: _groupAdmins);
                         })),
                 Visibility(
                     visible: _canEditGroup,
@@ -1666,25 +1565,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     if (mounted) {
       setState(() {});
     }
-  }
-}
-
-class _OfficerCard extends StatelessWidget {
-  final Member? groupMember;
-  
-  _OfficerCard({this.groupMember});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 128,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
-        Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
-      ],),
-    );
   }
 }
 
