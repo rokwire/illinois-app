@@ -557,7 +557,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
 
   void _onTapLink(String? url, { bool? useInternalBrowser }) {
     Analytics().logSelect(target: 'Link: $url');
-    if (StringUtils.isNotEmpty(url)) {
+    if (mounted && StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }

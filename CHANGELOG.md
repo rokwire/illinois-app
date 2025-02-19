@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - GroupDetailPanel: remove events section for non members [#4806](https://github.com/rokwire/illinois-app/issues/4806).
+- Fixed URL opening from guide detail panel when the panel gets dismissed.
 ### Changed
 - Center text and make it smaller in Dining detail [#4602](https://github.com/rokwire/illinois-app/issues/4602).
 - Prompt to save only modified group admin settings [#4783](https://github.com/rokwire/illinois-app/issues/4783).
