@@ -267,7 +267,8 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> imple
   Future<dynamic>? _asyncLoadCandidates({Client? client}) async => Events2().loadEventsEx( //TBD load in portions: pass offset and limit
     Events2Query(
       searchText: _searchText,
-      types: {Event2TypeFilter.admin}
+      types: {Event2TypeFilter.admin},
+      grouping: Event2Grouping(type: Event2GroupingType.none), //Exclude SuperEvents and Recurring events
     ), client: client);
 
   Future<dynamic>? _asyncLoadSubEvents({Client? client}) async => _event?.isSuperEvent == true ? Events2().loadEventsEx(
