@@ -620,18 +620,20 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       debugPrint("ProfileInfo: Detected Requred Updates:\n${JsonUtils.encode(updatedProfile.toJson(), prettify: true)}");
     }
 
-    Auth2UserPrivacy updatedPrivacy = Auth2UserPrivacy.fromOther(privacy,
-      public: (privacy?.public == null) ? true : null,
+    bool isProfileNameNotEmpty = StringUtils.isNotEmpty(profileFirstName) || StringUtils.isNotEmpty(profileMiddleName) || StringUtils.isNotEmpty(profileLastName);
+    bool? privacyIsPublic = ((privacy?.public == null) && isProfileNameNotEmpty) ? true : privacy?.public;
+    Auth2UserPrivacy? updatedPrivacy = (privacyIsPublic != null) ? Auth2UserPrivacy.fromOther(privacy,
+      public: privacyIsPublic,
       fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(privacy?.fieldsVisibility,
         profile: Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
-          firstName: (privacy?.fieldsVisibility?.profile?.firstName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : null,
-          middleName: (privacy?.fieldsVisibility?.profile?.middleName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : null,
-          lastName: (privacy?.fieldsVisibility?.profile?.lastName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : null,
-          email: ((account?.authType?.loginType?.shouldHaveEmail == true) && (privacy?.fieldsVisibility?.profile?.email != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : null,
-          phone: ((account?.authType?.loginType?.shouldHavePhone == true) && (privacy?.fieldsVisibility?.profile?.phone != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : null,
+          firstName: (privacy?.fieldsVisibility?.profile?.firstName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.firstName,
+          middleName: (privacy?.fieldsVisibility?.profile?.middleName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.middleName,
+          lastName: (privacy?.fieldsVisibility?.profile?.lastName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.lastName,
+          email: ((account?.authType?.loginType?.shouldHaveEmail == true) && (privacy?.fieldsVisibility?.profile?.email != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.email,
+          phone: ((account?.authType?.loginType?.shouldHavePhone == true) && (privacy?.fieldsVisibility?.profile?.phone != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.phone,
         )
       )
-    );
+    ) : null;
 
 
     List<Future<bool>> updateFutures = <Future<bool>>[];
@@ -641,7 +643,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       updateFutures.add(Auth2().saveUserProfile(updatedProfile));
     }
 
-    int updatePrivacyIndex = (updatedPrivacy != privacy) ? updateFutures.length : -1;
+    int updatePrivacyIndex = ((updatedPrivacy != null) && (updatedPrivacy != privacy)) ? updateFutures.length : -1;
     if (0 <= updatePrivacyIndex) {
       updateFutures.add(Auth2().saveUserPrivacy(updatedPrivacy));
     }
