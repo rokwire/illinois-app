@@ -23,16 +23,21 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoEditPage extends StatefulWidget {
   final ProfileInfo contentType;
+  final bool onboarding;
+
+  final Auth2Type? authType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
-  final bool onboarding;
+
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
+
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
-  ProfileInfoEditPage({super.key, required this.contentType,
-    this.profile, this.privacy, this.onboarding = false,
+  ProfileInfoEditPage({super.key,
+    required this.contentType, this.onboarding = false,
+    this.authType, this.profile, this.privacy,
     this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
     this.onFinishEdit
   });
@@ -65,6 +70,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Timer? _onScreenInsetsBottomChangedTimer;
 
   bool get _showProfileCommands => (widget.onboarding == false);
+  bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
+  bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
+  bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
 
   @override
   void initState() {
@@ -87,7 +95,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
       lastName: Auth2FieldVisibility.public,
-      email: Auth2FieldVisibility.public,
+      email: (widget.authType?.loginType?.shouldHaveEmail == true) ? Auth2FieldVisibility.public : null,
+      phone: (widget.authType?.loginType?.shouldHavePhone == true) ? Auth2FieldVisibility.public : null,
     );
 
     _fieldVisibilities.addAll(_profileVisibility.fieldsVisibility);
@@ -128,9 +137,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         Column(children: [
           _photoWidget,
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-            _nameWidget,
+            _staticNameWidget,
           ),
 
+          if (_showNameControls)
+            ...[
+              _firstNameSection,
+              _middleNameSection,
+              _lastNameSection,
+            ],
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
@@ -297,8 +312,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     static const double _buttonIconSize = 16;
 
-    Widget get _nameWidget =>
-      Text(widget.profile?.fullName ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
+    Widget get _staticNameWidget =>
+      Text(_staicNameText ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
+
+    String? get _staicNameText => StringUtils.fullName([
+      _fieldTextControllers[_ProfileField.firstName]?.text,
+      _fieldTextControllers[_ProfileField.middleName]?.text,
+      _fieldTextControllers[_ProfileField.lastName]?.text,
+    ]);
 
   // Edit: Pronunciation
 
@@ -479,6 +500,21 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   // Edit: Other Sections
 
+  Widget get _firstNameSection => _textFieldSection(_ProfileField.firstName,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.first_name.text', 'First Name'),
+    enabled: _canEditName, locked: true,
+  );
+
+  Widget get _middleNameSection => _textFieldSection(_ProfileField.middleName,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.middle_name.text', 'Middle Name'),
+    enabled: _canEditName, locked: true,
+  );
+
+  Widget get _lastNameSection => _textFieldSection(_ProfileField.lastName,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.last_name.text', 'Last Name'),
+    enabled: _canEditName, locked: true,
+  );
+
   Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
   );
@@ -505,20 +541,27 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
-    enabled: false, locked: true,
+    textInputType: TextInputType.emailAddress,
+    enabled: (widget.authType?.loginType?.shouldHaveEmail != true) || StringUtils.isEmpty(widget.profile?.email),
+    locked: (widget.authType?.loginType?.shouldHaveEmail == true),
   );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
+    textInputType: TextInputType.emailAddress,
   );
 
   Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
     headingTitle: Localization().getStringEx('panel.profile.info.title.phone.text', 'Phone Number'),
+    textInputType: TextInputType.phone,
+    enabled: (widget.authType?.loginType?.shouldHavePhone != true) || StringUtils.isEmpty(widget.profile?.phone),
+    locked: (widget.authType?.loginType?.shouldHavePhone == true),
   );
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
     headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
+    textInputType: TextInputType.url,
   );
 
   Widget _textFieldSection(_ProfileField field, {
@@ -668,7 +711,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   void _onTextChanged(_ProfileField field, String value) {
     bool wasNotEmpty = (_fieldTextNotEmpty[field] == true);
     bool isNotEmpty = value.isNotEmpty;
-    if (wasNotEmpty != isNotEmpty) {
+    if ((wasNotEmpty != isNotEmpty) || field.isName) {
       setState(() {
         _fieldTextNotEmpty[field] = isNotEmpty;
       });
@@ -718,7 +761,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         )
       );
 
-      bool? shouldSave = await _shouldSaveModified(profile, privacy);
+      bool? shouldSave = await _shouldSaveModified(
+        profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
+        privacyModified: (privacy != widget.privacy)
+      );
       if (shouldSave == true) {
         _ProfileSaveResult result = await _saveEdit(profile, privacy);
         if (result.succeeded) {
@@ -741,14 +787,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
   }
 
-  Future<bool?> _shouldSaveModified(Auth2UserProfile profile, Auth2UserPrivacy privacy) async {
+  Future<bool?> _shouldSaveModified({bool? profileModified, bool? privacyModified}) async {
     String? prompt;
-    if (widget.profile != profile) {
-      prompt = (widget.privacy != privacy) ?
+    if (profileModified == true) {
+      prompt = (privacyModified == true) ?
         Localization().getStringEx('panel.profile.info.cancel.save.profile_and_privacy.prompt.text', 'Save your profile and privacy settings changes?') :
         Localization().getStringEx('panel.profile.info.cancel.save.profile.prompt.text', 'Save your profile settings changes?');
     }
-    else if (widget.privacy != privacy) {
+    else if (privacyModified == true) {
       prompt = Localization().getStringEx('panel.profile.info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
     }
 
@@ -862,7 +908,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         )
       );
 
-      bool? shouldSave = await _shouldSaveModified(profile, privacy);
+      bool? shouldSave = await _shouldSaveModified(
+        profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
+        privacyModified: (privacy != widget.privacy)
+      );
       if (shouldSave == true) {
         await _saveEdit(profile, privacy);
       }
@@ -894,33 +943,41 @@ class _ProfileSaveResult {
 ///////////////////////////////////////////
 // _ProfileField
 
-// NB: Use same naming with Auth2UserProfileScope
 enum _ProfileField {
-  pronouns,
+  firstName, middleName, lastName, pronouns,
   photoUrl, pronunciationUrl,
   email, email2, phone, website,
   college, department, major, title,
 }
 
-extension _ProfileFieldImpl on _ProfileField {
-
-  // static _ProfileField? fromString(String value) => _ProfileField.values.firstWhereOrNull((field) => (field.toString() == value));
-
-  static Set<Auth2UserProfileScope> get profileScope => <Auth2UserProfileScope> {
-    Auth2UserProfileScope.pronouns,
-    Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
-    Auth2UserProfileScope.email, /*Auth2UserProfileScope.email2,*/ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
-    /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
-  };
+extension _ProfileFieldExt on _ProfileField {
+  bool get isName => (this == _ProfileField.firstName) || (this == _ProfileField.middleName) || (this == _ProfileField.lastName);
 }
 
+///////////////////////////////////////////
+// Auth2LoginTypeProfileUtils
+
+extension Auth2LoginTypeProfileUtils on Auth2LoginType {
+  bool get shouldHaveName => (this == Auth2LoginType.oidcIllinois);
+  bool get shouldHaveEmail => (this == Auth2LoginType.oidcIllinois) || (this == Auth2LoginType.email);
+  bool get shouldHavePhone => (this == Auth2LoginType.phone) || (this == Auth2LoginType.phoneTwilio);
+}
 ///////////////////////////////////////////
 // Auth2UserProfile Utils
 
 extension _Auth2UserProfileUtils on Auth2UserProfile {
 
+  bool get isNameNotEmpty =>
+    StringUtils.isNotEmpty(firstName) ||
+    StringUtils.isNotEmpty(middleName) ||
+    StringUtils.isNotEmpty(lastName);
+
   String? fieldValue(_ProfileField field) {
     switch(field) {
+      case _ProfileField.firstName: return firstName;
+      case _ProfileField.middleName: return middleName;
+      case _ProfileField.lastName: return lastName;
+
       case _ProfileField.pronouns: return pronouns;
 
       case _ProfileField.photoUrl: return photoUrl;
@@ -941,6 +998,10 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
   static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) =>
     Auth2UserProfile.fromOther(other,
       override: Auth2UserProfile(
+        firstName: StringUtils.ensureNotEmpty(fields[_ProfileField.firstName]?.text),
+        middleName: StringUtils.ensureNotEmpty(fields[_ProfileField.middleName]?.text),
+        lastName: StringUtils.ensureNotEmpty(fields[_ProfileField.lastName]?.text),
+
         pronouns: StringUtils.ensureNotEmpty(fields[_ProfileField.pronouns]?.text),
 
         photoUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.photoUrl]?.text),
@@ -958,7 +1019,46 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
           Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
         }
       ),
-      scope: _ProfileFieldImpl.profileScope,
+      scope: <Auth2UserProfileScope> {
+        Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,
+        Auth2UserProfileScope.pronouns,
+        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+        Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
+      }
+    );
+
+  static Auth2UserProfile buildCopy(Auth2UserProfile? other) =>
+    Auth2UserProfile.fromOther(other,
+      override: Auth2UserProfile(
+        firstName: StringUtils.ensureNotEmpty(other?.firstName),
+        middleName: StringUtils.ensureNotEmpty(other?.middleName),
+        lastName: StringUtils.ensureNotEmpty(other?.lastName),
+
+        pronouns: StringUtils.ensureNotEmpty(other?.pronouns),
+
+        photoUrl: StringUtils.ensureNotEmpty(other?.photoUrl),
+        pronunciationUrl: StringUtils.ensureNotEmpty(other?.pronunciationUrl),
+
+        email: StringUtils.ensureNotEmpty(other?.email),
+        phone: StringUtils.ensureNotEmpty(other?.phone),
+        website: StringUtils.ensureNotEmpty(other?.website),
+
+        data: {
+          Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(other?.college),
+          Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(other?.department),
+          Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(other?.major),
+          Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(other?.title),
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
+        }
+      ),
+      scope: <Auth2UserProfileScope> {
+        Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,
+        Auth2UserProfileScope.pronouns,
+        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+        Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
+      }
     );
 }
 
@@ -968,6 +1068,10 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibility {
 
   Map<_ProfileField, Auth2FieldVisibility?> get fieldsVisibility => <_ProfileField, Auth2FieldVisibility?>{
+    _ProfileField.firstName: firstName,
+    _ProfileField.middleName: middleName,
+    _ProfileField.lastName: lastName,
+
     _ProfileField.pronouns: pronouns,
 
     _ProfileField.photoUrl: photoUrl,
@@ -986,6 +1090,10 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
 
   static Auth2UserProfileFieldsVisibility buildModified(Auth2UserProfileFieldsVisibility? other, Map<_ProfileField, Auth2FieldVisibility?>? fields) =>
     Auth2UserProfileFieldsVisibility.fromOther(other,
+      firstName : fields?[_ProfileField.firstName],
+      middleName : fields?[_ProfileField.middleName],
+      lastName : fields?[_ProfileField.lastName],
+
       pronouns : fields?[_ProfileField.pronouns],
 
       photoUrl : fields?[_ProfileField.photoUrl],
@@ -1014,3 +1122,4 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       }),
     );
 }
+
