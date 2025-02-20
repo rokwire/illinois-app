@@ -422,7 +422,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   void _trimForbiddenTabs(){
     if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
       _tabs?.removeWhere((DetailTab? tab) => tab == null ||
-          (tab == DetailTab.Scheduled && _canShowScheduled == false));
+          (tab == DetailTab.Scheduled &&
+              ( _canShowScheduled == false || _tabs?.contains(DetailTab.Posts) != true)
+          ));
     }
   }
 
