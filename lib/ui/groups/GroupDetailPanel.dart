@@ -113,6 +113,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
   static final int          _postsPageSize = 8;
   static final int          _animationDurationInMilliSeconds = 200;
+  static final List<DetailTab> _permanentTabs = [DetailTab.Scheduled];
 
   Group?                _group;
   GroupStats?        _groupStats;
@@ -391,7 +392,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         //   _currentTab = DetailTab.About; //TBD
         // }
         _initTabs();
-        _trimForbiddenTabs();
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
 
@@ -411,7 +411,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           _group = group;
           _refreshGroupAdmins();
           _initTabs();
-          _trimForbiddenTabs();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
         if(refreshEvents)
@@ -423,7 +422,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   void _trimForbiddenTabs(){
     if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
       _tabs?.removeWhere((DetailTab? tab) => tab == null ||
-          (tab == DetailTab.Scheduled && _canShowScheduled == false));
+          (tab == DetailTab.Scheduled &&
+              ( _canShowScheduled == false || _tabs?.contains(DetailTab.Posts) != true)
+          ));
     }
   }
 
@@ -558,13 +559,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   }
 
   void _initUpdateController() => _updateController.stream.listen((command) {
-    if (command is Map && command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
-      _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
+    if (command is Map) {
+        if(command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+          _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
+        }
     }
   });
 
-  void _initTabs() =>
+  void _initTabs() {
     _tabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
+    _tabs?.addAll(_permanentTabs);
+    _tabs = _tabs?.toSet().toList();// exclude duplicated
+    _trimForbiddenTabs();
+  }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
@@ -1545,7 +1552,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         });
       }
       _initTabs();
-      _trimForbiddenTabs();
       _refreshGroupAdmins();
       _refreshGroupStats();
       _updateController.add(GroupDetailPanel.notifyRefresh);

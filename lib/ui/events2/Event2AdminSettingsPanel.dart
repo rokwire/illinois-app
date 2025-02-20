@@ -186,7 +186,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
 
   Event2? get _event => widget.event;
 
-  bool get _showSuperEvent => true /*_event?.isSuperEventChild == false*/;
+  bool get _showSuperEvent => widget.event?.isRecurring != true;
 
   bool get _canUploadCsv => PlatformUtils.isWeb;
 }
