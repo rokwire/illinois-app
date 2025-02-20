@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- GroupDetailPanel show scheduled tab as permanent tab (trimmed if events not part of content items) [#4697](https://github.com/rokwire/illinois-app/issues/4697).
 
 ## [6.1.62] - 2025-02-19
 ### Fixed
