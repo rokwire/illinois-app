@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.64] - 2025-02-20
 ### Changed
 - Validate profile & privacy details on backend when profile info UI is presented [#4814](https://github.com/rokwire/illinois-app/issues/4814).
 -  Allow editing profile name where applicable, disable profile visibility update for profiles without a name [#4814](https://github.com/rokwire/illinois-app/issues/4814).
 - GroupDetailPanel show scheduled tab as permanent tab (trimmed if events not part of content items) [#4697](https://github.com/rokwire/illinois-app/issues/4697).
 
-## [6.1.62] - 2025-02-19
+## [6.1.63] - 2025-02-19
 ### Fixed
 - GroupDetailPanel: remove events section for non members [#4806](https://github.com/rokwire/illinois-app/issues/4806).
 - Fixed URL opening from guide detail panel when the panel gets dismissed.
