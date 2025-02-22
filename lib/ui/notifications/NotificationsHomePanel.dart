@@ -1039,7 +1039,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                           : Container(),
                       Row(children: [
                         Expanded(
-                            child: Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle('widget.info.tiny'))),
+                            child: Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle('widget.info.dark.tiny'))),
                       ]),
                     ])),
                   ],

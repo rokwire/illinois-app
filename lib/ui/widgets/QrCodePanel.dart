@@ -49,6 +49,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   final bool modalSheet;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+  final Color? backgroundColor;
 
   QrCodePanel({Key? key,
     this.deepLinkUrl,
@@ -64,6 +65,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
     this.modalSheet = false,
     this.analyticsFeature,
+    this.backgroundColor,
   });
 
   factory QrCodePanel.fromEvent(Event2? event, {Key? key, AnalyticsFeature? analyticsFeature }) => QrCodePanel(
@@ -151,6 +153,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     digitalCardShare: profile?.toDigitalCard(photoImageData: photoImageData),
     saveFileName: profile?.vcardFullName ?? 'Digital Business Card',
     saveWatermarkText: profile?.vcardFullName,
+    backgroundColor: Styles().colors.background,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textDark),
     title: Localization().getStringEx('panel.qr_code.digital_card.title', 'Digital Business Card'),
     description: Localization().getStringEx('panel.qr_code.digital_card.description.label', 'Scan the QR code image below to import your Digital Business Card.'),
@@ -162,7 +165,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.fillColorSecondary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => QrCodePanel.fromProfile(
         profile: profile,
@@ -277,8 +280,8 @@ class _QrCodePanelState extends State<QrCodePanel> {
       ],),
     );
 
-  Color? get _backgroundColor => widget.modalSheet ?
-    Styles().colors.surface : Styles().colors.background;
+  Color get _backgroundColor => widget.backgroundColor ??
+      (widget.modalSheet ? Styles().colors.surface : Styles().colors.background);
 
   Future<Uint8List?> _loadQrImageBytes() async {
     String qrContent = StringUtils.ensureNotEmpty(_promotionUrl ?? widget.digitalCardQrCode);

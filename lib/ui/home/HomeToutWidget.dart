@@ -84,13 +84,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                   Visibility(visible: StringUtils.isNotEmpty(title2), child:
                     Row(children: [
                       Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
-                      Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
-                        InkWell(onTap: _onInfo, child:
-                          Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
-                            Styles().images.getImage('info', excludeFromSemantics: true),
-                          )
-                        ),
-                      ),
+                      // Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
+                      //   InkWell(onTap: _onInfo, child:
+                      //     Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
+                      //       Styles().images.getImage('info', excludeFromSemantics: true),
+                      //     )
+                      //   ),
+                      // ),
                     ],)
                   ),
                 ],),
