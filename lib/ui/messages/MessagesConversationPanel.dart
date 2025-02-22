@@ -863,11 +863,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           Material(
             type: MaterialType.transparency,
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            child: ProfileSoundRecorderDialog(onSave: (audio) async {
+            child: ProfileSoundRecorderDialog(onSave: (audio, extension) async {
               if (CollectionUtils.isEmpty(audio)) {
                 return AudioResult.error(AudioErrorType.fileNameNotSupplied, 'Missing file.');
               }
-              AudioResult result = AudioResult(AudioResultType.succeeded, audioData: audio);
+              AudioResult result = AudioResult.succeed(audioData: audio, extension: extension);
               _addAttachedFiles([result]);
               return result;
             }),
@@ -1284,7 +1284,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           for (Message message in loadedMessages ?? []) {
             for (FileAttachment file in message.fileAttachments ?? []) {
               for (FileContentItemReference ref in fileRefs ?? []) {
-                if (ref.id == file.id) {
+                if (ref.key == file.id) {
                   file.url = ref.url;
                 }
               }
@@ -1363,7 +1363,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         List<FileContentItemReference>? fileRefs = await Content().getFileContentDownloadUrls(fileIds!, Content.conversationsContentCategory, entityId: _conversationId);
         for (FileContentItemReference ref in fileRefs ?? []) {
           for (FileAttachment file in newMessage?.fileAttachments ?? []) {
-            if (ref.id == file.id) {
+            if (ref.key == file.id) {
               file.url = ref.url;
             }
           }
@@ -1659,7 +1659,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   String _getAudioFileName(AudioResult result) {
-    return 'audio_${result.hashCode}';
+    return 'audio_${result.hashCode}${result.audioFileExtension}';
   }
 
   FileType _getFileType(dynamic file) {
@@ -1691,7 +1691,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       FileType type = _getFileType(file);
       String? name = _getFileName(file);
       FileContentItemReference ref = fileRefs.firstWhere((ref) => ref.name == name, orElse: () => FileContentItemReference());
-      return FileAttachment(name: name, type: type.name, id: ref.id);
+      return FileAttachment(name: name, type: type.name, id: ref.key);
     }) : [];
   }
 }

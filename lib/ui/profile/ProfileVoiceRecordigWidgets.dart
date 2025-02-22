@@ -257,7 +257,7 @@ enum _RecorderMode {record, play}
 
 class ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
-  final Future<AudioResult> Function(Uint8List? audioFile)? onSave;
+  final Future<AudioResult> Function(Uint8List? audioFile, String? extension)? onSave;
 
   // ignore: unused_element
   const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes, this.onSave});
@@ -420,7 +420,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await (widget.onSave ?? Content().uploadUserNamePronunciation).call(audioBytes);
+        AudioResult result = await (widget.onSave ?? Content().uploadUserNamePronunciation).call(audioBytes, _controller.extension);
         if (result.resultType == AudioResultType.succeeded) {
           setStateIfMounted(() => _loading = false);
           _closeModal(result: result);
@@ -545,7 +545,7 @@ class _ProfileSoundRecorderController {
         notifyChanged();
         String? path = await _constructFilePath;
         if (kIsWeb || path != null) {
-          await _audioRecorder.start(const RecordConfig(encoder: AudioEncoder.wav), path: path ?? '');
+          await _audioRecorder.start(RecordConfig(encoder: Platform.isIOS ? AudioEncoder.aacLc : AudioEncoder.wav), path: path ?? '');
           // _recording = await _audioRecorder.isRecording();
         }
       }
@@ -657,9 +657,11 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
+  String get extension => Platform.isIOS ? '.m4a' : '.wav';
+
   Future<String?> get _constructFilePath async {
     Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
-    return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio.m4a") : null;
+    return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio" + extension) : null;
   }
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{

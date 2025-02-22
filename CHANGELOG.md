@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix some styling issues
 - Hide HomePanel name info button
+- Fix media file previews on iOS [#59](https://github.com/rokmetro/neom-app/issues/59)
 
 ## [0.5.8] = 2025-02-15
 ### Added
