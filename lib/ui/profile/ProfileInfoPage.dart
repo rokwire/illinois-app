@@ -72,6 +72,11 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get isEditing => _editing;
   bool get directoryVisibility => (_privacy?.public == true);
 
+  bool get _directoryVisibilityEnabled =>
+    StringUtils.isNotEmpty(_profile?.firstName) ||
+    StringUtils.isNotEmpty(_profile?.middleName) ||
+    StringUtils.isNotEmpty(_profile?.lastName);
+
   void setEditing(bool value) {
     if (mounted && (_editing != value)) {
       setState(() {
@@ -81,8 +86,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     }
   }
 
-  Future<bool> saveEdit() =>
-    _profileInfoEditKey.currentState?.saveEdit() ?? Future.value(false);
+  Future<bool?> saveModified() async => _profileInfoEditKey.currentState?.saveModified();
 
   @override
   void initState() {
@@ -118,7 +122,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     }
     else {
       return Column(children: [
-        _directoryVisibilityControl,
+        _directoryVisibilityContent,
 
         if (widget.onboarding == false)
           Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
@@ -160,6 +164,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     ProfileInfoEditPage(
       key: _profileInfoEditKey,
       contentType: widget.contentType,
+      authType: Auth2().account?.authType,
       profile: _profile,
       privacy: _privacy,
       identifiers: _identifiers,
@@ -170,16 +175,16 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       onFinishEdit: _onFinishEditInfo,
   );
 
-  Widget get _directoryVisibilityControl =>
+  Widget get _directoryVisibilityContent =>
     DirectoryProfileCard(child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 12), child:
-              Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),)
+              _directoryVisibilityTitle
             ),
           ),
-          _updatingDirectoryVisibility ? _directoryVisibilityProgress : _directoryVisibilityToggleButton,
+          _directoryVisibilityControl,
         ],),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16,), child:
           Container(height: 1, color: Styles().colors.surfaceAccent,),
@@ -189,6 +194,26 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         )
       ],)
 
+    );
+
+  Widget get _directoryVisibilityControl {
+    if (_updatingDirectoryVisibility) {
+      return _directoryVisibilityProgress;
+    }
+    else if (_directoryVisibilityEnabled) {
+      return _directoryVisibilityToggleButton;
+    }
+    else {
+      return _directoryVisibilityDisabledButton;
+    }
+  }
+
+
+  Widget get _directoryVisibilityDisabledButton =>
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+      Styles().images.getImage('toggle-off',
+        colorBlendMode: BlendMode.dstIn,
+      )
     );
 
   Widget get _directoryVisibilityToggleButton =>
@@ -207,17 +232,26 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       )
     );
 
+  Widget get _directoryVisibilityTitle =>
+    Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
+      style: _directoryVisibilityEnabled ?
+        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
+        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
+    );
+
   Widget get _directoryVisibilityDescription {
 
     final String visibilityMacro = "{{visibility}}";
 
-    String messageTemplate = directoryVisibility ?
+    String messageTemplate = _directoryVisibilityEnabled ? (directoryVisibility ?
       AppTextUtils.appTitleString('panel.profile.info.directory_visibility.public.description', 'Your directory visibility is set to $visibilityMacro. The information below will be visible to ${AppTextUtils.appTitleMacro} app users signed in with their NetIDs.') :
-      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.');
+      AppTextUtils.appTitleString('panel.profile.info.directory_visibility.private.description', 'Your directory visibility is set to $visibilityMacro. Your profile is visible only to you.')) :
+    AppTextUtils.appTitleString('panel.profile.info.directory_visibility.disabled.description', 'Your directory visibility is $visibilityMacro. Your name is required to be visible to ${AppTextUtils.appTitleMacro} app users.');
 
-    final String visibilityValue = directoryVisibility ?
+    String visibilityValue = _directoryVisibilityEnabled ? (directoryVisibility ?
       Localization().getStringEx('panel.profile.info.directory_visibility.public.text', 'Public') :
-      Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private');
+      Localization().getStringEx('panel.profile.info.directory_visibility.private.text', 'Private')) :
+    Localization().getStringEx('panel.profile.info.directory_visibility.not_enabled.text', 'Not Enabled');
 
     List<InlineSpan> spanList = StringUtils.split<InlineSpan>(messageTemplate,
       macros: [visibilityMacro],
@@ -456,16 +490,19 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       ImagesResult? photoResult = JsonUtils.cast<ImagesResult>(ListUtils.entry(results, 2));
       AudioResult? pronunciationResult = JsonUtils.cast<AudioResult>(ListUtils.entry(results, 3));
 
-      Auth2UserProfile? updatedProfile = await _syncUserProfile(profile,
+      _ProfileInfoSyncResult? syncResult = await _syncUserProfileAndPrivacy(Auth2().account, profile, privacy,
         hasContentUserPhoto: photoResult?.succeeded == true,
         hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
       );
-      if (updatedProfile != null) {
-        profile = updatedProfile;
+
+      if (syncResult?.profile != null) {
+        profile = syncResult?.profile;
+      }
+      if (syncResult?.privacy != null) {
+        privacy = syncResult?.privacy;
       }
 
       setState(() {
-        //TMP: Added some sample data
         _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,);
         _privacy = privacy;
         _photoImageData = photoResult?.imageData;
@@ -476,50 +513,168 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     }
   }
 
-  Future<Auth2UserProfile?> _syncUserProfile(Auth2UserProfile? profile, { bool? hasContentUserPhoto, bool? hasContentUserNamePronunciation }) async {
-    if (profile != null) {
+  Future<_ProfileInfoSyncResult?> _syncUserProfileAndPrivacy(Auth2Account? account, Auth2UserProfile? profile, Auth2UserPrivacy? privacy, {
+    bool? hasContentUserPhoto,
+    bool? hasContentUserNamePronunciation
+  }) async {
 
-      Set<Auth2UserProfileScope> updateProfileScope = <Auth2UserProfileScope>{};
+    // Check if user profile needs synchronization
+    Auth2UserProfile? updatedProfile = null;
+    Set<Auth2UserProfileScope> updateProfileScope = <Auth2UserProfileScope>{};
 
-      String? profilePhotoUrl = profile.photoUrl;
-      if (hasContentUserPhoto != null) {
-        bool profileHasUserPhoto = StringUtils.isNotEmpty(profilePhotoUrl);
-        if (profileHasUserPhoto != hasContentUserPhoto) {
-          profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) : "";
-          updateProfileScope.add(Auth2UserProfileScope.photoUrl);
+    // Photo Url?
+    String? profilePhotoUrl = profile?.photoUrl;
+    if (hasContentUserPhoto != null) {
+      bool profileHasUserPhoto = StringUtils.isNotEmpty(profilePhotoUrl);
+      if (profileHasUserPhoto != hasContentUserPhoto) {
+        profilePhotoUrl = hasContentUserPhoto ? Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) : "";
+        updateProfileScope.add(Auth2UserProfileScope.photoUrl);
+      }
+    }
+
+    // Pronunciation Url?
+    String? profilePronunciationUrl = profile?.pronunciationUrl;
+    if (hasContentUserNamePronunciation != null) {
+      bool profileHasPronunciationUrl = StringUtils.isNotEmpty(profilePronunciationUrl);
+      if (profileHasPronunciationUrl != hasContentUserNamePronunciation) {
+        profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationUrl(accountId: Auth2().accountId) : "";
+        updateProfileScope.add(Auth2UserProfileScope.pronunciationUrl);
+      }
+    }
+
+    // First/Middle/Last Names & Email?
+    String? profileFirstName = profile?.firstName;
+    String? profileMiddleName = profile?.middleName;
+    String? profileLastName = profile?.lastName;
+    String? profileEmail = profile?.email;
+    String? profilePhone = profile?.phone;
+
+    List<Auth2Type>? authTypes = account?.authTypes;
+    if (authTypes != null) {
+
+      // First Name?
+      if (StringUtils.isEmpty(profileFirstName)) {
+        for (Auth2Type authType in authTypes) {
+          if (StringUtils.isNotEmpty(authType.uiucUser?.firstName)) {
+            profileFirstName = authType.uiucUser?.firstName;
+            updateProfileScope.add(Auth2UserProfileScope.firstName);
+            break;
+          }
         }
       }
 
-      String? profilePronunciationUrl = profile.pronunciationUrl;
-      if (hasContentUserNamePronunciation != null) {
-        bool profileHasPronunciationUrl = StringUtils.isNotEmpty(profilePronunciationUrl);
-        if (profileHasPronunciationUrl != hasContentUserNamePronunciation) {
-          profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationUrl(accountId: Auth2().accountId) : "";
-          updateProfileScope.add(Auth2UserProfileScope.pronunciationUrl);
+      // Middle Name?
+      if (StringUtils.isEmpty(profileMiddleName)) {
+        for (Auth2Type authType in authTypes) {
+          if (StringUtils.isNotEmpty(authType.uiucUser?.middleName)) {
+            profileMiddleName = authType.uiucUser?.middleName;
+            updateProfileScope.add(Auth2UserProfileScope.middleName);
+            break;
+          }
         }
       }
 
-      if (updateProfileScope.isNotEmpty) {
-        Auth2UserProfile updatedProfile = Auth2UserProfile.fromOther(profile,
-          override: Auth2UserProfile(
-            photoUrl: profilePhotoUrl,
-            pronunciationUrl: profilePronunciationUrl,
-          ),
-          scope: updateProfileScope);
+      // Last Name?
+      if (StringUtils.isEmpty(profileLastName)) {
+        for (Auth2Type authType in authTypes) {
+          if (StringUtils.isNotEmpty(authType.uiucUser?.lastName)) {
+            profileLastName = authType.uiucUser?.lastName;
+            updateProfileScope.add(Auth2UserProfileScope.lastName);
+            break;
+          }
+        }
+      }
 
-        debugPrint("ProfileInfo: Detected Requred Update:\n" +
-          (updateProfileScope.contains(Auth2UserProfileScope.photoUrl) ? "Photo: ${profile.photoUrl} => $profilePhotoUrl\n" : "") +
-          (updateProfileScope.contains(Auth2UserProfileScope.pronunciationUrl) ? "Photo: ${profile.pronunciationUrl} => $profilePronunciationUrl\n" : "")
-        );
+      // Email? => Round 1, from illinois_oidc auth type
+      if (StringUtils.isEmpty(profileEmail)) {
+        for (Auth2Type authType in authTypes) {
+          if (StringUtils.isNotEmpty(authType.uiucUser?.email)) {
+            profileEmail = authType.uiucUser?.email;
+            updateProfileScope.add(Auth2UserProfileScope.email);
+            break;
+          }
+        }
+      }
 
-        bool updateResult = await Auth2().saveUserProfile(updatedProfile);
-        if (updateResult == true) {
-          return updatedProfile;
+      // Email? => Round 2, from email auth type
+      if (StringUtils.isEmpty(profileEmail)) {
+        for (Auth2Type authType in authTypes) {
+          if ((authType.loginType == Auth2LoginType.email) && StringUtils.isNotEmpty(authType.identifier)) {
+            profileEmail = authType.identifier;
+            updateProfileScope.add(Auth2UserProfileScope.email);
+            break;
+          }
+        }
+      }
+
+      // Phone?
+      if (StringUtils.isEmpty(profilePhone)) {
+        for (Auth2Type authType in authTypes) {
+          if (((authType.loginType == Auth2LoginType.phone) || (authType.loginType == Auth2LoginType.phoneTwilio)) && StringUtils.isNotEmpty(authType.identifier)) {
+            profilePhone = authType.identifier;
+            updateProfileScope.add(Auth2UserProfileScope.phone);
+            break;
+          }
         }
       }
     }
 
-    return null;
+    if (updateProfileScope.isNotEmpty) {
+      updatedProfile = Auth2UserProfile.fromOther(profile,
+        override: Auth2UserProfile(
+          photoUrl: profilePhotoUrl,
+          pronunciationUrl: profilePronunciationUrl,
+          firstName: profileFirstName,
+          middleName: profileMiddleName,
+          lastName: profileLastName,
+          email: profileEmail,
+          phone: profilePhone,
+        ),
+        scope: updateProfileScope);
+
+      debugPrint("ProfileInfo: Detected Requred Updates:\n${JsonUtils.encode(updatedProfile.toJson(), prettify: true)}");
+    }
+
+    bool isProfileNameNotEmpty = StringUtils.isNotEmpty(profileFirstName) || StringUtils.isNotEmpty(profileMiddleName) || StringUtils.isNotEmpty(profileLastName);
+    bool? privacyIsPublic = ((privacy?.public == null) && isProfileNameNotEmpty) ? true : privacy?.public;
+    Auth2UserPrivacy? updatedPrivacy = (privacyIsPublic != null) ? Auth2UserPrivacy.fromOther(privacy,
+      public: privacyIsPublic,
+      fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(privacy?.fieldsVisibility,
+        profile: Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
+          firstName: (privacy?.fieldsVisibility?.profile?.firstName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.firstName,
+          middleName: (privacy?.fieldsVisibility?.profile?.middleName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.middleName,
+          lastName: (privacy?.fieldsVisibility?.profile?.lastName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.lastName,
+          email: ((account?.authType?.loginType?.shouldHaveEmail == true) && (privacy?.fieldsVisibility?.profile?.email != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.email,
+          phone: ((account?.authType?.loginType?.shouldHavePhone == true) && (privacy?.fieldsVisibility?.profile?.phone != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.phone,
+        )
+      )
+    ) : null;
+
+
+    List<Future<bool>> updateFutures = <Future<bool>>[];
+
+    int updateProfileIndex = (updatedProfile != null) ? updateFutures.length : -1;
+    if (0 <= updateProfileIndex) {
+      updateFutures.add(Auth2().saveUserProfile(updatedProfile));
+    }
+
+    int updatePrivacyIndex = ((updatedPrivacy != null) && (updatedPrivacy != privacy)) ? updateFutures.length : -1;
+    if (0 <= updatePrivacyIndex) {
+      updateFutures.add(Auth2().saveUserPrivacy(updatedPrivacy));
+    }
+
+    if (0 < updateFutures.length) {
+      List<bool> updateResults = await Future.wait(updateFutures);
+      bool? updateProfileResult = (0 <= updateProfileIndex) ? updateResults[updateProfileIndex] : null;
+      bool? updatePrivacyResult = (0 <= updatePrivacyIndex) ? updateResults[updatePrivacyIndex] : null;
+      return _ProfileInfoSyncResult(
+        profile: (updateProfileResult == true) ? updatedProfile : null,
+        privacy: (updatePrivacyResult == true) ? updatedPrivacy : null,
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   void _onEditInfo() {
@@ -565,7 +720,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 }
 
 ///////////////////////////////////////////
-// _ProfileDirectoryMyInfoUtilsPageState
+// ProfileDirectoryMyInfoBasePageState
 
 class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends State<T> {
 
@@ -578,6 +733,18 @@ class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends Stat
   Widget build(BuildContext context) =>
     throw UnimplementedError();
 }
+
+///////////////////////////////////////////
+// ProfileInfoSyncResult
+
+class _ProfileInfoSyncResult {
+  final Auth2UserProfile? profile;
+  final Auth2UserPrivacy? privacy;
+  _ProfileInfoSyncResult({this.profile, this.privacy});
+}
+
+///////////////////////////////////////////
+// ProfileInfoVisibility
 
 extension ProfileInfoVisibility on ProfileInfo {
 

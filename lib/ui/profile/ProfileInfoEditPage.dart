@@ -24,17 +24,22 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoEditPage extends StatefulWidget {
   final ProfileInfo contentType;
+  final bool onboarding;
+
+  final Auth2Type? authType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
   final List<Auth2Identifier>? identifiers;
-  final bool onboarding;
+
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
   final String? photoImageToken;
+
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
-  ProfileInfoEditPage({super.key, required this.contentType,
-    this.profile, this.privacy, this.identifiers, this.onboarding = false,
+  ProfileInfoEditPage({super.key,
+    required this.contentType, this.onboarding = false,
+    this.authType, this.profile, this.privacy, this.identifiers,
     this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
     this.onFinishEdit
   });
@@ -73,6 +78,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Timer? _onScreenInsetsBottomChangedTimer;
 
   bool get _showProfileCommands => (widget.onboarding == false);
+  bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
+  bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
+  bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
 
   @override
   void initState() {
@@ -145,7 +153,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Padding(padding: EdgeInsets.zero, child:
         Column(children: [
           _photoWidget,
-          _nameWidget,
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+            _staticNameWidget,
+          ),
+
+          if (_showNameControls)
+            ...[
+              _firstNameSection,
+              _middleNameSection,
+              _lastNameSection,
+            ],
           _pronunciationSection,
           //_pronounsSection,
           _titleSection,
@@ -312,12 +329,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     static const double _buttonIconSize = 16;
 
-    //TODO: work on UI
-    Widget get _nameWidget => _textFieldSection(_ProfileField.fullName,
-      headingTitle: Localization().getStringEx('panel.profile.info.title.full_name.text', 'Full Name'),
-      required: true,
-      visibilityToggle: false,
-    );
+    Widget get _staticNameWidget =>
+      Text(_staicNameText ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
+
+    String? get _staicNameText => StringUtils.fullName([
+      _fieldTextControllers[_ProfileField.firstName]?.text,
+      _fieldTextControllers[_ProfileField.middleName]?.text,
+      _fieldTextControllers[_ProfileField.lastName]?.text,
+    ]);
 
   // Edit: Pronunciation
 
@@ -498,6 +517,21 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   // Edit: Other Sections
 
+  Widget get _firstNameSection => _textFieldSection(_ProfileField.firstName,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.first_name.text', 'First Name'),
+    enabled: _canEditName, locked: true,
+  );
+
+  Widget get _middleNameSection => _textFieldSection(_ProfileField.middleName,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.middle_name.text', 'Middle Name'),
+    enabled: _canEditName, locked: true,
+  );
+
+  Widget get _lastNameSection => _textFieldSection(_ProfileField.lastName,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.last_name.text', 'Last Name'),
+    enabled: _canEditName, locked: true,
+  );
+
   Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
   );
@@ -534,6 +568,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
+    textInputType: TextInputType.emailAddress,
   );
 
   Widget get _phoneSection {
@@ -549,6 +584,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
     headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
+    textInputType: TextInputType.url,
   );
 
   Widget _textFieldSection(_ProfileField field, {
@@ -715,7 +751,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   void _onTextChanged(String value, {_ProfileField? profileField, Auth2PublicAccountIdentifier? identifier}) {
     bool wasNotEmpty = profileField != null ? (_fieldTextNotEmpty[profileField] == true) : (identifier != null ? _identifierTextNotEmpty[identifier] == true : false);
     bool isNotEmpty = value.isNotEmpty;
-    if (wasNotEmpty != isNotEmpty) {
+    if ((wasNotEmpty != isNotEmpty) || field.isName) {
       setState(() {
         if (profileField != null) {
           _fieldTextNotEmpty[profileField] = isNotEmpty;
@@ -767,39 +803,77 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     Analytics().logSelect(target: 'Cancel Edit');
     FocusScope.of(context).unfocus();
 
-    Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-    Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-      fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
-          profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-          identifiers: _identifierVisibility,
-      )
-    );
+    if (_saving == false) {
+      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+            profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+            identifiers: _identifierVisibility,
+        )
+      );
 
+      bool? shouldSave = await _shouldSaveModified(
+        profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
+        privacyModified: (privacy != widget.privacy)
+      );
+      if (shouldSave == true) {
+        _ProfileSaveResult result = await _saveEdit(profile, privacy);
+        if (result.succeeded) {
+          widget.onFinishEdit?.call(
+            profile: (result.profile == true) ? profile : null,
+            privacy: (result.privacy == true) ? privacy : null,
+            pronunciationAudioData: _pronunciationAudioData,
+            photoImageData: _photoImageData,
+            photoImageToken: _photoImageToken,
+          );
+        }
+      }
+      else if (shouldSave == false) {
+        widget.onFinishEdit?.call(
+          photoImageData: _photoImageData,
+          photoImageToken: _photoImageToken,
+          pronunciationAudioData: _pronunciationAudioData,
+        );
+      }
+    }
+  }
+
+  Future<bool?> _shouldSaveModified({bool? profileModified, bool? privacyModified}) async {
     String? prompt;
-    if (widget.profile != profile) {
-      prompt = (widget.privacy != privacy) ?
+    if (profileModified == true) {
+      prompt = (privacyModified == true) ?
         Localization().getStringEx('panel.profile.info.cancel.save.profile_and_privacy.prompt.text', 'Save your profile and privacy settings changes?') :
         Localization().getStringEx('panel.profile.info.cancel.save.profile.prompt.text', 'Save your profile settings changes?');
     }
-    else if (widget.privacy != privacy) {
+    else if (privacyModified == true) {
       prompt = Localization().getStringEx('panel.profile.info.cancel.save.privacy.prompt.text', 'Save your privacy settings changes?');
     }
 
-    bool shouldSave = (prompt != null) ? await AppAlert.showConfirmationDialog(context,
-      message: prompt,
-      positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
-      negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No')
+    return (prompt != null) ? await showDialog(context: context, builder: (context) =>
+      AlertDialog(content: Text(prompt ?? ''), actions: <Widget>[
+        TextButton(child:
+          Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: 'Yes');
+            Navigator.pop(context, true);
+          }
+        ),
+        TextButton(child:
+          Text(Localization().getStringEx('dialog.no.title', 'No')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: 'No');
+            Navigator.pop(context, false);
+          }
+        ),
+        TextButton(child:
+          Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: 'Cancel');
+            Navigator.pop(context, null);
+          }
+        ),
+      ])
     ) : false;
-    if (shouldSave) {
-      _onSaveEdit();
-    }
-    else {
-      widget.onFinishEdit?.call(
-        photoImageData: _photoImageData,
-        photoImageToken: _photoImageToken,
-        pronunciationAudioData: _pronunciationAudioData,
-      );
-    }
   }
 
   Widget get _saveEditButton => RoundedButton(
@@ -812,19 +886,11 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     onTap: _onSaveEdit,
   );
 
-  void _onSaveEdit() {
+  void _onSaveEdit() async {
     Analytics().logSelect(target: 'Save Edit');
-    saveEdit();
-  }
-
-  Future<bool> saveEdit() async {
     FocusScope.of(context).unfocus();
 
-    if (_saving == true) {
-      // Operation in progress
-      return false;
-    }
-    else {
+    if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       if (StringUtils.isEmpty(profile.fullName)) {
         AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile.info.dialog.missing.name.text', 'Please enter your full name.'));
@@ -837,62 +903,80 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         )
       );
 
-      List<Future> futures = [];
+      _ProfileSaveResult result = await _saveEdit(profile, privacy);
 
-      int? profileIndex = (widget.profile != profile) ? futures.length : null;
-      if (profileIndex != null) {
-        futures.add(Auth2().saveUserProfile(profile));
-      }
-
-      int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
-      if (privacyIndex != null) {
-        futures.add(Auth2().saveUserPrivacy(privacy));
-      }
-
-      if (futures.length == 0) {
-        // Nothing to save
+      if (result.succeeded) {
         widget.onFinishEdit?.call(
+          profile: (result.profile == true) ? profile : null,
+          privacy: (result.privacy == true) ? privacy : null,
           pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
           photoImageToken: _photoImageToken,
         );
-        return true;
       }
-      else {
-        setState(() {
-          _saving = true;
-        });
+    }
+  }
 
-        List<dynamic> results = await Future.wait(futures);
+  Future<_ProfileSaveResult> _saveEdit(Auth2UserProfile profile, Auth2UserPrivacy privacy) async {
 
-        if (mounted == false) {
-          // Already stalled
-          return false;
-        }
-        else {
-          bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
-          bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+    List<Future> futures = [];
 
-          setState(() {
-            _saving = false;
-          });
+    int? profileIndex = (widget.profile != profile) ? futures.length : null;
+    if (profileIndex != null) {
+      futures.add(Auth2().saveUserProfile(profile));
+    }
 
-          if ((profileResult ?? true) && (privacyResult ?? true)) {
-            widget.onFinishEdit?.call(
-              profile: (profileResult == true) ? profile : null,
-              privacy: (privacyResult == true) ? privacy : null,
-              pronunciationAudioData: _pronunciationAudioData,
-              photoImageData: _photoImageData,
-              photoImageToken: _photoImageToken,
-            );
-            return true; // Succeeded
-          }
-          else {
-            AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.save.failed.text', 'Failed to update profile and privacy settings.'));
-            return false; // Failed
-          }
-        }
+    int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
+    if (privacyIndex != null) {
+      futures.add(Auth2().saveUserPrivacy(privacy));
+    }
+
+    if (futures.length == 0) {
+      return _ProfileSaveResult();
+    }
+    else {
+      setStateIfMounted(() {
+        _saving = true;
+      });
+
+      List<dynamic> results = await Future.wait(futures);
+
+      setStateIfMounted(() {
+        _saving = false;
+      });
+
+      bool? profileResult = ((profileIndex != null) && (profileIndex < results.length)) ? results[profileIndex] : null;
+      bool? privacyResult = ((privacyIndex != null) && (privacyIndex < results.length)) ? results[privacyIndex] : null;
+      if ((profileResult == false) || (privacyResult == false)) {
+        await AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.save.failed.text', 'Failed to update profile and privacy settings.'));
       }
+      return _ProfileSaveResult(profile: profileResult, privacy: privacyResult);
+    }
+  }
+
+  // Returns true if we can close the UI, false if canceled.
+  Future<bool> saveModified() async {
+    FocusScope.of(context).unfocus();
+
+    if (mounted && (_saving == false)) {
+      Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+          profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
+        )
+      );
+
+      bool? shouldSave = await _shouldSaveModified(
+        profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
+        privacyModified: (privacy != widget.privacy)
+      );
+      if (shouldSave == true) {
+        await _saveEdit(profile, privacy);
+      }
+      return (shouldSave != null);
+    }
+    else {
+      return true;
     }
   }
 
@@ -904,36 +988,46 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 }
 
 ///////////////////////////////////////////
+// _ProfileSaveResult
+
+class _ProfileSaveResult {
+  bool? profile;
+  bool? privacy;
+  _ProfileSaveResult({this.profile, this.privacy});
+
+  bool get succeeded => (profile ?? true) && (privacy ?? true);
+}
+
+///////////////////////////////////////////
 // _ProfileField
 
-// NB: Use same naming with Auth2UserProfileScope
 enum _ProfileField {
-  fullName, pronouns,
+  firstName, middleName, lastName, pronouns,
   photoUrl, pronunciationUrl,
   email2, website,
   college, department, major, title,
 }
 
-extension _ProfileFieldImpl on _ProfileField {
-
-  // static _ProfileField? fromString(String value) => _ProfileField.values.firstWhereOrNull((field) => (field.toString() == value));
-
-  static Set<Auth2UserProfileScope> get profileScope => <Auth2UserProfileScope> {
-    Auth2UserProfileScope.firstName, Auth2UserProfileScope.lastName, Auth2UserProfileScope.middleName,
-    Auth2UserProfileScope.pronouns, Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
-    Auth2UserProfileScope.email, /*Auth2UserProfileScope.email2,*/ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
-    /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
-  };
+extension _ProfileFieldExt on _ProfileField {
+  bool get isName => (this == _ProfileField.firstName) || (this == _ProfileField.middleName) || (this == _ProfileField.lastName);
 }
 
 ///////////////////////////////////////////
-// Auth2UserProfile Utils
+// Auth2LoginTypeProfileUtils
 
 extension _Auth2UserProfileUtils on Auth2UserProfile {
 
+  bool get isNameNotEmpty =>
+    StringUtils.isNotEmpty(firstName) ||
+    StringUtils.isNotEmpty(middleName) ||
+    StringUtils.isNotEmpty(lastName);
+
   String? fieldValue(_ProfileField field) {
     switch(field) {
-      case _ProfileField.fullName: return fullName;
+      case _ProfileField.firstName: return firstName;
+      case _ProfileField.middleName: return middleName;
+      case _ProfileField.lastName: return lastName;
+
       case _ProfileField.pronouns: return pronouns;
 
       case _ProfileField.photoUrl: return photoUrl;
@@ -951,26 +1045,14 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
     }
   }
 
-  static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) {
-    String? firstName, lastName, middleName;
-    List<String>? nameParts = fields[_ProfileField.fullName]?.text.trim().split(' ');
-    if (CollectionUtils.isNotEmpty(nameParts)) {
-      if (nameParts!.length >= 1) {
-        firstName = nameParts.first;
-      }
-      if (nameParts.length == 2) {
-        lastName = nameParts.last;
-      }
-      if (nameParts.length > 2) {
-        middleName = nameParts.sublist(1, nameParts.length - 1).join(' ');
-      }
-    }
-    return Auth2UserProfile.fromOther(other,
+  static Auth2UserProfile buildModified(Auth2UserProfile? other, Map<_ProfileField, TextEditingController?> fields) =>
+    Auth2UserProfile.fromOther(other,
       override: Auth2UserProfile(
-          firstName: firstName,
-          lastName: lastName,
-          middleName: middleName,
-          pronouns: StringUtils.ensureNotEmpty(fields[_ProfileField.pronouns]?.text),
+        firstName: StringUtils.ensureNotEmpty(fields[_ProfileField.firstName]?.text),
+        middleName: StringUtils.ensureNotEmpty(fields[_ProfileField.middleName]?.text),
+        lastName: StringUtils.ensureNotEmpty(fields[_ProfileField.lastName]?.text),
+
+        pronouns: StringUtils.ensureNotEmpty(fields[_ProfileField.pronouns]?.text),
 
           photoUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.photoUrl]?.text),
           pronunciationUrl: StringUtils.ensureNotEmpty(fields[_ProfileField.pronunciationUrl]?.text),
@@ -987,7 +1069,46 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
             Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
           }
       ),
-      scope: _ProfileFieldImpl.profileScope,
+      scope: <Auth2UserProfileScope> {
+        Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,
+        Auth2UserProfileScope.pronouns,
+        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+        Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
+      }
+    );
+
+  static Auth2UserProfile buildCopy(Auth2UserProfile? other) =>
+    Auth2UserProfile.fromOther(other,
+      override: Auth2UserProfile(
+        firstName: StringUtils.ensureNotEmpty(other?.firstName),
+        middleName: StringUtils.ensureNotEmpty(other?.middleName),
+        lastName: StringUtils.ensureNotEmpty(other?.lastName),
+
+        pronouns: StringUtils.ensureNotEmpty(other?.pronouns),
+
+        photoUrl: StringUtils.ensureNotEmpty(other?.photoUrl),
+        pronunciationUrl: StringUtils.ensureNotEmpty(other?.pronunciationUrl),
+
+        email: StringUtils.ensureNotEmpty(other?.email),
+        phone: StringUtils.ensureNotEmpty(other?.phone),
+        website: StringUtils.ensureNotEmpty(other?.website),
+
+        data: {
+          Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(other?.college),
+          Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(other?.department),
+          Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(other?.major),
+          Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(other?.title),
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
+        }
+      ),
+      scope: <Auth2UserProfileScope> {
+        Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,
+        Auth2UserProfileScope.pronouns,
+        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+        Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
+      }
     );
   }
 }
@@ -998,6 +1119,10 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibility {
 
   Map<_ProfileField, Auth2FieldVisibility?> get fieldsVisibility => <_ProfileField, Auth2FieldVisibility?>{
+    _ProfileField.firstName: firstName,
+    _ProfileField.middleName: middleName,
+    _ProfileField.lastName: lastName,
+
     _ProfileField.pronouns: pronouns,
 
     _ProfileField.photoUrl: photoUrl,
@@ -1014,6 +1139,10 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
 
   static Auth2UserProfileFieldsVisibility buildModified(Auth2UserProfileFieldsVisibility? other, Map<_ProfileField, Auth2FieldVisibility?>? fields) =>
     Auth2UserProfileFieldsVisibility.fromOther(other,
+      firstName : fields?[_ProfileField.firstName],
+      middleName : fields?[_ProfileField.middleName],
+      lastName : fields?[_ProfileField.lastName],
+
       pronouns : fields?[_ProfileField.pronouns],
 
       photoUrl : fields?[_ProfileField.photoUrl],
@@ -1042,3 +1171,4 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       }),
     );
 }
+

@@ -139,6 +139,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+## [6.1.64] - 2025-02-20
+### Changed
+- Validate profile & privacy details on backend when profile info UI is presented [#4814](https://github.com/rokwire/illinois-app/issues/4814).
+-  Allow editing profile name where applicable, disable profile visibility update for profiles without a name [#4814](https://github.com/rokwire/illinois-app/issues/4814).
+- GroupDetailPanel show scheduled tab as permanent tab (trimmed if events not part of content items) [#4697](https://github.com/rokwire/illinois-app/issues/4697).
+
+## [6.1.63] - 2025-02-19
+### Fixed
+- GroupDetailPanel: remove events section for non members [#4806](https://github.com/rokwire/illinois-app/issues/4806).
+- Fixed URL opening from guide detail panel when the panel gets dismissed.
+### Changed
+- Center text and make it smaller in Dining detail [#4602](https://github.com/rokwire/illinois-app/issues/4602).
+- Prompt to save only modified group admin settings [#4783](https://github.com/rokwire/illinois-app/issues/4783).
+### Added
+- GroupAboutContentWidget with showPanel [#4778](https://github.com/rokwire/illinois-app/issues/4778).
+
+## [6.1.62] - 2025-02-18
+### Changed
+- Updated hour after event label text in Event2SetupSurveyPanel [#4784](https://github.com/rokwire/illinois-app/issues/4784).
+- Show additional attendance takers control in create event / setup attendance [#4777](https://github.com/rokwire/illinois-app/issues/4777).
+- Updated Event Type and Location layout in Create/Edit Event panel [#4775](https://github.com/rokwire/illinois-app/issues/4775).
+
+## [6.1.61] - 2025-02-17
+### Changed
+- Prompt to save profile on close [#4776](https://github.com/rokwire/illinois-app/issues/4776).
+
 ## [6.1.60] - 2025-02-14
 ### Changed
 - Acknowledged new privacy content for App Directory [#4772](https://github.com/rokwire/illinois-app/issues/4772).
