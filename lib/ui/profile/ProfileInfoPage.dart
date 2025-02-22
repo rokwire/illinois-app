@@ -10,7 +10,6 @@ import 'package:neom/ui/profile/ProfileInfoEditPage.dart';
 import 'package:neom/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPage.dart';
-import 'package:neom/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -235,7 +234,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   Widget get _directoryVisibilityTitle =>
     Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
       style: _directoryVisibilityEnabled ?
-        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
+        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.fat.enabled') :
         Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
     );
 
@@ -383,19 +382,19 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     });
   }
 
-  Widget get _viewStoredDataButton =>
-    LinkButton(
-      title: Localization().getStringEx('panel.profile.info.command.link.view_stored_data.text', 'View My Stored Information'),
-      hint: Localization().getStringEx('panel.profile.info.command.link.view_stored_data.hint', 'See everything we know about you'),
-      textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
-      padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
-      onTap: _onViewStoredData,
-    );
+  // Widget get _viewStoredDataButton =>
+  //   LinkButton(
+  //     title: Localization().getStringEx('panel.profile.info.command.link.view_stored_data.text', 'View My Stored Information'),
+  //     hint: Localization().getStringEx('panel.profile.info.command.link.view_stored_data.hint', 'See everything we know about you'),
+  //     textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
+  //     padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+  //     onTap: _onViewStoredData,
+  //   );
 
-  void _onViewStoredData() {
-    Analytics().logSelect(target: 'View My Stored Information');
-    ProfileStoredDataPanel.present(context);
-  }
+  // void _onViewStoredData() {
+  //   Analytics().logSelect(target: 'View My Stored Information');
+  //   ProfileStoredDataPanel.present(context);
+  // }
 
   Widget get _deleteAccountButton => Stack(children: [
     LinkButton(
@@ -546,8 +545,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     String? profileFirstName = profile?.firstName;
     String? profileMiddleName = profile?.middleName;
     String? profileLastName = profile?.lastName;
-    String? profileEmail = profile?.email;
-    String? profilePhone = profile?.phone;
 
     List<Auth2Type>? authTypes = account?.authTypes;
     if (authTypes != null) {
@@ -584,39 +581,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
           }
         }
       }
-
-      // Email? => Round 1, from illinois_oidc auth type
-      if (StringUtils.isEmpty(profileEmail)) {
-        for (Auth2Type authType in authTypes) {
-          if (StringUtils.isNotEmpty(authType.uiucUser?.email)) {
-            profileEmail = authType.uiucUser?.email;
-            updateProfileScope.add(Auth2UserProfileScope.email);
-            break;
-          }
-        }
-      }
-
-      // Email? => Round 2, from email auth type
-      if (StringUtils.isEmpty(profileEmail)) {
-        for (Auth2Type authType in authTypes) {
-          if ((authType.loginType == Auth2LoginType.email) && StringUtils.isNotEmpty(authType.identifier)) {
-            profileEmail = authType.identifier;
-            updateProfileScope.add(Auth2UserProfileScope.email);
-            break;
-          }
-        }
-      }
-
-      // Phone?
-      if (StringUtils.isEmpty(profilePhone)) {
-        for (Auth2Type authType in authTypes) {
-          if (((authType.loginType == Auth2LoginType.phone) || (authType.loginType == Auth2LoginType.phoneTwilio)) && StringUtils.isNotEmpty(authType.identifier)) {
-            profilePhone = authType.identifier;
-            updateProfileScope.add(Auth2UserProfileScope.phone);
-            break;
-          }
-        }
-      }
     }
 
     if (updateProfileScope.isNotEmpty) {
@@ -627,8 +591,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
           firstName: profileFirstName,
           middleName: profileMiddleName,
           lastName: profileLastName,
-          email: profileEmail,
-          phone: profilePhone,
         ),
         scope: updateProfileScope);
 
@@ -644,8 +606,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
           firstName: (privacy?.fieldsVisibility?.profile?.firstName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.firstName,
           middleName: (privacy?.fieldsVisibility?.profile?.middleName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.middleName,
           lastName: (privacy?.fieldsVisibility?.profile?.lastName != Auth2FieldVisibility.public) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.lastName,
-          email: ((account?.authType?.loginType?.shouldHaveEmail == true) && (privacy?.fieldsVisibility?.profile?.email != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.email,
-          phone: ((account?.authType?.loginType?.shouldHavePhone == true) && (privacy?.fieldsVisibility?.profile?.phone != Auth2FieldVisibility.public)) ? Auth2FieldVisibility.public : privacy?.fieldsVisibility?.profile?.phone,
         )
       )
     ) : null;

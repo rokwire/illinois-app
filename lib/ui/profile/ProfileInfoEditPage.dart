@@ -78,8 +78,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Timer? _onScreenInsetsBottomChangedTimer;
 
   bool get _showProfileCommands => (widget.onboarding == false);
-  bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
-  bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
+  bool get _showNameControls => !_hasProfileName;
+  bool get _canEditName => !_hasProfileName;
   bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
 
   @override
@@ -532,9 +532,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     enabled: _canEditName, locked: true,
   );
 
-  Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
-  );
+  // Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
+  //   headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
+  // );
 
   Widget get _titleSection => _textFieldSection(_ProfileField.title,
     headingTitle: Localization().getStringEx('panel.profile.info.title.title.text', 'Title'),
@@ -751,7 +751,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   void _onTextChanged(String value, {_ProfileField? profileField, Auth2PublicAccountIdentifier? identifier}) {
     bool wasNotEmpty = profileField != null ? (_fieldTextNotEmpty[profileField] == true) : (identifier != null ? _identifierTextNotEmpty[identifier] == true : false);
     bool isNotEmpty = value.isNotEmpty;
-    if ((wasNotEmpty != isNotEmpty) || field.isName) {
+    if ((wasNotEmpty != isNotEmpty) || (profileField?.isName ?? false)) {
       setState(() {
         if (profileField != null) {
           _fieldTextNotEmpty[profileField] = isNotEmpty;
@@ -894,7 +894,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       if (StringUtils.isEmpty(profile.fullName)) {
         AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile.info.dialog.missing.name.text', 'Please enter your full name.'));
-        return false;
+        return;
       }
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
@@ -1090,8 +1090,6 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         photoUrl: StringUtils.ensureNotEmpty(other?.photoUrl),
         pronunciationUrl: StringUtils.ensureNotEmpty(other?.pronunciationUrl),
 
-        email: StringUtils.ensureNotEmpty(other?.email),
-        phone: StringUtils.ensureNotEmpty(other?.phone),
         website: StringUtils.ensureNotEmpty(other?.website),
 
         data: {
@@ -1110,7 +1108,6 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
       }
     );
-  }
 }
 
 ///////////////////////////////////////////

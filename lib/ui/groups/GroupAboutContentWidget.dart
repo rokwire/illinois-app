@@ -1,19 +1,19 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/ExpandableText.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/groups/GroupWidgets.dart';
+import 'package:neom/ui/widgets/ExpandableText.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/ext/Group.dart';
+import 'package:neom/ext/Group.dart';
 
 class GroupAboutContentWidget extends StatefulWidget {
   final Group? group;
@@ -75,13 +75,13 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
 
     if (!_isResearchProject) {
       contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
-      Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
+      Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'), ),),
       );
     }
 
     if (StringUtils.isNotEmpty(_group?.description)) {
       contentList.add(ExpandableText(_group?.description ?? '',
-        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.light.regular'),
         trimLinesCount: 4,
         readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
       );
@@ -90,7 +90,7 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
     if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
       contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
       ExpandableText(_group?.researchConsentDetails ?? '',
-        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.light.regular'),
         trimLinesCount: 12,
         readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
         footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
@@ -118,8 +118,8 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4), child:
-        Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
-        Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.regular'), ),
+        Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.light.fat'), ),),
+        Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.light.regular'), ),
       ],),) :
     Container(width: 0, height: 0);
   }
@@ -211,8 +211,8 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
+          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.light.small.fat'),),),
+        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.light.regular')),
       ],),
     );
   }

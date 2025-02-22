@@ -938,7 +938,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               child: Align(alignment: Alignment.center, child:
                 SmallRoundedButton(
                   label: Localization().getStringEx("", "Save"), //TBD localize
-                  textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+                  textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.light.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                   backgroundColor: Styles().colors.background,
                   borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                   progress: _updating,

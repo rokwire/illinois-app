@@ -9,7 +9,6 @@ import 'package:neom/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -157,8 +156,6 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
     (college?.isNotEmpty == true) ||
     (department?.isNotEmpty == true) ||
     (major?.isNotEmpty == true) ||
-    (email?.isNotEmpty == true) ||
     (email2?.isNotEmpty == true) ||
-    (phone?.isNotEmpty == true) ||
     (website?.isNotEmpty == true);
 }

@@ -161,12 +161,12 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
         setState(() {
           _saving = true;
         });
-        _profileInfoKey.currentState?.saveEdit().then((bool result){
+        _profileInfoKey.currentState?.saveModified().then((bool? result){
           if (mounted) {
             setState(() {
               _saving = false;
             });
-            if (result) {
+            if (result ?? false) {
               _finishProfile();
             }
           }

@@ -290,7 +290,6 @@ extension GroupContentItemExt on GroupContentItem{
       case 'scheduled' : return DetailTab.Scheduled;
       case 'messages' : return DetailTab.Messages;
       case 'polls' : return DetailTab.Polls;
-      case 'about' : return DetailTab.About;
     }
     return null;
   }
