@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
@@ -49,6 +50,9 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   SurveyResponse? _latestResponse;
   String _comparisonResponseId = _defaultComparisonResponseId;
 
+  late String _contactEmailAddress;
+  late GestureRecognizer _contactEmailGestureRecognizer;
+
   bool _latestCleared = false;
   bool _loading = false;
 
@@ -56,9 +60,18 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   void initState() {
     _latestResponse = widget.latestResponse;
 
+    _contactEmailAddress = Localization().getStringEx('panel.skills_self_evaluation.results.contact.address', 'bwrobrts@illinois.edu');
+    _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _onContactEmailAddress();
+
     _loadResults();
     _loadContentItems();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _contactEmailGestureRecognizer.dispose();
+    super.dispose();
   }
 
   @override
@@ -170,8 +183,6 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       }
     }
 
-    String contactAddress = Localization().getStringEx('panel.skills_self_evaluation.results.contact.address',
-        'bwrobrts@illinois.edu');
     return [
       Stack(children: [
         responseSections.length > 0 ? ListView.builder(
@@ -233,13 +244,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               'If you have any questions or concerns about the BESSI score feedback '
                   'you just received, please contact Dr. Brent Roberts ('),
             style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body.small')),
-            TextSpan(text: contactAddress,
-                recognizer: TapGestureRecognizer()..onTap = () {
-                  Uri? uri = Uri.tryParse('mailto:$contactAddress');
-                  if (uri != null) {
-                    launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                },
+            TextSpan(text: _contactEmailAddress,
+                recognizer: _contactEmailGestureRecognizer,
                 style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.small')),
             TextSpan(text: Localization().getStringEx('panel.skills_self_evaluation.results.contact2',
                 ').  Dr. Roberts is a professor of psychology at the University of '
@@ -270,6 +276,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.clear_scores.label', 'Clear All Scores'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
       ),)),
     ];
+  }
+
+  void _onContactEmailAddress() {
+    String url = 'mailto:$_contactEmailAddress';
+    Analytics().logSelect(target: url);
+    Uri? uri = Uri.tryParse(url);
+    if (uri != null) {
+      launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   List<DropdownMenuItem<String>> _buildResponseDateDropDownItems() {
