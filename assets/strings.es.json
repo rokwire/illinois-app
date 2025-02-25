@@ -250,8 +250,6 @@
     "panel.browse.section.messages.description": "Connect and send messages to {{university_long_name}} students and employees.",
     "panel.browse.section.mtd.title": "Autobuses MTD",
     "panel.browse.section.mtd.description": "Vea las ubicaciones, las rutas y la disponibilidad de las paradas de autobús de MTD.",
-    "panel.browse.section.inbox.title": "Notificaciones",
-    "panel.browse.section.inbox.description": "Accesos directos a sus notificaciones en la aplicación de grupos, académicos o eventos deportivos y más.",
     "panel.browse.section.polls.title": "Encuestas",
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music & News",

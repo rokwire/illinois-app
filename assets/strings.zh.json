@@ -250,8 +250,6 @@
 	"panel.browse.section.messages.description": "Connect and send messages to {{university_long_name}} students and employees.",
 	"panel.browse.section.mtd.title": "MTD 巴士",
 	"panel.browse.section.mtd.description": "查看 MTD 巴士站位置、路线和实时动态。",
-	"panel.browse.section.inbox.title": "通知",
-	"panel.browse.section.inbox.description": "來自團體、學術或體育賽事等的應用內通知的快捷方式。",
 	"panel.browse.section.polls.title": "民意調查",
 	"panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
 	"panel.browse.section.music_and_news.title": "Illini Music & News",

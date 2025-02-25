@@ -251,8 +251,6 @@
     "panel.browse.section.messages.description": "Connect and send messages to {{university_long_name}} students and employees.",
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
-    "panel.browse.section.inbox.title": "Notifications",
-    "panel.browse.section.inbox.description": "Shortcuts to your in-app notifications from groups, academics, athletics events, and more.",
     "panel.browse.section.polls.title": "Polls",
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music & News",
