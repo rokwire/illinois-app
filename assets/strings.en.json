@@ -246,9 +246,7 @@
     "panel.browse.button.faqs.hint": "",
     "panel.browse.button.date_cat.title":"Due Date Catalog",
     "panel.browse.button.date_cat.hint":"",
-    "panel.browse.button.video_tutorial.title": "Video Tutorial",
-    "panel.browse.button.video_tutorial.hint": "",
-    
+
     "panel.browse.label.browse_all": "Browse all",
 
     "panel.browse.label.offline.sign_in": "Sign-In is not available while offline.",
@@ -262,7 +260,6 @@
     "panel.browse.label.offline.feedback": "Provide Feedback is not available while offline.",
     "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
     "panel.browse.label.offline.date_cat": "Due Date Catalog is not available while offline.",
-    "panel.browse.label.offline.video_tutorial": "Video Tutorials are not available while offline.",
     "panel.browse.label.offline.inbox": "Notifications are not available while offline.",
 
     "panel.browse.label.no_card.bus_pass": "You need a valid Illini ID to access MTD Bus Pass.",
@@ -2145,9 +2142,6 @@
     "panel.settings.privacy.privacy.button.set_privacy.slider.hint": "Privacy Level",
     "panel.settings.privacy.privacy.button.set_privacy.slider.increase": "increased to",
     "panel.settings.privacy.privacy.button.set_privacy.slider.decrease": "decreased to",
-
-    "panel.settings.video_tutorials.header.title": "Video Tutorials",
-    "panel.settings.video_tutorials.empty.msg": "There are no video tutorials.",
 
     "panel.settings.video_tutorial.header.title": "Video Tutorial",
     "panel.settings.video_tutorial.video.missing.msg": "Missing video",
@@ -4157,11 +4151,6 @@
     "widget.checklist.uiuc.offline": "New Student Checklist is not available while offline.",
     "widget.checklist.gies.logged_out": "You need to be signed in with your NetID to access the iDegrees New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
     "widget.checklist.uiuc.logged_out": "You need to be signed in with your NetID to access the New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
-
-    "widget.home.video_tutorials.button.title": "Video Tutorials",
-    "widget.home.video_tutorials.text.empty.description": "There are no video tutorials yet.",
-    "widget.home.video_tutorials.button.all.title": "View All",
-    "widget.home.video_tutorials.button.all.hint": "Tap to view all video tutorials",
 
     "widget.home.dinings.header.title": "Dining",
     "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here.",

@@ -245,8 +245,6 @@
 	"panel.browse.button.faqs.hint": "",
 	"panel.browse.button.date_cat.title":"到期日目錄",
 	"panel.browse.button.date_cat.hint":"",
-	"panel.browse.button.video_tutorial.title": "視頻教程",
-	"panel.browse.button.video_tutorial.hint": "",
 
 	"panel.browse.label.browse_all": "浏览全部",
 	"panel.browse.label.offline.sign_in":"离线时无法入",
@@ -260,7 +258,6 @@
 	"panel.browse.label.offline.feedback":"离线时无法提供反馈。",
 	"panel.browse.label.offline.crisis_help": "離線時無法使用危機幫助。",
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
-	"panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
 	"panel.browse.label.offline.inbox": "離線時通知不可用。",
 
 	"panel.browse.label.no_card.bus_pass": "您需要有效的 Illini ID才能使用 MTD Bus Pass。",
@@ -2131,9 +2128,6 @@
 	"panel.settings.privacy.privacy.button.set_privacy.slider.hint": "隐私级别",
 	"panel.settings.privacy.privacy.button.set_privacy.slider.increase": "增加到",
 	"panel.settings.privacy.privacy.button.set_privacy.slider.decrease": "减少到",
-
-	"panel.settings.video_tutorials.header.title": "視頻教程",
-	"panel.settings.video_tutorials.empty.msg": "沒有視頻教程。",
 
 	"panel.settings.video_tutorial.header.title": "視頻教程",
 	"panel.settings.video_tutorial.video.missing.msg": "缺少視頻",
@@ -4129,11 +4123,6 @@
 	"widget.checklist.uiuc.offline": "離線時新學生清單不可用。",
 	"widget.checklist.gies.logged_out": "您需要使用您的 NetID 登入才能訪問 iDegrees 新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
 	"widget.checklist.uiuc.logged_out": "您需要使用您的 NetID 登入才能訪問新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-
-	"widget.home.video_tutorials.button.title": "视频教程",
-	"widget.home.video_tutorials.text.empty.description": "目前还没有视频教程。",
-	"widget.home.video_tutorials.button.all.title": "查看全部",
-	"widget.home.video_tutorials.button.all.hint": "点击查看所有视频教程",
 
 	"widget.home.dinings.header.title": "宿舍餐厅",
 	"widget.home.dinings.text.empty.description": "在宿舍餐厅中的項目上点击 \u2606，以便您可以在此处快速找到它们。",
