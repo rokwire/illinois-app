@@ -74,7 +74,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyMapMyLocationsNotification                 = '$notifyBase.map.my_locations';
   static const String notifyMapMentalHealthNotification                = '$notifyBase.map.mental_health';
   static const String notifyMapStoriedSitesNotification                = '$notifyBase.map.storied_sites';
-  static const String notifyMapStateFarmWayfindingNotification         = '$notifyBase.map.state_farm_wayfinding';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
   static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
   static const String notifyAcademicsCanvasCoursesNotification         = "$notifyBase.academics.canvas_courses";
@@ -94,12 +93,10 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessTodoListNotification               = "$notifyBase.wellness.todo_list";
   static const String notifyWellnessAppointmentsNotification           = "$notifyBase.wellness.appointments";
   static const String notifyWellnessHealthScreenerNotification         = "$notifyBase.wellness.health_screener";
-  static const String notifyWellnessPodcastNotification                = "$notifyBase.wellness.podcast";
   static const String notifyWellnessResourcesNotification              = "$notifyBase.wellness.resources";
   static const String notifyWellnessMentalHealthNotification           = "$notifyBase.wellness.mental_health";
   static const String notifyWalletNotification                         = "$notifyBase.wallet";
   static const String notifyWalletIlliniIdNotification                 = "$notifyBase.wallet.illini_id";
-  static const String notifyWalletIlliniIdFaqsNotification             = "$notifyBase.wallet.illini_id.faqs";
   static const String notifyWalletBusPassNotification                  = "$notifyBase.wallet.bus_pass";
   static const String notifyWalletMealPlanNotification                 = "$notifyBase.wallet.meal_plan";
   static const String notifyWalletAddIlliniCashNotification            = "$notifyBase.wallet.add_illini_cash";
@@ -225,7 +222,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeMapMtdStops = 'map.mtd_stops';
   static const String payloadTypeMapMyLocations = 'map.my_locations';
   static const String payloadTypeMapMentalHealth = 'map.mental_health';
-  static const String payloadTypeMapStateFarmWayfinding = 'map.state_farm_wayfinding';
   static const String payloadTypeAcademics = 'academics';
   static const String payloadTypeAcademicsGiesCheckilst = 'academics.gies_checklist';
   static const String payloadTypeAcademicsUiucCheckilst = 'academics.uiuc_checklist';
@@ -245,12 +241,10 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeWellnessTodoList = 'wellness.todo';
   static const String payloadTypeWellnessAppointments = 'wellness.appointments';
   static const String payloadTypeWellnessHealthScreener = 'wellness.health_screener';
-  static const String payloadTypeWellnessPodcast = 'wellness.podcast';
   static const String payloadTypeWellnessResources = 'wellness.resources';
   static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
   static const String payloadTypeWallet = 'wallet';
   static const String payloadTypeWalletIlliniId = 'wallet.illini_id';
-  static const String payloadTypeWalletIlliniIdFaqs = 'wallet.illini_id';
   static const String payloadTypeWalletBusPass = 'wallet.bus_pass';
   static const String payloadTypeWalletMealPlan = 'wallet.meal_plan';
   static const String payloadTypeWalletAddIlliniCash = 'wallet.add_illini_cash';
@@ -480,9 +474,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeMapMentalHealth) {
       NotificationService().notify(notifyMapMentalHealthNotification, data);
     }
-    else if (type == payloadTypeMapStateFarmWayfinding) {
-      NotificationService().notify(notifyMapStateFarmWayfindingNotification, data);
-    }
     else if (type == payloadTypeAcademics) {
       NotificationService().notify(notifyAcademicsNotification, data);
     }
@@ -537,9 +528,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeWellnessMentalHealth) {
       NotificationService().notify(notifyWellnessMentalHealthNotification, data);
     }
-    else if (type == payloadTypeWellnessPodcast) {
-      NotificationService().notify(notifyWellnessPodcastNotification, data);
-    }
     else if (type == payloadTypeWellnessResources) {
       NotificationService().notify(notifyWellnessResourcesNotification, data);
     }
@@ -554,9 +542,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWalletIlliniId) {
       NotificationService().notify(notifyWalletIlliniIdNotification, data);
-    }
-    else if (type == payloadTypeWalletIlliniIdFaqs) {
-      NotificationService().notify(notifyWalletIlliniIdFaqsNotification, data);
     }
     else if (type == payloadTypeWalletBusPass) {
       NotificationService().notify(notifyWalletBusPassNotification, data);

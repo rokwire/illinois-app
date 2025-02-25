@@ -18,6 +18,26 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
+  final String _contactEmail = "rokwire@illinois.edu";
+  late GestureRecognizer _contactEmailGestureRecognizer;
+
+  final String _contactWebsite = "app.illinois.edu";
+  late GestureRecognizer _contactWebsiteGestureRecognizer;
+
+  @override
+  void initState() {
+    _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("mailto:$_contactEmail");
+    _contactWebsiteGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("https://$_contactWebsite");
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _contactEmailGestureRecognizer.dispose();
+    _contactWebsiteGestureRecognizer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -81,17 +101,23 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   Widget get _contactInfoWidget =>
     Container(padding: EdgeInsets.symmetric(vertical: 20), child:
       Column(children: [
-        // Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
-        // Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin")),
-        RichText(text:
-          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
-              TextSpan(text: "rokwire@neom.edu",
-                  style: Styles().textStyles.getTextStyle("widget.item.light.regular_underline.thin"),
-                  recognizer: TapGestureRecognizer()), //..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
+        Container(
+          padding: const EdgeInsets.all(6),
+          child: SizedBox(width: 32, height: 32, child:
+          Styles().images.getImage('university-logo-dark-frame'),
+          ),
+        ),
+        Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        RichText(textAlign: TextAlign.left, text:
+          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
+              TextSpan(text: _contactEmail,
+                  style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
+                  recognizer: _contactEmailGestureRecognizer),
               TextSpan(text: " • "),
-              TextSpan(text: "app.neom.edu",
-                style: Styles().textStyles.getTextStyle("widget.item.light.regular_underline.thin"),
-                recognizer: TapGestureRecognizer()), //..onTap = () => _processUrl("app.illinois.edu")),
+              TextSpan(text: "app.illinois.edu",
+                style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
+                recognizer: _contactWebsiteGestureRecognizer),
           ]))
       ],)
     );
@@ -100,7 +126,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   Widget get _appLogo => Container(
     padding: const EdgeInsets.all(6),
     child: SizedBox(width: 51, height: 51, child:
-      Styles().images.getImage('university-logo-dark-frame'),
+    Styles().images.getImage('university-logo-dark-frame'),
     ),
   );
 
@@ -137,6 +163,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   }
 
   void _processUrl(String? url) {
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {

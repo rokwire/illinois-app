@@ -148,7 +148,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapMtdStopsNotification,
       FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
-      FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyAcademicsAppointmentsNotification,
       FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
@@ -167,13 +166,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessDailyTipsNotification,
       FirebaseMessaging.notifyWellnessHealthScreenerNotification,
       FirebaseMessaging.notifyWellnessMentalHealthNotification,
-      FirebaseMessaging.notifyWellnessPodcastNotification,
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
-      FirebaseMessaging.notifyWalletIlliniIdFaqsNotification,
       FirebaseMessaging.notifyWalletBusPassNotification,
       FirebaseMessaging.notifyWalletMealPlanNotification,
       FirebaseMessaging.notifyWalletAddIlliniCashNotification,
@@ -423,9 +420,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
       _onFirebaseMapNotification(ExploreMapType.StoriedSites);
     }
-    else if (name == FirebaseMessaging.notifyMapStateFarmWayfindingNotification) {
-      _onFirebaseMapNotification(ExploreMapType.StateFarmWayfinding);
-    }
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);
     }
@@ -480,9 +474,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessMentalHealthNotification) {
       _onFirebaseWellnessNotification(WellnessContent.mentalHealth);
     }
-    else if (name == FirebaseMessaging.notifyWellnessPodcastNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.podcast);
-    }
     else if (name == FirebaseMessaging.notifyWellnessResourcesNotification) {
       _onFirebaseWellnessNotification(WellnessContent.resources);
     }
@@ -498,9 +489,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
       _onFirebaseWaletNotification(WalletContentType.illiniId);
-    }
-    else if (name == FirebaseMessaging.notifyWalletIlliniIdFaqsNotification) {
-      _onFirebaseWaletNotification(WalletContentType.illiniIdFaqs);
     }
     else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
       _onFirebaseWaletNotification(WalletContentType.busPass);

@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
-import 'package:neom/ui/wallet/WalletICardFaqsContentWidget.dart';
 import 'package:neom/ui/wallet/WalletICardContentWidget.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -26,7 +25,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-enum WalletICardContent { i_card, faqs }
+enum WalletICardContent { i_card }
 
 class WalletICardHomeContentPanel extends StatefulWidget {
   final WalletICardContent? content;
@@ -191,9 +190,7 @@ class _WalletICardHomePanelState extends State<WalletICardHomeContentPanel> {
     _contentValues = <WalletICardContent>[];
     for (WalletICardContent iCardContent in WalletICardContent.values) {
       // Hide FAQs for all
-      if (iCardContent != WalletICardContent.faqs) {
-        _contentValues.add(iCardContent);
-      }
+      _contentValues.add(iCardContent);
     }
   }
 
@@ -220,8 +217,6 @@ class _WalletICardHomePanelState extends State<WalletICardHomeContentPanel> {
     switch (_selectedContent) {
       case WalletICardContent.i_card:
         return WalletICardContentWidget();
-      case WalletICardContent.faqs:
-        return WalletICardFaqsContentWidget();
     }
   }
 
@@ -236,8 +231,6 @@ class _WalletICardHomePanelState extends State<WalletICardHomeContentPanel> {
     switch (content) {
       case WalletICardContent.i_card:
         return Localization().getStringEx('panel.icard.home.content.icard.label', 'Illini ID');
-      case WalletICardContent.faqs:
-        return Localization().getStringEx('panel.icard.home.content.faqs.label', 'FAQs');
     }
   }
 }

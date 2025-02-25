@@ -25,7 +25,6 @@ import 'package:neom/ui/home/HomeEmptyFavoritesWidget.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeToutWidget.dart';
 import 'package:neom/ui/home/HomeWelcomeMessageWidget.dart';
-import 'package:neom/ui/home/HomeWelcomeVideoWidget.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:neom/service/FlexUI.dart';
@@ -210,9 +209,6 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
     else if (code == 'connect') {
       return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
-    }
-    else if (code == 'welcome_video') {
-      return HomeWelcomeVideoWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
     }
     else if (code == 'welcome_message') {
       return HomeWelcomeMessageWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);

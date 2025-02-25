@@ -50,9 +50,12 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 
+  // Getters: McKinley
   Map<String, dynamic> get safer => JsonUtils.mapValue(content['safer']) ?? {};
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
-  Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
+  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
+  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
+  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
 
   Map<String, dynamic> get safety => JsonUtils.mapValue(content['safety']) ?? {};
   Map<String, dynamic> get safeRides => JsonUtils.mapValue(safety['safeRides']) ?? {};
@@ -65,9 +68,6 @@ class Config extends rokwire.Config {
   String? get safeWalkEndTime        => JsonUtils.stringValue(safeWalk['end_time']);
   String? get safeWalkOrderInterval  => JsonUtils.stringValue(safeWalk['order_interval']);
   String? get safeWalkAboutUrl       => JsonUtils.stringValue(safeWalk['about_url']);
-
-  Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
-  Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
 
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
@@ -196,12 +196,6 @@ class Config extends rokwire.Config {
   String? get wellnessMentalHealthCcUrl => JsonUtils.stringValue(wellness['mental_health_cc_url']);
   String? get wellnessMentalHealthThumbUrl => JsonUtils.stringValue(wellness['mental_health_thumb_url']);
   String? get wellnessMentalHealthVideoUrl => JsonUtils.stringValue(wellness['mental_health_video_url']);
-
-  // Getters: McKinley
-
-  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
-  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
-  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
 
   // Getters: settings
   int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;

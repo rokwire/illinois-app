@@ -18,12 +18,10 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/model/Identity.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:http/http.dart';
-import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/Identity.dart';
 import 'package:neom/service/MobileAccess.dart';
 import 'package:neom/service/Storage.dart';
@@ -626,7 +624,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().iCard?.uin;
   }
 
-  bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
+  bool get _hasBuildingAccess => false;
 
   bool get _hasMobileAccess => (_hasMobileAccessKeys && _hasMobileIdentityCredentials);
 

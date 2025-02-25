@@ -32,10 +32,9 @@ import 'package:neom/service/CheckList.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:neom/ui/BrowsePanel.dart';
 import 'package:neom/service/RadioPlayer.dart';
-import 'package:neom/ui/home/HomeAppHelpWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsNewsWidget.dart';
-import 'package:neom/ui/home/HomeCampusSafetyResourcesWidget.dart';
+import 'package:neom/ui/home/HomeSafetyResourcesWidget.dart';
 import 'package:neom/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:neom/ui/home/HomeFavoritesPanel.dart';
 import 'package:neom/ui/home/HomeCheckListWidget.dart';
@@ -46,15 +45,13 @@ import 'package:neom/ui/home/HomeFavoritesWidget.dart';
 import 'package:neom/ui/home/HomeInboxWidget.dart';
 import 'package:neom/ui/home/HomeLaundryWidget.dart';
 import 'package:neom/ui/home/HomeMessagesSectionWidget.dart';
-import 'package:neom/ui/home/HomePollsWidget.dart';
 import 'package:neom/ui/home/HomePublicSurveysWidget.dart';
+import 'package:neom/ui/home/HomePollsWidget.dart';
 import 'package:neom/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:neom/ui/home/HomeSafeRidesWidget.dart';
 import 'package:neom/ui/home/HomeSafeWalkRequestWidget.dart';
-import 'package:neom/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:neom/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:neom/ui/home/HomeToutWidget.dart';
-import 'package:neom/ui/home/HomeVideoTutorialsWidget.dart';
 import 'package:neom/ui/home/HomeRadioWidget.dart';
 import 'package:neom/ui/home/HomeWalletWidget.dart';
 import 'package:neom/ui/home/HomeWellnessMentalHealthWidget.dart';
@@ -73,7 +70,6 @@ import 'package:neom/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:neom/ui/home/HomeGroupsWidget.dart';
 import 'package:neom/ui/home/HomeRecentItemsWidget.dart';
-import 'package:neom/ui/home/HomeSaferWidget.dart';
 import 'package:neom/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:neom/ui/home/HomeTwitterWidget.dart';
 import 'package:neom/ui/widgets/FlexContent.dart';
@@ -199,15 +195,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeCampusHighlightsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeCampusHighlightsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'campus_safety_resources') {
-      if (title) {
-        return HomeCampusSafetyResourcesWidget.title;
-      } else if (handle) {
-        return HomeCampusSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeCampusSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'twitter') {
@@ -354,15 +341,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: ExplorePOI.favoriteKeyName);
       }
     }
-    else if (code == 'safer') {
-      if (title) {
-        return HomeSaferWidget.title;
-      } else if (handle) {
-        return HomeSaferWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeSaferWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
     else if (code == 'dinings') {
       if (title) {
         return HomeDiningWidget.title;
@@ -434,33 +412,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       // } else {
       //   return HomeInboxWidget(key: _globalKey(globalKeys, code), content: HomeInboxContent.unread, favoriteId: code, updateController: updateController,);
       // }
-    }
-    else if (code == 'app_help') {
-      if (title) {
-        return HomeAppHelpWidget.title;
-      } else if (handle) {
-        return HomeAppHelpWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeAppHelpWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'video_tutorials') {
-      if (title) {
-        return HomeVideoTutorialsWidget.title;
-      } else if (handle) {
-        return HomeVideoTutorialsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeVideoTutorialsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'state_farm_center') {
-      if (title) {
-        return HomeStateFarmCenterWidget.title;
-      } else if (handle) {
-        return HomeStateFarmCenterWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeStateFarmCenterWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
     }
 
     else if (code == 'my_dining') {
