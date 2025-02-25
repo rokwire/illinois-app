@@ -73,7 +73,6 @@ import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeGroupsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
@@ -370,15 +369,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: ExplorePOI.favoriteKeyName, );
       } else {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: ExplorePOI.favoriteKeyName);
-      }
-    }
-    else if (code == 'safer') {
-      if (title) {
-        return HomeSaferWidget.title;
-      } else if (handle) {
-        return HomeSaferWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeSaferWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'dinings') {

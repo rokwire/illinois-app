@@ -42,8 +42,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
-import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -60,7 +58,6 @@ import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -581,7 +578,6 @@ class _BrowseEntry extends StatelessWidget {
     'music_and_news.daily_illini': 'external-link',
     'app_help.faqs'              : 'external-link',
     'app_help.feedback'          : 'external-link',
-    'safer.my_mckinley'          : 'external-link',
   };
 
   Widget? get _iconWidget =>
@@ -619,11 +615,6 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
-
-      case "safer.building_access":          _onTapBuildingAccess(context); break;
-      case "safer.test_locations":           _onTapTestLocations(context); break;
-      case "safer.my_mckinley":              _onTapMyMcKinley(context); break;
-      case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
       case "laundry.laundry":                _onTapLaundry(context); break;
       case "laundry.my_laundry":             _onTapMyLaundry(context); break;
@@ -822,30 +813,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapSportTeams(BuildContext context) {
     Analytics().logSelect(target: "Teams");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.teams)));
-  }
-
-  static void _onTapBuildingAccess(BuildContext context) {
-    Analytics().logSelect(target: 'Building Access');
-    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
-  }
-
-  static void _onTapTestLocations(BuildContext context) {
-    Analytics().logSelect(target: 'Locations');
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => HomeSaferTestLocationsPanel()
-    ));
-  }
-
-  static void _onTapMyMcKinley(BuildContext context) {
-    Analytics().logSelect(target: 'MyMcKinley');
-    _launchUrl(context, Config().saferMcKinleyUrl);
-  }
-
-  static void _onTapWellnessAnswerCenter(BuildContext context) {
-    Analytics().logSelect(target: 'Answer Center');
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => HomeSaferWellnessAnswerCenterPanel()
-    ));
   }
 
   static void _onTapCampusHighlights(BuildContext context) {
