@@ -53,7 +53,6 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
-import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -651,9 +650,6 @@ class _BrowseEntry extends StatelessWidget {
       case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
       case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
 
-      case "inbox.all_notifications":        _onTapNotifications(context); break;
-      case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
-
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
 
@@ -874,12 +870,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapCampusGuide(BuildContext context) {
     Analytics().logSelect(target: "Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
-  }
-
-  static void _onTapNotifications(BuildContext context, {bool? unread}) {
-    bool isUnread = (unread == true);
-    Analytics().logSelect(target: isUnread ? "Unread Notifications" : "All Notifications");
-    NotificationsHomePanel.present(context, content: isUnread ? NotificationsContent.unread : NotificationsContent.all);
   }
 
   static void _onTapEventFeed(BuildContext context) {
