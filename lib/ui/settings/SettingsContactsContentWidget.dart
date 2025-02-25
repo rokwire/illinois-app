@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';

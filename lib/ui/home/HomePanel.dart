@@ -42,7 +42,6 @@ import 'package:neom/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:neom/ui/home/HomeDiningWidget.dart';
 import 'package:neom/ui/home/HomeEvent2Widget.dart';
 import 'package:neom/ui/home/HomeFavoritesWidget.dart';
-import 'package:neom/ui/home/HomeInboxWidget.dart';
 import 'package:neom/ui/home/HomeLaundryWidget.dart';
 import 'package:neom/ui/home/HomeMessagesSectionWidget.dart';
 import 'package:neom/ui/home/HomePublicSurveysWidget.dart';
@@ -395,25 +394,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRadioWidget(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'inbox') {
-      if (title) {
-        return HomeInboxWidget.title(content: HomeInboxContent.all);
-      } else if (handle) {
-        return HomeInboxWidget.handle(key: _globalKey(globalKeys, code), content: HomeInboxContent.all, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeInboxWidget(key: _globalKey(globalKeys, code), content: HomeInboxContent.all, favoriteId: code, updateController: updateController,);
-      }
-
-      //TODO
-      // if (title) {
-      //   return HomeInboxWidget.title(content: HomeInboxContent.unread);
-      // } else if (handle) {
-      //   return HomeInboxWidget.handle(key: _globalKey(globalKeys, code), content: HomeInboxContent.unread, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      // } else {
-      //   return HomeInboxWidget(key: _globalKey(globalKeys, code), content: HomeInboxContent.unread, favoriteId: code, updateController: updateController,);
-      // }
-    }
-
     else if (code == 'my_dining') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: Dining.favoriteKeyName);
