@@ -1069,8 +1069,6 @@
 	"panel.explore.button.mental_health.hint":"",
 	"panel.explore.button.student_course.title":"我的課程",
 	"panel.explore.button.student_course.hint":"",
-	"panel.explore.button.state_farm.title":"國營農場尋路",
-	"panel.explore.button.state_farm.hint":"",
 	"panel.explore.button.appointments.title":"MyMcKinley 预约",
 	"panel.explore.button.appointments.hint":"",
 	"panel.explore.button.stored_sites.title": "Storied Sites",
@@ -1135,7 +1133,6 @@
 	"panel.explore.state.online.empty.student_course":"沒有註冊學生課程。",
 	"panel.explore.state.online.empty.appointments":"沒有可用的約會。",
 	"panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
-	"panel.explore.state.online.empty.state_farm":"離線時無法使用 State Farm Wayfinding。",
 
 	"panel.explore.state.offline.empty.events":"离线时无即将发生的活动。",
 	"panel.explore.state.offline.empty.events2":"离线時沒有可用的活动信息。",
@@ -1148,7 +1145,6 @@
 	"panel.explore.state.offline.empty.student_course":"離線時沒有可用的學生課程。",
 	"panel.explore.state.offline.empty.appointments":"離線時沒有可用的約會。",
 	"panel.explore.state.offline.empty.stored_sites":"No storied sites are available while offline.",
-	"panel.explore.state.offline.empty.state_farm":"離線時無法使用 State Farm Wayfinding.",
 
 	"panel.explore.state.failed.events":"無法加載即將發生的事件。",
 	"panel.explore.state.failed.events2":"無法加載事件源。",
@@ -1161,7 +1157,6 @@
 	"panel.explore.state.failed.student_course":"無法加載學生課程。",
 	"panel.explore.state.failed.appointments":"無法加載約會。",
 	"panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
-	"panel.explore.state.failed.state_farm":"無法加載 State Farm Wayfinding。",
 
 	"panel.explore.item.events.name":"活动",
 	"panel.explore.item.dinings.name":"用餐地点",

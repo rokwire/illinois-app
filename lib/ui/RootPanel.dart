@@ -150,7 +150,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapMtdStopsNotification,
       FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
-      FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyAcademicsAppointmentsNotification,
       FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
@@ -424,9 +423,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
       _onFirebaseMapNotification(ExploreMapType.StoriedSites);
-    }
-    else if (name == FirebaseMessaging.notifyMapStateFarmWayfindingNotification) {
-      _onFirebaseMapNotification(ExploreMapType.StateFarmWayfinding);
     }
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);

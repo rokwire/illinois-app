@@ -48,7 +48,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   MapMTDStops                    = AnalyticsFeature("Map: MTD Stops", priority: -1);
   static const AnalyticsFeature   MapMyLocations                 = AnalyticsFeature("Map: My Locations", priority: -1);
   static const AnalyticsFeature   MapMentalHealth                = AnalyticsFeature("Map: Therapist", priority: -1);
-  static const AnalyticsFeature   MapStateFarm                   = AnalyticsFeature("Map: State Farm", priority: -1);
   static const AnalyticsFeature   StoriedSites                   = AnalyticsFeature("Map: Storied Sites", priority: -1);
 
   static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
@@ -142,7 +141,6 @@ class AnalyticsFeature {
     MapMTDStops,
     MapMyLocations,
     MapMentalHealth,
-    MapStateFarm,
     StoriedSites,
 
     Events,

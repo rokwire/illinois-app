@@ -84,7 +84,7 @@
 			"polls.features": ["authentication", "netid_login"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "state_farm_wayfinding", "storied_sites"],
+			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
@@ -231,7 +231,6 @@
 				"wayfinding"                              : false,
 				"state_farm_center"                       : false,
 				"create_stadium_poll"                     : false,
-				"state_farm_wayfinding"                   : false,
 				"all_notifications"                       : false,
 				"unread_notifications"                    : false,
 				"app_help"                                : false,

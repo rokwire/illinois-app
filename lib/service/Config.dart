@@ -67,9 +67,6 @@ class Config extends rokwire.Config {
   String? get safeWalkOrderInterval  => JsonUtils.stringValue(safeWalk['order_interval']);
   String? get safeWalkAboutUrl       => JsonUtils.stringValue(safeWalk['about_url']);
 
-  Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
-  Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
-
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
