@@ -98,7 +98,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessMentalHealthNotification           = "$notifyBase.wellness.mental_health";
   static const String notifyWalletNotification                         = "$notifyBase.wallet";
   static const String notifyWalletIlliniIdNotification                 = "$notifyBase.wallet.illini_id";
-  static const String notifyWalletIlliniIdFaqsNotification             = "$notifyBase.wallet.illini_id.faqs";
   static const String notifyWalletBusPassNotification                  = "$notifyBase.wallet.bus_pass";
   static const String notifyWalletMealPlanNotification                 = "$notifyBase.wallet.meal_plan";
   static const String notifyWalletAddIlliniCashNotification            = "$notifyBase.wallet.add_illini_cash";
@@ -248,7 +247,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
   static const String payloadTypeWallet = 'wallet';
   static const String payloadTypeWalletIlliniId = 'wallet.illini_id';
-  static const String payloadTypeWalletIlliniIdFaqs = 'wallet.illini_id';
   static const String payloadTypeWalletBusPass = 'wallet.bus_pass';
   static const String payloadTypeWalletMealPlan = 'wallet.meal_plan';
   static const String payloadTypeWalletAddIlliniCash = 'wallet.add_illini_cash';
@@ -549,9 +547,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWalletIlliniId) {
       NotificationService().notify(notifyWalletIlliniIdNotification, data);
-    }
-    else if (type == payloadTypeWalletIlliniIdFaqs) {
-      NotificationService().notify(notifyWalletIlliniIdFaqsNotification, data);
     }
     else if (type == payloadTypeWalletBusPass) {
       NotificationService().notify(notifyWalletBusPassNotification, data);

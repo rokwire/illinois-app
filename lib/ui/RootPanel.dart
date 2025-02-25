@@ -174,7 +174,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessTodoListNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
-      FirebaseMessaging.notifyWalletIlliniIdFaqsNotification,
       FirebaseMessaging.notifyWalletBusPassNotification,
       FirebaseMessaging.notifyWalletMealPlanNotification,
       FirebaseMessaging.notifyWalletAddIlliniCashNotification,
@@ -496,9 +495,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
       _onFirebaseWaletNotification(WalletContentType.illiniId);
-    }
-    else if (name == FirebaseMessaging.notifyWalletIlliniIdFaqsNotification) {
-      _onFirebaseWaletNotification(WalletContentType.illiniIdFaqs);
     }
     else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
       _onFirebaseWaletNotification(WalletContentType.busPass);
