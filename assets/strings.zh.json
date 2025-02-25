@@ -289,8 +289,6 @@
 
 	"panel.browse.section.academics.title": "學业",
 	"panel.browse.section.academics.description": "Tools for managing your academic life.",
-	"panel.browse.section.app_help.title": "應用幫助",
-	"panel.browse.section.app_help.description": "觀看視頻教程並就您的{{app_title}}應用體驗提供反饋。",
 	"panel.browse.section.appointments.title": "約會",
 	"panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
 	"panel.browse.section.athletics.title": "十大田徑運動",
@@ -345,11 +343,6 @@
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
 	"panel.browse.entry.academics.appointments.title": "約會",
 	"panel.browse.entry.academics.my_illini.title": "myIllini",
-
-	"panel.browse.entry.app_help.video_tutorial.title": "視頻教程",
-	"panel.browse.entry.app_help.feedback.title": "反饋",
-	"panel.browse.entry.app_help.review.title": "评价",
-	"panel.browse.entry.app_help.faqs.title": "常見問題",
 
 	"panel.browse.entry.appointments.appointments.title": "約會",
 
@@ -4136,18 +4129,6 @@
 	"widget.checklist.uiuc.offline": "離線時新學生清單不可用。",
 	"widget.checklist.gies.logged_out": "您需要使用您的 NetID 登入才能訪問 iDegrees 新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
 	"widget.checklist.uiuc.logged_out": "您需要使用您的 NetID 登入才能訪問新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-
-	"widget.home.app_help.header.title": "应用帮助",
-	"widget.home.app_help.text.empty.description": "点击应用帮助中的项目上的 \u2606，以便您可以在此处快速找到它们。",
-	"widget.home.app_help.feedback.button.title": "提供反馈意见",
-	"widget.home.app_help.feedback.button.description": "喜欢这个应用程序？ 遗漏了什么？{{app_university}} Smart, Healthy Communities Initiative需要您的想法和意见。 谢谢您！",
-	"widget.home.app_help.feedback.label.offline": "离线时无法提供反馈。",
-	"widget.home.app_help.feedback.panel.title": "提供反馈意见",
-	"widget.home.app_help.review.button.title": "提交评论",
-	"widget.home.app_help.review.button.description": "为这个应用程序评分。 告诉别人你的想法。",
-	"widget.home.app_help.faqs.button.title": "常见问题",
-	"widget.home.app_help.faqs.button.description": "在常见问题中检查您的问题。",
-	"widget.home.app_help.faqs.panel.title": "常见问题",
 
 	"widget.home.video_tutorials.button.title": "视频教程",
 	"widget.home.video_tutorials.text.empty.description": "目前还没有视频教程。",

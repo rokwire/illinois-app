@@ -289,8 +289,6 @@
 
     "panel.browse.section.academics.title": "Académica",
     "panel.browse.section.academics.description": "Tools for managing your academic life.",
-    "panel.browse.section.app_help.title": "Ayuda de la aplicación",
-    "panel.browse.section.app_help.description": "Mire tutoriales en video y proporcione comentarios sobre su experiencia con la aplicación de {{app_title}}.",
     "panel.browse.section.appointments.title": "Citas",
     "panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
     "panel.browse.section.athletics.title": "Los 10 grandes atletismo",
@@ -345,11 +343,6 @@
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
     "panel.browse.entry.academics.appointments.title": "Citas",
     "panel.browse.entry.academics.my_illini.title": "myIllini",
-
-    "panel.browse.entry.app_help.video_tutorial.title": "Videotutorial",
-    "panel.browse.entry.app_help.feedback.title": "Comentarios",
-    "panel.browse.entry.app_help.review.title": "Revisar",
-    "panel.browse.entry.app_help.faqs.title": "Preguntas frecuentes",
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
@@ -4163,18 +4156,6 @@
     "widget.checklist.uiuc.offline": "La Lista de verificación para nuevos estudiantes no está disponible sin conexión.",
     "widget.checklist.gies.logged_out": "Debe iniciar sesión con su NetID para acceder a la lista de verificación de nuevos estudiantes de iDegrees. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "widget.checklist.uiuc.logged_out": "Debe iniciar sesión con su NetID para acceder a la lista de verificación de nuevos estudiantes. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-
-    "widget.home.app_help.header.title": "Ayuda de la aplicación",
-    "widget.home.app_help.text.empty.description": "Toca \u2606 en los elementos de la Ayuda de la aplicación para que puedas encontrarlos rápidamente aquí.",
-    "widget.home.app_help.feedback.button.title": "Proveer comentarios",
-    "widget.home.app_help.feedback.button.description": "¿Disfrutas de la aplicación? ¿Falta algo? La Iniciativa de Comunidades Inteligentes y Saludables de la {{app_university}} necesita sus ideas y aportes. ¡Gracias!",
-    "widget.home.app_help.feedback.label.offline": "Proporcionar un comentario no está disponible sin conexión.",
-    "widget.home.app_help.feedback.panel.title": "PROVEER COMENTARIOS",
-    "widget.home.app_help.review.button.title": "Enviar opinión",
-    "widget.home.app_help.review.button.description": "Califica esta aplicación. Dile a los demás lo que piensas.",
-    "widget.home.app_help.faqs.button.title": "Preguntas frecuentes",
-    "widget.home.app_help.faqs.button.description": "Consulta tu duda en preguntas frecuentes.",
-    "widget.home.app_help.faqs.panel.title": "Preguntas frecuentes",
 
     "widget.home.video_tutorials.button.title": "Tutoriales en vídeo",
     "widget.home.video_tutorials.text.empty.description": "No hay videos tutoriales, todavía.",

@@ -291,8 +291,6 @@
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Tools for managing your academic life.",
-    "panel.browse.section.app_help.title": "App Help",
-    "panel.browse.section.app_help.description": "Watch video tutorials and provide feedback on your {{app_title}} app experience.",
     "panel.browse.section.appointments.title": "Appointments",
     "panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
     "panel.browse.section.athletics.title": "Big 10 Athletics",
@@ -347,11 +345,6 @@
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
     "panel.browse.entry.academics.appointments.title": "Appointments",
     "panel.browse.entry.academics.my_illini.title": "myIllini",
-
-    "panel.browse.entry.app_help.video_tutorial.title": "Video Tutorials",
-    "panel.browse.entry.app_help.feedback.title": "Feedback",
-    "panel.browse.entry.app_help.review.title": "Review",
-    "panel.browse.entry.app_help.faqs.title": "FAQs",
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
@@ -4164,18 +4157,6 @@
     "widget.checklist.uiuc.offline": "New Student Checklist is not available while offline.",
     "widget.checklist.gies.logged_out": "You need to be signed in with your NetID to access the iDegrees New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
     "widget.checklist.uiuc.logged_out": "You need to be signed in with your NetID to access the New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
-
-    "widget.home.app_help.header.title": "App Help",
-    "widget.home.app_help.text.empty.description": "Tap the \u2606 on items in App Help for quick access here.",
-    "widget.home.app_help.feedback.button.title": "Provide Feedback",
-    "widget.home.app_help.feedback.button.description": "Enjoying the app? Missing something? The {{app_university}} Smart, Healthy Communities Initiative needs your ideas and input. Thank you!",
-    "widget.home.app_help.feedback.label.offline": "Provide Feedback is not available while offline.",
-    "widget.home.app_help.feedback.panel.title": "PROVIDE FEEDBACK",
-    "widget.home.app_help.review.button.title": "Submit Review",
-    "widget.home.app_help.review.button.description": "Rate this app. Tell others what you think.",
-    "widget.home.app_help.faqs.button.title": "FAQs",
-    "widget.home.app_help.faqs.button.description": "Check your question in frequently asked questions.",
-    "widget.home.app_help.faqs.panel.title": "FAQs",
 
     "widget.home.video_tutorials.button.title": "Video Tutorials",
     "widget.home.video_tutorials.text.empty.description": "There are no video tutorials yet.",

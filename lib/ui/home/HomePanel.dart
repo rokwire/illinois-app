@@ -32,7 +32,6 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/service/RadioPlayer.dart';
-import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
@@ -421,15 +420,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRadioWidget.handle(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeRadioWidget(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'app_help') {
-      if (title) {
-        return HomeAppHelpWidget.title;
-      } else if (handle) {
-        return HomeAppHelpWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeAppHelpWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'video_tutorials') {

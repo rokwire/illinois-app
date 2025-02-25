@@ -10,12 +10,10 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
@@ -53,17 +51,13 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
-import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
-import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -573,8 +567,6 @@ class _BrowseEntry extends StatelessWidget {
     'academics.my_illini'        : 'external-link',
     'academics.due_date_catalog' : 'external-link',
     'music_and_news.daily_illini': 'external-link',
-    'app_help.faqs'              : 'external-link',
-    'app_help.feedback'          : 'external-link',
   };
 
   Widget? get _iconWidget =>
@@ -598,11 +590,6 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
       case "academics.appointments":          _onTapAppointments(context, analyticsFeature: AnalyticsFeature.AcademicsAppointments); break;
       case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
-
-      case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
-      case "app_help.feedback":              _onTapFeedback(context); break;
-      case "app_help.review":                _onTapReview(context); break;
-      case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "appointments.appointments":       _onTapAppointments(context, analyticsFeature: AnalyticsFeature.Appointments); break;
 
@@ -728,66 +715,6 @@ class _BrowseEntry extends StatelessWidget {
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
       analyticsFeature: AnalyticsFeature.AcademicsCampusReminders,
     )));
-  }
-
-  static void _onTapVideoTutorials(BuildContext context) {
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
-    }
-    else if (uiuc.Content().videos?.isNotEmpty == true) {
-      List<Video>? videoTutorials = _getVideoTutorials();
-      if (videoTutorials?.length == 1) {
-        Video? videoTutorial = videoTutorials?.first;
-        if (videoTutorial != null) {
-          Analytics().logSelect(target: "Video Tutorials", attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: videoTutorial)));
-        }
-      } else {
-        Analytics().logSelect(target: "Video Tutorials",);
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialListPanel(videoTutorials: videoTutorials)));
-      }
-    }
-  }
-
-  static List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
-    if (videoTutorials == null) {
-      return null;
-    }
-    List<dynamic>? videos = JsonUtils.listValue(videoTutorials['videos']);
-    if (CollectionUtils.isEmpty(videos)) {
-      return null;
-    }
-    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    return Video.listFromJson(jsonList: videos, contentStrings: strings);
-  }
-
-  static void _onTapFeedback(BuildContext context) {
-    Analytics().logSelect(target: "Provide Feedback");
-
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
-    }
-    else if (StringUtils.isNotEmpty(Config().feedbackUrl)) {
-      String email = Uri.encodeComponent(Auth2().email ?? '');
-      String name =  Uri.encodeComponent(Auth2().fullName ?? '');
-      String phone = Uri.encodeComponent(Auth2().phone ?? '');
-      String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
-      _launchUrl(context, feedbackUrl);
-    }
-  }
-
-  static void _onTapReview(BuildContext context) {
-    Analytics().logSelect(target: "Provide Review");
-    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
-  }
-
-  static void _onTapFAQs(BuildContext context) {
-    Analytics().logSelect(target: "FAQs");
-
-    if (StringUtils.isNotEmpty(Config().faqsUrl)) {
-      _launchUrl(context, Config().faqsUrl);
-    }
   }
 
   static void _onTapSportEvents(BuildContext context) {
