@@ -16,7 +16,7 @@
 				"safewalk_request", "saferides", "safety_resources",
 				"recent_items", "public_surveys", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
 			],
-			"home.system": ["tout", "welcome_video", "welcome_message", "emergency", "voter_registration", "connect"],
+			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 			"home.dinings": ["dinings_all", "dinings_open"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card"],
@@ -217,7 +217,6 @@
 			},
 			"enable" : {
 				"emergency"                               : false,
-				"home.system.welcome_video"               : false,
 				"wallet.illini_id_faq"                    : false,
 				"explore.map.laundry"                     : false,
 				"wellness.podcast"                        : false,
