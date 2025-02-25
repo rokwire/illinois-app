@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.2.0] - 2025-02-25
 ### Fixed
 - Make sure to dispose TapGestureRecognizer objects.
+### Deleted
+- Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
 ## [6.1.64] - 2025-02-20
 ### Changed

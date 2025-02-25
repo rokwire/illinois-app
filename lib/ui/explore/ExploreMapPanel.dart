@@ -73,7 +73,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
 
-enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, StoriedSites }
+enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StoriedSites }
 
 
 enum EventsDisplayType { single, multiple, all }
@@ -96,7 +96,6 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
     ExploreMapType.MTDStops:            AnalyticsFeature.MapMTDStops,
     ExploreMapType.MyLocations:         AnalyticsFeature.MapMyLocations,
     ExploreMapType.MentalHealth:        AnalyticsFeature.MapMentalHealth,
-    ExploreMapType.StateFarmWayfinding: AnalyticsFeature.MapStateFarm,
     ExploreMapType.StoriedSites:        AnalyticsFeature.StoriedSites,
   };
 
@@ -1731,7 +1730,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist');
       case ExploreMapType.StoriedSites:        return Localization().getStringEx('panel.explore.button.stored_sites.title', 'Storied Sites');
-      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
   }
@@ -1748,7 +1746,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.hint', '');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
       case ExploreMapType.StoriedSites:        return Localization().getStringEx('panel.explore.button.stored_sites.hint', '');
-      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
   }
@@ -1999,7 +1996,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.state.offline.empty.my_locations', 'No saved locations available while offline.');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.state.offline.empty.mental_health', 'No therapist locations are available while offline.');
-      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
       default:                              return null;
     }
   }*/
@@ -2016,7 +2012,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No therapist locations are available.');
       case ExploreMapType.StoriedSites: return Localization().getStringEx('panel.explore.state.online.empty.stored_sites', 'No storied sites are available.');
-      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
   }
@@ -2033,7 +2028,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
       case ExploreMapType.StoriedSites: return Localization().getStringEx('panel.explore.state.failed.stored_sites', 'Failed to load storied sites.');
-      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
   }
@@ -2121,7 +2115,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return _loadMentalHealthBuildings();
         case ExploreMapType.StoriedSites: return _loadPlaces();
-        case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
     }
@@ -2227,10 +2220,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _displayContentPopups() {
-    if (_selectedMapType == ExploreMapType.StateFarmWayfinding) {
-      _viewStateFarmPoi();
-    }
-    else if (_explores == null) {
+    if (_explores == null) {
       _showMessagePopup(_failedContentMessage);
     }
     else if (_selectedMapType == ExploreMapType.Appointments) {
@@ -2604,18 +2594,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       return null;
     }
   }
-
-  void _viewStateFarmPoi() {
-    Analytics().logSelect(target: "State Farm Wayfinding");
-    Map<String, dynamic> stateFarmLocation = Config().stateFarmWayfinding;
-    LatLng location = LatLng(
-      JsonUtils.doubleValue(stateFarmLocation['latitude']) ?? 0,
-      JsonUtils.doubleValue(stateFarmLocation['longitude']) ?? 0
-    );
-    double zoom = JsonUtils.doubleValue(stateFarmLocation['zoom']) ?? 0;
-    _targetCameraUpdate = CameraUpdate.newCameraPosition(CameraPosition(target: location, zoom: zoom));
-    _pinMapExplore(ExplorePOI(name: 'State Farm', location: ExploreLocation( latitude: location.latitude, longitude: location.longitude)));
-  }
 }
 
 ////////////////////
@@ -2651,9 +2629,6 @@ ExploreMapType? _exploreMapTypeFromCode(String? code) {
   }
   else if (code == 'storied_sites') {
     return ExploreMapType.StoriedSites;
-  }
-  else if (code == 'state_farm_wayfinding') {
-    return ExploreMapType.StateFarmWayfinding;
   }
   else {
     return null;
@@ -2691,9 +2666,6 @@ ExploreMapType? _exploreMapTypeFromString(String? value) {
   else if (value == 'storiedSights') {
     return ExploreMapType.StoriedSites;
   }
-  else if (value == 'stateFarmWayfinding') {
-    return ExploreMapType.StateFarmWayfinding;
-  }
   else {
     return null;
   }
@@ -2711,7 +2683,6 @@ String? _exploreMapTypeToString(ExploreMapType? value) {
     case ExploreMapType.MyLocations:         return 'myLocations';
     case ExploreMapType.MentalHealth:        return 'mentalHealth';
     case ExploreMapType.StoriedSites:        return 'storiedSights';
-    case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }
 }

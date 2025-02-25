@@ -20,7 +20,6 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
@@ -308,23 +307,23 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     else if (feature == 'laundry') {
       return features.contains('laundry') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.laundry.title", "Laundry"), iconKey: "guide-laundry", onTap: _navigateLaundry,) : null;
     }
-    else if (feature == 'library-card') {
-      return features.contains('library_card') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), iconKey: "guide-library-card", onTap: _navigateLibraryCard) : null;
-    }
     else if (feature == 'meal-plan') {
       return features.contains('meal_plan') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.meal_plan.title", "Meal Plan"), iconKey: "guide-meal-plan", onTap: _navigateMealPlan,) : null;
     }
     else if (feature == 'my-illini') {
       return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "My Illini"), iconKey: "guide-student-portal", onTap: _navigateMyIllini) : null;
     }
-    else if (feature == 'parking') {
-      return features.contains('parking') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.parking.title", "Parking"), iconKey: "guide-parking", onTap: _navigateParking) : null;
-    }
     else if (feature == 'quick-polls') {
       return features.contains('quick_polls') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.quick_polls.title", "Quick Polls"), iconKey: "guide-polls", onTap: _navigateQuickPolls) : null;
     }
     else if (feature == 'saved') {
       return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), iconKey: "guide-saved", onTap: _navigateSaved) : null;
+    }
+    else if (feature == 'parking') {
+      return null; // We do not support parking any more
+    }
+    else if (feature == 'library-card') {
+      return null; // We do not support library card any more
     }
     else {
       return null;
@@ -371,11 +370,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
-  void _navigateLibraryCard() {
-    Analytics().logSelect(target: "Library Card");
-    //showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
-  }
-
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
     WalletMealPlanPanel.present(context);
@@ -392,11 +386,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         launchUrl(uri);
       }
     }
-  }
-
-  void _navigateParking() {
-    Analytics().logSelect(target: "Parking");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
   }
 
   void _navigateQuickPolls() {

@@ -18,7 +18,6 @@ Map<String, String> deeplinkNameMap = {
   'map.mtd_stops': 'Bus Stops',
   'map.my_locations': 'My Locations',
   'map.mental_health': 'Find a Therapist',
-  'map.state_farm_wayfinding': 'State Farm Wayfinding',
   'academics': 'Academics',
   'academics.gies_checklist': 'iDegrees New Student Checklist',
   'academics.uiuc_checklist': 'New Student Checklist',

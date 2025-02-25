@@ -269,8 +269,8 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     Analytics().logSelect(target: 'Campus Resources');
     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
