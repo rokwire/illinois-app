@@ -47,9 +47,7 @@ import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
-import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
@@ -667,10 +665,6 @@ class _BrowseEntry extends StatelessWidget {
 
       case "surveys.public_surveys":         _onTapPublicSurveys(context); break;
 
-      case "state_farm_center.parking":      _onTapParking(context); break;
-      case "state_farm_center.wayfinding":   _onTapStateFarmWayfinding(context); break;
-      case "state_farm_center.create_stadium_poll": _onTapCreateStadiumPoll(context); break;
-
       case "wallet.illini_cash_card":        _onTapIlliniCash(context); break;
       case "wallet.add_illini_cash":         _onTapAddIlliniCash(context); break;
       case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
@@ -1049,25 +1043,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapPublicSurveys(BuildContext context) {
     Analytics().logSelect(target: "Public Surveys");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
-  }
-
-  static void _onTapParking(BuildContext context) {
-    Analytics().logSelect(target: "Parking");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
-  }
-
-  static void _onTapStateFarmWayfinding(BuildContext context) {
-    Analytics().logSelect(target: "State Farm Wayfinding");
-    /* TBD Map2 NativeCommunicator().launchMap(target: {
-      'latitude': Config().stateFarmWayfinding['latitude'],
-      'longitude': Config().stateFarmWayfinding['longitude'],
-      'zoom': Config().stateFarmWayfinding['zoom'],
-    }); */
-  }
-
-  static void _onTapCreateStadiumPoll(BuildContext context) {
-    Analytics().logSelect(target: "Create Stadium Poll");
-    CreateStadiumPollPanel.present(context);
   }
 
   static void _onTapIlliniCash(BuildContext context) {

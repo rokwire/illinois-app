@@ -20,7 +20,6 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
@@ -314,14 +313,14 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     else if (feature == 'my-illini') {
       return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "My Illini"), iconKey: "guide-student-portal", onTap: _navigateMyIllini) : null;
     }
-    else if (feature == 'parking') {
-      return features.contains('parking') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.parking.title", "Parking"), iconKey: "guide-parking", onTap: _navigateParking) : null;
-    }
     else if (feature == 'quick-polls') {
       return features.contains('quick_polls') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.quick_polls.title", "Quick Polls"), iconKey: "guide-polls", onTap: _navigateQuickPolls) : null;
     }
     else if (feature == 'saved') {
       return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), iconKey: "guide-saved", onTap: _navigateSaved) : null;
+    }
+    else if (feature == 'parking') {
+      return null; // We do not support parking any more
     }
     else if (feature == 'library-card') {
       return null; // We do not support library card any more
@@ -387,11 +386,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         launchUrl(uri);
       }
     }
-  }
-
-  void _navigateParking() {
-    Analytics().logSelect(target: "Parking");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
   }
 
   void _navigateQuickPolls() {

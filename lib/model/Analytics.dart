@@ -89,7 +89,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
 
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
-  static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
 
   static const AnalyticsFeature   Wallet                         = AnalyticsFeature("Wallet");
   static const AnalyticsFeature   WalletBusPass                  = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
@@ -176,7 +175,6 @@ class AnalyticsFeature {
     Recent,
     Safety,
     Debug,
-    StateFarmCenter,
     Onboarding,
 
     Wallet,

@@ -50,7 +50,6 @@ import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
 import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
-import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeVideoTutorialsWidget.dart';
@@ -459,15 +458,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeVideoTutorialsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeVideoTutorialsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'state_farm_center') {
-      if (title) {
-        return HomeStateFarmCenterWidget.title;
-      } else if (handle) {
-        return HomeStateFarmCenterWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeStateFarmCenterWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 
