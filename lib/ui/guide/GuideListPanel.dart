@@ -308,9 +308,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     else if (feature == 'laundry') {
       return features.contains('laundry') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.laundry.title", "Laundry"), iconKey: "guide-laundry", onTap: _navigateLaundry,) : null;
     }
-    else if (feature == 'library-card') {
-      return features.contains('library_card') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), iconKey: "guide-library-card", onTap: _navigateLibraryCard) : null;
-    }
     else if (feature == 'meal-plan') {
       return features.contains('meal_plan') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.meal_plan.title", "Meal Plan"), iconKey: "guide-meal-plan", onTap: _navigateMealPlan,) : null;
     }
@@ -325,6 +322,9 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
     else if (feature == 'saved') {
       return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), iconKey: "guide-saved", onTap: _navigateSaved) : null;
+    }
+    else if (feature == 'library-card') {
+      return null; // We do not support library card any more
     }
     else {
       return null;
@@ -369,11 +369,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   void _navigateLaundry() {
     Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
-  }
-
-  void _navigateLibraryCard() {
-    Analytics().logSelect(target: "Library Card");
-    //showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
   }
 
   void _navigateMealPlan() {

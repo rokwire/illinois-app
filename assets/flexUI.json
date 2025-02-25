@@ -23,7 +23,7 @@
 			"home.dinings": ["dinings_all", "dinings_open"],
 			"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
+			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card"],
 
 			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
@@ -50,7 +50,7 @@
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
 			"browse.surveys": ["public_surveys"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
+			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_podcast"],
 
 			"wallet": ["illini_id", "illini_id_faq", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
@@ -100,7 +100,7 @@
 			
 			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "sport_prefs", "research_questionnaire"],
 	
-			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
+			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"gies", "new_student", "canvas", "safer", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization"],
@@ -224,7 +224,6 @@
 				"new_student_checklist"                   : { "firstYearStudent": true }
 			},
 			"enable" : {
-				"library_card"                            : false,
 				"emergency"                               : false,
 				"safer"                                   : false,
 				"parking"                                 : false,

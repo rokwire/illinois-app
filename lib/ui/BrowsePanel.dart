@@ -685,7 +685,6 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
       case "wallet.bus_pass_card":           _onTapBusPass(context); break;
       case "wallet.illini_id_card":          _onTapIlliniId(context); break;
-      case "wallet.library_card":            _onTapLibraryCard(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -1129,11 +1128,6 @@ class _BrowseEntry extends StatelessWidget {
     WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
   }
 
-  static void _onTapLibraryCard(BuildContext context) {
-    Analytics().logSelect(target: "Library Card");
-    _notImplemented(context);
-  }
-
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings,)));
@@ -1164,6 +1158,7 @@ class _BrowseEntry extends StatelessWidget {
     _launchUrl(context, Wellness().getResourceUrl(resourceId: 'podcast'));
   }
 
+  // ignore: unused_element
   static void _notImplemented(BuildContext context) {
     AppAlert.showDialogResult(context, "Not implemented yet.");
   }

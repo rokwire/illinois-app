@@ -114,7 +114,6 @@
     "generic.app.feature.meal_plan": "University Housing Meal Plan",
     "generic.app.feature.bus_pass": "MTD Bus Pass",
     "generic.app.feature.illini_id": "Illini ID",
-    "generic.app.feature.library_card": "Library Card",
     "generic.app.feature.stadium_polls": "Stadium Polls",
     "generic.app.feature.polls": "Polls",
     "generic.app.feature.notifications": "Notifications",
@@ -271,7 +270,6 @@
     "panel.browse.label.offline.inbox": "Las notificaciones no están disponibles sin conexión.",
 
     "panel.browse.label.no_card.bus_pass": "Necesita una tarjeta de identidad Illini válida para acceder al pase de autobús MTD.",
-    "panel.browse.label.no_card.library_card": "Necesita una tarjeta de identidad Illini válida para acceder a la tarjeta de la biblioteca.",
     "panel.browse.label.no_card.illini_id": "No hay información Illini ID. No tienes una Illini ID activa. Por favor visite el Centro de Identificación.",
     "panel.browse.label.expired_card.illini_id": "No hay información Illini ID. Su Illini ID expiró el %s. Por favor visite el Centro de Identificación.",
     "panel.browse.label.expiring_card.illini_id":"Su ID caducará el %s. Por favor visite el Centro de Identificación.",
@@ -439,7 +437,6 @@
     "panel.browse.entry.wallet.meal_plan_card.title": "Plan de Comidas",
     "panel.browse.entry.wallet.bus_pass_card.title": "Pase de autobus",
     "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
-    "panel.browse.entry.wallet.library_card.title": "Tarjeta de biblioteca",
 
     "panel.browse.entry.wellness.wellness_rings.title": "Daily Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
@@ -3381,7 +3378,6 @@
     "panel.guide_list.button.illini_cash.title": "Illini Cash",
     "panel.guide_list.button.illini_id.title": "Illini ID",
     "panel.guide_list.button.laundry.title": "Ropa sucia",
-    "panel.guide_list.button.library_card.title": "Tarjeta de biblioteca",
     "panel.guide_list.button.meal_plan.title": "Régimen de comidas",
     "panel.guide_list.button.my_illini.title": "myIllini",
     "panel.guide_list.button.parking.title": "Estacionamiento",
@@ -3916,8 +3912,6 @@
     "widget.home.wallet.bus_pass.label.card_expires.text": "Vence: %s",
 
     "widget.home.wallet.illini_id.title": "Illini ID",
-
-    "widget.home.wallet.library_card.title": "Tarjeta de biblioteca",
 
     "widget.home.radio.will.title": "WILL News & Talk (NPR)",
     "widget.home.radio.will.disabled.message": "WILL News & Talk (NPR) is not enabled.",

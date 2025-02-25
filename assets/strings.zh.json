@@ -114,7 +114,6 @@
 	"generic.app.feature.meal_plan": "University Housing Meal Plan",
 	"generic.app.feature.bus_pass": "MTD Bus Pass",
 	"generic.app.feature.illini_id": "Illini ID",
-	"generic.app.feature.library_card": "Library Card",
 	"generic.app.feature.stadium_polls": "Stadium Polls",
 	"generic.app.feature.polls": "Polls",
 	"generic.app.feature.notifications": "Notifications",
@@ -271,7 +270,6 @@
 	"panel.browse.label.offline.inbox": "離線時通知不可用。",
 
 	"panel.browse.label.no_card.bus_pass": "您需要有效的 Illini ID才能使用 MTD Bus Pass。",
-	"panel.browse.label.no_card.library_card": "您需要有效的Illini ID才能訪問借書證。",
 	"panel.browse.label.no_card.illini_id": "沒有Illini ID信息。 您沒有有效的 Illini ID。 請訪問 ID 中心。",
 	"panel.browse.label.expired_card.illini_id": "沒有Illini ID 信息。 您的 Illini ID 已於 %s 過期。 請訪問 ID 中心。",
 	"panel.browse.label.expiring_card.illini_id":"您的 ID 將於 %s 過期。 請訪問 ID 中心。",
@@ -439,7 +437,6 @@
 	"panel.browse.entry.wallet.meal_plan_card.title": "進食計劃",
 	"panel.browse.entry.wallet.bus_pass_card.title": "巴士通票",
 	"panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
-	"panel.browse.entry.wallet.library_card.title": "借書卡",
 
 	"panel.browse.entry.wellness.wellness_rings.title": "Daily Rings",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
@@ -3366,7 +3363,6 @@
 	"panel.guide_list.button.illini_cash.title": "Illini Cash",
 	"panel.guide_list.button.illini_id.title": "Illini ID",
 	"panel.guide_list.button.laundry.title": "洗衣房",
-	"panel.guide_list.button.library_card.title": "借書卡",
 	"panel.guide_list.button.meal_plan.title": "進食計劃",
 	"panel.guide_list.button.my_illini.title": "myIllini",
 	"panel.guide_list.button.parking.title": "停車處",
@@ -3900,8 +3896,6 @@
 	"widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
 	"widget.home.wallet.illini_id.title": "Illini ID",
-
-	"widget.home.wallet.library_card.title": "借書卡",
 
 	"widget.home.radio.will.title": "WILL News & Talk (NPR)",
 	"widget.home.radio.will.disabled.message": "WILL News & Talk (NPR) is not enabled.",
