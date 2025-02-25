@@ -19,7 +19,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
@@ -663,7 +662,6 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
       case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
-      case "wellness.wellness_podcast":         _onTapWellnessPodcast(context); break;
     }
   }
 
@@ -1010,11 +1008,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapWellnessSuccessTeam(BuildContext context) {
     Analytics().logSelect(target: "My Success Team");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
-  }
-
-  static void _onTapWellnessPodcast(BuildContext context) {
-    Analytics().logSelect(target: "Healthy Illini Podcast");
-    _launchUrl(context, Wellness().getResourceUrl(resourceId: 'podcast'));
   }
 
   // ignore: unused_element

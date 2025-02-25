@@ -412,7 +412,6 @@
 	"panel.browse.entry.wellness.wellness_resources.title": "一般資源",
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
 	"panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
-	"panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
 	"panel.browse.entry.wellness.wellness_recreation.title": "Campus Recreation",
 
 	"panel.assistant.header.title": "伊利諾伊州助理",
@@ -2509,7 +2508,6 @@
 	"panel.wellness.section.screener.label": "Illinois Health Screener",
 	"panel.wellness.section.resources.label": "一般資源",
 	"panel.wellness.section.mental_health.label": "心理健康資源",
-	"panel.wellness.section.podcast.label": "健康Illini播客",
 
 	"panel.wellness.sections.description.footer.wellness.text": "健康 ",
 	"panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",

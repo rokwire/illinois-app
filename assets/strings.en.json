@@ -414,7 +414,6 @@
     "panel.browse.entry.wellness.wellness_resources.title": "General Resources",
     "panel.browse.entry.wellness.wellness_mental_health.title": "Mental Health Resources",
     "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
-    "panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
     "panel.browse.entry.wellness.wellness_recreation.title": "Campus Recreation",
 
     "panel.assistant.header.title": "Illinois Assistant",
@@ -2524,7 +2523,6 @@
     "panel.wellness.section.resources.label": "General Resources",
     "panel.wellness.section.mental_health.label": "Mental Health Resources",
     "panel.wellness.section.success_team.label": "My Success Team",
-    "panel.wellness.section.podcast.label": "Healthy Illini Podcast",
 
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
     "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving toward enhancing your ",

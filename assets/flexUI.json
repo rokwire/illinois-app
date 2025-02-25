@@ -43,7 +43,7 @@
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
 			"browse.surveys": ["public_surveys"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card"],
-			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_podcast"],
+			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
 
 			"wallet": ["illini_id", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
 
@@ -66,7 +66,7 @@
 			"academics.skills_self_evaluation.features": ["authentication", "login"],
 			"academics.essential_skills_coach.features": ["authentication", "netid_login"],
 
-			"wellness": ["recreation", "daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "success_team", "struggling"],
+			"wellness": ["recreation", "daily_tips", "rings", "appointments", "health_screener", "resources", "mental_health", "success_team", "struggling"],
 			"wellness.appointments.features": ["authentication", "netid_login"],
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
@@ -218,8 +218,6 @@
 			"enable" : {
 				"emergency"                               : false,
 				"explore.map.laundry"                     : false,
-				"wellness.podcast"                        : false,
-				"wellness_podcast"                        : false,
 				"campus_safety_resources"                 : false,
 				"twitter"                                 : false,
 				"public_surveys"                          : false,

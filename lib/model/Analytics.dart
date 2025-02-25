@@ -105,7 +105,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessResources              = AnalyticsFeature("Wellness: Resources", key: {"WellnessResources"}, priority: 1);
   static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Success Team", key: {"WellnessSuccessTeam"}, priority: 1);
-  static const AnalyticsFeature   WellnessPodcast                = AnalyticsFeature("Wellness: Podcast", priority: -1);
   static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
 
   static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
@@ -192,7 +191,6 @@ class AnalyticsFeature {
     WellnessResources,
     WellnessMentalHealth,
     WellnessSuccessTeam,
-    WellnessPodcast,
   ];
 
   final String name;
