@@ -606,7 +606,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return Wellness().loadMentalHealthBuildings();
         case ExploreMapType.StoriedSites: return Places().getAllPlaces();
-        case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
     }

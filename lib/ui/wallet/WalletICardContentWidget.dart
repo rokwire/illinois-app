@@ -19,12 +19,10 @@ import 'dart:math' as math;
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
@@ -46,7 +44,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
-// import 'package:url_launcher/url_launcher.dart';
 
 class WalletICardContentWidget extends StatefulWidget {
   WalletICardContentWidget({super.key});
@@ -627,7 +624,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().iCard?.uin;
   }
 
-  bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
+  bool get _hasBuildingAccess => false;
 
   bool get _hasMobileAccess => (_hasMobileAccessKeys && _hasMobileIdentityCredentials);
 

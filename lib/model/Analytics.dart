@@ -48,7 +48,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   MapMTDStops                    = AnalyticsFeature("Map: MTD Stops", priority: -1);
   static const AnalyticsFeature   MapMyLocations                 = AnalyticsFeature("Map: My Locations", priority: -1);
   static const AnalyticsFeature   MapMentalHealth                = AnalyticsFeature("Map: Therapist", priority: -1);
-  static const AnalyticsFeature   MapStateFarm                   = AnalyticsFeature("Map: State Farm", priority: -1);
   static const AnalyticsFeature   StoriedSites                   = AnalyticsFeature("Map: Storied Sites", priority: -1);
 
   static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
@@ -90,7 +89,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
 
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
-  static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
 
   static const AnalyticsFeature   Wallet                         = AnalyticsFeature("Wallet");
   static const AnalyticsFeature   WalletBusPass                  = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
@@ -107,7 +105,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessResources              = AnalyticsFeature("Wellness: Resources", key: {"WellnessResources"}, priority: 1);
   static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Success Team", key: {"WellnessSuccessTeam"}, priority: 1);
-  static const AnalyticsFeature   WellnessPodcast                = AnalyticsFeature("Wellness: Podcast", priority: -1);
   static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
 
   static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
@@ -142,7 +139,6 @@ class AnalyticsFeature {
     MapMTDStops,
     MapMyLocations,
     MapMentalHealth,
-    MapStateFarm,
     StoriedSites,
 
     Events,
@@ -178,7 +174,6 @@ class AnalyticsFeature {
     Recent,
     Safety,
     Debug,
-    StateFarmCenter,
     Onboarding,
 
     Wallet,
@@ -196,7 +191,6 @@ class AnalyticsFeature {
     WellnessResources,
     WellnessMentalHealth,
     WellnessSuccessTeam,
-    WellnessPodcast,
   ];
 
   final String name;

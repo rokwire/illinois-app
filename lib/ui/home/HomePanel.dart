@@ -32,10 +32,9 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/service/RadioPlayer.dart';
-import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
-import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeSafetyResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
@@ -43,17 +42,14 @@ import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
-import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomePublicSurveysWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
 import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
-import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
-import 'package:illinois/ui/home/HomeVideoTutorialsWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessMentalHealthWidget.dart';
@@ -73,7 +69,6 @@ import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeGroupsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
@@ -208,15 +203,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeCampusHighlightsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeCampusHighlightsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'campus_safety_resources') {
-      if (title) {
-        return HomeCampusSafetyResourcesWidget.title;
-      } else if (handle) {
-        return HomeCampusSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeCampusSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'twitter') {
@@ -372,15 +358,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: ExplorePOI.favoriteKeyName);
       }
     }
-    else if (code == 'safer') {
-      if (title) {
-        return HomeSaferWidget.title;
-      } else if (handle) {
-        return HomeSaferWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeSaferWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
     else if (code == 'dinings') {
       if (title) {
         return HomeDiningWidget.title;
@@ -433,51 +410,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRadioWidget.handle(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeRadioWidget(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'all_notifications') {
-      if (title) {
-        return HomeInboxWidget.title(content: HomeInboxContent.all);
-      } else if (handle) {
-        return HomeInboxWidget.handle(key: _globalKey(globalKeys, code), content: HomeInboxContent.all, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeInboxWidget(key: _globalKey(globalKeys, code), content: HomeInboxContent.all, favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'unread_notifications') {
-      if (title) {
-        return HomeInboxWidget.title(content: HomeInboxContent.unread);
-      } else if (handle) {
-        return HomeInboxWidget.handle(key: _globalKey(globalKeys, code), content: HomeInboxContent.unread, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeInboxWidget(key: _globalKey(globalKeys, code), content: HomeInboxContent.unread, favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'app_help') {
-      if (title) {
-        return HomeAppHelpWidget.title;
-      } else if (handle) {
-        return HomeAppHelpWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeAppHelpWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'video_tutorials') {
-      if (title) {
-        return HomeVideoTutorialsWidget.title;
-      } else if (handle) {
-        return HomeVideoTutorialsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeVideoTutorialsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'state_farm_center') {
-      if (title) {
-        return HomeStateFarmCenterWidget.title;
-      } else if (handle) {
-        return HomeStateFarmCenterWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeStateFarmCenterWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 

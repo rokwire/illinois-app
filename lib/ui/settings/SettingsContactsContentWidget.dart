@@ -20,6 +20,26 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
+  final String _contactEmail = "rokwire@illinois.edu";
+  late GestureRecognizer _contactEmailGestureRecognizer;
+
+  final String _contactWebsite = "app.illinois.edu";
+  late GestureRecognizer _contactWebsiteGestureRecognizer;
+
+  @override
+  void initState() {
+    _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("mailto:$_contactEmail");
+    _contactWebsiteGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("https://$_contactWebsite");
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _contactEmailGestureRecognizer.dispose();
+    _contactWebsiteGestureRecognizer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -89,13 +109,13 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         RichText(textAlign: TextAlign.left, text:
           TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
-              TextSpan(text: "rokwire@illinois.edu",
+              TextSpan(text: _contactEmail,
                   style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                  recognizer: TapGestureRecognizer()..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
+                  recognizer: _contactEmailGestureRecognizer),
               TextSpan(text: " • "),
               TextSpan(text: "app.illinois.edu",
                 style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                recognizer: TapGestureRecognizer()..onTap = () => _processUrl("app.illinois.edu")),
+                recognizer: _contactWebsiteGestureRecognizer),
           ]))
       ],)
     );
@@ -134,6 +154,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   }
 
   void _processUrl(String? url) {
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {

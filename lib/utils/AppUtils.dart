@@ -91,26 +91,26 @@ class AppAlert {
     );
   }
 
-  static Future<void> showLinkedTextMessage(BuildContext context, { required String message, required String linkMacro, required String linkText, void Function()? linkAction }) {
+  static Future<void> showLinkedTextMessage(BuildContext context, { required String message, required String linkMacro, required String linkText, void Function()? linkAction }) async {
     List<InlineSpan> spanList = <InlineSpan>[];
+    GestureRecognizer linkGestureRecognizer = TapGestureRecognizer()..onTap = linkAction;
     List<String> messages = message.split(linkMacro);
     if (0 < messages.length) {
       spanList.add(TextSpan(text: messages.first));
     }
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: linkText, style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = linkAction, )
-      );
+      spanList.add(TextSpan(text: linkText, recognizer: linkGestureRecognizer, style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),));
       spanList.add(TextSpan(text: messages[index]));
     }
 
-    return showWidgetMessage(context,
+    await showWidgetMessage(context,
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.regular"), children: spanList)
       ),
       buttonTextStyle: Styles().textStyles.getTextStyle("widget.message.regular"),
       analyticsMessage: message.replaceAll(linkMacro, linkText)
     );
+    linkGestureRecognizer.dispose();
   }
 
   static Future<void> showWidgetMessage(BuildContext context, Widget messageWidget, { TextStyle? buttonTextStyle, String? analyticsMessage }) =>
