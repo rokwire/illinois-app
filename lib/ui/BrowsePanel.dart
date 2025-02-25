@@ -609,7 +609,6 @@ class _BrowseEntry extends StatelessWidget {
       case "mtd.my_locations":               _onTapMyLocations(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
-      case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
@@ -737,16 +736,6 @@ class _BrowseEntry extends StatelessWidget {
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
-    )));
-  }
-
-  static void _onTapCampusSafetyResources(BuildContext context) {
-    Analytics().logSelect(target: 'Campus Safety Resources');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 
@@ -949,8 +938,8 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Safety Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }

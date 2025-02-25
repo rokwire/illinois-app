@@ -34,7 +34,7 @@ import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
-import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeSafetyResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
@@ -203,15 +203,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeCampusHighlightsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeCampusHighlightsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'campus_safety_resources') {
-      if (title) {
-        return HomeCampusSafetyResourcesWidget.title;
-      } else if (handle) {
-        return HomeCampusSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeCampusSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'twitter') {

@@ -12,7 +12,7 @@
 				"event_feed", "my_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders",
 				"gies_checklist", "new_student_checklist", "student_courses", "canvas_courses",
-				"campus_highlights", "campus_safety_resources",
+				"campus_highlights",
 				"safewalk_request", "saferides", "safety_resources",
 				"recent_items", "public_surveys", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
 			],
@@ -28,7 +28,7 @@
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
 			"browse.laundry": ["laundry", "my_laundry"],
-			"browse.campus_guide": ["campus_highlights", "campus_safety_resources", "campus_guide", "my_campus_guide"],
+			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["event_feed", "my_events"],
@@ -218,7 +218,6 @@
 			"enable" : {
 				"emergency"                               : false,
 				"explore.map.laundry"                     : false,
-				"campus_safety_resources"                 : false,
 				"twitter"                                 : false,
 				"public_surveys"                          : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
