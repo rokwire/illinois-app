@@ -88,7 +88,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
           AppSemantics.announceMessage(context, " moved one position below");
           // AppSemantics.requestSemanticsUpdates(context);
         },
-       child: LongPressDraggable<HomeFavorite>(
+       child: _buildDraggableWidget(
         data: HomeFavorite(widget.favoriteId),
         axis: Axis.vertical,
         //affinity: Axis.vertical,
@@ -126,6 +126,39 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,),
     ]);
+  }
+
+  Widget _buildDraggableWidget<T extends Object>(
+      {HomeFavorite? data,
+      Axis? axis,
+      int? maxSimultaneousDrags,
+      VoidCallback? onDragStarted,
+      DragEndCallback? onDragEnd,
+      VoidCallback? onDragCompleted,
+      DraggableCanceledCallback? onDraggableCanceled,
+      required Widget feedback,
+      required Widget child}) {
+    if (kIsWeb) {
+      return Draggable<HomeFavorite>(
+          data: data,
+          axis: axis,
+          maxSimultaneousDrags: maxSimultaneousDrags,
+          onDragStarted: onDragStarted,
+          onDragEnd: onDragEnd,
+          onDragCompleted: onDragCompleted,
+          child: child,
+          feedback: feedback);
+    } else {
+      return LongPressDraggable<HomeFavorite>(
+          data: data,
+          axis: axis,
+          maxSimultaneousDrags: maxSimultaneousDrags,
+          onDragStarted: onDragStarted,
+          onDragEnd: onDragEnd,
+          onDragCompleted: onDragCompleted,
+          child: child,
+          feedback: feedback);
+    }
   }
 
   void _onDragMove(Offset offset) {
