@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Intro video in the web app [#4825](https://github.com/rokwire/illinois-app/issues/4825).
+### Fixed
+- Avoid long press for drag and drop widgets in web [#4805](https://github.com/rokwire/illinois-app/issues/4805).
 
 ## [6.2.0] - 2025-02-25
 ### Fixed
