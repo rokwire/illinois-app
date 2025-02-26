@@ -1192,18 +1192,18 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         )
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
-                    ),
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text('To: ${memberIds?.length ?? 0} members',
-                          style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
-                      ),
-                      GestureDetector( onTap: () => _onTapPostOptions(), child:
-                      Styles().images.getImage(widget.isReply ? 'ellipsis-alert' : 'report', excludeFromSemantics: true, color: Styles().colors.alert)
-                      ),
-                    ]),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    //   child: Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
+                    // ),
+                    // Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    //   Text('To: ${memberIds?.length ?? 0} members',
+                    //       style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat')
+                    //   ),
+                    //   GestureDetector( onTap: () => _onTapPostOptions(), child:
+                    //   Styles().images.getImage(widget.isReply ? 'ellipsis-alert' : 'report', excludeFromSemantics: true, color: Styles().colors.alert)
+                    //   ),
+                    // ]),
                   ]))))),
     ]);
   }
@@ -1231,42 +1231,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
           )
         )
       ]));
-
-  void _onTapPostOptions() {
-    bool isReportAbuseVisible = widget.group.currentUserIsMemberOrAdmin ?? false;
-    Analytics().logSelect(target: 'Post Options');
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Styles().colors.surface,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Visibility(visible: isReportAbuseVisible, child: RibbonButton(
-                    leftIconKey: "reply",
-                    label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
-                    onTap: _onTapCard
-                )),
-                // Visibility(visible: isReportAbuseVisible, child: RibbonButton(
-                //   leftIconKey: "comment",
-                //   label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
-                //   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
-                // )),
-                // Visibility(visible: isReportAbuseVisible, child: RibbonButton(
-                //   leftIconKey: "comment",
-                //   label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
-                //   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
-                // )),
-              ],
-            ),
-          );
-        });
-  }
 
   Widget get _pinWidget => Visibility(visible: widget.post?.pinned == true, child:
       InkWell(
