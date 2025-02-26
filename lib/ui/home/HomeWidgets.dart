@@ -371,18 +371,21 @@ class HomeBannerWidget extends StatelessWidget {
     return Column(children: [
 
       // Title Row
-      Padding(padding: EdgeInsets.zero, child:
-        Semantics(container: true, header: true,
-          child: Stack(alignment: bannerFavoriteAlignment, children: <Widget>[
-            Stack(alignment: bannerTitleAlignment, children: <Widget>[
-              Container(width: MediaQuery.of(context).size.width, child: Styles().images.getImage(bannerImageKey, fit: BoxFit.contain, excludeFromSemantics: true)),
-              Semantics(label: title, header: true, excludeSemantics: true, child:
-                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.fat.spaced"))
-              ),
-            ]),
-            if (favoriteId != null)
-              HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
-          ],),
+      Container(
+        height: 60,
+        child: Padding(padding: EdgeInsets.zero, child:
+          Semantics(container: true, header: true,
+            child: Stack(alignment: bannerFavoriteAlignment, children: <Widget>[
+              Stack(alignment: bannerTitleAlignment, children: <Widget>[
+                Container(width: MediaQuery.of(context).size.width, child: Styles().images.getImage(bannerImageKey, fit: BoxFit.cover, excludeFromSemantics: true)),
+                Semantics(label: title, header: true, excludeSemantics: true, child:
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.fat.spaced"))
+                ),
+              ]),
+              if (favoriteId != null)
+                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
+            ],),
+          ),
         ),
       ),
 
