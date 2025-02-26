@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Intro video in the web app [#4825](https://github.com/rokwire/illinois-app/issues/4825).
 
 ## [6.1.64] - 2025-02-20
 ### Changed
