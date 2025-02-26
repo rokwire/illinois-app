@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+
+## [0.5.11] = 2025-02-26
 ### Fixed
 - Improve group post card UI
-- Image bug fixes [#65](https://github.com/rokmetro/neom-app/issues/65)
+- Reduce favorite section banner height on web
 
 ## [0.5.10] = 2025-02-25
 ### Fixed
