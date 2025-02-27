@@ -10,18 +10,15 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
@@ -42,34 +39,24 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
-import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
-import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
-import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
-import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
-import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -579,9 +566,6 @@ class _BrowseEntry extends StatelessWidget {
     'academics.my_illini'        : 'external-link',
     'academics.due_date_catalog' : 'external-link',
     'music_and_news.daily_illini': 'external-link',
-    'app_help.faqs'              : 'external-link',
-    'app_help.feedback'          : 'external-link',
-    'safer.my_mckinley'          : 'external-link',
   };
 
   Widget? get _iconWidget =>
@@ -606,11 +590,6 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.appointments":          _onTapAppointments(context, analyticsFeature: AnalyticsFeature.AcademicsAppointments); break;
       case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 
-      case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
-      case "app_help.feedback":              _onTapFeedback(context); break;
-      case "app_help.review":                _onTapReview(context); break;
-      case "app_help.faqs":                  _onTapFAQs(context); break;
-
       case "appointments.appointments":       _onTapAppointments(context, analyticsFeature: AnalyticsFeature.Appointments); break;
 
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
@@ -619,11 +598,6 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
-
-      case "safer.building_access":          _onTapBuildingAccess(context); break;
-      case "safer.test_locations":           _onTapTestLocations(context); break;
-      case "safer.my_mckinley":              _onTapMyMcKinley(context); break;
-      case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
       case "laundry.laundry":                _onTapLaundry(context); break;
       case "laundry.my_laundry":             _onTapMyLaundry(context); break;
@@ -635,7 +609,6 @@ class _BrowseEntry extends StatelessWidget {
       case "mtd.my_locations":               _onTapMyLocations(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
-      case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
@@ -662,9 +635,6 @@ class _BrowseEntry extends StatelessWidget {
       case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
       case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
 
-      case "inbox.all_notifications":        _onTapNotifications(context); break;
-      case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
-
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
 
@@ -676,16 +646,11 @@ class _BrowseEntry extends StatelessWidget {
 
       case "surveys.public_surveys":         _onTapPublicSurveys(context); break;
 
-      case "state_farm_center.parking":      _onTapParking(context); break;
-      case "state_farm_center.wayfinding":   _onTapStateFarmWayfinding(context); break;
-      case "state_farm_center.create_stadium_poll": _onTapCreateStadiumPoll(context); break;
-
       case "wallet.illini_cash_card":        _onTapIlliniCash(context); break;
       case "wallet.add_illini_cash":         _onTapAddIlliniCash(context); break;
       case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
       case "wallet.bus_pass_card":           _onTapBusPass(context); break;
       case "wallet.illini_id_card":          _onTapIlliniId(context); break;
-      case "wallet.library_card":            _onTapLibraryCard(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -696,7 +661,6 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
       case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
-      case "wellness.wellness_podcast":         _onTapWellnessPodcast(context); break;
     }
   }
 
@@ -750,66 +714,6 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  static void _onTapVideoTutorials(BuildContext context) {
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
-    }
-    else if (uiuc.Content().videos?.isNotEmpty == true) {
-      List<Video>? videoTutorials = _getVideoTutorials();
-      if (videoTutorials?.length == 1) {
-        Video? videoTutorial = videoTutorials?.first;
-        if (videoTutorial != null) {
-          Analytics().logSelect(target: "Video Tutorials", attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: videoTutorial)));
-        }
-      } else {
-        Analytics().logSelect(target: "Video Tutorials",);
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialListPanel(videoTutorials: videoTutorials)));
-      }
-    }
-  }
-
-  static List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
-    if (videoTutorials == null) {
-      return null;
-    }
-    List<dynamic>? videos = JsonUtils.listValue(videoTutorials['videos']);
-    if (CollectionUtils.isEmpty(videos)) {
-      return null;
-    }
-    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    return Video.listFromJson(jsonList: videos, contentStrings: strings);
-  }
-
-  static void _onTapFeedback(BuildContext context) {
-    Analytics().logSelect(target: "Provide Feedback");
-
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
-    }
-    else if (StringUtils.isNotEmpty(Config().feedbackUrl)) {
-      String email = Uri.encodeComponent(Auth2().email ?? '');
-      String name =  Uri.encodeComponent(Auth2().fullName ?? '');
-      String phone = Uri.encodeComponent(Auth2().phone ?? '');
-      String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
-      _launchUrl(context, feedbackUrl);
-    }
-  }
-
-  static void _onTapReview(BuildContext context) {
-    Analytics().logSelect(target: "Provide Review");
-    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
-  }
-
-  static void _onTapFAQs(BuildContext context) {
-    Analytics().logSelect(target: "FAQs");
-
-    if (StringUtils.isNotEmpty(Config().faqsUrl)) {
-      _launchUrl(context, Config().faqsUrl);
-    }
-  }
-
   static void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
@@ -825,30 +729,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.teams)));
   }
 
-  static void _onTapBuildingAccess(BuildContext context) {
-    Analytics().logSelect(target: 'Building Access');
-    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
-  }
-
-  static void _onTapTestLocations(BuildContext context) {
-    Analytics().logSelect(target: 'Locations');
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => HomeSaferTestLocationsPanel()
-    ));
-  }
-
-  static void _onTapMyMcKinley(BuildContext context) {
-    Analytics().logSelect(target: 'MyMcKinley');
-    _launchUrl(context, Config().saferMcKinleyUrl);
-  }
-
-  static void _onTapWellnessAnswerCenter(BuildContext context) {
-    Analytics().logSelect(target: 'Answer Center');
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => HomeSaferWellnessAnswerCenterPanel()
-    ));
-  }
-
   static void _onTapCampusHighlights(BuildContext context) {
     Analytics().logSelect(target: 'Campus Highlights');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
@@ -856,16 +736,6 @@ class _BrowseEntry extends StatelessWidget {
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
-    )));
-  }
-
-  static void _onTapCampusSafetyResources(BuildContext context) {
-    Analytics().logSelect(target: 'Campus Safety Resources');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 
@@ -914,12 +784,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapCampusGuide(BuildContext context) {
     Analytics().logSelect(target: "Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
-  }
-
-  static void _onTapNotifications(BuildContext context, {bool? unread}) {
-    bool isUnread = (unread == true);
-    Analytics().logSelect(target: isUnread ? "Unread Notifications" : "All Notifications");
-    NotificationsHomePanel.present(context, content: isUnread ? NotificationsContent.unread : NotificationsContent.all);
   }
 
   static void _onTapEventFeed(BuildContext context) {
@@ -1074,8 +938,8 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Safety Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
@@ -1083,25 +947,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapPublicSurveys(BuildContext context) {
     Analytics().logSelect(target: "Public Surveys");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
-  }
-
-  static void _onTapParking(BuildContext context) {
-    Analytics().logSelect(target: "Parking");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
-  }
-
-  static void _onTapStateFarmWayfinding(BuildContext context) {
-    Analytics().logSelect(target: "State Farm Wayfinding");
-    /* TBD Map2 NativeCommunicator().launchMap(target: {
-      'latitude': Config().stateFarmWayfinding['latitude'],
-      'longitude': Config().stateFarmWayfinding['longitude'],
-      'zoom': Config().stateFarmWayfinding['zoom'],
-    }); */
-  }
-
-  static void _onTapCreateStadiumPoll(BuildContext context) {
-    Analytics().logSelect(target: "Create Stadium Poll");
-    CreateStadiumPollPanel.present(context);
   }
 
   static void _onTapIlliniCash(BuildContext context) {
@@ -1129,11 +974,6 @@ class _BrowseEntry extends StatelessWidget {
     WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
   }
 
-  static void _onTapLibraryCard(BuildContext context) {
-    Analytics().logSelect(target: "Library Card");
-    _notImplemented(context);
-  }
-
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings,)));
@@ -1159,11 +999,7 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
   }
 
-  static void _onTapWellnessPodcast(BuildContext context) {
-    Analytics().logSelect(target: "Healthy Illini Podcast");
-    _launchUrl(context, Wellness().getResourceUrl(resourceId: 'podcast'));
-  }
-
+  // ignore: unused_element
   static void _notImplemented(BuildContext context) {
     AppAlert.showDialogResult(context, "Not implemented yet.");
   }

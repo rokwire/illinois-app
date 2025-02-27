@@ -98,6 +98,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   bool _onlineLaunching = false;
 
   List<String>? _displayCategories;
+  Map<String?, GestureRecognizer> _contactGestureRecognizers = <String?, GestureRecognizer>{};
 
   @override
   void initState() {
@@ -128,6 +129,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    for (GestureRecognizer gestureRecognizer in _contactGestureRecognizers.values) {
+      gestureRecognizer.dispose();
+    }
     super.dispose();
   }
 
@@ -572,34 +576,42 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ] : null;
   }
 
-  List<Widget>? get _contactsDetailWidget{
-    if(CollectionUtils.isEmpty(_event?.contacts))
-      return null;
+  List<Widget>? get _contactsDetailWidget {
+    List<Event2Contact>? contacts = _event?.contacts;
+    if ((contacts != null) && contacts.isNotEmpty) {
+      List<Widget> contactList = [];
+      contactList.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.contacts.title', 'Contacts'), 'person'));
 
-    List<Widget> contactList = [];
-    contactList.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.contacts.title', 'Contacts'), 'person'));
-
-    for (Event2Contact? contact in _event!.contacts!) {
-      String? details =  event2ContactToDisplayString(contact);
-      if(StringUtils.isNotEmpty(details)){
-      contactList.add(
-          _buildDetailWidget(
-        // Text(details?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline')),
-              RichText(textScaler: MediaQuery.of(context).textScaler, text:
-                TextSpan(style: Styles().textStyles.getTextStyle("common.body"), children: <TextSpan>[
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.organization)?"${contact?.organization}, " : ""),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
-            ])),
-            'person', iconVisible: false, detailPadding: EdgeInsets.zero));
+      for (Event2Contact contact in contacts) {
+        String? details =  event2ContactToDisplayString(contact);
+        if(StringUtils.isNotEmpty(details)){
+        contactList.add(
+            _buildDetailWidget(
+          // Text(details?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline')),
+                RichText(textScaler: MediaQuery.of(context).textScaler, text:
+                  TextSpan(style: Styles().textStyles.getTextStyle("common.body"), children: <TextSpan>[
+                    if (StringUtils.isNotEmpty(contact.firstName))
+                      TextSpan(text: contact.firstName ?? ""),
+                    if (StringUtils.isNotEmpty(contact.lastName))
+                      TextSpan(text: contact.lastName ?? ""),
+                    if (StringUtils.isNotEmpty(contact.organization))
+                      TextSpan(text: contact.organization ?? ""),
+                    if (StringUtils.isNotEmpty(contact.email))
+                      TextSpan(text: contact.email ?? "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: _contactGestureRecognizers[contact.email] ??= TapGestureRecognizer()..onTap = () => _onContactEmail(contact.email),),
+                    if (StringUtils.isNotEmpty(contact.phone))
+                      TextSpan(text: contact.phone ?? "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: _contactGestureRecognizers[contact.phone] ??= TapGestureRecognizer()..onTap = () => _onContactPhone(contact.phone),),
+              ])),
+              'person', iconVisible: false, detailPadding: EdgeInsets.zero));
+        }
       }
+
+      contactList.add( _detailSpacerWidget);
+
+      return contactList;
     }
-
-    contactList.add( _detailSpacerWidget);
-
-    return contactList;
+    else {
+      return null;
+    }
   }
 
   List<Widget>? get _adminCommandsButton => _isAdmin? <Widget>[

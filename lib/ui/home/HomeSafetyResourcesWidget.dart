@@ -59,28 +59,12 @@ class HomeSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.safety_resources.label.campus_safety_resources', 'Safety Resources');
+  static String get title => Localization().getStringEx('widget.home.safety_resources.label.title', 'Safety Resources');
 
   @override String get _title => title;
   @override String get _emptyContentDescription => Localization().getStringEx("widget.home.safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Safety Resources</b></a> for quick access here.");
   @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources');
   @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Safety Resources.");
-}
-
-class HomeCampusSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
-  HomeCampusSafetyResourcesWidget({super.key, super.favoriteId, super.updateController});
-
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
-    );
-
-  static String get title => Localization().getStringEx('widget.home.campus_safety_resources.label.campus_safety_resources', 'Campus Safety Resources');
-
-  @override String get _title => title;
-  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.campus_safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Campus Safety Resources</b></a> for quick access here.");
-  @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources');
-  @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources.");
 }
 
 class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBaseWidget> implements NotificationsListener {
@@ -197,8 +181,8 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
         LinkButton(
-          title: Localization().getStringEx('widget.home.campus_safety_resources.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.campus_safety_resources.button.all.hint', 'Tap to view all safety resources'),
+          title: Localization().getStringEx('widget.home.safety_resources.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.safety_resources.button.all.hint', 'Tap to view all safety resources'),
           onTap: _onViewAll,
         ),
       ),

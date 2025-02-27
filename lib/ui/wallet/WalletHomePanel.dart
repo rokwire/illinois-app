@@ -22,7 +22,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
-import 'package:illinois/ui/wallet/WalletICardFaqsContentWidget.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
@@ -34,7 +33,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum WalletContentType { illiniId, illiniIdFaqs, busPass, mealPlan, illiniCash, addIlliniCash }
+enum WalletContentType { illiniId, busPass, mealPlan, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   final WalletContentType? contentType;
@@ -234,7 +233,6 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   Widget? get _contentPage {
     switch(_selectedContentType) {
       case WalletContentType.illiniId:      return WalletICardContentWidget(key: _contentPageKey);
-      case WalletContentType.illiniIdFaqs:  return WalletICardFaqsContentWidget(key: _contentPageKey);
       case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false, canClose: false,);
       case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);
       case WalletContentType.illiniCash:    return WalletIlliniCashContentWidget(key: _contentPageKey, headerHeight: 88);
@@ -338,7 +336,6 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
 WalletContentType? _walletContentTypeFromString(String? value) {
   switch(value) {
     case 'illini_id': return WalletContentType.illiniId;
-    case 'illini_id_faq': return WalletContentType.illiniIdFaqs;
     case 'bus_pass': return WalletContentType.busPass;
     case 'meal_plan': return WalletContentType.mealPlan;
     case 'illini_cash': return WalletContentType.illiniCash;
@@ -350,7 +347,6 @@ WalletContentType? _walletContentTypeFromString(String? value) {
 String? _walletContentTypeToString(WalletContentType? value) {
   switch(value) {
     case WalletContentType.illiniId: return 'illini_id';
-    case WalletContentType.illiniIdFaqs: return 'illini_id_faq';
     case WalletContentType.busPass: return 'bus_pass';
     case WalletContentType.mealPlan: return 'meal_plan';
     case WalletContentType.illiniCash: return 'illini_cash';
@@ -362,7 +358,6 @@ String? _walletContentTypeToString(WalletContentType? value) {
 String? _walletContentTypeToDisplayString(WalletContentType? contentType) {
   switch (contentType) {
     case WalletContentType.illiniId: return Localization().getStringEx('panel.wallet.content_type.illini_id.label', 'Illini ID');
-    case WalletContentType.illiniIdFaqs: return Localization().getStringEx('panel.wallet.content_type.illini_id_faqs.label', 'Illini ID FAQs');
     case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass');
     case WalletContentType.mealPlan: return Localization().getStringEx('panel.wallet.content_type.meal_plan.label', 'Meal Plan');
     case WalletContentType.illiniCash: return Localization().getStringEx('panel.wallet.content_type.illini_cash.label', 'Illini Cash');
