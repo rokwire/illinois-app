@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deleted
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
+## [6.1.65] - 2025-02-27
+### Fixed
+- GroupDetailPanel fixed post max lines restriction [#4822](https://github.com/rokwire/illinois-app/issues/4822).
+
 ## [6.1.64] - 2025-02-20
 ### Changed
 - Validate profile & privacy details on backend when profile info UI is presented [#4814](https://github.com/rokwire/illinois-app/issues/4814).
