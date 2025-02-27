@@ -353,7 +353,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                     pinned: true,
                     expandedHeight: _groupHeaderHeight,
                     flexibleSpace: _groupHeader,
-                    bottom: _buildTabs(),
+                    bottom: _isMemberOrAdmin ? _buildTabs() : null,
                   )
               )
           ),
@@ -776,9 +776,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         case DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
           break;
-        case DetailTab.Messages:
-          title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
-          break;
+        // case DetailTab.Messages:
+        //   title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
+        //   break;
         case DetailTab.Polls:
           title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
           break;
@@ -857,8 +857,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         return _GroupEventsContent(group: _group, updateController: _updateController);
       case DetailTab.Posts:
         return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
-      case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
+      // case DetailTab.Messages:
+      //   return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
       case DetailTab.Scheduled:
@@ -1577,9 +1577,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
           else if (result.isPost) {
             _updateController.add(_GroupPostsContent.notifyPostRefreshWithScrollToLast);
           }
-          else if (result.isMessage) {
-            _updateController.add(_GroupMessagesContent.notifyMessagesRefreshWithScrollToLast);
-          }
+          // else if (result.isMessage) {
+          //   _updateController.add(_GroupMessagesContent.notifyMessagesRefreshWithScrollToLast);
+          // }
         }
       });
     }

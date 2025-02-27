@@ -475,7 +475,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   _RecurrenceRepeatType? _recurrenceRepeatType;
   List<DayOfWeek>? _recurrenceWeekDays;
   int? _weeklyRepeatPeriod;
+  int? _dailyRepeatPeriod;
   static const int _maxRecurrenceWeeksValue = 10;
+  static const int _maxRecurrenceDaysValue = 10;
   int? _monthlyRepeatPeriod;
   static const int _maxRecurrenceMonthsValue = 10;
   _RecurrenceRepeatMonthlyType? _recurrenceRepeatMonthlyType;
@@ -564,6 +566,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     //_allDay = (widget.event?.allDay == true);
 
     _weeklyRepeatPeriod = (widget.isCreate) ? 1 : null; // default 1 week
+    _dailyRepeatPeriod = (widget.isCreate) ? 1 : null;
     _monthlyRepeatPeriod = (widget.isCreate) ? 1 : null; // default 1 month
 
     _eventType = widget.event?.eventType;
@@ -914,7 +917,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   List<DropdownMenuItem<Location>>? _buildTimeZoneDropDownItems() {
     List<DropdownMenuItem<Location>> menuItems = <DropdownMenuItem<Location>>[];
     timeZoneDatabase.locations.forEach((String name, Location location) {
-      if (name.startsWith('US/')) {
+      if (name.startsWith('US/') || name.startsWith('Europe/') || name.startsWith('Asia/')) {
         menuItems.add(DropdownMenuItem<Location>(
           value: location,
           child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name, style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"))),
@@ -1141,7 +1144,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     List<Widget> contentList = <Widget>[
       _buildRepeatTypeDropDown(),
     ];
-
+    if(_recurrenceRepeatType == _RecurrenceRepeatType.daily) {
+      contentList.addAll(<Widget>[
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
+        _buildRecurrenceEveryDaySectionWidget(),
+        _buildRecurrenceEndOnSectionWidget()
+      ]);
+    }
     if (_recurrenceRepeatType == _RecurrenceRepeatType.weekly) {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
@@ -1329,6 +1338,61 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return Wrap(crossAxisAlignment: WrapCrossAlignment.center, runSpacing: 6, children: daysWidgets);
   }
 
+  Widget _buildRecurrenceEveryDaySectionWidget() {
+    String? title = Localization().getStringEx('panel.event2.create.label.recurrence.every.label', 'EVERY');
+    return Semantics(
+      label: title,
+      container: true,
+      child: Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: RichText(
+                textScaler: MediaQuery.of(context).textScaler,
+                text: TextSpan(
+                    text: title,
+                    style: Event2CreatePanel.headingTextStype,
+                    semanticsLabel: ""
+                ),
+              ),
+            ),
+            Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
+            Expanded(
+              flex: 4,
+              child: Container(
+                decoration: Event2CreatePanel.dropdownButtonDecoration,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12, right: 8),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int?>(
+                      dropdownColor: Styles().colors.white,
+                      icon: Styles().images.getImage('chevron-down'),
+                      isExpanded: true,
+                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(
+                        _getEveryDayRecurrencePeriod(_dailyRepeatPeriod),
+                        style: _dropDownItemTextStyle(),
+                      ),
+                      selectedItemBuilder: (_) {
+                        return _buildDailyRecurrenceDropDownItems(selectedItem: true) ?? [];
+                      },
+                      items: _buildDailyRecurrenceDropDownItems(),
+                      value: _dailyRepeatPeriod,
+                      onChanged: _onDailyPeriodChanged,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildRecurrenceEveryWeekSectionWidget() {
     String? title = Localization().getStringEx('panel.event2.create.label.recurrence.every.label', 'EVERY');
     return Semantics(
@@ -1379,6 +1443,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return menuItems;
   }
 
+  List<DropdownMenuItem<int?>>? _buildDailyRecurrenceDropDownItems({bool selectedItem = false}) {
+    TextStyle? textStyle = _dropDownItemTextStyle(textDark: true);
+    List<DropdownMenuItem<int?>> menuItems = <DropdownMenuItem<int?>>[];
+    for (int i = 1; i <= _maxRecurrenceDaysValue; i++) {
+      menuItems.add(DropdownMenuItem<int?>(
+        value: i,
+        child: Text(
+          _getEveryDayRecurrencePeriod(i),
+          style: textStyle,
+        ),
+      ));
+    }
+    return menuItems;
+  }
+
+
   String _getEveryWeekRecurrencePeriod(int? period) {
     if (period == null) {
       return '-----';
@@ -1389,6 +1469,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         : Localization().getStringEx('panel.event2.create.label.recurrence.period.week.label', 'week');
     return '$period $weeksLabel';
   }
+
+  String _getEveryDayRecurrencePeriod(int? period) {
+    if (period == null) {
+      return '-----';
+    }
+    String dayLabel = (period > 1)
+        ? Localization().getStringEx('panel.event2.create.label.recurrence.period.days.label', 'days')
+        : Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day');
+    return '$period $dayLabel';
+  }
+
 
   void _onToggleWeekDay(DayOfWeek day) {
     setStateIfMounted(() {
@@ -1412,6 +1503,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       _errorMap = _buildErrorMap();
     });
   }
+
+  void _onDailyPeriodChanged(int? value) {
+    Analytics().logSelect(target: "Recurrence Every day: $value");
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _dailyRepeatPeriod = value;
+      _errorMap = _buildErrorMap();
+    });
+  }
+
 
   // 3 Monthly Section
 
@@ -1704,11 +1805,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
-        _buildSelectLocationButton(),
+        //_buildSelectLocationButton(),
         _buildLocationBuildingInnerSection(),
         _buildLocationAddressInnerSection(),
-        _buildLocationLatitudeInnerSection(),
-        _buildLocationLongitudeInnerSection(),
+        //_buildLocationLatitudeInnerSection(),
+        //_buildLocationLongitudeInnerSection(),
       ]);
     }
 
@@ -1796,12 +1897,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   );
 
   Widget _buildLocationLatitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
-    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: true),
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: false),
     body: Event2CreatePanel.buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx('panel.event2.create.location.latitude.field', 'LOCATION LATITUDE FIELD')),
   );
 
   Widget _buildLocationLongitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
-    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.longitude.title', 'LOCATION LONGITUDE'), required: true),
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.longitude.title', 'LOCATION LONGITUDE'), required: false),
     body: Event2CreatePanel.buildInnerTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx('panel.event2.create.location.longitude.field', 'LOCATION LONGITUDE FIELD')),
   );
 
@@ -2488,7 +2589,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
       if (!_hasRecurrenceEndDate) {
         missingList.add(Localization().getStringEx('panel.event2.create.status.missing.recurrence.end_date', 'recurrence end date'));
-      } else if (_recurrenceEndDate!.isBefore(_startDate!)) {
+      } else if (_startDate != null && _recurrenceEndDate!.isBefore(_startDate!)) {
         invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.recurrence.end_date', 'recurrence end date before start date'));
       }
     }
@@ -2498,7 +2599,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
     else {
       if (_inPersonEventType && !_hasLocation) {
-        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location coordinates'));
+        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location'));
       }
       if (_onlineEventType) {
         if (!_hasOnlineDetails) {
@@ -2752,20 +2853,23 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   ExploreLocation? _constructLocation() {
     double? latitude = _parseLatLng(_locationLatitudeController);
     double? longitude = _parseLatLng(_locationLongitudeController);
-    return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0)) ? ExploreLocation(
+    return ExploreLocation(
       name: _locationBuildingController.text.isNotEmpty ? _locationBuildingController.text : null,
       building: _locationBuildingController.text.isNotEmpty ? _locationBuildingController.text : null,
       description: _locationAddressController.text.isNotEmpty ? _locationAddressController.text : null,
       fullAddress: _locationAddressController.text.isNotEmpty ? _locationAddressController.text : null,
       latitude: latitude,
       longitude: longitude,
-    ) : null;
+    );
   }
 
   bool get _hasLocation {
-    double? latitude = _parseLatLng(_locationLatitudeController);
-    double? longitude = _parseLatLng(_locationLongitudeController);
-    return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0));
+    bool stupid1 = _locationBuildingController.text.isNotEmpty;
+    bool stupid2 = _locationAddressController.text.isNotEmpty;
+    return stupid1 || stupid2;
+    // double? latitude = _parseLatLng(_locationLatitudeController);
+    // double? longitude = _parseLatLng(_locationLongitudeController);
+    // return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0));
   }
 
   static double? _parseLatLng(TextEditingController textController) =>
@@ -3429,13 +3533,14 @@ enum _ErrorCategory { missing, invalid }
 
 // _RecurrenceRepeatType
 
-enum _RecurrenceRepeatType { does_not_repeat, weekly, monthly }
+enum _RecurrenceRepeatType { does_not_repeat, weekly, monthly, daily }
 
 String? _repeatTypeToDisplayString(_RecurrenceRepeatType? value) {
   switch (value) {
     case _RecurrenceRepeatType.does_not_repeat: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.does_not_repeat.label', 'Does Not Repeat');
     case _RecurrenceRepeatType.weekly: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.weekly.label', 'Weekly');
     case _RecurrenceRepeatType.monthly: return Localization().getStringEx('panel.event2.create.recurrence.repeat_type.monthly.label', 'Monthly');
+    case _RecurrenceRepeatType.daily: return Localization().getStringEx('', 'Daily');
     default: return null;
   }
 }

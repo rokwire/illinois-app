@@ -2959,6 +2959,10 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.enableTimeZone) ...[
+              _buildTimeZoneDropdown(),
+              Padding(padding: EdgeInsets.only(bottom: 12)),
+            ],
             Padding(
               padding: const EdgeInsets.only(bottom: 6.0),
               child: Row(
@@ -3248,7 +3252,8 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget> {
                       isExpanded: true,
                       style: Styles().textStyles.getTextStyle(
                           "panel.create_event.dropdown_button.title.regular"),
-                      hint: Text(_timeZone.name),
+                      hint: Text(_timeZone.name, style: Styles().textStyles.getTextStyle(
+                          "panel.create_event.dropdown_button.title.regular"),),
                       items: _buildTimeZoneDropDownItems(),
                       onChanged: _onTimeZoneChanged,
                     ),
@@ -3265,14 +3270,14 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget> {
   List<DropdownMenuItem<Location>>? _buildTimeZoneDropDownItems() {
     List<DropdownMenuItem<Location>> menuItems = <DropdownMenuItem<Location>>[];
     timeZoneDatabase.locations.forEach((String name, Location location) {
-      if (name.startsWith('US/')) {
+      if (name.startsWith('US/') || name.startsWith('Europe/') || name.startsWith('Asia/')) {
         menuItems.add(DropdownMenuItem<Location>(
           value: location,
           child: Semantics(
             label: name,
             excludeSemantics: true,
             container: true,
-            child: Text(name, style: headingTextStype),
+            child: Text(name, style: Styles().textStyles.getTextStyle("widget.card.title.light.tiny.fat")),
           ),
         ));
       }
@@ -3362,9 +3367,6 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget> {
     FocusScope.of(context).unfocus();
   }
 }
-
-
-
 
 
 

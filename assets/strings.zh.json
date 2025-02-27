@@ -1326,7 +1326,7 @@
 	"panel.event2.create.status.missing.end_date": "結束日期",
 	"panel.event2.create.status.missing.end_time": "結束時間",
 	"panel.event2.create.status.missing.event_type": "活动类别",
-	"panel.event2.create.status.missing.location": "地点座标位置",
+	"panel.event2.create.status.missing.location": "地點",
 	"panel.event2.create.status.missing.online_url": "网址链接",
 	"panel.event2.create.status.missing.cost_description": "成本细节信息",
 	"panel.event2.create.status.missing.attributes": "活动特征",

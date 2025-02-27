@@ -719,7 +719,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       title: _linkedEventsSectionTitle,
       slantImageKey: "slant-dark",
       slantColor: Styles().colors.backgroundVariant,
-      titleTextStyle: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
+      titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
       progressWidget: _linkedEventsProgress,
       children: !_linkedEventsLoading ? _linkedEventsContent : [Row(children: [Expanded(child: Container())],)],
   ) : Container();
@@ -783,7 +783,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
         Row(children: [
           Expanded(child:
-            Text(message, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
+            Text(message, style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"), textAlign: TextAlign.center,),
           )
         ],)
       )

@@ -1336,7 +1336,7 @@
     "panel.event2.create.status.missing.end_date": "fecha de finalización",
     "panel.event2.create.status.missing.end_time": "hora de finalización",
     "panel.event2.create.status.missing.event_type": "tipo de evento",
-    "panel.event2.create.status.missing.location": "coordenadas de ubicación",
+    "panel.event2.create.status.missing.location": "ubicación",
     "panel.event2.create.status.missing.online_url": "URL en línea",
     "panel.event2.create.status.missing.cost_description": "descripción del costo",
     "panel.event2.create.status.missing.attributes": "atributos del evento",
