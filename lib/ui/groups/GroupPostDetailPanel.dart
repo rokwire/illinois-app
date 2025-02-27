@@ -257,8 +257,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           //         onTapUrl : (url) {_onTapPostLink(url); return true;},
                           //         textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
                           //     )
-                            GroupPostCard(post: _post, group: widget.group, isClickable: false, postReactions: widget.postReactions,
-                              isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
+                            GroupPostCard(
+                                post: _post,
+                                group: widget.group,
+                                isClickable: false,
+                                displayMode: GroupPostCardDisplayMode.page,
+                                postReactions: widget.postReactions,
+                                isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
                           visible: _isEditMainPost,

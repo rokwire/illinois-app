@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Avoid long press for drag and drop widgets in web [#4805](https://github.com/rokwire/illinois-app/issues/4805).
 
+## [6.1.65] - 2025-02-27
+### Fixed
+- GroupDetailPanel fixed post max lines restriction [#4822](https://github.com/rokwire/illinois-app/issues/4822).
+
 ## [6.1.64] - 2025-02-20
 ### Changed
 - Validate profile & privacy details on backend when profile info UI is presented [#4814](https://github.com/rokwire/illinois-app/issues/4814).
