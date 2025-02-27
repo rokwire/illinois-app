@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2PrivacyPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -27,12 +27,12 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2ImprovePanel extends StatefulWidget{
-  Onboarding2ImprovePanel();
-  _Onboarding2ImprovePanelState createState() => _Onboarding2ImprovePanelState();
+class Onboarding2PrivacyShareActivityPanel extends StatefulWidget{
+  Onboarding2PrivacyShareActivityPanel();
+  _Onboarding2PrivacyShareActivityPanelState createState() => _Onboarding2PrivacyShareActivityPanelState();
 }
 
-class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
+class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2PrivacyShareActivityPanel> {
   late bool _toggled;
 
   @override
@@ -70,7 +70,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                       header: true,
                       excludeSemantics: true,
                       child: Padding(padding: EdgeInsets.all(16), child:
-                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.improve.heading.title"))
+                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy.share_activity.heading.title"))
                       ),
                     ),
 
@@ -85,7 +85,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                     Container(height: 10,),
 
                     Onboarding2UnderlinedButton(
-                      title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                      title: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.title.learn_more', 'Learn More'),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
                       onTap: _onTapLearnMore,
                     ),
@@ -122,8 +122,8 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                     ),
                   ),
                   RoundedButton(
-                    label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue'),
-                    hint: Localization().getStringEx('panel.onboarding2.improve.button.continue.hint', ''),
+                    label: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.continue.title', 'Continue'),
+                    hint: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.continue.hint', ''),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     backgroundColor: Styles().colors.white,
@@ -137,10 +137,10 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
         )
       );
 
-  String get _title => Localization().getStringEx('panel.onboarding2.improve.label.title', 'Share your activity history to improve recommendations?');
-  String get _description => Localization().getStringEx('panel.onboarding2.improve.label.description', 'The more you and others share, the more relevant info you get.');
-  String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.improve.button.toggle.title', "Share my activity.");
-  String get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.improve.button.untoggle.title', 'Don’t share my activity.');
+  String get _title => Localization().getStringEx('panel.onboarding2.privacy.share_activity.label.title', 'Share your activity history to improve recommendations?');
+  String get _description => Localization().getStringEx('panel.onboarding2.privacy.share_activity.label.description', 'The more you and others share, the more relevant info you get.');
+  String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.toggle.title', "Share my activity.");
+  String get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.untoggle.title', 'Don’t share my activity.');
 
 
   void _onToggleTap() {
@@ -156,18 +156,18 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
 
   Widget get _learnMoreDialog =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing activity"), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.share_activity.learn_more.title1',"Sharing activity"), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests."), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.share_activity.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests."), style: Onboarding2InfoDialog.contentStyle,),
       Container(height: 24,),
-      Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting out"), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.share_activity.learn_more.title2',"Opting out"), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.share_activity.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "), style: Onboarding2InfoDialog.contentStyle,),
     ]);
 
   void _onTapContinue() {
     Onboarding2().privacyImproveSelection = _toggled;
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLevelPanel()));
   }
 
   void _onTapBack() {

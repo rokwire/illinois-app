@@ -19,13 +19,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ImprovePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyShareActivityPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-import 'Onboarding2PrivacyPanel.dart';
+import 'Onboarding2PrivacyLevelPanel.dart';
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2PersonalizePanel extends StatefulWidget{
@@ -71,7 +71,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                       header: true,
                       excludeSemantics: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.improve.heading.title"))
+                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy.share_activity.heading.title"))
                       )
                     )
                     ,
@@ -86,7 +86,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                     Container(height: 10,),
 
                     Onboarding2UnderlinedButton(
-                      title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                      title: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.title.learn_more', 'Learn More'),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
                       onTap: _onTapLearnMore,
                     ),
@@ -123,8 +123,8 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                   ),
                 ),
                 RoundedButton(
-                  label: Localization().getStringEx('panel.onboarding2.personalize.button.continue.title', 'Continue'),
-                  hint: Localization().getStringEx('panel.onboarding2.personalize.button.continue.hint', ''),
+                  label: Localization().getStringEx('panel.onboarding2.privacy.store_activity.button.continue.title', 'Continue'),
+                  hint: Localization().getStringEx('panel.onboarding2.privacy.store_activity.button.continue.hint', ''),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   backgroundColor: Styles().colors.white,
@@ -139,10 +139,10 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
     );
 
 
-  String get _title => Localization().getStringEx('panel.onboarding2.personalize.label.title', 'Store your app activity and personal information?');
-  String get _description => Localization().getStringEx('panel.onboarding2.personalize.label.description', 'This includes content you view, teams you follow, and sign-in information. ');
-  String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and my preferences.');
-  String? get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.personalize.button.untoggle.title', 'Don\'t store my app activity or information.');
+  String get _title => Localization().getStringEx('panel.onboarding2.privacy.store_activity.label.title', 'Store your app activity and personal information?');
+  String get _description => Localization().getStringEx('panel.onboarding2.privacy.store_activity.label.description', 'This includes content you view, teams you follow, and sign-in information. ');
+  String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.store_activity.button.toggle.title', 'Store my app activity and my preferences.');
+  String? get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.store_activity.button.untoggle.title', 'Don\'t store my app activity or information.');
 
   void _onToggleTap(){
     setState(() {
@@ -157,30 +157,30 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   Widget get _learnMoreDialog =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.title1',"App activity"), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.title1',"App activity"), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content1',"Storing your app activity means that the app collects and remembers data about how you interact with it. The app stores your food preferences, your favorite teams, events you have starred, and other filters. Storing this information helps you use the app more efficiently."), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.location_services.content1',"Storing your app activity means that the app collects and remembers data about how you interact with it. The app stores your food preferences, your favorite teams, events you have starred, and other filters. Storing this information helps you use the app more efficiently."), style: Onboarding2InfoDialog.contentStyle,),
       Container(height: 24,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal information"), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.title2',"Personal information"), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and Illini ID information."), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and Illini ID information."), style: Onboarding2InfoDialog.contentStyle,),
       Container(height: 24,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.title3',"Storage"), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.title3',"Storage"), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content3',"Your data is stored safely on your mobile device and on our secure servers. Your stored information is not given or sold to any third parties. The app activity information is associated with your personal information only when you are signed in."), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.location_services.content3',"Your data is stored safely on your mobile device and on our secure servers. Your stored information is not given or sold to any third parties. The app activity information is associated with your personal information only when you are signed in."), style: Onboarding2InfoDialog.contentStyle,),
       Container(height: 24,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.title4',"Opting Out"), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.title4',"Opting Out"), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content4',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data."), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.store_activity.learn_more.location_services.content4',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data."), style: Onboarding2InfoDialog.contentStyle,),
     ]);
 
   void _onTapContinue() {
     Analytics().logSelect(target: 'Continue');
     Onboarding2().privacyPersonalizeSelection = _toggled;
     if (Onboarding2().privacyPersonalizeSelection) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyShareActivityPanel()));
     } else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLevelPanel()));
     }
   }
 

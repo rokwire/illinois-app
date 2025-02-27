@@ -27,7 +27,7 @@ class Onboarding2 with Service {
   factory Onboarding2() => _instance;
 
   // Privacy Selection
-  bool privacyExploreCampusSelection = true;
+  bool privacyLocationServicesSelection = true;
   bool privacyPersonalizeSelection = true;
   bool privacyImproveSelection = true;
 
@@ -196,7 +196,7 @@ class Onboarding2 with Service {
   int get getPrivacyLevel{
     //TBD refactoring
     int privacyLevel = -1;
-    if (privacyExploreCampusSelection){
+    if (privacyLocationServicesSelection){
       if (privacyPersonalizeSelection){
         if(privacyImproveSelection){
           privacyLevel = 5;

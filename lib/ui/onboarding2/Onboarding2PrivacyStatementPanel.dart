@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -130,7 +130,7 @@ class Onboarding2PrivacyStatementPanel extends StatelessWidget {
 
   void _onTapContinue(BuildContext context) {
     Analytics().logSelect(target: "Begin");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ExploreCampusPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLocationServicesPanel()));
   }
 
   void _onTapBack(BuildContext context) {

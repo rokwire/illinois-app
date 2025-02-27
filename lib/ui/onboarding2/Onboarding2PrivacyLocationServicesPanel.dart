@@ -25,20 +25,20 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-import 'Onboarding2PersonalizePanel.dart';
+import 'Onboarding2PrivacyStoreActivityPanel.dart';
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2ExploreCampusPanel extends StatefulWidget{
-  Onboarding2ExploreCampusPanel();
-  _Onboarding2ExploreCampusPanelState createState() => _Onboarding2ExploreCampusPanelState();
+class Onboarding2PrivacyLocationServicesPanel extends StatefulWidget{
+  Onboarding2PrivacyLocationServicesPanel();
+  _Onboarding2PrivacyLocationServicesPanelState createState() => _Onboarding2PrivacyLocationServicesPanelState();
 }
 
-class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampusPanel> {
+class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2PrivacyLocationServicesPanel> {
   late bool _toggled;
 
   @override
   void initState() {
-    _toggled = Onboarding2().privacyExploreCampusSelection;
+    _toggled = Onboarding2().privacyLocationServicesSelection;
     super.initState();
   }
 
@@ -71,7 +71,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                       header: true,
                       excludeSemantics: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.explore_campus.title"))
+                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy.location_services.title"))
                       )
                     ),
 
@@ -86,7 +86,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                   Container(height: 10,),
 
                   Onboarding2UnderlinedButton(
-                    title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                    title: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.title.learn_more', 'Learn More'),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
                     onTap: _onTapLearnMore,
                   ),
@@ -123,8 +123,8 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                 ),
               ),
               RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.title', 'Continue'),
-                hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
+                label: Localization().getStringEx('panel.onboarding2.privacy.location_services.button.continue.title', 'Continue'),
+                hint: Localization().getStringEx('panel.onboarding2.privacy.location_services.button.continue.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 backgroundColor: Styles().colors.white,
@@ -138,10 +138,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
     )
   );
 
-  String get _title => Localization().getStringEx('panel.onboarding2.explore_campus.label.title', 'Enable location specific services?');
-  String get _description => Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Easily find events on campus and connect to nearby users.');
-  String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Enable location services.');
-  String get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Don\'t enable location services.');
+  String get _title => Localization().getStringEx('panel.onboarding2.privacy.location_services.label.title', 'Enable location specific services?');
+  String get _description => Localization().getStringEx('panel.onboarding2.privacy.location_services.label.description', 'Easily find events on campus and connect to nearby users.');
+  String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.location_services.button.toggle.title', 'Enable location services.');
+  String get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.location_services.button.untoggle.title', 'Don\'t enable location services.');
 
   void _onToggleTap(){
     setState(() {
@@ -156,16 +156,16 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   Widget get _learnMoreDialog =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.title',"Location Specific Services "), style: Onboarding2InfoDialog.titleStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.location_services.learn_more.location_services.title',"Location Specific Services "), style: Onboarding2InfoDialog.titleStyle,),
       Container(height: 8,),
-      Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. "), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.location_services.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. "), style: Onboarding2InfoDialog.contentStyle,),
       Container(height: 10,),
-      Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."), style: Onboarding2InfoDialog.contentStyle,),
+      Text(Localization().getStringEx('panel.onboarding2.privacy.location_services.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."), style: Onboarding2InfoDialog.contentStyle,),
     ]);
 
   void _onTapContinue() {
     Analytics().logSelect(target: 'Continue');
-    Onboarding2().privacyExploreCampusSelection = _toggled;
+    Onboarding2().privacyLocationServicesSelection = _toggled;
     _requestLocationPermissionsIfNeeded().then((_) {
       if (mounted) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PersonalizePanel()));
