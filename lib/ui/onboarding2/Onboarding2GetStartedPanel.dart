@@ -16,12 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 
 class Onboarding2GetStartedPanel extends StatelessWidget {
   Onboarding2GetStartedPanel();
@@ -29,13 +31,13 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(body:
-      Container(color: Styles().colors.background, child:
+    return Scaffold(backgroundColor: Styles().colors.background, body:
+      SwipeDetector(onSwipeLeft: () => _onTapContinue(context), child:
         Column(children: [
           Expanded(child:
             SingleChildScrollView(child:
               Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-                Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child: 
+                Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
                   Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus\nIn Your Pocket",)),
                 ),
                 Container(height: 14,),
@@ -46,36 +48,36 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
               ]),
             )
           ),
-          //SafeArea(child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                RoundedButton(
-                  label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
-                  hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
-                  onTap: () => _onGoNext(context),
-                ),
-                Onboarding2UnderlinedButton(
-                  title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
-                  hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
-                  onTap: (){_onReturningUser(context);},
-                )
-              ],),
-            ),
-          //),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              RoundedButton(
+                label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
+                hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.white,
+                onTap: () => _onTapContinue(context),
+              ),
+              Onboarding2UnderlinedButton(
+                title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
+                hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
+                onTap: () => _onReturningUser(context),
+              )
+            ],),
+          ),
         ]),
-      )
+      ),
     );
   }
 
   void _onReturningUser(BuildContext context){
+    Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue', language: 'en'));
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel(returningUser: true,)));
   }
 
-  void _onGoNext(BuildContext context) {
+  void _onTapContinue(BuildContext context) {
+    Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?", language: 'en'));
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2VideoTutorialPanel()));
   }
 }

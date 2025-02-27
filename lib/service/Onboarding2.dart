@@ -6,7 +6,6 @@ import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
@@ -25,18 +24,15 @@ class Onboarding2 with Service {
   // Singleton Factory
   Onboarding2._internal();
   static final Onboarding2 _instance = Onboarding2._internal();
+  factory Onboarding2() => _instance;
 
-  factory Onboarding2() {
-    return _instance;
-  }
+  // Privacy Selection
+  bool privacyExploreCampusSelection = true;
+  bool privacyPersonalizeSelection = true;
+  bool privacyImproveSelection = true;
 
-  Onboarding2 get instance {
-    return _instance;
-  }
-
-  void finalize(BuildContext context) {
+  void finalize(BuildContext context) =>
     _proceedToNotificationsAuthIfNeeded(context);
-  }
 
   void _proceedToNotificationsAuthIfNeeded(BuildContext context) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
@@ -196,39 +192,16 @@ class Onboarding2 with Service {
     NotificationService().notify(notifyFinished, context);
   }
   
-  void storeExploreCampusChoice(bool? choice){
-    Storage().onBoardingExploreCampus = choice;
-  }
-
-  void storePersonalizeChoice(bool? choice){
-    Storage().onBoardingPersonalizeChoice = choice;
-  }
-
-  void storeImproveChoice(bool? choice){
-    Storage().onBoardingImproveChoice = choice;
-  }
-
-  bool get getExploreCampusChoice{
-    return Storage().onBoardingExploreCampus ?? false;
-  }
-
-  bool get getPersonalizeChoice{
-    return Storage().onBoardingPersonalizeChoice ?? false;
-  }
-
-  bool get getImproveChoice{
-    return Storage().onBoardingImproveChoice ?? false;
-  }
 
   int get getPrivacyLevel{
     //TBD refactoring
     int privacyLevel = -1;
-    if(getExploreCampusChoice){
-      if(getPersonalizeChoice){
-        if(getImproveChoice){
+    if (privacyExploreCampusSelection){
+      if (privacyPersonalizeSelection){
+        if(privacyImproveSelection){
           privacyLevel = 5;
         } else {
-          //!getImproveChoice
+          //!privacyImprove
           privacyLevel = 3;
         }
       }else {
@@ -236,12 +209,12 @@ class Onboarding2 with Service {
         privacyLevel = 2;
       }
     } else {
-      //!getExploreCampusChoice
-      if(getPersonalizeChoice){
-        if(getImproveChoice){
+      //!privacyEnableLocationServices
+      if(privacyPersonalizeSelection){
+        if(privacyImproveSelection){
           privacyLevel = 5;
         } else {
-          //!getImproveChoice
+          //!privacyImprove
           privacyLevel = 3;
         }
       }else {

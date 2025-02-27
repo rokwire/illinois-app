@@ -60,7 +60,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                 Container(color: Styles().colors.fillColorPrimary, child:
                   Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                     Row(children: [
-                      Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19), color: Styles().colors.white, onTap: _goBack,),
+                      Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19), imageColor: Styles().colors.white, onTap: _goBack,),
                       Expanded(child: Container()),
                       Semantics(
                         label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),

@@ -286,18 +286,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         navigatorObservers:[AppNavigation()],
         //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         title: Localization().getStringEx('app.title', 'Illinois'),
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
-          dialogTheme: DialogTheme(
-            backgroundColor: Styles().colors.surface,
-            contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
-            titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
-          ),
-          primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.regular),
+        theme: _appTheme,
         home: _homePanel,
       ),
     );
@@ -307,13 +296,13 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
-    if (_upgradeRequiredVersion != null) {
+    else if (_upgradeRequiredVersion != null) {
       return OnboardingUpgradePanel(requiredVersion:_upgradeRequiredVersion);
     }
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (!Storage().onBoardingPassed!) {
+    else if (Storage().onBoardingPassed != true) {
       return Onboarding2GetStartedPanel();
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
@@ -411,6 +400,22 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       }
     }
   }
+
+  // App Theme
+
+  ThemeData get _appTheme => ThemeData(
+    appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+    dialogTheme: DialogTheme(
+      backgroundColor: Styles().colors.surface,
+      contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
+      titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
+    ),
+    primaryColor: Styles().colors.fillColorPrimaryVariant,
+    fontFamily: Styles().fontFamilies.regular
+  );
 
   // NotificationsListener
 

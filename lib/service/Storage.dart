@@ -84,18 +84,6 @@ class Storage extends rokwire.Storage {
   bool? get onBoardingPassed => getBoolWithName(onBoardingPassedKey, defaultValue: false);
   set onBoardingPassed(bool? showOnBoarding) => setBoolWithName(onBoardingPassedKey, showOnBoarding);
 
-  static const String onBoardingExploreChoiceKey  = 'on_boarding_explore_campus';
-  bool? get onBoardingExploreCampus => getBoolWithName(onBoardingExploreChoiceKey, defaultValue: true);
-  set onBoardingExploreCampus(bool? exploreCampus) => setBoolWithName(onBoardingExploreChoiceKey, exploreCampus);
-
-  static const String onBoardingPersonalizeChoiceKey  = 'on_boarding_personalize';
-  bool? get onBoardingPersonalizeChoice => getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: true);
-  set onBoardingPersonalizeChoice(bool? personalize) => setBoolWithName(onBoardingPersonalizeChoiceKey, personalize);
-
-  static const String onBoardingImproveChoiceKey  = 'on_boarding_improve';
-  bool? get onBoardingImproveChoice => getBoolWithName(onBoardingImproveChoiceKey, defaultValue: true);
-  set onBoardingImproveChoice(bool? personalize) => setBoolWithName(onBoardingImproveChoiceKey, personalize);
-
   // Privacy Update Version
   static const String privacyUpdateVersionKey  = 'privacy_update_version';
   String? get privacyUpdateVersion => getStringWithName(privacyUpdateVersionKey);
