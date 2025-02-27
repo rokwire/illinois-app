@@ -5,13 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.65] - 2025-02-27
 ### Changed
 - Intro video in the web app [#4825](https://github.com/rokwire/illinois-app/issues/4825).
 ### Fixed
 - Avoid long press for drag and drop widgets in web [#4805](https://github.com/rokwire/illinois-app/issues/4805).
-
-## [6.1.65] - 2025-02-27
-### Fixed
 - GroupDetailPanel fixed post max lines restriction [#4822](https://github.com/rokwire/illinois-app/issues/4822).
 
 ## [6.1.64] - 2025-02-20
