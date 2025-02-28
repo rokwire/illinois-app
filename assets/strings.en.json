@@ -4045,7 +4045,7 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Bus Stops</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.locations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>My Locations</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
     "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
     "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display because you have chosen not to display any past or future appointments.",

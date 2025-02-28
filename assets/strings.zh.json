@@ -4019,7 +4019,7 @@
 	"widget.home.favorites.message.empty.news": "点击 <a href='{{local_url}}'><b>十大新聞</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
 	"widget.home.favorites.message.empty.laundry": "点击 <a href='{{local_url}}'><b>洗衣房</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
 	"widget.home.favorites.message.empty.mtd_stops": "点击 <a href='{{local_url}}'><b>公交车站</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.locations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>My Locations</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>校園指南/b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
 	"widget.home.favorites.message.empty.appointments": "点击 <a href='{{local_url}}'><b>我的MyMckinley预约</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
 	"widget.home.favorites.message.empty.appointments.not_to_display": "因为您选择不显示任何过去或未来的预约，所以没有内容显示。",
