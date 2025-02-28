@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.X]
+<!-- The following updates persist in the 6.1 support branch. -->
+<!-- They should eihter appear in the next 6.1 support update, or in the upcoming 6.2 build. -->
 ### Changed
 - Updated status text for no favorite locations [#4828](https://github.com/rokwire/illinois-app/issues/4828).
+### Fixed
+- Fixed storage update support in FlexUi, acknowledged for conversations visibility updates in Debug Home panel [#4830](https://github.com/rokwire/illinois-app/issues/4830).
 
 ## [6.1.65] - 2025-02-27
 ### Fixed
