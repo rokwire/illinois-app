@@ -774,7 +774,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     setState(() {
       Storage().debugMessagesDisabled = (Storage().debugMessagesDisabled != true);
     });
-    FlexUI().update();
   }
 
   void _onUseDeviceLocalTimeZoneToggled() {

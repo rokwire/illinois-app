@@ -88,7 +88,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
       case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Bus Stops</b></a> for quick access here."); break;
-      case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.locations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>My Locations</b></a> for quick access here."); break;
+      case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.locations", "Tap the \u2606 on locations on the <a href='$localUrlMacro'><b>Map</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
       case Appointment.favoriteKeyName:
         message = (Storage().appointmentsCanDisplay != true) ?
