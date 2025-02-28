@@ -37,7 +37,7 @@ class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2Privac
 
   @override
   void initState() {
-    _toggled = Onboarding2().privacyImproveSelection;
+    _toggled = Onboarding2().privacyShareActivitySelection;
     super.initState();
   }
 
@@ -166,7 +166,7 @@ class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2Privac
     ]);
 
   void _onTapContinue() {
-    Onboarding2().privacyImproveSelection = _toggled;
+    Onboarding2().privacyShareActivitySelection = _toggled;
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLevelPanel()));
   }
 

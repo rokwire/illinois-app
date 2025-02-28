@@ -28,17 +28,17 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'Onboarding2PrivacyLevelPanel.dart';
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2PersonalizePanel extends StatefulWidget{
-  Onboarding2PersonalizePanel();
-  _Onboarding2PersonalizePanelState createState() => _Onboarding2PersonalizePanelState();
+class Onboarding2PrivacyStoreActivityPanel extends StatefulWidget{
+  Onboarding2PrivacyStoreActivityPanel();
+  _Onboarding2PrivacyStoreActivityPanelState createState() => _Onboarding2PrivacyStoreActivityPanelState();
 }
 
-class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePanel> {
+class _Onboarding2PrivacyStoreActivityPanelState extends State<Onboarding2PrivacyStoreActivityPanel> {
   late bool _toggled;
 
   @override
   void initState() {
-    _toggled = Onboarding2().privacyPersonalizeSelection;
+    _toggled = Onboarding2().privacyStoreActivitySelection;
     super.initState();
   }
 
@@ -176,8 +176,8 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   void _onTapContinue() {
     Analytics().logSelect(target: 'Continue');
-    Onboarding2().privacyPersonalizeSelection = _toggled;
-    if (Onboarding2().privacyPersonalizeSelection) {
+    Onboarding2().privacyStoreActivitySelection = _toggled;
+    if (Onboarding2().privacyStoreActivitySelection) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyShareActivityPanel()));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLevelPanel()));

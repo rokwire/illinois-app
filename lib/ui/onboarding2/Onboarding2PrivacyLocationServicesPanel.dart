@@ -168,7 +168,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
     Onboarding2().privacyLocationServicesSelection = _toggled;
     _requestLocationPermissionsIfNeeded().then((_) {
       if (mounted) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PersonalizePanel()));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStoreActivityPanel()));
       }
     });
   }

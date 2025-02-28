@@ -28,8 +28,8 @@ class Onboarding2 with Service {
 
   // Privacy Selection
   bool privacyLocationServicesSelection = true;
-  bool privacyPersonalizeSelection = true;
-  bool privacyImproveSelection = true;
+  bool privacyStoreActivitySelection = true;
+  bool privacyShareActivitySelection = true;
 
   void finalize(BuildContext context) =>
     _proceedToNotificationsAuthIfNeeded(context);
@@ -197,8 +197,8 @@ class Onboarding2 with Service {
     //TBD refactoring
     int privacyLevel = -1;
     if (privacyLocationServicesSelection){
-      if (privacyPersonalizeSelection){
-        if(privacyImproveSelection){
+      if (privacyStoreActivitySelection){
+        if(privacyShareActivitySelection){
           privacyLevel = 5;
         } else {
           //!privacyImprove
@@ -210,8 +210,8 @@ class Onboarding2 with Service {
       }
     } else {
       //!privacyEnableLocationServices
-      if(privacyPersonalizeSelection){
-        if(privacyImproveSelection){
+      if(privacyStoreActivitySelection){
+        if(privacyShareActivitySelection){
           privacyLevel = 5;
         } else {
           //!privacyImprove
