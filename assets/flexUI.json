@@ -91,7 +91,9 @@
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
 			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "sport_prefs", "research_questionnaire"],
-	
+
+			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level" ],
+
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
@@ -221,6 +223,12 @@
 				"twitter"                                 : false,
 				"public_surveys"                          : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
+				"onboarding2.video_tutorial"              : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_share_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_level"               : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
 				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",

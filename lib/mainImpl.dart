@@ -62,7 +62,6 @@ import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
@@ -162,6 +161,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Gateway(),
       Places(),
       Safety(),
+      Onboarding2(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();
@@ -303,7 +303,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (Storage().onBoardingPassed != true) {
-      return Onboarding2GetStartedPanel();
+      return Onboarding2().first ?? Container();
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);

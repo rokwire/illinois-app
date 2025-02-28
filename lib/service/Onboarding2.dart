@@ -7,10 +7,12 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
@@ -18,7 +20,7 @@ import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
 
-class Onboarding2 with Service {
+class Onboarding2 with Service implements NotificationsListener {
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
 
@@ -26,6 +28,53 @@ class Onboarding2 with Service {
   Onboarding2._internal();
   static final Onboarding2 _instance = Onboarding2._internal();
   factory Onboarding2() => _instance;
+
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this,[
+      FlexUI.notifyChanged,
+    ]);
+    super.createService();
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  Future<void> initService() async {
+    _contentCodes = List<String>.from(_contentSource);
+    await super.initService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn => <Service>{ FlexUI() };
+
+  // Notification Listener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _contentCodes = List<String>.from(_contentSource);
+    }
+  }
+
+  // Content
+
+  late List<String> _contentCodes;
+
+  @protected
+  String get flexUIEntry => 'onboarding2';
+
+  List<String> get _contentSource => FlexUI()[flexUIEntry]?.cast<String>() ?? <String>[];
+
+  // Flow
+
+  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first) : null;
 
   // Privacy Selection
 
@@ -236,6 +285,33 @@ class Onboarding2 with Service {
     return privacyLevel;
   }
 }
+
+class Onboarding2Context {
+  Onboarding2Context();
+}
+
+class Onboarding2Panel {
+  String get onboardingCode => '';
+  Onboarding2Context? get onboardingContext => null;
+
+  set onboardingProgress(bool value) {}
+  Future<bool> isOnboardingEnabled() async => true;
+
+  static Widget? _fromCode(String code, { Onboarding2Context? context }) {
+    if (code == "get_started") {
+      return Onboarding2GetStartedPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "video_tutorial") {
+      return Onboarding2VideoTutorialPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    // "", "", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level"
+    else {
+      return null;
+    }
+  }
+
+}
+
 
 abstract class Onboarding2ProgressableState {
   bool get onboarding2Progress;

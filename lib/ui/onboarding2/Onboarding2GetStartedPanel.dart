@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
@@ -26,13 +27,29 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 
-class Onboarding2GetStartedPanel extends StatelessWidget {
-  Onboarding2GetStartedPanel();
+class Onboarding2GetStartedPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2GetStartedPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2GetStartedPanelState>());
+
+  GlobalKey<_Onboarding2GetStartedPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2GetStartedPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2GetStartedPanelState>) : null;
 
   @override
-  Widget build(BuildContext context) {
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+  @override
+  State<StatefulWidget> createState() => _Onboarding2GetStartedPanelState();
+}
+
+class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel> {
+
+  bool _onboardingProgress = false;
+
+  @override
+  Widget build(BuildContext context) =>
+    Scaffold(backgroundColor: Styles().colors.background, body:
       SwipeDetector(onSwipeLeft: () => _onTapContinue(context), child:
         Column(children: [
           Expanded(child:
@@ -58,6 +75,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 borderColor: Styles().colors.fillColorSecondary,
                 backgroundColor: Styles().colors.white,
+                progress: _onboardingProgress,
                 onTap: () => _onTapContinue(context),
               ),
               Onboarding2UnderlinedButton(
@@ -70,6 +88,11 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
         ]),
       ),
     );
+
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
   }
 
   void _onReturningUser(BuildContext context){

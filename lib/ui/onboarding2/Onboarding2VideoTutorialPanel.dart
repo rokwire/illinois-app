@@ -24,6 +24,7 @@ import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -39,7 +40,18 @@ import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
-class Onboarding2VideoTutorialPanel extends StatefulWidget {
+class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2VideoTutorialPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2VideoTutorialPanelState>());
+
+  GlobalKey<_Onboarding2VideoTutorialPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2VideoTutorialPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2VideoTutorialPanelState>) : null;
+
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
   @override
   State<Onboarding2VideoTutorialPanel> createState() => _Onboarding2VideoTutorialPanelState();
 }
@@ -53,6 +65,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   String? _currentCaptionText;
   bool _ccEnabled = false;
   bool _ccVisible = false;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -321,6 +334,12 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   bool get _isPortrait => (MediaQuery.of(context).orientation == Orientation.portrait);
+
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
 
   // NotificationsListener
 
