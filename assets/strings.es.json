@@ -3856,7 +3856,7 @@
     "widget.home.favorites.message.empty.news": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes noticias</b></a> para acceder rápidamente aquí.",
     "widget.home.favorites.message.empty.laundry": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lavanderías</b></a> para acceder rápidamente aquí.",
     "widget.home.favorites.message.empty.mtd_stops": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Paradas de Autobús</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.locations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>My Locations</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.locations": "Tap the \\u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Guía del Campus</b></a> para acceder rápidamente aquí.",
     "widget.home.favorites.message.empty.appointments": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Citas de MyMcKinley</b></a> para acceder rápidamente aquí.",
     "widget.home.favorites.message.empty.appointments.not_to_display": "No hay nada que mostrar, ya que has optado por no mostrar ninguna cita pasada o futura.",
