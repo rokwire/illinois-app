@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
@@ -73,11 +74,13 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
 
   void _onReturningUser(BuildContext context){
     Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue', language: 'en'));
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel(returningUser: true,)));
+    Onboarding2().privacyReturningUser = true;
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
   }
 
   void _onTapContinue(BuildContext context) {
     Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?", language: 'en'));
+    Onboarding2().privacyReturningUser = false;
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2VideoTutorialPanel()));
   }
 }

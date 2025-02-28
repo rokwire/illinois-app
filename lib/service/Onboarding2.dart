@@ -6,6 +6,7 @@ import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
@@ -27,9 +28,18 @@ class Onboarding2 with Service {
   factory Onboarding2() => _instance;
 
   // Privacy Selection
-  bool privacyLocationServicesSelection = true;
-  bool privacyStoreActivitySelection = true;
-  bool privacyShareActivitySelection = true;
+
+  bool get privacyReturningUser => Storage().onBoarding2PrivacyReturningUser == true;
+  set privacyReturningUser(bool value) => Storage().onBoarding2PrivacyReturningUser = value;
+
+  bool get privacyLocationServicesSelection => Storage().onBoarding2PrivacyLocationServicesSelection == true;
+  set privacyLocationServicesSelection(bool value) => Storage().onBoarding2PrivacyLocationServicesSelection = value;
+
+  bool get privacyStoreActivitySelection => Storage().onBoarding2PrivacyStoreActivitySelection == true;
+  set privacyStoreActivitySelection(bool value) => Storage().onBoarding2PrivacyStoreActivitySelection = value;
+
+  bool get  privacyShareActivitySelection => Storage().onBoarding2PrivacyShareActivitySelection == true;
+  set privacyShareActivitySelection(bool value) => Storage().onBoarding2PrivacyShareActivitySelection = value;
 
   void finalize(BuildContext context) =>
     _proceedToNotificationsAuthIfNeeded(context);

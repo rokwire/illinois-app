@@ -30,13 +30,10 @@ import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2RolesPanel extends StatefulWidget{
-  final bool returningUser;
-
-  Onboarding2RolesPanel({this.returningUser = false});
+  Onboarding2RolesPanel();
 
   @override
-  _Onboarding2RoleSelectionPanelState createState() =>
-    _Onboarding2RoleSelectionPanelState();
+  _Onboarding2RoleSelectionPanelState createState() => _Onboarding2RoleSelectionPanelState();
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
@@ -136,7 +133,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     Analytics().logSelect(target:"Continue");
     if (_selectedRoles.isNotEmpty) {
       Auth2().prefs?.roles = _selectedRoles;
-      if (widget.returningUser) {
+      if (Onboarding2().privacyReturningUser) {
         Onboarding2().finalize(context);
       } else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStatementPanel()));
