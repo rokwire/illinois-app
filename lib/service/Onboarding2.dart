@@ -1,11 +1,7 @@
 
-import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Questionnaire.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
@@ -15,6 +11,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyShareActivityPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStoreActivityPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
@@ -22,7 +19,6 @@ import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
 class Onboarding2 with Service implements NotificationsListener {
 
@@ -78,12 +74,12 @@ class Onboarding2 with Service implements NotificationsListener {
 
   // Flow
 
-  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first)?.asWidget : null;
+  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first, context: {})?.asWidget : null;
 
-  Future<Widget?> next(Onboarding2Panel panel) async {
+  Future<void> next(BuildContext context, Onboarding2Panel panel) async {
     int index = _contentCodes.indexOf(panel.onboardingCode);
     while ((0 <= index) && ((index + 1) < _contentCodes.length)) {
-      Onboarding2Panel? nextPanel = Onboarding2Panel._fromCode(_contentCodes[index + 1]);
+      Onboarding2Panel? nextPanel = Onboarding2Panel._fromCode(_contentCodes[index + 1], context: panel.onboardingContext);
       Widget? nextWidget = nextPanel?.asWidget;
       if ((nextPanel != null) && (nextWidget != null)) {
         if (panel.onboardingProgress != true) {
@@ -91,7 +87,10 @@ class Onboarding2 with Service implements NotificationsListener {
         }
         if (await nextPanel.isOnboardingEnabled()) {
           panel.onboardingProgress = false;
-          return nextWidget;
+          if (context.mounted) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => nextWidget));
+            return;
+          }
         }
       }
       index++;
@@ -99,7 +98,9 @@ class Onboarding2 with Service implements NotificationsListener {
     if (panel.onboardingProgress != true) {
       panel.onboardingProgress = false;
     }
-    return null;
+    if (context.mounted) {
+      NotificationService().notify(notifyFinished, context);;
+    }
   }
 
   // Privacy Selection
@@ -115,140 +116,6 @@ class Onboarding2 with Service implements NotificationsListener {
 
   bool get  privacyShareActivitySelection => Storage().onBoarding2PrivacyShareActivitySelection == true;
   set privacyShareActivitySelection(bool value) => Storage().onBoarding2PrivacyShareActivitySelection = value;
-
-
-  void _proceedToLogin(BuildContext context){
-    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('login_netid')) {
-      /*Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
-        "onContinueAction": () {
-          _didProceedToLogin(context);
-        },
-        "onContinueActionEx": (dynamic state) {
-          _didProceedToLogin(context, currentPanelState: state);
-        }
-      })));*/
-    }
-    else if (codes.contains('login_phone')) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
-        "onContinueAction": () {
-          _didProceedToLogin(context);
-        },
-        "onContinueActionEx": (dynamic state) {
-          _didProceedToLogin(context, currentPanelState: state);
-        }
-      })));
-    }
-    else {
-      _didProceedToLogin(context);
-    }
-  }
-
-  void _didProceedToLogin(BuildContext context, { dynamic currentPanelState}) {
-    _proceedToProfileInfoIfNeeded(context, currentPanelState: currentPanelState);
-  }
-
-  void _proceedToProfileInfoIfNeeded(BuildContext context, { dynamic currentPanelState }) {
-    /*Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('profile_info')) {
-      Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2ProfileInfoPanel(onboardingContext: {
-        'onContinueAction': () => _didProceedProfileInfo(context),
-        'onContinueActionEx': (state) => _didProceedProfileInfo(context, currentPanelState: state),
-      },)));
-    }
-    else */ {
-      _didProceedProfileInfo(context, currentPanelState: currentPanelState);
-    }
-  }
-
-  void _didProceedProfileInfo(BuildContext context, { dynamic currentPanelState}) {
-    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('profile_info')) {
-      _startResearhQuestionnaireIfNeeded(context, currentPanelState: currentPanelState);
-    }
-    else {
-      _didFinishResearhQuestionnaire(context);
-    }
-  }
-
-  void _startResearhQuestionnaireIfNeeded(BuildContext context, { dynamic currentPanelState }) {
-    if (Questionnaires().participateInResearch == true) {
-      Onboarding2ProgressableState? progressableState = (currentPanelState is Onboarding2ProgressableState) ? currentPanelState : null;
-      progressableState?.onboarding2Progress = true;
-      Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
-        progressableState?.onboarding2Progress = false;
-        Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
-        if (questionnaireAnswers?.isNotEmpty ?? false) {
-          _didFinishResearhQuestionnaire(context);
-        }
-        else {
-          _promptForResearhQuestionnaire(context, questionanire: questionnaire);
-        }
-      });
-    }
-    else {
-      _promptForResearhQuestionnaire(context);
-    }
-  }
-
-  void _promptForResearhQuestionnaire(BuildContext context, { Questionnaire? questionanire }) {
-    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => researhQuestionnairePromptPanel(questionanire: questionanire)));
-  }
-
-  Widget researhQuestionnairePromptPanel({ Questionnaire? questionanire, Map<String, dynamic>? invocationContext}) {
-    return Onboarding2ResearchQuestionnairePromptPanel(onboardingContext: {
-      "onConfirmActionEx": (BuildContext context) {
-        _proceedToResearhQuestionnaire(context, questionanire: questionanire, invocationContext: invocationContext);
-      },
-      "onRejectActionEx": (BuildContext context) {
-        _didFinishResearhQuestionnaire(context, invocationContext: invocationContext);
-      }
-    });
-  }
-  
-  void _proceedToResearhQuestionnaire(BuildContext context, { Questionnaire? questionanire, Map<String, dynamic>? invocationContext }) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
-      "questionanire": questionanire,
-      'onContinueAction':  () {
-        _didProceedResearchQuestionnaire(context, invocationContext: invocationContext);
-      }
-    },)));
-  }
-
-  void _didProceedResearchQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
-    _acknowledgeResearhQuestionnaire(context, invocationContext: invocationContext);
-  }
-
-  void _acknowledgeResearhQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
-      'onContinueAction':  () {
-        _didAcknowledgeResearhQuestionnaire(context, invocationContext: invocationContext);
-      }
-    },)));
-  }
-
-  void _didAcknowledgeResearhQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
-    _didFinishResearhQuestionnaire(context, invocationContext: invocationContext);
-  }
-
-  void _didFinishResearhQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
-    Function? onFinish = (invocationContext != null) ? invocationContext["onFinishResearhQuestionnaireAction"] : null;
-    Function? onFinishEx = (invocationContext != null) ? invocationContext["onFinishResearhQuestionnaireActionEx"] : null;
-    if (onFinishEx != null) {
-      onFinishEx(context);
-    }
-    else if (onFinish != null) {
-      onFinish();
-    }
-    else {
-      finish(context);
-    }
-  }
-
-  void finish(BuildContext context) {
-    NotificationService().notify(notifyFinished, context);
-  }
-  
 
   int get getPrivacyLevel{
     //TBD refactoring
@@ -284,9 +151,7 @@ class Onboarding2 with Service implements NotificationsListener {
   }
 }
 
-class Onboarding2Context {
-  Onboarding2Context();
-}
+typedef Onboarding2Context = Map<String, dynamic>;
 
 class Onboarding2Panel {
   String get onboardingCode => '';
@@ -329,6 +194,18 @@ class Onboarding2Panel {
     }
     else if (code == "login_netid") {
       return Onboarding2LoginNetIdPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "profile_info") {
+      return Onboarding2ProfileInfoPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "research_questionnaire_participate_prompt") {
+      return Onboarding2ResearchQuestionnairePromptPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "research_questionnaire") {
+      return Onboarding2ResearchQuestionnairePanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "research_questionnaire_acknowledgement") {
+      return Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingCode: code, onboardingContext: context,);
     }
 
     else {

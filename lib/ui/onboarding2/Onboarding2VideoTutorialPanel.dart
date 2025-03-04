@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -345,13 +344,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
-  void _onboardingNext() async {
-    Widget? nextPanel = await Onboarding2().next(widget);
-    if ((nextPanel != null) && mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-    }
-  }
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() => Onboarding2().next(context, widget);
 
   // NotificationsListener
 

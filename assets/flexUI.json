@@ -90,7 +90,7 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
-			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "research_questionnaire" ],
+			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "research_questionnaire_participate_prompt", "research_questionnaire", "research_questionnaire_acknowledgement" ],
 
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
@@ -133,8 +133,11 @@
 				"onboarding2.login_phone"          	      : 4,
 				"onboarding2.verify_phone"         	      : 4,
 				"onboarding2.confirm_phone"        	      : 4,
-				"onboarding2.research_questionnaire"      : 4,
+
 				"onboarding2.profile_info"                : 4,
+				"onboarding2.research_questionnaire"      : 4,
+				"onboarding2.research_questionnaire_participate_prompt" : 4,
+				"onboarding2.research_questionnaire_acknowledgement"    : 4,
 
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,
@@ -188,8 +191,10 @@
 				"authenticate.linked.email.info"          : { "emailLinked": true },
 				"authenticate.linked.email.remove"        : { "emailLinked": true },
 
-				"onboarding2.research_questionnaire"      : { "shibbolethLoggedIn": true },
 				"onboarding2.profile_info"                : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire"      : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire_participate_prompt" : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire_acknowledgement"    : { "shibbolethLoggedIn": true },
 
 				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },

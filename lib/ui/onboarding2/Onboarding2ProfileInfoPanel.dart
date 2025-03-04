@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -203,11 +202,6 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
-  void _onboardingNext() async {
-    Widget? nextPanel = await Onboarding2().next(widget);
-    if ((nextPanel != null) && mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-    }
-  }
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() => Onboarding2().next(context, widget);
 }

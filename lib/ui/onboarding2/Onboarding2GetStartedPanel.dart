@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -110,9 +109,6 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
 
   void _onboardingNext([bool returningUser = false]) async {
     Onboarding2().privacyReturningUser = returningUser;
-    Widget? nextPanel = await Onboarding2().next(widget);
-    if ((nextPanel != null) && mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-    }
+    Onboarding2().next(context, widget);
   }
 }

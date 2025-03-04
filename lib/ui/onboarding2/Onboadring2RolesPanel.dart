@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -158,14 +157,11 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
-  void _onboardingNext() async {
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
     if (_selectedRoles.isNotEmpty) {
       Auth2().prefs?.roles = _selectedRoles;
-      Widget? nextPanel = await Onboarding2().next(widget);
-      if ((nextPanel != null) && mounted) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-      }
+      Onboarding2().next(context, widget);
     }
   }
 }

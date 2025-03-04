@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -223,13 +222,10 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
-  void _onboardingNext() async {
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
     Auth2().prefs?.privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
-    Widget? nextPanel = await Onboarding2().next(widget);
-    if ((nextPanel != null) && mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-    }
+    Onboarding2().next(context, widget);
   }
 }

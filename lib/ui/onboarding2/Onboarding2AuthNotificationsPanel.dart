@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -191,14 +190,11 @@ Future<bool> _requestAuthorization() async {
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingBack() => Navigator.of(context).pop();
   void _onboardingNext([bool requestAuthorization = false]) async {
     bool goNext = requestAuthorization ? await _requestAuthorization() : true;
     if (goNext && mounted) {
-      Widget? nextPanel = await Onboarding2().next(widget);
-      if ((nextPanel != null) && mounted) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-      }
+      Onboarding2().next(context, widget);
     }
   }
 }

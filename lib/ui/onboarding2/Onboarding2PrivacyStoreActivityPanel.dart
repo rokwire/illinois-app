@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -207,13 +206,10 @@ class _Onboarding2PrivacyStoreActivityPanelState extends State<Onboarding2Privac
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
-  void _onboardingNext() async {
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
     Onboarding2().privacyStoreActivitySelection = _toggled;
-    Widget? nextPanel = await Onboarding2().next(widget);
-    if ((nextPanel != null) && mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-    }
+    Onboarding2().next(context, widget);
   }
 
 }

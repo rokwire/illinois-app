@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -210,15 +209,12 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
     });
   }
 
-  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingBack() => Navigator.of(context).pop();
   void _onboardingNext() async {
     Onboarding2().privacyLocationServicesSelection = _toggled;
     await _requestLocationPermissionsIfNeeded();
     if (mounted) {
-      Widget? nextPanel = await Onboarding2().next(widget);
-      if ((nextPanel != null) && mounted) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-      }
+      Onboarding2().next(context, widget);
     }
   }
 }
