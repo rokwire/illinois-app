@@ -16,12 +16,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -29,21 +29,35 @@ import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2RolesPanel extends StatefulWidget{
-  Onboarding2RolesPanel();
+class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2RolesPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2RoleSelectionPanelState>());
+
+  GlobalKey<_Onboarding2RoleSelectionPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2RoleSelectionPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2RoleSelectionPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
   @override
   _Onboarding2RoleSelectionPanelState createState() => _Onboarding2RoleSelectionPanelState();
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
-  late Set<UserRole> _selectedRoles;
+  Set<UserRole> _selectedRoles = <UserRole>{};
   bool get _allowNext => _selectedRoles.isNotEmpty;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
     Set<UserRole>? userRoles = Auth2().prefs?.roles;
-    _selectedRoles = (userRoles != null) ? Set.from(userRoles) : <UserRole>{};
+    if (userRoles != null) {
+      _selectedRoles = Set.from(userRoles);
+    }
     super.initState();
   }
 
@@ -51,7 +65,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background, body:
       SafeArea(child:
-        SwipeDetector(onSwipeLeft: _onTapContinue, onSwipeRight: _onTapBack, child:
+        SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
               Row(children: <Widget>[
@@ -105,6 +119,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                   enabled: _allowNext,
                   backgroundColor: (Styles().colors.white),
                   borderColor: (_allowNext ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03),
+                  progress: _onboardingProgress,
                   onTap: _onTapContinue,
                 ),
               )
@@ -126,17 +141,30 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
   void _onTapBack() {
     Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
+    _onboardingBack();
   }
 
   void _onTapContinue() {
-    Analytics().logSelect(target:"Continue");
+    Analytics().logSelect(target: "Continue");
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() async {
     if (_selectedRoles.isNotEmpty) {
       Auth2().prefs?.roles = _selectedRoles;
-      if (Onboarding2().privacyReturningUser) {
-        Onboarding2().finalize(context);
-      } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStatementPanel()));
+      Widget? nextPanel = await Onboarding2().next(widget);
+      if ((nextPanel != null) && mounted) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
       }
     }
   }

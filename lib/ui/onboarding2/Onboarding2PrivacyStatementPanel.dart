@@ -16,19 +16,39 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 
 
-class Onboarding2PrivacyStatementPanel extends StatelessWidget {
+class Onboarding2PrivacyStatementPanel extends StatefulWidget with Onboarding2Panel {
 
-  Onboarding2PrivacyStatementPanel();
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2PrivacyStatementPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2PrivacyStatementPanelState>());
+
+  GlobalKey<_Onboarding2PrivacyStatementPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyStatementPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2PrivacyStatementPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2PrivacyStatementPanelState();
+}
+
+
+class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacyStatementPanel> {
+
+  bool _onboardingProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +64,14 @@ class Onboarding2PrivacyStatementPanel extends StatelessWidget {
       backgroundColor: Styles().colors.background,
       body: SafeArea(child:
         SwipeDetector(
-          onSwipeLeft: () => _onTapContinue(context),
-          onSwipeRight: () => _onTapBack(context),
+          onSwipeLeft: _onboardingNext,
+          onSwipeRight: _onboardingBack,
           child: Column(children: [
             Expanded(child:
               SingleChildScrollView(child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Align(alignment: Alignment.centerLeft, child:
-                    Onboarding2BackButton( padding: const EdgeInsets.all(16), onTap: () =>_onTapBack(context),),
+                    Onboarding2BackButton( padding: const EdgeInsets.all(16), onTap: _onTapBack,),
                   ),
 
                   Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
@@ -86,7 +106,7 @@ class Onboarding2PrivacyStatementPanel extends StatelessWidget {
                   container: true,
                   label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
                   button: true,
-                  child: InkWell(onTap: () => _onTapPrivacyPolicy(context), child:
+                  child: InkWell(onTap: _onTapPrivacyPolicy, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
                       RichText(textAlign: TextAlign.center, text:
                         TextSpan(style: Styles().textStyles.getTextStyle("widget.info.small"), children: <TextSpan>[
@@ -112,6 +132,7 @@ class Onboarding2PrivacyStatementPanel extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     backgroundColor: Styles().colors.white,
                     borderColor: Styles().colors.fillColorSecondaryVariant,
+                    progress: _onboardingProgress,
                     onTap: () => _onTapContinue(context),
                   ),
                 ),
@@ -123,18 +144,35 @@ class Onboarding2PrivacyStatementPanel extends StatelessWidget {
     );
   }
 
-  void _onTapPrivacyPolicy(BuildContext context) {
+  void _onTapPrivacyPolicy() {
     Analytics().logSelect(target: "Privacy Statement");
     AppPrivacyPolicy.launch(context);
   }
 
-  void _onTapContinue(BuildContext context) {
-    Analytics().logSelect(target: "Begin");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLocationServicesPanel()));
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    _onboardingBack();
   }
 
-  void _onTapBack(BuildContext context) {
-    Analytics().logSelect(target: "Back");
-    Navigator.of(context).pop();
+  void _onTapContinue(BuildContext context) {
+    Analytics().logSelect(target: "Begin");
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() async {
+    Widget? nextPanel = await Onboarding2().next(widget);
+    if ((nextPanel != null) && mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    }
   }
 }

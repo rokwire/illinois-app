@@ -16,10 +16,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -27,13 +27,27 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2PrivacyShareActivityPanel extends StatefulWidget{
-  Onboarding2PrivacyShareActivityPanel();
+class Onboarding2PrivacyShareActivityPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2PrivacyShareActivityPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2PrivacyShareActivityPanelState>());
+
+  GlobalKey<_Onboarding2PrivacyShareActivityPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyShareActivityPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2PrivacyShareActivityPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
   _Onboarding2PrivacyShareActivityPanelState createState() => _Onboarding2PrivacyShareActivityPanelState();
 }
 
 class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2PrivacyShareActivityPanel> {
-  late bool _toggled;
+  bool _toggled = true;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -50,7 +64,7 @@ class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2Privac
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background, body:
       SafeArea(child:
-        SwipeDetector(onSwipeLeft: _onTapContinue, onSwipeRight: _onTapBack, child:
+        SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
           Column(children: [
             Expanded(child:
               SingleChildScrollView(child:
@@ -128,6 +142,7 @@ class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2Privac
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     backgroundColor: Styles().colors.white,
                     borderColor: Styles().colors.fillColorSecondaryVariant,
+                    progress: _onboardingProgress,
                     onTap: _onTapContinue,
                   )
                 ],),
@@ -165,13 +180,31 @@ class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2Privac
       Text(Localization().getStringEx('panel.onboarding2.privacy.share_activity.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "), style: Onboarding2InfoDialog.contentStyle,),
     ]);
 
-  void _onTapContinue() {
-    Onboarding2().privacyShareActivitySelection = _toggled;
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyLevelPanel()));
-  }
-
   void _onTapBack() {
     Analytics().logSelect(target: 'Back');
-    Navigator.of(context).pop();
+    _onboardingBack();
+  }
+
+  void _onTapContinue() {
+    Analytics().logSelect(target: 'Continue');
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() async {
+    Onboarding2().privacyShareActivitySelection = _toggled;
+    Widget? nextPanel = await Onboarding2().next(widget);
+    if ((nextPanel != null) && mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    }
   }
 }

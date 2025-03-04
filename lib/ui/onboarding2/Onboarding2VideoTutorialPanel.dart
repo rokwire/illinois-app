@@ -25,7 +25,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -49,6 +48,8 @@ class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel
   GlobalKey<_Onboarding2VideoTutorialPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2VideoTutorialPanelState>) ?
     (super.key as GlobalKey<_Onboarding2VideoTutorialPanelState>) : null;
 
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
   @override
   set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
@@ -256,16 +257,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
-  }
-
-  void _onTapContinue() {
-    Analytics().logSelect(target: _skipButtonLabel(language: 'en'));
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
-  }
-
   void _onTapPlayPause() {
     if (!_isPlayerInitialized) {
       return;
@@ -335,10 +326,30 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   bool get _isPortrait => (MediaQuery.of(context).orientation == Orientation.portrait);
 
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+
+  void _onTapContinue() {
+    Analytics().logSelect(target: _skipButtonLabel(language: 'en'));
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
   set onboardingProgress(bool value) {
     setStateIfMounted(() {
       _onboardingProgress = value;
     });
+  }
+
+  void _onboardingNext() async {
+    Widget? nextPanel = await Onboarding2().next(widget);
+    if ((nextPanel != null) && mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    }
   }
 
   // NotificationsListener

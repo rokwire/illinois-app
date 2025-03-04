@@ -18,10 +18,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -36,6 +34,8 @@ class Onboarding2GetStartedPanel extends StatefulWidget with Onboarding2Panel {
   GlobalKey<_Onboarding2GetStartedPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2GetStartedPanelState>) ?
     (super.key as GlobalKey<_Onboarding2GetStartedPanelState>) : null;
 
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
   @override
   set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
@@ -89,21 +89,30 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
       ),
     );
 
+  void _onReturningUser(BuildContext context){
+    Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue', language: 'en'));
+    _onboardingNext(true);
+  }
+
+  void _onTapContinue(BuildContext context) {
+    Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?", language: 'en'));
+    _onboardingNext(false);
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
   set onboardingProgress(bool value) {
     setStateIfMounted(() {
       _onboardingProgress = value;
     });
   }
 
-  void _onReturningUser(BuildContext context){
-    Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue', language: 'en'));
-    Onboarding2().privacyReturningUser = true;
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
-  }
-
-  void _onTapContinue(BuildContext context) {
-    Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?", language: 'en'));
-    Onboarding2().privacyReturningUser = false;
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2VideoTutorialPanel()));
+  void _onboardingNext(bool returningUser) async {
+    Onboarding2().privacyReturningUser = returningUser;
+    Widget? nextPanel = await Onboarding2().next(widget);
+    if ((nextPanel != null) && mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    }
   }
 }

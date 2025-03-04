@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -30,23 +31,41 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2PrivacyLevelPanel extends StatelessWidget {
+class Onboarding2PrivacyLevelPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2PrivacyLevelPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2PrivacyLevelPanelState>());
+
+  GlobalKey<_Onboarding2PrivacyLevelPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyLevelPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2PrivacyLevelPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
+  _Onboarding2PrivacyLevelPanelState createState() => _Onboarding2PrivacyLevelPanelState();
+}
+
+
+class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPanel> {
+  bool _onboardingProgress = false;
 
   @override
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background,
       appBar: AppBar(backgroundColor: Styles().colors.fillColorPrimary, toolbarHeight: 0,),
-      body: SwipeDetector(
-        onSwipeLeft: () => _onTapContinue(context),
-        onSwipeRight: () => _onTapBack(context),
-        child: Column(children: [
+      body: SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
+        Column(children: [
           Expanded(child:
             SingleChildScrollView(child:
               Column(children:[
                 Container(color: Styles().colors.fillColorPrimary, child:
                   Column(children: <Widget>[
                     Row(children: [
-                      Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: () => _onTapBack(context),),
+                      Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack,),
                       Expanded(child:
                         Align(alignment: Alignment.centerRight, child:
                           Semantics(
@@ -109,7 +128,8 @@ class Onboarding2PrivacyLevelPanel extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   backgroundColor: Styles().colors.white,
                   borderColor: Styles().colors.fillColorSecondaryVariant,
-                  onTap: () => _onTapContinue(context),
+                  progress: _onboardingProgress,
+                  onTap: _onTapContinue,
                 ),
               ),
             ],),
@@ -179,20 +199,37 @@ class Onboarding2PrivacyLevelPanel extends StatelessWidget {
 
   }
 
-  void _onTapContinue(BuildContext context) {
-    Analytics().logSelect(target: "Continue");
-    Auth2().prefs?.privacyLevel = _privacyLevel;
-    Storage().privacyUpdateVersion = Config().appVersion;
-    Onboarding2().finalize(context);
-  }
-
-  void _onTapBack(BuildContext context) {
-    Analytics().logSelect(target: "Back");
-    Navigator.of(context).pop();
-  }
-
   void _onTapPrivacyPolicy(BuildContext context) {
     Analytics().logSelect(target: "Privacy Statement");
     AppPrivacyPolicy.launch(context);
+  }
+
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    _onboardingBack();
+  }
+
+  void _onTapContinue() {
+    Analytics().logSelect(target: "Continue");
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() async {
+    Auth2().prefs?.privacyLevel = _privacyLevel;
+    Storage().privacyUpdateVersion = Config().appVersion;
+    Widget? nextPanel = await Onboarding2().next(widget);
+    if ((nextPanel != null) && mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    }
   }
 }

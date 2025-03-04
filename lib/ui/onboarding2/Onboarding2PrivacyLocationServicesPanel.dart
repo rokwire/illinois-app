@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -25,16 +26,29 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-import 'Onboarding2PrivacyStoreActivityPanel.dart';
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2PrivacyLocationServicesPanel extends StatefulWidget{
-  Onboarding2PrivacyLocationServicesPanel();
+class Onboarding2PrivacyLocationServicesPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2PrivacyLocationServicesPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2PrivacyLocationServicesPanelState>());
+
+  GlobalKey<_Onboarding2PrivacyLocationServicesPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyLocationServicesPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2PrivacyLocationServicesPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
   _Onboarding2PrivacyLocationServicesPanelState createState() => _Onboarding2PrivacyLocationServicesPanelState();
 }
 
 class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2PrivacyLocationServicesPanel> {
-  late bool _toggled;
+  bool _toggled = true;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -51,7 +65,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background, body:
       SafeArea(child:
-        SwipeDetector(onSwipeLeft: _onTapContinue, onSwipeRight: _onTapBack, child:
+        SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
           Column(children: [
             Expanded(child:
               SingleChildScrollView(child:
@@ -129,6 +143,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 backgroundColor: Styles().colors.white,
                 borderColor: Styles().colors.fillColorSecondaryVariant,
+                progress: _onboardingProgress,
                 onTap: _onTapContinue,
               )
             ],),
@@ -163,14 +178,14 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
       Text(Localization().getStringEx('panel.onboarding2.privacy.location_services.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."), style: Onboarding2InfoDialog.contentStyle,),
     ]);
 
+  void _onTapBack() {
+    Analytics().logSelect(target: 'Back');
+    _onboardingBack();
+  }
+
   void _onTapContinue() {
     Analytics().logSelect(target: 'Continue');
-    Onboarding2().privacyLocationServicesSelection = _toggled;
-    _requestLocationPermissionsIfNeeded().then((_) {
-      if (mounted) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStoreActivityPanel()));
-      }
-    });
+    _onboardingNext();
   }
 
   Future<void> _requestLocationPermissionsIfNeeded() async {
@@ -186,9 +201,24 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
     }
   }
 
-  void _onTapBack() {
-    Analytics().logSelect(target: 'Back');
-    Navigator.of(context).pop();
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
   }
 
+  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() async {
+    Onboarding2().privacyLocationServicesSelection = _toggled;
+    await _requestLocationPermissionsIfNeeded();
+    if (mounted) {
+      Widget? nextPanel = await Onboarding2().next(widget);
+      if ((nextPanel != null) && mounted) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+      }
+    }
+  }
 }

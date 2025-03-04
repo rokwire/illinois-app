@@ -7,7 +7,13 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyShareActivityPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStoreActivityPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
@@ -18,7 +24,6 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
-
 
 class Onboarding2 with Service implements NotificationsListener {
 
@@ -74,7 +79,29 @@ class Onboarding2 with Service implements NotificationsListener {
 
   // Flow
 
-  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first) : null;
+  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first)?.asWidget : null;
+
+  Future<Widget?> next(Onboarding2Panel panel) async {
+    int index = _contentCodes.indexOf(panel.onboardingCode);
+    while ((0 <= index) && ((index + 1) < _contentCodes.length)) {
+      Onboarding2Panel? nextPanel = Onboarding2Panel._fromCode(_contentCodes[index + 1]);
+      Widget? nextWidget = nextPanel?.asWidget;
+      if ((nextPanel != null) && (nextWidget != null)) {
+        if (panel.onboardingProgress != true) {
+          panel.onboardingProgress = true;
+        }
+        if (await nextPanel.isOnboardingEnabled()) {
+          panel.onboardingProgress = false;
+          return nextWidget;
+        }
+      }
+      index++;
+    }
+    if (panel.onboardingProgress != true) {
+      panel.onboardingProgress = false;
+    }
+    return null;
+  }
 
   // Privacy Selection
 
@@ -294,17 +321,38 @@ class Onboarding2Panel {
   String get onboardingCode => '';
   Onboarding2Context? get onboardingContext => null;
 
-  set onboardingProgress(bool value) {}
   Future<bool> isOnboardingEnabled() async => true;
 
-  static Widget? _fromCode(String code, { Onboarding2Context? context }) {
+  Widget? get asWidget => (this is Widget) ? (this as Widget) : null;
+
+  bool get onboardingProgress => false;
+  set onboardingProgress(bool value) {}
+
+  static Onboarding2Panel? _fromCode(String code, { Onboarding2Context? context }) {
     if (code == "get_started") {
       return Onboarding2GetStartedPanel(onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "video_tutorial") {
       return Onboarding2VideoTutorialPanel(onboardingCode: code, onboardingContext: context,);
     }
-    // "", "", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level"
+    else if (code == "privacy_statement") {
+      return Onboarding2PrivacyStatementPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "privacy_location_services") {
+      return Onboarding2PrivacyLocationServicesPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "privacy_store_activity") {
+      return Onboarding2PrivacyStoreActivityPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "privacy_share_activity") {
+      return Onboarding2PrivacyShareActivityPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "privacy_level") {
+      return Onboarding2PrivacyLevelPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "roles") {
+      return Onboarding2RolesPanel(onboardingCode: code, onboardingContext: context,);
+    }
     else {
       return null;
     }
