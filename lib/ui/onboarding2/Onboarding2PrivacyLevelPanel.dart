@@ -165,7 +165,35 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
       )
     );
 
-  int get _privacyLevel => Onboarding2().getPrivacyLevel;
+  int get _privacyLevel {
+    //TBD refactoring
+    if (Onboarding2().privacyLocationServicesSelection) {
+      if (Onboarding2().privacyStoreActivitySelection) {
+        if (Onboarding2().privacyShareActivitySelection) {
+          return 5;
+        } else {
+          //!privacyImprove
+          return 3;
+        }
+      } else {
+        //!getPersonalizeChoice
+        return 2;
+      }
+    } else {
+      //!privacyEnableLocationServices
+      if (Onboarding2().privacyStoreActivitySelection) {
+        if (Onboarding2().privacyShareActivitySelection) {
+          return 5;
+        } else {
+          //!privacyImprove
+          return 3;
+        }
+      }else {
+        //!getPersonalizeChoice
+        return 1;
+      }
+    }
+  }
 
   String get _privacyTitle {
     switch (_privacyLevel) {

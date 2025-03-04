@@ -116,39 +116,6 @@ class Onboarding2 with Service implements NotificationsListener {
 
   bool get  privacyShareActivitySelection => Storage().onBoarding2PrivacyShareActivitySelection == true;
   set privacyShareActivitySelection(bool value) => Storage().onBoarding2PrivacyShareActivitySelection = value;
-
-  int get getPrivacyLevel{
-    //TBD refactoring
-    int privacyLevel = -1;
-    if (privacyLocationServicesSelection){
-      if (privacyStoreActivitySelection){
-        if(privacyShareActivitySelection){
-          privacyLevel = 5;
-        } else {
-          //!privacyImprove
-          privacyLevel = 3;
-        }
-      }else {
-        //!getPersonalizeChoice
-        privacyLevel = 2;
-      }
-    } else {
-      //!privacyEnableLocationServices
-      if(privacyStoreActivitySelection){
-        if(privacyShareActivitySelection){
-          privacyLevel = 5;
-        } else {
-          //!privacyImprove
-          privacyLevel = 3;
-        }
-      }else {
-        //!getPersonalizeChoice
-        privacyLevel = 1;
-      }
-    }
-
-    return privacyLevel;
-  }
 }
 
 typedef Onboarding2Context = Map<String, dynamic>;
@@ -214,7 +181,6 @@ class Onboarding2Panel {
   }
 
 }
-
 
 abstract class Onboarding2ProgressableState {
   bool get onboarding2Progress;
