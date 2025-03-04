@@ -50,7 +50,7 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
   @override
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background, body:
-      SwipeDetector(onSwipeLeft: () => _onTapContinue(context), child:
+      SwipeDetector(onSwipeLeft: () => _onboardingNext(), child:
         Column(children: [
           Expanded(child:
             SingleChildScrollView(child:
@@ -108,7 +108,7 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
     });
   }
 
-  void _onboardingNext(bool returningUser) async {
+  void _onboardingNext([bool returningUser = false]) async {
     Onboarding2().privacyReturningUser = returningUser;
     Widget? nextPanel = await Onboarding2().next(widget);
     if ((nextPanel != null) && mounted) {

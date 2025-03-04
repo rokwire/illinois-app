@@ -91,7 +91,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
       SafeArea(child:
           Stack(children: [
             Positioned.fill(child:
-              SwipeDetector(onSwipeLeft: _onTapContinue, onSwipeRight: _onTapBack, child:
+            SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
                 Container(color: Styles().colors.blackTransparent06,)
               )
             ),
@@ -328,7 +328,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   void _onTapBack() {
     Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
+    _onboardingBack();
   }
 
   void _onTapContinue() {
@@ -345,6 +345,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     });
   }
 
+  _onboardingBack() => Navigator.of(context).pop();
   void _onboardingNext() async {
     Widget? nextPanel = await Onboarding2().next(widget);
     if ((nextPanel != null) && mounted) {
