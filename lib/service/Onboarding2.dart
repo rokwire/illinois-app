@@ -21,7 +21,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.da
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
@@ -117,34 +117,6 @@ class Onboarding2 with Service implements NotificationsListener {
   bool get  privacyShareActivitySelection => Storage().onBoarding2PrivacyShareActivitySelection == true;
   set privacyShareActivitySelection(bool value) => Storage().onBoarding2PrivacyShareActivitySelection = value;
 
-  void finalize(BuildContext context) =>
-    _proceedToNotificationsAuthIfNeeded(context);
-
-  void _proceedToNotificationsAuthIfNeeded(BuildContext context) {
-    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('notifications_auth')) {
-      OnboardingAuthNotificationsPanel authNotificationsPanel = OnboardingAuthNotificationsPanel(onboardingContext:{
-        'onContinueAction':  () {
-          _didProceedNotificationsAuth(context);
-        }
-      });
-      authNotificationsPanel.onboardingCanDisplayAsync.then((bool result) {
-        if (result) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => authNotificationsPanel));
-        }
-        else {
-          _didProceedNotificationsAuth(context);
-        }
-      });
-    }
-    else {
-      _didProceedNotificationsAuth(context);
-    }
-  }
-
-  void _didProceedNotificationsAuth(BuildContext context) {
-    _proceedToLogin(context);
-  }
 
   void _proceedToLogin(BuildContext context){
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
@@ -352,6 +324,9 @@ class Onboarding2Panel {
     }
     else if (code == "roles") {
       return Onboarding2RolesPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "notifications_auth") {
+      return Onboarding2AuthNotificationsPanel(onboardingCode: code, onboardingContext: context,);
     }
     else {
       return null;

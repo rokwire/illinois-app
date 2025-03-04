@@ -90,9 +90,7 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
-			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "sport_prefs", "research_questionnaire"],
-
-			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth" ],
+			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "research_questionnaire" ],
 
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
@@ -107,13 +105,11 @@
 		},
 		"rules": {
 			"roles" : {
-				"onboarding.login_netid"                   : ["student", "OR", "employee"],
-				"onboarding.login_phone"                   : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.verify_phone"                  : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.confirm_phone"                 : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_netid"                  : ["student", "OR", "employee"],
+				"onboarding2.login_phone"                  : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.verify_phone"                 : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.confirm_phone"                : ["NOT", ["employee", "OR", "student"]],
 	
-				"onboarding.sport_prefs"                   : ["fan"],
-
 				"features.student"                         : ["student"]
 			},
 			"groups": {
@@ -132,16 +128,13 @@
 			"locations": {
 			},
 			"privacy": {
-				"onboarding.notifications_auth"   	      : 4,
-				"onboarding.location_auth"        	      : 2,
-				"onboarding.roles"                   	    : 3,
-				"onboarding.login_netid"             	    : 4,
-				"onboarding.login_phone"          	      : 4,
-				"onboarding.verify_phone"         	      : 4,
-				"onboarding.confirm_phone"        	      : 4,
-				"onboarding.sport_prefs"          	      : 3,
+				"onboarding2.notifications_auth"   	      : 4,
+				"onboarding2.login_netid"             	  : 4,
+				"onboarding2.login_phone"          	      : 4,
+				"onboarding2.verify_phone"         	      : 4,
+				"onboarding2.confirm_phone"        	      : 4,
 				"onboarding.research_questionnaire"       : 4,
-				"onboarding.profile)info"                 : 4,
+				"onboarding.profile_info"                 : 4,
 
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,
@@ -195,8 +188,8 @@
 				"authenticate.linked.email.info"          : { "emailLinked": true },
 				"authenticate.linked.email.remove"        : { "emailLinked": true },
 
-				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
-				"onboarding.profile_info"                 : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire"      : { "shibbolethLoggedIn": true },
+				"onboarding2.profile_info"                : { "shibbolethLoggedIn": true },
 
 				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },

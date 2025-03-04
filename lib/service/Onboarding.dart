@@ -21,7 +21,7 @@ import 'package:illinois/ui/onboarding/OnboardingGetStartedPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthLocationPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingPrivacyStatementPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingRolesPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingSportPrefsPanel.dart';
@@ -51,9 +51,6 @@ class Onboarding extends rokwire.Onboarding  {
     }
     else if (code == 'privacy') {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.onboarding, onboardingContext: context);
-    }
-    else if (code == 'notifications_auth') {
-      return OnboardingAuthNotificationsPanel(onboardingContext: context);
     }
     else if (code == 'location_auth') {
       return OnboardingAuthLocationPanel(onboardingContext: context);
@@ -92,7 +89,7 @@ class Onboarding extends rokwire.Onboarding  {
     else if (panel is SettingsPrivacyPanel) {
       return 'privacy';
     }
-    else if (panel is OnboardingAuthNotificationsPanel) {
+    else if (panel is Onboarding2AuthNotificationsPanel) {
       return 'notifications_auth';
     }
     else if (panel is OnboardingAuthLocationPanel) {
