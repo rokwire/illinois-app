@@ -3633,10 +3633,11 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
 
   @override
   Widget build(BuildContext context) =>
-      Stack(children: [
-        _buildReactionsLayoutWidget,
-        _loadingLayout
-      ]);
+      // Stack(alignment: Alignment.centerLeft,
+      //     children: [
+        _buildReactionsLayoutWidget;
+        // _loadingLayout
+      // ]);
 
 
   Widget get _buildReactionsLayoutWidget {
@@ -3644,6 +3645,7 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     return Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
+          _loadingLayout,
           ...sameEmojiReactions.keys.map((String emoji) =>
               _buildReactionWidget(
                   occurrences: sameEmojiReactions[emoji],
@@ -3670,13 +3672,12 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     );
   }
 
-  Widget get _loadingLayout => Visibility(visible: _loading, child:
-    Container(
-      padding: const EdgeInsets.only(right: 6), child:
-        SizedBox(width: 14, height: 14, child:
+  Widget get _loadingLayout => Visibility(visible: true || _loading, child:
+      Container(padding: EdgeInsets.only(right: 8),
+        child: SizedBox(width: 16, height: 16, child:
           CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
-        ),
-  ));
+        )),
+  );
 
   Widget _buildReactionWidget({Reaction? reaction, List<Reaction>? occurrences}){
     return Padding( padding: EdgeInsets.all(4),
