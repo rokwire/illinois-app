@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingGetStartedPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthLocationPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingPrivacyStatementPanel.dart';
@@ -58,9 +58,6 @@ class Onboarding extends rokwire.Onboarding  {
     else if (code == 'roles') {
       return OnboardingRolesPanel(onboardingContext: context);
     }
-    else if (code == 'login_netid') {
-      return OnboardingLoginNetIdPanel(onboardingContext: context);
-    }
     else if (code == 'login_phone') {
       return OnboardingLoginPhonePanel(onboardingContext: context);
     }
@@ -98,7 +95,7 @@ class Onboarding extends rokwire.Onboarding  {
     else if (panel is OnboardingRolesPanel) {
       return 'roles';
     }
-    else if (panel is OnboardingLoginNetIdPanel) {
+    else if (panel is Onboarding2LoginNetIdPanel) {
       return 'login_netid';
     }
     else if (panel is OnboardingLoginPhonePanel) {

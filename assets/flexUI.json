@@ -133,8 +133,8 @@
 				"onboarding2.login_phone"          	      : 4,
 				"onboarding2.verify_phone"         	      : 4,
 				"onboarding2.confirm_phone"        	      : 4,
-				"onboarding.research_questionnaire"       : 4,
-				"onboarding.profile_info"                 : 4,
+				"onboarding2.research_questionnaire"      : 4,
+				"onboarding2.profile_info"                : 4,
 
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,

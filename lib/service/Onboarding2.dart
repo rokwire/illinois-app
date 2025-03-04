@@ -9,12 +9,12 @@ import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyShareActivityPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStoreActivityPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
@@ -22,7 +22,6 @@ import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
 class Onboarding2 with Service implements NotificationsListener {
@@ -121,14 +120,14 @@ class Onboarding2 with Service implements NotificationsListener {
   void _proceedToLogin(BuildContext context){
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('login_netid')) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
+      /*Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
         "onContinueAction": () {
           _didProceedToLogin(context);
         },
         "onContinueActionEx": (dynamic state) {
           _didProceedToLogin(context, currentPanelState: state);
         }
-      })));
+      })));*/
     }
     else if (codes.contains('login_phone')) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
@@ -150,14 +149,14 @@ class Onboarding2 with Service implements NotificationsListener {
   }
 
   void _proceedToProfileInfoIfNeeded(BuildContext context, { dynamic currentPanelState }) {
-    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    /*Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('profile_info')) {
       Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2ProfileInfoPanel(onboardingContext: {
         'onContinueAction': () => _didProceedProfileInfo(context),
         'onContinueActionEx': (state) => _didProceedProfileInfo(context, currentPanelState: state),
       },)));
     }
-    else {
+    else */ {
       _didProceedProfileInfo(context, currentPanelState: currentPanelState);
     }
   }
@@ -328,6 +327,10 @@ class Onboarding2Panel {
     else if (code == "notifications_auth") {
       return Onboarding2AuthNotificationsPanel(onboardingCode: code, onboardingContext: context,);
     }
+    else if (code == "login_netid") {
+      return Onboarding2LoginNetIdPanel(onboardingCode: code, onboardingContext: context,);
+    }
+
     else {
       return null;
     }

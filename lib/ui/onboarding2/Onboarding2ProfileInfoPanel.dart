@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -12,10 +13,19 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class Onboarding2ProfileInfoPanel extends StatefulWidget {
-  final Map<String, dynamic>? onboardingContext;
+class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2ProfileInfoPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2ProfileInfoPanelState>());
 
-  Onboarding2ProfileInfoPanel({super.key, this.onboardingContext});
+  GlobalKey<_Onboarding2ProfileInfoPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ProfileInfoPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2ProfileInfoPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
   @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
@@ -24,7 +34,7 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget {
 class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
 
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey<ProfileInfoPageState>();
-  bool _onboarding2Progress = false;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -48,10 +58,10 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   }
 
   @override
-  bool get onboarding2Progress => _onboarding2Progress;
+  bool get onboarding2Progress => _onboardingProgress;
 
   @override
-  set onboarding2Progress(bool progress) => setStateIfMounted(() { _onboarding2Progress = progress; });
+  set onboarding2Progress(bool progress) => setStateIfMounted(() { _onboardingProgress = progress; });
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -113,7 +123,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     ],),
   );
 
-  bool get _canContinue => (_onboarding2Progress != true);
+  bool get _canContinue => (_onboardingProgress != true);
 
   Widget get _continueCommandButton => RoundedButton(
       label: Localization().getStringEx('panel.onboarding.profile_info.continue.title', 'Continue'),
@@ -121,14 +131,14 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
       textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       borderColor: _canContinue ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03,
-      progress: _onboarding2Progress,
+      progress: _onboardingProgress,
       enabled: _canContinue,
       onTap: _onTapContinue
   );
 
-  bool get _canSkip => (_onboarding2Progress != true);
+  bool get _canSkip => (_onboardingProgress != true);
 
-  Widget get _skipLinkSection => _onboarding2Progress ?
+  Widget get _skipLinkSection => _onboardingProgress ?
     Stack(children: [
       _skipLinkButton,
       Positioned.fill(child:
@@ -149,22 +159,10 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary,)
   );
 
-  void _onTapSkip() {
-    Analytics().logSelect(target: "Skip");
-    if (_canSkip) {
-      _finishProfile();
-    }
-  }
-
   Widget get _backImageButton => OnboardingBackButton(
     padding: const EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 20),
     onTap: _onTapBack
   );
-
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
-  }
 
   void _onProfileStateChanged() {
     if (mounted) {
@@ -174,26 +172,42 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     }
   }
 
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    _onboardingBack();
+  }
+
+  void _onTapSkip() {
+    Analytics().logSelect(target: "Skip");
+    if (_canSkip) {
+      _onboardingNext();
+    }
+  }
+
   bool get _isLoaded => (_profileInfoKey.currentState?.isLoading != true);
   bool get _isLoading => (_profileInfoKey.currentState?.isLoading == true);
 
   void _onTapContinue() {
     Analytics().logSelect(target: "Continue");
     if (_canContinue) {
-      _finishProfile();
+      _onboardingNext();
     }
   }
 
-  void _finishProfile() {
-    Map<String, dynamic>? onboardingContext = widget.onboardingContext;
-    Function? onContinue = onboardingContext?['onContinueAction'];
-    Function? onContinueEx = onboardingContext?['onContinueActionEx'];
-    if (onContinueEx != null) {
-      onContinueEx(this);
-    }
-    else if (onContinue != null) {
-      onContinue();
-    }
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
   }
 
+  _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() async {
+    Widget? nextPanel = await Onboarding2().next(widget);
+    if ((nextPanel != null) && mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    }
+  }
 }
