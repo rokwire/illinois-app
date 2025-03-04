@@ -36,8 +36,7 @@ class Onboarding2ResearchQuestionnairePanel extends StatefulWidget with Onboardi
       dynamic contextParam = onboardingContext?["questionanire"];
       Questionnaire? questionnaire = (contextParam is Questionnaire) ? contextParam : null;
       if (questionnaire == null) {
-        questionnaire = await Questionnaires().loadResearch();
-        onboardingContext?["questionanire"] = questionnaire;
+        onboardingContext?["questionanire"] = (questionnaire = await Questionnaires().loadResearch());
       }
       Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
       return (questionnaireAnswers?.isNotEmpty != true);

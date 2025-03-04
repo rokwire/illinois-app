@@ -5,7 +5,11 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginNetIdPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneConfirmPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyShareActivityPanel.dart';
@@ -161,6 +165,18 @@ class Onboarding2Panel {
     }
     else if (code == "login_netid") {
       return Onboarding2LoginNetIdPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "login_phone_or_email_statement") {
+      return Onboarding2LoginPhoneOrEmailStatementPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "login_phone_or_email") {
+      return Onboarding2LoginPhoneOrEmailPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "login_email") {
+      return Onboarding2LoginEmailPanel(onboardingCode: code, onboardingContext: context,);
+    }
+    else if (code == "login_phone") {
+      return Onboarding2LoginPhoneConfirmPanel(onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "profile_info") {
       return Onboarding2ProfileInfoPanel(onboardingCode: code, onboardingContext: context,);

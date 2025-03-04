@@ -90,7 +90,7 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
-			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "research_questionnaire_participate_prompt", "research_questionnaire", "research_questionnaire_acknowledgement" ],
+			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone_or_email_statement", "login_phone_or_email", "login_email", "login_phone", "profile_info", "research_questionnaire_participate_prompt", "research_questionnaire", "research_questionnaire_acknowledgement" ],
 
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
@@ -106,10 +106,11 @@
 		"rules": {
 			"roles" : {
 				"onboarding2.login_netid"                  : ["student", "OR", "employee"],
+				"onboarding2.login_phone_or_email_statement" : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_phone_or_email"         : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_email"                  : ["NOT", ["employee", "OR", "student"]],
 				"onboarding2.login_phone"                  : ["NOT", ["employee", "OR", "student"]],
-				"onboarding2.verify_phone"                 : ["NOT", ["employee", "OR", "student"]],
-				"onboarding2.confirm_phone"                : ["NOT", ["employee", "OR", "student"]],
-	
+
 				"features.student"                         : ["student"]
 			},
 			"groups": {
@@ -130,9 +131,10 @@
 			"privacy": {
 				"onboarding2.notifications_auth"   	      : 4,
 				"onboarding2.login_netid"             	  : 4,
-				"onboarding2.login_phone"          	      : 4,
-				"onboarding2.verify_phone"         	      : 4,
-				"onboarding2.confirm_phone"        	      : 4,
+				"onboarding2.login_phone_or_email_statement" : 4,
+				"onboarding2.login_phone_or_email"        : 4,
+				"onboarding2.login_email"                 : 4,
+				"onboarding2.login_phone"         	      : 4,
 
 				"onboarding2.profile_info"                : 4,
 				"onboarding2.research_questionnaire"      : 4,
