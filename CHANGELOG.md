@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.1.X]
 <!-- The following updates persist in the 6.1 support branch. -->
-<!-- They should eihter appear in the next 6.1 support update, or in the upcoming 6.2 build. -->
+<!-- They should either appear in the next 6.1 support update, or in the upcoming 6.2 build. -->
 ### Changed
 - Updated status text for no favorite locations [#4828](https://github.com/rokwire/illinois-app/issues/4828).
 - GroupPostDetailPanel remove reply button [#4808](https://github.com/rokwire/illinois-app/issues/4808).
+- Group advanced settings: text updates [#4846](https://github.com/rokwire/illinois-app/issues/4846).
 ### Fixed
 - Fixed storage update support in FlexUi, acknowledged for conversations visibility updates in Debug Home panel [#4830](https://github.com/rokwire/illinois-app/issues/4830).
 - MessageDetailPanel header title[#4845](https://github.com/rokwire/illinois-app/issues/4845).
