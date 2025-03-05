@@ -686,7 +686,7 @@
 
     "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
     "panel.athletics.content.events.empty.message": "No hay eventos para los equipos seleccionados.",
-    "panel.athletics.content.events.my.empty.message": "No hay eventos destacados para los equipos seleccionados.",
+    "panel.athletics.content.events.my.empty.message": "No hay eventos destacados para los equipos seleccionados. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
 
     "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
     "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
@@ -696,7 +696,7 @@
     "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
 
     "panel.athletics.content.news.empty.message": "No hay novedades para los equipos seleccionados.",
-    "panel.athletics.content.news.my.empty.message": "No hay novedades destacadas para los equipos seleccionados.",
+    "panel.athletics.content.news.my.empty.message": "No hay novedades destacadas para los equipos seleccionados. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
 
     "panel.athletics.content.game_day.empty.message": "No hay guías del día del partido disponibles para los equipos seleccionados.",
@@ -772,7 +772,7 @@
     "panel.onboarding.login.phone.label.title":"Verifique su número de teléfono",
     "panel.onboarding.login.netid.label.title.hint":"Encabezado 1",
     "panel.onboarding.login.phone.label.title.hint":"Encabezado 1",
-    "panel.onboarding.login.netid.label.description":"Inicie sesión con su NetID para usar las características académicas y de residencia específicas.",
+    "panel.onboarding.login.netid.label.description":"Inicie sesión con su NetID para ver funciones específicas para usted, como su ID de Illini o el cronograma y las ubicaciones de sus cursos.",
     "panel.onboarding.login.phone.label.description":"Esto guarda sus preferencias para que pueda tener la misma experiencia en más de un dispositivo",
     "panel.onboarding.login.netid.button.continue.title":"Inicia sesión con tu NetID",
     "panel.onboarding.login.phone.button.continue.title":"Verificar mi número de teléfono",
@@ -879,7 +879,7 @@
     "panel.onboarding2.explore_campus.learn_more.location_services.content1": "Cuando se permiten los Servicios de Ubicación, la aplicación puede encontrar eventos y servicios cerca de ti y proporcionar mapas interactivos. ",
     "panel.onboarding2.explore_campus.learn_more.location_services.content2": "Cuando se activa Bluetooth, la aplicación puede intercambiar información con otros dispositivos para el pase MTD. Bluetooth te ayuda a encontrar tu asiento, lugar de estacionamiento, mensajes dentro de los edificios, y servicios al aire libre que puedan estar cerca de ti.",
     "panel.onboarding2.explore_campus.label.title": "¿Quieres permitir los servicios de ubicación?",
-    "panel.onboarding2.explore_campus.label.description": "Encuentra fácilmente los eventos en campus y conéctate con otros usuarios cercanos.",
+    "panel.onboarding2.explore_campus.label.description": "Encuentre eventos y paradas de autobús cercanas o solicite un SafeWalk desde su ubicación exacta.",
     "panel.onboarding2.explore_campus.button.toggle.title": "Permitir los servicios de ubicación.",
     "panel.onboarding2.explore_campus.button.untoggle.title": "No permitir servicios de ubicación.",
 
@@ -1191,10 +1191,10 @@
 
     "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación {{app_title}}.",
     "panel.explore.hide.appointments.msg":"No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
-    "panel.explore.instructions.mtd_stops.msg":"Toque una parada de autobús en el mapa para obtener los horarios de los autobuses. Toca la estrella para guardar la parada de autobús como favorita.",
-    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.instructions.mtd_stops.msg":"Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.instructions.mtd.dont_show.msg":"No me muestres esto de nuevo.",
-    "panel.explore.missing.my_locations.msg":"You currently have no saved locations. Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.missing.my_locations.msg":"You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.directions.na.msg":"Debe habilitar los servicios de ubicación para obtener indicaciones de navegación.",
     "panel.explore.directions.failed.msg":"Error al iniciar las indicaciones de navegación.",
     "panel.explore.details.na.msg":"Los detalles no están disponibles para los puntos de interés personalizados.",
@@ -1810,7 +1810,7 @@
     "panel.saved.button.less.hint": "Toca para ver menos artículos favoritos",
     "panel.saved.button.event_reminders":"Recordatorios de eventos",
     "panel.saved.button.dining_specials":"Especiales de comidas",
-    "panel.saved.message.no_items.description": "Toque el \u2606 en eventos, lugares para comer y recordatorios que le interesen para encontrarlos rápidamente aquí.",
+    "panel.saved.message.no_items.description": "Toque el \u2606 en eventos, lugares para comer y recordatorios que le interesen para encontrarlos rápidamente aquí. (Su nivel de privacidad debe ser al menos 2.)",
     "panel.saved.message.offline":"Los elementos guardados no están disponibles sin conexión",
 
     "panel.food_details.label.nutrition_fatcts_not_available.title": "Información nutricional no disponible",
@@ -3285,7 +3285,7 @@
     "panel.mtd_stops.home.status.error.all.text": "Error al cargar las paradas de autobús.",
     "panel.mtd_stops.home.status.error.my.text": "Error al cargar tus paradas de autobús guardadas.",
     "panel.mtd_stops.home.status.empty.all.text": "No hay paradas de autobús disponibles.",
-    "panel.mtd_stops.home.status.empty.my.text": "No tienes paradas de autobús guardadas.",
+    "panel.mtd_stops.home.status.empty.my.text": "Tap the \\u2606 on <a href='{{local_url}}'><b>bus stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "panel.mtd_stops.search.header.title":"Buscar",
     "panel.mtd_stops.search.search.field.title":"Buscar",
@@ -3818,12 +3818,12 @@
     "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
 
     "widget.home.campus_safety_resources.label.campus_safety_resources": "Recursos de seguridad del campus",
-    "widget.home.campus_safety_resources.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de seguridad del campus</b></a> para acceder rápidamente aquí.",
+    "widget.home.campus_safety_resources.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de seguridad del campus</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.campus_safety_resources.button.all.title": "Ver todo",
     "widget.home.campus_safety_resources.button.all.hint": "Toque para ver todos los recursos de seguridad",
 
     "widget.home.safety_resources.label.campus_safety_resources": "Safety Resources",
-    "widget.home.safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Safety Resources</b></a> for quick access here.",
+    "widget.home.safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Safety Resources</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "widget.home.suggested_events.label.events_for_you":"Eventos sugeridos",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curada por tus intereses",
@@ -3856,7 +3856,7 @@
     "widget.home.event2_feed.button.all.hint":"Toca para ver todos los eventos",
 
     "widget.home.my_events2.label.header.title":"My Events",
-    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
+    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",
@@ -3882,7 +3882,7 @@
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
     "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.",
+    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.(<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
 
@@ -3904,7 +3904,7 @@
     "widget.home.safer.alert.building_access.privacy_update.msg": "Con tu nivel de privacidad en {{privacy_level_icon}}, deberás iniciar sesión cada vez para mostrar tu estado de acceso a edificios. ¿Quieres cambiar tu nivel de privacidad a 4 o 5 para solo tener que iniciar sesión una vez?",
 
     "widget.home.wallet.label.title": "Cartera",
-    "widget.home.wallet.text.empty.description": "Toque \u2606 en los elementos de Wallet para encontrarlos rápidamente aquí.",
+    "widget.home.wallet.text.empty.description": "Toque \u2606 en los elementos de Wallet para encontrarlos rápidamente aquí. (Su nivel de privacidad debe ser al menos 2.)",
 
     "widget.home.wallet.illini_cash.title": "Illini Cash",
     "widget.home.wallet.illini_cash.label.current_balance": "Saldo actual de Illini Cash",
@@ -4029,17 +4029,17 @@
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
     "widget.home.favorites.message.offline.appointments": "Mis citas de MyMcKinley no están disponibles sin conexión.",
 
-    "widget.home.favorites.message.empty.events": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Eventos</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.events2": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Sección de Eventos</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.dining": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Comida</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.athletics": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes eventos</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.news": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes noticias</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.laundry": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lavanderías</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.mtd_stops": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Paradas de Autobús</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.locations": "Tap the \\u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Guía del Campus</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.appointments": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Citas de MyMcKinley</b></a> para acceder rápidamente aquí.",
-    "widget.home.favorites.message.empty.appointments.not_to_display": "No hay nada que mostrar, ya que has optado por no mostrar ninguna cita pasada o futura.",
+    "widget.home.favorites.message.empty.events": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Eventos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.events2": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Sección de Eventos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.dining": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Comida</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.athletics": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes eventos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.news": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes noticias</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.laundry": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lavanderías</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.mtd_stops": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Paradas de Autobús</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.locations": "Tap the \\u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Guía del Campus</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.appointments": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Citas de MyMcKinley</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.appointments.not_to_display": "No hay nada que mostrar, ya que has optado por no mostrar ninguna cita pasada o futura. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
 
     "widget.home.favorites.all.title": "Ver Todo",
     "widget.home.favorites.all.hint.events": "Toque para ver todos los eventos favoritos",
@@ -4053,12 +4053,12 @@
     "widget.home.favorites.all.hint.appointments": "Toque para ver todas las citas favoritas",
 
     "widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
-    "widget.home.wellness_resources.text.empty.description": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de Bienestar</b></a> para acceder rápidamente aquí.",
+    "widget.home.wellness_resources.text.empty.description": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de Bienestar</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.wellness_resources.button.all.title": "Ver Todo",
     "widget.home.wellness_resources.button.all.hint": "Toque para ver todos los recursos de bienestar",
 
     "widget.home.wellness_mental_health.header.label": "Mis recursos de salud mental",
-    "widget.home.wellness_mental_health.text.empty.description": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de Salud Mental</b></a> para acceder rápidamente aquí.",
+    "widget.home.wellness_mental_health.text.empty.description": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de Salud Mental</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.wellness_mental_health.button.all.title": "Ver Todo",
     "widget.home.wellness_mental_health.button.all.hint": "Toca para ver todos los recursos de salud mental",
 
@@ -4285,7 +4285,7 @@
     "widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 
     "widget.home.dinings.header.title": "Comida",
-    "widget.home.dinings.text.empty.description": "Toque \u2606 en los elementos de Dinings para que pueda encontrarlos rápidamente aquí.",
+    "widget.home.dinings.text.empty.description": "Toque \u2606 en los elementos de Dinings para que pueda encontrarlos rápidamente aquí. (Su nivel de privacidad debe ser al menos 2.)",
     "widget.home.dinings.all.button.title": "Comedor de la residencia",
     "widget.home.dinings.all.button.description": "Los estudiantes, profesores, personal y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Abierto ahora",

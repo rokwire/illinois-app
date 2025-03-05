@@ -46,7 +46,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeDiningWidget.title;
   @override String? get titleIconKey => 'dining';
-  @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the \u2606 on items in Dinings so you can quickly find them here.");
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the ☆ on items in Dining for quick access here. (Your privacy level must be at least 2.)");
 
   @override
   Widget? widgetFromCode(String code) {

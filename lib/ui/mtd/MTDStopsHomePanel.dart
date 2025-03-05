@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/MTD.dart';
 import 'package:illinois/model/Location.dart';
@@ -13,6 +14,7 @@ import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -39,6 +41,11 @@ class MTDStopsHomePanel extends StatefulWidget {
 class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements NotificationsListener {
   
   static Color _dimmedBackgroundColor = Color(0x99000000);
+
+  static const String _localUrl = 'local://bus_stops';
+  static const String _localUrlMacro = '{{local_url}}';
+  static const String _privacyUrl = 'privacy://level';
+  static const String _privacyUrlMacro = '{{privacy_url}}';
 
   MTDStopsScope? _selectedScope;
   bool _contentTypesDropdownExpanded = false;
@@ -199,6 +206,16 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
+  void _selectContentType(MTDStopsScope contentType) {
+    if (_selectedScope != contentType) {
+      setState(() {
+        _selectedScope = contentType;
+        _contentTypesDropdownExpanded = false;
+        _stops = _contentList;
+      });
+    }
+  }
+
 
   static String _getContentTypeName(MTDStopsScope? contentType, {String? languageCode} ) =>
       contentType?.titleEx(languageCode: languageCode) ?? '';
@@ -229,7 +246,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       return _buildStatus(_errorDisplayStatus);
     }
     else if (_stops!.isEmpty) {
-      return _buildStatus(_emptyDisplayStatus);
+      return _buildStatus(_emptyDisplayStatusHtml);
     }
     else {
       return _buildStops();
@@ -263,18 +280,37 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     );
   }
 
-  Widget _buildStatus(String status) {
+  Widget _buildStatus(String statusHtml) {
     double screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
       Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
         Row(children: [
           Expanded(child:
-            Text(status ,style:
-              Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+            HtmlWidget("<center>$statusHtml</center>" ,
+              onTapUrl: _handleLocalUrl,
+              textStyle: Styles().textStyles.getTextStyle("widget.message.regular"),
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+            )
           ),
         ],)
       ),
     );
+  }
+
+  bool _handleLocalUrl(String? url) {
+    if (url == _localUrl) {
+      Analytics().logSelect(target: 'Bus Stops', source: widget.runtimeType.toString());
+      _selectContentType(MTDStopsScope.all);
+      return true;
+    }
+    else if (url == _privacyUrl) {
+      Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   String get _errorDisplayStatus {
@@ -285,10 +321,12 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
-  String get _emptyDisplayStatus {
+  String get _emptyDisplayStatusHtml {
     switch(_selectedScope) {
       case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
-      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have no saved bus stops.');
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', "Tap the \u2606 on <a href='$_localUrlMacro'><b>bus stops</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+        .replaceAll(_localUrlMacro, _localUrl)
+        .replaceAll(_privacyUrlMacro, _privacyUrl);
       default: return '';
     }
   }
