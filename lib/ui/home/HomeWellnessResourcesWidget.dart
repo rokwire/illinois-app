@@ -27,6 +27,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -71,6 +72,8 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
+  static const String privacyUrl = 'privacy://level';
+  static const String privacyUrlMacro = '{{privacy_url}}';
 
 
   @override
@@ -122,8 +125,9 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   Widget _buildEmpty() {
     String favoriteKey = WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey);
-    String message = Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Wellness Resources</b></a> so you can quickly find them here.")
-      .replaceAll(localUrlMacro, '$localScheme://$favoriteKey');
+    String message = Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the ☆ on items in <a href='$localUrlMacro'><b>Wellness Resources</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      .replaceAll(localUrlMacro, '$localScheme://$favoriteKey')
+      .replaceAll(privacyUrlMacro, privacyUrl);
 
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
@@ -336,6 +340,10 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
       Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
+    }
+    else if (url == privacyUrl) {
+      Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
     }
   }
 
