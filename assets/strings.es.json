@@ -686,7 +686,7 @@
 
     "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
     "panel.athletics.content.events.empty.message": "No hay eventos para los equipos seleccionados.",
-    "panel.athletics.content.events.my.empty.message": "No hay eventos destacados para los equipos seleccionados.",
+    "panel.athletics.content.events.my.empty.message": "No hay eventos destacados para los equipos seleccionados. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
 
     "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
     "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",

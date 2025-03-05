@@ -688,7 +688,7 @@
 
     "panel.athletics.content.events.unknown_error.message": "Unknown Error Occurred",
     "panel.athletics.content.events.empty.message": "There are no events for the selected teams.",
-    "panel.athletics.content.events.my.empty.message": "There are no starred events for the selected teams.",
+    "panel.athletics.content.events.my.empty.message": "There are no starred events for the selected teams. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "panel.athletics.content.my_teams.header.title": "My Big 10 Teams",
     "panel.athletics.content.my_teams.all.select.label": "Select All",

@@ -686,7 +686,7 @@
 
 	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
 	"panel.athletics.content.events.empty.message": "所選團隊沒有任何活動。",
-	"panel.athletics.content.events.my.empty.message": "所選團隊沒有加星號的賽事。",
+	"panel.athletics.content.events.my.empty.message": "所選團隊沒有加星號的賽事。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 
 	"panel.athletics.content.my_teams.header.title": "我的十大團隊",
 	"panel.athletics.content.my_teams.all.select.label": "全選",
