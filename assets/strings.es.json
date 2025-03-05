@@ -696,7 +696,7 @@
     "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
 
     "panel.athletics.content.news.empty.message": "No hay novedades para los equipos seleccionados.",
-    "panel.athletics.content.news.my.empty.message": "No hay novedades destacadas para los equipos seleccionados.",
+    "panel.athletics.content.news.my.empty.message": "No hay novedades destacadas para los equipos seleccionados. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
 
     "panel.athletics.content.game_day.empty.message": "No hay guías del día del partido disponibles para los equipos seleccionados.",

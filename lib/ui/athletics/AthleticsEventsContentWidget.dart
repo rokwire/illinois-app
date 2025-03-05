@@ -60,8 +60,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   ScrollController _scrollController = ScrollController();
 
-  static const String privacyUrl = 'privacy://level';
-  static const String privacyUrlMacro = '{{privacy_url}}';
+  static const String _privacyUrl = 'privacy://level';
+  static const String _privacyUrlMacro = '{{privacy_url}}';
 
   @override
   void initState() {
@@ -140,7 +140,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   bool _handleLocalUrl(String? url) {
-    if (url == privacyUrl) {
+    if (url == _privacyUrl) {
       Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
       return true;
@@ -347,7 +347,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   String get _emptyMessageHtml {
     return _favoritesMode ?
-      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='\$privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(privacyUrlMacro, privacyUrl) :
+      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
       Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.');
   }
 

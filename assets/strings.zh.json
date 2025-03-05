@@ -696,7 +696,7 @@
 	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
 
 	"panel.athletics.content.news.empty.message": "目前還沒有選定球隊的消息。",
-	"panel.athletics.content.news.my.empty.message": "入選球隊沒有加星號的新聞。",
+	"panel.athletics.content.news.my.empty.message": "入選球隊沒有加星號的新聞。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
 
 	"panel.athletics.content.game_day.empty.message": "所選球隊沒有可用的比賽日指南。",

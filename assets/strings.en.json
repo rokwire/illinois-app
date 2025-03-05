@@ -698,7 +698,7 @@
     "panel.athletics.content.teams.unknown_error.message": "Unknown Error Occurred.",
 
     "panel.athletics.content.news.empty.message": "There is no news for the selected teams.",
-    "panel.athletics.content.news.my.empty.message": "There is no starred news for the selected teams.",
+    "panel.athletics.content.news.my.empty.message": "There is no starred news for the selected teams. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.athletics.content.news.failed.message": "Failed to load news.",
 
     "panel.athletics.content.game_day.empty.message": "There are no available gameday guides for the selected teams.",
