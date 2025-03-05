@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -45,6 +46,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -182,6 +184,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   implements NotificationsListener {
 
   static const double _filterLayoutSortKey = 1.0;
+  static const String _privacyUrl = 'privacy://level';
+  static const String _privacyUrlMacro = '{{privacy_url}}';
 
   late List<ExploreMapType> _exploreTypes;
   ExploreMapType? _selectedMapType;
@@ -1028,7 +1032,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _showMessagePopup(String? message) {
     if ((message != null) && message.isNotEmpty) {
-      ExploreMessagePopup.show(context, message);
+      ExploreMessagePopup.show(context, message, onTapUrl: _handleLocalUrl);
     }
   }
 
@@ -1036,6 +1040,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     showDialog(context: context, builder: (context) => ExploreOptionalMessagePopup(
       message: message,
       showPopupStorageKey: showPopupStorageKey,
+      onTapUrl: _handleLocalUrl,
     ));
   }
 
@@ -2246,21 +2251,38 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _showMessagePopup(_emptyContentMessage);
       }
       else if (Storage().showMtdStopsMapInstructions != false) {
-        _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
+        String messageHtml = Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").
+          replaceAll(_privacyUrlMacro, _privacyUrl);
+        _showOptionalMessagePopup(messageHtml, showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
         );
       }
     }
     else if (_selectedMapType == ExploreMapType.MyLocations) {
       if (CollectionUtils.isEmpty(_explores)) {
-        _showMessagePopup(Localization().getStringEx('panel.explore.missing.my_locations.msg', 'You currently have no saved locations. Select a location on the map and tap the star to save it as a favorite.'),);
+        String messageHtml = Localization().getStringEx('panel.explore.missing.my_locations.msg', "You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").
+          replaceAll(_privacyUrlMacro, _privacyUrl);
+        _showMessagePopup(messageHtml);
       }
       else if (Storage().showMyLocationsMapInstructions != false) {
-        _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.my_locations.msg", "Select a location on the map and tap the star to save it as a favorite.",), showPopupStorageKey: Storage().showMyLocationsMapInstructionsKey
+        String messageHtml = Localization().getStringEx("panel.explore.instructions.my_locations.msg", "Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)",).
+          replaceAll(_privacyUrlMacro, _privacyUrl);
+        _showOptionalMessagePopup(messageHtml, showPopupStorageKey: Storage().showMyLocationsMapInstructionsKey
         );
       }
     }
     else if (CollectionUtils.isEmpty(_explores)) {
       _showMessagePopup(_emptyContentMessage);
+    }
+  }
+
+  bool _handleLocalUrl(String url) {
+    if (url == _privacyUrl) {
+      Analytics().logSelect(target: 'Privacy Level');
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      return true;
+    }
+    else {
+      return false;
     }
   }
 
@@ -2729,10 +2751,11 @@ class ExploreMapSearchMTDStopsParam {
 
 class ExploreMessagePopup extends StatelessWidget {
   final String message;
-  ExploreMessagePopup({super.key, required this.message});
+  final bool Function(String url)? onTapUrl;
+  ExploreMessagePopup({super.key, required this.message, this.onTapUrl});
 
-  static Future<void> show(BuildContext context, String message) =>
-    showDialog(context: context, builder: (context) => ExploreMessagePopup(message: message));
+  static Future<void> show(BuildContext context, String message, { bool Function(String url)? onTapUrl}) =>
+    showDialog(context: context, builder: (context) => ExploreMessagePopup(message: message, onTapUrl: onTapUrl));
 
   @override
   Widget build(BuildContext context) =>
@@ -2743,8 +2766,11 @@ class ExploreMessagePopup extends StatelessWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
               Styles().images.getImage('university-logo') ?? Container(),
               Padding(padding: EdgeInsets.only(top: 20), child:
-                Text(message, textAlign: TextAlign.center, style:
-                  Styles().textStyles.getTextStyle("widget.detail.small")
+                // Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.small")
+                HtmlWidget(message,
+                  onTapUrl: (url) => (onTapUrl != null) ? onTapUrl!(url) : false,
+                  textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
                 )
               )
             ])

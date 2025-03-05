@@ -848,7 +848,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-            propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
+            propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
           }
         }
       }
@@ -872,7 +872,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
       ),
       Expanded(child:
-        Text(value, maxLines: 1, style:
+        Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style:
           Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
         ),
       ),
@@ -3229,7 +3229,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
               EnabledToggleButton(
                   enabled: true,
                   borderRadius: BorderRadius.zero,
-                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts"),
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts and Messages"),
                   toggled: isGroupPostAllowed,
                   onTap: (){_onSettingsTap(
                       changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
@@ -3247,7 +3247,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: (isGroupPostAllowed == true && isGroupInfoAllowed == true),
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send messages to specific members"), //TBD localize section
                                   toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
@@ -3258,7 +3258,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send posts to admins"),
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send messages to admins"),
                                   toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
@@ -3291,7 +3291,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Reactions (emojis) to posts"),
+                                  label: Localization().getStringEx("panel.groups_create.reactions_to_post.label", "Reactions (emojis) to posts"),
                                   toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
