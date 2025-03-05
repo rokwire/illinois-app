@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -48,6 +49,8 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
+  static const String privacyUrl = 'privacy://level';
+  static const String privacyUrlMacro = '{{privacy_url}}';
 
   @override
   void initState() {
@@ -199,8 +202,9 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   }
 
   Widget _buildEmptyContent() {
-    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here.")
-      .replaceAll(localUrlMacro, '$localScheme://${Guide.campusHighlightContentType}');
+    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide Highlights</b></a> for quick access here.(<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)")
+      .replaceAll(localUrlMacro, '$localScheme://${Guide.campusHighlightContentType}')
+      .replaceAll(privacyUrlMacro, privacyUrl);
       return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
   }
 
@@ -208,6 +212,9 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == Guide.campusHighlightContentType.toLowerCase())) {
       _onCampusHighlightLink();
+    }
+    else if (url == privacyUrl) {
+      _onPrivacyLevelLink();
     }
   }
 
@@ -219,6 +226,11 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
     )));
+  }
+
+  void _onPrivacyLevelLink() {
+    Analytics().logSelect(target: "Privacy Level", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
   double get _pageHeight {
