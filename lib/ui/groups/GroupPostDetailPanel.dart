@@ -170,7 +170,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               _buildRepliesSection(),
               _buildPostInputSection(),
             ])),
-          Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
+          Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, right: 8, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Row(children: [
                   Expanded( child:
@@ -216,13 +216,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                           Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
                             Styles().images.getImage('report', excludeFromSemantics: true))))),
-
-                  Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
-                    Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
-                      GestureDetector(onTap: _onTapHeaderReply, child:
-                          Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                            Styles().images.getImage('reply', excludeFromSemantics: true))))),
-
                 ]),
             ])
           )
@@ -671,12 +664,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             context, Localization().getStringEx('panel.group.detail.post.reply.delete.failed.msg', 'Failed to delete reply.'));
       }
     });
-  }
-
-  void _onTapHeaderReply() {
-    Analytics().logSelect(target: 'Reply');
-    _clearBodyControllerContent();
-    _scrollToPostEdit();
   }
 
   void _onTapPostReply({Comment? reply}) {
