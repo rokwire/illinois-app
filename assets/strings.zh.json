@@ -584,7 +584,7 @@
 
 	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
 	"panel.athletics.content.events.empty.message": "所選團隊沒有任何活動。",
-	"panel.athletics.content.events.my.empty.message": "所選團隊沒有加星號的賽事。",
+	"panel.athletics.content.events.my.empty.message": "所選團隊沒有加星號的賽事。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 
 	"panel.athletics.content.my_teams.header.title": "我的十大團隊",
 	"panel.athletics.content.my_teams.all.select.label": "全選",
@@ -594,7 +594,7 @@
 	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
 
 	"panel.athletics.content.news.empty.message": "目前還沒有選定球隊的消息。",
-	"panel.athletics.content.news.my.empty.message": "入選球隊沒有加星號的新聞。",
+	"panel.athletics.content.news.my.empty.message": "入選球隊沒有加星號的新聞。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
 
 	"panel.athletics.content.game_day.empty.message": "所選球隊沒有可用的比賽日指南。",
@@ -670,7 +670,7 @@
 	"panel.onboarding.login.phone.label.title":"验证您的电话号码",
 	"panel.onboarding.login.netid.label.title.hint":"标题1",
 	"panel.onboarding.login.phone.label.title.hint":"标题1",
-	"panel.onboarding.login.netid.label.description":"使用您的NetID登入以使用特定於學術和宿舍的功能.",
+	"panel.onboarding.login.netid.label.description":"使用您的 NetID 登入以查看特定於您的功能，例如您的 Illini ID 或您的課程安排和地點。",
 	"panel.onboarding.login.phone.label.description":"这将保存您的首选项，因此您可以在多台设备上获得相同的体验。",
 	"panel.onboarding.login.netid.button.continue.title":"Sign In with NetID",
 	"panel.onboarding.login.phone.button.continue.title":"验证我的电话号码",
@@ -777,7 +777,7 @@
 	"panel.onboarding2.explore_campus.learn_more.location_services.content1": "当允许基于位置的服务时，应用程序可以找到在您附近的活动或服务并提供交互式地图。",
 	"panel.onboarding2.explore_campus.learn_more.location_services.content2": "当开启蓝芽功能时，应用程序可与其他设备交换MTD Pass的信息。蓝牙功能還可以在建築物内导航方向并显示地理围栏讯息。",
 	"panel.onboarding2.explore_campus.label.title": "要开启基于位置的服务吗",
-	"panel.onboarding2.explore_campus.label.description": "轻松地找到举办于校园的活动，并与邻近使用者连结。",
+	"panel.onboarding2.explore_campus.label.description": " 尋找附近的活動和公車站或從您的確切位置要求 SafeWalk。",
 	"panel.onboarding2.explore_campus.button.toggle.title": "允许基于位置的服务",
 	"panel.onboarding2.explore_campus.button.untoggle.title": "不要开启基于位置的服务.",
 
@@ -1083,10 +1083,10 @@
 
 	"panel.explore.missing.appointments.msg":"您目前沒有在 {{app_title}} 應用中鏈接的即將到來的预约。",
 	"panel.explore.hide.appointments.msg":"沒有可顯示的內容，因為您選擇不顯示任何過去或未來的预约。",
-	"panel.explore.instructions.mtd_stops.msg":"請點擊地圖上的巴士站以獲取巴士時刻表。 點擊星標將巴士站保存為最愛。",
-	"panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the star to save it as a favorite.",
+	"panel.explore.instructions.mtd_stops.msg":"Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+	"panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 	"panel.explore.instructions.mtd.dont_show.msg":"不要再給我看這個了。",
-	"panel.explore.missing.my_locations.msg":"You currently have no saved locations. Select a location on the map and tap the star to save it as a favorite.",
+	"panel.explore.missing.my_locations.msg":"You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 	"panel.explore.directions.na.msg":"您需要啟用定位服務才能獲得導航方向。",
 	"panel.explore.directions.failed.msg":"未能啟動導航方向。",
 	"panel.explore.details.na.msg":"自定義興趣點的詳細信息不可用。",
@@ -1689,7 +1689,7 @@
 	"panel.saved.button.less.hint": "點按即可查看不太喜歡的項目",
 	"panel.saved.button.event_reminders":"活动提醒",
 	"panel.saved.button.dining_specials":"食堂特餐",
-	"panel.saved.message.no_items.description": "点击 \u2606 活动, 用餐地点和提醒, 您可以在这里快速找到它们.",
+	"panel.saved.message.no_items.description": "点击 \u2606 活动, 用餐地点和提醒, 您可以在这里快速找到它们。（您的隱私等級必須至少為 2。）",
 	"panel.saved.message.offline":"离线时无法查看已保存项目。",
 
 	"panel.food_details.label.nutrition_fatcts_not_available.title":"营养信息不可用",
@@ -3118,7 +3118,7 @@
 	"panel.mtd_stops.home.status.error.all.text": "无法加载公交车站。",
 	"panel.mtd_stops.home.status.error.my.text": "无法加载储存的公交车站。",
 	"panel.mtd_stops.home.status.empty.all.text": "没有可用的公交车站。",
-	"panel.mtd_stops.home.status.empty.my.text": "您没有已储存的公交车站。",
+	"panel.mtd_stops.home.status.empty.my.text": "Tap the \\u2606 on <a href='{{local_url}}'><b>bus stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
 	"panel.mtd_stops.search.header.title":"搜寻",
 	"panel.mtd_stops.search.search.field.title":"搜寻",
@@ -3622,7 +3622,7 @@
 	"widget.home.campus_reminders.button.all.hint": "點按即可查看所有提醒",
 
 	"widget.home.safety_resources.label.title": "Safety Resources",
-	"widget.home.safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Safety Resources</b></a> for quick access here.",
+	"widget.home.safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Safety Resources</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 	"widget.home.safety_resources.button.all.title": "查看全部",
 	"widget.home.safety_resources.button.all.hint": "點擊查看所有安全資源",
 
@@ -3657,7 +3657,7 @@
 	"widget.home.event2_feed.button.all.hint":"点击以活动",
 
 	"widget.home.my_events2.label.header.title":"My Events",
-	"widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
+	"widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有群組",
@@ -3683,7 +3683,7 @@
 	"widget.home_create_poll.button.login.label":"登入",
 
 	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
-	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>校園指南要點</b></a>中項目上的 \u2606 可在此處快速訪問。",
+	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>校園指南要點</b></a>中項目上的 \u2606 可在此處快速訪問。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
 
@@ -3705,7 +3705,7 @@
 	"widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
 	"widget.home.wallet.label.title": "錢包",
-	"widget.home.wallet.text.empty.description": "在電子錢包中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
+	"widget.home.wallet.text.empty.description": "在電子錢包中的項目上點擊 \u2606，以便您可以在此處快速找到它們。（您的隱私等級必須至少為 2。）",
 
 	"widget.home.wallet.illini_cash.title": "Illini Cash",
 	"widget.home.wallet.illini_cash.label.current_balance": "當前Illini Cash餘額",
@@ -3827,17 +3827,17 @@
 	"widget.home.favorites.message.offline.campus_guide": "此功能离线时无法使用。",
 	"widget.home.favorites.message.offline.appointments": "此功能离线时无法使用。",
 
-	"widget.home.favorites.message.empty.events": "点击 <a href='{{local_url}}'><b>活动</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.events2": "点击 <a href='{{local_url}}'><b>活动提醒</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.dining": "点击 <a href='{{local_url}}'><b>宿舍餐厅</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.athletics": "点击 <a href='{{local_url}}'><b>十大活動</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.news": "点击 <a href='{{local_url}}'><b>十大新聞</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.laundry": "点击 <a href='{{local_url}}'><b>洗衣房</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.mtd_stops": "点击 <a href='{{local_url}}'><b>公交车站</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here.",
-	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>校園指南/b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.appointments": "点击 <a href='{{local_url}}'><b>我的MyMckinley预约</b></a> 中项目上的 \u2606，可以在这里快速找到它们。",
-	"widget.home.favorites.message.empty.appointments.not_to_display": "因为您选择不显示任何过去或未来的预约，所以没有内容显示。",
+	"widget.home.favorites.message.empty.events": "点击 <a href='{{local_url}}'><b>活动</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.events2": "点击 <a href='{{local_url}}'><b>活动提醒</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.dining": "点击 <a href='{{local_url}}'><b>宿舍餐厅</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.athletics": "点击 <a href='{{local_url}}'><b>十大活動</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.news": "点击 <a href='{{local_url}}'><b>十大新聞</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.laundry": "点击 <a href='{{local_url}}'><b>洗衣房</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.mtd_stops": "点击 <a href='{{local_url}}'><b>公交车站</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>校園指南/b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.appointments": "点击 <a href='{{local_url}}'><b>我的MyMckinley预约</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.appointments.not_to_display": "因为您选择不显示任何过去或未来的预约，所以没有内容显示。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 
 	"widget.home.favorites.all.title": "查看全部",
 	"widget.home.favorites.all.hint.events": "點按即可查看所有喜愛的活動",
@@ -3851,12 +3851,12 @@
 	"widget.home.favorites.all.hint.appointments": "點擊查看所有的预约",
 
 	"widget.home.wellness_resources.header.label": "我的健康資源",
-	"widget.home.wellness_resources.text.empty.description": "点击<a href='{{local_url}}'><b>健康資源</b></a>中的项目上的 \u2606 图标，以便您之后快速找到它们。",
+	"widget.home.wellness_resources.text.empty.description": "点击<a href='{{local_url}}'><b>健康資源</b></a>中的项目上的 \u2606 图标，以便您之后快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.wellness_resources.button.all.title": "查看全部",
 	"widget.home.wellness_resources.button.all.hint": "點擊查看所有健康資源",
 
 	"widget.home.wellness_mental_health.header.label": "我的心理健康資源",
-	"widget.home.wellness_mental_health.text.empty.description": "点击<a href='{{local_url}}'><b>心理健康資源</b></a>中的项目上的 \u2606 图标，以便您之后快速找到它们。",
+	"widget.home.wellness_mental_health.text.empty.description": "点击<a href='{{local_url}}'><b>心理健康資源</b></a>中的项目上的 \u2606 图标，以便您之后快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.wellness_mental_health.button.all.title": "查看全部",
 	"widget.home.wellness_mental_health.button.all.hint": "點擊查看所有心理健康資源",
 
@@ -4053,7 +4053,7 @@
 	"widget.checklist.uiuc.logged_out": "您需要使用您的 NetID 登入才能訪問新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
 
 	"widget.home.dinings.header.title": "宿舍餐厅",
-	"widget.home.dinings.text.empty.description": "在宿舍餐厅中的項目上点击 \u2606，以便您可以在此处快速找到它们。",
+	"widget.home.dinings.text.empty.description": "在宿舍餐厅中的項目上点击 \u2606，以便您可以在此处快速找到它们。（您的隱私等級必須至少為 2。）",
 	"widget.home.dinings.all.button.title": "宿舍餐厅",
 	"widget.home.dinings.all.button.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
 	"widget.home.dinings.open.button.title": "开放中的宿舍餐厅",

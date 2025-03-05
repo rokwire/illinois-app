@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupPostDetailPanel remove reply button [#4808](https://github.com/rokwire/illinois-app/issues/4808).
 - Group advanced settings: text updates [#4846](https://github.com/rokwire/illinois-app/issues/4846).
 - Group cards: text update and visibility fix [#4796](https://github.com/rokwire/illinois-app/issues/4796).
+- Updated privacy related messages and texts [#4842](https://github.com/rokwire/illinois-app/issues/4842).
 ### Fixed
 - Fixed storage update support in FlexUi, acknowledged for conversations visibility updates in Debug Home panel [#4830](https://github.com/rokwire/illinois-app/issues/4830).
 - MessageDetailPanel header title[#4845](https://github.com/rokwire/illinois-app/issues/4845).
