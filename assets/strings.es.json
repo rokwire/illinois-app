@@ -4058,7 +4058,7 @@
     "widget.home.wellness_resources.button.all.hint": "Toque para ver todos los recursos de bienestar",
 
     "widget.home.wellness_mental_health.header.label": "Mis recursos de salud mental",
-    "widget.home.wellness_mental_health.text.empty.description": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de Salud Mental</b></a> para acceder rápidamente aquí.",
+    "widget.home.wellness_mental_health.text.empty.description": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de Salud Mental</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.wellness_mental_health.button.all.title": "Ver Todo",
     "widget.home.wellness_mental_health.button.all.hint": "Toca para ver todos los recursos de salud mental",
 

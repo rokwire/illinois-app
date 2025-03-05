@@ -4042,7 +4042,7 @@
 	"widget.home.wellness_resources.button.all.hint": "點擊查看所有健康資源",
 
 	"widget.home.wellness_mental_health.header.label": "我的心理健康資源",
-	"widget.home.wellness_mental_health.text.empty.description": "点击<a href='{{local_url}}'><b>心理健康資源</b></a>中的项目上的 \u2606 图标，以便您之后快速找到它们。",
+	"widget.home.wellness_mental_health.text.empty.description": "点击<a href='{{local_url}}'><b>心理健康資源</b></a>中的项目上的 \u2606 图标，以便您之后快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.wellness_mental_health.button.all.title": "查看全部",
 	"widget.home.wellness_mental_health.button.all.hint": "點擊查看所有心理健康資源",
 
