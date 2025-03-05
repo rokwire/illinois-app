@@ -3887,7 +3887,7 @@
 	"widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
 	"widget.home.wallet.label.title": "錢包",
-	"widget.home.wallet.text.empty.description": "在電子錢包中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
+	"widget.home.wallet.text.empty.description": "在電子錢包中的項目上點擊 \u2606，以便您可以在此處快速找到它們。（您的隱私等級必須至少為 2。）",
 
 	"widget.home.wallet.illini_cash.title": "Illini Cash",
 	"widget.home.wallet.illini_cash.label.current_balance": "當前Illini Cash餘額",
@@ -4264,7 +4264,7 @@
 	"widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 
 	"widget.home.dinings.header.title": "宿舍餐厅",
-	"widget.home.dinings.text.empty.description": "在宿舍餐厅中的項目上点击 \u2606，以便您可以在此处快速找到它们。",
+	"widget.home.dinings.text.empty.description": "在宿舍餐厅中的項目上点击 \u2606，以便您可以在此处快速找到它们。（您的隱私等級必須至少為 2。）",
 	"widget.home.dinings.all.button.title": "宿舍餐厅",
 	"widget.home.dinings.all.button.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
 	"widget.home.dinings.open.button.title": "开放中的宿舍餐厅",

@@ -3913,7 +3913,7 @@
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you have to sign in only once?",
 
     "widget.home.wallet.label.title": "Wallet",
-    "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet for quick access here.",
+    "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet for quick access here. (Your privacy level must be at least 2.)",
 
     "widget.home.wallet.illini_cash.title": "Illini Cash",
     "widget.home.wallet.illini_cash.label.current_balance": "Current Illini Cash Balance",
@@ -4292,7 +4292,7 @@
     "widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 
     "widget.home.dinings.header.title": "Dining",
-    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here.",
+    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here. (Your privacy level must be at least 2.)",
     "widget.home.dinings.all.button.title": "Residence Hall Dining",
     "widget.home.dinings.all.button.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",
