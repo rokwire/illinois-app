@@ -3199,6 +3199,7 @@
     "panel.groups_event_detail.label.link_result":  "El evento se ha vinculado a",
 
     "panel.group.detail.post.header.title": "Publicación",
+    "panel.group.detail.post.header.title.message": "Message",
     "panel.group.detail.post.delete.confirm.msg": "¿Estás seguro/a que quieres eliminar esta publicación?",
     "panel.group.detail.post.delete.many_groups.confirm.msg": "Esta publicación está visible en más de un grupo. ¿Estás seguro de que deseas eliminarla?",
     "panel.group.detail.post.delete.failed.msg": "No se pudo eliminar la publicación.",
