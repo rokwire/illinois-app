@@ -67,8 +67,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         appBar: AppBar(
           leading: HeaderBackButton(),
           title: Text(
+            widget.type == PostType.direct_message ?
+            Localization().getStringEx('panel.group.detail.post.header.title.message', 'Message'):
             Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-            style: Styles().textStyles.getTextStyle("panel.group_post_create.heading.regular")
+            style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat")
           ),
           centerTitle: false),
         backgroundColor: Styles().colors.background,

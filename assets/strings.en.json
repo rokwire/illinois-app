@@ -3054,6 +3054,7 @@
     "panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
     "panel.group.detail.post.header.title": "Post",
+    "panel.group.detail.post.header.title.message": "Message",
     "panel.group.detail.post.delete.confirm.msg": "Are you sure that you want to delete this post?",
     "panel.group.detail.post.delete.many_groups.confirm.msg": "This post is visible in more than one group. Are you sure that you want to delete it?",
     "panel.group.detail.post.delete.failed.msg": "Failed to delete post.",
