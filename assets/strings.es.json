@@ -1191,10 +1191,10 @@
 
     "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación {{app_title}}.",
     "panel.explore.hide.appointments.msg":"No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
-    "panel.explore.instructions.mtd_stops.msg":"Toque una parada de autobús en el mapa para obtener los horarios de los autobuses. Toca la estrella para guardar la parada de autobús como favorita.",
-    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.instructions.mtd_stops.msg":"Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.instructions.mtd.dont_show.msg":"No me muestres esto de nuevo.",
-    "panel.explore.missing.my_locations.msg":"You currently have no saved locations. Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.missing.my_locations.msg":"You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.directions.na.msg":"Debe habilitar los servicios de ubicación para obtener indicaciones de navegación.",
     "panel.explore.directions.failed.msg":"Error al iniciar las indicaciones de navegación.",
     "panel.explore.details.na.msg":"Los detalles no están disponibles para los puntos de interés personalizados.",

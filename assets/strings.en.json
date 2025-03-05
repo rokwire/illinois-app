@@ -1193,10 +1193,10 @@
 
     "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within {{app_title}} app.",
     "panel.explore.hide.appointments.msg":"There is nothing to display as you have chosen not to display any past or future appointments.",
-    "panel.explore.instructions.mtd_stops.msg":"Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite.",
-    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.instructions.mtd_stops.msg":"Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.instructions.mtd.dont_show.msg":"Don't show me this again.",
-    "panel.explore.missing.my_locations.msg":"You currently have no saved locations. Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.missing.my_locations.msg":"You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.directions.na.msg":"You need to enable location services to get navigation directions.",
     "panel.explore.directions.failed.msg":"Failed to launch navigation directions.",
     "panel.explore.details.na.msg":"Details are not available for custom points of interest.",
