@@ -111,7 +111,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return Scaffold(
         appBar: AppBar(
             leading: HeaderBackButton(),
-            title: Text(Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
+            title: Text(_panelTitle ?? "",
                 style: Styles().textStyles.getTextStyle('widget.heading.regular.extra_fat')),
             centerTitle: false),
         backgroundColor: Styles().colors.background,
@@ -909,6 +909,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String? currentMemberId = widget.group.currentMember?.userId;
     return StringUtils.isNotEmpty(currentMemberId) && StringUtils.isNotEmpty(creatorId) && (currentMemberId == creatorId);
   }
+
+  String? get _panelTitle => _post?.isMessage == true ?
+      Localization().getStringEx('panel.group.detail.post.header.title.message', 'Message'):
+      Localization().getStringEx('panel.group.detail.post.header.title', 'Post');
 
   bool get _isEditPostVisible => _isEditVisible(_post?.creatorId);
 
