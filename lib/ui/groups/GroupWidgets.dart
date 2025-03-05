@@ -847,7 +847,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-            propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
+            propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
           }
         }
       }
@@ -871,7 +871,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
       ),
       Expanded(child:
-        Text(value, maxLines: 1, style:
+        Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style:
           Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
         ),
       ),
