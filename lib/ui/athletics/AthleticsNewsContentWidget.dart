@@ -143,9 +143,9 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
 
   Widget _buildEmptyContent() {
     return _buildCenteredWidget(
-      HtmlWidget(_emptyMessageHtml,
+      HtmlWidget("<center>$_emptyMessageHtml</center>",
         onTapUrl : _handleLocalUrl,
-        textStyle:  Styles().textStyles.getTextStyle('widget.item.medium.fat'),
+        textStyle:  Styles().textStyles.getTextStyle('widget.item.medium'),
         customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
       )
     );
@@ -170,7 +170,9 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: child);
+    return Padding(padding: EdgeInsets.symmetric(vertical: 32, horizontal: 48), child:
+      Center(child: child)
+    );
   }
 
   Widget _buildNewsContent() {
