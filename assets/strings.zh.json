@@ -3270,7 +3270,7 @@
 	"panel.mtd_stops.home.status.error.all.text": "无法加载公交车站。",
 	"panel.mtd_stops.home.status.error.my.text": "无法加载储存的公交车站。",
 	"panel.mtd_stops.home.status.empty.all.text": "没有可用的公交车站。",
-	"panel.mtd_stops.home.status.empty.my.text": "您没有已储存的公交车站。",
+	"panel.mtd_stops.home.status.empty.my.text": "Tap the \\u2606 on <a href='{{local_url}}'><b>bus stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
 	"panel.mtd_stops.search.header.title":"搜寻",
 	"panel.mtd_stops.search.search.field.title":"搜寻",

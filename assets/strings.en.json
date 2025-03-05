@@ -3293,7 +3293,7 @@
     "panel.mtd_stops.home.status.error.all.text": "Failed to load bus stops.",
     "panel.mtd_stops.home.status.error.my.text": "Failed to load saved bus stops.",
     "panel.mtd_stops.home.status.empty.all.text": "There are no bus stops available.",
-    "panel.mtd_stops.home.status.empty.my.text": "You have no saved bus stops.",
+    "panel.mtd_stops.home.status.empty.my.text": "Tap the \u2606 on <a href='{{local_url}}'><b>bus stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "panel.mtd_stops.search.header.title":"Search",
     "panel.mtd_stops.search.search.field.title":"Search",
