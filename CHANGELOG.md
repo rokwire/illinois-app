@@ -6,10 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.1.66] - 2025-03-05
+### Changed
+- Updated status text for no favorite locations [#4828](https://github.com/rokwire/illinois-app/issues/4828).
+- GroupPostDetailPanel remove reply button [#4808](https://github.com/rokwire/illinois-app/issues/4808).
+- Group advanced settings: text updates [#4846](https://github.com/rokwire/illinois-app/issues/4846).
+- Group cards: text update and visibility fix [#4796](https://github.com/rokwire/illinois-app/issues/4796).
+- Updated privacy related messages and texts [#4842](https://github.com/rokwire/illinois-app/issues/4842).
+### Fixed
+- Fixed storage update support in FlexUi, acknowledged for conversations visibility updates in Debug Home panel [#4830](https://github.com/rokwire/illinois-app/issues/4830).
+- MessageDetailPanel header title[#4845](https://github.com/rokwire/illinois-app/issues/4845).
+- Reply to a direct message [#4844](https://github.com/rokwire/illinois-app/issues/4844).
+
+## [6.1.65] - 2025-02-27
+### Fixed
+- GroupDetailPanel fixed post max lines restriction [#4822](https://github.com/rokwire/illinois-app/issues/4822).
+
 ## [6.1.64] - 2025-02-20
 ### Changed
 - Validate profile & privacy details on backend when profile info UI is presented [#4814](https://github.com/rokwire/illinois-app/issues/4814).
--  Allow editing profile name where applicable, disable profile visibility update for profiles without a name [#4814](https://github.com/rokwire/illinois-app/issues/4814).
+- Allow editing profile name where applicable, disable profile visibility update for profiles without a name [#4814](https://github.com/rokwire/illinois-app/issues/4814).
 - GroupDetailPanel show scheduled tab as permanent tab (trimmed if events not part of content items) [#4697](https://github.com/rokwire/illinois-app/issues/4697).
 
 ## [6.1.63] - 2025-02-19

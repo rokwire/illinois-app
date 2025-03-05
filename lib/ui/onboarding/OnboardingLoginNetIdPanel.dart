@@ -94,7 +94,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                   ),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 32),
-                      child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Log in with your NetID to use academic and residence hall specific features.'),
+                      child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Sign in with your NetID to view features specific to you such as your Illini ID or your course schedule and locations.'),
                           textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
                   Container(
                     height: 32,
