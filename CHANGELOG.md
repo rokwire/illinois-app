@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed storage update support in FlexUi, acknowledged for conversations visibility updates in Debug Home panel [#4830](https://github.com/rokwire/illinois-app/issues/4830).
 - MessageDetailPanel header title[#4845](https://github.com/rokwire/illinois-app/issues/4845).
+- Reply to a direct message [#4844](https://github.com/rokwire/illinois-app/issues/4844).
 
 ## [6.1.65] - 2025-02-27
 ### Fixed

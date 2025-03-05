@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -350,6 +351,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           groupIds: groupIds, subject: subject, body: htmlModifiedBody, imageUrl: imageUrl, dateActivatedUtc: scheduleDate?.toUtc());
     } else {
       List<String>? memberAccountIds = MemberExt.extractUserIds(_selectedMembers);
+      if (CollectionUtils.isNotEmpty(memberAccountIds)) {
+        memberAccountIds!.add(Auth2().accountId!);
+      }
       post = Post.forGroup(
           groupId: _groupId,
           subject: subject,

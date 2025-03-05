@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -119,7 +120,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         body: _buildContent());
   }
 
-  Widget _buildContent(){
+  Widget _buildContent() {
+    List<String>? updatedMemberIds = _isEditMainPost ? MemberExt.extractUserIds(_mainPostUpdateData?.members) : _post?.getMemberAccountIds(
+        groupId: _groupId);
+    if (CollectionUtils.isNotEmpty(updatedMemberIds) && updatedMemberIds!.contains(Auth2().accountId)) {
+      updatedMemberIds.remove(Auth2().accountId);
+    }
     return Stack(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SingleChildScrollView(
@@ -138,9 +144,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
                     GroupMembersSelectionWidget(
                       selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(
-                          selectedAccountIds: (_isEditMainPost
-                              ? MemberExt.extractUserIds(_mainPostUpdateData?.members)
-                              : _post?.getMemberAccountIds(groupId: _groupId)),
+                          selectedAccountIds: updatedMemberIds,
                           upToDateMembers: _allMembersAllowedToPost),
                       allMembers: _allMembersAllowedToPost,
                       enabled: _isEditMainPost,
@@ -694,6 +698,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapEditMainPost() {
     List<String>? selectedAccountIds = _post?.getMemberAccountIds(groupId: _groupId);
+    if (CollectionUtils.isNotEmpty(selectedAccountIds) && selectedAccountIds!.contains(Auth2().accountId)) {
+      selectedAccountIds.remove(Auth2().accountId);
+    }
     _mainPostUpdateData = PostDataModel(
         body: _post?.body,
         imageUrl: _post?.imageUrl,
@@ -718,7 +725,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _post!.body = htmlModifiedBody;
     _post!.imageUrl = imageUrl;
     _post!.dateActivatedUtc = _mainPostUpdateData?.dateScheduled?.toUtc();
-    _post!.setMemberAccountIds(groupId: _groupId, accountIds: MemberExt.extractUserIds(toMembers));
+    List<String>? memberAccountIds = MemberExt.extractUserIds(toMembers);
+    if (CollectionUtils.isNotEmpty(memberAccountIds) && !memberAccountIds!.contains(Auth2().accountId)) {
+      memberAccountIds.add(Auth2().accountId!);
+    }
+    _post!.setMemberAccountIds(groupId: _groupId, accountIds: memberAccountIds);
     Social().updatePost(post: _post!).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
