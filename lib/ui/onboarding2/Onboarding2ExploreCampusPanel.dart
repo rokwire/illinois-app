@@ -250,7 +250,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   }
 
   String? get _description{
-    return Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Easily find events on campus and connect to nearby users.');
+    return Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Find nearby events and bus stops or request a SafeWalk from your exact location.');
   }
 
   String? get _toggledButtonTitle{

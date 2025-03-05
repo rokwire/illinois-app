@@ -772,7 +772,7 @@
 	"panel.onboarding.login.phone.label.title":"验证您的电话号码",
 	"panel.onboarding.login.netid.label.title.hint":"标题1",
 	"panel.onboarding.login.phone.label.title.hint":"标题1",
-	"panel.onboarding.login.netid.label.description":"使用您的NetID登入以使用特定於學術和宿舍的功能.",
+	"panel.onboarding.login.netid.label.description":"使用您的 NetID 登入以查看特定於您的功能，例如您的 Illini ID 或您的課程安排和地點。",
 	"panel.onboarding.login.phone.label.description":"这将保存您的首选项，因此您可以在多台设备上获得相同的体验。",
 	"panel.onboarding.login.netid.button.continue.title":"Sign In with NetID",
 	"panel.onboarding.login.phone.button.continue.title":"验证我的电话号码",
@@ -879,7 +879,7 @@
 	"panel.onboarding2.explore_campus.learn_more.location_services.content1": "当允许基于位置的服务时，应用程序可以找到在您附近的活动或服务并提供交互式地图。",
 	"panel.onboarding2.explore_campus.learn_more.location_services.content2": "当开启蓝芽功能时，应用程序可与其他设备交换MTD Pass的信息。蓝牙功能還可以在建築物内导航方向并显示地理围栏讯息。",
 	"panel.onboarding2.explore_campus.label.title": "要开启基于位置的服务吗",
-	"panel.onboarding2.explore_campus.label.description": "轻松地找到举办于校园的活动，并与邻近使用者连结。",
+	"panel.onboarding2.explore_campus.label.description": " 尋找附近的活動和公車站或從您的確切位置要求 SafeWalk。",
 	"panel.onboarding2.explore_campus.button.toggle.title": "允许基于位置的服务",
 	"panel.onboarding2.explore_campus.button.untoggle.title": "不要开启基于位置的服务.",
 

@@ -772,7 +772,7 @@
     "panel.onboarding.login.phone.label.title":"Verifique su número de teléfono",
     "panel.onboarding.login.netid.label.title.hint":"Encabezado 1",
     "panel.onboarding.login.phone.label.title.hint":"Encabezado 1",
-    "panel.onboarding.login.netid.label.description":"Inicie sesión con su NetID para usar las características académicas y de residencia específicas.",
+    "panel.onboarding.login.netid.label.description":"Inicie sesión con su NetID para ver funciones específicas para usted, como su ID de Illini o el cronograma y las ubicaciones de sus cursos.",
     "panel.onboarding.login.phone.label.description":"Esto guarda sus preferencias para que pueda tener la misma experiencia en más de un dispositivo",
     "panel.onboarding.login.netid.button.continue.title":"Inicia sesión con tu NetID",
     "panel.onboarding.login.phone.button.continue.title":"Verificar mi número de teléfono",
@@ -879,7 +879,7 @@
     "panel.onboarding2.explore_campus.learn_more.location_services.content1": "Cuando se permiten los Servicios de Ubicación, la aplicación puede encontrar eventos y servicios cerca de ti y proporcionar mapas interactivos. ",
     "panel.onboarding2.explore_campus.learn_more.location_services.content2": "Cuando se activa Bluetooth, la aplicación puede intercambiar información con otros dispositivos para el pase MTD. Bluetooth te ayuda a encontrar tu asiento, lugar de estacionamiento, mensajes dentro de los edificios, y servicios al aire libre que puedan estar cerca de ti.",
     "panel.onboarding2.explore_campus.label.title": "¿Quieres permitir los servicios de ubicación?",
-    "panel.onboarding2.explore_campus.label.description": "Encuentra fácilmente los eventos en campus y conéctate con otros usuarios cercanos.",
+    "panel.onboarding2.explore_campus.label.description": "Encuentre eventos y paradas de autobús cercanas o solicite un SafeWalk desde su ubicación exacta.",
     "panel.onboarding2.explore_campus.button.toggle.title": "Permitir los servicios de ubicación.",
     "panel.onboarding2.explore_campus.button.untoggle.title": "No permitir servicios de ubicación.",
 
