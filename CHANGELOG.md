@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deleted
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
+## [6.1.X]
+### Changed
+- Control SafeWalks availability from app config settings [#4857](https://github.com/rokwire/illinois-app/issues/4857).
+
 ## [6.1.66] - 2025-03-05
 ### Changed
 - Updated status text for no favorite locations [#4828](https://github.com/rokwire/illinois-app/issues/4828).
