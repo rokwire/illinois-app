@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.67] - 2025-03-06
 ### Changed
 - Control SafeWalks availability from app config settings [#4857](https://github.com/rokwire/illinois-app/issues/4857).
 ### Fixed
 - Web support for embeds [#4718](https://github.com/rokwire/illinois-app/issues/4718).
+### Added
+- GroupPost emoji reactions [#4613](https://github.com/rokwire/illinois-app/issues/4613).
 
 ## [6.1.66] - 2025-03-05
 ### Changed
