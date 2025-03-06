@@ -3621,12 +3621,15 @@ class GroupReactionsLayout extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupReactionsState();
 }
 
-class _GroupReactionsState extends State<GroupReactionsLayout> {
+class _GroupReactionsState extends State<GroupReactionsLayout> implements NotificationsListener{
   List<Reaction>? _reactions;
   bool _loading = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Social.notifyReactionsUpdated,
+    ]);
     _loadReactions();
     super.initState();
   }
@@ -3672,7 +3675,7 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     );
   }
 
-  Widget get _loadingLayout => Visibility(visible: true || _loading, child:
+  Widget get _loadingLayout => Visibility(visible: _loading, child:
       Container(padding: EdgeInsets.only(right: 8),
         child: SizedBox(width: 16, height: 16, child:
           CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
@@ -3719,9 +3722,8 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
       _loading = true;
     });
     Social().react(entityId: widget.entityId!, source: widget.reactionSource, reaction: reaction).then((succeeded) {
-      if (succeeded) {
-        _loadReactions();
-      } else {
+      //If success then we will receive notification Social.notifyReactionsUpdated and will load reactions
+      if (!succeeded) {
         setStateIfMounted(() {
           _loading = false;
         });
@@ -3780,6 +3782,17 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
         });
   }
 
+  @override
+  void onNotification(String name, param) {
+    if(name == Social.notifyReactionsUpdated){
+      Map<String, dynamic>? params = JsonUtils.mapValue(param);
+      String? identifier = JsonUtils.stringValue(params?["identifier"]);
+      if(identifier == widget.entityId){
+        _loadReactions();
+      }
+    }
+  }
+
   //Loading
   void _loadReactions(){
     if (!_hasEntityId) {
@@ -3788,12 +3801,12 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     setStateIfMounted(() {
       _loading = true;
     });
-    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) {
-      setStateIfMounted(() {
-        _loading = false;
-        _reactions = result;
-      });
-    });
+    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) =>
+        _reactions = result
+    ).whenComplete(()=>
+      setStateIfMounted(() =>
+        _loading = false
+      ));
   }
 
   bool get _hasEntityId => (widget.entityId != null);
