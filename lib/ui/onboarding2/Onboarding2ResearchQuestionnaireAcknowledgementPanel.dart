@@ -1,16 +1,41 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidget {
+class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  final void Function()? onContinue;
+  Onboarding2ResearchQuestionnaireAcknowledgementPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
+    super(key: GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>());
 
-  final Map<String, dynamic>? onboardingContext;
-  Onboarding2ResearchQuestionnaireAcknowledgementPanel({this.onboardingContext});
+  GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
+  Future<bool> isOnboardingEnabled() async => Onboarding2ResearchQuestionnairePanel(onboardingContext: onboardingContext).isOnboardingEnabled();
+
+  @override
+  State<Onboarding2ResearchQuestionnaireAcknowledgementPanel> createState() => _Onboarding2ResearchQuestionnaireAcknowledgementPanelState();
+}
+
+class _Onboarding2ResearchQuestionnaireAcknowledgementPanelState extends State<Onboarding2ResearchQuestionnaireAcknowledgementPanel> {
+
+  bool _onboardingProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +101,24 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
 
   void _onContinue(BuildContext context) {
     Analytics().logSelect(target: "Continue");
-    Function? onContinue = (onboardingContext != null) ? onboardingContext!["onContinueAction"] : null;
-    if (onContinue != null) {
-      onContinue();
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  //void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
+    if (widget.onContinue != null) {
+      widget.onContinue?.call();
+    } else {
+      Onboarding2().next(context, widget);
     }
   }
 }

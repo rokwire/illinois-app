@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -13,19 +14,45 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
+class Onboarding2ResearchQuestionnairePanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  final void Function()? onContinue;
+  Onboarding2ResearchQuestionnairePanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
+    super(key: GlobalKey<_Onboarding2ResearchQuestionnairePanelState>());
 
-  final Map<String, dynamic>? onboardingContext;
-  Onboarding2ResearchQuestionnairePanel({this.onboardingContext});
+  GlobalKey<_Onboarding2ResearchQuestionnairePanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnairePanelState>) ?
+    (super.key as GlobalKey<_Onboarding2ResearchQuestionnairePanelState>) : null;
 
   @override
-  State<Onboarding2ResearchQuestionnairePanel> createState() =>
-    _Onboarding2ResearchQuestionnairePanelState();
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
+  Future<bool> isOnboardingEnabled() async {
+    if (Questionnaires().participateInResearch == true) {
+      dynamic contextParam = onboardingContext?["questionanire"];
+      Questionnaire? questionnaire = (contextParam is Questionnaire) ? contextParam : null;
+      if (questionnaire == null) {
+        onboardingContext?["questionanire"] = (questionnaire = await Questionnaires().loadResearch());
+      }
+      Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
+      return (questionnaireAnswers?.isNotEmpty != true);
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  State<Onboarding2ResearchQuestionnairePanel> createState() => _Onboarding2ResearchQuestionnairePanelState();
 }
 
 class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2ResearchQuestionnairePanel> {
 
   bool _loading = false;
+  bool _onboardingProgress = false;
   Questionnaire? _questionnaire;
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
 
@@ -33,10 +60,10 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   @override
   void initState() {
-    dynamic questionnaire = (widget.onboardingContext != null) ? widget.onboardingContext!['questionanire'] : null;
-    if (questionnaire is Questionnaire) {
-      _questionnaire = questionnaire;
-      _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire.id) ?? <String, LinkedHashSet<String>>{});
+    dynamic contextParam = widget.onboardingContext?["questionanire"];
+    if (contextParam is Questionnaire) {
+      _questionnaire = contextParam;
+      _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(_questionnaire?.id) ?? <String, LinkedHashSet<String>>{});
     }
     else {
       _loading = true;
@@ -315,13 +342,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       }
       else {
         Analytics().logResearchQuestionnaiire(answers: _analyticsAnswers);
-
         Auth2().profile?.setResearchQuestionnaireAnswers(_questionnaire?.id, _selection);
+        _onboardingNext();
         
-        Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-        if (onContinue != null) {
-          onContinue();
-        }
       }
     }
   }
@@ -410,4 +433,21 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     ]);
   }
 
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  //void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
+    if (widget.onContinue != null) {
+      widget.onContinue?.call();
+    } else {
+      Onboarding2().next(context, widget);
+    }
+  }
 }

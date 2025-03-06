@@ -701,11 +701,11 @@
     "panel.polls.home.card.button.create.title": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary", "height": 1.38 },
 
     "panel.onboarding2.heading.title": {"font_family": "bold", "size": 32.0, "color": "white", "letter_spacing" :  1.0},
-    "panel.onboarding2.improve.heading.title": {"font_family": "bold", "size": 24.0, "color": "fillColorPrimary", "height": 1.2 },
+    "panel.onboarding2.privacy.share_activity.heading.title": {"font_family": "bold", "size": 24.0, "color": "fillColorPrimary", "height": 1.2 },
     "panel.onboarding2.login_email.heading.title": {"font_family": "bold", "size": 36.0, "color": "fillColorPrimary"},
     "panel.onboarding2.get_started.description": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary", "weight" :  "w500"},
     "panel.onboarding2.roles.description": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary", "height": 1.5 },
-    "panel.onboarding2.explore_campus.title": {"font_family": "bold", "size": 24.0, "color": "fillColorPrimary", "height": 1.4 },
+    "panel.onboarding2.privacy.location_services.title": {"font_family": "bold", "size": 24.0, "color": "fillColorPrimary", "height": 1.4 },
     "panel.onboarding2.privacy_statement.title.fat": {"font_family": "bold", "size": 32.0, "color": "fillColorPrimary", "weight" :  "w700", "height": 1.25},
     "panel.onboarding2.privacy_statement.title.regular": {"font_family": "regular", "size": 32.0, "color": "fillColorPrimary", "weight" :  "w400"},
     "panel.onboarding2.privacy_statement.description.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary",  "height": 1.4},
