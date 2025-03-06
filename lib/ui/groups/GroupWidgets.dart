@@ -1310,7 +1310,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Expanded(child: Expanded(child:
+                Expanded(child:
                 Visibility(visible: widget.reply?.creatorId != null,
                     child: GroupMemberProfileInfoWidget(
                       name: widget.reply?.creatorName,
@@ -1318,7 +1318,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       isAdmin: widget.creator?.isAdmin == true,
                       additionalInfo: widget.reply?.displayDateTime,
                       // updateController: widget.updateController,
-                    ))),),
+                    )),),
                 // Visibility(
                 //   visible: Config().showGroupPostReactions &&
                 //       (widget.group?.currentUserHasPermissionToSendReactions == true),
@@ -1399,9 +1399,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
-                    Visibility(
-                      visible: Config().showGroupPostReactions,
-                      child: Expanded(
+                        Expanded(
                           child: Visibility(visible: _reactionsEnabled,
                               child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment,)
                           )
@@ -1409,7 +1407,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                           //       semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                           //       style: Styles().textStyles.getTextStyle('widget.description.small'))),)
-                      )),
+                      ),
                 ],),)
             ])))));
   }
@@ -1431,7 +1429,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     }
   }
 
-  bool get _reactionsEnabled => true;
+  bool get _reactionsEnabled => Config().showGroupPostReactions;
 }
 
 //////////////////////////////////////
