@@ -1142,7 +1142,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 padding: EdgeInsets.only(top: 14),
                                 child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
                             )),
-                            kIsWeb ? Container() : WebEmbed(body: htmlBody),
+                            WebEmbed(body: htmlBody),
                             // Container(
                             //   constraints: BoxConstraints(maxHeight: 200),
                             //     child: Semantics(
@@ -1397,7 +1397,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
               )),
 
-              kIsWeb ? Container() : WebEmbed(body: bodyText),
+              WebEmbed(body: bodyText),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
