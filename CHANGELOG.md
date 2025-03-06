@@ -5,14 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Control SafeWalks availability from app config settings [#4857](https://github.com/rokwire/illinois-app/issues/4857).
 
-## [6.1.X]
-<!-- The following updates persist in the 6.1 support branch. -->
-<!-- They should eihter appear in the next 6.1 support update, or in the upcoming 6.2 build. -->
+## [6.1.66] - 2025-03-05
 ### Changed
 - Updated status text for no favorite locations [#4828](https://github.com/rokwire/illinois-app/issues/4828).
+- GroupPostDetailPanel remove reply button [#4808](https://github.com/rokwire/illinois-app/issues/4808).
+- Group advanced settings: text updates [#4846](https://github.com/rokwire/illinois-app/issues/4846).
+- Group cards: text update and visibility fix [#4796](https://github.com/rokwire/illinois-app/issues/4796).
+- Updated privacy related messages and texts [#4842](https://github.com/rokwire/illinois-app/issues/4842).
 ### Fixed
 - Fixed storage update support in FlexUi, acknowledged for conversations visibility updates in Debug Home panel [#4830](https://github.com/rokwire/illinois-app/issues/4830).
+- MessageDetailPanel header title[#4845](https://github.com/rokwire/illinois-app/issues/4845).
+- Reply to a direct message [#4844](https://github.com/rokwire/illinois-app/issues/4844).
 
 ## [6.1.65] - 2025-02-27
 ### Fixed
