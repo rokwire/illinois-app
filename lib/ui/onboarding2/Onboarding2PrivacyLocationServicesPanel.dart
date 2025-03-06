@@ -153,7 +153,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
   );
 
   String get _title => Localization().getStringEx('panel.onboarding2.privacy.location_services.label.title', 'Enable location specific services?');
-  String get _description => Localization().getStringEx('panel.onboarding2.privacy.location_services.label.description', 'Easily find events on campus and connect to nearby users.');
+  String get _description => Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Find nearby events and bus stops or request a SafeWalk from your exact location.');
   String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.location_services.button.toggle.title', 'Enable location services.');
   String get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.location_services.button.untoggle.title', 'Don\'t enable location services.');
 

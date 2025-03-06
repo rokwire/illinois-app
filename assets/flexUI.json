@@ -238,7 +238,8 @@
 				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
 				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
-				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}"
+				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
+				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}"
 			}
 		}
 	},

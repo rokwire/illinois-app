@@ -585,7 +585,7 @@
 
     "panel.athletics.content.events.unknown_error.message": "Unknown Error Occurred",
     "panel.athletics.content.events.empty.message": "There are no events for the selected teams.",
-    "panel.athletics.content.events.my.empty.message": "There are no starred events for the selected teams.",
+    "panel.athletics.content.events.my.empty.message": "There are no starred events for the selected teams. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "panel.athletics.content.my_teams.header.title": "My Big 10 Teams",
     "panel.athletics.content.my_teams.all.select.label": "Select All",
@@ -595,7 +595,7 @@
     "panel.athletics.content.teams.unknown_error.message": "Unknown Error Occurred.",
 
     "panel.athletics.content.news.empty.message": "There is no news for the selected teams.",
-    "panel.athletics.content.news.my.empty.message": "There is no starred news for the selected teams.",
+    "panel.athletics.content.news.my.empty.message": "There is no starred news for the selected teams. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.athletics.content.news.failed.message": "Failed to load news.",
 
     "panel.athletics.content.game_day.empty.message": "There are no available gameday guides for the selected teams.",
@@ -671,7 +671,7 @@
     "panel.onboarding.login.phone.label.title":"Verify your phone number",
     "panel.onboarding.login.netid.label.title.hint":"Header 1",
     "panel.onboarding.login.phone.label.title.hint":"Header 1",
-    "panel.onboarding.login.netid.label.description":"Sign in with your NetID to use academic and residence hall features specific to you.",
+    "panel.onboarding.login.netid.label.description":"Sign in with your NetID to view features specific to you such as your Illini ID or your course schedule and locations.",
     "panel.onboarding.login.phone.label.description":"This saves your preferences so you can have the same experience on more than one device.",
     "panel.onboarding.login.netid.button.continue.title":"Sign in with NetID",
     "panel.onboarding.login.phone.button.continue.title":"Verify My Phone Number",
@@ -778,7 +778,7 @@
     "panel.onboarding2.privacy.location_services.learn_more.location_services.content1": "When Location Services is enabled, the app can find events and services near you and provide interactive maps. ",
     "panel.onboarding2.privacy.location_services.learn_more.location_services.content2": "When Bluetooth is enabled, the app can exchange information with other devices for your MTD bus pass. Bluetooth helps you find your seat, parking spot, in-building messaging, and outdoor services that may be near you.",
     "panel.onboarding2.privacy.location_services.label.title": "Enable location-specific services?",
-    "panel.onboarding2.privacy.location_services.label.description": "Easily find events on campus and connect to nearby users.",
+    "panel.onboarding2.privacy.location_services.label.description": "Find nearby events and bus stops or request a SafeWalk from your exact location.",
     "panel.onboarding2.privacy.location_services.button.toggle.title": "Enable location services",
     "panel.onboarding2.privacy.location_services.button.untoggle.title": "Don't enable location services",
 
@@ -840,7 +840,7 @@
     "panel.onboarding2.privacy_statement.label.title": "Control Your Data Privacy",
     "panel.onboarding2.privacy_statement.label.title2": "",
     "panel.onboarding2.privacy_statement.label.description": "Choose what information you want to store and share to get a recommended privacy level.",
-    "panel.onboarding2.privacy_statement.label.description1": "Please Read the ",
+    "panel.onboarding2.privacy_statement.label.description1": "Please read the ",
     "panel.onboarding2.privacy_statement.label.description2": "Privacy Notice ",
     "panel.onboarding2.privacy_statement.label.description3": ". Your continued use of the app assumes that you have read and agree with it.",
     "panel.onboarding2.privacy_statement.button.continue.title": "Begin",
@@ -1084,10 +1084,10 @@
 
     "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within {{app_title}} app.",
     "panel.explore.hide.appointments.msg":"There is nothing to display as you have chosen not to display any past or future appointments.",
-    "panel.explore.instructions.mtd_stops.msg":"Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite.",
-    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.instructions.mtd_stops.msg":"Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "panel.explore.instructions.my_locations.msg":"Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.instructions.mtd.dont_show.msg":"Don't show me this again.",
-    "panel.explore.missing.my_locations.msg":"You currently have no saved locations. Select a location on the map and tap the star to save it as a favorite.",
+    "panel.explore.missing.my_locations.msg":"You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "panel.explore.directions.na.msg":"You need to enable location services to get navigation directions.",
     "panel.explore.directions.failed.msg":"Failed to launch navigation directions.",
     "panel.explore.details.na.msg":"Details are not available for custom points of interest.",
@@ -1703,7 +1703,7 @@
     "panel.saved.button.less.hint": "Tap to see less favorite items",
     "panel.saved.button.event_reminders":"Event reminders",
     "panel.saved.button.dining_specials":"Dining specials",
-    "panel.saved.message.no_items.description": "Tap the \u2606 on events, dining locations, and reminders that interest you for quick access here.",
+    "panel.saved.message.no_items.description": "Tap the \u2606 on events, dining locations, and reminders that interest you for quick access here. (Your privacy level must be at least 2.)",
     "panel.saved.message.offline":"Saved items are not available while offline.",
 
     "panel.food_details.label.nutrition_fatcts_not_available.title": "Nutrition information not available",
@@ -3054,6 +3054,7 @@
     "panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
     "panel.group.detail.post.header.title": "Post",
+    "panel.group.detail.post.header.title.message": "Message",
     "panel.group.detail.post.delete.confirm.msg": "Are you sure that you want to delete this post?",
     "panel.group.detail.post.delete.many_groups.confirm.msg": "This post is visible in more than one group. Are you sure that you want to delete it?",
     "panel.group.detail.post.delete.failed.msg": "Failed to delete post.",
@@ -3139,7 +3140,7 @@
     "panel.mtd_stops.home.status.error.all.text": "Failed to load bus stops.",
     "panel.mtd_stops.home.status.error.my.text": "Failed to load saved bus stops.",
     "panel.mtd_stops.home.status.empty.all.text": "There are no bus stops available.",
-    "panel.mtd_stops.home.status.empty.my.text": "You have no saved bus stops.",
+    "panel.mtd_stops.home.status.empty.my.text": "Tap the \u2606 on <a href='{{local_url}}'><b>bus stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "panel.mtd_stops.search.header.title":"Search",
     "panel.mtd_stops.search.search.field.title":"Search",
@@ -3663,7 +3664,7 @@
     "widget.home.event2_feed.button.all.hint": "Tap to view all events",
 
     "widget.home.my_events2.label.header.title":"My Events",
-    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
+    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.label.browsing_history.title":"Browsing History",
@@ -3707,7 +3708,7 @@
     "widget.home_create_poll.button.login.label":"Sign In",
 
     "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here.",
+    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.campus_guide_highlights.button.all.title": "View All",
     "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
 
@@ -3729,7 +3730,7 @@
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you have to sign in only once?",
 
     "widget.home.wallet.label.title": "Wallet",
-    "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet for quick access here.",
+    "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet for quick access here. (Your privacy level must be at least 2.)",
 
     "widget.home.wallet.illini_cash.title": "Illini Cash",
     "widget.home.wallet.illini_cash.label.current_balance": "Current Illini Cash Balance",
@@ -3851,17 +3852,17 @@
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide is not available while offline.",
     "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments is not available while offline.",
 
-    "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 Events</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 News</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Bus Stops</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display because you have chosen not to display any past or future appointments.",
+    "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 Events</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 News</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Bus Stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display because you have chosen not to display any past or future appointments. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
     "widget.home.favorites.all.title": "View All",
     "widget.home.favorites.all.hint.events": "Tap to view all favorite Events",
@@ -3875,12 +3876,12 @@
     "widget.home.favorites.all.hint.appointments": "Tap to view all favorite Appointments",
 
     "widget.home.wellness_resources.header.label": "My Wellness Resources",
-    "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> for quick access here.",
+    "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.wellness_resources.button.all.title": "View All",
     "widget.home.wellness_resources.button.all.hint": "Tap to view all Wellness Resources",
 
     "widget.home.wellness_mental_health.header.label": "My Mental Health Resources",
-    "widget.home.wellness_mental_health.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Mental Health Resources</b></a> for quick access here.",
+    "widget.home.wellness_mental_health.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Mental Health Resources</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.wellness_mental_health.button.all.title": "View All",
     "widget.home.wellness_mental_health.button.all.hint": "Tap to view all Mental Health Resources",
 
@@ -4079,7 +4080,7 @@
     "widget.checklist.uiuc.logged_out": "You need to be signed in with your NetID to access the New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
 
     "widget.home.dinings.header.title": "Dining",
-    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here.",
+    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here. (Your privacy level must be at least 2.)",
     "widget.home.dinings.all.button.title": "Residence Hall Dining",
     "widget.home.dinings.all.button.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",
@@ -4359,10 +4360,10 @@
 
     "privacy.category.directory.title": "Directory",
     "privacy.entry.directory.identity.data_usage": "These features use your personal university credentials.",
-    "privacy.entry.directory.identity.description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
+    "privacy.entry.directory.identity.description": "This feature allows a user to personalize the information that is visible to others in the Directory of Users.",
     "privacy.entry.directory.identity.title": "Identity",
     "privacy.entry.directory.personalizations.data_usage": "These features use your personal university credentials.",
-    "privacy.entry.directory.personalizations.description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
+    "privacy.entry.directory.personalizations.description": "This feature allows a user to personalize the information that is visible to others in the Directory of Users.",
     "privacy.entry.directory.personalizations.title": "Personalizations",
     "privacy.entry.directory.sharing.data_usage": "Your name, email address and other optional information can be shared with others.",
     "privacy.entry.directory.sharing.description": "This feature allows user to share additional information in the directory beyond your name and email address with others.",
@@ -4393,7 +4394,7 @@
     "privacy.entry.wayfinding.notifications.description": "Receive personalized notifications based on your location.",
     "privacy.entry.wayfinding.notifications.data_usage": "This feature sends notifications utilizing location services, personal information, and places you have starred in the app.",
     "privacy.entry.wayfinding.sharing.title": "Sharing",
-    "privacy.entry.wayfinding.sharing.description": "Potentially share your location with others.",
+    "privacy.entry.wayfinding.sharing.description": "Share your location when requesting a SafeWalk.",
     "privacy.entry.wayfinding.sharing.data_usage": "This feature uses location services and may share your location with others.",
 
     "privacy.category.groups.title": "Groups",
@@ -4416,13 +4417,13 @@
     "privacy.category.general.title": "General",
     "privacy.entry.general.view.only.title": "View Only",
 
-    "privacy.entry.general.view.only.description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, the {{app_title}} X/Twitter feed, etc.",
+    "privacy.entry.general.view.only.description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, etc.",
     "privacy.entry.general.view.only.data_usage": "Your data are not stored or shared.",
     "privacy.entry.general.location.sharing.title": "Location Sharing",
-    "privacy.entry.general.location.sharing.description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, the {{app_title}} X/Twitter feed, nearby bus stops, etc.",
+    "privacy.entry.general.location.sharing.description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, nearby bus stops, etc.",
     "privacy.entry.general.location.sharing.data_usage": "Your location data are shared but not stored.",
     "privacy.entry.general.personalizations.title":  "Personalizations",
-    "privacy.entry.general.personalizations.description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, the {{app_title}} X/Twitter feed, nearby bus stops, etc. You can star various content.",
+    "privacy.entry.general.personalizations.description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, nearby bus stops, etc. You can star various content.",
     "privacy.entry.general.personalizations.data_usage": "Your location data are shared but not stored. Your list of starred items is stored in the app.",
     "privacy.entry.general.notifications.title": "Notifications",
     "privacy.entry.general.notifications.description": "You may receive notifications about content updates, research project qualification, appointments, and group membership. You can star various content and create groups.",

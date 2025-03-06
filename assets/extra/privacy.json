@@ -64,17 +64,6 @@
                     "title_key": "privacy.entry.athletics.view.only.title"
                 },
                 {
-                    "dataUsage": "This feature uses location services but does not store your location.",
-                    "dataUsage_key": "privacy.entry.athletics.location.sharing.data_usage",
-                    "description": "Find seats, nearby restrooms & concession stands. See real-time parking availability and directions.",
-                    "description_key": "privacy.entry.athletics.location.sharing.description",
-                    "icon_resource": "location-dark",
-                    "min_level": 2,
-                    "off_icon_resource": "location-disabled-dark",
-                    "title": "Location Sharing",
-                    "title_key": "privacy.entry.athletics.location.sharing.title"
-                },
-                {
                     "dataUsage": "This feature uses location services, personal preferences and events you have starred in the app.",
                     "dataUsage_key": "privacy.entry.athletics.personalizations.data_usage",
                     "description": "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
@@ -133,7 +122,7 @@
                 {
                     "dataUsage": "These features use your personal university credentials.",
                     "dataUsage_key": "privacy.entry.directory.identity.data_usage",
-                    "description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
+                    "description": "This feature allows a user to personalize the information that is visible to others in the Directory of Users.",
                     "description_key": "privacy.entry.directory.identity.description",
                     "icon_resource": "person-dark",
                     "min_level": 4,
@@ -144,7 +133,7 @@
                 {
                     "dataUsage": "These features use your personal university credentials.",
                     "dataUsage_key": "privacy.entry.directory.personalizations.data_usage",
-                    "description": "This feature allows a user to personalize the information that is visible to others in the App Directory.",
+                    "description": "This feature allows a user to personalize the information that is visible to others in the Directory of Users.",
                     "description_key": "privacy.entry.directory.personalizations.description",
                     "icon_resource": "sliders-dark",
                     "min_level": 4,
@@ -255,7 +244,7 @@
                 {
                     "dataUsage": "This feature uses location services and may share your location with others.",
                     "dataUsage_key": "privacy.entry.wayfinding.sharing.data_usage",
-                    "description": "Potentially share your location with others.",
+                    "description": "Share your location when requesting a SafeWalk.",
                     "description_key": "privacy.entry.wayfinding.sharing.description",
                     "icon_resource": "share-dark",
                     "min_level": 5,
@@ -333,7 +322,7 @@
                 {
                     "dataUsage": "Building access and due date catalog require a university sign in.",
                     "dataUsage_key": "privacy.entry.general.view.only.data_usage",
-                    "description": "View your building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
+                    "description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, etc.",
                     "description_key": "privacy.entry.general.view.only.description",
                     "icon_resource": "view-dark",
                     "min_level": 1,
@@ -344,7 +333,7 @@
                 {
                     "dataUsage": "Building access and due date catalog require a university sign in.",
                     "dataUsage_key": "privacy.entry.general.location.sharing.data_usage",
-                    "description": "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+                    "description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, nearby bus stops, etc.",
                     "description_key": "privacy.entry.general.location.sharing.description",
                     "icon_resource": "location-dark",
                     "min_level": 2,
@@ -355,7 +344,7 @@
                 {
                     "dataUsage": "Research projects, building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in a research project.",
                     "dataUsage_key": "privacy.entry.general.personalizations.data_usage",
-                    "description": "View your Research projects, building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
+                    "description": "View wellness resources, Campus Guide, crisis help, Campus Reminders, nearby bus stops, etc. You can star various content.",
                     "description_key": "privacy.entry.general.personalizations.description",
                     "icon_resource": "sliders-dark",
                     "min_level": 3,
