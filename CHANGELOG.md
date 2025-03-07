@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure to dispose TapGestureRecognizer objects.
 ### Deleted
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
-- 
-## [6.1.X]
+
+## [6.1.68] - 2025-03-07
 - Update Profile Info UX for other login types than OIDC [#4847](https://github.com/rokwire/illinois-app/issues/4847).
 
 ## [6.1.67] - 2025-03-06
