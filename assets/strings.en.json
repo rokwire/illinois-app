@@ -2371,8 +2371,9 @@
     "panel.profile.stored_data.source.gateway.contact_info.title": "Contact Info",
     "panel.profile.stored_data.source.gateway.icard.title": "iCard",
 
-    "panel.profile.info_and_directory.message.signed_out": "To view \"My Info & User Directory\", {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
+    "panel.profile.info_and_directory.message.signed_out": "To view your profile, {{link.login}} and {{link.privacy}} to 4 or 5.",
     "panel.profile.info_and_directory.message.signed_out.link.login": "sign in",
+    "panel.profile.info_and_directory.message.signed_out.link.privacy": "set your privacy level",
     "panel.profile.info_and_directory.tab.accounts.connections.title": "My Connections",
     "panel.profile.info_and_directory.tab.accounts.directory.title": "User Directory",
 
