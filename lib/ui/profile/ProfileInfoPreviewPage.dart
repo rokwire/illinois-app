@@ -2,12 +2,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -92,7 +94,7 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
           DirectoryProfileDetails(_profile)
         ),
-        if ((widget.onboarding == false) && (_profile?.isNotEmpty == true))
+        if ((widget.onboarding == false) && Auth2().isOidcLoggedIn && (_profile?.isNotEmpty == true))
           _shareButton,
     ],)
   );
@@ -143,18 +145,3 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
     widget.contentType.permitedVisibility;
 }
 
-extension _Auth2UserProfileUtils on Auth2UserProfile {
-  bool get isNotEmpty =>
-    (photoUrl?.isNotEmpty == true) ||
-    (firstName?.isNotEmpty == true) ||
-    (middleName?.isNotEmpty == true) ||
-    (lastName?.isNotEmpty == true) ||
-    (title?.isNotEmpty == true) ||
-    (college?.isNotEmpty == true) ||
-    (department?.isNotEmpty == true) ||
-    (major?.isNotEmpty == true) ||
-    (email?.isNotEmpty == true) ||
-    (email2?.isNotEmpty == true) ||
-    (phone?.isNotEmpty == true) ||
-    (website?.isNotEmpty == true);
-}
