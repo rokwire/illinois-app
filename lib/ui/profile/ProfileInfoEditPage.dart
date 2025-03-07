@@ -72,6 +72,22 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   double _screenInsetsBottom = 0;
   Timer? _onScreenInsetsBottomChangedTimer;
 
+  final Map<Auth2LoginType, Set<_ProfileField>> fieldAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
+    Auth2LoginType.oidc: _oidcFieldAvailabilities,
+    Auth2LoginType.oidcIllinois: _oidcFieldAvailabilities,
+    Auth2LoginType.email: _emailFieldAvailabilities,
+    Auth2LoginType.phone: _phoneFieldAvailabilities,
+    Auth2LoginType.phoneTwilio: _phoneFieldAvailabilities,
+    Auth2LoginType.username: _defaultFieldAvailabilities,
+  };
+  static Set<_ProfileField> _oidcFieldAvailabilities = _ProfileField.values.toSet();
+  static Set<_ProfileField> _defaultFieldAvailabilities = <_ProfileField>{_ProfileField.firstName, _ProfileField.middleName, _ProfileField.lastName, _ProfileField.photoUrl};
+  static Set<_ProfileField> _emailFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
+  static Set<_ProfileField> _phoneFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
+
+  bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
+
+
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
@@ -191,7 +207,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
-    Widget get _photoWidget => Stack(children: [
+    Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
       Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
@@ -212,7 +228,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
             _togglePhotoVisibilityButton
           )
         )
-    ],);
+    ],) : Container();
 
     Widget get _editPhotoButton =>
       _photoIconButton(_editIcon,
@@ -340,10 +356,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   // Edit: Pronunciation
 
-  Widget get _pronunciationSection => _fieldSection(
+  Widget get _pronunciationSection => _isFieldAvailable(_ProfileField.pronunciationUrl) ? _fieldSection(
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
-  );
+  ) : Container();
 
   Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Styles().images.getImage('plus-circle', size: 24) ?? Container(),
@@ -594,7 +610,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true, bool enabled = true,
     bool available = true, bool locked = false,
-  }) => ((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) ?
+  }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) && _isFieldAvailable(field)) ?
     _fieldSection(
       headingTitle: headingTitle,
       headingHint: headingHint,
@@ -614,7 +630,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }) =>
       Row(children: [
         Expanded(child:
-          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
+          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled, locked: locked && !enabled && !available)
         ),
         if (_showPrivacyControls)
           Padding(padding: EdgeInsets.only(left: 6), child:
@@ -651,6 +667,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
+    bool locked = false,
   }) =>
     Container(decoration: _controlDecoration, child:
       Row(children: [
@@ -664,12 +681,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
               maxLines: 1,
               keyboardType: textInputType,
               autocorrect: autocorrect,
-              readOnly: (enabled != true),
+              readOnly: ((enabled != true) || (locked == true)),
               onChanged: (String text) => _onTextChanged(field, text),
             )
           )
         ),
-        if (enabled)
+        if (locked)
+          Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
+            Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize)
+          ),
+        if (enabled && !locked)
           InkWell(onTap: () => _onTextEdit(field), child:
             Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
               Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
@@ -781,9 +802,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
+        ) : null
       );
 
       bool? shouldSave = await _shouldSaveModified(
