@@ -4,7 +4,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
@@ -17,6 +19,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -46,7 +49,7 @@ class ProfileInfoEditPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoEditPageState();
 }
 
-class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver {
+class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver implements NotificationsListener {
 
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;
@@ -69,13 +72,34 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   double _screenInsetsBottom = 0;
   Timer? _onScreenInsetsBottomChangedTimer;
 
+  final Map<Auth2LoginType, Set<_ProfileField>> fieldAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
+    Auth2LoginType.oidc: _oidcFieldAvailabilities,
+    Auth2LoginType.oidcIllinois: _oidcFieldAvailabilities,
+    Auth2LoginType.email: _emailFieldAvailabilities,
+    Auth2LoginType.phone: _phoneFieldAvailabilities,
+    Auth2LoginType.phoneTwilio: _phoneFieldAvailabilities,
+    Auth2LoginType.username: _defaultFieldAvailabilities,
+  };
+  static Set<_ProfileField> _oidcFieldAvailabilities = _ProfileField.values.toSet();
+  static Set<_ProfileField> _defaultFieldAvailabilities = <_ProfileField>{_ProfileField.firstName, _ProfileField.middleName, _ProfileField.lastName, _ProfileField.photoUrl};
+  static Set<_ProfileField> _emailFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
+  static Set<_ProfileField> _phoneFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
+
+  bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
+
+
   bool get _showProfileCommands => (widget.onboarding == false);
+  bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+    ]);
+
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
@@ -106,6 +130,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
 
     for (_ProfileField field in _ProfileField.values) {
@@ -116,6 +141,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     _audioPlayer?.dispose();
 
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == FlexUI.notifyChanged) {
+      setStateIfMounted((){});
+    }
   }
 
   @override
@@ -175,7 +207,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
-    Widget get _photoWidget => Stack(children: [
+    Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
       Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
@@ -186,16 +218,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         ),
       ),
       Positioned.fill(child:
-        Align(alignment: Alignment.bottomLeft, child:
+        Align(alignment: _showPrivacyControls ? Alignment.bottomLeft : Alignment.bottomRight, child:
           _editPhotoButton
         )
       ),
-      Positioned.fill(child:
-        Align(alignment: Alignment.bottomRight, child:
-          _togglePhotoVisibilityButton
+      if (_showPrivacyControls)
+        Positioned.fill(child:
+          Align(alignment: Alignment.bottomRight, child:
+            _togglePhotoVisibilityButton
+          )
         )
-      )
-    ],);
+    ],) : Container();
 
     Widget get _editPhotoButton =>
       _photoIconButton(_editIcon,
@@ -323,10 +356,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   // Edit: Pronunciation
 
-  Widget get _pronunciationSection => _fieldSection(
+  Widget get _pronunciationSection => _isFieldAvailable(_ProfileField.pronunciationUrl) ? _fieldSection(
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
-  );
+  ) : Container();
 
   Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Styles().images.getImage('plus-circle', size: 24) ?? Container(),
@@ -337,8 +370,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         ),
       ),
     ),
-    Padding(padding: EdgeInsets.only(left: 6), child:
-      _visibilityButton(_ProfileField.pronunciationUrl),
+    if (_showPrivacyControls)
+      Padding(padding: EdgeInsets.only(left: 6), child:
+        _visibilityButton(_ProfileField.pronunciationUrl),
     ),
   ],);
 
@@ -350,7 +384,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _pronunciationPlayButton,
       _pronunciationEditButton,
       _pronunciationDeleteButton,
-      _visibilityButton(_ProfileField.pronunciationUrl),
+      if (_showPrivacyControls)
+        _visibilityButton(_ProfileField.pronunciationUrl),
     ],)
   ],);
 
@@ -502,41 +537,43 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _firstNameSection => _textFieldSection(_ProfileField.firstName,
     headingTitle: Localization().getStringEx('panel.profile.info.title.first_name.text', 'First Name'),
-    enabled: _canEditName, locked: true,
+    enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _middleNameSection => _textFieldSection(_ProfileField.middleName,
     headingTitle: Localization().getStringEx('panel.profile.info.title.middle_name.text', 'Middle Name'),
-    enabled: _canEditName, locked: true,
+    enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _lastNameSection => _textFieldSection(_ProfileField.lastName,
     headingTitle: Localization().getStringEx('panel.profile.info.title.last_name.text', 'Last Name'),
-    enabled: _canEditName, locked: true,
+    enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
+    available: _showPrivacyControls,
   );
 
   Widget get _titleSection => _textFieldSection(_ProfileField.title,
     headingTitle: Localization().getStringEx('panel.profile.info.title.title.text', 'Title'),
-    headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)')
+    headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)'),
+    available: _showPrivacyControls,
   );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
     headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
-    enabled: false,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _departmentSection => _textFieldSection(_ProfileField.department,
     headingTitle: Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
-    enabled: false,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
-    enabled: false,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
@@ -544,11 +581,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.emailAddress,
     enabled: (widget.authType?.loginType?.shouldHaveEmail != true) || StringUtils.isEmpty(widget.profile?.email),
     locked: (widget.authType?.loginType?.shouldHaveEmail == true),
+    available: _showPrivacyControls,
   );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
     textInputType: TextInputType.emailAddress,
+    available: _showPrivacyControls,
   );
 
   Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
@@ -556,21 +595,22 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.phone,
     enabled: (widget.authType?.loginType?.shouldHavePhone != true) || StringUtils.isEmpty(widget.profile?.phone),
     locked: (widget.authType?.loginType?.shouldHavePhone == true),
+    available: _showPrivacyControls,
   );
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
     headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
     textInputType: TextInputType.url,
+    available: _showPrivacyControls,
   );
 
   Widget _textFieldSection(_ProfileField field, {
     String? headingTitle, String? headingHint,
     TextInputType textInputType = TextInputType.text,
-    bool autocorrect = true,
-    bool enabled = true,
-    bool locked = false,
-  }) => ((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) ?
+    bool autocorrect = true, bool enabled = true,
+    bool available = true, bool locked = false,
+  }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) && _isFieldAvailable(field)) ?
     _fieldSection(
       headingTitle: headingTitle,
       headingHint: headingHint,
@@ -578,23 +618,24 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           textInputType: textInputType,
           autocorrect: autocorrect,
           enabled: enabled,
+          available: available,
           locked: locked,
       )
     ) : Container();
 
   Widget _textFieldControl(_ProfileField field, {
     TextInputType textInputType = TextInputType.text,
-    bool autocorrect = true,
-    bool enabled = true,
-    bool locked = false,
+    bool autocorrect = true, bool enabled = true,
+    bool locked = false, bool available = true,
     }) =>
       Row(children: [
         Expanded(child:
-          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
+          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled, locked: locked && !enabled && !available)
         ),
-        Padding(padding: EdgeInsets.only(left: 6), child:
-          _visibilityButton(field, locked: locked),
-        ),
+        if (_showPrivacyControls)
+          Padding(padding: EdgeInsets.only(left: 6), child:
+            _visibilityButton(field, locked: locked),
+          ),
       ],);
 
   Widget _fieldSection({
@@ -626,6 +667,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
+    bool locked = false,
   }) =>
     Container(decoration: _controlDecoration, child:
       Row(children: [
@@ -639,12 +681,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
               maxLines: 1,
               keyboardType: textInputType,
               autocorrect: autocorrect,
-              readOnly: (enabled != true),
+              readOnly: ((enabled != true) || (locked == true)),
               onChanged: (String text) => _onTextChanged(field, text),
             )
           )
         ),
-        if (enabled)
+        if (locked)
+          Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
+            Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize)
+          ),
+        if (enabled && !locked)
           InkWell(onTap: () => _onTextEdit(field), child:
             Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
               Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
@@ -653,13 +699,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       ])
     );
 
-  Widget _visibilityButton(_ProfileField field, { bool locked = false}) =>
+  Widget _visibilityButton(_ProfileField field, { bool locked = false }) =>
     _iconButton(
       icon: _visibilityIcon(field, locked: locked),
       onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
     );
 
-  Widget _iconButton({ Widget? icon, bool progress = false, void Function()? onTap}) =>
+  Widget _iconButton({ Widget? icon, void Function()? onTap, bool progress = false}) =>
     InkWell(onTap: onTap, child:
       Container(decoration: _controlDecoration, child:
         Padding(padding: EdgeInsets.all(15), child:
@@ -756,9 +802,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
+        ) : null
       );
 
       bool? shouldSave = await _shouldSaveModified(
@@ -966,11 +1012,6 @@ extension Auth2LoginTypeProfileUtils on Auth2LoginType {
 // Auth2UserProfile Utils
 
 extension _Auth2UserProfileUtils on Auth2UserProfile {
-
-  bool get isNameNotEmpty =>
-    StringUtils.isNotEmpty(firstName) ||
-    StringUtils.isNotEmpty(middleName) ||
-    StringUtils.isNotEmpty(lastName);
 
   String? fieldValue(_ProfileField field) {
     switch(field) {
