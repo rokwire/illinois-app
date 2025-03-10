@@ -18,6 +18,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/model/sport/Game.dart';
 import 'package:neom/model/sport/SportDetails.dart';
@@ -26,6 +27,7 @@ import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Sports.dart';
 import 'package:neom/ui/athletics/AthleticsWidgets.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -57,6 +59,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   List<SportDefinition>? _teamsFilter;
 
   ScrollController _scrollController = ScrollController();
+
+  static const String _privacyUrl = 'privacy://level';
+  static const String _privacyUrlMacro = '{{privacy_url}}';
 
   @override
   void initState() {
@@ -126,7 +131,23 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   Widget _buildEmptyContent() {
     return _buildCenteredWidget(
-        Text(_emptyMessage, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+      HtmlWidget("<center>$_emptyMessageHtml</center>",
+        onTapUrl : _handleLocalUrl,
+        textStyle:  Styles().textStyles.getTextStyle('widget.item.medium'),
+        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+      )
+    );
+  }
+
+  bool _handleLocalUrl(String? url) {
+    if (url == _privacyUrl) {
+      Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   Widget _buildErrorContent() {
@@ -138,7 +159,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: child);
+    return Padding(padding: EdgeInsets.symmetric(vertical: 32, horizontal: 48), child:
+      Center(child: child)
+    );
   }
 
   Widget _buildExtendingWidget() {
@@ -324,10 +347,10 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   bool get _favoritesMode => (widget.showFavorites == true);
 
-  String get _emptyMessage {
-    return _favoritesMode
-        ? Localization().getStringEx('panel.athletics.content.events.my.empty.message', 'There are no starred events for the selected teams.')
-        : Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.');
+  String get _emptyMessageHtml {
+    return _favoritesMode ?
+      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
+      Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.');
   }
 
   // Notifications Listener

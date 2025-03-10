@@ -53,12 +53,17 @@ class Onboarding2TitleWidget extends StatelessWidget{
 }
 
 class Onboarding2BackButton extends StatelessWidget {
-  final EdgeInsetsGeometry? padding;
-  final GestureTapCallback? onTap;
+  final EdgeInsetsGeometry padding;
   final String imageKey;
-  final Color? color;
+  final Color? imageColor;
+  final GestureTapCallback? onTap;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.imageKey = 'chevron-left-bold', this.color});
+  Onboarding2BackButton({
+    this.padding = const EdgeInsets.all(16),
+    this.imageKey = 'chevron-left-bold',
+    this.imageColor,
+    this.onTap
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +77,7 @@ class Onboarding2BackButton extends StatelessWidget {
             onTap: onTap,
             child: Padding(
               padding: padding!,
-              child: Container(child: Styles().images.getImage(imageKey, color: this.color, excludeFromSemantics: true)
+              child: Container(child: Styles().images.getImage(imageKey, color: this.imageColor, excludeFromSemantics: true)
               ),
             ),
           )
@@ -239,7 +244,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
 }
 
 class Onboarding2UnderlinedButton extends StatelessWidget{ //TBD check if we can replace with UnderlineButton
-  final Function? onTap;
+  final void Function()? onTap;
   final String? title;
   final String? hint;
   final TextStyle? textStyle;
@@ -248,27 +253,55 @@ class Onboarding2UnderlinedButton extends StatelessWidget{ //TBD check if we can
   const Onboarding2UnderlinedButton({Key? key, this.onTap, this.title, this.hint, this.padding = const EdgeInsets.symmetric(vertical: 20), this.textStyle}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return  InkWell(
-      onTap: () {
-        onTap!();
-      },
-      child: Semantics(
-          label: title,
-          hint: hint,
-          button: true,
-          excludeSemantics: true,
-          child: Padding(
-              padding: padding,
-              child: Container(
-                  padding: EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    title!,
-                    style: textStyle ?? defaultTextStyle
-                  )))),
+  Widget build(BuildContext context) =>
+    InkWell(onTap: onTap, child:
+      Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
+        Padding(padding: padding, child:
+          Padding(padding: EdgeInsets.only(bottom: 2), child:
+            Text(title ?? '', style: textStyle ?? Styles().textStyles.getTextStyle("widget.button.title.medium.underline"))
+          )
+        )
+      ),
     );
+}
+
+class Onboarding2PrivacyProgress extends StatelessWidget {
+  static const double defaultHeight = 4;
+  static const double  defaultSpacing = 2;
+  static const int  defaultLength = 3;
+
+  static get defaultActiveColor => Styles().colors.fillColorPrimary;
+  static get defaultInactiveColor => Styles().colors.backgroundVariant;
+
+  final int pos;
+  final int lenght;
+
+  final double height;
+  final double spacing;
+
+  final Color? activeColor;
+  final Color? inactiveColor;
+
+  Onboarding2PrivacyProgress(this.pos, {super.key,
+    this.lenght = defaultLength,
+    this.height = defaultHeight, this.spacing = defaultSpacing,
+    this.activeColor, this.inactiveColor,
+  });
+
+  Color? get _activeColor => activeColor ?? defaultActiveColor;
+  Color? get _inactiveColor => inactiveColor ?? defaultInactiveColor;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> steps = <Widget>[];
+    for (int index = 0; index < lenght; index++) {
+      if (0 < index) {
+        steps.add(Container(height: height, width: spacing,));
+      }
+      steps.add(Expanded(child:
+        Container(height: height, color: (index < pos) ? _activeColor : _inactiveColor,),
+      ));
+    }
+    return Row(children: steps,);
   }
-
-  TextStyle? get defaultTextStyle => Styles().textStyles.getTextStyle("widget.button.title.medium.underline");
-
 }

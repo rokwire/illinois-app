@@ -14,151 +14,154 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ui/widgets/SlantedWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:neom/service/Onboarding2.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
-import 'package:neom/ui/widgets/RoleGridButton.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 
 import 'Onboarding2Widgets.dart';
 
-class Onboarding2RolesPanel extends StatefulWidget{
-  final bool returningUser;
+class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2RolesPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2RoleSelectionPanelState>());
 
-  Onboarding2RolesPanel({this.returningUser = false});
+  GlobalKey<_Onboarding2RoleSelectionPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2RoleSelectionPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2RoleSelectionPanelState>) : null;
 
   @override
-  _Onboarding2RoleSelectionPanelState createState() =>
-      _Onboarding2RoleSelectionPanelState();
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+
+  @override
+  _Onboarding2RoleSelectionPanelState createState() => _Onboarding2RoleSelectionPanelState();
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
-  Set<UserRole>? _selectedRoles;
-  bool _updating = false;
-
-  bool get _allowNext => _selectedRoles != null && _selectedRoles!.isNotEmpty;
+  Set<UserRole> _selectedRoles = <UserRole>{};
+  bool get _allowNext => _selectedRoles.isNotEmpty;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
-    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs!.roles!) : Set<UserRole>();
+    Set<UserRole>? userRoles = Auth2().prefs?.roles;
+    if (userRoles != null) {
+      _selectedRoles = Set.from(userRoles);
+    }
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Styles().colors.background,
-      body: SafeArea(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-        Container(
-          color: Styles().colors.surface,
-          padding: EdgeInsets.only(top: 19, bottom: 19),
-          child: Row(children: <Widget>[
-            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
-                onTap:() {
-                  Analytics().logSelect(target: "Back");
-                  Navigator.pop(context);
-                }),
-            Expanded(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-              Semantics(
-                label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'WHO ARE YOU?').toLowerCase(),
-                hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
-                excludeSemantics: true,
-                child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'WHO ARE YOU?'),
-                  style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
+  Widget build(BuildContext context) =>
+    Scaffold(backgroundColor: Styles().colors.background, body:
+      SafeArea(child:
+        SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+              Row(children: <Widget>[
+                Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+                Expanded(child:
+                  Center(child:
+                    Semantics(
+                      label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?').toLowerCase(),
+                      hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
+                      excludeSemantics: true,
+                      child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
+                        style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(padding: EdgeInsets.only(left: 46),),
+              ],),
+            ),
+
+            Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
+              Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+                style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description"),
+                textAlign: TextAlign.start,
+              ),
+            ),
+
+            Padding(padding: EdgeInsets.only(bottom:  10, left: 20, right: 20), child:
+              Text(Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am a...'),
+                style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
+                textAlign: TextAlign.start,
+              ),
+            ),
+
+            Expanded(child:
+              SingleChildScrollView(child:
+                Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
+                  RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,)
                 ),
               ),
-            ],),),
-            Padding(padding: EdgeInsets.only(left: 42),),
+            ),
+
+            if (_allowNext)
+              Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), child:
+                RoundedButton(
+                  label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
+                  hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
+                  textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  enabled: _allowNext,
+                  backgroundColor: (Styles().colors.white),
+                  borderColor: (_allowNext ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03),
+                  progress: _onboardingProgress,
+                  onTap: _onTapContinue,
+                ),
+              )
           ],),
         ),
-
-        Container(height: 6,),
-        // Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        //   child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-        //     textAlign: TextAlign.start,
-        //     style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")
-        //   ),
-        // ),
-
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text(
-              Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am part of the following ERI Sector...'),
-              style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
-            textAlign: TextAlign.start,
-          ),
-        ),
-
-        Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,)
-        ),),),
-        
-        !_allowNext? Container():
-         Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
-            SlantedWidget(
-              color: Styles().colors.fillColorSecondary,
-              child: RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
-                hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
-                textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.light.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                enabled: _allowNext,
-                progress: _updating,
-                backgroundColor: (Styles().colors.surface),
-                borderColor: (_allowNext
-                    ? Styles().colors.fillColorSecondary
-                    : Styles().colors.fillColorPrimaryTransparent03),
-                onTap: () => _onGoNext()),
-            ),
-        )
-
-      ],),),
+      ),
     );
-  }
 
   void _onRoleGridButton(RoleGridButton button) {
-
-    if ((button.data is UserRole) && (_selectedRoles != null)) {
-
-      UserRole role = button.data;
-
-      Analytics().logSelect(target: "Role: $role");
-
-      if (_selectedRoles!.contains(role)) {
-        _selectedRoles!.remove(role);
-      } else {
-        _selectedRoles!.add(role);
-      }
-
-      setState(() {});
-
-    }
+      Analytics().logSelect(target: "Role: ${button.role}");
+      setState(() {
+        if (_selectedRoles.contains(button.role) == true) {
+          _selectedRoles.remove(button.role);
+        } else {
+          _selectedRoles.add(button.role);
+        }
+      });
   }
 
-  void _onGoNext() {
-    Analytics().logSelect(target:"Continue");
-    if (_selectedRoles != null && _selectedRoles!.isNotEmpty && !_updating) {
-      Auth2().prefs?.roles = _selectedRoles;
-      setState(() { _updating = true; });
-      setState(() { _updating = false; });
-      if(widget.returningUser){
-        Onboarding2().finalize(context);
-      } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStatementPanel()));
-      }
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    _onboardingBack();
+  }
 
+  void _onTapContinue() {
+    Analytics().logSelect(target: "Continue");
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
+    if (_selectedRoles.isNotEmpty) {
+      Auth2().prefs?.roles = _selectedRoles;
+      Onboarding2().next(context, widget);
     }
   }
 }

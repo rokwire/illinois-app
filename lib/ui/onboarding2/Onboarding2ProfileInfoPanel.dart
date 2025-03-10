@@ -16,10 +16,19 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2ProfileInfoPanel extends StatefulWidget with OnboardingPanel {
-  final Map<String, dynamic>? onboardingContext;
+class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2ProfileInfoPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2ProfileInfoPanelState>());
 
-  Onboarding2ProfileInfoPanel({super.key, this.onboardingContext});
+  GlobalKey<_Onboarding2ProfileInfoPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ProfileInfoPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2ProfileInfoPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
   @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
@@ -33,7 +42,7 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget with OnboardingPanel {
 class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
 
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey<ProfileInfoPageState>();
-  bool _onboarding2Progress = false;
+  bool _onboardingProgress = false;
   bool _saving = false;
 
   @override
@@ -58,10 +67,10 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   }
 
   @override
-  bool get onboarding2Progress => _onboarding2Progress;
+  bool get onboarding2Progress => _onboardingProgress;
 
   @override
-  set onboarding2Progress(bool progress) => setStateIfMounted(() { _onboarding2Progress = progress; });
+  set onboarding2Progress(bool progress) => setStateIfMounted(() { _onboardingProgress = progress; });
 
   @override
   Widget build(BuildContext context) => SafeArea(
@@ -125,7 +134,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     ],),
   );
 
-  bool get _canContinue => (_onboarding2Progress != true) && (_saving != true);
+  bool get _canContinue => (_onboardingProgress != true) && (_saving != true);
 
   Widget get _continueCommandButton => SlantedWidget(
     color: Styles().colors.fillColorSecondary,
@@ -136,7 +145,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
         textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
         textAlign: TextAlign.center,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        progress: _onboarding2Progress || _saving,
+        progress: _onboardingProgress || _saving,
         progressColor: Styles().colors.textLight,
         onTap: _onTapContinue,
         rightIconKey: null,
@@ -151,7 +160,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     }
   }
 
-  bool get _isLoaded => (_profileInfoKey.currentState?.isLoading == false);
+  bool get _isLoaded => (_profileInfoKey.currentState?.isLoading != true);
   bool get _isEditing => (_profileInfoKey.currentState?.isEditing == true);
 
   void _onTapContinue() {
@@ -167,7 +176,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
               _saving = false;
             });
             if (result ?? false) {
-              _finishProfile();
+              _onboardingNext();
             }
           }
         });
@@ -178,18 +187,15 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     }
   }
 
-  void _finishProfile() {
-    Map<String, dynamic>? onboardingContext = widget.onboardingContext;
-    Function? onContinue = onboardingContext?['onContinueAction'];
-    Function? onContinueEx = onboardingContext?['onContinueActionEx'];
-    if (onContinueEx != null) {
-      onContinueEx(this);
-    }
-    else if (onContinue != null) {
-      onContinue();
-    }
-    else {
-      Onboarding().next(context, widget);
-    }
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
   }
+
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() => Onboarding2().next(context, widget);
 }

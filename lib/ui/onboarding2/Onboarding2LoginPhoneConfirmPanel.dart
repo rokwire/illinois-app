@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
@@ -28,34 +28,43 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:sprintf/sprintf.dart';
 
-class OnboardingLoginPhoneConfirmPanel extends StatefulWidget with OnboardingPanel {
+class Onboarding2LoginPhoneConfirmPanel extends StatefulWidget with Onboarding2Panel {
 
-  final Map<String, dynamic>? onboardingContext;
-  final String? phoneNumber;
-  final ValueSetter<dynamic>? onFinish;
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2LoginPhoneConfirmPanel({ this.onboardingCode = '', this.onboardingContext }) :
+    super(key: GlobalKey<_Onboarding2LoginPhoneConfirmPanelState>());
 
-  OnboardingLoginPhoneConfirmPanel({this.onboardingContext, this.phoneNumber, this.onFinish});
+  GlobalKey<_Onboarding2LoginPhoneConfirmPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2LoginPhoneConfirmPanelState>) ?
+    (super.key as GlobalKey<_Onboarding2LoginPhoneConfirmPanelState>) : null;
 
   @override
-  _OnboardingLoginPhoneConfirmPanelState createState() => _OnboardingLoginPhoneConfirmPanelState();
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => (onboardingContext?['login'] == true) && (phoneNumber?.isNotEmpty == true);
+
+  String? get phoneNumber => JsonUtils.stringValue(onboardingContext?['phoneNumber']);
+  bool get link => JsonUtils.boolValue(onboardingContext?['link']) == true;
 
   @override
-  bool get onboardingCanDisplay {
-    return (onboardingContext != null) && onboardingContext!['shouldVerifyPhone'] == true;
-  }
+  _Onboarding2LoginPhoneConfirmPanelState createState() => _Onboarding2LoginPhoneConfirmPanelState();
 }
 
-class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneConfirmPanel> implements Onboarding2ProgressableState {
+class _Onboarding2LoginPhoneConfirmPanelState extends State<Onboarding2LoginPhoneConfirmPanel> {
   TextEditingController _codeController = TextEditingController();
   String? _verificationErrorMsg;
 
   bool _isLoading = false;
   bool _link = false;
+  bool _onboardingProgress = false;
+  bool get _hasProgress => _onboardingProgress || _isLoading;
 
   @override
   void initState() {
     super.initState();
-    _link = widget.onboardingContext?["link"] ?? false;
+    _link = widget.link;
   }
 
   @override
@@ -66,7 +75,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
 
   @override
   Widget build(BuildContext context) {
-    String? phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : widget.phoneNumber;
+    String? phoneNumber = widget.phoneNumber;
     String maskedPhoneNumber = StringUtils.getMaskedPhoneNumber(phoneNumber);
     String description = sprintf(
         Localization().getStringEx(
@@ -199,7 +208,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
               ],
             ),),),
           Visibility(
-            visible: _isLoading,
+            visible: _hasProgress,
             child: Center(
               child: CircularProgressIndicator(),
             ),
@@ -218,7 +227,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
 
   void _onTapConfirm() {
 
-    if(_isLoading){
+    if(_hasProgress){
       return;
     }
 
@@ -228,7 +237,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     if (StringUtils.isNotEmpty(_verificationErrorMsg)) {
       return;
     }
-    String? phoneNumber = ((widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : null) ?? widget.phoneNumber;
+    String? phoneNumber = widget.phoneNumber;
     setState(() {
       _isLoading = true;
     });
@@ -269,25 +278,11 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
 
   void _finishedPhoneVerification() {
     // Hook this panels to Onboarding2
-    Function? onWidgetFinish = widget.onFinish;
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
-    if (onContinueEx != null) {
-      onContinueEx(this);
-    }
-    else if (onContinue != null) {
-      onContinue();
-    }
-    else if (onWidgetFinish != null) {
-      onWidgetFinish(widget);
-    }
-    else {
-      Onboarding().next(context, widget);
-    }
+    _onboardingNext();
   }
 
   void _onTapCancel() {
-    String phoneNumber = ((widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : null) ?? widget.phoneNumber ?? '';
+    String phoneNumber = widget.phoneNumber ?? '';
     setState(() {
       _isLoading = true;
     });
@@ -330,17 +325,17 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
   }
 
-  // Onboarding2ProgressableState
+  // Onboarding
 
-  @override
-  bool get onboarding2Progress => _isLoading;
-  
-  @override
-  set onboarding2Progress(bool progress) {
-    if (mounted) {
-      setState(() {
-        _isLoading = progress;
-      });
-    }
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  //void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
+    Onboarding2().next(context, widget);
   }
 }

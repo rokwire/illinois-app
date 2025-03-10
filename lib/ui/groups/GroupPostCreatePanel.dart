@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/service/Analytics.dart';
@@ -67,6 +68,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         appBar: AppBar(
           leading: HeaderBackButton(),
           title: Text(
+            widget.type == PostType.direct_message ?
+            Localization().getStringEx('panel.group.detail.post.header.title.message', 'Message'):
             Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
             style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light")
           ),
@@ -359,6 +362,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           groupIds: groupIds, subject: subject, body: htmlModifiedBody, imageUrl: imageUrl, dateActivatedUtc: scheduleDate?.toUtc());
     } else {
       List<String>? memberAccountIds = MemberExt.extractUserIds(_selectedMembers);
+      if (CollectionUtils.isNotEmpty(memberAccountIds)) {
+        memberAccountIds!.add(Auth2().accountId!);
+      }
       post = Post.forGroup(
           groupId: _groupId,
           subject: subject,

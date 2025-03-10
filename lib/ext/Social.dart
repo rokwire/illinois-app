@@ -70,20 +70,28 @@ extension ReactionExt on Reaction {
   String? get engagerName => engager?.name;
   String? get engagerId => engager?.accountId;
   bool get isCurrentUserReacted => (Auth2().accountId == engagerId);
+  String? get emoji => data?["emoji_source"];
+  String? get emojiName => data?["emoji_name"];
 
   /// Returns Key: Emoji.emoji and Value: List of all Reactions with this emoji
   static   Map<String, List<Reaction>>?  extractSameEmojiReactions(List<Reaction>? reactions){
     return reactions?.fold(<String, List<Reaction>>{}, (map, element) {
       if(element.type == ReactionType.emoji &&  element.data != null){
-        List<Reaction>? collection = map?[element.data];
+        List<Reaction>? collection = map?[element.emoji];
         if(collection == null){
-          map?[element.data!] = collection = <Reaction>[];
+          map?[element.emoji!] = collection = <Reaction>[];
         }
         collection?.add(element);
       }
       return map;
     });
   }
+
+  static  List<Reaction>? extractUsersReactions(Iterable<Reaction>? reactions, {String? emoji}) =>
+      reactions?.where((Reaction reaction) =>
+          (emoji == null || reaction.emoji == emoji) &&
+          reaction.isCurrentUserReacted
+      ).toList();
 }
 
 extension MessageExt on Message {

@@ -292,11 +292,9 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
 
   void _onResearchQuestionnaireLink() {
     Analytics().logSelect(target: "View Research Interests Form", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
-      "onContinueAction": () {
-        _didResearchQuestionnaire();
-      }
-    },)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(
+      onContinue: _didResearchQuestionnaire,
+    )));
   }
 
   void _didResearchQuestionnaire() {

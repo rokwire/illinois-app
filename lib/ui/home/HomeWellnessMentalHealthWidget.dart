@@ -25,6 +25,7 @@ import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:neom/ui/wellness/WellnessHomePanel.dart';
 import 'package:neom/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
@@ -67,7 +68,8 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
-
+  static const String privacyUrl = 'privacy://level';
+  static const String privacyUrlMacro = '{{privacy_url}}';
 
   @override
   void initState() {
@@ -120,8 +122,9 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   Widget _buildEmpty() {
     String favoriteKey = WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey);
-    String message = Localization().getStringEx("widget.home.wellness_mental_health.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Metnal Heatlh Resources</b></a> so you can quickly find them here.")
-      .replaceAll(localUrlMacro, '$localScheme://$favoriteKey');
+    String message = Localization().getStringEx("widget.home.wellness_mental_health.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Mental Health Resources</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      .replaceAll(localUrlMacro, '$localScheme://$favoriteKey')
+      .replaceAll(privacyUrlMacro, privacyUrl);
 
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
@@ -244,6 +247,10 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
       Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.mentalHealth,)));
+    }
+    else if (url == privacyUrl) {
+      Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
     }
   }
 

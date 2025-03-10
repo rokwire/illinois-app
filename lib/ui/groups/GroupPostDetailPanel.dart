@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:neom/model/Analytics.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -111,7 +112,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return Scaffold(
         appBar: AppBar(
             leading: HeaderBackButton(),
-            title: Text(Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
+            title: Text(_panelTitle ?? "",
                 style: Styles().textStyles.getTextStyle('widget.heading.regular.extra_fat')),
             centerTitle: false),
         backgroundColor: Styles().colors.background,
@@ -119,7 +120,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         body: _buildContent());
   }
 
-  Widget _buildContent(){
+  Widget _buildContent() {
+    List<String>? updatedMemberIds = _isEditMainPost ? MemberExt.extractUserIds(_mainPostUpdateData?.members) : _post?.getMemberAccountIds(
+        groupId: _groupId);
+    if (CollectionUtils.isNotEmpty(updatedMemberIds) && updatedMemberIds!.contains(Auth2().accountId)) {
+      updatedMemberIds.remove(Auth2().accountId);
+    }
     return Stack(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SingleChildScrollView(
@@ -138,9 +144,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child:
                     GroupMembersSelectionWidget(
                       selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(
-                          selectedAccountIds: (_isEditMainPost
-                              ? MemberExt.extractUserIds(_mainPostUpdateData?.members)
-                              : _post?.getMemberAccountIds(groupId: _groupId)),
+                          selectedAccountIds: updatedMemberIds,
                           upToDateMembers: _allMembersAllowedToPost),
                       allMembers: _allMembersAllowedToPost,
                       enabled: _isEditMainPost,
@@ -170,7 +174,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               _buildRepliesSection(),
               _buildPostInputSection(),
             ])),
-          Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
+          Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, right: 8, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Row(children: [
                   Expanded( child:
@@ -216,13 +220,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                           Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
                             Styles().images.getImage('report', excludeFromSemantics: true))))),
-
-                  Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
-                    Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
-                      GestureDetector(onTap: _onTapHeaderReply, child:
-                          Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                            Styles().images.getImage('reply', excludeFromSemantics: true))))),
-
                 ]),
             ])
           )
@@ -257,8 +254,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           //         onTapUrl : (url) {_onTapPostLink(url); return true;},
                           //         textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
                           //     )
-                            GroupPostCard(post: _post, group: widget.group, isClickable: false, postReactions: widget.postReactions,
-                              isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
+                            GroupPostCard(
+                                post: _post,
+                                group: widget.group,
+                                isClickable: false,
+                                displayMode: GroupPostCardDisplayMode.page,
+                                postReactions: widget.postReactions,
+                                isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
                           visible: _isEditMainPost,
@@ -669,12 +671,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  void _onTapHeaderReply() {
-    Analytics().logSelect(target: 'Reply');
-    _clearBodyControllerContent();
-    _scrollToPostEdit();
-  }
-
   void _onTapPostReply({Comment? reply}) {
     Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
@@ -703,6 +699,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapEditMainPost() {
     List<String>? selectedAccountIds = _post?.getMemberAccountIds(groupId: _groupId);
+    if (CollectionUtils.isNotEmpty(selectedAccountIds) && selectedAccountIds!.contains(Auth2().accountId)) {
+      selectedAccountIds.remove(Auth2().accountId);
+    }
     _mainPostUpdateData = PostDataModel(
         body: _post?.body,
         imageUrl: _post?.imageUrl,
@@ -727,7 +726,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _post!.body = htmlModifiedBody;
     _post!.imageUrl = imageUrl;
     _post!.dateActivatedUtc = _mainPostUpdateData?.dateScheduled?.toUtc();
-    _post!.setMemberAccountIds(groupId: _groupId, accountIds: MemberExt.extractUserIds(toMembers));
+    List<String>? memberAccountIds = MemberExt.extractUserIds(toMembers);
+    if (CollectionUtils.isNotEmpty(memberAccountIds) && !memberAccountIds!.contains(Auth2().accountId)) {
+      memberAccountIds.add(Auth2().accountId!);
+    }
+    _post!.setMemberAccountIds(groupId: _groupId, accountIds: memberAccountIds);
     Social().updatePost(post: _post!).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
@@ -918,6 +921,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String? currentMemberId = widget.group.currentMember?.userId;
     return StringUtils.isNotEmpty(currentMemberId) && StringUtils.isNotEmpty(creatorId) && (currentMemberId == creatorId);
   }
+
+  String? get _panelTitle => _post?.isMessage == true ?
+      Localization().getStringEx('panel.group.detail.post.header.title.message', 'Message'):
+      Localization().getStringEx('panel.group.detail.post.header.title', 'Post');
 
   bool get _isEditPostVisible => _isEditVisible(_post?.creatorId);
 

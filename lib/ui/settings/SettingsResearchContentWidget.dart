@@ -82,11 +82,9 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
 
   void _onResearchQuestionnaireClicked() {
     Analytics().logSelect(target: 'Research Questionnaire');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
-      "onContinueAction": () {
-        _didResearchQuestionnaire();
-      }
-    },)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(
+      onContinue: _didResearchQuestionnaire,
+    )));
   }
 
   Future<bool?> _promptTurnOffParticipateInResearch() async {
@@ -109,11 +107,9 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
   }
 
   void _didResearchQuestionnaire() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
-      "onContinueAction": () {
-        _didAcknowledgeResearchQuestionnaire();
-      }
-    },)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(
+      onContinue: _didAcknowledgeResearchQuestionnaire,
+    )));
   }
 
   void _didAcknowledgeResearchQuestionnaire() {

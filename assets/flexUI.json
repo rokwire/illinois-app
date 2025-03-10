@@ -59,7 +59,7 @@
 			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth", "profile_info"],
 
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"new_student", "messages", "student", "assistant", "assistant_personalization"],
+				"new_student", "messages", "student", "assistant", "assistant_personalization", "privacy"],
 
             "attributes": ["groups", "events"],
             "attributes.groups": ["rso"],
@@ -69,12 +69,11 @@
 		},
 		"rules": {
 			"roles" : {
-				"onboarding.login_netid"                   	: ["student", "OR", "employee"],
-				"onboarding.login_phone"                   	: ["NOT", ["employee", "OR", "student"]],
-				"onboarding.verify_phone"                  	: ["NOT", ["employee", "OR", "student"]],
-				"onboarding.confirm_phone"                 	: ["NOT", ["employee", "OR", "student"]],
-	
-				"onboarding.sport_prefs"                   	: ["fan"],
+				"onboarding2.login_netid"                  : ["student", "OR", "employee"],
+				"onboarding2.login_phone_or_email_statement" : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_phone_or_email"         : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_email"                  : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_phone"                  : ["NOT", ["employee", "OR", "student"]],
 
 				"features.student"                         	: ["student"]
 			},
@@ -93,16 +92,17 @@
 			"locations": {
 			},
 			"privacy": {
-				"onboarding.notifications_auth"   	      : 4,
-				"onboarding.location_auth"        	      : 2,
-				"onboarding.roles"                   	    : 3,
-				"onboarding.login_netid"             	    : 4,
-				"onboarding.login_phone"          	      : 4,
-				"onboarding.verify_phone"         	      : 4,
-				"onboarding.confirm_phone"        	      : 4,
-				"onboarding.sport_prefs"          	      : 3,
-				"onboarding.research_questionnaire"       : 4,
-				"onboarding.profile_info"                 : 4,
+				"onboarding2.notifications_auth"   	      : 4,
+				"onboarding2.login_netid"             	  : 4,
+				"onboarding2.login_phone_or_email_statement" : 4,
+				"onboarding2.login_phone_or_email"        : 4,
+				"onboarding2.login_email"                 : 4,
+				"onboarding2.login_phone"         	      : 4,
+
+				"onboarding2.profile_info"                : 4,
+				"onboarding2.research_questionnaire"      : 4,
+				"onboarding2.research_questionnaire_participate_prompt" : 4,
+				"onboarding2.research_questionnaire_acknowledgement"    : 4,
 
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,
@@ -144,13 +144,16 @@
 				"authenticate.connected.passkey.disconnect" : { "passkeyLoggedIn": true },
 				"authenticate.connected.passkey.login"      : { "passkeyLoggedIn": false },
 
-				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
-				"onboarding.profile_info"                 : { "loggedIn": true },
+				"onboarding2.profile_info"                : { "loggedIn": true },
+				"onboarding2.research_questionnaire"      : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire_participate_prompt" : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire_acknowledgement"    : { "shibbolethLoggedIn": true },
 
 				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },
 				"features.email_login"                    : { "emailLoggedIn": true },
 				"features.phone_login"                    : { "phoneLoggedIn": true },
+				"features.privacy"                        : { "loggedIn": true },
 
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
@@ -171,6 +174,12 @@
 				"explore.map.laundry"                     : false,
 				"twitter"                                 : false,
 				"public_surveys"                          : false,
+				"onboarding2.video_tutorial"              : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_share_activity"      : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2PrivacyStoreActivitySelection}"],
+				"onboarding2.privacy_level"               : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
 				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",
@@ -180,7 +189,8 @@
 				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
 				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
-				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}"
+				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
+				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}"
 			}
 		}
 	},

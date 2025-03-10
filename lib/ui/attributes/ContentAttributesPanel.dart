@@ -22,18 +22,20 @@ enum ContentAttributesSortType { native, explicit, alphabetical, }
 class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final String? title;
   final String? bgImageKey;
+
   final String? description;
-  final Widget Function(BuildContext context)? descriptionBuilder;
   final TextStyle? descriptionTextStyle;
+  final Widget Function(BuildContext context)? descriptionBuilder;
+
   final TextStyle? sectionTitleTextStyle;
   final TextStyle? sectionDescriptionTextStyle;
   final TextStyle? sectionRequiredMarkTextStyle;
+
   final Widget? Function(BuildContext context)? footerBuilder;
-  final String? applyTitle;
-  final Widget Function(BuildContext context, bool enabled, void Function() onTap)? applyBuilder;
-  final String? continueTitle;
-  final TextStyle? continueTextStyle;
-  
+
+  final Widget Function(BuildContext context, bool enabled, void Function() handler)? applyBuilder;
+  final Widget Function(BuildContext context, void Function() handler)? continueBuilder;
+
   final String? scope;
   final bool filtersMode;
   final ContentAttributesSortType sortType;
@@ -47,11 +49,11 @@ class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   })? handleAttributeValue;
 
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
-    this.description, this.descriptionBuilder, this.descriptionTextStyle,
+    this.description, this.descriptionTextStyle, this.descriptionBuilder,
     this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
     this.footerBuilder,
-    this.applyTitle, this.applyBuilder,
-    this.continueTitle, this.continueTextStyle,
+    this.applyBuilder,
+    this.continueBuilder,
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
     this.scope, this.filtersMode = false,
@@ -375,7 +377,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   bool get _isSelectionValid => widget.contentAttributes?.isSelectionValid(_selection) ?? false;
 
-  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueTitle != null);
+  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueBuilder != null);
 
   bool get _canApply => (!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes)) && (widget.filtersMode || _isSelectionValid);
 
@@ -411,7 +413,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       commands.add(_buildApply());
     }
 
-    if (widget.continueTitle != null) {
+    if (widget.applyBuilder != null) {
       commands.add(_buildContinue());
     }
 
@@ -449,11 +451,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Widget _buildApply() {
     bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
-    return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onTapApply) :
+    return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onApply) :
       Row(children: <Widget>[
         Expanded(flex: 1, child: Container()),
         Expanded(flex: 2, child: RoundedButton(
-          label: widget.applyTitle ?? _applyTitle,
+          label: _applyTitle,
           textColor: canApply ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
           borderColor: canApply ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
           backgroundColor: Styles().colors.surface,
@@ -464,21 +466,25 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ],);
   }
 
-  Widget _buildContinue() => InkWell(onTap: _onTapContinue, child:
-    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-      Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),)
-    )
-  ,);
+  String get _applyTitle => _applyTitleEx();
 
-
-  String get _applyTitle => widget.filtersMode ? 
-    Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
-    Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes');
+  String _applyTitleEx({String? language}) => widget.filtersMode ?
+    Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter', language: language) :
+    Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes', language: language);
 
   void _onTapApply() {
-    Analytics().logSelect(target: 'Apply');
+    Analytics().logSelect(target: _applyTitleEx(language: 'en'));
+    _onApply();
+  }
+
+  void _onApply() {
     Navigator.of(context).pop(ContentAttributes.selectionToAttributesSelection(_selection) ?? <String, dynamic>{});
   }
+
+  Widget _buildContinue() => widget.continueBuilder?.call(context, _onContinue) ?? Container();
+
+  void _onContinue() =>
+    Navigator.of(context).pop((widget.selection != null) ? Map<String, dynamic>.from(widget.selection!) : <String, dynamic>{});
 
   void _onTapClear() {
     Analytics().logSelect(target: 'Clear');
@@ -490,11 +496,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     setState(() {
       _selection.clear();
     });
-  }
-
-  void _onTapContinue() {
-    Analytics().logSelect(target: 'Continue');
-    Navigator.of(context).pop((widget.selection != null) ? Map<String, dynamic>.from(widget.selection!) : <String, dynamic>{});
   }
 }
 

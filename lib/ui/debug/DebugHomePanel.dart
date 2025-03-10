@@ -23,7 +23,6 @@ import 'package:neom/model/Explore.dart';
 import 'package:neom/service/AppReview.dart';
 import 'package:neom/service/Canvas.dart';
 import 'package:neom/service/CustomCourses.dart';
-import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:neom/ui/debug/DebugRewardsPanel.dart';
 import 'package:neom/ui/debug/DebugStudentCoursesPanel.dart';
@@ -816,7 +815,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     setState(() {
       Storage().debugMessagesDisabled = (Storage().debugMessagesDisabled != true);
     });
-    FlexUI().update();
   }
 
   void _onUseDeviceLocalTimeZoneToggled() {

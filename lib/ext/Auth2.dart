@@ -6,6 +6,27 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+extension Auth2UserProfileExt on Auth2UserProfile {
+  bool get isNameNotEmpty =>
+    StringUtils.isNotEmpty(firstName) ||
+    StringUtils.isNotEmpty(middleName) ||
+    StringUtils.isNotEmpty(lastName);
+
+  bool get isNotEmpty =>
+    (photoUrl?.isNotEmpty == true) ||
+    (firstName?.isNotEmpty == true) ||
+    (middleName?.isNotEmpty == true) ||
+    (lastName?.isNotEmpty == true) ||
+    (title?.isNotEmpty == true) ||
+    (college?.isNotEmpty == true) ||
+    (department?.isNotEmpty == true) ||
+    (major?.isNotEmpty == true) ||
+    (email?.isNotEmpty == true) ||
+    (email2?.isNotEmpty == true) ||
+    (phone?.isNotEmpty == true) ||
+    (website?.isNotEmpty == true);
+}
+
 extension Auth2UserProfileVCard on Auth2UserProfile {
   String toDigitalCard({Uint8List? photoImageData,}) {
     // https://en.wikipedia.org/wiki/VCard

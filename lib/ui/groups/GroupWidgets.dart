@@ -855,7 +855,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-            propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
+            propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
           }
         }
       }
@@ -879,7 +879,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
       ),
       Expanded(child:
-        Text(value, maxLines: 1, style:
+        Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style:
           Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
         ),
       ),
@@ -1044,7 +1044,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
 //////////////////////////////////////
 // GroupPostCard
-
+enum GroupPostCardDisplayMode { list, page }
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final List<Reaction>? postReactions;
@@ -1054,10 +1054,13 @@ class GroupPostCard extends StatefulWidget {
   final bool isReply;
   final bool? isClickable;
   final bool? pinned;
+  final GroupPostCardDisplayMode displayMode;
+  // final Member? creator;
+  // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.postReactions, this.pinned, this.isClickable = true, this.showImage = true, this.isReply = false}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.postReactions, this.pinned, this.showImage = true, this.isReply = false, this.displayMode = GroupPostCardDisplayMode.list}) :
     super(key: key);
 
   @override
@@ -1129,7 +1132,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         child: Column(
                           children: [
                               HtmlWidget(
-                                  "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
+                                  "<div style= $_htmlStyle> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
                                   textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small")
                               ),
@@ -1173,7 +1176,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(reactions: _reactions, group: widget.group)
+                                child: GroupReactionsLayout(group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
                               )
                             ),
                             Visibility(
@@ -1267,7 +1270,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
     UrlUtils.launchExternal(url);
   }
 
-  bool get _reactionsEnabled => false;
+  String get _htmlStyle => widget.displayMode == GroupPostCardDisplayMode.list ?
+    "text-overflow:ellipsis;max-lines:3" :
+    "white-space: normal";
+
+  bool get _reactionsEnabled => true;
 }
 
 //////////////////////////////////////
@@ -1292,7 +1299,6 @@ class GroupReplyCard extends StatefulWidget {
 
 class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
   // static const double _smallImageSize = 64;
-  List<Reaction> _reactions = []; //TBD load
 
   @override
   void initState() {
@@ -1330,7 +1336,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Expanded(child: Expanded(child:
+                Expanded(child:
                 Visibility(visible: widget.reply?.creatorId != null,
                     child: GroupMemberProfileInfoWidget(
                       name: widget.reply?.creatorName,
@@ -1338,7 +1344,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       isAdmin: widget.creator?.isAdmin == true,
                       additionalInfo: widget.reply?.displayDateTime,
                       // updateController: widget.updateController,
-                    ))),),
+                    )),),
                 // Visibility(
                 //   visible: Config().showGroupPostReactions &&
                 //       (widget.group?.currentUserHasPermissionToSendReactions == true),
@@ -1420,17 +1426,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
-                    Visibility(
-                      visible: Config().showGroupPostReactions,
-                      child: Expanded(
+                        Expanded(
                           child: Visibility(visible: _reactionsEnabled,
-                              child: GroupReactionsLayout(reactions: _reactions)
+                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment,)
                           )
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                           //       semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                           //       style: Styles().textStyles.getTextStyle('widget.description.small'))),)
-                      )),
+                      ),
                 ],),)
             ])))));
   }
@@ -1452,7 +1456,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     }
   }
 
-  bool get _reactionsEnabled => false;
+  bool get _reactionsEnabled => Config().showGroupPostReactions;
 }
 
 //////////////////////////////////////
@@ -2756,7 +2760,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
               EnabledToggleButton(
                   enabled: true,
                   borderRadius: BorderRadius.zero,
-                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts"),
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts and Messages"),
                   toggled: isGroupPostAllowed,
                   onTap: (){_onSettingsTap(
                       changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
@@ -2774,7 +2778,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: (isGroupPostAllowed == true && isGroupInfoAllowed == true),
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send messages to specific members"), //TBD localize section
                                   toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
@@ -2785,7 +2789,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send posts to admins"),
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send messages to admins"),
                                   toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
@@ -2818,7 +2822,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Reactions (emojis) to posts"),
+                                  label: Localization().getStringEx("panel.groups_create.reactions_to_post.label", "Reactions (emojis) to posts"),
                                   toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
@@ -3402,32 +3406,49 @@ class ReactionKeyboard {
 
 class GroupReactionsLayout extends StatefulWidget {
   final Group? group;
-  final List<Reaction> reactions;
-  final Future<bool> Function(Reaction)? onSendReaction;
-  final Future<bool> Function(Reaction)? onDeleteReaction;
+  final String? entityId;
+  final SocialEntityType reactionSource;
   final bool? enabled;
 
-  const GroupReactionsLayout({super.key, required this.reactions, this.group, this.onSendReaction, this.onDeleteReaction, this.enabled = true,});
+  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource,});
 
   @override
   State<StatefulWidget> createState() => _GroupReactionsState();
 }
 
-class _GroupReactionsState extends State<GroupReactionsLayout> {
+class _GroupReactionsState extends State<GroupReactionsLayout> implements NotificationsListener{
+  List<Reaction>? _reactions;
+  bool _loading = false;
+
   @override
-  Widget build(BuildContext context)
-    => _buildReactionsLayoutWidget;
+  void initState() {
+    NotificationService().subscribe(this, [
+      Social.notifyReactionsUpdated,
+    ]);
+    _loadReactions();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      // Stack(alignment: Alignment.centerLeft,
+      //     children: [
+        _buildReactionsLayoutWidget;
+        // _loadingLayout
+      // ]);
+
 
   Widget get _buildReactionsLayoutWidget {
-    Map<String, List<Reaction>> sameEmojiReactions = ReactionExt.extractSameEmojiReactions(widget.reactions) ?? {};
+    Map<String, List<Reaction>> sameEmojiReactions = ReactionExt.extractSameEmojiReactions(_reactions) ?? {};
     return Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
+          _loadingLayout,
           ...sameEmojiReactions.keys.map((String emoji) =>
               _buildReactionWidget(
-                  occurrences: sameEmojiReactions[emoji]?.length,
+                  occurrences: sameEmojiReactions[emoji],
                   reaction: sameEmojiReactions[emoji]?.
-                  firstWhere(
+                    firstWhere(
                           (Reaction reaction) => reaction.isCurrentUserReacted,
                       orElse: () => (CollectionUtils.isNotEmpty(sameEmojiReactions[emoji]) ? sameEmojiReactions[emoji]?.first : null)
                           ?? Reaction()))
@@ -3449,10 +3470,18 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     );
   }
 
-  Widget _buildReactionWidget({Reaction? reaction, int? occurrences}){
+  Widget get _loadingLayout => Visibility(visible: _loading, child:
+      Container(padding: EdgeInsets.only(right: 8),
+        child: SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+        )),
+  );
+
+  Widget _buildReactionWidget({Reaction? reaction, List<Reaction>? occurrences}){
     return Padding( padding: EdgeInsets.all(4),
         child: InkWell(
-            onTap: () => _deleteReaction(reaction), //TBD call BB to remove reaction
+            onTap: () => _onTapReaction(reaction),
+            onLongPress: () =>_onLongPressReactions(occurrences),
             child: Container(
                 padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
                 decoration: BoxDecoration(
@@ -3461,9 +3490,9 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
                     border: Border.all(color: Styles().colors.surfaceAccent,)),
                 child: Row(mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(reaction?.data ?? "", style: TextStyle(fontSize: 18)),
-                      Visibility(visible: (occurrences ?? 0 ) > 1,
-                          child: Text(occurrences?.toString() ?? "", style: TextStyle(fontSize: 16),)
+                      Text(reaction?.emoji ?? "", style: TextStyle(fontSize: 18)),
+                      Visibility(visible: (occurrences?.length ?? 0 ) > 1,
+                          child: Text(occurrences?.length.toString() ?? "", style: TextStyle(fontSize: 16),)
                       )
                     ])
             )
@@ -3471,34 +3500,111 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     );
   }
 
-  void _reactWithEmoji(emoji.Emoji emoji){
-    _sendReaction(
-        Reaction(
-          data: emoji.emoji,
-          type: ReactionType.emoji,
-          dateCreatedUtc: DateTime.now().toUtc(),
-          engager: Creator(accountId: widget.group?.currentMember?.userId, name: widget.group?.currentMember?.name),
-        )
-    );
+  void _onTapReaction(Reaction? reaction){
+    _sendReaction(reaction?.isCurrentUserReacted == true ?
+        reaction :
+        Reaction.emoji(emojiSource: reaction?.emoji, emojiName: reaction?.emojiName));
   }
 
-  void _sendReaction(Reaction? reaction){ //TBD hook to BB
-    if(widget.enabled == true && reaction != null) {
-      setStateIfMounted(() =>
-          widget.reactions.add(reaction)
-      );
-      widget.onSendReaction?.call(reaction);
+  void _reactWithEmoji(emoji.Emoji emoji){//Emoji coming from the Emoji picker
+    List<Reaction>? userReactions = ReactionExt.extractUsersReactions(_reactions, emoji: emoji.emoji);
+    _sendReaction(CollectionUtils.isNotEmpty(userReactions) ? userReactions!.first :
+          Reaction.emoji(emojiSource: emoji.emoji, emojiName: emoji.name));
+  }
+
+  void _sendReaction(Reaction? reaction){
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().react(entityId: widget.entityId!, source: widget.reactionSource, reaction: reaction).then((succeeded) {
+      //If success then we will receive notification Social.notifyReactionsUpdated and will load reactions
+      if (!succeeded) {
+        setStateIfMounted(() {
+          _loading = false;
+        });
+        AppAlert.showDialogResult(
+            context, Localization().getStringEx('widget.group.card.reaction.failed.msg', 'Failed to react. Please, try again.'));
+      }
+    });
+  }
+
+  void _onLongPressReactions(List<Reaction>? reactions) {
+    if (CollectionUtils.isEmpty(reactions)) {
+      return;
+    }
+    Analytics().logSelect(target: 'Reactions List');
+
+    List<Widget> reactionWidgets = [];
+    for (Reaction reaction in reactions!) {
+      reactionWidgets.add(Padding(
+        padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Currently we have only likes
+            reaction.type == ReactionType.emoji ? Text(reaction.emoji ?? "") :
+            Styles().images.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
+            Container(width: 16),
+            Text(StringUtils.ensureNotEmpty(reaction.engagerName), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+          ],
+        ),
+      ));
+    }
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Styles().colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 24),
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              children: [
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors.disabledTextColor)),
+                Container(height: 16),
+                Expanded(
+                  child: ListView(
+                    children: reactionWidgets,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Social.notifyReactionsUpdated){
+      Map<String, dynamic>? params = JsonUtils.mapValue(param);
+      String? identifier = JsonUtils.stringValue(params?["identifier"]);
+      if(identifier == widget.entityId){
+        _loadReactions();
+      }
     }
   }
 
-  void _deleteReaction(Reaction? reaction){ //TBD remove
-    if(widget.enabled == true && reaction != null) {
-      setStateIfMounted(() =>
-          widget.reactions.remove(reaction)
-      );
-      widget.onDeleteReaction?.call(reaction);
+  //Loading
+  void _loadReactions(){
+    if (!_hasEntityId) {
+      return;
     }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) =>
+        _reactions = result
+    ).whenComplete(()=>
+      setStateIfMounted(() =>
+        _loading = false
+      ));
   }
+
+  bool get _hasEntityId => (widget.entityId != null);
 }
 
 class GroupConfirmationDialog extends StatelessWidget {

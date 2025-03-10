@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/semantics.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Appointments.dart';
 import 'package:neom/service/MTD.dart';
@@ -537,7 +538,8 @@ class _DiningHomePanelState extends State<DiningHomePanel> implements Notificati
 class ExploreOptionalMessagePopup extends StatefulWidget {
   final String message;
   final String? showPopupStorageKey;
-  ExploreOptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
+  final bool Function(String url)? onTapUrl;
+  ExploreOptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey, this.onTapUrl}) : super(key: key);
 
   @override
   State<ExploreOptionalMessagePopup> createState() => _MTDInstructionsPopupState();
@@ -565,7 +567,12 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
                 Column(children: [
                   Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                   Padding(padding: EdgeInsets.only(top: 18), child:
-                    Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
+                    //Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
+                    HtmlWidget(widget.message,
+                      onTapUrl: (url) => (widget.onTapUrl != null) ? widget.onTapUrl!(url) : false,
+                      textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+                    )
                   )
                 ]),
               ),

@@ -23,6 +23,7 @@ import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/SemanticsWidgets.dart';
 import 'package:neom/service/Analytics.dart';
@@ -43,6 +44,7 @@ abstract class _HomeSafetyResourcesBaseWidget extends StatefulWidget {
 
   String get _title;
   String get _localUrlMacro => '{{local_url}}';
+  String get _privacyUrlMacro => '{{local_url}}';
   String get _emptyContentDescription;
   String get _listContentTitle;
   String get _listEmptyContentDescription;
@@ -62,9 +64,25 @@ class HomeSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
   static String get title => Localization().getStringEx('widget.home.safety_resources.label.title', 'Safety Resources');
 
   @override String get _title => title;
-  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Safety Resources</b></a> for quick access here.");
+  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Safety Resources</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)");
   @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources');
   @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Safety Resources.");
+}
+
+class HomeCampusSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
+  HomeCampusSafetyResourcesWidget({super.key, super.favoriteId, super.updateController});
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.campus_safety_resources.label.campus_safety_resources', 'Campus Safety Resources');
+
+  @override String get _title => title;
+  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.campus_safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Campus Safety Resources</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.");
+  @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources');
+  @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources.");
 }
 
 class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBaseWidget> implements NotificationsListener {
@@ -77,6 +95,8 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
   final double _pageSpacing = 16;
 
   static const String localScheme = 'local';
+  static const String privacyScheme = 'privacy';
+  static const String privacyLevelHost = 'level';
 
   @override
   void initState() {
@@ -218,7 +238,9 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
   }
 
   Widget _buildEmptyContent() {
-    String message = widget._emptyContentDescription.replaceAll(widget._localUrlMacro, '$localScheme://${Guide.campusSafetyResourceContentType}');
+    String message = widget._emptyContentDescription
+      .replaceAll(widget._localUrlMacro, '$localScheme://${Guide.campusSafetyResourceContentType}')
+      .replaceAll(widget._privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
     return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
   }
 
@@ -226,6 +248,9 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == Guide.campusSafetyResourceContentType.toLowerCase())) {
       _onCampusSafetyResourceLink();
+    }
+    else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
+      _onPrivacyLevelLink();
     }
   }
 
@@ -237,6 +262,11 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       contentEmptyMessage: widget._listEmptyContentDescription,
       favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
+  }
+
+  void _onPrivacyLevelLink() {
+    Analytics().logSelect(target: "Privacy Level", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
   double get _pageHeight {

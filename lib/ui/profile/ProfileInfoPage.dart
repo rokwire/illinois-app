@@ -4,12 +4,15 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/ext/Auth2.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/directory/DirectoryAccountsPage.dart';
 import 'package:neom/ui/profile/ProfileInfoEditPage.dart';
 import 'package:neom/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPage.dart';
+import 'package:neom/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -71,10 +74,11 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get isEditing => _editing;
   bool get directoryVisibility => (_privacy?.public == true);
 
+  bool get _directoryVisibilityAvailable =>
+    FlexUI().isPrivacyAvailable;
+
   bool get _directoryVisibilityEnabled =>
-    StringUtils.isNotEmpty(_profile?.firstName) ||
-    StringUtils.isNotEmpty(_profile?.middleName) ||
-    StringUtils.isNotEmpty(_profile?.lastName);
+    _profile?.isNameNotEmpty == true;
 
   void setEditing(bool value) {
     if (mounted && (_editing != value)) {
@@ -91,6 +95,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   void initState() {
     NotificationService().subscribe(this, [
       DirectoryAccountsPage.notifyEditInfo,
+      FlexUI.notifyChanged,
     ]);
     _editing = (widget.editParam == true);
     _identifiers = Auth2().account?.identifiers;
@@ -112,6 +117,9 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         widget.onStateChanged?.call();
       });
     }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted((){});
+    }
   }
 
   @override
@@ -121,10 +129,11 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     }
     else {
       return Column(children: [
-        _directoryVisibilityContent,
+        if (_directoryVisibilityAvailable)
+          _directoryVisibilityContent,
 
-        if (widget.onboarding == false)
-          Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+        if (widget.onboarding == false && _directoryVisibilityAvailable)
+          Padding(padding: EdgeInsets.only(top: 16), child:
             Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.info.tiny'), textAlign: TextAlign.center,),
           ),
 
