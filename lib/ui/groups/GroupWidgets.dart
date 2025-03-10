@@ -1140,7 +1140,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Visibility(visible: StringUtils.isNotEmpty(imageUrl),
                               child: Container(
                                 padding: EdgeInsets.only(top: 14),
-                                child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                                child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? null : Config().networkAuthHeaders, excludeFromSemantics: true)
                             )),
                             WebEmbed(body: htmlBody),
                             // Container(
@@ -1393,7 +1393,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                      child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? null : Config().networkAuthHeaders, excludeFromSemantics: true)
               )),
 
               WebEmbed(body: bodyText),
