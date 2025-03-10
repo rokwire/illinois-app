@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Show replies count for messages [#4844](https://github.com/rokwire/illinois-app/issues/4844).
-- Show image in posts and replies [#4841](https://github.com/rokwire/illinois-app/issues/4841).
+- WEB: Show image in posts and replies [#4841](https://github.com/rokwire/illinois-app/issues/4841).
 
 ## [6.1.68] - 2025-03-07
 ### Changed
