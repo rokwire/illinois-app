@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Show replies count for messages [#4844](https://github.com/rokwire/illinois-app/issues/4844).
 
 ## [6.1.68] - 2025-03-07
 ### Changed
