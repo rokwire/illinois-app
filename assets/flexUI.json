@@ -90,12 +90,12 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
-			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "profile_info", "sport_prefs", "research_questionnaire"],
-	
+			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone_or_email_statement", "login_phone_or_email", "login_email", "login_phone", "profile_info", "research_questionnaire_participate_prompt", "research_questionnaire", "research_questionnaire_acknowledgement" ],
+
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization"],
+				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "privacy"],
 
 			"attributes": ["groups", "events"],
 			"attributes.groups": ["rso"],
@@ -105,12 +105,11 @@
 		},
 		"rules": {
 			"roles" : {
-				"onboarding.login_netid"                   : ["student", "OR", "employee"],
-				"onboarding.login_phone"                   : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.verify_phone"                  : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.confirm_phone"                 : ["NOT", ["employee", "OR", "student"]],
-	
-				"onboarding.sport_prefs"                   : ["fan"],
+				"onboarding2.login_netid"                  : ["student", "OR", "employee"],
+				"onboarding2.login_phone_or_email_statement" : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_phone_or_email"         : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_email"                  : ["NOT", ["employee", "OR", "student"]],
+				"onboarding2.login_phone"                  : ["NOT", ["employee", "OR", "student"]],
 
 				"features.student"                         : ["student"]
 			},
@@ -130,16 +129,17 @@
 			"locations": {
 			},
 			"privacy": {
-				"onboarding.notifications_auth"   	      : 4,
-				"onboarding.location_auth"        	      : 2,
-				"onboarding.roles"                   	    : 3,
-				"onboarding.login_netid"             	    : 4,
-				"onboarding.login_phone"          	      : 4,
-				"onboarding.verify_phone"         	      : 4,
-				"onboarding.confirm_phone"        	      : 4,
-				"onboarding.sport_prefs"          	      : 3,
-				"onboarding.research_questionnaire"       : 4,
-				"onboarding.profile)info"                 : 4,
+				"onboarding2.notifications_auth"   	      : 4,
+				"onboarding2.login_netid"             	  : 4,
+				"onboarding2.login_phone_or_email_statement" : 4,
+				"onboarding2.login_phone_or_email"        : 4,
+				"onboarding2.login_email"                 : 4,
+				"onboarding2.login_phone"         	      : 4,
+
+				"onboarding2.profile_info"                : 4,
+				"onboarding2.research_questionnaire"      : 4,
+				"onboarding2.research_questionnaire_participate_prompt" : 4,
+				"onboarding2.research_questionnaire_acknowledgement"    : 4,
 
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,
@@ -193,13 +193,16 @@
 				"authenticate.linked.email.info"          : { "emailLinked": true },
 				"authenticate.linked.email.remove"        : { "emailLinked": true },
 
-				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
-				"onboarding.profile_info"                 : { "shibbolethLoggedIn": true },
+				"onboarding2.profile_info"                : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire"      : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire_participate_prompt" : { "shibbolethLoggedIn": true },
+				"onboarding2.research_questionnaire_acknowledgement"    : { "shibbolethLoggedIn": true },
 
 				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },
 				"features.email_login"                    : { "emailLoggedIn": true },
 				"features.phone_login"                    : { "phoneLoggedIn": true },
+				"features.privacy"                        : { "shibbolethLoggedIn": true },
 
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
@@ -221,6 +224,12 @@
 				"twitter"                                 : false,
 				"public_surveys"                          : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
+				"onboarding2.video_tutorial"              : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.privacy_share_activity"      : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2PrivacyStoreActivitySelection}"],
+				"onboarding2.privacy_level"               : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"_illini_cash"                            : "${config.settings.wallet.illiniCashEnabled}",
 				"illini_cash"                             : false,
@@ -233,7 +242,8 @@
 				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
 				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
-				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}"
+				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
+				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}"
 			}
 		}
 	},

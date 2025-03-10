@@ -43,7 +43,7 @@ class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeWalletWidget.title;
   @override String? get titleIconKey => 'wallet';
-  @override String? get emptyMessage => Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here.");
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the ☆ on items in Wallet for quick access here. (Your privacy level must be at least 2.)");
 
   @override
   Widget? widgetFromCode(String code) {

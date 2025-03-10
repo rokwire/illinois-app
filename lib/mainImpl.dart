@@ -15,10 +15,12 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -45,7 +47,6 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/OnCampus.dart';
-import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -62,7 +63,8 @@ import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -92,6 +94,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 
 final AppExitListener appExitListener = AppExitListener();
 
@@ -138,7 +142,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Dinings(),
       IlliniCash(),
       FlexUI(),
-      Onboarding(),
       Polls(),
       GeoFence(),
       Guide(),
@@ -167,6 +170,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Gateway(),
       Places(),
       Safety(),
+      Onboarding2(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();
@@ -311,18 +315,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       navigatorObservers:[AppNavigation()],
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois'),
-      theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
-          dialogTheme: DialogTheme(
-            backgroundColor: Styles().colors.surface,
-            contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
-            titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
-          ),
-          primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.regular),
+      theme: _appTheme,
       home: _homePanel,
     );
   }
@@ -331,14 +324,14 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
-    if (_upgradeRequiredVersion != null) {
+    else if (_upgradeRequiredVersion != null) {
       return OnboardingUpgradePanel(requiredVersion:_upgradeRequiredVersion);
     }
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (!Storage().onBoardingPassed!) {
-      return Onboarding2GetStartedPanel();
+    else if (Storage().onBoardingPassed != true) {
+      return Onboarding2().first ?? Container();
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
@@ -347,20 +340,46 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else if ((Storage().participateInResearchPrompted != true) && (Questionnaires().participateInResearch == null) && Auth2().isOidcLoggedIn) {
-      return Onboarding2().researhQuestionnairePromptPanel(invocationContext: {
-        "onFinishResearhQuestionnaireActionEx": (BuildContext context) {
-          if (mounted) {
-            setState(() {
-              Storage().participateInResearchPrompted = true;
-            });
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          }
-        }
-      });
+      return Onboarding2ResearchQuestionnairePromptPanel(
+        onContinue: _didPromptParticipateInResearch,
+      );
     }
     else {
       return RootPanel();
     }
+  }
+
+  void _didPromptParticipateInResearch(BuildContext context, Onboarding2Panel panel, bool? participateInResearch) async {
+    if (participateInResearch == true) {
+      panel.onboardingProgress = true;
+      Questionnaire? questionnaire = await Questionnaires().loadResearch();
+      Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
+      panel.onboardingProgress = false;
+      if (questionnaireAnswers?.isNotEmpty ?? false) {
+        _didFinishParticipateInResearch(context);
+      }
+      else if (context.mounted) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(
+          onContinue: () => _didResearchQuestionnaire(context),
+        )));
+      }
+    }
+    else {
+      _didFinishParticipateInResearch(context);
+    }
+  }
+
+  void _didResearchQuestionnaire(BuildContext context) {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(
+        onContinue: () => _didResearchQuestionnaire(context),
+      )));
+    }
+  }
+
+  void _didFinishParticipateInResearch(BuildContext context) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    setState(() {});
   }
 
   void _resetUI() async {
@@ -436,6 +455,22 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     }
   }
 
+  // App Theme
+
+  ThemeData get _appTheme => ThemeData(
+    appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+    dialogTheme: DialogTheme(
+      backgroundColor: Styles().colors.surface,
+      contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
+      titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
+    ),
+    primaryColor: Styles().colors.fillColorPrimaryVariant,
+    fontFamily: Styles().fontFamilies.regular
+  );
+
   // NotificationsListener
 
   @override
@@ -482,6 +517,11 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
+      /* TMP:
+      setState(() {
+        Storage().onBoardingPassed = false;
+        _key = UniqueKey();
+      });*/
     }
     else if (state == AppLifecycleState.resumed) {
       if (_initializeError != null) {

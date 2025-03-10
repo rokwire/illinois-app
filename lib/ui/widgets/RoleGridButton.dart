@@ -35,10 +35,10 @@ class RoleGridButton extends TileToggleButton {
     required String hint,
     required String iconKey,
     required String selectedIconKey,
+    required UserRole role,
     Color? selectedTitleColor,
     Color? selectedBackgroundColor,
     required bool selected,
-    dynamic data,
     double? sortOrder,
     void Function(RoleGridButton)? onTap,
     this.textScaler = TextScaler.noScaling,
@@ -55,7 +55,7 @@ class RoleGridButton extends TileToggleButton {
     iconWidth: 38,
     semanticsValue: "${Localization().getStringEx("toggle_button.status.unchecked", "unchecked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
     selectedSemanticsValue: "${Localization().getStringEx("toggle_button.status.checked", "checked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
-    data: data,
+    data: role,
     sortOrder: sortOrder,
     onTap: (BuildContext context, TileToggleButton button) => _handleTap(context, button, onTap),
   );
@@ -63,9 +63,10 @@ class RoleGridButton extends TileToggleButton {
   @protected Widget get defaultIconWidget =>  Container(constraints: BoxConstraints(minHeight: 40), child: super.defaultIconWidget);
   @protected Widget get displayTitleWidget =>  Container(constraints: BoxConstraints(minHeight: _titleMinHeight), child: super.displayTitleWidget);
   double get _titleMinHeight => textScaler.scale(minimumTitleRowsCount * titleFontSize * fontSizeHeightFactor) ;
+  UserRole get role => (data as UserRole);
 
 
-  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, TextScaler? textScaler, void Function(RoleGridButton)? onTap }) {
+  static RoleGridButton? fromRole(UserRole role, { bool? selected, double? sortOrder, TextScaler? textScaler, void Function(RoleGridButton)? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
@@ -74,7 +75,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey: 'role-student',
         selectedBackgroundColor: Styles().colors.white,
         selected: (selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -88,7 +89,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey:  'role-visitor',
         selectedBackgroundColor: Styles().colors.white,
         selected: (selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -102,7 +103,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey:  'role-athletics',
         selectedBackgroundColor: Styles().colors.white,
         selected: (selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -116,7 +117,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey: 'role-employee',
         selectedBackgroundColor: Styles().colors.white,
         selected: (selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -130,7 +131,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey: 'role-alumni',
         selectedBackgroundColor: Styles().colors.white,
         selected:(selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -144,7 +145,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey:  'role-parent',
         selectedBackgroundColor: Styles().colors.white,
         selected: (selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -159,7 +160,7 @@ class RoleGridButton extends TileToggleButton {
         selectedIconKey: 'role-alumni',
         selectedBackgroundColor: Styles().colors.white,
         selected: (selected == true),
-        data: role,
+        role: role,
         sortOrder: sortOrder,
         onTap: onTap,
         textScaler: textScaler ?? TextScaler.noScaling,
@@ -175,15 +176,13 @@ class RoleGridButton extends TileToggleButton {
     List<String> codes = JsonUtils.listStringsValue(FlexUI()['roles']) ?? [];
     int index = 1;
     for (String code in codes) {
-      
       UserRole? role = UserRole.fromString(code);
-      bool selected = selectedRoles?.contains(role) ?? false;
-      RoleGridButton? button = RoleGridButton.fromRole(role,
-        selected: selected,
+      RoleGridButton? button = (role != null) ? RoleGridButton.fromRole(role,
+        selected: selectedRoles?.contains(role) == true,
         sortOrder: index.toDouble(),
         textScaler: textScaler,
         onTap: onTap
-      );
+      ) : null;
 
       if (button != null) {
         List<Widget> roleButtons = (0 < (index % 2)) ? roleButtons1 : roleButtons2;
