@@ -98,20 +98,8 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     }
     else {
       getLocationServicesStatus().then((LocationServicesStatus? status) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-          title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
-          bgImageKey: 'event-filters-background',
-          descriptionBuilder: _buildOnboardingDescription,
-          sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.fat.highlight'),
-          sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
-          sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
-          applyBuilder: _buildOnboardingApply,
-          continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later'),
-          continueTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
-          contentAttributes: buildContentAttributesV1(status: status),
-          sortType: ContentAttributesSortType.native,
-          scope: Events2.contentAttributesScope,
-          filtersMode: true,
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => _Event2OnboardingFiltersPanel(
+          status: status,
         ))).then((result) {
           Map<String, dynamic>? selection = JsonUtils.mapValue(result);
           if (selection != null) {
@@ -207,7 +195,6 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   }
 
   static Widget _buildOnboardingApply(BuildContext context, bool enabled, void Function() onTap) {
-    String applyTitle = Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Events Feed');
     TextStyle? applyTextStyle = Styles().textStyles.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
     Color? borderColor = enabled ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryVariant;
     Decoration? applyDecoration = BoxDecoration(
@@ -215,15 +202,42 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(16))
     );
-    return InkWell(onTap: onTap, child:
+    return InkWell(onTap: () => _onTapOnboardingApply(onTap), child:
       Container(decoration: applyDecoration, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), child:
-          Text(applyTitle, style: applyTextStyle, textAlign: TextAlign.center, maxLines: null,),
+          Text(_onboardingApplyTitle, style: applyTextStyle, textAlign: TextAlign.center, maxLines: null,),
         )
       ),
     );
   }
+
+  static String get _onboardingApplyTitle => _onboardingApplyTitleEx();
+
+  static String _onboardingApplyTitleEx({String? language}) =>
+    Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Events Feed', language: language);
+
+  static void _onTapOnboardingApply(void Function() applyHandler) {
+    Analytics().logSelect(target: _onboardingApplyTitleEx(language: 'en'));
+    applyHandler();
+  }
   
+  static Widget _buildOnboardingContinue(BuildContext context, void Function() onTap) =>
+    InkWell(onTap: () => _onTapOnboardingContinue(onTap), child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+        Text(_onboardingContinueTitle, style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),)
+      ),
+    );
+
+  static String get _onboardingContinueTitle => _onboardingContinueTitleEx();
+
+  static String _onboardingContinueTitleEx({String? language}) =>
+    Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later', language: language);
+
+  static void _onTapOnboardingContinue(void Function() continueHandler) {
+    Analytics().logSelect(target: _onboardingContinueTitleEx(language: 'en'));
+    continueHandler();
+  }
+
   // Location Services
 
   static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
@@ -1102,6 +1116,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 }
 
+// _CustomRangeEventTimeAttributeValue
+
 class _CustomRangeEventTimeAttributeValue extends ContentAttributeValue {
   _CustomRangeEventTimeAttributeValue({String? label, dynamic value, String? group, Map<String, dynamic>? requirements, String? info, Map<String, dynamic>? customData }) :
     super (label: label, value: value, group: group, requirements: requirements, info: info, customData: customData);
@@ -1112,6 +1128,8 @@ class _CustomRangeEventTimeAttributeValue extends ContentAttributeValue {
     return (StringUtils.isNotEmpty(info)) ? '$title $info' : title;
   }
 }
+
+// Event2FilterParam
 
 class Event2FilterParam {
   static const String notifyChanged = "edu.illinois.rokwire.event2.home.filters.changed";
@@ -1201,4 +1219,23 @@ class Event2FilterParam {
       }
     }
   }
+}
+
+// _Event2OnboardingFiltersPanel
+
+class _Event2OnboardingFiltersPanel extends ContentAttributesPanel {
+  _Event2OnboardingFiltersPanel({Key? key, LocationServicesStatus? status }) : super(key: key,
+    title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
+    bgImageKey: 'event-filters-background',
+    descriptionBuilder: Event2HomePanel._buildOnboardingDescription,
+    sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.fat.highlight'),
+    sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+    sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
+    applyBuilder: Event2HomePanel._buildOnboardingApply,
+    continueBuilder: Event2HomePanel._buildOnboardingContinue,
+    contentAttributes: Event2HomePanel.buildContentAttributesV1(status: status),
+    sortType: ContentAttributesSortType.native,
+    scope: Events2.contentAttributesScope,
+    filtersMode: true,
+  );
 }
