@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -47,9 +48,11 @@ class _WebEmbedState extends State<WebEmbed> {
         _aspectRatio = 16 / 9;
       }
       // Setup controller to load the URL
-      _controller = WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..loadRequest(Uri.parse(_embedUrl!));
+      _controller = WebViewController();
+      if (!kIsWeb) {
+        _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      }
+      _controller.loadRequest(Uri.parse(_embedUrl!));
     } else {
       // No recognized link => no controller
       _controller = WebViewController();
