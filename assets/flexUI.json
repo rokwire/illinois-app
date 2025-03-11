@@ -37,7 +37,7 @@
 
 			"browse.list": ["polls", "surveys"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["uiuc_assistant", "google_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
 
 			"settings": ["favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
@@ -159,7 +159,6 @@
 			},
 			"platform":{
 				"assistant.google_assistant"              : { "environment":  "dev"},
-				"assistant.azure_assistant"               : { "environment":  "dev"},
 				"assistant.grok_assistant"                : { "environment":  "dev"},
 				"assistant.all_assistants"                : { "environment":  "dev"}
 			},

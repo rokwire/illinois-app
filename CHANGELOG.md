@@ -170,6 +170,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Show replies count for messages [#4844](https://github.com/rokwire/illinois-app/issues/4844).
 - Fixed Analytics logs for Event2 onboarding screen [#4501](https://github.com/rokwire/illinois-app/issues/4501).
+- Acknowledged FlexUI rules for SafeWalks availability in quick actions menu [#4875](https://github.com/rokwire/illinois-app/issues/4875).
+### Removed
+- Azure Assistant provider [#4876](https://github.com/rokwire/illinois-app/issues/4876).
 
 ## [6.1.68] - 2025-03-07
 - Update Profile Info UX for other login types than OIDC [#4847](https://github.com/rokwire/illinois-app/issues/4847).
