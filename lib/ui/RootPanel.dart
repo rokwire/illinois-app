@@ -1278,13 +1278,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onSafetySafeWalkDetail(Map<String, dynamic>? content) async {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-        SafetyHomePanel(
-          contentType: SafetyContentType.safeWalkRequest,
-          safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
-          safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
-        )
-    ));
+    if (FlexUI().isSafeWalkAvailable) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          SafetyHomePanel(
+            contentType: SafetyContentType.safeWalkRequest,
+            safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
+            safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
+          )
+      ));
+    }
+    else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "Failed to load group data."));
+    }
   }
 
   Future<void> _onPlaceDetail(Map<String, dynamic>? content) async {
