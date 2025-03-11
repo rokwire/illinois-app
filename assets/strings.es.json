@@ -459,7 +459,6 @@
     "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.label": "Pregunta al asistente de Illinois",
     "panel.assistant.content.conversation.google.label": "Pregunta al asistente de Google",
-    "panel.assistant.content.conversation.azure.label": "Pregúntele al Asistente de Azure",
     "panel.assistant.content.conversation.grok.label": "Pregunta al asistente de Grok",
     "panel.assistant.content.conversation.all.label": "Usar todos los asistentes",
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
@@ -4482,7 +4481,6 @@
 
     "model.assistant.provider.uiuc.label": "Illinois",
     "model.assistant.provider.google.label": "Google",
-    "model.assistant.provider.azure.label": "Azure",
     "model.assistant.provider.grok.label": "Grok",
     "model.assistant.provider.unknown.label": "Unknown",
 
