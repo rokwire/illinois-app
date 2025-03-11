@@ -15,15 +15,15 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class Onboarding2LoginNetIdPanel extends StatefulWidget with Onboarding2Panel {
@@ -96,7 +96,7 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               borderColor: Styles().colors.fillColorSecondary,
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               progress: _progress,
               onTap: _onLoginTapped,
             ),
@@ -145,7 +145,7 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
       setState(() { _loginProgress = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
-          if (result == Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.status == Auth2OidcAuthenticateResultStatus.succeeded) {
             FlexUI().update().then((_) {
               if (mounted) {
                 setState(() { _loginProgress = false; });
@@ -153,7 +153,7 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
               }
             });
           }
-          else if (result == Auth2OidcAuthenticateResult.failed) {
+          else if (result?.status == Auth2OidcAuthenticateResultStatus.failed) {
             setState(() { _loginProgress = false; });
             showDialog(context: context, builder: (context) => _buildDialogWidget(context));
           }

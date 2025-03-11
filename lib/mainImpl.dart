@@ -20,8 +20,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:neom/model/Questionnaire.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Polls.dart';
 import 'package:neom/service/Questionnaire.dart';
 import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/Config.dart';
@@ -30,7 +32,6 @@ import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/IlliniCash.dart';
 import 'package:neom/service/NativeCommunicator.dart';
-import 'package:neom/service/Onboarding.dart';
 import 'package:neom/service/Onboarding2.dart';
 import 'package:neom/service/RecentItems.dart';
 import 'package:neom/service/Services.dart' as neom;
@@ -42,6 +43,9 @@ import 'package:neom/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:neom/ui/RootPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:neom/ui/widgets/FlexContent.dart';
 

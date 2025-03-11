@@ -9,6 +9,7 @@ import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';

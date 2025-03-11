@@ -80,22 +80,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   double _screenInsetsBottom = 0;
   Timer? _onScreenInsetsBottomChangedTimer;
 
-  final Map<Auth2LoginType, Set<_ProfileField>> fieldAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
-    Auth2LoginType.oidc: _oidcFieldAvailabilities,
-    Auth2LoginType.oidcIllinois: _oidcFieldAvailabilities,
-    Auth2LoginType.email: _emailFieldAvailabilities,
-    Auth2LoginType.phone: _phoneFieldAvailabilities,
-    Auth2LoginType.phoneTwilio: _phoneFieldAvailabilities,
-    Auth2LoginType.username: _defaultFieldAvailabilities,
-  };
-  static Set<_ProfileField> _oidcFieldAvailabilities = _ProfileField.values.toSet();
-  static Set<_ProfileField> _defaultFieldAvailabilities = <_ProfileField>{_ProfileField.firstName, _ProfileField.middleName, _ProfileField.lastName, _ProfileField.photoUrl};
-  static Set<_ProfileField> _emailFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
-  static Set<_ProfileField> _phoneFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
-
-  bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
-
-
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => !_hasProfileName;
@@ -224,7 +208,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
-    Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
+    Widget get _photoWidget => Stack(children: [
       Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
@@ -245,7 +229,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
             _togglePhotoVisibilityButton
           )
         )
-    ],) : Container();
+    ],);
 
     Widget get _editPhotoButton =>
       _photoIconButton(_editIcon,
@@ -373,10 +357,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   // Edit: Pronunciation
 
-  Widget get _pronunciationSection => _isFieldAvailable(_ProfileField.pronunciationUrl) ? _fieldSection(
+  Widget get _pronunciationSection => _fieldSection(
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
-  ) : Container();
+  );
 
   Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Styles().images.getImage('plus-circle', size: 24) ?? Container(),
@@ -631,7 +615,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true, bool enabled = true,
     bool required = false, bool available = true, bool locked = false,
-  }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) && _isFieldAvailable(field)) ?
+  }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled)) ?
     _fieldSection(
       headingTitle: headingTitle,
       headingHint: headingHint,
@@ -703,7 +687,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
               maxLines: 1,
               keyboardType: textInputType,
               autocorrect: autocorrect,
-              readOnly: (enabled != true) || (locked == true)),
+              readOnly: (enabled != true) || (locked == true),
               onChanged: (String text) => _onTextChanged(profileField: profileField, identifier: identifier, text),
             )
           )
@@ -1056,11 +1040,6 @@ extension _ProfileFieldExt on _ProfileField {
 // Auth2LoginTypeProfileUtils
 
 extension _Auth2UserProfileUtils on Auth2UserProfile {
-
-  bool get isNameNotEmpty =>
-    StringUtils.isNotEmpty(firstName) ||
-    StringUtils.isNotEmpty(middleName) ||
-    StringUtils.isNotEmpty(lastName);
 
   String? fieldValue(_ProfileField field) {
     switch(field) {

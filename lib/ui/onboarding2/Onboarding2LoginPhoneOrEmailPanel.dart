@@ -16,8 +16,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';

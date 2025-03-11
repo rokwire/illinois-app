@@ -73,7 +73,7 @@ class RoleGridButton extends TileToggleButton {
   UserRole get role => (data as UserRole);
 
 
-  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, TextScaler? textScaler, void Function(RoleGridButton)? onTap, EdgeInsetsGeometry? margin }) {
+  static RoleGridButton? fromRole(UserRole role, { bool? selected, double? sortOrder, TextScaler? textScaler, void Function(RoleGridButton)? onTap, EdgeInsetsGeometry? margin }) {
     if (role == UserRole.neomU) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.neom_u.title', 'NEOM U'),

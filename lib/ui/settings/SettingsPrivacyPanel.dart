@@ -450,7 +450,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
   Widget _buildSliderInstructions(){
     return Container(
-      padding: EdgeInsets.only(left: 22, right: 22,),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: Styles().colors.surface,
       child: Row(children: <Widget>[
         Expanded(child:

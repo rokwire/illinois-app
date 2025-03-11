@@ -15,11 +15,11 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/Onboarding2.dart';
+import 'package:neom/service/Onboarding2.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
@@ -68,7 +68,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
           Column(children: [
             Expanded(child:
               SingleChildScrollView(child:
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Column(children: <Widget>[
                     Padding(padding: EdgeInsets.all(Onboarding2PrivacyProgress.defaultSpacing), child:
                       Onboarding2PrivacyProgress(1)
@@ -140,7 +140,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
                 hint: Localization().getStringEx('panel.onboarding2.privacy.location_services.button.continue.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondaryVariant,
                 progress: _onboardingProgress,
                 onTap: _onTapContinue,

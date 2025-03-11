@@ -15,11 +15,11 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
@@ -101,7 +101,7 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 progress: _onboardingProgress,
                 onTap: _onTapReceiveNotifications,
               ),

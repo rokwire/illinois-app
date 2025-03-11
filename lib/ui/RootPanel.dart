@@ -546,7 +546,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FlexUI.notifyChanged) {
       _updateTabsContent();
-      _updateQuickActionItems();
+      // _updateQuickActionItems();
     }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);

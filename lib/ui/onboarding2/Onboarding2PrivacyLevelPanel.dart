@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/widgets/PrivacySlider.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/widgets/PrivacySlider.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -64,7 +64,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
                 Container(color: Styles().colors.fillColorPrimary, child:
                   Column(children: <Widget>[
                     Row(children: [
-                      Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack,),
+                      Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.surface, onTap: _onTapBack,),
                       Expanded(child:
                         Align(alignment: Alignment.centerRight, child:
                           Semantics(
@@ -125,7 +125,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
                   hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondaryVariant,
                   progress: _onboardingProgress,
                   onTap: _onTapContinue,

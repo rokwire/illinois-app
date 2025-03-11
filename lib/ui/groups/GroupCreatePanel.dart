@@ -1150,7 +1150,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         Expanded(
                           flex: 3,
                           child: Container(
-                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.surface),
                           child: TextField(
                             controller: _groupNetIdsController,
                             maxLines: 1,

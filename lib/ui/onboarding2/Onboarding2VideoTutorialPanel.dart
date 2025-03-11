@@ -100,7 +100,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
             Positioned.fill(child:
               Align(alignment: (_isPortrait ? Alignment.bottomCenter : Alignment.bottomLeft), child:
-                LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _skipButtonLabel(), onTap: _onTapContinue, textColor: Styles().colors.white)
+                LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _skipButtonLabel(), onTap: _onTapContinue, textColor: Styles().colors.surface)
               ),
             ),
             Positioned.fill(child:
@@ -156,7 +156,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              border: Border.all(color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
+              border: Border.all(color: (_ccEnabled ? Styles().colors.surface : Styles().colors.disabledTextColorTwo), width: 2),
               borderRadius: BorderRadius.all(Radius.circular(6))
             ),
             child: Text('CC', style: _ccEnabled? Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled"))

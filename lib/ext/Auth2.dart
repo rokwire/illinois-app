@@ -21,9 +21,9 @@ extension Auth2UserProfileExt on Auth2UserProfile {
     (college?.isNotEmpty == true) ||
     (department?.isNotEmpty == true) ||
     (major?.isNotEmpty == true) ||
-    (email?.isNotEmpty == true) ||
+    // (email?.isNotEmpty == true) ||
     (email2?.isNotEmpty == true) ||
-    (phone?.isNotEmpty == true) ||
+    // (phone?.isNotEmpty == true) ||
     (website?.isNotEmpty == true);
 }
 

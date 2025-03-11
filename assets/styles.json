@@ -771,8 +771,8 @@
 
     "panel.settings.privacy_panel.update.message": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.settings.privacy_panel.update.message.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
-    "panel.settings.privacy_panel.privacy.label.medium": {"extends": "widget.info.medium.fat"},
-    "panel.settings.privacy_panel.privacy.label.regular": {"extends": "widget.info.regular.thin"},
+    "panel.settings.privacy_panel.privacy.label.medium": {"extends": "widget.info.medium.fat", "color": "textDark"},
+    "panel.settings.privacy_panel.privacy.label.regular": {"extends": "widget.info.regular.thin", "color": "textLight"},
     "panel.settings.privacy_panel.privacy.description.large": {"extends": "widget.description.large.fat"},
     "panel.settings.privacy_panel.privacy.entry.title.enabled": {"extends": "widget.toggle_button.title.regular.fat.enabled"},
     "panel.settings.privacy_panel.privacy.entry.title.disabled": {"extends": "widget.toggle_button.title.regular.fat.disabled"},

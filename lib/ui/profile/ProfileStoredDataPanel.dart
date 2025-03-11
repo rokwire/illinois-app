@@ -37,7 +37,7 @@ class ProfileStoredDataPanel extends StatefulWidget {
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       constraints: BoxConstraints(maxHeight: height),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => ProfileStoredDataPanel._(),
