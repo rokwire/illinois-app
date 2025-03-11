@@ -116,7 +116,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   TabController?  _tabBarController;
   int            _currentTabIndex = 0;
 
-  late QuickActions quickActions;
+  late QuickActions _quickActions;
 
   _RootPanelState();
 
@@ -234,17 +234,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _tabs = _getTabs();
     _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
     _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
-    _updatePanels(_tabs);
+    _updateTabPanels(_tabs);
 
-    quickActions = const QuickActions();
-    quickActions.initialize(_onQuickAction);
-    quickActions.setShortcutItems(<ShortcutItem>[
+    _quickActions = const QuickActions();
+    _quickActions.initialize(_onQuickAction);
+    _quickActions.setShortcutItems(<ShortcutItem>[
       ShortcutItem(
         type: Safety.safeWalkRequestAction,
         localizedTitle: Localization().getStringEx('model.safety.safewalks.request.action.text', 'Request a SafeWalk'),
         icon: Platform.isAndroid ? 'paper_plane' : 'paper-plane',
       ),
-  ]);
+    ]);
 
     Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
 
@@ -290,77 +290,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGameDetail(param);
     }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
-      _showAthleticsGameDetail(param);
+      _onAthleticsGameDetail(param);
     }
     else if (name == LocalNotifications.notifyLocalNotificationTapped) {
       _onLocalNotification(param);
-    }
-    else if (name == Events.notifyEventDetail) {
-      _onFirebaseEventDetail(param);
-    }
-    else if (name == Events2.notifyLaunchDetail) {
-      _onFirebaseEventDetail(param);
-    }
-    else if (name == Events2.notifyLaunchQuery) {
-      _onFirebaseEventsQuery(param);
-    }
-    else if (name == Sports.notifyGameDetail) {
-      _onFirebaseGameDetail(param);
-    }
-    else if (name == Groups.notifyGroupDetail) {
-      _onGroupDetail(param);
-    }
-    else if (name == Social.notifyMessageDetail) {
-      _onSocialMessageDetail(param);
-    }
-    else if (name == Appointments.notifyAppointmentDetail) {
-      _onAppointmentDetail(param);
-    }
-    else if (name == Guide.notifyGuide) {
-      _onGuide();
-    }
-    else if (name == Guide.notifyGuideDetail) {
-      _onGuideDetail(param);
-    }
-    else if (name == Guide.notifyGuideList) {
-      _onGuideList(param);
-    }
-    else if (name == Wellness.notifyCategorySelect) {
-      _onWellnessCategorySelect(param);
-    }
-    else if (name == Canvas.notifyCanvasEventDetail) {
-      _onCanvasEventDetail(param);
-    }
-    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
-      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
-    }
-    else if (name == Gateway.notifyBuildingDetail) {
-      _onGatewayBuildingDetail(param);
-    }
-    else if (name == Safety.notifySafeWalkDetail) {
-      _onSafetySafeWalkDetail(param);
-    }
-    else if (name == Places.notifyPlacesDetail) {
-      _onPlaceDetail(param);
-    }
-    else if (name == Localization.notifyStringsUpdated) {
-      if (mounted) {
-        setState(() { });
-      }
-    }
-    else if (name == FlexUI.notifyChanged) {
-      _updateContent();
-    }
-    else if (name == Styles.notifyChanged) {
-      if (mounted) {
-        setState(() { });
-      }
-    }
-    else if (name == Polls.notifyPresentVote) {
-      _presentPollVote(param);
-    }
-    else if (name == Polls.notifyPresentResult) {
-      _presentPollResult(param);
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
@@ -576,6 +509,69 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
       _onFirebaseGuideArticleNotification(param);
     }
+    else if (name == Events.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
+    }
+    else if (name == Events2.notifyLaunchDetail) {
+      _onFirebaseEventDetail(param);
+    }
+    else if (name == Events2.notifyLaunchQuery) {
+      _onFirebaseEventsQuery(param);
+    }
+    else if (name == Sports.notifyGameDetail) {
+      _onFirebaseGameDetail(param);
+    }
+    else if (name == Groups.notifyGroupDetail) {
+      _onGroupDetail(param);
+    }
+    else if (name == Social.notifyMessageDetail) {
+      _onSocialMessageDetail(param);
+    }
+    else if (name == Appointments.notifyAppointmentDetail) {
+      _onAppointmentDetail(param);
+    }
+    else if (name == Guide.notifyGuide) {
+      _onGuide();
+    }
+    else if (name == Guide.notifyGuideDetail) {
+      _onGuideDetail(param);
+    }
+    else if (name == Guide.notifyGuideList) {
+      _onGuideList(param);
+    }
+    else if (name == Wellness.notifyCategorySelect) {
+      _onWellnessCategorySelect(param);
+    }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
+    }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
+    }
+    else if (name == Gateway.notifyBuildingDetail) {
+      _onGatewayBuildingDetail(param);
+    }
+    else if (name == Safety.notifySafeWalkDetail) {
+      _onSafetySafeWalkDetail(param);
+    }
+    else if (name == Places.notifyPlacesDetail) {
+      _onPlaceDetail(param);
+    }
+    else if (name == Localization.notifyStringsUpdated) {
+        setStateIfMounted(() { });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateTabsContent();
+    }
+    else if (name == Styles.notifyChanged) {
+      setStateIfMounted(() { });
+    }
+    else if (name == Polls.notifyPresentVote) {
+      _presentPollVote(param);
+    }
+    else if (name == Polls.notifyPresentResult) {
+      _presentPollResult(param);
+    }
     else if (name == HomePanel.notifySelect) {
       _onSelectHome(param);
     }
@@ -617,7 +613,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
-  
+  // TabBar
+
   void _selectTab(int tabIndex) {
 
     RootTab? rootTab = getRootTabByIndex(tabIndex);
@@ -673,6 +670,125 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Widget? get currentTabPanel {
     return _getTabPanelAtIndex(_currentTabIndex);
   }
+
+  static List<RootTab> _getTabs() {
+    List<RootTab> tabs = [];
+    List<String>? codes = _getTabbarCodes();
+    if (codes != null) {
+      for (String code in codes) {
+        ListUtils.add(tabs, rootTabFromString(code));
+      }
+    }
+    return tabs;
+  }
+
+  static List<String>? _getTabbarCodes() {
+    try {
+      dynamic tabsList = FlexUI()['tabbar'];
+      return (tabsList is List) ? tabsList.cast<String>() : null;
+    }
+    catch(e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  static Widget? _createPanelForTab(RootTab? rootTab) {
+    if (rootTab == RootTab.Home) {
+      return HomePanel();
+    }
+    else if (rootTab == RootTab.Favorites) {
+      return HomeFavoritesPanel();
+    }
+    else if (rootTab == RootTab.Browse) {
+      return BrowsePanel();
+    }
+    else if (rootTab == RootTab.Maps) {
+      return ExploreMapPanel();
+    }
+    else if (rootTab == RootTab.Academics) {
+      return AcademicsHomePanel(rootTabDisplay: true,);
+    }
+    else if (rootTab == RootTab.Wellness) {
+      return WellnessHomePanel(rootTabDisplay: true,);
+    }
+    else if (rootTab == RootTab.Wallet) {
+      return null;
+    }
+    else if (rootTab == RootTab.Assistant) {
+      return null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  int? get _defaultTabIndex {
+    dynamic defaultTabCode = FlexUI()['tabbar.default'];
+    return (defaultTabCode is String) ? _getIndexByRootTab(rootTabFromString(defaultTabCode)) : null;
+  }
+
+  void _updateTabsContent() {
+    List<RootTab> tabs = _getTabs();
+    if (!DeepCollectionEquality().equals(_tabs, tabs)) {
+      _updateTabPanels(tabs);
+
+      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
+      if (mounted) {
+        setState(() {
+          _tabs = tabs;
+          _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
+
+          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
+          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
+          _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
+        });
+        _tabBarController!.animateTo(_currentTabIndex);
+      }
+      else {
+        _tabs = tabs;
+        _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
+        _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
+      }
+    }
+  }
+
+  void _updateTabPanels(List<RootTab> tabs) {
+    for (RootTab rootTab in tabs) {
+      if (_panels[rootTab] == null) {
+        Widget? panel = _createPanelForTab(rootTab);
+        _panels[rootTab] = panel;
+      }
+    }
+  }
+
+  void _onTabSelectionChanged(int tabIndex) {
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      _selectTab(tabIndex);
+    }
+  }
+
+  void _onSelectTab(RootTab? tab) {
+    if (mounted) {
+      int? tabIndex = _getIndexByRootTab(tab);
+      if ((tabIndex == null) && (tab == RootTab.Home)) {
+        tabIndex = 0;
+      }
+      if (tabIndex != null) {
+        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+        _selectTab(tabIndex);
+      }
+      else if (tab == RootTab.Favorites) {
+        _onFirebaseHomeNotification(HomeContentType.favorites);
+      }
+      else if (tab == RootTab.Browse) {
+        _onFirebaseHomeNotification(HomeContentType.browse);
+      }
+    }
+  }
+
+  // Exit Prompt
 
   void _onBack() {
     if (_currentTabIndex != 0) {
@@ -758,10 +874,43 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
+  // Quick Actions
+
   void _onQuickAction(String action) {
     if (action == Safety.safeWalkRequestAction) {
       _onSafetySafeWalkDetail(null);
     }
+  }
+
+  // Polls
+
+  void _showPresentPoll() {
+    Poll? presentingPoll = Polls().presentingPoll;
+    if (presentingPoll != null) {
+      Timer(Duration(milliseconds: 500), (){
+        if (presentingPoll.status == PollStatus.opened) {
+          _presentPollVote(presentingPoll.pollId);
+        }
+        else if (presentingPoll.status == PollStatus.closed) {
+          _presentPollResult(presentingPoll.pollId);
+        }
+      });
+    }
+  }
+
+  void _presentPollVote(String? pollId) {
+    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePromptPanel(pollId: pollId)));
+  }
+
+  void _presentPollResult(String? pollId) {
+    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
+  }
+
+  // ActionBuilder
+
+  Future<Function?> _checkDidNotificationLaunch() async {
+    ActionData? notificationResponseAction = await LocalNotifications().getNotificationResponseAction();
+    return ActionBuilder.getAction(context, notificationResponseAction, dismissContext: context);
   }
 
   void _showPanel(Map<String, dynamic> content) {
@@ -770,6 +919,19 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         _onGuideDetail(content);
     }
   }
+
+  // Local Notifications
+
+  void _onLocalNotification(dynamic param) {
+    if (param is ActionData) {
+      ActionBuilder.getAction(context, param)?.call();
+    }
+    /*else if (param is NotificationResponse) {
+      // TBD
+    }*/
+  }
+
+  // Firebase Notifications
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
@@ -850,14 +1012,167 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onLocalNotification(dynamic param) {
-    if (param is ActionData) {
-      ActionBuilder.getAction(context, param)?.call();
+  void _onFirebaseGroupsNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? groupId = param["entity_id"];
+      _presentGroupDetailPanel(groupId: groupId);
     }
-    /*else if (param is NotificationResponse) {
-      // TBD
-    }*/
   }
+
+  void _onFirebaseGroupPostNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? groupId = param["entity_id"];
+      String? groupPostId = param["post_id"];
+      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId);
+    }
+  }
+
+  void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
+    if (StringUtils.isNotEmpty(groupId)) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+    }
+  }
+
+  void _onFirebaseSocialMessageNotification(param) {
+    if (param is Map<String, dynamic>) {
+      _presentSocialMessagePanel(
+        conversationId: JsonUtils.stringValue(param["entity_id"]),
+        messageId: JsonUtils.stringValue(param["message_id"]),
+        messageGlobalId: JsonUtils.stringValue(param["message_global_id"]),
+      );
+    }
+  }
+
+  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
+    if (StringUtils.isNotEmpty(conversationId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+        conversationId: conversationId,
+        targetMessageId: messageId,
+        targetMessageGlobalId: messageGlobalId,
+      )));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
+    }
+  }
+
+  void _onFirebaseAthleticsNewsNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? newsId = param["news_id"];
+      if (StringUtils.isNotEmpty(newsId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
+      }
+    }
+  }
+
+  void _onFirebaseAthleticsTeamNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(Sports().getSportByShortName(sportName))));
+      }
+    }
+  }
+  void _onFirebaseAthleticsTeamRosterNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(Sports().getSportByShortName(sportName), null)));
+      }
+    }
+  }
+
+  void _onFirebaseTabNotification(RootTab? tab) =>
+    _onSelectTab(tab);
+
+  void _onFirebaseHomeNotification(HomeContentType homeType) {
+    NotificationService().notify(HomePanel.notifySelect, homeType);
+  }
+
+  void _onFirebaseMapNotification(ExploreMapType mapType) {
+    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
+  }
+
+  void _onFirebaseInboxNotification() {
+    NotificationsHomePanel.present(context, content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
+  }
+
+  void _onFirebasePollNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? pollId = JsonUtils.stringValue(param['entity_id']);
+      if (StringUtils.isNotEmpty(pollId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => PollDetailPanel(pollId: pollId)));
+      }
+    }
+  }
+
+  void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? deepLink = JsonUtils.stringValue(param['deep_link']);
+      Canvas().openCanvasAppDeepLink(StringUtils.ensureNotEmpty(deepLink));
+    }
+  }
+
+  void _onFirebaseAppointmentNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
+      if (StringUtils.isNotEmpty(appointmentId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
+      }
+    }
+  }
+
+  void _onFirebaseWellnessToDoItemNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? todoItemId = JsonUtils.stringValue(param['entity_id']);
+      if (StringUtils.isNotEmpty(todoItemId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
+      } else {
+        _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
+      }
+    }
+  }
+
+  void _onFirebaseGuideArticleNotification(dynamic param) async {
+    _onGuideDetail(param);
+  }
+
+  void _onFirebaseProfileNotification({required ProfileContent profileContent}) {
+    ProfileHomePanel.present(context, content: profileContent);
+  }
+
+  void _onFirebaseSettingsNotification({required SettingsContent settingsContent}) {
+    if (settingsContent == SettingsContent.favorites) {
+      HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
+    } else {
+      SettingsHomeContentPanel.present(context, content: settingsContent);
+    }
+  }
+
+  void _onFirebaseWaletNotification(WalletContentType contentType) {
+    WalletHomePanel.present(context, contentType: contentType);
+  }
+
+  void _onFirebaseAcademicsNotification(AcademicsContent content) {
+    if (AcademicsHomePanel.hasState) {
+      NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+    } else {
+      AcademicsHomePanel.push(context, content);
+    }
+  }
+
+  void _onFirebaseWellnessNotification(WellnessContent content) {
+    if (WellnessHomePanel.hasState) {
+      NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
+    } else {
+      WellnessHomePanel.push(context, content);
+    }
+  }
+
+  // Service Notifications
 
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
     String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
@@ -969,7 +1284,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
+  void _onAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
     if (athleticsGameDetails == null) {
       return;
     }
@@ -981,232 +1296,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
   }
   
-  void _showPresentPoll() {
-    Poll? presentingPoll = Polls().presentingPoll;
-    if (presentingPoll != null) {
-      Timer(Duration(milliseconds: 500), (){
-        if (presentingPoll.status == PollStatus.opened) {
-          _presentPollVote(presentingPoll.pollId);
-        }
-        else if (presentingPoll.status == PollStatus.closed) {
-          _presentPollResult(presentingPoll.pollId);
-        }
-      });
-    }
-  }
-
-  Future<Function?> _checkDidNotificationLaunch() async {
-    ActionData? notificationResponseAction = await LocalNotifications().getNotificationResponseAction();
-    return ActionBuilder.getAction(context, notificationResponseAction, dismissContext: context);
-  }
-
-  void _presentPollVote(String? pollId) {
-    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePromptPanel(pollId: pollId)));
-  }
-
-  void _presentPollResult(String? pollId) {
-    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
-  }
-
-  static List<String>? _getTabbarCodes() {
-    try {
-      dynamic tabsList = FlexUI()['tabbar'];
-      return (tabsList is List) ? tabsList.cast<String>() : null;
-    }
-    catch(e) {
-      print(e.toString());
-    }
-    return null;
-  }
-
-  int? get _defaultTabIndex {
-    dynamic defaultTabCode = FlexUI()['tabbar.default'];
-    return (defaultTabCode is String) ? _getIndexByRootTab(rootTabFromString(defaultTabCode)) : null;
-  }
-
-  void _updateContent() {
-    List<RootTab> tabs = _getTabs();
-    if (!DeepCollectionEquality().equals(_tabs, tabs)) {
-      _updatePanels(tabs);
-      
-      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
-      if (mounted) {
-        setState(() {
-          _tabs = tabs;
-          _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
-          
-          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
-          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
-          _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
-        });
-        _tabBarController!.animateTo(_currentTabIndex);
-      }
-      else {
-        _tabs = tabs;
-        _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
-        _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
-      }
-    }
-  }
-
-  void _updatePanels(List<RootTab> tabs) {
-    for (RootTab rootTab in tabs) {
-      if (_panels[rootTab] == null) {
-        Widget? panel = _createPanelForTab(rootTab);
-        _panels[rootTab] = panel;
-      }
-    }
-  }
-
-  static List<RootTab> _getTabs() {
-    List<RootTab> tabs = [];
-    List<String>? codes = _getTabbarCodes();
-    if (codes != null) {
-      for (String code in codes) {
-        ListUtils.add(tabs, rootTabFromString(code));
-      }
-    }
-    return tabs;
-  }
-
-  static Widget? _createPanelForTab(RootTab? rootTab) {
-    if (rootTab == RootTab.Home) {
-      return HomePanel();
-    }
-    else if (rootTab == RootTab.Favorites) {
-      return HomeFavoritesPanel();
-    }
-    else if (rootTab == RootTab.Browse) {
-      return BrowsePanel();
-    }
-    else if (rootTab == RootTab.Maps) {
-      return ExploreMapPanel();
-    }
-    else if (rootTab == RootTab.Academics) {
-      return AcademicsHomePanel(rootTabDisplay: true,);
-    }
-    else if (rootTab == RootTab.Wellness) {
-      return WellnessHomePanel(rootTabDisplay: true,);
-    }
-    else if (rootTab == RootTab.Wallet) {
-      return null;
-    }
-    else if (rootTab == RootTab.Assistant) {
-      return null;
-    }
-    else {
-      return null;
-    }
-  }
-
-  void _onTabSelectionChanged(int tabIndex) {
-    if (mounted) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      _selectTab(tabIndex);
-    }
-  }
-
-  void _onFirebaseGroupsNotification(param) {
-    if (param is Map<String, dynamic>) {
-      String? groupId = param["entity_id"];
-      _presentGroupDetailPanel(groupId: groupId);
-    }
-  }
-
-  void _onFirebaseGroupPostNotification(param) {
-    if (param is Map<String, dynamic>) {
-      String? groupId = param["entity_id"];
-      String? groupPostId = param["post_id"];
-      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId);
-    }
-  }
-
-  void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
-    if (StringUtils.isNotEmpty(groupId)) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
-    }
-  }
-
-  void _onFirebaseSocialMessageNotification(param) {
-    if (param is Map<String, dynamic>) {
-      _presentSocialMessagePanel(
-        conversationId: JsonUtils.stringValue(param["entity_id"]),
-        messageId: JsonUtils.stringValue(param["message_id"]),
-        messageGlobalId: JsonUtils.stringValue(param["message_global_id"]),
-      );
-    }
-  }
-
-  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
-    if (StringUtils.isNotEmpty(conversationId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
-        conversationId: conversationId,
-        targetMessageId: messageId,
-        targetMessageGlobalId: messageGlobalId,
-      )));
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
-    }
-  }
-
-  void _onFirebaseAthleticsNewsNotification(param) {
-    if (param is Map<String, dynamic>) {
-      String? newsId = param["news_id"];
-      if (StringUtils.isNotEmpty(newsId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
-      }
-    }
-  }
-
-  void _onFirebaseAthleticsTeamNotification(param) {
-    if (param is Map<String, dynamic>) {
-      String? sportName = JsonUtils.stringValue(param["sport"]);
-      if (StringUtils.isNotEmpty(sportName)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(Sports().getSportByShortName(sportName))));
-      }
-    }
-  }
-  void _onFirebaseAthleticsTeamRosterNotification(param) {
-    if (param is Map<String, dynamic>) {
-      String? sportName = JsonUtils.stringValue(param["sport"]);
-      if (StringUtils.isNotEmpty(sportName)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(Sports().getSportByShortName(sportName), null)));
-      }
-    }
-  }
-
-  void _onSelectTab(RootTab? tab) {
-    if (mounted) {
-      int? tabIndex = _getIndexByRootTab(tab);
-      if ((tabIndex == null) && (tab == RootTab.Home)) {
-        tabIndex = 0;
-      }
-      if (tabIndex != null) {
-        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-        _selectTab(tabIndex);
-      }
-      else if (tab == RootTab.Favorites) {
-        _onFirebaseHomeNotification(HomeContentType.favorites);
-      }
-      else if (tab == RootTab.Browse) {
-        _onFirebaseHomeNotification(HomeContentType.browse);
-      }
-    }
-  }
-
-  void _onFirebaseTabNotification(RootTab? tab) =>
-    _onSelectTab(tab);
-
-  void _onFirebaseHomeNotification(HomeContentType homeType) {
-    NotificationService().notify(HomePanel.notifySelect, homeType);
-  }
-
-  void _onFirebaseMapNotification(ExploreMapType mapType) {
-    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
-  }
-
   void _onSelectHome(dynamic param) {
     int? homeIndex = _getIndexByRootTab(RootTab.Home);
     if (mounted && (homeIndex != null)) {
@@ -1237,84 +1326,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseInboxNotification() {
-    NotificationsHomePanel.present(context,
-        content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
-  }
-
-  void _onFirebasePollNotification(dynamic param) {
-    if (param is Map<String, dynamic>) {
-      String? pollId = JsonUtils.stringValue(param['entity_id']);
-      if (StringUtils.isNotEmpty(pollId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => PollDetailPanel(pollId: pollId)));
-      }
-    }
-  }
-  
-  void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {
-    if (param is Map<String, dynamic>) {
-      String? deepLink = JsonUtils.stringValue(param['deep_link']);
-      Canvas().openCanvasAppDeepLink(StringUtils.ensureNotEmpty(deepLink));
-    }
-  }
-
-  void _onFirebaseAppointmentNotification(dynamic param) {
-    if (param is Map<String, dynamic>) {
-      String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
-      if (StringUtils.isNotEmpty(appointmentId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
-      } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
-      }
-    }
-  }
-
-  void _onFirebaseWellnessToDoItemNotification(dynamic param) {
-    if (param is Map<String, dynamic>) {
-      String? todoItemId = JsonUtils.stringValue(param['entity_id']);
-      if (StringUtils.isNotEmpty(todoItemId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
-      } else {
-        _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
-      }
-    }
-  }
-
-  void _onFirebaseGuideArticleNotification(dynamic param) async {
-    _onGuideDetail(param);
-  }
-
-  void _onFirebaseProfileNotification({required ProfileContent profileContent}) {
-    ProfileHomePanel.present(context, content: profileContent);
-  }
-
-  void _onFirebaseSettingsNotification({required SettingsContent settingsContent}) {
-    if (settingsContent == SettingsContent.favorites) {
-      HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
-    } else {
-      SettingsHomeContentPanel.present(context, content: settingsContent);
-    }
-  }
-
-  void _onFirebaseWaletNotification(WalletContentType contentType) {
-    WalletHomePanel.present(context, contentType: contentType);
-  }
-
-  void _onFirebaseAcademicsNotification(AcademicsContent content) {
-    if (AcademicsHomePanel.hasState) {
-      NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
-    } else {
-      AcademicsHomePanel.push(context, content);
-    }
-  }
-
-  void _onFirebaseWellnessNotification(WellnessContent content) {
-    if (WellnessHomePanel.hasState) {
-      NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
-    } else {
-      WellnessHomePanel.push(context, content);
-    }
-  }
 }
 
 RootTab? rootTabFromString(String? value) {
