@@ -4271,6 +4271,9 @@
 
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
+    "model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
+    "model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
+    "model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
     "model.assistant.provider.uiuc.label": "Illinois",
     "model.assistant.provider.google.label": "Google",
