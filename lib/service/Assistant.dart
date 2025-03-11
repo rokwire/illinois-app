@@ -20,7 +20,6 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
     AssistantProvider.uiuc: List<Message>.empty(growable: true),
     AssistantProvider.google: List<Message>.empty(growable: true),
-    AssistantProvider.azure: List<Message>.empty(growable: true),
     AssistantProvider.grok: List<Message>.empty(growable: true)
   };
 
@@ -168,7 +167,6 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     await Future.wait([
       _loadMessages(provider: AssistantProvider.uiuc),
       _loadMessages(provider: AssistantProvider.google),
-      _loadMessages(provider: AssistantProvider.azure),
     ]);
   }
 
