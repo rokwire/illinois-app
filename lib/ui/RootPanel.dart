@@ -117,6 +117,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   int            _currentTabIndex = 0;
 
   late QuickActions _quickActions;
+  late List<ShortcutItem> _quickActionItems;
 
   _RootPanelState();
 
@@ -220,8 +221,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Guide.notifyGuideList,
       Wellness.notifyCategorySelect,
       Localization.notifyStringsUpdated,
-      FlexUI.notifyChanged,
       Styles.notifyChanged,
+      FlexUI.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
       uiuc.TabBar.notifySelectionChanged,
@@ -238,13 +239,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
     _quickActions = const QuickActions();
     _quickActions.initialize(_onQuickAction);
-    _quickActions.setShortcutItems(<ShortcutItem>[
-      ShortcutItem(
-        type: Safety.safeWalkRequestAction,
-        localizedTitle: Localization().getStringEx('model.safety.safewalks.request.action.text', 'Request a SafeWalk'),
-        icon: Platform.isAndroid ? 'paper_plane' : 'paper-plane',
-      ),
-    ]);
+    _quickActions.setShortcutItems(_quickActionItems = _buildQuickActionItems());
 
     Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
 
@@ -560,11 +555,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Localization.notifyStringsUpdated) {
         setStateIfMounted(() { });
     }
-    else if (name == FlexUI.notifyChanged) {
-      _updateTabsContent();
-    }
     else if (name == Styles.notifyChanged) {
       setStateIfMounted(() { });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateTabsContent();
+      _updateQuickActionItems();
     }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
@@ -875,6 +871,22 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   // Quick Actions
+
+  List<ShortcutItem> _buildQuickActionItems() => <ShortcutItem>[
+    if (FlexUI().isSafeWalkAvailable)
+      ShortcutItem(
+        type: Safety.safeWalkRequestAction,
+        localizedTitle: Localization().getStringEx('model.safety.safewalks.request.action.text', 'Request a SafeWalk'),
+        icon: Platform.isAndroid ? 'paper_plane' : 'paper-plane',
+      ),
+  ];
+
+  void _updateQuickActionItems() {
+    List<ShortcutItem> quickActionItems = _buildQuickActionItems();
+    if (!DeepCollectionEquality().equals(_quickActionItems, quickActionItems)) {
+      _quickActions.setShortcutItems(_quickActionItems = _buildQuickActionItems());
+    }
+  }
 
   void _onQuickAction(String action) {
     if (action == Safety.safeWalkRequestAction) {
