@@ -1831,6 +1831,7 @@
     "panel.settings.home.account.options.payment":"Payment",
     "panel.settings.home.net_id.message":"Signed in with your NetID",
     "panel.settings.home.net_id.button.disconnect":"Sign Out",
+    "panel.settings.home.net_id.button.profile":"View My Profile",
     "panel.settings.home.phone_ver.message":"Signed in with your phone",
     "panel.settings.home.phone_ver.button.connect":"Verify Your Mobile Phone Number",
     "panel.settings.home.phone_ver.button.disconnect":"Sign Out",

@@ -1830,6 +1830,7 @@
     "panel.settings.home.account.options.payment":"Pago",
     "panel.settings.home.net_id.message":"Inicie sesión con su NetID",
     "panel.settings.home.net_id.button.disconnect":"Desconectar",
+    "panel.settings.home.net_id.button.profile":"View My Profile",
     "panel.settings.home.phone_ver.message":"Inicie sesión con su teléfono",
     "panel.settings.home.phone_ver.button.connect":"Verifique su número de teléfono móvil",
     "panel.settings.home.phone_ver.button.disconnect":"Desconectar",

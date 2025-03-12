@@ -1817,6 +1817,7 @@
 	"panel.settings.home.account.options.payment":"支付",
 	"panel.settings.home.net_id.message":"使用您的 NetID 登入",
 	"panel.settings.home.net_id.button.disconnect":"登出",
+	"panel.settings.home.net_id.button.profile":"View My Profile",
 	"panel.settings.home.phone_ver.message":"使用您的手机号码登入",
 	"panel.settings.home.phone_ver.button.connect":"验证您的手机号码",
 	"panel.settings.home.phone_ver.button.disconnect":"登出",
