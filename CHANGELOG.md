@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged FlexUI rules for SafeWalks availability in quick actions menu [#4875](https://github.com/rokwire/illinois-app/issues/4875).
 ### Removed
 - Azure Assistant provider [#4876](https://github.com/rokwire/illinois-app/issues/4876).
+### Added
+- Add pinning option when editing your own group admin post[#4807](https://github.com/rokwire/illinois-app/issues/4807).
 
 ## [6.1.68] - 2025-03-07
 ### Changed
