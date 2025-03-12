@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Azure Assistant provider [#4876](https://github.com/rokwire/illinois-app/issues/4876).
 ### Added
-- Add pinning option when editing your own group admin post[#4807](https://github.com/rokwire/illinois-app/issues/4807).
+- Added pinning option when editing your own group admin post [#4807](https://github.com/rokwire/illinois-app/issues/4807).
+- Added "View My Profile" button to Sign In/Out page in Profile panel [#4872](https://github.com/rokwire/illinois-app/issues/4872).
 
 ## [6.1.68] - 2025-03-07
 ### Changed
