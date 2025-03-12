@@ -1155,7 +1155,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
                               )
                             ),
                             Visibility(
