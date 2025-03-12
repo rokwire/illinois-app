@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Refactored onboarding service [#4826](https://github.com/rokwire/illinois-app/issues/4826).
+- Use dropdown buttons for profile privacy edit [#4859](https://github.com/rokwire/illinois-app/issues/4859).
 
 ## [6.2.0] - 2025-02-25
 ### Fixed
