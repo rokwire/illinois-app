@@ -90,7 +90,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   static const EdgeInsetsGeometry _dropdownMenuItemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
   static const EdgeInsetsGeometry _dropdownButtonPadding = const EdgeInsets.only(left: 16, right: 8, top: 15, bottom: 15);
 
-  bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => !_hasProfileName;
@@ -345,16 +344,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _photoVisibilityDropdown; // _photoVisibilityToggleButton
 
     Widget get _photoVisibilityDropdown =>
-      _visibilityDropdown(_ProfileField.photoUrl,
+      _visibilityDropdown(profileField: _ProfileField.photoUrl,
         buttonPadding: EdgeInsets.only(left: 8, right: 6, top: 10, bottom: 10),
         buttonInnerIconPadding: 8
       );
 
     // ignore: unused_element
-    Widget get _photoVisibilityToggleButton =>
-    _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
-      onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
-    );
+    // Widget get _photoVisibilityToggleButton =>
+    // _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
+    //   onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+    // );
 
     Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
       InkWell(onTap: onTap, child:
@@ -734,17 +733,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     );
 
   Widget _visibilityButton({ _ProfileField? profileField, Auth2PublicAccountIdentifier? identifier, bool locked = false}) {
-    Auth2FieldVisibility? visibility = _getFieldVisibility(profileField: profileField, identifier: identifier);
-    bool textNotEmpty = profileField != null ? (_fieldTextNotEmpty[profileField] == true) : (identifier != null ? _identifierTextNotEmpty[identifier] == true : false);
-    return _visibilityDropdown(visibility, textNotEmpty, locked: locked); // _visibilityToggleButton(field, locked: locked);
+    return _visibilityDropdown(profileField: profileField, identifier: identifier, locked: locked); // _visibilityToggleButton(field, locked: locked);
   }
-
-  // ignore: unused_element
-  Widget _visibilityToggleButton(_ProfileField field, { bool locked = false }) =>
-    _iconButton(
-      icon: _visibilityIcon(field, locked: locked),
-      onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
-    );
 
   Widget _iconButton({ Widget? icon, void Function()? onTap, bool progress = false}) =>
     InkWell(onTap: onTap, child:
@@ -756,16 +746,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         )
       )
     );
-
-  Widget? _visibilityIcon(Auth2FieldVisibility? visibility, bool textNotEmpty, { bool locked = false} ) {
-    if (locked) {
-      return _lockIcon;
-    } else if (_permittedVisibility.contains(visibility) && textNotEmpty) {
-      return _publicIcon;
-    } else {
-      return _privateIcon;
-    }
-  }
 
   Widget? _visibilityDropdownIcon(Auth2FieldVisibility? visibility, bool textNotEmpty, { bool locked = false} ) {
     if (locked) {
@@ -788,8 +768,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   static Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
   static Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  static Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
-  static Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize);
   static Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
   static Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
   static Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
@@ -797,34 +775,38 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   static Widget? get _privateDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.mediumGray2, size: _buttonIconSize);
   static Widget? get _lockDropdownIcon => Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize);
   static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _dropdownButtonChevronIconSize);
-  static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _buttonIconSize);
-  static Widget? get _redioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _buttonIconSize);
+  static Widget? get _radioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _buttonIconSize);
+  static Widget? get _radioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _buttonIconSize);
 
   //static  Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
-  Widget _visibilityDropdown(_ProfileField field, {
+  Widget _visibilityDropdown({
+    _ProfileField? profileField, Auth2PublicAccountIdentifier? identifier,
     bool locked = false,
     EdgeInsetsGeometry buttonPadding = _dropdownButtonPadding,
     double buttonInnerIconPadding = _dropdownButtonInnerIconPaddingX,
-  }) =>
-      DropdownButtonHideUnderline(child:
+  }) {
+    Auth2FieldVisibility? visibility = _getFieldVisibility(profileField: profileField, identifier: identifier);
+    bool textNotEmpty = profileField != null ? (_fieldTextNotEmpty[profileField] == true) : (identifier != null ? _identifierTextNotEmpty[identifier] == true : false);
+    return DropdownButtonHideUnderline(child:
       DropdownButton2<Auth2FieldVisibility>(
         dropdownStyleData: DropdownStyleData(
           width: _visibilityDropdownItemsWidth ??= _evaluateVisibilityDropdownItemsWidth(),
           direction: DropdownDirection.left,
           decoration: _controlDecoration,
         ),
-        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field,
+        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(visibility, textNotEmpty,
           padding: buttonPadding,
           innerIconPadding: buttonInnerIconPadding,
         ),
         isExpanded: false,
-        items: _visibilityDropdownItems(field),
-        onChanged: ((_fieldTextNotEmpty[field] == true) && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(field, visibility) : null,
+        items: _visibilityDropdownItems(visibility),
+        onChanged: (textNotEmpty && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(profileField: profileField, identifier: identifier, visibility: visibility) : null,
       ),
-      );
+    );
+  }
 
-  Widget _visibilityDropdownButton(_ProfileField field, {
+  Widget _visibilityDropdownButton(Auth2FieldVisibility? visibility, bool textNotEmpty, {
     bool locked = false,
     EdgeInsetsGeometry padding = _dropdownButtonPadding,
     double innerIconPadding = _dropdownButtonInnerIconPaddingX,
@@ -833,14 +815,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Padding(padding: padding, child:
       Row(mainAxisSize: MainAxisSize.min, children: [
         SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-        Center(child: _visibilityDropdownIcon(field, locked: locked),)
+          Center(child: _visibilityDropdownIcon(visibility, textNotEmpty, locked: locked),)
         ),
         Padding(padding: EdgeInsets.only(left: innerIconPadding), child:
-        SizedBox(width: _dropdownButtonChevronIconSize, height: _dropdownButtonChevronIconSize, child:
-        Center(child:
-        locked ? null : _chevronDropdownIcon,
-        )
-        )
+          SizedBox(width: _dropdownButtonChevronIconSize, height: _dropdownButtonChevronIconSize, child:
+            Center(child:
+              locked ? null : _chevronDropdownIcon,
+            )
+          )
         )
       ],)
       )
@@ -848,16 +830,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _visibilityDropdownLockedButton =>
       Container(decoration: _controlDecoration, child:
-      Padding(padding: EdgeInsets.only(left: 23, right: 23, top: 15, bottom: 15), child:
-      SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-      Center(child: _lockIcon,)
-      ),
-      )
+        Padding(padding: EdgeInsets.only(left: 23, right: 23, top: 15, bottom: 15), child:
+          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+            Center(child: _lockIcon,)
+          ),
+        )
       );
 
-  List<DropdownMenuItem<Auth2FieldVisibility>> _visibilityDropdownItems(_ProfileField field) {
+  List<DropdownMenuItem<Auth2FieldVisibility>> _visibilityDropdownItems(Auth2FieldVisibility? visibility) {
     List<DropdownMenuItem<Auth2FieldVisibility>> items = <DropdownMenuItem<Auth2FieldVisibility>>[];
-    Auth2FieldVisibility selectedFieldVisibility = profileFieldVisibility(field);
+    Auth2FieldVisibility selectedFieldVisibility = visibility ?? Auth2FieldVisibility.private;
     for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values.reversed) {
       if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
         items.add(_visibilityDropdownItem(fieldVisibility, selected: selectedFieldVisibility == fieldVisibility));
@@ -873,30 +855,30 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisSize: MainAxisSize.max, children: [
             Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
-            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-            Center(child: visibility.displayDropdownItemIcon)
-            )
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: visibility.displayDropdownItemIcon)
+              )
             ),
             Expanded(child:
-            Text(visibility.displayTitle,
-              overflow: TextOverflow.ellipsis,
-              style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
-              semanticsLabel: "",
-            ),
+              Text(visibility.displayTitle,
+                overflow: TextOverflow.ellipsis,
+                style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
             ),
             Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
-            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-            Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
-            )
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: selected ? _radioOnDropdownIcon : _radioOffDropdownIcon)
+              )
             )
           ],),
           if (visibility.displayDescription.isNotEmpty)
             Padding(padding: EdgeInsets.symmetric(horizontal: _dropdownItemInnerIconPaddingX + _buttonIconSize), child:
-            Text(visibility.displayDescription,
-              overflow: TextOverflow.ellipsis,
-              style: _descriptionDropdownItemTextStyle,
-              semanticsLabel: "",
-            ),
+              Text(visibility.displayDescription,
+                overflow: TextOverflow.ellipsis,
+                style: _descriptionDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
             )
         ],)
         ),
@@ -933,10 +915,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.semi_fat");
   TextStyle? get _descriptionDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.small.semi_fat");
 
-  void _onDropdownFieldVisibility(_ProfileField field, Auth2FieldVisibility? visibility) {
-    Analytics().logSelect(target: 'Select $field Visibility $visibility');
+  void _onDropdownFieldVisibility({_ProfileField? profileField, Auth2PublicAccountIdentifier? identifier, Auth2FieldVisibility? visibility}) {
+    Analytics().logSelect(target: 'Select ${profileField ?? identifier?.code} Visibility $visibility');
     setState(() {
-      _fieldVisibilities[field] = visibility;
+      visibility ??= _getFieldVisibility(profileField: profileField, identifier: identifier);
+      if (profileField != null) {
+        _fieldVisibilities[profileField] = visibility;
+      } else if (identifier?.id != null) {
+        _identifierVisibility ??= {};
+        _identifierVisibility?[identifier!.id!] = visibility ?? Auth2FieldVisibility.private;
+      }
     });
   }
 

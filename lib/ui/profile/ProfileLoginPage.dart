@@ -275,15 +275,15 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
               CompactRoundedButton(
                 label: Localization().getStringEx("panel.settings.home.net_id.button.profile", "View My Profile"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
-              backgroundColor: Styles().colors.gradientColorPrimary,
-              borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.gradientColorPrimary,
+                borderColor: Styles().colors.fillColorSecondary,
                 onTap: _onViewProfileClicked
               ),
               CompactRoundedButton(
                 label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
-              backgroundColor: Styles().colors.gradientColorPrimary,
-              borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.gradientColorPrimary,
+                borderColor: Styles().colors.fillColorSecondary,
                 onTap: _onDisconnectClicked
               ),
             ],),
