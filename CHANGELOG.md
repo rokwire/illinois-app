@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
 ## [6.1.X]
+
+## [6.1.69] - 2025-03-12
 ### Fixed
 - Show replies count for messages [#4844](https://github.com/rokwire/illinois-app/issues/4844).
 - Fixed Analytics logs for Event2 onboarding screen [#4501](https://github.com/rokwire/illinois-app/issues/4501).
