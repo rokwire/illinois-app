@@ -1041,14 +1041,13 @@ class GroupPostCard extends StatefulWidget {
   final Group group;
   final bool? isAdmin;
   final bool? isClickable;
-  final bool? pinned;
   final GroupPostCardDisplayMode displayMode;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.pinned, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list}) :
     super(key: key);
 
   @override
