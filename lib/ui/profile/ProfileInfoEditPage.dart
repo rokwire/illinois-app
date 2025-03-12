@@ -88,9 +88,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   static Set<_ProfileField> _emailFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
   static Set<_ProfileField> _phoneFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
 
+  static const double _buttonIconSize = 16;
+  static const double _dropdownItemInnerIconPaddingX = 6;
+  static const double _dropdownButtonInnerIconPaddingX = 12;
+  static const double _dropdownButtonChevronIconSize = 10;
+  static const EdgeInsetsGeometry _dropdownMenuItemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry _dropdownButtonPadding = const EdgeInsets.only(left: 16, right: 8, top: 15, bottom: 15);
+
   bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
-
-
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
@@ -218,7 +223,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
     Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
-      Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
           photoUrl: _photoImageUrl,
@@ -229,7 +234,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       ),
       Positioned.fill(child:
         Align(alignment: _showPrivacyControls ? Alignment.bottomLeft : Alignment.bottomRight, child:
-          _editPhotoButton
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+            _editPhotoButton
+          )
         )
       ),
       if (_showPrivacyControls)
@@ -331,9 +338,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
 
     Widget get _togglePhotoVisibilityButton =>
-      _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
-        onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+      _visibilityDropdown(_ProfileField.photoUrl,
+        buttonPadding: EdgeInsets.only(left: 8, right: 6, top: 10, bottom: 10),
+        buttonInnerIconPadding: 8
       );
+      /*_photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
+        onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+      );*/
 
     Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
       InkWell(onTap: onTap, child:
@@ -352,8 +363,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           ),
         )
       );
-
-    static const double _buttonIconSize = 16;
 
     Widget get _staticNameWidget =>
       Text(_staicNameText ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
@@ -764,13 +773,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   static Widget? get _publicDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
   static Widget? get _privateDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.mediumGray2, size: _buttonIconSize);
   static Widget? get _lockDropdownIcon => Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize);
-  static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2);
+  static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _dropdownButtonChevronIconSize);
   static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _buttonIconSize);
   static Widget? get _redioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _buttonIconSize);
 
   //static  Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
-  Widget _visibilityDropdown(_ProfileField field, { bool locked = false }) =>
+  Widget _visibilityDropdown(_ProfileField field, {
+      bool locked = false,
+      EdgeInsetsGeometry buttonPadding = _dropdownButtonPadding,
+      double buttonInnerIconPadding = _dropdownButtonInnerIconPaddingX,
+    }) =>
     DropdownButtonHideUnderline(child:
       DropdownButton2<Auth2FieldVisibility>(
         dropdownStyleData: DropdownStyleData(
@@ -778,22 +791,29 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           direction: DropdownDirection.left,
           decoration: _controlDecoration,
         ),
-        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field),
+        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field,
+          padding: buttonPadding,
+          innerIconPadding: buttonInnerIconPadding,
+        ),
         isExpanded: false,
         items: _visibilityDropdownItems(field),
         onChanged: ((_fieldTextNotEmpty[field] == true) && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(field, visibility) : null,
       ),
     );
 
-  Widget _visibilityDropdownButton(_ProfileField field, { bool locked = false }) =>
+  Widget _visibilityDropdownButton(_ProfileField field, {
+      bool locked = false,
+      EdgeInsetsGeometry padding = _dropdownButtonPadding,
+      double innerIconPadding = _dropdownButtonInnerIconPaddingX,
+    }) =>
     Container(decoration: _controlDecoration, child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 15, bottom: 15), child:
+      Padding(padding: padding, child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
             Center(child: _visibilityDropdownIcon(field, locked: locked),)
           ),
-          Padding(padding: EdgeInsets.only(left: 12), child:
-            SizedBox(width: 10, height: 10, child:
+          Padding(padding: EdgeInsets.only(left: innerIconPadding), child:
+            SizedBox(width: _dropdownButtonChevronIconSize, height: _dropdownButtonChevronIconSize, child:
               Center(child:
                 locked ? null : _chevronDropdownIcon,
               )
@@ -868,13 +888,11 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         }
       }
     }
-    double dropdownItemWidth = (maxTextWidth * 5 / 3) + 2 * (_buttonIconSize + _dropdownItemInnerIconPaddingX) + _dropdownMenuPadding.horizontal;
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + 2 * (_buttonIconSize + _dropdownItemInnerIconPaddingX) + _dropdownMenuItemPadding.horizontal;
     return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
   }
 
 
-  EdgeInsetsGeometry get _dropdownMenuPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-  double get _dropdownItemInnerIconPaddingX => 6;
   TextStyle? get _selectedDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
   TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
 
