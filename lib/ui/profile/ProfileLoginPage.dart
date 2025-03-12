@@ -24,6 +24,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileLoginPage extends StatefulWidget {
+  static const String notifyProfileInfo = "edu.illinois.rokwire.profile.info";
+
   final EdgeInsetsGeometry margin;
 
   ProfileLoginPage({super.key, this.margin = const EdgeInsets.all(16) });
@@ -268,16 +270,24 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
-          RoundedButton(
-            label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
-            backgroundColor: Styles().colors.gradientColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
-            contentWeight: 0.45,
-            conentAlignment: MainAxisAlignment.start,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectClicked
-          )
+          Row(children: [ Expanded(child:
+            Wrap(alignment: WrapAlignment.start, spacing: 8, runSpacing: 8, children: [
+              CompactRoundedButton(
+                label: Localization().getStringEx("panel.settings.home.net_id.button.profile", "View My Profile"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
+              backgroundColor: Styles().colors.gradientColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
+                onTap: _onViewProfileClicked
+              ),
+              CompactRoundedButton(
+                label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
+              backgroundColor: Styles().colors.gradientColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
+                onTap: _onDisconnectClicked
+              ),
+            ],),
+          ),],),
         ));
       }
     }
@@ -435,6 +445,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   }
 
   void _onDisconnectClicked() {
+    Analytics().logSelect(target: 'Sign Out');
     if (Auth2().isOidcLoggedIn) {
       Analytics().logSelect(target: "Disconnect netId");
     } else if (Auth2().isCodeLoggedIn) {
@@ -449,6 +460,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         Auth2().logout();
       }
     });
+  }
+
+  void _onViewProfileClicked() {
+    Analytics().logSelect(target: 'View Profile');
+    NotificationService().notify(ProfileLoginPage.notifyProfileInfo);
   }
 
   // Linked

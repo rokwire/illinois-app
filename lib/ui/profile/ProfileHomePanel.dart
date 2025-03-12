@@ -91,6 +91,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       ProfileInfoWrapperPage.notifySignIn,
+      ProfileLoginPage.notifyProfileInfo,
     ]);
 
     if (_isContentItemEnabled(widget.content)) {
@@ -123,6 +124,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     else if (name == ProfileInfoWrapperPage.notifySignIn) {
       setStateIfMounted(() {
         _selectedContent = _lastSelectedContent = ProfileContent.login;
+      });
+    }
+    else if (name == ProfileLoginPage.notifyProfileInfo) {
+      setStateIfMounted(() {
+        _selectedContent = _lastSelectedContent = ProfileContent.profile;
       });
     }
   }

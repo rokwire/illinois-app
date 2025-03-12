@@ -159,6 +159,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased - Illinois
 ### Changed
 - Refactored onboarding service [#4826](https://github.com/rokwire/illinois-app/issues/4826).
+- Use dropdown buttons for profile privacy edit [#4859](https://github.com/rokwire/illinois-app/issues/4859).
 
 ## [6.2.0] - 2025-02-25
 ### Fixed
@@ -173,6 +174,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged FlexUI rules for SafeWalks availability in quick actions menu [#4875](https://github.com/rokwire/illinois-app/issues/4875).
 ### Removed
 - Azure Assistant provider [#4876](https://github.com/rokwire/illinois-app/issues/4876).
+### Added
+- Added pinning option when editing your own group admin post [#4807](https://github.com/rokwire/illinois-app/issues/4807).
+- Added "View My Profile" button to Sign In/Out page in Profile panel [#4872](https://github.com/rokwire/illinois-app/issues/4872).
 
 ## [6.1.68] - 2025-03-07
 - Update Profile Info UX for other login types than OIDC [#4847](https://github.com/rokwire/illinois-app/issues/4847).

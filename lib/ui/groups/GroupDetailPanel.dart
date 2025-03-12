@@ -1963,7 +1963,6 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
-        pinned: post.pinned,
         isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
       ));
       }

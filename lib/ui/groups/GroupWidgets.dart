@@ -1047,20 +1047,18 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 enum GroupPostCardDisplayMode { list, page }
 class GroupPostCard extends StatefulWidget {
   final Post? post;
-  final List<Reaction>? postReactions;
   final Group group;
   final bool? isAdmin;
   final bool showImage;
   final bool isReply;
   final bool? isClickable;
-  final bool? pinned;
   final GroupPostCardDisplayMode displayMode;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.postReactions, this.pinned, this.showImage = true, this.isReply = false, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.showImage = true, this.isReply = false, this.displayMode = GroupPostCardDisplayMode.list}) :
     super(key: key);
 
   @override
@@ -1069,13 +1067,6 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   // static const double _smallImageSize = 64;
-  late List<Reaction> _reactions;
-
-  @override
-  void initState() {
-    _reactions = widget.postReactions ?? [];
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1176,7 +1167,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
                               )
                             ),
                             Visibility(
@@ -1261,7 +1252,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReactions: _reactions,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
   }
 
