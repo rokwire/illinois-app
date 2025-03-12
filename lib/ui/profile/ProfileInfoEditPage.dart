@@ -242,7 +242,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       if (_showPrivacyControls)
         Positioned.fill(child:
           Align(alignment: Alignment.bottomRight, child:
-            _togglePhotoVisibilityButton
+            _editPhotoVisibilityButton
           )
         )
     ],) : Container();
@@ -337,14 +337,20 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Analytics().logAlert(text: _clearPhotoPrompt(language: 'en'), selection: 'OK');
     }
 
-    Widget get _togglePhotoVisibilityButton =>
+    Widget get _editPhotoVisibilityButton =>
+      _photoVisibilityDropdown; // _photoVisibilityToggleButton
+
+    Widget get _photoVisibilityDropdown =>
       _visibilityDropdown(_ProfileField.photoUrl,
         buttonPadding: EdgeInsets.only(left: 8, right: 6, top: 10, bottom: 10),
         buttonInnerIconPadding: 8
       );
-      /*_photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
-        onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
-      );*/
+
+    // ignore: unused_element
+    Widget get _photoVisibilityToggleButton =>
+    _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
+      onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+    );
 
     Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
       InkWell(onTap: onTap, child:
@@ -718,11 +724,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     );
 
   Widget _visibilityButton(_ProfileField field, { bool locked = false }) =>
-    _visibilityDropdown(field, locked: locked);
-    /*_iconButton(
+    _visibilityDropdown(field, locked: locked); // _visibilityToggleButton(field, locked: locked);
+
+  // ignore: unused_element
+  Widget _visibilityToggleButton(_ProfileField field, { bool locked = false }) =>
+    _iconButton(
       icon: _visibilityIcon(field, locked: locked),
       onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
-    );*/
+    );
 
   Widget _iconButton({ Widget? icon, void Function()? onTap, bool progress = false}) =>
     InkWell(onTap: onTap, child:
