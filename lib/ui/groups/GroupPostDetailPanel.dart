@@ -42,12 +42,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
-  final List<Reaction>? postReactions; //TBD load from bb
   final Comment? focusedReply;
   final Group group;
   final bool hidePostOptions;
 
-  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.postReactions, this.hidePostOptions = false});
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -259,7 +258,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 group: widget.group,
                                 isClickable: false,
                                 displayMode: GroupPostCardDisplayMode.page,
-                                postReactions: widget.postReactions,
                                 isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
