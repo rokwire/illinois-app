@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -71,6 +72,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   AudioPlayer? _audioPlayer;
 
   double _screenInsetsBottom = 0;
+  double? _visibilityDropdownItemsWidth;
   Timer? _onScreenInsetsBottomChangedTimer;
 
   final Map<Auth2LoginType, Set<_ProfileField>> fieldAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
@@ -160,6 +162,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _onScreenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 100), (){
         _onScreenInsetsBottomChangedTimer = null;
         setStateIfMounted(() {});
+      });
+    }
+
+    double visibilityDropdownItemsWidth = _evaluateVisibilityDropdownItemsWidth();
+    if (_visibilityDropdownItemsWidth != visibilityDropdownItemsWidth) {
+      setStateIfMounted(() {
+        _visibilityDropdownItemsWidth = visibilityDropdownItemsWidth;
       });
     }
   }
@@ -764,7 +773,11 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget _visibilityDropdown(_ProfileField field, { bool locked = false }) =>
     DropdownButtonHideUnderline(child:
       DropdownButton2<Auth2FieldVisibility>(
-        dropdownStyleData: DropdownStyleData(width: 240),
+        dropdownStyleData: DropdownStyleData(
+          width: _visibilityDropdownItemsWidth ??= _evaluateVisibilityDropdownItemsWidth(),
+          direction: DropdownDirection.left,
+          decoration: _controlDecoration,
+        ),
         customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field),
         isExpanded: false,
         items: _visibilityDropdownItems(field),
@@ -815,21 +828,55 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       value: visibility,
       child: Semantics(label: visibility.displayText, container: true, button: true, child:
         Row(mainAxisSize: MainAxisSize.max, children: [
-          Padding(padding: EdgeInsets.only(right: 6), child:
-            visibility.displayDropdownItemIcon
+          Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
+            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+              Center(child: visibility.displayDropdownItemIcon)
+            )
           ),
-          Text(visibility.displayText,
-            overflow: TextOverflow.ellipsis,
-            style: selected ?
-              Styles().textStyles.getTextStyle("widget.message.regular.fat") :
-              Styles().textStyles.getTextStyle("widget.message.regular"),
-            semanticsLabel: "",
+          Expanded(child:
+            Text(visibility.displayText,
+              overflow: TextOverflow.ellipsis,
+              style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
+              semanticsLabel: "",
+            ),
           ),
-          Padding(padding: EdgeInsets.only(left: 6), child:
-            selected ? _redioOnDropdownIcon : _redioOffDropdownIcon
+          Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
+            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+              Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+            )
           )
         ],)
     ));
+
+  double _evaluateVisibilityDropdownItemsWidth() {
+    double maxTextWidth = 0;
+    for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+        final Size sizeFull = (TextPainter(
+          text: TextSpan(
+            text: fieldVisibility.displayText,
+            style: _selectedDropdownItemTextStyle,
+          ),
+          textScaler: MediaQuery
+              .of(context)
+              .textScaler,
+          textDirection: TextDirection.ltr,
+        )
+          ..layout()).size;
+        if (maxTextWidth < sizeFull.width) {
+          maxTextWidth = sizeFull.width;
+        }
+      }
+    }
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + 2 * (_buttonIconSize + _dropdownItemInnerIconPaddingX) + _dropdownMenuPadding.horizontal;
+    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+  }
+
+
+  EdgeInsetsGeometry get _dropdownMenuPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  double get _dropdownItemInnerIconPaddingX => 6;
+  TextStyle? get _selectedDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
+  TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
 
   void _onDropdownFieldVisibility(_ProfileField field, Auth2FieldVisibility? visibility) {
     Analytics().logSelect(target: 'Select $field Visibility $visibility');
@@ -839,7 +886,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
 
-  Decoration get _controlDecoration => BoxDecoration(
+  BoxDecoration get _controlDecoration => BoxDecoration(
     color: Styles().colors.white,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8)),
