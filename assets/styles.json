@@ -296,6 +296,7 @@
     "widget.item.medium.extra_fat": { "font_family": "extra_bold", "size": 18.0, "color": "textBackground"},
     "widget.item.medium": { "font_family": "regular", "size": 18.0, "color": "textBackground"},
     "widget.item.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textBackground"},
+    "widget.item.regular.semi_fat": { "font_family": "semi_bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
     "widget.item.regular_underline.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline"},

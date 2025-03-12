@@ -855,45 +855,58 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   DropdownMenuItem<Auth2FieldVisibility> _visibilityDropdownItem(Auth2FieldVisibility visibility, { bool selected = false}) =>
     DropdownMenuItem<Auth2FieldVisibility>(
       value: visibility,
-      child: Semantics(label: visibility.displayText, container: true, button: true, child:
-        Row(mainAxisSize: MainAxisSize.max, children: [
-          Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
-            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-              Center(child: visibility.displayDropdownItemIcon)
-            )
-          ),
-          Expanded(child:
-            Text(visibility.displayText,
-              overflow: TextOverflow.ellipsis,
-              style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
-              semanticsLabel: "",
+      child: Semantics(label: visibility.semanticLabel, container: true, button: true, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisSize: MainAxisSize.max, children: [
+            Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: visibility.displayDropdownItemIcon)
+              )
             ),
-          ),
-          Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
-            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-              Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+            Expanded(child:
+              Text(visibility.displayTitle,
+                overflow: TextOverflow.ellipsis,
+                style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+              )
             )
-          )
+          ],),
+          if (visibility.displayDescription.isNotEmpty)
+            Padding(padding: EdgeInsets.symmetric(horizontal: _dropdownItemInnerIconPaddingX + _buttonIconSize), child:
+              Text(visibility.displayDescription,
+                overflow: TextOverflow.ellipsis,
+                style: _descriptionDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            )
         ],)
-    ));
+      ),
+    );
 
   double _evaluateVisibilityDropdownItemsWidth() {
     double maxTextWidth = 0;
     for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values) {
       if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
-        final Size sizeFull = (TextPainter(
-          text: TextSpan(
-            text: fieldVisibility.displayText,
-            style: _selectedDropdownItemTextStyle,
-          ),
-          textScaler: MediaQuery
-              .of(context)
-              .textScaler,
+        final Size textSizeFull = (TextPainter(
+          text: TextSpan(text: fieldVisibility.displayTitle, style: _selectedDropdownItemTextStyle,),
+          textScaler: MediaQuery.of(context).textScaler,
           textDirection: TextDirection.ltr,
-        )
-          ..layout()).size;
-        if (maxTextWidth < sizeFull.width) {
-          maxTextWidth = sizeFull.width;
+        )..layout()).size;
+        if (maxTextWidth < textSizeFull.width) {
+          maxTextWidth = textSizeFull.width;
+        }
+        final Size descriptionSizeFull = (TextPainter(
+          text: TextSpan(text: fieldVisibility.displayDescription, style: _selectedDropdownItemTextStyle,),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+        if (maxTextWidth < descriptionSizeFull.width) {
+          maxTextWidth = descriptionSizeFull.width;
         }
       }
     }
@@ -902,8 +915,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
 
-  TextStyle? get _selectedDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
-  TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
+  TextStyle? get _selectedDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.extra_fat");
+  TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.semi_fat");
+  TextStyle? get _descriptionDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.small.semi_fat");
 
   void _onDropdownFieldVisibility(_ProfileField field, Auth2FieldVisibility? visibility) {
     Analytics().logSelect(target: 'Select $field Visibility $visibility');
@@ -1346,13 +1360,25 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
 // _Auth2FieldVisibilityUI
 
 extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
-  String get displayText {
+
+  String get displayTitle {
     switch(this) {
-      case Auth2FieldVisibility.public: return "Public";
-      case Auth2FieldVisibility.connections: return "Only my connections";
-      case Auth2FieldVisibility.private: return "Only me";
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.title', 'Public');
+      case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.title', 'Only My Connections');
+      case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.title', 'Only me');
     }
   }
+
+  String get displayDescription {
+    switch(this) {
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Anyone can view');
+      case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
+      case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
+    }
+  }
+
+  String get semanticLabel =>
+    "$displayTitle $displayDescription";
 
   Widget? get displayDropdownItemIcon {
     switch(this) {

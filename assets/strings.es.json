@@ -2322,6 +2322,12 @@
     "panel.profile.info.directory_visibility.public.text": "Public",
     "panel.profile.info.directory_visibility.private.text": "Private",
     "panel.profile.info.directory_visibility.not_enabled.text": "Not Enabled",
+    "panel.profile.info.directory_visibility.dropdown.public.title": "Public",
+    "panel.profile.info.directory_visibility.dropdown.public.description": "Anyone can view",
+    "panel.profile.info.directory_visibility.dropdown.connections.title": "Only My Connections",
+    "panel.profile.info.directory_visibility.dropdown.connections.description": "",
+    "panel.profile.info.directory_visibility.dropdown.private.title": "Only me",
+    "panel.profile.info.directory_visibility.dropdown.private.description": "",
     "panel.profile.info.directory_visibility.toggle.failed.text": "Failed to update directory visibility.",
 
     "panel.profile.info.share.command.button.save.text": "Save to Photos",
