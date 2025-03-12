@@ -720,7 +720,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget? _visibilityIcon(_ProfileField field, { bool locked = false} ) {
     if (locked) {
       return _lockIcon;
-    } else if (isFieldVisibilityPermitted(field)) {
+    } else if (isProfileFieldVisibilityPermitted(field)) {
       return _publicIcon;
     } else {
       return _privateIcon;
@@ -730,15 +730,20 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget? _visibilityDropdownIcon(_ProfileField field, { bool locked = false} ) {
     if (locked) {
       return _lockIcon;
-    } else if (isFieldVisibilityPermitted(field)) {
+    } else if (isProfileFieldVisibilityPermitted(field)) {
       return _publicDropdownIcon;
     } else {
       return _privateDropdownIcon;
     }
   }
 
-  bool isFieldVisibilityPermitted(_ProfileField field) =>
-      _permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true);
+  bool isProfileFieldVisibilityPermitted(_ProfileField field) =>
+    _permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true);
+
+  Auth2FieldVisibility profileFieldVisibility(_ProfileField field) {
+    Auth2FieldVisibility? profileFieldVisibility = _fieldVisibilities[field];
+    return ((_fieldTextNotEmpty[field] == true) && (profileFieldVisibility != null) && _permittedVisibility.contains(profileFieldVisibility)) ? profileFieldVisibility : Auth2FieldVisibility.private;
+  }
 
   static Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
   static Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
@@ -795,11 +800,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       );
 
   List<DropdownMenuItem<Auth2FieldVisibility>> _visibilityDropdownItems(_ProfileField field) {
-    bool public = isFieldVisibilityPermitted(field);
-    return <DropdownMenuItem<Auth2FieldVisibility>>[
-      _visibilityDropdownItem(Auth2FieldVisibility.public, selected: public),
-      _visibilityDropdownItem(Auth2FieldVisibility.private, selected: !public),
-    ];
+    List<DropdownMenuItem<Auth2FieldVisibility>> items = <DropdownMenuItem<Auth2FieldVisibility>>[];
+    Auth2FieldVisibility selectedFieldVisibility = profileFieldVisibility(field);
+    for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values.reversed) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+        items.add(_visibilityDropdownItem(fieldVisibility, selected: selectedFieldVisibility == fieldVisibility));
+      }
+    }
+    return items;
   }
 
   DropdownMenuItem<Auth2FieldVisibility> _visibilityDropdownItem(Auth2FieldVisibility visibility, { bool selected = false}) =>
