@@ -1098,6 +1098,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Visibility(visible: widget.post?.creatorId != null,
                                 child: Padding(padding: EdgeInsets.only(left: 12, top: 12),
                                   child: GroupMemberProfileInfoWidget(
+                                    key: ValueKey(widget.post?.creatorId),
                                     name: widget.post?.creatorName,
                                     userId: widget.post?.creatorId,
                                     isAdmin: widget.isAdmin,
@@ -1330,6 +1331,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 Expanded(child:
                 Visibility(visible: widget.reply?.creatorId != null,
                     child: GroupMemberProfileInfoWidget(
+                      key: ValueKey(widget.reply?.creatorId),
                       name: widget.reply?.creatorName,
                       userId: widget.reply?.creatorId,
                       isAdmin: widget.creator?.isAdmin == true,
