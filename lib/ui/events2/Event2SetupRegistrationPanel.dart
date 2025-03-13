@@ -14,6 +14,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/ext/uri.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -321,7 +322,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     Uri? uri = controller.text.isNotEmpty ? Uri.tryParse(controller.text.trim()) : null;
     if (uri != null) {
-      Uri? fixedUri = UrlUtils.fixUri(uri);
+      Uri? fixedUri = uri.fix();
       if (fixedUri != null) {
         controller.text = fixedUri.toString();
         uri = fixedUri;

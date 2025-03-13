@@ -30,6 +30,7 @@ import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Roster.dart';
+import 'package:rokwire_plugin/ext/uri.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

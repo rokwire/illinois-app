@@ -30,6 +30,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/ext/uri.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -926,12 +927,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _launchUrl(String? url, { BuildContext? context, void Function(bool progress)? updateProgress }) {
-    Uri? uri = UrlUtils.parseUri(url?.trim());
+    Uri? uri = UriExt.parse(url?.trim());
     if (uri != null) {
       if (updateProgress != null) {
         updateProgress(true);
       }
-      UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+      uri.fixAsync().then((Uri? fixedUri) {
         if (updateProgress != null) {
           updateProgress(false);
         }

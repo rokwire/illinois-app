@@ -29,6 +29,7 @@ import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/ext/uri.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -375,12 +376,12 @@ class Event2CreatePanel extends StatefulWidget {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     hideKeyboard(context);
     if (controller.text.isNotEmpty) {
-      Uri? uri = UrlUtils.parseUri(controller.text);
+      Uri? uri = UriExt.parse(controller.text);
       if (uri != null) {
         if (updateProgress != null) {
           updateProgress(true);
         }
-         UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+        uri.fixAsync().then((Uri? fixedUri) {
           if (updateProgress != null) {
             updateProgress(false);
           }

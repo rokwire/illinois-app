@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:rokwire_plugin/ext/uri.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
