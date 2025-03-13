@@ -155,6 +155,7 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
           Row(children: [
             Visibility(visible: widget.poll?.creatorUserUuid != null,
                 child: GroupMemberProfileInfoWidget(
+                    key: ValueKey(widget.poll?.pollId),
                     name: widget.poll?.creatorUserName,
                     userId: widget.poll?.creatorUserUuid,
                     isAdmin: widget.isAdmin,
