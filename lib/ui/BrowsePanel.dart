@@ -923,7 +923,12 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSafewalkRequest(BuildContext context) {
     Analytics().logSelect(target: "Request a SafeWalk");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetyHomePanel()));
+    if (FlexUI().isSafeWalkAvailable) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetyHomePanel()));
+    }
+    else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
+    }
   }
 
   static void _onTapSafeRides(BuildContext context) {
@@ -932,16 +937,25 @@ class _BrowseEntry extends StatelessWidget {
     if (safeRidesGuideEntry != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry)));
     }
+    else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.saferides.not_available.text", "SafeRides feature is not currently available."));
+    }
   }
 
   static void _onTapSafetyResources(BuildContext context) {
     Analytics().logSelect(target: "Safety Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
-    )));
+    List<Map<String, dynamic>>? safetyResourcesList = Guide().safetyResourcesList;
+    if (CollectionUtils.isNotEmpty(safetyResourcesList)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+        contentList: safetyResourcesList,
+        contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
+        contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+        favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
+      )));
+    }
+    else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safety_resources.not_available.text", "Safety Resources are not currently available."));
+    }
   }
 
   static void _onTapPublicSurveys(BuildContext context) {

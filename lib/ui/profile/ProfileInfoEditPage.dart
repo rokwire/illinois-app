@@ -1,7 +1,9 @@
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
@@ -70,6 +72,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   AudioPlayer? _audioPlayer;
 
   double _screenInsetsBottom = 0;
+  double? _visibilityDropdownItemsWidth;
   Timer? _onScreenInsetsBottomChangedTimer;
 
   final Map<Auth2LoginType, Set<_ProfileField>> fieldAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
@@ -85,9 +88,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   static Set<_ProfileField> _emailFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
   static Set<_ProfileField> _phoneFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
 
+  static const double _buttonIconSize = 16;
+  static const double _dropdownItemInnerIconPaddingX = 6;
+  static const double _dropdownButtonInnerIconPaddingX = 12;
+  static const double _dropdownButtonChevronIconSize = 10;
+  static const EdgeInsetsGeometry _dropdownMenuItemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry _dropdownButtonPadding = const EdgeInsets.only(left: 16, right: 8, top: 15, bottom: 15);
+
   bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
-
-
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
@@ -161,6 +169,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         setStateIfMounted(() {});
       });
     }
+
+    double visibilityDropdownItemsWidth = _evaluateVisibilityDropdownItemsWidth();
+    if (_visibilityDropdownItemsWidth != visibilityDropdownItemsWidth) {
+      setStateIfMounted(() {
+        _visibilityDropdownItemsWidth = visibilityDropdownItemsWidth;
+      });
+    }
   }
 
   @override
@@ -208,7 +223,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
     Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
-      Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
           photoUrl: _photoImageUrl,
@@ -219,13 +234,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       ),
       Positioned.fill(child:
         Align(alignment: _showPrivacyControls ? Alignment.bottomLeft : Alignment.bottomRight, child:
-          _editPhotoButton
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+            _editPhotoButton
+          )
         )
       ),
       if (_showPrivacyControls)
         Positioned.fill(child:
           Align(alignment: Alignment.bottomRight, child:
-            _togglePhotoVisibilityButton
+            _editPhotoVisibilityButton
           )
         )
     ],) : Container();
@@ -320,10 +337,20 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Analytics().logAlert(text: _clearPhotoPrompt(language: 'en'), selection: 'OK');
     }
 
-    Widget get _togglePhotoVisibilityButton =>
-      _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
-        onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+    Widget get _editPhotoVisibilityButton =>
+      _photoVisibilityDropdown; // _photoVisibilityToggleButton
+
+    Widget get _photoVisibilityDropdown =>
+      _visibilityDropdown(_ProfileField.photoUrl,
+        buttonPadding: EdgeInsets.only(left: 8, right: 6, top: 10, bottom: 10),
+        buttonInnerIconPadding: 8
       );
+
+    // ignore: unused_element
+    Widget get _photoVisibilityToggleButton =>
+    _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
+      onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+    );
 
     Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
       InkWell(onTap: onTap, child:
@@ -342,8 +369,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           ),
         )
       );
-
-    static const double _buttonIconSize = 16;
 
     Widget get _staticNameWidget =>
       Text(_staicNameText ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
@@ -657,7 +682,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         TextSpan(style: Styles().textStyles.getTextStyle('widget.title.tiny.fat.spaced'), children: [
           TextSpan(text: title?.toUpperCase()),
           if (hint?.isNotEmpty == true)
-
             TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.tiny'))
         ]),
       ),
@@ -700,6 +724,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     );
 
   Widget _visibilityButton(_ProfileField field, { bool locked = false }) =>
+    _visibilityDropdown(field, locked: locked); // _visibilityToggleButton(field, locked: locked);
+
+  // ignore: unused_element
+  Widget _visibilityToggleButton(_ProfileField field, { bool locked = false }) =>
     _iconButton(
       icon: _visibilityIcon(field, locked: locked),
       onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
@@ -719,23 +747,187 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget? _visibilityIcon(_ProfileField field, { bool locked = false} ) {
     if (locked) {
       return _lockIcon;
-    } else if (_permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true)) {
+    } else if (isProfileFieldVisibilityPermitted(field)) {
       return _publicIcon;
     } else {
       return _privateIcon;
     }
   }
 
-  Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
-  Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize);
-  Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
-  Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  //Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+  Widget? _visibilityDropdownIcon(_ProfileField field, { bool locked = false} ) {
+    if (locked) {
+      return _lockIcon;
+    } else if (isProfileFieldVisibilityPermitted(field)) {
+      return _publicDropdownIcon;
+    } else {
+      return _privateDropdownIcon;
+    }
+  }
 
-  Decoration get _controlDecoration => BoxDecoration(
+  bool isProfileFieldVisibilityPermitted(_ProfileField field) =>
+    _permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true);
+
+  Auth2FieldVisibility profileFieldVisibility(_ProfileField field) {
+    Auth2FieldVisibility? profileFieldVisibility = _fieldVisibilities[field];
+    return ((_fieldTextNotEmpty[field] == true) && (profileFieldVisibility != null) && _permittedVisibility.contains(profileFieldVisibility)) ? profileFieldVisibility : Auth2FieldVisibility.private;
+  }
+
+  static Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+  static Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+  static Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _publicDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+  static Widget? get _privateDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _lockDropdownIcon => Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _dropdownButtonChevronIconSize);
+  static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _buttonIconSize);
+  static Widget? get _redioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _buttonIconSize);
+
+  //static  Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+
+  Widget _visibilityDropdown(_ProfileField field, {
+      bool locked = false,
+      EdgeInsetsGeometry buttonPadding = _dropdownButtonPadding,
+      double buttonInnerIconPadding = _dropdownButtonInnerIconPaddingX,
+    }) =>
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<Auth2FieldVisibility>(
+        dropdownStyleData: DropdownStyleData(
+          width: _visibilityDropdownItemsWidth ??= _evaluateVisibilityDropdownItemsWidth(),
+          direction: DropdownDirection.left,
+          decoration: _controlDecoration,
+        ),
+        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field,
+          padding: buttonPadding,
+          innerIconPadding: buttonInnerIconPadding,
+        ),
+        isExpanded: false,
+        items: _visibilityDropdownItems(field),
+        onChanged: ((_fieldTextNotEmpty[field] == true) && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(field, visibility) : null,
+      ),
+    );
+
+  Widget _visibilityDropdownButton(_ProfileField field, {
+      bool locked = false,
+      EdgeInsetsGeometry padding = _dropdownButtonPadding,
+      double innerIconPadding = _dropdownButtonInnerIconPaddingX,
+    }) =>
+    Container(decoration: _controlDecoration, child:
+      Padding(padding: padding, child:
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+            Center(child: _visibilityDropdownIcon(field, locked: locked),)
+          ),
+          Padding(padding: EdgeInsets.only(left: innerIconPadding), child:
+            SizedBox(width: _dropdownButtonChevronIconSize, height: _dropdownButtonChevronIconSize, child:
+              Center(child:
+                locked ? null : _chevronDropdownIcon,
+              )
+            )
+          )
+        ],)
+      )
+    );
+
+  Widget get _visibilityDropdownLockedButton =>
+      Container(decoration: _controlDecoration, child:
+        Padding(padding: EdgeInsets.only(left: 23, right: 23, top: 15, bottom: 15), child:
+          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+            Center(child: _lockIcon,)
+          ),
+        )
+      );
+
+  List<DropdownMenuItem<Auth2FieldVisibility>> _visibilityDropdownItems(_ProfileField field) {
+    List<DropdownMenuItem<Auth2FieldVisibility>> items = <DropdownMenuItem<Auth2FieldVisibility>>[];
+    Auth2FieldVisibility selectedFieldVisibility = profileFieldVisibility(field);
+    for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values.reversed) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+        items.add(_visibilityDropdownItem(fieldVisibility, selected: selectedFieldVisibility == fieldVisibility));
+      }
+    }
+    return items;
+  }
+
+  DropdownMenuItem<Auth2FieldVisibility> _visibilityDropdownItem(Auth2FieldVisibility visibility, { bool selected = false}) =>
+    DropdownMenuItem<Auth2FieldVisibility>(
+      value: visibility,
+      child: Semantics(label: visibility.semanticLabel, container: true, button: true, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisSize: MainAxisSize.max, children: [
+            Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: visibility.displayDropdownItemIcon)
+              )
+            ),
+            Expanded(child:
+              Text(visibility.displayTitle,
+                overflow: TextOverflow.ellipsis,
+                style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+              )
+            )
+          ],),
+          if (visibility.displayDescription.isNotEmpty)
+            Padding(padding: EdgeInsets.symmetric(horizontal: _dropdownItemInnerIconPaddingX + _buttonIconSize), child:
+              Text(visibility.displayDescription,
+                overflow: TextOverflow.ellipsis,
+                style: _descriptionDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            )
+        ],)
+      ),
+    );
+
+  double _evaluateVisibilityDropdownItemsWidth() {
+    double maxTextWidth = 0;
+    for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+        final Size textSizeFull = (TextPainter(
+          text: TextSpan(text: fieldVisibility.displayTitle, style: _selectedDropdownItemTextStyle,),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+        if (maxTextWidth < textSizeFull.width) {
+          maxTextWidth = textSizeFull.width;
+        }
+        final Size descriptionSizeFull = (TextPainter(
+          text: TextSpan(text: fieldVisibility.displayDescription, style: _selectedDropdownItemTextStyle,),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+        if (maxTextWidth < descriptionSizeFull.width) {
+          maxTextWidth = descriptionSizeFull.width;
+        }
+      }
+    }
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + 2 * (_buttonIconSize + _dropdownItemInnerIconPaddingX) + _dropdownMenuItemPadding.horizontal;
+    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+  }
+
+
+  TextStyle? get _selectedDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.extra_fat");
+  TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.semi_fat");
+  TextStyle? get _descriptionDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.small.semi_fat");
+
+  void _onDropdownFieldVisibility(_ProfileField field, Auth2FieldVisibility? visibility) {
+    Analytics().logSelect(target: 'Select $field Visibility $visibility');
+    setState(() {
+      _fieldVisibilities[field] = visibility;
+    });
+  }
+
+
+  BoxDecoration get _controlDecoration => BoxDecoration(
     color: Styles().colors.white,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -1164,3 +1356,35 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     );
 }
 
+///////////////////////////////////////////
+// _Auth2FieldVisibilityUI
+
+extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
+
+  String get displayTitle {
+    switch(this) {
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.title', 'Public');
+      case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.title', 'Only My Connections');
+      case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.title', 'Only me');
+    }
+  }
+
+  String get displayDescription {
+    switch(this) {
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Anyone can view');
+      case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
+      case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
+    }
+  }
+
+  String get semanticLabel =>
+    "$displayTitle $displayDescription";
+
+  Widget? get displayDropdownItemIcon {
+    switch(this) {
+      case Auth2FieldVisibility.public: return ProfileInfoEditPageState._publicDropdownIcon;
+      case Auth2FieldVisibility.connections: return ProfileInfoEditPageState._lockDropdownIcon;
+      case Auth2FieldVisibility.private: return ProfileInfoEditPageState._lockDropdownIcon;
+    }
+  }
+}

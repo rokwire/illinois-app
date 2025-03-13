@@ -1039,18 +1039,16 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 enum GroupPostCardDisplayMode { list, page }
 class GroupPostCard extends StatefulWidget {
   final Post? post;
-  final List<Reaction>? postReactions;
   final Group group;
   final bool? isAdmin;
   final bool? isClickable;
-  final bool? pinned;
   final GroupPostCardDisplayMode displayMode;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.postReactions, this.pinned, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list}) :
     super(key: key);
 
   @override
@@ -1059,13 +1057,6 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   // static const double _smallImageSize = 64;
-  late List<Reaction> _reactions;
-
-  @override
-  void initState() {
-    _reactions = widget.postReactions ?? [];
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1097,6 +1088,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Visibility(visible: widget.post?.creatorId != null,
                                 child: Padding(padding: EdgeInsets.only(left: 12, top: 12),
                                   child: GroupMemberProfileInfoWidget(
+                                    key: ValueKey(widget.post?.creatorId),
                                     name: widget.post?.creatorName,
                                     userId: widget.post?.creatorId,
                                     isAdmin: widget.isAdmin,
@@ -1165,7 +1157,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
                               )
                             ),
                             Visibility(
@@ -1236,7 +1228,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReactions: _reactions,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
   }
 
@@ -1314,6 +1306,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 Expanded(child:
                 Visibility(visible: widget.reply?.creatorId != null,
                     child: GroupMemberProfileInfoWidget(
+                      key: ValueKey(widget.reply?.creatorId),
                       name: widget.reply?.creatorName,
                       userId: widget.reply?.creatorId,
                       isAdmin: widget.creator?.isAdmin == true,
@@ -2296,6 +2289,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
             Row(children: [
               Visibility(visible: widget.poll?.creatorUserUuid != null,
                   child: GroupMemberProfileInfoWidget(
+                    key: ValueKey(widget.poll?.pollId),
                     name: widget.poll?.creatorUserName,
                     userId: widget.poll?.creatorUserUuid,
                     isAdmin: widget.isAdmin,

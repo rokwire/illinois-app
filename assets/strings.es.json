@@ -358,7 +358,6 @@
     "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.label": "Pregunta al asistente de Illinois",
     "panel.assistant.content.conversation.google.label": "Pregunta al asistente de Google",
-    "panel.assistant.content.conversation.azure.label": "Pregúntele al Asistente de Azure",
     "panel.assistant.content.conversation.grok.label": "Pregunta al asistente de Grok",
     "panel.assistant.content.conversation.all.label": "Usar todos los asistentes",
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
@@ -1834,6 +1833,7 @@
     "panel.settings.home.account.options.payment":"Pago",
     "panel.settings.home.net_id.message":"Inicie sesión con su NetID",
     "panel.settings.home.net_id.button.disconnect":"Desconectar",
+    "panel.settings.home.net_id.button.profile":"View My Profile",
     "panel.settings.home.phone_ver.message":"Inicie sesión con su teléfono",
     "panel.settings.home.phone_ver.button.connect":"Verifique su número de teléfono móvil",
     "panel.settings.home.phone_ver.button.disconnect":"Desconectar",
@@ -2326,6 +2326,12 @@
     "panel.profile.info.directory_visibility.public.text": "Public",
     "panel.profile.info.directory_visibility.private.text": "Private",
     "panel.profile.info.directory_visibility.not_enabled.text": "Not Enabled",
+    "panel.profile.info.directory_visibility.dropdown.public.title": "Public",
+    "panel.profile.info.directory_visibility.dropdown.public.description": "Anyone can view",
+    "panel.profile.info.directory_visibility.dropdown.connections.title": "Only My Connections",
+    "panel.profile.info.directory_visibility.dropdown.connections.description": "",
+    "panel.profile.info.directory_visibility.dropdown.private.title": "Only me",
+    "panel.profile.info.directory_visibility.dropdown.private.description": "",
     "panel.profile.info.directory_visibility.toggle.failed.text": "Failed to update directory visibility.",
 
     "panel.profile.info.share.command.button.save.text": "Save to Photos",
@@ -4274,10 +4280,12 @@
 
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
+    "model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
+    "model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
+    "model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
     "model.assistant.provider.uiuc.label": "Illinois",
     "model.assistant.provider.google.label": "Google",
-    "model.assistant.provider.azure.label": "Azure",
     "model.assistant.provider.grok.label": "Grok",
     "model.assistant.provider.unknown.label": "Unknown",
 
