@@ -459,7 +459,6 @@
 	"panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"panel.assistant.content.conversation.label": "詢問伊利諾伊州助理",
 	"panel.assistant.content.conversation.google.label": "詢問 Google 助理",
-	"panel.assistant.content.conversation.azure.label": "詢問 Azure 助手",
 	"panel.assistant.content.conversation.grok.label": "詢問 Grok 助理",
 	"panel.assistant.content.conversation.all.label": "使用所有助手",
 	"panel.assistant.content.faqs.label": "伊利諾伊州助理常見問題解答",
@@ -1929,6 +1928,7 @@
 	"panel.settings.home.account.options.payment":"支付",
 	"panel.settings.home.net_id.message":"使用您的 NetID 登入",
 	"panel.settings.home.net_id.button.disconnect":"登出",
+	"panel.settings.home.net_id.button.profile":"View My Profile",
 	"panel.settings.home.phone_ver.message":"使用您的手机号码登入",
 	"panel.settings.home.phone_ver.button.connect":"验证您的手机号码",
 	"panel.settings.home.phone_ver.button.disconnect":"登出",
@@ -4457,10 +4457,12 @@
 
 	"model.safety.safewalks.title": "SafeWalks",
 	"model.safety.safewalks.request.action.text": "Request a SafeWalk",
+	"model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
+	"model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
+	"model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
 	"model.assistant.provider.uiuc.label": "Illinois",
 	"model.assistant.provider.google.label": "Google",
-	"model.assistant.provider.azure.label": "Azure",
 	"model.assistant.provider.grok.label": "Grok",
 	"model.assistant.provider.unknown.label": "Unknown",
 

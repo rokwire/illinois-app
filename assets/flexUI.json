@@ -55,7 +55,7 @@
 
 			"wallet": ["illini_id", "illini_id_faq", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "azure_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["uiuc_assistant", "google_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
@@ -103,7 +103,7 @@
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "privacy"],
+				"gies", "new_student", "canvas", "safer", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "safewalk_request", "privacy"],
 
 			"attributes": ["groups", "events"],
 			"attributes.groups": ["rso"],
@@ -214,7 +214,6 @@
 			},
 			"platform":{
 				"assistant.google_assistant"              : { "environment":  "dev"},
-				"assistant.azure_assistant"               : { "environment":  "dev"},
 				"assistant.grok_assistant"                : { "environment":  "dev"},
 				"assistant.all_assistants"                : { "environment":  "dev"}
 			},

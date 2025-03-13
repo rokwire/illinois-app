@@ -1488,7 +1488,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.8.2"
+    version: "1.8.3"
   roundcheckbox:
     dependency: "direct main"
     description:

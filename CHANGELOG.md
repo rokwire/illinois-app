@@ -5,10 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.69] - 2025-03-12
 ### Fixed
 - Show replies count for messages [#4844](https://github.com/rokwire/illinois-app/issues/4844).
 - WEB: Show image in posts and replies [#4841](https://github.com/rokwire/illinois-app/issues/4841).
 - Fixed Analytics logs for Event2 onboarding screen [#4501](https://github.com/rokwire/illinois-app/issues/4501).
+- Acknowledged FlexUI rules for SafeWalks availability in quick actions menu [#4875](https://github.com/rokwire/illinois-app/issues/4875).
+- Fix mismatched profile info in Post and Poll cards [#4870](https://github.com/rokwire/illinois-app/issues/4870).
+### Removed
+- Azure Assistant provider [#4876](https://github.com/rokwire/illinois-app/issues/4876).
+### Added
+- Added pinning option when editing your own group admin post [#4807](https://github.com/rokwire/illinois-app/issues/4807).
+- Added "View My Profile" button to Sign In/Out page in Profile panel [#4872](https://github.com/rokwire/illinois-app/issues/4872).
 
 ## [6.1.68] - 2025-03-07
 ### Changed
