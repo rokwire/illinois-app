@@ -740,7 +740,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _launchUrl(String? url, {BuildContext? context}) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
+      if (UrlUtils.canLaunchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         Uri? uri = Uri.tryParse(url!);
