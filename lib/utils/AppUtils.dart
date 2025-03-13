@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -30,6 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -489,4 +491,19 @@ class AppTextUtils {
 class PlatformUtils {
   static bool get isWeb => kIsWeb == true;
   static bool get isMobile => kIsWeb == false;
+}
+
+class AppLaunchUrl {
+  static void launchUrl({required BuildContext context, String? url,
+      String? title, String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
+    if (UrlUtils.isWebScheme(url) && await TrackingServices.isAllowed()) {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => WebPanel(url: url, title: title,
+                  analyticsName: analyticsName, analyticsSource: analyticsSource, analyticsFeature: analyticsFeature, showTabBar: showTabBar)));
+    } else {
+      UrlUtils.launchExternal(url);
+    }
+  }
 }
