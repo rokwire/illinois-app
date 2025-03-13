@@ -42,6 +42,7 @@ import 'package:neom/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:neom/ui/RootPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2RolesPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
@@ -289,11 +290,14 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (!Storage().onBoardingPassed! || !Auth2().isLoggedIn) {
+    else if (!Auth2().isLoggedIn || !Auth2().isPasskeyLinked) {
       return ProfileLoginPasskeyPanel(onboardingContext: _onboardingContext,);
     }
+    else if (!(ListUtils.contains(Auth2().prefs?.roles, UserRole.values) ?? false)) {
+      return Onboarding2RolesPanel(onboardingContext: _onboardingContext,);
+    }
     else if (StringUtils.isEmpty(Auth2().fullName)) {
-      return Onboarding2ProfileInfoPanel(onboardingContext: _onboardingContext);
+      return Onboarding2ProfileInfoPanel(onboardingContext: _onboardingContext,);
     }
     // else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
     //   return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);

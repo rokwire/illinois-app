@@ -19,36 +19,46 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neom/service/Config.dart';
+import 'package:neom/service/Onboarding2.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/SlantedWidget.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'package:neom/service/Analytics.dart';
 
-class ProfileLoginCodePanel extends StatefulWidget with OnboardingPanel {
-  @override
+class ProfileLoginCodePanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
   final Map<String, dynamic>? onboardingContext;
+
   final bool? linkIdentifier;
   final String? defaultIdentifierType;
   final String? identifier;
   final String? identifierId;
   final Function()? onFinish;
 
-  ProfileLoginCodePanel({super.key, this.onboardingContext, this.defaultIdentifierType, this.identifier, this.identifierId, this.linkIdentifier, this.onFinish});
+  ProfileLoginCodePanel({this.onboardingCode = 'login_code', this.onboardingContext, this.defaultIdentifierType, this.identifier, this.identifierId, this.linkIdentifier, this.onFinish}) :
+      super(key: GlobalKey<_ProfileLoginCodePanelState>());
+
+  GlobalKey<_ProfileLoginCodePanelState>? get globalKey => (super.key is GlobalKey<_ProfileLoginCodePanelState>) ?
+    (super.key as GlobalKey<_ProfileLoginCodePanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => !Auth2().isLoggedIn;
 
   @override
   State<StatefulWidget> createState() => _ProfileLoginCodePanelState();
-
-  @override
-  bool get onboardingCanDisplay => !Auth2().isLoggedIn;
 
   String? get identifierType => onboardingContext?["identifier_type"] ?? defaultIdentifierType;
 }
@@ -60,7 +70,7 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   String? _identifier;
   String? _errorMessage;
   bool? _linkIdentifier;
-  bool _isLoading = false;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -172,7 +182,7 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
           backgroundColor: Styles().colors.fillColorSecondary,
           textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
           onTap: () => _primaryButtonAction(context),
-          progress: _isLoading,
+          progress: _onboardingProgress,
           progressColor: Styles().colors.textLight,
           rightIconKey: null,
         ),
@@ -222,8 +232,8 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   }
 
   Future<void> _primaryButtonAction(BuildContext context) async {
-    if (!_isLoading) {
-      setState(() { _isLoading = true; });
+    if (!_onboardingProgress) {
+      setState(() { _onboardingProgress = true; });
 
       Analytics().logSelect(target: "Confirm ${widget.identifierType}");
       _clearErrorMessage();
@@ -264,7 +274,7 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
         //   });
         //   return;
         // }
-        setState(() { _isLoading = false; });
+        setState(() { _onboardingProgress = false; });
         _next();
       }
     }
@@ -275,6 +285,15 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
       _setErrorMessage(Localization().getStringEx("panel.settings.confirm_identifier.validation.phone_number.text", "Please enter your code"));
       return;
     }
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
   }
 
   void _next() {
@@ -297,13 +316,13 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
       }));
     } else {
       // just login if a passkey is already linked
-      Onboarding().next(context, widget);
+      Onboarding2().next(context, widget);
     }
   }
 
   void _setErrorMessage(String? msg) {
     setState(() {
-      _isLoading = false;
+      _onboardingProgress = false;
       _errorMessage = msg;
     });
   }

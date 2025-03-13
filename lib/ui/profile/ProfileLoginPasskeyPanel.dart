@@ -18,36 +18,41 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
+import 'package:neom/service/Onboarding2.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/SlantedWidget.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:neom/service/Analytics.dart';
 
-class ProfileLoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
-  @override
+class ProfileLoginPasskeyPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
   final Map<String, dynamic>? onboardingContext;
 
   final bool? link;
 
-  ProfileLoginPasskeyPanel({super.key, this.onboardingContext, this.link});
+  ProfileLoginPasskeyPanel({this.onboardingCode = 'login_passkey', this.onboardingContext, this.link}) :
+      super(key: GlobalKey<_ProfileLoginPasskeyPanelState>());
+
+  GlobalKey<_ProfileLoginPasskeyPanelState>? get globalKey => (super.key is GlobalKey<_ProfileLoginPasskeyPanelState>) ?
+    (super.key as GlobalKey<_ProfileLoginPasskeyPanelState>) : null;
+
+  @override
+  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
 
   @override
   State<StatefulWidget> createState() => _ProfileLoginPasskeyPanelState();
-
-  @override
-  bool get onboardingCanDisplay {
-    return !Auth2().isPasskeyLinked;
-  }
 }
 
 enum ResponseType { success, error, message }
@@ -59,16 +64,16 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
   Auth2PasskeyAccountState _state = Auth2PasskeyAccountState.exists;
 
   late bool _link;
-  bool _loading = false;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
     _link = widget.onboardingContext?["link"] ?? widget.link ?? (Auth2().isLoggedIn && !Auth2().isPasskeyLinked);
 
     if ((Storage().auth2PasskeySaved ?? false) && (widget.onboardingContext?["afterLogout"] != true) && !_link && !kIsWeb) {
-      _loading = true;
+      _onboardingProgress = true;
       Auth2().authenticateWithPasskey().then((result) {
-        _loading = false;
+        _onboardingProgress = false;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _trySignInCallback(context, result);
         });
@@ -168,7 +173,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
         backgroundColor: Styles().colors.fillColorSecondary,
         textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
         onTap: () => _primaryButtonAction(context),
-        progress: _loading,
+        progress: _onboardingProgress,
         progressColor: Styles().colors.textLight,
         rightIconKey: null,
       ),
@@ -327,7 +332,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
                 textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
                 rightIconKey: null,
                 onTap: () => _primaryButtonAction(context),
-                progress: _loading,
+                progress: _onboardingProgress,
                 progressColor: Styles().colors.textLight,
               ),
             ),
@@ -400,7 +405,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
   }
 
   Future<void> _tryLink(BuildContext context) async {
-    if (!_loading) {
+    if (!_onboardingProgress) {
       Analytics().logSelect(target: "Sign Up");
       _clearResponseMessage();
 
@@ -418,7 +423,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
       }
       Map<String, dynamic> params = {'display_name': StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName : identifier};
       setState(() {
-        _loading = true;
+        _onboardingProgress = true;
       });
       Auth2LinkResult auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
       if (auth2linkResult.status == Auth2LinkResultStatus.succeeded) {
@@ -433,7 +438,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
         }
       }
       setState(() {
-        _loading = false;
+        _onboardingProgress = false;
       });
     }
   }
@@ -455,17 +460,17 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
   }
 
   Future<void> _trySignIn(BuildContext context) async {
-    if (!_loading) {
+    if (!_onboardingProgress) {
       Analytics().logSelect(target: "Sign In");
       _clearResponseMessage();
 
       setState(() {
-        _loading = true;
+        _onboardingProgress = true;
       });
       Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey();
       if (mounted) {
         setState(() {
-          _loading = false;
+          _onboardingProgress = false;
         });
         _trySignInCallback(context, result);
       }
@@ -511,8 +516,16 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
   //   _next(context);
   // }
 
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
   void _next(BuildContext context) {
-    // Hook this panels to Onboarding2
     Function? onContinue = widget.onboardingContext?["onContinueAction"];
     Function? onContinueEx = widget.onboardingContext?["onContinueActionEx"];
     if (onContinueEx != null) {
@@ -528,7 +541,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
       });
     }
     else {
-      Onboarding().next(context, widget);
+      Onboarding2().next(context, widget);
     }
   }
 

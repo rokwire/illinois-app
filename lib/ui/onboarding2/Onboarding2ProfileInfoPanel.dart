@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2ProfileInfoPanel({ this.onboardingCode = '', this.onboardingContext }) :
+  Onboarding2ProfileInfoPanel({ this.onboardingCode = 'profile_info', this.onboardingContext }) :
     super(key: GlobalKey<_Onboarding2ProfileInfoPanelState>());
 
   GlobalKey<_Onboarding2ProfileInfoPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ProfileInfoPanelState>) ?
@@ -29,14 +29,11 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
   @override
   set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => StringUtils.isEmpty(Auth2().fullName);
 
   @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
-
-  @override
-  bool get onboardingCanDisplay {
-    return StringUtils.isEmpty(Auth2().fullName);
-  }
 }
 
 class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {

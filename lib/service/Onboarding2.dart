@@ -3,23 +3,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/onboarding2/Onboadring2RolesPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2RolesPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2GetStartedPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2LoginNetIdPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2LoginPhoneConfirmPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2PrivacyShareActivityPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2PrivacyStoreActivityPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:neom/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
@@ -139,58 +130,30 @@ class Onboarding2Panel {
     if (code == "get_started") {
       return Onboarding2GetStartedPanel(onboardingCode: code, onboardingContext: context,);
     }
-    else if (code == "video_tutorial") {
-      return Onboarding2VideoTutorialPanel(onboardingCode: code, onboardingContext: context,);
-    }
     else if (code == "privacy_statement") {
       return Onboarding2PrivacyStatementPanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "privacy_location_services") {
-      return Onboarding2PrivacyLocationServicesPanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "privacy_store_activity") {
-      return Onboarding2PrivacyStoreActivityPanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "privacy_share_activity") {
-      return Onboarding2PrivacyShareActivityPanel(onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "privacy_level") {
       return Onboarding2PrivacyLevelPanel(onboardingCode: code, onboardingContext: context,);
     }
-    else if (code == "roles") {
-      return Onboarding2RolesPanel(onboardingCode: code, onboardingContext: context,);
+    else if (code == "privacy_location_services") {
+      return Onboarding2PrivacyLocationServicesPanel(onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "notifications_auth") {
       return Onboarding2AuthNotificationsPanel(onboardingCode: code, onboardingContext: context,);
     }
-    else if (code == "login_netid") {
-      return Onboarding2LoginNetIdPanel(onboardingCode: code, onboardingContext: context,);
+    else if (code == "roles") {
+      return Onboarding2RolesPanel(onboardingCode: code, onboardingContext: context,);
     }
-    else if (code == "login_phone_or_email_statement") {
-      return Onboarding2LoginPhoneOrEmailStatementPanel(onboardingCode: code, onboardingContext: context,);
+    else if (code == 'login_passkey') {
+      return ProfileLoginPasskeyPanel(onboardingCode: code, onboardingContext: context);
     }
-    else if (code == "login_phone_or_email") {
-      return Onboarding2LoginPhoneOrEmailPanel(onboardingCode: code, onboardingContext: context,);
+    else if (code == 'login_code') {
+      return ProfileLoginCodePanel(onboardingCode: code, onboardingContext: context);
     }
-    else if (code == "login_email") {
-      return Onboarding2LoginEmailPanel(onboardingCode: code, onboardingContext: context,);
+    else if (code == 'profile_info') {
+      return Onboarding2ProfileInfoPanel(onboardingCode: code, onboardingContext: context);
     }
-    else if (code == "login_phone") {
-      return Onboarding2LoginPhoneConfirmPanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "profile_info") {
-      return Onboarding2ProfileInfoPanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "research_questionnaire_participate_prompt") {
-      return Onboarding2ResearchQuestionnairePromptPanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "research_questionnaire") {
-      return Onboarding2ResearchQuestionnairePanel(onboardingCode: code, onboardingContext: context,);
-    }
-    else if (code == "research_questionnaire_acknowledgement") {
-      return Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingCode: code, onboardingContext: context,);
-    }
-
     else {
       return null;
     }

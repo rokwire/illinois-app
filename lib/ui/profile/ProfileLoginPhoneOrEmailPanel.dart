@@ -27,9 +27,6 @@ class ProfileLoginPhoneOrEmailPanel extends StatefulWidget with OnboardingPanel 
   ProfileLoginPhoneOrEmailPanel({this.onboardingContext, this.mode = SettingsLoginPhoneOrEmailMode.both, this.link, this.identifier, this.onFinish });
 
   _ProfileLoginPhoneOrEmailPanelState createState() => _ProfileLoginPhoneOrEmailPanelState();
-
-  @override
-  bool get onboardingCanDisplay => !Auth2().isLoggedIn;
 }
 
 class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmailPanel>  {

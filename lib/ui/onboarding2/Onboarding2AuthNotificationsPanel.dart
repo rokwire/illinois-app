@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
-import 'dart:io' show Platform;
+import 'package:universal_io/io.dart' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class Onboarding2AuthNotificationsPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2AuthNotificationsPanel({ this.onboardingCode = '', this.onboardingContext }) :
+  Onboarding2AuthNotificationsPanel({ this.onboardingCode = 'notifications_auth', this.onboardingContext }) :
     super(key: GlobalKey<_Onboarding2AuthNotificationsPanelState>());
 
   GlobalKey<_Onboarding2AuthNotificationsPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2AuthNotificationsPanelState>) ?
@@ -65,58 +68,99 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'Event info when you need it');
-    String notRightNow = Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.title', 'Not right now');
-    return Scaffold(backgroundColor: Styles().colors.background, body:
-      SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
-        Column(children: [
-          Expanded(child:
-            SingleChildScrollView(child:
-              Column(children: <Widget>[
-                Stack(children: <Widget>[
-                  Styles().images.getImage('header-notifications', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-                  OnboardingBackButton(padding: const EdgeInsets.all(16), onTap:_onTapBack),
-                ]),
-                Semantics(label: titleText, hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'), excludeSemantics: true, child:
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
-                    Align(alignment: Alignment.center, child:
-                      Text(titleText, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
-                    )
+    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'EVENT INFO WHEN YOU NEED IT');
+    String notRightNow = Localization().getStringEx(
+        'panel.onboarding.notifications.button.dont_allow.title',
+        'Not right now');
+    return Scaffold(
+        backgroundColor: Styles().colors.background,
+        body: SwipeDetector(
+            onSwipeLeft: _onboardingNext,
+            child: Column(
+              children: [
+                Expanded(child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                        Onboarding2TitleWidget(),
+                      ),
+                      Container(
+                        constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+                        child: Column(
+                            crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                            children: [
+                              Semantics(
+                                  label: titleText,
+                                  hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'),
+                                  excludeSemantics: true,
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          titleText,
+                                          style: Styles().textStyles.getTextStyle('panel.onboarding2.notifications.heading.title'),
+                                        ),
+                                      )
+                                  )
+                              ),
+                              Container(height: 12,),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
+                                child: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” groups and events.'),
+                                      style: Styles().textStyles.getTextStyle('widget.title.large'),
+                                    )),
+                              ),
+                            ]
+                        ),
+                      )
+                    ]
                   )
                 ),
-                Container(height: 12,),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
-                  Align(alignment: Alignment.topCenter, child:
-                    Text(Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'), textAlign: TextAlign.center, style:TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary),)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      SlantedWidget(
+                        color: Styles().colors.fillColorSecondary,
+                        child: RibbonButton(
+                          label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
+                          textAlign: TextAlign.center,
+                          hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
+                          textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          backgroundColor: Styles().colors.fillColorSecondary,
+                          progress: _onboardingProgress,
+                          onTap: _onTapReceiveNotifications,
+                          rightIconKey: null,
+                        ),
+                      ),
+                      InkWell(onTap: _onTapSkip,
+                        child: Semantics(
+                            label:notRightNow,
+                            hint:Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.hint', ''),
+                            button: true,
+                            excludeSemantics: true,
+                            child:Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Text(
+                                  notRightNow,
+                                  style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
+                                )
+                            )
+                        ),
+                      )
+                    ],
                   ),
-                ),
-              ]),
+                )
+              ],
             )
-          ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8), child:
-            Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-              RoundedButton(
-                label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
-                hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.surface,
-                progress: _onboardingProgress,
-                onTap: _onTapReceiveNotifications,
-              ),
-              InkWell(onTap: _onTapSkip, child:
-                Semantics(label: notRightNow, hint:Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.hint', ''), button: true, excludeSemantics: true, child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-                    Text(notRightNow, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid),)
-                  )
-                ),
-              ),
-            ],),
-          ),
-        ],)
-      )
-    );
+        ));
   }
 
   void _onTapReceiveNotifications() {
@@ -152,9 +196,9 @@ Future<bool> _requestAuthorization() async {
     return Dialog(child:
       Padding(padding: EdgeInsets.all(18), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx('app.title', 'Illinois'), style: TextStyle(fontSize: 24, color: Colors.black),),
+          Text(Localization().getStringEx('app.title', 'Illinois'), style: Styles().textStyles.getTextStyle('widget.dialog.message.large'),),
           Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-            Text(message ?? '', textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),),
+            Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
             TextButton(onPressed: _onTapDialogOK, child:
@@ -171,11 +215,6 @@ Future<bool> _requestAuthorization() async {
     Navigator.of(context).pop();
   }
 
-  void _onTapBack() {
-    Analytics().logSelect(target: 'Not right now') ;
-    _onboardingBack();
-  }
-
   void _onTapSkip() {
     Analytics().logSelect(target: 'Not right now') ;
     _onboardingNext(false);
@@ -190,7 +229,6 @@ Future<bool> _requestAuthorization() async {
     });
   }
 
-  void _onboardingBack() => Navigator.of(context).pop();
   void _onboardingNext([bool requestAuthorization = false]) async {
     bool goNext = requestAuthorization ? await _requestAuthorization() : true;
     if (goNext && mounted) {

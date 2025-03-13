@@ -56,7 +56,7 @@
 
 			"roles": ["neom_u", "talent_academy", "eri_f", "ec_12", "debug"],
 
-			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth", "profile_info"],
+			"onboarding2":["login_passkey", "login_code", "roles", "notifications_auth", "profile_info"],
 
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"new_student", "messages", "student", "assistant", "assistant_personalization", "privacy"],

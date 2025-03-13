@@ -1155,25 +1155,31 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
   // Returns true if we can close the UI, false if canceled.
+  // used for onboarding - skip save confirmation
   Future<bool> saveModified() async {
     FocusScope.of(context).unfocus();
 
     if (mounted && (_saving == false)) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+      if (StringUtils.isEmpty(profile.fullName)) {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile.info.dialog.missing.name.text', 'Please enter your full name.'));
+        return false;
+      }
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
           profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
         )
       );
 
-      bool? shouldSave = await _shouldSaveModified(
-        profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
-        privacyModified: (privacy != widget.privacy)
-      );
-      if (shouldSave == true) {
-        await _saveEdit(profile, privacy);
-      }
-      return (shouldSave != null);
+      // bool? shouldSave = await _shouldSaveModified(
+      //   profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
+      //   privacyModified: (privacy != widget.privacy)
+      // );
+      // if (shouldSave == true) {
+      await _saveEdit(profile, privacy);
+      // }
+      // return (shouldSave != null);
+      return true;
     }
     else {
       return true;
