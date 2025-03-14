@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as launcher_plugin;
 
 class AppAlert {
   
@@ -367,7 +367,7 @@ class AppPrivacyPolicy {
       if (Platform.isIOS) {
         Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
         if (privacyPolicyUri != null) {
-          return launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+          return launcher_plugin.launchUrl(privacyPolicyUri, mode: launcher_plugin.LaunchMode.externalApplication);
         }
         else {
           return false;
@@ -494,16 +494,30 @@ class PlatformUtils {
 }
 
 class AppLaunchUrl {
-  static void launchUrl({required BuildContext context, String? url,
-      String? title, String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
-    if (UrlUtils.isWebScheme(url) && await TrackingServices.isAllowed()) {
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) => WebPanel(url: url, title: title,
-                  analyticsName: analyticsName, analyticsSource: analyticsSource, analyticsFeature: analyticsFeature, showTabBar: showTabBar)));
-    } else {
-      UrlUtils.launchExternal(url);
+  static void launch({required BuildContext context, String? url, Uri? uri, String? title,
+      String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
+    if (uri == null) {
+      uri = UriExt.tryParse(url);
+    }
+    uri = uri?.fix() ?? uri;
+
+    if (uri != null) {
+      if (uri.isWebScheme && await TrackingServices.isAllowed()) {
+        Navigator.push(
+            context,
+            CupertinoPageRoute(
+                builder: (context) =>
+                    WebPanel(
+                        uri: uri,
+                        title: title,
+                        analyticsName: analyticsName,
+                        analyticsSource: analyticsSource,
+                        analyticsFeature: analyticsFeature,
+                        showTabBar: showTabBar)));
+      } else {
+        launcher_plugin.launchUrl(
+            uri, mode: Platform.isAndroid ? launcher_plugin.LaunchMode.externalApplication : launcher_plugin.LaunchMode.platformDefault);
+      }
     }
   }
 }

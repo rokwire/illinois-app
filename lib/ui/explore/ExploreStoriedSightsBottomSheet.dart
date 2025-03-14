@@ -809,7 +809,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         child: MarkdownBody(
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
-            AppLaunchUrl.launchUrl(url: href, context: context);
+            AppLaunchUrl.launch(url: href, context: context);
           },
           styleSheet: MarkdownStyleSheet(
             p: Styles().textStyles.getTextStyle("widget.description.regular"),
