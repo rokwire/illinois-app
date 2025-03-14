@@ -262,7 +262,7 @@
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.wallet.title": "Cartera",
     "panel.browse.section.wallet.description": "Your ID, bus pass, Illini Cash balance, and residence hall meal plan all in one place.",
-    "panel.browse.section.wellness.title": "Bienestar",
+    "panel.browse.section.wellness.title": "Salud y bienestar",
     "panel.browse.section.wellness.description": "Mantenga y mejore su salud y bienestar.",
 
     "panel.browse.entry.academics.gies_checklist.title": "Lista de verificación para nuevos estudiantes de iDegrees",
@@ -2250,7 +2250,7 @@
     "panel.profile.stored_data.source.occupations.matches.title": "Matches",
     "panel.profile.stored_data.source.transportation.title": "Transportation",
     "panel.profile.stored_data.source.transportation.passes.title": "Passes",
-    "panel.profile.stored_data.source.wellness.title": "Wellness",
+    "panel.profile.stored_data.source.wellness.title": "Health & Wellnessr",
     "panel.profile.stored_data.source.wellness.my_rings.title": "Rings",
     "panel.profile.stored_data.source.wellness.my_rings_records.title": "Rings Records",
     "panel.profile.stored_data.source.wellness.todo_entries.title": "To-Do Items",
@@ -2466,7 +2466,7 @@
     "panel.bus_pass.error.duplicate.text": "Este pase de autobús MTD ya se ha mostrado en otro dispositivo.\n\nSolo un dispositivo puede mostrar el pase de autobús MTD por Illini ID.",
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 
-    "panel.wellness.home.header.sections.title": "Bienestar",
+    "panel.wellness.home.header.sections.title": "Salud y bienestar",
     "panel.wellness.section.daily_tips.label": "Consejo de bienestar de hoy",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
@@ -2595,7 +2595,7 @@
     "panel.academics.appointments.home.heading.appointments.past": "Citas en el Pasado Reciente",
     "panel.academics.appointments.home.label.providers.all": "Todos Proveedores",
 
-    "panel.wellness.home.header.title": "Bienestar",
+    "panel.wellness.home.header.title": "Salud y bienestar",
     "panel.wellness.home.eight_dimensions.header.title": "8 dimensiones de bienestar",
 
     "panel.debug.header.title": "Depurar",

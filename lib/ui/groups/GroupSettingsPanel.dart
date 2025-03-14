@@ -443,7 +443,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_linkController.text.isNotEmpty) {
       Uri? uri = Uri.tryParse(_linkController.text);
       if (uri != null) {
-        Uri? fixedUri = UrlUtils.fixUri(uri);
+        Uri? fixedUri = uri.fix();
         if (fixedUri != null) {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;

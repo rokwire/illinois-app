@@ -1023,7 +1023,7 @@ class _BrowseEntry extends StatelessWidget {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (launchInternal && UrlUtils.launchInternal(url)){
+      else if (launchInternal && UrlUtils.canLaunchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else {

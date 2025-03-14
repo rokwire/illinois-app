@@ -376,12 +376,12 @@ class Event2CreatePanel extends StatefulWidget {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     hideKeyboard(context);
     if (controller.text.isNotEmpty) {
-      Uri? uri = UrlUtils.parseUri(controller.text);
+      Uri? uri = UriExt.parse(controller.text);
       if (uri != null) {
         if (updateProgress != null) {
           updateProgress(true);
         }
-         UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+        uri.fixAsync().then((Uri? fixedUri) {
           if (updateProgress != null) {
             updateProgress(false);
           }
@@ -2202,10 +2202,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((dynamic result) {
+      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
           setStateIfMounted(() {
             _loadingEventGroups = false;
-            _eventGroups = JsonUtils.listTypedValue<Group>(result);
+            _eventGroups = groups;
             _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
           });
       });

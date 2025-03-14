@@ -321,7 +321,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     Uri? uri = controller.text.isNotEmpty ? Uri.tryParse(controller.text.trim()) : null;
     if (uri != null) {
-      Uri? fixedUri = UrlUtils.fixUri(uri);
+      Uri? fixedUri = uri.fix();
       if (fixedUri != null) {
         controller.text = fixedUri.toString();
         uri = fixedUri;

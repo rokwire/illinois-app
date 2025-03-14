@@ -28,8 +28,8 @@ class WebPanel extends rokwire.WebPanel with AnalyticsInfo {
   final Map<String, dynamic>? analyticsSource;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  WebPanel({Key? key, String? url, String? title, this.analyticsName, this.analyticsSource, this.analyticsFeature, bool showTabBar = true}) :
-    super(key: key, url: url, title: title, headerBar: HeaderBar(title: title), tabBar: showTabBar ? uiuc.TabBar() : null);
+  WebPanel({Key? key, String? url, Uri? uri, String? title, this.analyticsName, this.analyticsSource, this.analyticsFeature, bool showTabBar = true}) :
+    super(key: key, url: url, uri: uri, title: title, headerBar: HeaderBar(title: title), tabBar: showTabBar ? uiuc.TabBar() : null);
 
   @override
   String? get analyticsPageName {
@@ -39,7 +39,7 @@ class WebPanel extends rokwire.WebPanel with AnalyticsInfo {
   @override
   Map<String, dynamic> get analyticsPageAttributes {
     return {
-      Analytics.LogAttributeUrl : url,
+      Analytics.LogAttributeUrl : uri?.toString() ?? url,
       Analytics.LogAttributeSource: analyticsSource,
     };
   }

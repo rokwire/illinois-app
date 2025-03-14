@@ -925,12 +925,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   void _launchUrl(String? url, { BuildContext? context, void Function(bool progress)? updateProgress }) {
-    Uri? uri = UrlUtils.parseUri(url?.trim());
+    Uri? uri = UriExt.parse(url?.trim());
     if (uri != null) {
       if (updateProgress != null) {
         updateProgress(true);
       }
-      UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+      uri.fixAsync().then((Uri? fixedUri) {
         if (updateProgress != null) {
           updateProgress(false);
         }
