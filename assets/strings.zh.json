@@ -268,7 +268,7 @@
 	"panel.browse.section.surveys.description": "Participate in surveys available to you.",
 	"panel.browse.section.wallet.title": "錢包",
 	"panel.browse.section.wallet.description": "Your ID, bus pass, Illini Cash balance, and residence hall meal plan all in one place.",
-	"panel.browse.section.wellness.title": "健康",
+	"panel.browse.section.wellness.title": "健康與保健",
 	"panel.browse.section.wellness.description": "保持並改善您的健康和福祉。",
 
 	"panel.browse.entry.academics.gies_checklist.title": "iDegrees 新學生清單",
@@ -2240,7 +2240,7 @@
 	"panel.profile.stored_data.source.occupations.matches.title": "Matches",
 	"panel.profile.stored_data.source.transportation.title": "Transportation",
 	"panel.profile.stored_data.source.transportation.passes.title": "Passes",
-	"panel.profile.stored_data.source.wellness.title": "Wellness",
+	"panel.profile.stored_data.source.wellness.title": "Health & Wellness",
 	"panel.profile.stored_data.source.wellness.my_rings.title": "Rings",
 	"panel.profile.stored_data.source.wellness.my_rings_records.title": "Rings Records",
 	"panel.profile.stored_data.source.wellness.todo_entries.title": "To-Do Items",
@@ -2449,7 +2449,7 @@
 	"panel.bus_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
 
-	"panel.wellness.home.header.sections.title": "健康",
+	"panel.wellness.home.header.sections.title": "健康與保健",
 	"panel.wellness.section.daily_tips.label": "今天的健康小貼士",
 	"panel.wellness.section.rings.label": "每日健康戒指",
 	"panel.wellness.section.todo.label": "待辦事項清單",
@@ -2578,7 +2578,7 @@
 	"panel.academics.appointments.home.heading.appointments.past": "最近的预约",
 	"panel.academics.appointments.home.label.providers.all": "全部的提供者",
 
-	"panel.wellness.home.header.title": "養生",
+	"panel.wellness.home.header.title": "健康與保健",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
 
 	"panel.debug.header.title":"调试",

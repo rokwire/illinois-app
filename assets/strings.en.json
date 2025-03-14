@@ -268,7 +268,7 @@
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.wallet.title": "Wallet",
     "panel.browse.section.wallet.description": "Your ID, bus pass, Illini Cash balance, and residence hall meal plan all in one place.",
-    "panel.browse.section.wellness.title": "Wellness",
+    "panel.browse.section.wellness.title": "Health & Wellness",
     "panel.browse.section.wellness.description": "Maintain and improve your health and well-being.",
 
     "panel.browse.entry.academics.gies_checklist.title": "iDegrees New Student Checklist",
@@ -2260,7 +2260,7 @@
     "panel.profile.stored_data.source.occupations.matches.title": "Matches",
     "panel.profile.stored_data.source.transportation.title": "Transportation",
     "panel.profile.stored_data.source.transportation.passes.title": "Passes",
-    "panel.profile.stored_data.source.wellness.title": "Wellness",
+    "panel.profile.stored_data.source.wellness.title": "Health & Wellness",
     "panel.profile.stored_data.source.wellness.my_rings.title": "Rings",
     "panel.profile.stored_data.source.wellness.my_rings_records.title": "Rings Records",
     "panel.profile.stored_data.source.wellness.todo_entries.title": "To-Do Items",
@@ -2469,7 +2469,7 @@
     "panel.bus_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
     "panel.bus_pass.error.default.text": "Unable to load bus pass.",
 
-    "panel.wellness.home.header.sections.title": "Wellness",
+    "panel.wellness.home.header.sections.title": "Health & Wellness",
     "panel.wellness.section.daily_tips.label": "Today's Wellness Tip",
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
@@ -2602,7 +2602,7 @@
     "panel.academics.appointments.home.heading.appointments.past": "Recent Past Appointments",
     "panel.academics.appointments.home.label.providers.all": "All Providers",
 
-    "panel.wellness.home.header.title": "Wellness",
+    "panel.wellness.home.header.title": "Health & Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
 
     "panel.debug.header.title": "Debug",

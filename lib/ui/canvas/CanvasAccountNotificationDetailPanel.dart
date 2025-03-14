@@ -88,7 +88,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
 
   void _onTapLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
+      if (UrlUtils.canLaunchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
       } else {
         Uri? uri = Uri.tryParse(url!);

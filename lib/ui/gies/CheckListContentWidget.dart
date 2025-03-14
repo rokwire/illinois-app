@@ -214,7 +214,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
         String? pageId = JsonUtils.stringValue(uri.queryParameters['page_id']);
         CheckList(widget.contentKey).pushPage(CheckList(widget.contentKey).getPage(id: pageId));
       }
-      else if (UrlUtils.launchInternal(url)) {
+      else if (UrlUtils.canLaunchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
       } else {
         if (uri != null) {

@@ -22,6 +22,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:mime/mime.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:neom/ui/WebPanel.dart';
@@ -31,10 +32,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as launcher_plugin;
 import 'package:universal_io/io.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
@@ -371,7 +373,7 @@ class AppPrivacyPolicy {
       if (Platform.isIOS) {
         Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
         if (privacyPolicyUri != null) {
-          return launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+          return launcher_plugin.launchUrl(privacyPolicyUri, mode: launcher_plugin.LaunchMode.externalApplication);
         }
         else {
           return false;
@@ -495,6 +497,31 @@ class AppTextUtils {
 class PlatformUtils {
   static bool get isWeb => kIsWeb == true;
   static bool get isMobile => kIsWeb == false;
+}
+
+class AppLaunchUrl {
+  static void launch({required BuildContext context, String? url, Uri? uri, String? title,
+      String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
+    if (uri == null) {
+      uri = UriExt.tryParse(url);
+    }
+    uri = uri?.fix() ?? uri;
+
+    if (uri != null) {
+      if (uri.isWebScheme && await TrackingServices.isAllowed()) {
+        Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(
+            uri: uri,
+            title: title,
+            analyticsName: analyticsName,
+            analyticsSource: analyticsSource,
+            analyticsFeature: analyticsFeature,
+            showTabBar: showTabBar
+        )));
+      } else {
+        launcher_plugin.launchUrl(uri, mode: Platform.isAndroid ? launcher_plugin.LaunchMode.externalApplication : launcher_plugin.LaunchMode.platformDefault);
+      }
+    }
+  }
 }
 
 class AppCsv {

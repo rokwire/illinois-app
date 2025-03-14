@@ -2,15 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Explore.dart';
 import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/WebPanel.dart';
 import 'package:neom/ui/widgets/QrCodePanel.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:neom/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_header_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -791,21 +790,10 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
 
   List<DateTime> _placeCheckInDates = [];
   bool? _isHistoryExpanded;
-  TrackingAuthorizationStatus? _status;
 
   @override
   void initState() {
     super.initState();
-    _loadTrackingStatus();
-  }
-
-  void _loadTrackingStatus() async {
-    TrackingAuthorizationStatus? trackingStatus = await TrackingServices.queryAuthorizationStatus();
-    if (mounted) {
-      setState(() {
-        _status = trackingStatus;
-      });
-    }
   }
 
 
@@ -821,11 +809,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         child: MarkdownBody(
           data: widget.place.description ?? Localization().getStringEx('panel.explore.storied_sites.default.description', 'No description available'),
           onTapLink: (text, href, title) {
-            if (UrlUtils.isWebScheme(href) && (_status == TrackingAuthorizationStatus.allowed)) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: href)),);
-            } else {
-              UrlUtils.launchExternal(href);
-            }
+            AppLaunchUrl.launch(url: href, context: context);
           },
           styleSheet: MarkdownStyleSheet(
             p: Styles().textStyles.getTextStyle("widget.description.regular"),

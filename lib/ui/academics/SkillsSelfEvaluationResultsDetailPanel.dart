@@ -233,7 +233,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
     switch (link.type) {
       case "web":
-        if (link.internal && UrlUtils.launchInternal(link.url)) {
+        if (link.internal && UrlUtils.canLaunchInternal(link.url)) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: link.url)));
         } else if (link.url != null) {
           Uri? parsedUri = Uri.tryParse(link.url!);

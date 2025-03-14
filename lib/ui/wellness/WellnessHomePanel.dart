@@ -251,7 +251,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   }
 
   PreferredSizeWidget get _headerBar {
-    String title = Localization().getStringEx('panel.wellness.home.header.sections.title', 'Wellness');
+    String title = Localization().getStringEx('panel.wellness.home.header.sections.title', 'Health & Wellness');
     if (widget.rootTabDisplay) {
       return RootHeaderBar(title: title);
     } else {

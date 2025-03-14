@@ -151,6 +151,8 @@
 				"explore.map.laundry"                     : false,
 				"twitter"                                 : false,
 				"public_surveys"                          : false,
+				"home.wallet"                             : false,
+				"browse.wallet"                           : false,
 				"onboarding2.video_tutorial"              : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],

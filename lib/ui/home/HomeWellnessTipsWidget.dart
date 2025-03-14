@@ -181,7 +181,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (UrlUtils.launchInternal(url)){
+      else if (UrlUtils.canLaunchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else{
