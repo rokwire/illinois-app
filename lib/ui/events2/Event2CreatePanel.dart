@@ -2201,10 +2201,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((dynamic result) {
+      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
           setStateIfMounted(() {
             _loadingEventGroups = false;
-            _eventGroups = JsonUtils.listTypedValue<Group>(result);
+            _eventGroups = groups;
             _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
           });
       });
