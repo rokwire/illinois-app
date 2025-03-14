@@ -503,20 +503,16 @@ class AppLaunchUrl {
 
     if (uri != null) {
       if (uri.isWebScheme && await TrackingServices.isAllowed()) {
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) =>
-                    WebPanel(
-                        uri: uri,
-                        title: title,
-                        analyticsName: analyticsName,
-                        analyticsSource: analyticsSource,
-                        analyticsFeature: analyticsFeature,
-                        showTabBar: showTabBar)));
+        Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(
+            uri: uri,
+            title: title,
+            analyticsName: analyticsName,
+            analyticsSource: analyticsSource,
+            analyticsFeature: analyticsFeature,
+            showTabBar: showTabBar
+        )));
       } else {
-        launcher_plugin.launchUrl(
-            uri, mode: Platform.isAndroid ? launcher_plugin.LaunchMode.externalApplication : launcher_plugin.LaunchMode.platformDefault);
+        launcher_plugin.launchUrl(uri, mode: Platform.isAndroid ? launcher_plugin.LaunchMode.externalApplication : launcher_plugin.LaunchMode.platformDefault);
       }
     }
   }
