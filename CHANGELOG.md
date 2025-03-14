@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - NEOM U
 ### Fixed
+- Remove attribute requirement from group creation [#72](https://github.com/rokmetro/neom-app/issues/72)
 - Fix onboarding [#78](https://github.com/rokmetro/neom-app/issues/78)
 - Fix favorite dragging issue [#63](https://github.com/rokmetro/neom-app/issues/63)
 
