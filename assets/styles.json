@@ -463,6 +463,7 @@
     "widget.button.title.medium.fat.variant2": { "font_family": "bold", "size": 16.0, "color": "surface"},
     "widget.button.title.medium.fat.variant3": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
     "widget.button.title.medium.fat.underline": { "extends": "widget.button.title.medium.fat", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.title.medium.fat.dark.underline": { "extends": "widget.button.title.medium.fat.dark", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textDark"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textPrimary"},
     "widget.button.title.medium.thin.secondary": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},

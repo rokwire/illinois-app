@@ -34,7 +34,7 @@ class InAppNotificationToast extends StatelessWidget {
 
       action: ((actionText != null) && (onAction != null)) ?
         TextButton(onPressed: onAction, child:
-          Text(actionText, style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline')
+          Text(actionText, style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.dark.underline'),
         ),
       ) : null,
 

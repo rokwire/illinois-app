@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+### Added
+- Update conversations in real time [#74](https://github.com/rokmetro/neom-app/issues/74)
 ### Fixed
 - Remove attribute requirement from group creation [#72](https://github.com/rokmetro/neom-app/issues/72)
 - Fix onboarding [#78](https://github.com/rokmetro/neom-app/issues/78)

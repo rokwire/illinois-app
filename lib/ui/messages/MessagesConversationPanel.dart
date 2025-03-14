@@ -12,6 +12,7 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/DeepLink.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/SpeechToText.dart';
 import 'package:neom/ui/directory/DirectoryWidgets.dart';
 import 'package:neom/ui/messages/MessagesMediaFullscreenPanel.dart';
@@ -104,6 +105,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
       SpeechToText.notifyError,
+      FirebaseMessaging.notifyForegroundMessage,
     ]);
     WidgetsBinding.instance.addObserver(this);
 
@@ -138,6 +140,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
+    if (name == FirebaseMessaging.notifyForegroundMessage) {
+      if (ModalRoute.of(context)?.isCurrent ?? false) {
+        _refreshMessages();
+      }
+    }
     if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {

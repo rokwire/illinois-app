@@ -946,8 +946,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         duration: Duration(seconds: Config().inAppNotificationToastTimeout),
         child: InAppNotificationToast.message(StringUtils.truncate(value: body, atLength: Config().notificationBodyMaxLength),
           actionText: Localization().getStringEx('dialog.show.title', 'Show'),
-          onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
-          onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
+          onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletion(toast, completion) : null,
+          onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletion(toast, completion) : null,
         )
       );
       /*AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx('dialog.show.title', 'Show')).then((bool? result) {
@@ -958,7 +958,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseForegroundMessageCompletition(FToast toast, void Function() completion) {
+  void _onFirebaseForegroundMessageCompletion(FToast toast, void Function() completion) {
     toast.removeCustomToast();
     completion.call();
   }
@@ -1048,6 +1048,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
+    //TODO: do not push MessagesConversationPanel if already on the correct conversation panel
     if (StringUtils.isNotEmpty(conversationId)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
         conversationId: conversationId,
