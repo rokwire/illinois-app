@@ -133,7 +133,8 @@ class _LinkTextExState extends State<LinkTextEx> {
       return;
     }
 
-    Uri? uri = UrlUtils.fixUri(Uri.parse(url), scheme: 'https');
+
+    Uri? uri = Uri.parse(url).fix(scheme: 'https');
 
     if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri);

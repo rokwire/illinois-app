@@ -269,7 +269,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       Analytics().logSelect(target: 'Canvas Calendar -> Assignment');
       String? url = event.assignment?.htmlUrl;
       if (StringUtils.isNotEmpty(url)) {
-        if (UrlUtils.launchInternal(url)) {
+        if (UrlUtils.canLaunchInternal(url)) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
         } else {
           Uri? uri = Uri.tryParse(url!);

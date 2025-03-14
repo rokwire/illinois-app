@@ -685,7 +685,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
+      if (UrlUtils.canLaunchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
           url: url,
           analyticsName: "WebPanel($analyticsName)",
