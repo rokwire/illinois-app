@@ -37,7 +37,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:illinois/model/wellness/SuccessTeam.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/ext/uri.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
