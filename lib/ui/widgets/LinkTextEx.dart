@@ -134,13 +134,13 @@ class _LinkTextExState extends State<LinkTextEx> {
     }
 
     bool isEmail = url.contains('@');
-    if (isEmail) {
-      url = UrlUtils.fixEmail(url) ?? url;
-    }
     Uri? uri = Uri.tryParse(url);
+    if (isEmail) {
+      uri = uri?.fix(scheme: 'mailto');
+    }
     if (uri != null) {
       if (!isEmail) {
-        uri = UrlUtils.fixUri(uri, scheme: 'https');
+        uri = uri.fix(scheme: 'https');
       }
       if (uri != null && await canLaunchUrl(uri)) {
         await launchUrl(uri);

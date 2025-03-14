@@ -451,10 +451,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   void _onTapLink(String url) {
+    Uri? uri = Uri.tryParse(url);
     if (url.contains('@')) {
-      url = UrlUtils.fixEmail(url) ?? url;
+      uri = uri?.fix(scheme: 'mailto');
     } else {
-      url = UrlUtils.fixUrl(url, scheme: 'https') ?? url;
+      uri = uri?.fix(scheme: 'https');
     }
     Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
