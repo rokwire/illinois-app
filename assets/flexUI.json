@@ -222,6 +222,8 @@
 				"explore.map.laundry"                     : false,
 				"twitter"                                 : false,
 				"public_surveys"                          : false,
+				"home.wallet"                             : false,
+				"browse.wallet"                           : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],

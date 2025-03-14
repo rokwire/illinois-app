@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Added Filter feature to My Groups [#4835](https://github.com/rokwire/illinois-app/issues/4835).
+- Updated Wellness title, hide Wallet from Sections & Favorites [#4894](https://github.com/rokwire/illinois-app/issues/4894).
 ### Added
 - Common method for launching urls based on tracking services status [#4892](https://github.com/rokwire/illinois-app/issues/4892).
 
