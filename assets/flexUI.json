@@ -5,35 +5,13 @@
 			"tabbar.default": "favorites",
 
 			"home": [
-				"all_groups", "my_groups", "event_feed", "my_events", "public_surveys", "recent_polls", "my_messages"
+				"messages", "polls", "events", "groups"
 			],
 			"home.system": ["tout", "connect"],
 			"home.connect": ["phone_or_email"],
 			"home.app_help": ["faqs", "feedback", "review"],
 
-			"home.groups": ["all_groups", "my_groups"],
-			"home.events": ["event_feed", "my_events"],
-			"home.surveys": ["public_surveys"],
-			"home.polls": ["recent_polls"],
-			"home.messages": ["my_messages"],
-
-			"home.all_groups": ["groups"],
-			"home.my_messages": ["messages"],
-			"home.my_groups": ["groups"],
-			"home.event_feed": ["events"],
-			"home.my_events": ["events"],
-			"home.public_surveys": ["surveys"],
-			"home.all_notifications": ["inbox"],
-			"home.unread_notifications": ["inbox"],
-			"home.recent_polls": ["polls"],
-
 			"browse": ["groups", "messages", "events", "directory"],
-            "browse.directory": ["user_directory"],
-            "browse.events": ["event_feed", "my_events"],
-			"browse.groups": ["all_groups", "my_groups"],
-			"browse.surveys": ["public_surveys"],
-			"browse.polls": ["recent_polls"],
-            "browse.messages": ["my_messages"],
 
 			"browse.list": ["polls", "surveys"],
 
@@ -196,7 +174,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["all_groups", "my_groups", "event_feed", "my_events", "public_surveys", "recent_polls", "my_messages"]
+				"home": ["messages", "polls", "events", "groups"]
 			},
 			"rules": {
 			}

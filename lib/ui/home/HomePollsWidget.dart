@@ -58,16 +58,10 @@ class _HomePollsSectionWidgetState extends State<HomePollsSectionWidget> {
   }
 
   Widget get _widgetContent {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
-    // bool hasCreatePoll = favorites?.contains('create_poll') ?? false;
-    bool hasRecentPolls = favorites?.contains('recent_polls') ?? false;
     return Column(children: [
-      if (hasRecentPolls)
-        HomeRecentPollsWidget(updateController: widget.updateController,),
-      // if (hasRecentPolls && hasCreatePoll)
-      //   Container(height: 16),
-      // if (hasCreatePoll)
-      //   HomeCreatePollWidget(updateController: widget.updateController,),
+      HomeRecentPollsWidget(updateController: widget.updateController,),
+      // Container(height: 16),
+      // HomeCreatePollWidget(updateController: widget.updateController,),
     ],);
   }
 }

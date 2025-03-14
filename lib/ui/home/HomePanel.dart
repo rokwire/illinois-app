@@ -518,12 +518,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
     }
   }
 
-  static String sectionFromCode(String code) {
-    List<String>? homeSections = JsonUtils.listStringsValue(FlexUI()['home.$code']);
-    return homeSections?.isNotEmpty ?? false ? homeSections!.first : code;
-  }
-
-  static Key? _globalKey(Map<String, GlobalKey>? globalKeys, String code) => (globalKeys != null) ? (globalKeys[sectionFromCode(code)] ??= GlobalKey()) : null;
+  static Key? _globalKey(Map<String, GlobalKey>? globalKeys, String code) => (globalKeys != null) ? (globalKeys[code] ??= GlobalKey()) : null;
 }
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {

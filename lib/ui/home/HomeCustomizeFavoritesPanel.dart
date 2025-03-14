@@ -131,76 +131,67 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   List<Widget> _buildContentList() {
     List<Widget> widgets = [];
 
-    Set<String> homeSections = {};
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
-    if (homeFavorites != null) {
-      for (String code in homeFavorites) {
-        homeSections.add(HomePanel.sectionFromCode(code));
-      }
-    }
 
-    if (homeSections.isNotEmpty) {
+    if (homeFavorites != null) {
+
       widgets.add(_buildEditingHeader(
         favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
-        title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'CURRENT FAVORITES'),
+        title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Current Favorites'),
         linkButtonTitle: Localization().getStringEx('panel.home.edit.favorites.unstar.link.button', 'Unstar All'),
-        onTapLinkButton: CollectionUtils.isNotEmpty(homeFavorites) ? () => _onTapUnstarAll(homeFavorites!.toList()) : null,
+        onTapLinkButton: CollectionUtils.isNotEmpty(homeFavorites) ? () => _onTapUnstarAll(homeFavorites.toList()) : null,
         description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Tap, <b>hold</b>, and drag an item to reorder your favorites. To remove an item from Favorites, tap the star.'),
       ));
-    }
 
-    int position = 0;
-    for (String code in List<String>.from(homeSections).reversed) {
-      if (_availableCodes?.contains(code) ?? false) {
-        dynamic widget = HomePanel.dataFromCode(code, handle: true, position: position, globalKeys: _handleKeys, dragAndDropHost: this);
-        if (widget is Widget) {
-          widgets.add(widget);
-          position++;
-        }
-      }
-    }
-
-    List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
-    List<Map<String, dynamic>> unusedExpandedList = <Map<String, dynamic>>[];
-
-    for (String code in _availableCodes ?? []) {
-      if (!homeSections.contains(code)) {
-        dynamic title = HomePanel.dataFromCode(code, title: true);
-        unusedList.add({'title' : title, 'code': code});
-        if (title is String) {
-          for (String subsection in JsonUtils.listStringsValue(FlexUI()['home.$code']) ?? []) {
-            unusedExpandedList.add({'title' : title, 'code': subsection});
+      int position = 0;
+      for (String code in List<String>.from(homeFavorites).reversed) {
+        if (_availableCodes?.contains(code) ?? false) {
+          dynamic widget = HomePanel.dataFromCode(code, handle: true, position: position, globalKeys: _handleKeys, dragAndDropHost: this);
+          if (widget is Widget) {
+            widgets.add(widget);
+            position++;
           }
         }
       }
     }
 
-    unusedList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
-      String title1 = JsonUtils.stringValue(entry1['title'])?.toLowerCase() ?? '';
-      String title2 = JsonUtils.stringValue(entry2['title'])?.toLowerCase() ?? '';
-      return title1.compareTo(title2);
-    });
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
+    if (fullContent != null) {
 
-    if (unusedList.isNotEmpty){
-      widgets.add(Padding(
-        padding: EdgeInsets.only(top: homeSections.isNotEmpty ? 16.0 : 0.0),
-        child: _buildEditingHeader(
-          favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
-          title: Localization().getStringEx('panel.home.edit.unused.header.title', 'OTHER ITEMS TO FAVORITE'),
-          linkButtonTitle: Localization().getStringEx('panel.home.edit.unused.star.link.button', 'Star All'),
-          onTapLinkButton: CollectionUtils.isNotEmpty(unusedExpandedList) ? () => _onTapStarAll(unusedExpandedList) : null,
-          description: Localization().getStringEx('panel.home.edit.unused.header.description', 'Tap the star to add any below items to Favorites.'),
-        ),
+      List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
+
+      for (String code in fullContent) {
+        if ((_availableCodes?.contains(code) ?? false) && !(homeFavorites?.contains(code) ?? false)) {
+          dynamic title = HomePanel.dataFromCode(code, title: true);
+          if (title is String) {
+            unusedList.add({'title' : title, 'code': code});
+          }
+        }
+      }
+
+      unusedList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        String title1 = JsonUtils.stringValue(entry1['title'])?.toLowerCase() ?? '';
+        String title2 = JsonUtils.stringValue(entry2['title'])?.toLowerCase() ?? '';
+        return title1.compareTo(title2);
+      });
+
+
+      widgets.add(_buildEditingHeader(
+        favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
+        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Other Items to Favorite'),
+        linkButtonTitle: Localization().getStringEx('panel.home.edit.unused.star.link.button', 'Star All'),
+        onTapLinkButton: CollectionUtils.isNotEmpty(unusedList) ? () => _onTapStarAll(unusedList) : null,
+        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'Tap the star to add any below items to Favorites.'),
       ));
-    }
 
-    position = 0;
-    for (Map<String, dynamic> entry in unusedList) {
-      String? code = JsonUtils.stringValue(entry['code']);
-      dynamic widget = (code != null) ? HomePanel.dataFromCode(code, handle: true, position: position, globalKeys: _handleKeys, dragAndDropHost: this) : null;
-      if (widget is Widget) {
-        widgets.add(widget);
-        position++;
+      int position = 0;
+      for (Map<String, dynamic> entry in unusedList) {
+        String? code = JsonUtils.stringValue(entry['code']);
+        dynamic widget = (code != null) ? HomePanel.dataFromCode(code, handle: true, position: position, globalKeys: _handleKeys, dragAndDropHost: this) : null;
+        if (widget is Widget) {
+          widgets.add(widget);
+          position++;
+        }
       }
     }
 
@@ -337,7 +328,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     if (fullContent != null) {
       for (String code in fullContent) {
         if (_isCodeAvailable(code)) {
-          availableCodes.add(HomePanel.sectionFromCode(code));
+          availableCodes.add(code);
         }
       }
     }
@@ -458,8 +449,18 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _setFavorite({required String code, required bool value}) {
     HomeFavorite favorite = HomeFavorite(code);
-    Auth2().prefs?.setFavorite(favorite, value);
-    HomeFavorite.log(favorite, value);
+    List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite.id}']);
+    if (availableSectionFavorites != null) {
+      List<Favorite> favorites = <Favorite>[favorite];
+      for (String sectionEntry in availableSectionFavorites) {
+        favorites.add(HomeFavorite(sectionEntry, category: favorite.id));
+      }
+      Auth2().prefs?.setListFavorite(favorites, value);
+      HomeFavorite.log(favorites, value);
+    } else {
+      Auth2().prefs?.setFavorite(favorite, value);
+      HomeFavorite.log(favorite, value);
+    }
   }
 
   // HomeDragAndDropHost

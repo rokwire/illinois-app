@@ -80,14 +80,10 @@ class _HomeEvent2SectionWidgetState extends State<HomeEvent2SectionWidget> {
   }
 
   Widget get _widgetContent {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     return Column(children: [
-      if (favorites?.contains('event_feed') ?? false)
-        HomeEvent2FeedWidget(updateController: widget.updateController,),
-      if (favorites?.contains('event_feed') ?? false)
-        Container(height: 16),
-      if (favorites?.contains('my_events') ?? false)
-        HomeMyEvents2Widget(updateController: widget.updateController,),
+      HomeEvent2FeedWidget(updateController: widget.updateController,),
+      Container(height: 16),
+      HomeMyEvents2Widget(updateController: widget.updateController,),
     ],);
   }
 }
