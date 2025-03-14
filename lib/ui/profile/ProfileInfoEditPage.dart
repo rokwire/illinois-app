@@ -389,20 +389,18 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
   );
 
-  Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget get _pronunciationCreateControl => InkWell(onTap: _onCreatePronunciation, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Styles().images.getImage('plus-circle', size: 24) ?? Container(),
     Expanded(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
-        InkWell(onTap: _onCreatePronunciation, child:
-          Text(_pronunciationCreateText(), style: Styles().textStyles.getTextStyle('widget.detail.small.underline'),)
-        ),
+        Text(_pronunciationCreateText(), style: Styles().textStyles.getTextStyle('widget.detail.small.underline'),)
       ),
     ),
     if (_showPrivacyControls)
       Padding(padding: EdgeInsets.only(left: 6), child:
         _visibilityButton(profileField: _ProfileField.pronunciationUrl),
     ),
-  ],);
+  ],));
 
   String _pronunciationCreateText({String? language}) =>
     Localization().getStringEx('panel.profile.info.command.link.pronunciation.text', 'Add name pronunciation and how you prefer to be addressed (Ex: "Please call me Dr. Last Name, First Name or Nickname")', language: language);

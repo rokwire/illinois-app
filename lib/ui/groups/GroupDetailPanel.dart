@@ -1266,25 +1266,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                     visible: _canCreatePost,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
+                        label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create post"),
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost();
                         })),
-                Visibility(
-                    visible: _canCreateMessage,
-                    child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _onTapCreatePost(type: PostType.direct_message);
-                        })),
+                // Visibility(
+                //     visible: _canCreateMessage,
+                //     child: RibbonButton(
+                //         leftIconKey: "plus-circle",
+                //         label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
+                //         onTap: () {
+                //           Navigator.of(context).pop();
+                //           _onTapCreatePost(type: PostType.direct_message);
+                //         })),
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
@@ -1293,7 +1293,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                     visible: _canAddEvent,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),//localize
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1302,7 +1302,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                     visible: _canCreatePoll,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create poll"), //tbd localize
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreatePoll();

@@ -105,6 +105,9 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with A
     List<Conversation>? conversations = _conversations;
     if ((conversations != null) && conversations.isNotEmpty) {
       for (Conversation conversation in conversations) {
+        if (CollectionUtils.isEmpty(conversation.members)) {
+          continue;
+        }
         contentList.add(RecentConversationCard(conversation,
           expanded: (_expandedConversationId != null) && (conversation.id == _expandedConversationId),
           // onToggleExpanded: conversation.isGroupConversation ? () => _onToggleConversationExpanded(conversation) : null, //TODO: should group conversations be expandable to show all names?
@@ -377,6 +380,13 @@ class ConversationCard extends StatelessWidget {
     this.isHorizontal = false
   });
 
+  String _getConversationTitle() {
+    if (CollectionUtils.isEmpty(conversation.members)) {
+      return Auth2().fullName ?? 'Unknown';
+    }
+    return conversation.membersString ?? 'Group Conversation';
+  }
+
   @override
   Widget build(BuildContext context) {
     return isHorizontal
@@ -434,7 +444,7 @@ class ConversationCard extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                              StringUtils.ensureNotEmpty(conversation.membersString),
+                              _getConversationTitle(),
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
@@ -507,7 +517,7 @@ class ConversationCard extends StatelessWidget {
         ),
         Expanded(
           child: Text(
-            StringUtils.ensureNotEmpty(conversation.membersString),
+            _getConversationTitle(),
             style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),
             overflow: TextOverflow.ellipsis,
             maxLines: 2,

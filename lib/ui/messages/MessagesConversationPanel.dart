@@ -165,7 +165,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     });
 
     return Scaffold(
-      appBar: RootHeaderBar(title: _conversation?.membersString, leading: RootHeaderBarLeading.Back, onTapTitle: _onTapHeaderBarTitle),
+      appBar: RootHeaderBar(title: _getConversationTitle(), leading: RootHeaderBarLeading.Back, onTapTitle: _onTapHeaderBarTitle),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -173,14 +173,10 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   String _getConversationTitle() {
-    // If it's a one-on-one conversation, show the other member's name
-    // If group, show something else. For now, if multiple members, just show first.
-    if (_conversation?.members?.length == 1) {
-      return _conversation?.members?.first.name ?? 'Unknown';
-    } else {
-      // For group conversations, you could customize the title further
-      return _conversation?.membersString ?? 'Group Conversation';
+    if (CollectionUtils.isEmpty(_conversation?.members)) {
+      return Auth2().fullName ?? 'Unknown';
     }
+    return _conversation?.membersString ?? 'Group Conversation';
   }
 
   Widget _buildContent() {

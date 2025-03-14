@@ -420,7 +420,7 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await (widget.onSave ?? Content().uploadUserNamePronunciation).call(audioBytes, _controller.extension);
+        AudioResult result = await (widget.onSave?.call(audioBytes, _controller.extension) ?? Content().uploadUserNamePronunciation.call(audioBytes));
         if (result.resultType == AudioResultType.succeeded) {
           setStateIfMounted(() => _loading = false);
           _closeModal(result: result);

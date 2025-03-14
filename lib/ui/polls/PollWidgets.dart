@@ -239,6 +239,7 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
+          onTap: widget.poll!.userVote == null ? _onVoteTapped : null,
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
