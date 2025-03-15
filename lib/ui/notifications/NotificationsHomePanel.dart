@@ -134,7 +134,7 @@ class NotificationsHomePanel extends StatefulWidget {
 }
 
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
-  static final int _messagesPageSize = 8;
+  static final int _messagesPageSize = 16;
   static final double _defaultPaddingValue = 16;
 
   bool _isFilterVisible = false;
