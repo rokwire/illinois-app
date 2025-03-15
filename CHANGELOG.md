@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+
+## [0.5.13] = 2025-03-14
 ### Added
 - Update conversations in real time [#74](https://github.com/rokmetro/neom-app/issues/74)
 ### Fixed
@@ -12,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix onboarding [#78](https://github.com/rokmetro/neom-app/issues/78)
 - Fix favorite dragging issue [#63](https://github.com/rokmetro/neom-app/issues/63)
 - Bug report March 5th [#76](https://github.com/rokmetro/neom-app/issues/76)
+- Fix notifications scrolling for large screens
 
 ## [0.5.12] = 2025-02-26
 ### Fixed
