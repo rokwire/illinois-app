@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CanvasAccountNotificationDetailPanel extends StatefulWidget with AnalyticsInfo {
   final CanvasAccountNotification notification;
@@ -88,14 +86,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
 
   void _onTapLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.canLaunchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
+      AppLaunchUrl.launch(context: context, url: url, tryInternal: UrlUtils.canLaunchInternal(url), analyticsFeature: widget.analyticsFeature);
     }
   }
 }

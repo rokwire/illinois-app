@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Use the common method for launching urls [#4898](https://github.com/rokwire/illinois-app/issues/4898).
 ### Changed
 - Upgrade to Flutter 3.29.2, upgraded plugins [#4899](https://github.com/rokwire/illinois-app/issues/4899).
 
