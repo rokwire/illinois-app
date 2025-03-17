@@ -494,7 +494,7 @@ class PlatformUtils {
 }
 
 class AppLaunchUrl {
-  static void launch({required BuildContext context, String? url, Uri? uri, String? title,
+  static Future<void> launch({required BuildContext context, String? url, Uri? uri, bool tryInternal = true, String? title,
       String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
     if (uri == null) {
       uri = UriExt.tryParse(url);
@@ -502,7 +502,7 @@ class AppLaunchUrl {
     uri = uri?.fix() ?? uri;
 
     if (uri != null) {
-      if (uri.isWebScheme && await TrackingServices.isAllowed()) {
+      if (tryInternal && uri.isWebScheme && await TrackingServices.isAllowed()) {
         Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(
             uri: uri,
             title: title,

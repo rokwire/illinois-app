@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   final SkillsSelfEvaluationContent? content;
@@ -146,13 +144,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   }
 
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
-    if (link.internal && UrlUtils.canLaunchInternal(link.url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: link.url)));
-    } else if (link.url != null) {
-      Uri? parsedUri = Uri.tryParse(link.url!);
-      if (parsedUri != null) {
-        launchUrl(parsedUri, mode: LaunchMode.externalApplication);
-      }
-    }
+    bool tryInternal = link.internal && UrlUtils.canLaunchInternal(link.url);
+    AppLaunchUrl.launch(context: context, url: link.url, tryInternal: tryInternal);
   }
 }

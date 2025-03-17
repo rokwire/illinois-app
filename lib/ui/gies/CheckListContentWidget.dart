@@ -15,7 +15,6 @@
  */
 
 import 'package:expandable_page_view/expandable_page_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -23,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
@@ -33,7 +32,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 class CheckListContentWidget extends StatefulWidget with AnalyticsInfo {
@@ -214,12 +212,8 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
         String? pageId = JsonUtils.stringValue(uri.queryParameters['page_id']);
         CheckList(widget.contentKey).pushPage(CheckList(widget.contentKey).getPage(id: pageId));
       }
-      else if (UrlUtils.canLaunchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
-      } else {
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      else {
+        AppLaunchUrl.launch(context: context, uri: uri, analyticsFeature: widget.analyticsFeature);
       }
     }
   }
