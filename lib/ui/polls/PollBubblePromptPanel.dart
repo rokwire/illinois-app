@@ -39,7 +39,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.3), //Colors.transparent,
+        backgroundColor: Colors.black.withValues(alpha: 0.3), //Colors.transparent,
         body: SafeArea(
             child: Padding(
                 padding: EdgeInsets.only(top: kToolbarHeight),
@@ -296,7 +296,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
               ),
             ],),),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withValues(alpha: 0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(height: 15 + MediaQuery.of(context).textScaler.scale(16), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
                 Row(children: <Widget>[
@@ -344,7 +344,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImageKey, excludeFromSemantics: true)),
         Expanded(
             key: progressKey, child:Stack(children: <Widget>[
-          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withValues(alpha: 0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
           Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 5), child:
             Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),

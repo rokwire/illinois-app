@@ -518,7 +518,7 @@ class HomeDragFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withValues(alpha: 0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
@@ -528,7 +528,7 @@ class HomeDragFeedback extends StatelessWidget {
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                Shadow(color: Styles().colors.fillColorPrimary.withValues(alpha: 0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
           ),

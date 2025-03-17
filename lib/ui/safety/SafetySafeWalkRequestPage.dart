@@ -727,7 +727,7 @@ class _VerticalDashedLinePainter extends CustomPainter {
   final double dashSpace;
   final Color dashColor;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _VerticalDashedLinePainter({this.dashHeight = 5, this.dashSpace = 3, this.dashColor = Colors.black});
 
   @override

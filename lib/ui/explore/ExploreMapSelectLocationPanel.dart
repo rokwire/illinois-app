@@ -832,7 +832,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
       Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
-      String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
+      String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
         (_markerIconCache[markerKey] = await _groupMarkerIcon(
           context: context,

@@ -2490,7 +2490,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
       Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
       Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
-      String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
+      String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
           (_markerIconCache[markerKey] = await _groupMarkerIcon(
             context: context,
