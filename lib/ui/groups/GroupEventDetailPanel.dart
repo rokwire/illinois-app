@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -22,7 +21,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -31,7 +29,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 class GroupEventDetailPanel extends StatefulWidget with AnalyticsInfo {
@@ -453,7 +450,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
             StringUtils.ensureNotEmpty(description),
-            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            onTapUrl : (url) {_launchUrl(url: url, context: context); return true;},
             textStyle: Styles().textStyles.getTextStyle("widget.info.regular")
         ));
   }
@@ -623,7 +620,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       Analytics().logSelect(target: analyticsName);
     }
     if(StringUtils.isNotEmpty(url)){
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
+      AppLaunchUrl.launch(context: context, url: url, analyticsName: analyticsName);
     }
   }
 
@@ -738,17 +735,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     );
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.canLaunchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-      }
-    }
+  void _launchUrl({required BuildContext context, String? url}) {
+    AppLaunchUrl.launch(context: context, url: url);
   }
 
   bool get isFavorite => Auth2().isFavorite(_event);

@@ -22,7 +22,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -34,7 +33,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CanvasCourseCalendarPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
@@ -269,14 +267,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       Analytics().logSelect(target: 'Canvas Calendar -> Assignment');
       String? url = event.assignment?.htmlUrl;
       if (StringUtils.isNotEmpty(url)) {
-        if (UrlUtils.canLaunchInternal(url)) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
-        } else {
-          Uri? uri = Uri.tryParse(url!);
-          if (uri != null) {
-            launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
-        }
+        AppLaunchUrl.launch(context: context, url: url, analyticsFeature: widget.analyticsFeature);
       }
     } else {
       Analytics().logSelect(target: 'Canvas Calendar -> Event');

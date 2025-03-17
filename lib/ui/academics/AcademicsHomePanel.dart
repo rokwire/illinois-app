@@ -25,7 +25,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
@@ -404,14 +403,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (launchInternal && UrlUtils.canLaunchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          UrlUtils.launchExternal(url);
-        }
+        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
       }
     }
   }
