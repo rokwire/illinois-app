@@ -33,7 +33,6 @@ import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -685,21 +684,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.canLaunchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+      AppLaunchUrl.launch(
+          context: context,
           url: url,
-          analyticsName: "WebPanel($analyticsName)",
-          analyticsSource: widget.dining?.analyticsAttributes,
-        )));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          url_launcher.launchUrl(uri);
-        }
-      }
+          tryInternal: UrlUtils.canLaunchInternal(url),
+          analyticsName: analyticsName,
+          analyticsSource: widget.dining?.analyticsAttributes);
     }
   }
-
 }
 
 class _DiningDetail extends StatefulWidget {

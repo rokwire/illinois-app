@@ -24,7 +24,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -667,11 +666,10 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
     Navigator.of(context).pop();
   }
 
-  void _onTermsAndConditionsTapped(){
-    if(StringUtils.isNotEmpty(Config().illiniCashTosUrl)) {
-      Navigator.push(context, CupertinoPageRoute(
-          builder: (context) => WebPanel(url: Config().illiniCashTosUrl)
-      ));
+  void _onTermsAndConditionsTapped() {
+    String? url = Config().illiniCashTosUrl;
+    if (StringUtils.isNotEmpty(url)) {
+      AppLaunchUrl.launch(context: context, url: url);
     }
   }
 }
