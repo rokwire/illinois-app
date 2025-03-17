@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
-//import 'package:share/share.dart';
+//import 'package:share_plus/share_plus.dart';
 
 class ProfileInfoSharePanel extends StatefulWidget {
 

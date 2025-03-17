@@ -26,7 +26,7 @@ class _SurveyHeaderBarTitleWidget extends StatelessWidget {
   final String? title;
   final Survey survey;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _SurveyHeaderBarTitleWidget(this.survey, {super.key, this.title, });
 
   @override
