@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_beep/flutter_beep.dart';
+//import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -763,12 +763,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Future<void> _beep(bool success) async {
-    if (Platform.isAndroid) {
+    /* if (Platform.isAndroid) {
       await FlutterBeep.playSysSound(success ? AndroidSoundIDs.TONE_PROP_BEEP : AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
     }
     else if (Platform.isIOS) {
       await FlutterBeep.playSysSound(success ? iOSSoundIDs.AudioToneKey2 : iOSSoundIDs.SIMToolkitTone3);
-    }
+    } */
   }
 
   Future<bool?> _promptUnregisteredAttendee() => Event2Popup.showPrompt(context,
