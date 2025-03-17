@@ -296,8 +296,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
       List<InlineSpan> attributesList = <InlineSpan>[];
       ContentAttributes? contentAttributes = Groups().contentAttributes;
       List<ContentAttribute>? attributes = contentAttributes?.attributes;
-      TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.fat");
-      TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+      TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.fat");
+      TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
       if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);

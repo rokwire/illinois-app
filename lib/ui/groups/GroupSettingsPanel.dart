@@ -928,7 +928,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: Styles().colors.background,
+    return Container( color: Styles().colors.background,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:
@@ -965,7 +965,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           ],)
         ],),
       )
-      ,),);
+      ,);
   }
 
   void _onCloseTap() async {

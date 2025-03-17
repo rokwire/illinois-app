@@ -63,7 +63,7 @@ class _GroupAddMembersState extends State<GroupAddMembersPanel> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
-                              flex: 3,
+                              flex: 2,
                               child: Container(
                                   decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.surface),
                                   child: TextField(
