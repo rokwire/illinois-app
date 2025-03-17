@@ -285,7 +285,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   Widget bottomTitles(double value, TitleMeta meta) {
     String text = bottomTitleStrings(value.toInt());
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: _chartItems.length >= 8 ? 8 : 10)),
     );
   }
@@ -298,7 +298,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     if (value >= 0 && value <= _maxScore) {
       String text = value.toInt().toString();;
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        meta: meta,
         child: Text(
           text,
           style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10),

@@ -392,9 +392,9 @@ SPEC CHECKSUMS:
   FirebaseSessions: c4d40a97f88f9eaff2834d61b4fea0a522d62123
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_barcode_scanner: c5aa9f51c150a6242fa392386bd52b64bb27fcb5
-  flutter_email_sender: 2397f5e84aaacfb61af569637a963e7c687858d8
+  flutter_email_sender: aa1e9772696691d02cd91fea829856c11efb8e58
   flutter_exif_rotation: 5406455759acacf1f7b1b83e85dbb545340d6e9c
-  flutter_local_notifications: ad39620c743ea4c15127860f4b5641649a988100
+  flutter_local_notifications: 395056b3175ba4f08480a7c5de30cd36d69827e4
   flutter_pdfview: 32bf27bda6fd85b9dd2c09628a824df5081246cf
   flutter_timezone: 7c838e17ffd4645d261e87037e5bebf6d38fe544
   fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
