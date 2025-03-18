@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -98,7 +99,9 @@ class Config extends rokwire.Config {
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
   String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
+  String? get illiniCashUrl          => (Storage().debugUseIlliniCashTestUrl == true) ? (illiniCashTestUrl ?? illiniCashBaseUrl) : illiniCashBaseUrl;
   String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);
+  String? get illiniCashTestUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_test_url']);
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
   String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
