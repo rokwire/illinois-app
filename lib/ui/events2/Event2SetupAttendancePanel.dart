@@ -15,6 +15,7 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -44,6 +45,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   bool _manualCheckProgress = false;
   bool _selfCheckProgress = false;
   bool _selfCheckLimitedToRegisteredOnlyProgress = false;
+  bool _selfCheckPdfProgress = false;
   bool _applyProgress = false;
   
   final TextEditingController _attendanceTakersController = TextEditingController();
@@ -99,9 +101,12 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildHeadingDescription()),
               _sectionDivider,
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _dividerLine),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _dividerLine),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSelfCheckSection()),
-              _isEditing ? _buildAttendanceTakerSection() : Container(),
+              if (_isEditing)
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakerSection()),
               _sectionDivider,
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
             ]),
@@ -130,11 +135,14 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   TextStyle? get _headingDescriptionTextStyle =>
       Styles().textStyles.getTextStyle('widget.item.small.thin'); // widget.info.small
 
-  // Splitter Line
+  // Section Divider
 
-  Widget get _sectionDivider => Padding(padding: EdgeInsets.symmetric(vertical: _sectionPaddingHeight / 2), child:
-    Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
+  Widget get _sectionDivider => Padding(padding: EdgeInsets.symmetric(vertical: _sectionPaddingHeight), child:
+    _dividerLine,
   );
+
+  Widget get _dividerLine =>
+    Divider(color: Styles().colors.dividerLineAccent, height: 1, thickness: 1);
 
   // Scan
 
@@ -230,6 +238,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
         Column(mainAxisSize: MainAxisSize.min, children: [
           _buildSelfCheckToggle(),
           _buildSelfCheckLimitedToRegisteredOnlyToggle(),
+          if (_isEditing)
+            _buildSelfCheckPdf(),
         ],)
     );
 
@@ -309,18 +319,44 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
+  Widget _buildSelfCheckPdf() =>
+    Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight), child:
+      RoundedButton(
+        label: Localization().getStringEx('panel.event2.setup.attendance.self_check.download.title', 'Download Self Check-In PDF'),
+        hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.download.hint', ''),
+        textStyle: _selfCheckEnabled ? Styles().textStyles.getTextStyle('widget.button.title.medium') : Styles().textStyles.getTextStyle('widget.button.title.medium.variant3'),
+        borderColor: _selfCheckEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        backgroundColor: Styles().colors.white,
+        onTap: _selfCheckEnabled ? _onTapSelfCheckPdf : null,
+        contentWeight: 0.75,
+        progress: _selfCheckPdfProgress,
+      ),
+    );
+
+  void _onTapSelfCheckPdf() {
+    Analytics().logSelect(target: "Download Self Check-In PDF");
+    Event2CreatePanel.hideKeyboard(context);
+
+    setState(() {
+      _selfCheckPdfProgress = true;
+    });
+    Future.delayed(Duration(milliseconds: 1500)).then((_){
+      setStateIfMounted(() {
+        _selfCheckPdfProgress = false;
+      });
+    });
+
+  }
+
   // Attendance Taker
 
-  Widget _buildAttendanceTakerSection() {
-    return Padding(padding: _sectionPadding, child:
-      Column(children: [
-        _sectionDivider,
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
-          Event2AttendanceTakerWidget(_event, updateController: _updateController,),
-        ),
-      ],),
-    );
-  }
+  Widget _buildAttendanceTakerSection() =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      _sectionDivider,
+      Padding(padding: _sectionPadding, child:
+        Event2AttendanceTakerWidget(_event, updateController: _updateController,),
+      ),
+    ],);
 
   // Attendance Takers
 
