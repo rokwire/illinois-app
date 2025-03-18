@@ -183,6 +183,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
                 ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
                 ToggleRibbonButton(label: 'Messages/Conversations Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
+                ToggleRibbonButton(label: 'Use Test Wallet Service', toggled: (Storage().debugUseIlliniCashTestUrl == true) && _canUseTestWalletService, onTap: _canUseTestWalletService ? _onUseTestWalletService : null,
+                  textStyle: Styles().textStyles.getTextStyle(_canUseTestWalletService ? 'widget.button.title.medium.fat' : 'widget.button.title.medium.fat.variant3'),
+                  rightIconKeys: _canUseTestWalletService ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+                ),
 
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:
@@ -773,6 +777,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onMessagesEnabled() {
     setState(() {
       Storage().debugMessagesDisabled = (Storage().debugMessagesDisabled != true);
+    });
+  }
+
+  bool get _canUseTestWalletService => StringUtils.isNotEmpty(Config().illiniCashTestUrl);
+
+  void _onUseTestWalletService() {
+    setState(() {
+      Storage().debugUseIlliniCashTestUrl = (Storage().debugUseIlliniCashTestUrl != true);
     });
   }
 
