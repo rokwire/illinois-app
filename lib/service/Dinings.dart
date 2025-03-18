@@ -130,7 +130,7 @@ class Dinings with Service implements ContentItemCategoryClient{
   }
 
   Future<String?> _loadDiningsFromServer() async {
-    final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/LocationSchedules" : null;
+    final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/LocationSchedules" : null;
     final response = await Network().get(url);
     String? responseBody;
     if ((response != null) && (response.statusCode == 200)) {
@@ -146,7 +146,7 @@ class Dinings with Service implements ContentItemCategoryClient{
       if (diningId != null && diningDate != null) {
         String? filterDateString = DiningUtils.dateToRequestString(diningDate);
 
-        final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Menu/$diningId/$filterDateString" : null;
+        final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/Menu/$diningId/$filterDateString" : null;
         final response = await Network().get(url);
         if ((response != null) && (response.statusCode == 200)) {
           List<dynamic>? jsonList = JsonUtils.decode(response.body);
@@ -173,7 +173,7 @@ class Dinings with Service implements ContentItemCategoryClient{
   Future<DiningNutritionItem?> loadNutritionItemWithId(String? itemId) async {
     if(_enabled) {
       // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Nutrition/44";
-      final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Nutrition/$itemId" : null;
+      final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/Nutrition/$itemId" : null;
       final response = await Network().get(url);
       String? responseBody;
       if ((response != null) && (response.statusCode == 200)) {
@@ -195,7 +195,7 @@ class Dinings with Service implements ContentItemCategoryClient{
   Future<String?> _loadDiningSpecialsFromServer() async {
     _diningSpecialsResponse = null;
     // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Offers";
-    final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Offers" : null;
+    final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/Offers" : null;
     final response = await Network().get(url);
     if ((response != null) && (response.statusCode == 200)) {
       _diningSpecialsResponse = response.body;
@@ -291,7 +291,7 @@ class Dinings with Service implements ContentItemCategoryClient{
   /////////////////////////
   // Enabled
 
-  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashBaseUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashUrl);
 }
 
 class DiningUtils{

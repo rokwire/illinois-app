@@ -1047,7 +1047,7 @@
 
     "toggle-on": {"src": "images/switch-on.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
     "toggle-off": {"src": "images/switch-off.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
-    "toggle-disabled": {"src": "images/off.png", "type": "flutter.asset", "todo": "cut-off, color issue, fuzzy"},
+    "toggle-disabled": {"src": "images/switch-disabled.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
     "radio-button-on": {"src": "images/icon-favorite-selected.png", "type": "flutter.asset", "todo": "color issue"},
     "radio-button-off": {"src": "images/icon-favorite-deselected.png", "type": "flutter.asset", "todo": "color issue"},
 

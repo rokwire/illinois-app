@@ -159,8 +159,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   }
 
   Future<Response?> _loadBalanceRequest() async => _enabled ?
-    Network().get("${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}", auth: this,
-      analyticsUrl: "${Config().illiniCashBaseUrl}/Balances/${Analytics.LogAnonymousUin}",
+    Network().get("${Config().illiniCashUrl}/Balances/${Auth2().uin}", auth: this,
+      analyticsUrl: "${Config().illiniCashUrl}/Balances/${Analytics.LogAnonymousUin}",
     ) : null;
 
   Future<void> updateBalance() async {
@@ -198,9 +198,9 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
     String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
 
-    if ((Config().illiniCashBaseUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(firstName) && StringUtils.isNotEmpty(lastName)) {
-      String url =  "${Config().illiniCashBaseUrl}/StudentSummary/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
+    if ((Config().illiniCashUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(firstName) && StringUtils.isNotEmpty(lastName)) {
+      String url =  "${Config().illiniCashUrl}/StudentSummary/$uin/$firstName/$lastName";
+      String analyticsUrl = "${Config().illiniCashUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this); } on Exception catch(e) { print(e.toString()); }
       return response;
@@ -256,8 +256,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      String transactionHistoryUrl = "${Config().illiniCashUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
       final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
       return result;
     }
@@ -277,8 +277,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      String transactionHistoryUrl = "${Config().illiniCashUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
       final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
       return result;
     }
@@ -299,8 +299,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      String transactionHistoryUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
       final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
       return result;
     }
@@ -401,9 +401,9 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   }
 
   Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
-    if ((Config().illiniCashBaseUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
-      String url = "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
+    if ((Config().illiniCashUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
+      String url = "${Config().illiniCashUrl}/ICEligible/$uin/$firstName/$lastName";
+      String analyticsUrl = "${Config().illiniCashUrl}/ICEligible/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
@@ -584,7 +584,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   /////////////////////////
   // Enabled
 
-  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashBaseUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashUrl);
 
   /////////////////////////
   // Helpers
