@@ -195,7 +195,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     }
     else if (CollectionUtils.isEmpty(_recentPolls)) {
       return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.recent_polls.text.empty.description", "No Recent Polls are available right now."),);
+        message: Localization().getStringEx("widget.home.recent_polls.text.empty.description", "No polls are available right now."),);
     }
     else {
       return _buildPollsContent();

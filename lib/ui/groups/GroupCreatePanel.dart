@@ -390,7 +390,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             title: title,
             titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
             description: description,
-            descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+            descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),
           ),
           Container(height: 5,),
           Container(
@@ -508,7 +508,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Visibility(visible: _isResearchProject, child:
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          GroupSectionTitle(title: title, titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'), descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),),
+          GroupSectionTitle(title: title, titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'), descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),),
           Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.surface), child:
             Row(children: [
               Expanded(child:
@@ -609,7 +609,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+              descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),
               requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
@@ -712,7 +712,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Semantics(container: true, child:
           Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
             child:Text(longDescription ?? '',
-              style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight")
+              style: Styles().textStyles.getTextStyle("widget.item.light.small.thin")
             ),)),
         Container(height: _isPrivateGroup ? 5 : 40)
       ],);
@@ -747,7 +747,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       child: Text(
                           Localization()
                               .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
-                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"))))
+                          style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"))))
             ])));
   }
 
@@ -917,7 +917,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 GroupSectionTitle(
                   title: Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"),
                   titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
-                  descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+                  descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),
                   requiredMark: true
                 ),
                 Container(

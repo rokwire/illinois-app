@@ -2339,7 +2339,7 @@
 	"widget.profile.stored_data.retrieve.empty.message": "No stored information",
 	"widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard.",
 
-	"panel.create_poll.header.title": "创建快速投票",
+	"panel.create_poll.header.title": "創建投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",
 	"panel.create_poll.text.wants_to_know": "想知道…",
 	"panel.create_poll.text.question": "问题",
@@ -2348,7 +2348,7 @@
 	"panel.create_poll.button.add_option.text": "添加选项",
 	"panel.create_poll.button.add_option.hint": "",
 	"panel.create_poll.text.add_option": "更多设置",
-	"panel.create_poll.setting.multy_choice": "允许选择多个选项",
+	"panel.create_poll.setting.multi_choice": "允许选择多个选项",
 	"panel.create_poll.setting.repeat_vote": " 允许重复投票 ",
 	"panel.create_poll.setting.hide_result": " 在投票结束前隐藏结果 ",
 	"panel.create_poll.setting.button.cancel.title": "取消",
@@ -3784,7 +3784,7 @@
 	"widget.home.athletics_events.button.all.hint": "點按即可查看所有活動",
 
 	"widget.home.recent_polls.text.title": "最近的民意調查",
-	"widget.home.recent_polls.text.empty.description": "目前沒有可用的最近民意調查。.",
+	"widget.home.recent_polls.text.empty.description": "目前沒有可用的民意調查。",
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",
 	"widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
 	"widget.home.recent_polls.button.all.title": "查看全部",

@@ -3,10 +3,8 @@ import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Event2.dart';
-import 'package:neom/ext/Explore.dart';
 import 'package:neom/ext/Survey.dart';
 import 'package:neom/mainImpl.dart';
-import 'package:neom/model/Explore.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
@@ -18,7 +16,6 @@ import 'package:neom/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:neom/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:neom/ui/events2/Event2TimeRangePanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
-import 'package:neom/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
@@ -79,21 +76,21 @@ class Event2CreatePanel extends StatefulWidget {
 
   static const double innerRecurrenceSectionPaddingWidth = 16;
 
-  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.dark.small.fat.spaced");
-  static TextStyle? get headingDisabledTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.disabled.spaced");
-  static TextStyle? get subTitleTextStype => Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+  static TextStyle? get headingTextStyle => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+  static TextStyle? get headingDisabledTextStyle => Styles().textStyles.getTextStyle("widget.title.small.fat.disabled.spaced");
+  static TextStyle? get subTitleTextStyle => Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
   static TextStyle? get textEditStyle => Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin');
 
   static BoxDecoration get sectionDecoration => sectionDecorationEx(enabled: true);
   static BoxDecoration get sectionDisabledDecoration => sectionDecorationEx(enabled: false);
 
   static BoxDecoration sectionDecorationEx({bool enabled = true}) => BoxDecoration(
-    border: Border.all(color: enabled ? Styles().colors.background : Styles().colors.textMedium, width: 1),
+    border: Border.all(color: enabled ? Styles().colors.surface : Styles().colors.textMedium, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
   static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors.background, width: 1))
+    border: Border(top: BorderSide(color: Styles().colors.surface, width: 1))
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
@@ -192,14 +189,14 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
     Semantics ( label: title, child:
       RichText(textScaler: textScaler, text:
-        TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+        TextSpan(text: title, style: textStyle ?? headingTextStyle, semanticsLabel: "", children: required ? <InlineSpan>[
           TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
         ] : null),
     ));
 
 
   static Widget buildSectionSubTitleWidget(String subTitle) =>
-    Text(subTitle, style: subTitleTextStype);
+    Text(subTitle, style: subTitleTextStyle);
 
   static Widget buildSectionRequiredWidget() => 
     Text('*', style: Styles().textStyles.getTextStyle("widget.label.small.fat"), semanticsLabel: ", required",);
@@ -365,6 +362,7 @@ class Event2CreatePanel extends StatefulWidget {
         ) : Container(),
         LinkButton(
           title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
+          textStyle: Styles().textStyles.getTextStyle('widget.title.regular.underline'),
           hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
           onTap: onTap,
           padding: padding,
@@ -650,7 +648,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
       onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.surface,
+    backgroundColor: Styles().colors.background,
   );
 
   Widget _buildPanelContent() =>
@@ -698,15 +696,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders) : Container()
           ),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface), child: Container(height: 30)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
           Positioned.fill(child:
             Center(child:
               Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
                 RoundedButton(
                   label: buttonTitle,
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
                   onTap: _onTapAddImage,
-                  backgroundColor: Styles().colors.surface,
+                  backgroundColor: Styles().colors.background,
                   borderColor: Styles().colors.fillColorSecondary,
                   contentWeight: 0.67,
                 )
@@ -741,7 +739,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                       "The event image displays a 16:9 or 1000px x 615px jpg, png, or gif (not animated). Larger images are automatically positioned within the frame and can be tapped to view in their entirety within the Illinois app."),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 8,
-                  style: Styles().textStyles.getTextStyle('widget.message.small')))
+                  style: Styles().textStyles.getTextStyle('widget.message.light.small')))
         ]));
   }
 
@@ -781,8 +779,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           Row(children: [
             Expanded(child:
               RichText(textScaler: MediaQuery.of(context).textScaler, text:
-                TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
-                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                TextSpan(text: title, style: Event2CreatePanel.headingTextStyle,  children: <InlineSpan>[
+                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),),
                 ])
               )
             ),
@@ -1003,6 +1001,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
+      textStyle: _toggleTextStyle,
+      backgroundColor: Styles().colors.background,
       padding: _togglePadding,
       toggled: _allDay,
       onTap: _onTapAllDay,
@@ -1011,8 +1011,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     ));
 
   EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
-  BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
-  BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
+  BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surface, width: 1);
+  BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(8));
+  TextStyle? get _toggleTextStyle => Styles().textStyles.getTextStyle('widget.item.light.regular.fat');
 
   void _onToggleDateAndTimeSection() {
     Analytics().logSelect(target: "Toggle Date & Time");
@@ -1186,7 +1187,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               flex: 1,
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
-                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: ""))),
           Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
           Expanded(
               flex: 4,
@@ -1231,7 +1232,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   flex: 1,
                   child: RichText(
                       textScaler: MediaQuery.of(context).textScaler,
-                      text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+                      text: TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: ""))),
               Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
               Expanded(
                   flex: 4,
@@ -1248,7 +1249,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                                 : Localization().getStringEx('panel.event2.create.label.recurrence.end_date.label', 'End Date'),
                             style: _hasRecurrenceEndDate
                                 ? Styles().textStyles.getTextStyle('widget.button.title.small.fat')
-                                : Event2CreatePanel.headingDisabledTextStype)
+                                : Event2CreatePanel.headingDisabledTextStyle)
                       ])))
             ])));
   }
@@ -1309,7 +1310,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               flex: 1,
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
-                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: ""))),
           Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
           Expanded(
               flex: 4,
@@ -1353,7 +1354,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                 textScaler: MediaQuery.of(context).textScaler,
                 text: TextSpan(
                     text: title,
-                    style: Event2CreatePanel.headingTextStype,
+                    style: Event2CreatePanel.headingTextStyle,
                     semanticsLabel: ""
                 ),
               ),
@@ -1403,7 +1404,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               flex: 1,
               child: RichText(
                   textScaler: MediaQuery.of(context).textScaler,
-                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+                  text: TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: ""))),
           Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
           Expanded(
               flex: 4,
@@ -1527,7 +1528,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                 flex: 1,
                 child: RichText(
                     textScaler: MediaQuery.of(context).textScaler,
-                    text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+                    text: TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: ""))),
             Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
             InkWell(
                 onTap: () => _onRecurrenceRepeatMonthlyTypeChanged(_RecurrenceRepeatMonthlyType.daily),
@@ -1672,7 +1673,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   flex: 1,
                   child: RichText(
                       textScaler: MediaQuery.of(context).textScaler,
-                      text: TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: ""))),
+                      text: TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: ""))),
               Container(width: Event2CreatePanel.innerRecurrenceSectionPaddingWidth),
               Expanded(
                   flex: 4,
@@ -1822,7 +1823,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Row(children: <Widget>[
         Expanded(flex: 4, child:
           RichText(textScaler: MediaQuery.of(context).textScaler, text:
-            TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
+            TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, semanticsLabel: "", children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
             ])
           )
@@ -1896,6 +1897,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.location.address.field', 'LOCATION ADDRESS FIELD')),
   );
 
+  /*
   Widget _buildLocationLatitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: false),
     body: Event2CreatePanel.buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx('panel.event2.create.location.latitude.field', 'LOCATION LATITUDE FIELD')),
@@ -1922,6 +1924,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       ),
     );
   }
+  */
 
   Widget _buildOnlineUrlInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.url.title', 'ONLINE URL'), required: true),
@@ -1944,25 +1947,25 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     body: Event2CreatePanel.buildInnerTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text, semanticsLabel: Localization().getStringEx('panel.event2.create.online_details.passcode.field', 'PASSCODE FIELD')),
   );
 
-  void _onTapSelectLocation() {
-    Analytics().logSelect(target: "Select Location");
-    Event2CreatePanel.hideKeyboard(context);
-    ExploreLocation? location = _constructLocation();
-
-    ExploreMapSelectLocationPanel.push(context,
-      selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
-    ).then((Explore? explore) {
-      if ((explore != null) && mounted) {
-        _locationBuildingController.text = (explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '').replaceAll('\n', ' ');
-        _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
-        _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
-        _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
-        setState(() {
-          _errorMap = _buildErrorMap();
-        });
-      }
-    });
-  }
+  // void _onTapSelectLocation() {
+  //   Analytics().logSelect(target: "Select Location");
+  //   Event2CreatePanel.hideKeyboard(context);
+  //   ExploreLocation? location = _constructLocation();
+  //
+  //   ExploreMapSelectLocationPanel.push(context,
+  //     selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
+  //   ).then((Explore? explore) {
+  //     if ((explore != null) && mounted) {
+  //       _locationBuildingController.text = (explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '').replaceAll('\n', ' ');
+  //       _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
+  //       _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
+  //       _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
+  //       setState(() {
+  //         _errorMap = _buildErrorMap();
+  //       });
+  //     }
+  //   });
+  // }
 
   Widget get _innerSectionSplitter => Container(color: Styles().colors.surfaceAccent, height: 1);
 
@@ -1989,6 +1992,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
+      textStyle: _toggleTextStyle,
+      backgroundColor: Styles().colors.background,
       padding: _togglePadding,
       toggled: _free,
       onTap: _onTapFree,
@@ -2008,22 +2013,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     return Padding(padding: Event2CreatePanel.innerSectionHeadingPadding, child:
       Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
-        Row(children: [
-          Expanded(child:
-            RichText(textScaler: MediaQuery.of(context).textScaler, text:
-              TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
-                TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
-                TextSpan(text: _free ? '' : ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
-              ])
-            )
-          ),
-        ]),
+        RichText(textScaler: MediaQuery.of(context).textScaler, text:
+          TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, children: <InlineSpan>[
+            TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+            TextSpan(text: _free ? '' : ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+          ])
+        ),
       ),
     );
   }
 
   void _onToggleCostSection() {
-    Analytics().logSelect(target: "Toggle Cost Sectoion");
+    Analytics().logSelect(target: "Toggle Cost Section");
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _costSectionExpanded = !_costSectionExpanded;
@@ -2311,7 +2312,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   );
 
   Widget? _buildGroupsSectionBody() {
-    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
     if (_loadingEventGroups) {
       return Row(children: [
         Padding(padding: const EdgeInsets.only(right: 6), child:
@@ -2474,6 +2475,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
+      textStyle: _toggleTextStyle,
+      backgroundColor: Styles().colors.background,
       padding: _togglePadding,
       toggled: _published,
       onTap: _onTapPublished,
@@ -2514,9 +2517,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return Semantics(label: buttonTitle, hint: buttonHint, button: true, enabled: buttonEnabled, excludeSemantics: true, child:
       RoundedButton(
         label: buttonTitle,
-        textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
+        textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.light.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat.variant_two'),
         onTap: buttonEnabled ? _onTapCreateEvent : null,
-        backgroundColor: Styles().colors.surface,
+        backgroundColor: Styles().colors.background,
         borderColor: buttonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
         progress: _creatingEvent,
       )

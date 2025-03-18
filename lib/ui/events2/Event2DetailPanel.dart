@@ -152,7 +152,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget build(BuildContext context) {
     return Scaffold(
       body: _scaffoldContent,
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -177,11 +177,11 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         title: _event?.name,
         flexImageUrl:  _event?.imageUrl,
         flexImageKey: 'event-detail-default',
-        flexRightToLeftTriangleColor: Styles().colors.surface,
+        flexRightToLeftTriangleColor: Styles().colors.background,
       ),
       SliverList(delegate:
       SliverChildListDelegate([
-        Container(color: Styles().colors.surface, child:
+        Container(color: Styles().colors.background, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             _roleBadgeWidget,
             _contentHeadingWidget,
@@ -230,7 +230,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("common.title.secondary"));
+    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"));
 
   static List<String>? _buildDisplayCategories(Event2? event) =>
     Events2().displaySelectedContentAttributeLabelsFromSelection(event?.attributes, usage: ContentAttributeUsage.category);
@@ -290,12 +290,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'));
+    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
       Expanded(child: 
-        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('common.title.secondary'), maxLines: 2,)
+        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('widget.item.light.small.thin'), maxLines: 2,)
       ),
     ],),
    ) : Container();
@@ -304,7 +304,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
        HtmlWidget(
           StringUtils.ensureNotEmpty(_event?.description),
           onTapUrl : (url) { _launchUrl(url, context: context); return true; },
-          textStyle: Styles().textStyles.getTextStyle("common.body")
+          textStyle: Styles().textStyles.getTextStyle("widget.item.light.small.thin")
       )
   ) : Container();
 
@@ -349,8 +349,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('common.body.underline'),) :
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('common.body'),);
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.item.light.small.thin.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
           _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, detailPadding: EdgeInsets.zero)
@@ -368,7 +368,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 
-      String textDetailStyleName = canLocation ? 'common.body.underline' : 'common.body';
+      String textDetailStyleName = canLocation ? 'widget.item.light.small.thin.underline' : 'widget.item.light.small.thin';
       TextStyle? textDetailStyle = Styles().textStyles.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
@@ -424,7 +424,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       details.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.free.title', 'Free'), 'cost'));
       if (StringUtils.isNotEmpty(_event?.cost)) {
         details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost',
-          textStyle: Styles().textStyles.getTextStyle('common.body'),
+          textStyle: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),
           iconVisible: false,
           maxLines: 2,
           detailPadding: EdgeInsets.zero
@@ -453,7 +453,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')));
 
   List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
-    _buildTextDetailWidget(_publishedStatus, 'eye', iconColor: Styles().colors.fillColorPrimary),
+    _buildTextDetailWidget(_publishedStatus, 'eye', iconColor: Styles().colors.iconLight),
     _detailSpacerWidget
   ] : null;
 
@@ -568,7 +568,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
     return (description != null) ?<Widget>[
       _buildTextDetailWidget(description, 'info',
-        textStyle: Styles().textStyles.getTextStyle('common.body.italic') ,
+        textStyle: Styles().textStyles.getTextStyle('widget.item.small.light.thin.italic') ,
         iconPadding: const EdgeInsets.only(right: 6),
         maxLines: 5,
       ),
@@ -589,7 +589,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             _buildDetailWidget(
           // Text(details?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline')),
                 RichText(textScaler: MediaQuery.of(context).textScaler, text:
-                  TextSpan(style: Styles().textStyles.getTextStyle("common.body"), children: <TextSpan>[
+                  TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"), children: <TextSpan>[
                     if (StringUtils.isNotEmpty(contact.firstName))
                       TextSpan(text: contact.firstName ?? ""),
                     if (StringUtils.isNotEmpty(contact.lastName))
@@ -597,9 +597,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
                     if (StringUtils.isNotEmpty(contact.organization))
                       TextSpan(text: contact.organization ?? ""),
                     if (StringUtils.isNotEmpty(contact.email))
-                      TextSpan(text: contact.email ?? "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: _contactGestureRecognizers[contact.email] ??= TapGestureRecognizer()..onTap = () => _onContactEmail(contact.email),),
+                      TextSpan(text: contact.email ?? "", style: Styles().textStyles.getTextStyle('widget.item.light.small.thin.underline'), recognizer: _contactGestureRecognizers[contact.email] ??= TapGestureRecognizer()..onTap = () => _onContactEmail(contact.email),),
                     if (StringUtils.isNotEmpty(contact.phone))
-                      TextSpan(text: contact.phone ?? "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: _contactGestureRecognizers[contact.phone] ??= TapGestureRecognizer()..onTap = () => _onContactPhone(contact.phone),),
+                      TextSpan(text: contact.phone ?? "", style: Styles().textStyles.getTextStyle('widget.item.light.small.thin.underline'), recognizer: _contactGestureRecognizers[contact.phone] ??= TapGestureRecognizer()..onTap = () => _onContactPhone(contact.phone),),
               ])),
               'person', iconVisible: false, detailPadding: EdgeInsets.zero));
         }
@@ -821,7 +821,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildLocationTextDetailWidget(String text, { TextStyle? textStyle }) =>
-    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles.getTextStyle('common.body')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
+    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles.getTextStyle('widget.item.light.small.thin')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
       'location', iconVisible: false, detailPadding: EdgeInsets.zero
     );
 
@@ -835,7 +835,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }) =>
     _buildDetailWidget(
       Text(text,
-        style: textStyle ?? Styles().textStyles.getTextStyle(underlined ? 'common.body.underline' : 'common.body'),
+        style: textStyle ?? Styles().textStyles.getTextStyle(underlined ? 'widget.item.light.small.thin.underline' : 'widget.item.light.small.thin'),
         maxLines: maxLines,
         overflow: overflow,
       ),

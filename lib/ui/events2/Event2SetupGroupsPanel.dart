@@ -46,7 +46,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
   Widget build(BuildContext context) => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('panel.event2.setup.groups.header.title', 'Select Groups'), actions: _barActions,),
     body: _scaffoldContent,
-    backgroundColor: Styles().colors.surface,
+    backgroundColor: Styles().colors.background,
   );
 
   Widget get _scaffoldContent =>
@@ -77,7 +77,13 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
     List<Widget> cardsList = <Widget>[_groupsToolBar];
     for (Group group in _groups!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        ToggleRibbonButton(label: group.title ?? '', toggled: _selectedGroupIds.contains(group.id), onTap: () => _onGroupToggled(group.id)),
+        ToggleRibbonButton(
+          label: group.title ?? '',
+          toggled: _selectedGroupIds.contains(group.id),
+          onTap: () => _onGroupToggled(group.id),
+          textStyle: Styles().textStyles.getTextStyle('widget.item.light.regular.fat'),
+          backgroundColor: Styles().colors.background,
+        ),
       ),);
     }
     return Padding(padding: const EdgeInsets.only(bottom: 32), child:
@@ -91,7 +97,12 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
   ],);
 
   LinkButton _toolbarButton({String? title, void Function()? onTap}) =>
-    LinkButton(title: title ?? '', onTap: onTap, padding: const EdgeInsets.symmetric(vertical: 12) /*, textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),*/);
+    LinkButton(
+      title: title ?? '',
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),
+    );
 
   Widget get _loadingContent => Center(child:
     Padding(padding: EdgeInsets.symmetric(vertical: _screenHeight / 4), child:

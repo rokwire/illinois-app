@@ -1277,7 +1277,7 @@ class _Event2OnboardingFiltersPanel extends ContentAttributesPanel {
     bgImageKey: 'event-filters-background',
     descriptionBuilder: Event2HomePanel._buildOnboardingDescription,
     sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.fat.highlight'),
-    sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+    sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),
     sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
     applyBuilder: Event2HomePanel._buildOnboardingApply,
     continueBuilder: Event2HomePanel._buildOnboardingContinue,

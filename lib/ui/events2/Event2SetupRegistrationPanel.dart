@@ -116,7 +116,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.surface,
+    backgroundColor: Styles().colors.background,
   );
 
   Widget _buildPanelContent() =>
@@ -205,14 +205,14 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   Widget _buildDescriptionSection() {
     String description = (_registrationType == Event2RegistrationType.internal) ?
-      Localization().getStringEx('panel.event2.setup.registration.description.label.title', 'Registration within the Illinois app requires the user to log in with a NetID.') : '';
+      Localization().getStringEx('panel.event2.setup.registration.description.label.title', 'Registration within the NEOM U app requires the user to log in with a NetID.') : '';
 
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Visibility(visible: description.isNotEmpty, child:
         Padding(padding: EdgeInsets.only(top: 12), child:
           Row(children: [
             Expanded(child:
-              Text(description, style: _infoTextStype,),
+              Text(description, style: _infoTextStyle,),
             )
           ],)
         ),
@@ -221,7 +221,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
 
-  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStyle => Styles().textStyles.getTextStyle('widget.item.small.light.thin.italic');
 
 
   // Internal Details
@@ -268,7 +268,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildRegistrantsHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStype, semanticsLabel: "",),
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStyle, semanticsLabel: "",),
       )
     ],),
   );
@@ -314,6 +314,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     return Align(alignment: Alignment.centerRight, child:
       LinkButton(
         title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
+        textStyle: Styles().textStyles.getTextStyle('widget.title.regular.underline'),
         hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
         onTap: onTap,
         padding: padding,

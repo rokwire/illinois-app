@@ -32,7 +32,6 @@ import 'package:neom/ui/events2/Event2DetailPanel.dart';
 import 'package:neom/ui/events2/Event2HomePanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/explore/ExploreMapPanel.dart';
-import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/PopScopeFix.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -198,38 +197,30 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(color: Styles().colors.surface, child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildSearchBar(),
-              _buildCommandBar(),
-            ]),
-          ),
+          _buildSearchBar(),
+          _buildCommandBar(),
           _buildResultContent()
-        ],),
+        ]),
       ),
     );
 
-  Widget _buildSearchBar() => Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
-    Row(children: <Widget>[
-      Expanded(child:
-        _buildSearchTextField()
-      ),
-      _buildSearchImageButton('close',
-        label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-        hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-        onTap: _onTapClear,
-      ),
-      _buildSearchImageButton('search',
-        label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-        hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-        onTap: _onTapSearch,
-      ),
+  Widget _buildSearchBar() => Padding(padding: EdgeInsets.all(16), child:
+    Stack(children: <Widget>[
+      _buildSearchTextField(),
+      Row(children: [
+        Spacer(),
+        _buildSearchImageButton('close',
+          label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+          hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+          onTap: _onTapClear,
+        ),
+        _buildSearchImageButton('search',
+          label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+          hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+          onTap: _onTapSearch,
+        ),
+      ]),
     ],),
-  );
-
-  Decoration get _searchBarDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(bottom: BorderSide(color: Styles().colors.textDisabled, width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(
@@ -248,6 +239,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
       decoration: InputDecoration(
         border: InputBorder.none,
+        fillColor: Styles().colors.surface,
+        filled: true,
       ),
     ),
   );
@@ -255,7 +248,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   Widget _buildSearchImageButton(String image, {String? label, String? hint, void Function()? onTap}) =>
     Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
       InkWell(onTap: onTap, child:
-        Padding(padding: EdgeInsets.all(12), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8), child:
           Styles().images.getImage(image, excludeFromSemantics: true),
         ),
       ),
@@ -277,19 +270,26 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
         Event2FilterCommandButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
           leftIconKey: 'filters',
-          rightIconKey: 'chevron-right',
+          rightIconKey: 'caret-right',
+          rightIconColor: Styles().colors.textDark,
+          rightIconPadding: const EdgeInsets.only(left: 8, right: 2),
           onTap: _onFilters,
+          contentDecoration: BoxDecoration(
+            color: Styles().colors.buttonColorVariant,
+            border: Border.all(color: Styles().colors.textDisabled, width: 1),
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
         _sortButton,
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
-        LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
-          hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
-          textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
-          padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
-          onTap: _onMapView,
-        ),
+        // LinkButton(
+        //   title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'),
+        //   hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+        //   textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+        //   padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
+        //   onTap: _onMapView,
+        // ),
         Visibility(visible: Auth2().isCalendarAdmin, child:
           Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
@@ -306,15 +306,25 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return DropdownButtonHideUnderline(child:
-      DropdownButton2<Event2SortType>(
-        dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
-        customButton: Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
-          leftIconKey: 'sort'
+      Theme(
+        data: ThemeData(
+          canvasColor: Styles().colors.surface,
         ),
-        isExpanded: false,
-        items: _buildSortDropdownItems(),
-        onChanged: _onSortType,
+        child: DropdownButton2<Event2SortType>(
+          dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
+          customButton: Event2FilterCommandButton(
+            title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
+            leftIconKey: 'sort',
+            contentDecoration: BoxDecoration(
+              color: Styles().colors.buttonColorVariant,
+              border: Border.all(color: Styles().colors.textDisabled, width: 1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          isExpanded: false,
+          items: _buildSortDropdownItems(),
+          onChanged: _onSortType,
+        ),
       ),
     );
   }
@@ -369,38 +379,29 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
 
   Widget _buildContentDescription() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyleVariant = Styles().textStyles.getTextStyle("widget.card.title.light.tiny.fat.variant");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
     
-    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
+    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyleVariant,));
     descriptionList.add(TextSpan(text: _searchText ?? '' , style: regularStyle,));
     descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
     
-    descriptionList.addAll(_buildFiltersDescription(boldStyle: boldStyle, regularStyle: regularStyle));
+    descriptionList.addAll(_buildFiltersDescription(boldStyleVariant: boldStyleVariant, regularStyle: regularStyle));
     
-    descriptionList.addAll(_buildSortDescription(boldStyle: boldStyle, regularStyle: regularStyle));
+    descriptionList.addAll(_buildSortDescription(boldStyleVariant: boldStyleVariant, regularStyle: regularStyle));
     
-    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.events.label.title', 'Events: ') , style: boldStyle,));
+    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.events.label.title', 'Events: ') , style: boldStyleVariant,));
     descriptionList.add(TextSpan(text: _searching ? '...' : (_totalEventsCount?.toString() ?? '-') , style: regularStyle,));
     descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     
-    return Padding(padding: EdgeInsets.only(top: 12), child:
-      Container(decoration: _contentDescriptionDecoration, padding: EdgeInsets.only(top: 12, bottom: 12, left: 16, right: 16), child:
+    return Padding(padding: EdgeInsets.only(top: 24, bottom: 12, left: 16, right: 16), child:
         Row(children: [ Expanded(child:
           RichText(text: TextSpan(style: regularStyle, children: descriptionList))
         ),],)
-    ));
+    );
   }
 
-  Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(
-      top: BorderSide(color: Styles().colors.textDisabled, width: 1),
-      bottom: BorderSide(color: Styles().colors.textDisabled, width: 1),
-    )
-  );
-
-  List<InlineSpan> _buildFiltersDescription({TextStyle? boldStyle, TextStyle? regularStyle}) {
+  List<InlineSpan> _buildFiltersDescription({TextStyle? boldStyleVariant, TextStyle? regularStyle}) {
     List<InlineSpan> descriptionList = <InlineSpan>[];
 
     String? timeDescription = (_timeFilter != Event2TimeFilter.customRange) ?
@@ -438,19 +439,19 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyleVariant,));
       descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
     }
     
     return descriptionList;
   }
 
-  List<InlineSpan> _buildSortDescription({TextStyle? boldStyle, TextStyle? regularStyle}) {
+  List<InlineSpan> _buildSortDescription({TextStyle? boldStyleVariant, TextStyle? regularStyle}) {
     List<InlineSpan> descriptionList = <InlineSpan>[];
     if ((1 < (_events?.length ?? 0)) || _searching) {
       String? sortStatus = event2SortTypeDisplayStatusString(_sortType);
       if (sortStatus != null) {
-        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort: ') , style: boldStyle,));
+        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort: ') , style: boldStyleVariant,));
         descriptionList.add(TextSpan(text: sortStatus, style: regularStyle,),);
         descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
@@ -514,9 +515,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.light.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.light.regular.thin' : 'widget.item.light.medium.fat'),),
       ],),
     );
 

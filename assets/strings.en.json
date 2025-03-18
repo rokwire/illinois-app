@@ -2368,7 +2368,7 @@
     "panel.create_poll.button.add_option.text": "Add Option",
     "panel.create_poll.button.add_option.hint": "",
     "panel.create_poll.text.add_option": "Additional Settings",
-    "panel.create_poll.setting.multy_choice": "Allow selecting more than one choice",
+    "panel.create_poll.setting.multi_choice": "Allow selecting more than one choice",
     "panel.create_poll.setting.repeat_vote": "Allow repeat votes",
     "panel.create_poll.setting.hide_result": "Hide results until poll ends",
     "panel.create_poll.setting.button.cancel.title": "Cancel",
@@ -3816,7 +3816,7 @@
     "widget.home.athletics_events.button.all.hint": "Tap to view all events",
 
     "widget.home.recent_polls.text.title": "RECENT POLLS",
-    "widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
+    "widget.home.recent_polls.text.empty.description": "No polls are available right now.",
     "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
     "widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
     "widget.home.recent_polls.button.all.title": "View All",

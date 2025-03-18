@@ -84,13 +84,13 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: HeaderBar(
-          title: Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll"),
+          title: Localization().getStringEx("panel.create_poll.header.title", "Create a Poll"),
           leadingIconKey: 'close-circle-white',
           onLeading: _onTapCancel,
         ),
         body: SafeArea(
           child: Container(
-            color: Styles().colors.surface,
+            color: Styles().colors.background,
             child: SingleChildScrollView(
               child: Column(children: [
                 _buildDescription(),
@@ -133,14 +133,12 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildDescription() {
-    return Container(
-        color: Styles().colors.surface,
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
-            child: Text(
-              Localization().getStringEx("panel.create_poll.description","People can vote through the {{app_title}} app by asking you for the 4 Digit Poll #.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles.getTextStyle("widget.item.small.thin"),
-            )));
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
+        child: Text(
+          Localization().getStringEx("panel.create_poll.description","People can vote through the {{app_title}} app by asking you for the 4 Digit Poll #.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+          style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"),
+        ));
   }
 
   Widget _buildNameLabel() {
@@ -153,7 +151,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         child: Row(
           children: <Widget>[
             Expanded(flex: 5,
-              child: Text(name, style:Styles().textStyles.getTextStyle("widget.item.medium")),
+              child: Text(name, style:Styles().textStyles.getTextStyle("widget.item.light.medium")),
             ),
             Container(
               width: 7,
@@ -161,7 +159,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             Expanded(
               flex: 3,
               child: Text(wantToKnowText,
-                style: Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+                style: Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
             )
           ],
         )));
@@ -264,47 +262,41 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional Settings");
     return Padding(
         padding: EdgeInsets.only(top: 3),
-        child: Container(
-            color: Styles().colors.background,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 26),
-              child: Semantics( label: additionalSettingsText, excludeSemantics: true, child:
-                Container(
-                    child: Row(
-                    children: <Widget>[
-                      Styles().images.getImage('settings', excludeFromSemantics: true) ?? Container(),
-                      Expanded(child:
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(additionalSettingsText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-                          ),
-                        )
-                      )
-                    ],
-                  ),
-                ),
-            ))));
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 26),
+          child: Semantics( label: additionalSettingsText, excludeSemantics: true, child:
+            Container(
+                child: Row(
+                children: <Widget>[
+                  Styles().images.getImage('settings', excludeFromSemantics: true) ?? Container(),
+                  Expanded(child:
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                        child: Text(additionalSettingsText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+                      ),
+                    )
+                  )
+                ],
+              ),
+            ),
+        )));
   }
 
   Widget _buildSettingsList() {
-    return Container(
-        color: Styles().colors.background,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: Container(
-              child: Column(
-            children: _buildSettingsButtons(),
-          )),
-        ));
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: Column(
+        children: _buildSettingsButtons(),
+      ),
+    );
   }
 
   Widget _buildGroupMembersSelection(){
     if(widget.group == null){
       return Container();
     }
-    return Container(
+    return Padding(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        color: Colors.white,
         child: GroupMembersSelectionWidget(
         selectedMembers: _groupMembersSelection,
         allMembers: _membersAllowedToPost,
@@ -323,7 +315,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     List<Widget> widgets =  [];
 
     widgets.add(ToggleRibbonButton(
-        label: Localization().getStringEx("panel.create_poll.setting.multy_choice", "Allow selecting more than one choice"),
+        label: Localization().getStringEx("panel.create_poll.setting.multi_choice", "Allow selecting more than one choice"),
         toggled: _selectedMultichoice,
         borderRadius: rounding,
         textStyle: _textStyle,
@@ -378,8 +370,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 child: Column(children: [
                    RoundedButton(
                       label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll Now"),
-                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      backgroundColor: Colors.white,
+                       textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+                      backgroundColor: Styles().colors.background,
                       borderColor: Styles().colors.fillColorSecondary,
                       progress: (_progressPollStatus == PollStatus.opened),
                       onTap: () {
@@ -390,11 +382,11 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                       child: Text(
                         Localization()
                             .getStringEx("panel.create_poll.description.non_editable.text", "Once started, you can no longer edit the poll."),
-                        style: Styles().textStyles.getTextStyle("widget.item.small.thin"),
+                        style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"),
                       )),
                   UnderlinedButton(
                       title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll to start later"),//TBD localize
-                      titleStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
+                      titleStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.light"),
                       // backgroundColor: Colors.white,
                       // borderColor: Styles().colors.fillColorPrimary,
                       // textColor: Styles().colors.fillColorPrimary,
@@ -538,37 +530,39 @@ class _PollOptionViewState extends State<PollOptionView> {
             ])
           )
         ),
-        Stack(children: [
-          Container(
-            padding: EdgeInsets.only(left: 12, right: canClose ? 18 : 12),
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-            child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
-              TextField(
-                  controller: widget.textController,
-                  onChanged: (String text) {
-                    setState(() {});
-                  },
-                  minLines: widget.minLines,
-                  maxLines: widget.maxLength,
-                  decoration: InputDecoration(hintText: widget.hint, hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"), border: InputBorder.none, counterText: ""),
-                  maxLength: widget.maxLength,
-                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: Styles().textStyles.getTextStyle("widget.detail.dark.regular"),
-                  enabled: widget.enabled,
-                  textCapitalization: TextCapitalization.sentences,
-                )),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+              child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
+                TextField(
+                    controller: widget.textController,
+                    onChanged: (String text) {
+                      setState(() {});
+                    },
+                    minLines: widget.minLines,
+                    maxLines: widget.maxLength,
+                    decoration: InputDecoration(
+                        hintText: widget.hint,
+                        hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
+                        fillColor: Styles().colors.surface,
+                        filled: true,
+                        border: InputBorder.none,
+                        counterText: ""
+                    ),
+                    maxLength: widget.maxLength,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    style: Styles().textStyles.getTextStyle("widget.detail.dark.regular"),
+                    enabled: widget.enabled,
+                    textCapitalization: TextCapitalization.sentences,
+                  )),
+            ),
           ),
           Visibility(visible: canClose, child:
-            Positioned.fill(child:
-              Align(alignment: Alignment.topRight, child:
-                Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-                  InkWell(onTap : widget.onClose, child:
-                    Padding(padding: EdgeInsets.only(left: 12, right: 8, top: 8, bottom: 12), child:
-                        Text('X', style: Styles().textStyles.getTextStyle("widget.title.regular")
-                        ),
-                    ),
-                  ),
-                ),
+            Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+              InkWell(onTap : widget.onClose, child:
+                Padding(padding: const EdgeInsets.all(8), child: Styles().images.getImage('close-x-white'),),
               ),
             ),
           ),

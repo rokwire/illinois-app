@@ -78,7 +78,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.surface,
+    backgroundColor: Styles().colors.background,
   );
 
   Widget _buildPanelContent() =>
@@ -115,6 +115,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     hint: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan ID"),
+      textStyle: Styles().textStyles.getTextStyle('widget.item.light.regular.fat'),
+      backgroundColor: Styles().colors.background,
       toggled: _scanningEnabled,
       onTap: _onTapScan,
       padding: EdgeInsets.zero,
@@ -156,6 +158,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     hint: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
+      textStyle: Styles().textStyles.getTextStyle('widget.item.light.regular.fat'),
+      backgroundColor: Styles().colors.background,
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
       padding: EdgeInsets.zero,
@@ -213,12 +217,12 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakersHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStype,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStyle,),
       )
     ],),
   );
 
-  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStyle => Styles().textStyles.getTextStyle('widget.item.small.light.thin.italic');
 
   Future<void> _onRefresh() async {
     _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);

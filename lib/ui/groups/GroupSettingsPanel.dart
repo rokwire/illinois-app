@@ -598,7 +598,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
               child:Text(longDescription ?? '',
-                style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"),
+                style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"),
             ),)),
           Container(height: 8,)
       ],));
@@ -637,7 +637,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       padding: EdgeInsets.only(left: 8, right: 8, top: 12),
                       child: Text(
                           Localization().getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
-                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"))))
+                          style: Styles().textStyles.getTextStyle("widget.item.light.small.thin"))))
             ])));
   }
 
@@ -1179,7 +1179,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny.highlight")),
           ),
           ((description != null) && description.isNotEmpty) ? Container(padding: EdgeInsets.only(top: 2), child:
-              Text(description, style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight")),
+              Text(description, style: Styles().textStyles.getTextStyle("widget.item.light.small.thin")),
             ) : Container(),
         ],),
       )

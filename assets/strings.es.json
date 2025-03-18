@@ -2351,7 +2351,7 @@
     "widget.profile.stored_data.retrieve.empty.message": "No stored information",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard.",
 
-    "panel.create_poll.header.title": "Crear una encuesta rápida",
+    "panel.create_poll.header.title": "Crear una encuesta",
     "panel.create_poll.description": "Las personas pueden votar a través de la aplicación de {{app_title}} pidiéndole el número de encuesta de 4 dígitos.",
     "panel.create_poll.text.wants_to_know": "quiere saber…",
     "panel.create_poll.text.question": "PREGUNTA",
@@ -2360,7 +2360,7 @@
     "panel.create_poll.button.add_option.text": "Agregar opción",
     "panel.create_poll.button.add_option.hint": "",
     "panel.create_poll.text.add_option": "Ajustes adicionales",
-    "panel.create_poll.setting.multy_choice": "Permitir seleccionar más de una opción",
+    "panel.create_poll.setting.multi_choice": "Permitir seleccionar más de una opción",
     "panel.create_poll.setting.repeat_vote": "Permitir votos repetidos",
     "panel.create_poll.setting.hide_result": "Ocultar resultados hasta que finalice la encuesta",
     "panel.create_poll.setting.button.cancel.title": "Cancelar",
@@ -3807,7 +3807,7 @@
     "widget.home.athletics_events.button.all.hint": "Toca para ver todos los eventos",
 
     "widget.home.recent_polls.text.title": "ENCUESTAS RECIENTES",
-    "widget.home.recent_polls.text.empty.description": "No hay encuestas recientes disponibles en este momento.",
+    "widget.home.recent_polls.text.empty.description": "No hay encuestas disponibles en este momento.",
     "widget.home.recent_polls.text.offline": "Las encuestas recientes no están disponibles sin conexión.",
     "widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
     "widget.home.recent_polls.button.all.title": "Ver todo",

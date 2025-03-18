@@ -73,7 +73,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
           onLeading: _onTapDone,
         ),
-        backgroundColor: Styles().colors.surface,
+        backgroundColor: Styles().colors.background,
         body: Stack(alignment: Alignment.center, children: <Widget>[
           Column(
             children:[
@@ -113,21 +113,21 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
                     Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
-                      Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH"), style: Styles().textStyles.getTextStyle('widget.title.dark.regular.fat')))),
+                      Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH"), style: Styles().textStyles.getTextStyle('widget.title.regular.fat')))),
                       Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
-                      Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: "), style: Styles().textStyles.getTextStyle('widget.title.dark.regular.fat')))),
+                      Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: "), style: Styles().textStyles.getTextStyle('widget.title.regular.fat')))),
                       Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_selectedMembers)),
-                      Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS"), style: Styles().textStyles.getTextStyle('widget.title.dark.regular.fat')))),
+                      Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS"), style: Styles().textStyles.getTextStyle('widget.title.regular.fat')))),
                       Visibility(visible: true, child: _buildMembersWidget(_allMembers))
                     ])),
                   ])),
               ),
               Padding(padding: EdgeInsets.only(top: 24, bottom: 24), child:
               RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
                   contentWeight: 0.5,
                   borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.surface,
+                  backgroundColor: Styles().colors.background,
                   onTap: _onTapDone),
               ),
             ]),
@@ -241,12 +241,11 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         children: [
           Container(
               padding: EdgeInsets.symmetric(vertical: 2),
-              child: Text(Localization().getStringEx("panel.group.members.list.search.description","Search for a particular member:"),style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),)), //TBD localize
+              child: Text(Localization().getStringEx("panel.group.members.list.search.description","Search for a particular member:"),style: Styles().textStyles.getTextStyle("widget.message.light.regular.fat"),)), //TBD localize
           Container(
-          padding: EdgeInsets.symmetric(horizontal: 0),
-          color: Styles().colors.surface,
-          height: 48,
-          child: Row(
+            padding: EdgeInsets.symmetric(horizontal: 0),
+            height: 48,
+            child: Row(
             children: <Widget>[
               Flexible(
                 child: Semantics(
@@ -263,7 +262,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)),
+                        fillColor: Styles().colors.surface,
+                        filled: true,
                       )
                     )),
               ),

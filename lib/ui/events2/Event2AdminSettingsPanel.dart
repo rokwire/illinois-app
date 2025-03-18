@@ -33,7 +33,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.admin_settings.header.title', 'Admin Settings')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -215,11 +215,13 @@ class _ButtonWidget extends StatelessWidget{
 Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
   heading: RibbonButton(
         label: title?? "",
+        textStyle: Styles().textStyles.getTextStyle('widget.item.light.regular.fat'),
+        backgroundColor: Styles().colors.background,
         description: subTitle,
         descriptionTextColor: Styles().colors.fillColorSecondary,
         progress: progress,
         onTap: () => onTap?.call(),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
         progressSize: 18,
       ));
 }

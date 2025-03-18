@@ -90,7 +90,7 @@ class GroupSectionTitle extends StatelessWidget {
           ),
         ),
         (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
-          Text(description ?? "", semanticsLabel: "", style:  descriptionTextStyle ?? Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"),),
+          Text(description ?? "", semanticsLabel: "", style:  descriptionTextStyle ?? Styles().textStyles.getTextStyle("widget.item.light.small.thin"),),
         ) : Container(),
       ],)
     );
