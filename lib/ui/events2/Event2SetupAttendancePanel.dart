@@ -37,15 +37,21 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
+  late bool _selfCheckEnabled;
+  late bool _selfCheckLimitedToRegisteredOnly;
 
   bool _scanningProgress = false;
   bool _manualCheckProgress = false;
+  bool _selfCheckProgress = false;
+  bool _selfCheckLimitedToRegisteredOnlyProgress = false;
   bool _applyProgress = false;
   
   final TextEditingController _attendanceTakersController = TextEditingController();
 
   late bool _initialScanningEnabled;
   late bool _initialManualCheckEnabled;
+  late bool _initialSelfCheckEnabled;
+  late bool _initialSelfCheckLimitedToRegisteredOnly;
   List<String>? _initialAttendanceTakers;
   late String _initialAttendanceTakersDisplayString;
 
@@ -54,6 +60,9 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   bool _modified = false;
   bool _updatingAttendance = false;
+
+  static const double _sectionPaddingHeight = 12;
+  static const EdgeInsetsGeometry _sectionPadding = const EdgeInsets.symmetric(vertical: _sectionPaddingHeight);
 
   @override
   void initState() {
@@ -85,11 +94,15 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Column(children: [
-          Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildHeadingDescription()),
+              _sectionDivider,
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSelfCheckSection()),
               _isEditing ? _buildAttendanceTakerSection() : Container(),
+              _sectionDivider,
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
             ]),
           )
@@ -103,10 +116,30 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
+  // Heading Description
+  
+  Widget _buildHeadingDescription() =>
+    Padding(padding: _sectionPadding, child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description1', 'Attendance taking in the Illinois app is limited to event attendees with NetIDs.'), style: _headingDescriptionTextStyle,),
+        Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight)),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description2', 'If you are taking registration in the Illinois app or uploading a registration list to the Illinois app, scanning Illini IDs and using manual attendance will alert attendance takers if the individual has NOT registered for that event. The attendance taker can choose to mark the individual as attended or not.'), style: _headingDescriptionTextStyle,),
+      ],),
+    );
+
+  TextStyle? get _headingDescriptionTextStyle =>
+      Styles().textStyles.getTextStyle('widget.item.small.thin'); // widget.info.small
+
+  // Splitter Line
+
+  Widget get _sectionDivider => Padding(padding: EdgeInsets.symmetric(vertical: _sectionPaddingHeight / 2), child:
+    Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
+  );
+
   // Scan
 
   Widget _buildScanSection() =>
-    Padding(padding: Event2CreatePanel.sectionPadding, child:
+    Padding(padding: _sectionPadding, child:
       _buildScanToggle(),
     );
 
@@ -136,6 +169,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
         attendanceDetails: Event2AttendanceDetails(
           scanningEnabled: !_scanningEnabled,
           manualCheckEnabled: _manualCheckEnabled,
+          selfCheckEnabled: _selfCheckEnabled,
+          selfCheckLimitedToRegisteredOnly: _selfCheckLimitedToRegisteredOnly,
           attendanceTakers: _initialAttendanceTakers
         ),
         progress: (bool value) => (_scanningProgress = value),
@@ -147,7 +182,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   // Manual
 
   Widget _buildManualSection() =>
-    Padding(padding: Event2CreatePanel.sectionPadding, child:
+    Padding(padding: _sectionPadding, child:
       _buildManualToggle(),
     );
 
@@ -178,6 +213,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
         attendanceDetails: Event2AttendanceDetails(
           scanningEnabled: _scanningEnabled,
           manualCheckEnabled: !_manualCheckEnabled,
+          selfCheckEnabled: _selfCheckEnabled,
+          selfCheckLimitedToRegisteredOnly: _selfCheckLimitedToRegisteredOnly,
           attendanceTakers: _initialAttendanceTakers
         ),
         progress: (bool value) => (_manualCheckProgress = value),
@@ -186,16 +223,101 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
+  // Self Check
+
+  Widget _buildSelfCheckSection() =>
+    Padding(padding: _sectionPadding, child:
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          _buildSelfCheckToggle(),
+          _buildSelfCheckLimitedToRegisteredOnlyToggle(),
+        ],)
+    );
+
+  Widget _buildSelfCheckToggle() => Semantics(toggled: _selfCheckEnabled, excludeSemantics: true,
+    label: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.title", "Enable self check-in by scanning a printed event QR code"),
+    hint: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.hint", ""),
+    child: ToggleRibbonButton(
+      label: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.title", "Enable self check-in by scanning a printed event QR code"),
+      toggled: _selfCheckEnabled,
+      onTap: _onTapSelfCheck,
+      padding: EdgeInsets.zero,
+      progress: _selfCheckProgress,
+      //border: _toggleBorder,
+      //borderRadius: _toggleBorderRadius,
+    ));
+
+  void _onTapSelfCheck() {
+    Analytics().logSelect(target: "Toggle Self Check");
+    Event2CreatePanel.hideKeyboard(context);
+
+    if (_isCreating) {
+      setStateIfMounted(() {
+        _selfCheckEnabled = !_selfCheckEnabled;
+      });
+    }
+    else {
+      _updateEventAttendanceDetails(
+        attendanceDetails: Event2AttendanceDetails(
+          scanningEnabled: _scanningEnabled,
+          manualCheckEnabled: _manualCheckEnabled,
+          selfCheckEnabled: !_selfCheckEnabled,
+          selfCheckLimitedToRegisteredOnly: _selfCheckLimitedToRegisteredOnly,
+          attendanceTakers: _initialAttendanceTakers
+        ),
+        progress: (bool value) => (_selfCheckProgress = value),
+        success: (Event2 event) => _applyEventDetails(event)
+      );
+    }
+  }
+
+  Widget _buildSelfCheckLimitedToRegisteredOnlyToggle() => Semantics(enabled: _selfCheckEnabled, toggled: _selfCheckLimitedToRegisteredOnly, excludeSemantics: true,
+    label: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.title", "Limit self check-in to those who have registered for the event"),
+    hint: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.hint", ""),
+    child: ToggleRibbonButton(
+      label: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.title", "Limit self check-in to those who have registered for the event"),
+      toggled: _selfCheckLimitedToRegisteredOnly,
+      textStyle: _selfCheckEnabled ? Styles().textStyles.getTextStyle('widget.button.title.medium.thin') : Styles().textStyles.getTextStyle('widget.button.title.medium.thin.variant3'),
+      rightIconKeys: _selfCheckEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+      onTap: _selfCheckEnabled ? _onTapSelfCheckLimitedToRegisteredOnly : null,
+      padding: EdgeInsets.only(left: 24),
+      progress: _selfCheckLimitedToRegisteredOnlyProgress,
+      //border: _toggleBorder,
+      //borderRadius: _toggleBorderRadius,
+    ));
+
+  void _onTapSelfCheckLimitedToRegisteredOnly() {
+    Analytics().logSelect(target: "Toggle Self Check Limited To Registered Only");
+    Event2CreatePanel.hideKeyboard(context);
+
+    if (_isCreating) {
+      setStateIfMounted(() {
+        _selfCheckLimitedToRegisteredOnly = _selfCheckEnabled && !_selfCheckLimitedToRegisteredOnly;
+      });
+    }
+    else {
+      _updateEventAttendanceDetails(
+        attendanceDetails: Event2AttendanceDetails(
+          scanningEnabled: _scanningEnabled,
+          manualCheckEnabled: _manualCheckEnabled,
+          selfCheckEnabled: _selfCheckEnabled,
+          selfCheckLimitedToRegisteredOnly: _selfCheckEnabled && !_selfCheckLimitedToRegisteredOnly,
+          attendanceTakers: _initialAttendanceTakers
+        ),
+        progress: (bool value) => (_selfCheckLimitedToRegisteredOnlyProgress = value),
+        success: (Event2 event) => _applyEventDetails(event)
+      );
+    }
+  }
+
   // Attendance Taker
 
   Widget _buildAttendanceTakerSection() {
-    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+    return Padding(padding: _sectionPadding, child:
       Column(children: [
-        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
+        _sectionDivider,
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
           Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
-        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
       ],),
     );
   }
@@ -205,6 +327,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakersSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.attendance.takers.label.title', 'Netids for additional attendance takers:')),
     body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
+    padding: _sectionPadding,
     trailing: Column(children: [
       _buildAttendanceTakersHint(),
     ]),
@@ -253,6 +376,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   void _initDetails(Event2AttendanceDetails? details) {
     _scanningEnabled = _initialScanningEnabled = details?.scanningEnabled ?? false;
     _manualCheckEnabled = _initialManualCheckEnabled = details?.manualCheckEnabled ?? false;
+    _selfCheckEnabled = _initialSelfCheckEnabled = details?.selfCheckEnabled ?? false;
+    _selfCheckLimitedToRegisteredOnly = _initialSelfCheckLimitedToRegisteredOnly = details?.selfCheckLimitedToRegisteredOnly ?? false;
     _initialAttendanceTakers = details?.attendanceTakers;
     _attendanceTakersController.text = _initialAttendanceTakersDisplayString = details?.attendanceTakers?.join(' ') ?? '';
     _modified = false;
@@ -269,6 +394,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       
       bool modified = (_scanningEnabled != _initialScanningEnabled) ||
         (_manualCheckEnabled != _initialManualCheckEnabled) ||
+        (_selfCheckEnabled != _initialSelfCheckEnabled) ||
+        (_selfCheckEnabled && _initialSelfCheckEnabled && (_selfCheckLimitedToRegisteredOnly != _initialSelfCheckLimitedToRegisteredOnly)) ||
         (_attendanceTakersController.text != _initialAttendanceTakersDisplayString);
 
       if (_modified != modified) {
@@ -283,6 +410,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
+      selfCheckEnabled: _selfCheckEnabled,
+      selfCheckLimitedToRegisteredOnly: _selfCheckLimitedToRegisteredOnly,
       attendanceTakers: _buildAttendanceTakers(),
   );
 
