@@ -32,8 +32,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:share/share.dart' as share_native;
-import 'package:share_plus/share_plus.dart' as share_web;
+import 'package:share_plus/share_plus.dart';
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
@@ -355,11 +354,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
     Analytics().logSelect(target: 'Share QR Code');
     String? promotionUrl = _promotionUrl;
     if (promotionUrl != null) {
-      if (kIsWeb) {
-        share_web.Share.share(promotionUrl);
-      } else {
-        share_native.Share.share(promotionUrl);
-      }
+      Share.share(promotionUrl);
     }
   }
 
@@ -367,7 +362,6 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   void _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
-    final String mimeType = 'text/vcard';
     String contentToShare = widget.digitalCardShare ?? '';
     final String fileName = '${widget.saveFileName}.vcf';
     if (kIsWeb) {
@@ -380,9 +374,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
       File capturedFile = File(fullPath);
       await capturedFile.writeAsString(contentToShare);
       if (mounted) {
-        share_native.Share.shareFiles(
-          [fullPath],
-          mimeTypes: [mimeType],
+        Share.shareXFiles([XFile(fullPath, mimeType: 'text/vcard',)],
           text: widget.saveWatermarkText,
         );
       }

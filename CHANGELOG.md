@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.0.0] - 2025-03-17
+### Added
+- Use the common method for launching urls [#4898](https://github.com/rokwire/illinois-app/issues/4898).
+### Changed
+- Upgrade to Flutter 3.29.2, upgraded plugins [#4899](https://github.com/rokwire/illinois-app/issues/4899).
+
 ## [6.2.2] - 2025-03-14
 ### Changed
 - Added Filter feature to My Groups [#4835](https://github.com/rokwire/illinois-app/issues/4835).

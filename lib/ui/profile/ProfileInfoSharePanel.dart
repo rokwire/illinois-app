@@ -189,7 +189,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
         setState(() {
           _sharingVirtualCard = false;
         });
-        //TBD: DDWEB - implement
         // Share.shareFiles([fullPath],
         //   mimeTypes: ['text/vcard'],
         //   text: widget.profile?.vcfFullName,

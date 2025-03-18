@@ -459,7 +459,7 @@ class _SavedItemsList extends StatefulWidget {
   final Color? slantColor;
   final void Function(Favorite favorite)? onTapFavorite;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor, this.onTapFavorite});
 
   _SavedItemsListState createState() => _SavedItemsListState();

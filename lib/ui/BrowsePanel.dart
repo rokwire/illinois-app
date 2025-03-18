@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +19,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
@@ -65,7 +63,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 ///////////////////////////
 // BrowsePanel
@@ -1023,14 +1020,9 @@ class _BrowseEntry extends StatelessWidget {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (launchInternal && UrlUtils.canLaunchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
       }
     }
   }
