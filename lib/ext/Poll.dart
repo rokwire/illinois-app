@@ -6,8 +6,9 @@ import '../service/AppDateTime.dart';
 
 extension PollExt on Poll {
   String? get displayUpdateTime {
-    if(StringUtils.isNotEmpty(dateUpdatedUtcString)) {
-      DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(DateTime.tryParse(dateUpdatedUtcString!));
+    String? dateUpdatedString = dateUpdatedUtcString ?? dateCreatedUtcString;
+    if(StringUtils.isNotEmpty(dateUpdatedString)) {
+      DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(DateTime.tryParse(dateUpdatedString!));
       return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
     }
     else {

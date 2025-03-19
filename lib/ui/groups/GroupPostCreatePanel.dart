@@ -144,6 +144,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                           textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
                             Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
                             Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
+                          backgroundColor: Styles().colors.background,
                           onTap: () {
                             if(mounted){
                               setState(() {
@@ -166,6 +167,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                             textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
                             Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
                             Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
+                            backgroundColor: Styles().colors.background,
                             onTap: () {
                               if(mounted){
                                 setState(() {

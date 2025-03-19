@@ -2631,9 +2631,10 @@ class EnabledToggleButton extends ToggleRibbonButton {
         void Function()? onTap,
         BoxBorder? border,
         BorderRadius? borderRadius,
+        Color? backgroundColor,
         TextStyle? textStyle,
         this.enabled})
-      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
+      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, backgroundColor: backgroundColor, textStyle: textStyle);
 
   @override
   bool get toggled => (enabled == true) && super.toggled;

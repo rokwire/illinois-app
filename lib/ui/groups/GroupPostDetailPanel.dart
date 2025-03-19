@@ -292,6 +292,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                                           toggled: _mainPostUpdateData?.pinned == true,
                                           textStyle: Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"),
+                                          backgroundColor: Styles().colors.background,
                                           enabled: true,
                                           onTap: () {
                                             if(mounted){

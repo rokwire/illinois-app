@@ -862,6 +862,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Align(alignment: Alignment.bottomRight, child:
         LinkButton(
           title: Localization().getStringEx('panel.event2.create.button.clear_end_datetime.title', 'Clear End Date and Time'),
+          textStyle: Styles().textStyles.getTextStyle('widget.title.regular.underline'),
           hint: Localization().getStringEx('panel.event2.create.button.clear_end_datetime.hint', ''),
           onTap: _onClearEndDateTime,
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -2015,7 +2016,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
         RichText(textScaler: MediaQuery.of(context).textScaler, text:
           TextSpan(text: title, style: Event2CreatePanel.headingTextStyle, children: <InlineSpan>[
-            TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+            TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.light.small.thin'),),
             TextSpan(text: _free ? '' : ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
           ])
         ),
@@ -2056,7 +2057,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Widget? _buildAttributesSectionBody() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
 
     ContentAttributes? contentAttributes = Events2().contentAttributes;
     List<ContentAttribute>? attributes = contentAttributes?.attributes;

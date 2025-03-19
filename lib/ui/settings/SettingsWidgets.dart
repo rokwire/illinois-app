@@ -317,7 +317,7 @@ class InfoButton extends StatelessWidget {
     InkWell(onTap: onTap, child:
     Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.background.withAlpha(48), spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.gradientColorPrimary, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.background.withAlpha(48), spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,9 +332,9 @@ class InfoButton extends StatelessWidget {
               children: <Widget>[
                 Container(
                     padding: EdgeInsets.only(right: 14),
-                    child:Text(title!, style: Styles().textStyles.getTextStyle("widget.button.title.enabled"))),
+                    child:Text(title!, style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"))),
                 Padding(padding: EdgeInsets.only(top: 5), child:
-                Text(description!, style: Styles().textStyles.getTextStyle("widget.button.description.small"),),
+                Text(description!, style: Styles().textStyles.getTextStyle("widget.button.light.description.small"),),
                 ),
                 _buildAdditionalInfo(),
               ],
@@ -358,7 +358,7 @@ class InfoButton extends StatelessWidget {
             Container(height: 12,),
             Container(height: 1, color: Styles().colors.surfaceAccent,),
             Container(height: 12),
-            Text(additionalInfo!, style: Styles().textStyles.getTextStyle("widget.button.description.tiny"),),
+            Text(additionalInfo!, style: Styles().textStyles.getTextStyle("widget.button.light.description.tiny"),),
           ],
         );
   }

@@ -1657,9 +1657,9 @@ class GroupEventSelector2 extends Event2Selector2 {
         hint: (group.researchProject == true) ?
         Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
         Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
-        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-        backgroundColor: Colors.white,
-        borderColor: Styles().colors.fillColorPrimary,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+        backgroundColor: Styles().colors.background,
+        borderColor: Styles().colors.fillColorSecondary,
         progress: state.bindingInProgress,
         onTap: () => _onAddEventToGroup(state, event),
       ),

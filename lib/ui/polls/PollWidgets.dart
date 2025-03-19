@@ -127,12 +127,12 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
             child: Row(children: <Widget>[
               if (widget.showGroupName)
                 Expanded(child:
-                Text(StringUtils.ensureNotEmpty(widget.group?.title), overflow: TextOverflow.ellipsis, style:Styles().textStyles.getTextStyle("widget.card.detail.regular.fat")
+                  Text(StringUtils.ensureNotEmpty(widget.group?.title), overflow: TextOverflow.ellipsis, style:Styles().textStyles.getTextStyle("widget.card.detail.regular.fat")),
                 ),
-                ),
-              Spacer(),
+              if (!widget.showGroupName)
+                Spacer(),
               Padding(
-                padding: const EdgeInsets.only(right: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.regular.fat')),
               ),
               Visibility(visible: _PollOptionsState._hasPollOptions(widget), child:
@@ -194,7 +194,7 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
   }
 
   String? get _pollDateText =>
-      "Quick Poll,Updated ${widget.poll?.displayUpdateTime}";
+      "Quick Poll, Updated ${widget.poll?.displayUpdateTime}";
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;
@@ -246,13 +246,14 @@ class _PollCardState extends State<PollCard> implements NotificationsListener {
             Padding(padding: EdgeInsets.only(right: 5), child: Styles().images.getImage(checkboxImage, size: 24.0)),
             Expanded(
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                Stack(key: progressKey, alignment: Alignment.centerLeft, children: <Widget>[
-                  CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ? Styles().colors.fillColorPrimary : Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-                  Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
-                  Padding(padding: EdgeInsets.only(left: 10, right: 5), child:
-                  Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)
-                  ),
-                ],),
+                Expanded(
+                  child: Stack(key: progressKey, alignment: Alignment.centerLeft, children: <Widget>[
+                    CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ? Styles().colors.fillColorPrimary : Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+                    Padding(padding: EdgeInsets.only(left: 10, right: 5), child:
+                      Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),
+                    ),
+                  ],),
+                ),
                 Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle('widget.group.card.poll.votes'),),)
               ],),
             ),
