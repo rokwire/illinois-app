@@ -23,7 +23,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
-import 'dart:io' show Platform;
+import 'package:universal_io/io.dart' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class Onboarding2AuthNotificationsPanel extends StatefulWidget with Onboarding2Panel {
