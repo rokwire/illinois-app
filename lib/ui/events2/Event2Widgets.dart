@@ -10,7 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Auth2.dart' as app_auth2;
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as plugin_auth2;
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -424,6 +425,10 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
   Widget get _imageHeadingWidget {
+    String? imageUrl = _event.imageUrl ?? '';
+    if (StringUtils.isNotEmpty(imageUrl)) {
+      imageUrl = Config().wrapWebProxyUrl(sourceUrl: imageUrl);
+    }
     double screenWidth = MediaQuery.of(context).size.width;
     double preferredWidth = screenWidth / 4.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
@@ -431,8 +436,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         visible: _hasImage,
         child: Container(
           decoration: _imageHeadingDecoration,
-          child: Image.network(_event.imageUrl ?? '', width: imageWidth,
-                  fit: BoxFit.cover, headers: (kIsWeb ? null : Config().networkAuthHeaders), excludeFromSemantics: true),
+          child: Image.network(imageUrl ?? '', width: imageWidth,
+                  fit: BoxFit.cover, headers: (kIsWeb ? plugin_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders), excludeFromSemantics: true),
         ));
   }
 
@@ -473,8 +478,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }*/
 
   Widget get _favoriteButton {
-    bool isFavorite = Auth2().isFavorite(_event);
-    return Opacity(opacity: Auth2().canFavorite ? 1 : 0, child:
+    bool isFavorite = app_auth2.Auth2().isFavorite(_event);
+    return Opacity(opacity: app_auth2.Auth2().canFavorite ? 1 : 0, child:
       Semantics(container: true,
         child: Semantics(
           label: isFavorite ?
@@ -640,7 +645,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${_event.name}");
-    Auth2().prefs?.toggleFavorite(_event);
+    app_auth2.Auth2().prefs?.toggleFavorite(_event);
   }
 
   void _onGroupEventOptions() {
