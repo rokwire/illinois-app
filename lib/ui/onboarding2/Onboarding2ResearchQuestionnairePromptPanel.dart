@@ -16,8 +16,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatefulWidget with On
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
   final void Function(BuildContext context, Onboarding2Panel panel, bool? participateInResearch)? onContinue;
-  Onboarding2ResearchQuestionnairePromptPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
-    super(key: GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>());
+  Onboarding2ResearchQuestionnairePromptPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue });
 
   GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>) ?
     (super.key as GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>) : null;

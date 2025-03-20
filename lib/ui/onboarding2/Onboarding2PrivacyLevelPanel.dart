@@ -33,8 +33,7 @@ import 'Onboarding2Widgets.dart';
 class Onboarding2PrivacyLevelPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2PrivacyLevelPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2PrivacyLevelPanelState>());
+  Onboarding2PrivacyLevelPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2PrivacyLevelPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyLevelPanelState>) ?
     (super.key as GlobalKey<_Onboarding2PrivacyLevelPanelState>) : null;

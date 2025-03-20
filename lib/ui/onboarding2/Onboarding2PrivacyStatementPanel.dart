@@ -29,8 +29,7 @@ class Onboarding2PrivacyStatementPanel extends StatefulWidget with Onboarding2Pa
 
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2PrivacyStatementPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2PrivacyStatementPanelState>());
+  Onboarding2PrivacyStatementPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2PrivacyStatementPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyStatementPanelState>) ?
     (super.key as GlobalKey<_Onboarding2PrivacyStatementPanelState>) : null;

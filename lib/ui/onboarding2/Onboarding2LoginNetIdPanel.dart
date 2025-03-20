@@ -29,8 +29,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class Onboarding2LoginNetIdPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2LoginNetIdPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2LoginNetIdPanelState>());
+  Onboarding2LoginNetIdPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2LoginNetIdPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2LoginNetIdPanelState>) ?
     (super.key as GlobalKey<_Onboarding2LoginNetIdPanelState>) : null;

@@ -40,8 +40,7 @@ class ProfileLoginPasskeyPanel extends StatefulWidget with Onboarding2Panel {
 
   final bool? link;
 
-  ProfileLoginPasskeyPanel({this.onboardingCode = 'login_passkey', this.onboardingContext, this.link}) :
-      super(key: GlobalKey<_ProfileLoginPasskeyPanelState>());
+  ProfileLoginPasskeyPanel({this.onboardingCode = 'login_passkey', this.onboardingContext, this.link});
 
   GlobalKey<_ProfileLoginPasskeyPanelState>? get globalKey => (super.key is GlobalKey<_ProfileLoginPasskeyPanelState>) ?
     (super.key as GlobalKey<_ProfileLoginPasskeyPanelState>) : null;

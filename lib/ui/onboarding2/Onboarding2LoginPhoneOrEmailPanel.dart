@@ -31,8 +31,7 @@ class Onboarding2LoginPhoneOrEmailPanel extends StatefulWidget with Onboarding2P
 
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2LoginPhoneOrEmailPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>());
+  Onboarding2LoginPhoneOrEmailPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>) ?
     (super.key as GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>) : null;

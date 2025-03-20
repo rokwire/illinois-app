@@ -14,8 +14,7 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatefulWidge
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
   final void Function()? onContinue;
-  Onboarding2ResearchQuestionnaireAcknowledgementPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
-    super(key: GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>());
+  Onboarding2ResearchQuestionnaireAcknowledgementPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue });
 
   GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>) ?
     (super.key as GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>) : null;

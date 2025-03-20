@@ -41,8 +41,7 @@ import 'package:video_player/video_player.dart';
 class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2VideoTutorialPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2VideoTutorialPanelState>());
+  Onboarding2VideoTutorialPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2VideoTutorialPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2VideoTutorialPanelState>) ?
     (super.key as GlobalKey<_Onboarding2VideoTutorialPanelState>) : null;

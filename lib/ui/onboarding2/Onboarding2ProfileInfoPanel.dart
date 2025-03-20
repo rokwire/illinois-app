@@ -19,8 +19,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2ProfileInfoPanel({ this.onboardingCode = 'profile_info', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2ProfileInfoPanelState>());
+  Onboarding2ProfileInfoPanel({ this.onboardingCode = 'profile_info', this.onboardingContext });
 
   GlobalKey<_Onboarding2ProfileInfoPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ProfileInfoPanelState>) ?
     (super.key as GlobalKey<_Onboarding2ProfileInfoPanelState>) : null;

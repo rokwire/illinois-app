@@ -32,8 +32,7 @@ import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 class Onboarding2AuthNotificationsPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2AuthNotificationsPanel({ this.onboardingCode = 'notifications_auth', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2AuthNotificationsPanelState>());
+  Onboarding2AuthNotificationsPanel({ this.onboardingCode = 'notifications_auth', this.onboardingContext });
 
   GlobalKey<_Onboarding2AuthNotificationsPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2AuthNotificationsPanelState>) ?
     (super.key as GlobalKey<_Onboarding2AuthNotificationsPanelState>) : null;

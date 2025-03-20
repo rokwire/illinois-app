@@ -27,8 +27,7 @@ import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 class Onboarding2GetStartedPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2GetStartedPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2GetStartedPanelState>());
+  Onboarding2GetStartedPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2GetStartedPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2GetStartedPanelState>) ?
     (super.key as GlobalKey<_Onboarding2GetStartedPanelState>) : null;

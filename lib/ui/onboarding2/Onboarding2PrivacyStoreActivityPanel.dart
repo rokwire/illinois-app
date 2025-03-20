@@ -29,8 +29,7 @@ import 'Onboarding2Widgets.dart';
 class Onboarding2PrivacyStoreActivityPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2PrivacyStoreActivityPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2PrivacyStoreActivityPanelState>());
+  Onboarding2PrivacyStoreActivityPanel({ this.onboardingCode = '', this.onboardingContext });
 
   GlobalKey<_Onboarding2PrivacyStoreActivityPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyStoreActivityPanelState>) ?
     (super.key as GlobalKey<_Onboarding2PrivacyStoreActivityPanelState>) : null;

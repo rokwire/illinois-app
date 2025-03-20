@@ -18,8 +18,7 @@ class Onboarding2ResearchQuestionnairePanel extends StatefulWidget with Onboardi
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
   final void Function()? onContinue;
-  Onboarding2ResearchQuestionnairePanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
-    super(key: GlobalKey<_Onboarding2ResearchQuestionnairePanelState>());
+  Onboarding2ResearchQuestionnairePanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue });
 
   GlobalKey<_Onboarding2ResearchQuestionnairePanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnairePanelState>) ?
     (super.key as GlobalKey<_Onboarding2ResearchQuestionnairePanelState>) : null;
