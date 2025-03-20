@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: Upgrade Android Gradle Plugin to version 8.2.1.
 ### Fixed
 - Fixed assess to Onboarding2Panel states [#4826](https://github.com/rokwire/illinois-app/issues/4826).
+- Web: Various issues after the flutter upgrade [#4903](https://github.com/rokwire/illinois-app/issues/4903).
 
 ## [7.0.0] - 2025-03-17
 ### Added
