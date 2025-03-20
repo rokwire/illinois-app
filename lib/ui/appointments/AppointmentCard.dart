@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -179,7 +181,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                           Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
                             InkWell(onTap: () => StringUtils.isNotEmpty(imageKey) ? _onTapCardImage(imageKey) : null, child:
                               SizedBox(width: imageSize, height: imageSize, child:
-                                Styles().images.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
+                                Styles().images.getImage(Config().wrapWebProxyUrl(sourceUrl: imageKey), excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: kIsWeb ? rokwire_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders)
                               )
                             )
                           )

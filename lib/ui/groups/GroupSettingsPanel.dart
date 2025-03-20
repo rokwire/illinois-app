@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -210,7 +212,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: _group!.imageURL) ?? '', excludeFromSemantics: true, fit: BoxFit.cover, headers: kIsWeb ? rokwire_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders)))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(

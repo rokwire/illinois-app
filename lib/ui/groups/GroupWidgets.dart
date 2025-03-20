@@ -903,7 +903,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
                   constraints: BoxConstraints(maxWidth: maxImageWidgth),
                   // width: _smallImageSize,
                   height: _smallImageSize,
-                  child: Image.network(imageUrl!, excludeFromSemantics: true,
+                  child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true,
                     fit: BoxFit.fill,),),))
         // )
       );
@@ -1132,7 +1132,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Visibility(visible: StringUtils.isNotEmpty(imageUrl),
                               child: Container(
                                 padding: EdgeInsets.only(top: 14),
-                                child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? null : Config().networkAuthHeaders, excludeFromSemantics: true)
+                                child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders, excludeFromSemantics: true)
                             )),
                             WebEmbed(body: htmlBody),
                             // Container(
@@ -1386,7 +1386,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? null : Config().networkAuthHeaders, excludeFromSemantics: true)
+                      child: Image.network(Config().wrapWebProxyUrl(sourceUrl: widget.reply!.imageUrl) ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders, excludeFromSemantics: true)
               )),
 
               WebEmbed(body: bodyText),
@@ -2142,7 +2142,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
+              ? Positioned.fill(child: ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),

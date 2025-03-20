@@ -425,10 +425,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
   Widget get _imageHeadingWidget {
-    String? imageUrl = _event.imageUrl ?? '';
-    if (StringUtils.isNotEmpty(imageUrl)) {
-      imageUrl = Config().wrapWebProxyUrl(sourceUrl: imageUrl);
-    }
+    String imageUrl = Config().wrapWebProxyUrl(sourceUrl: _event.imageUrl) ?? '';
     double screenWidth = MediaQuery.of(context).size.width;
     double preferredWidth = screenWidth / 4.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
@@ -436,7 +433,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         visible: _hasImage,
         child: Container(
           decoration: _imageHeadingDecoration,
-          child: Image.network(imageUrl ?? '', width: imageWidth,
+          child: Image.network(imageUrl, width: imageWidth,
                   fit: BoxFit.cover, headers: (kIsWeb ? plugin_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders), excludeFromSemantics: true),
         ));
   }

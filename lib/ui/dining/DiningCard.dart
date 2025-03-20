@@ -20,6 +20,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -106,11 +107,11 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
   }
 
   Widget get _buildImage {
-    String? imageUrl = widget.dining?.imageURL;
+    String? imageUrl = Config().wrapWebProxyUrl(sourceUrl: widget.dining?.imageURL);
     return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
-          Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+          Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true)
         ),
       )
     );

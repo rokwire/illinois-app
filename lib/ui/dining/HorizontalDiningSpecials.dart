@@ -19,6 +19,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/dining/LocationsWithDiningSpecialPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -116,7 +118,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
         Container(width: width, color: Styles().colors.white, child:
           Row(/*crossAxisAlignment: CrossAxisAlignment.stretch,*/ children: <Widget>[
             _hasImage ? ModalImageHolder(child:
-              Image.network(widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)
+              Image.network(Config().wrapWebProxyUrl(sourceUrl: widget.special!.imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)
             ) : Container(),
             Expanded(child:
               GestureDetector(onTap: _onOfferTap, child:

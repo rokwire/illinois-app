@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -111,6 +113,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue) && widget.showInterests;
     String? description = game?.description;
     bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
+    String? wrappedImageUrl = Config().wrapWebProxyUrl(sourceUrl: game?.imageUrl);
 
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -121,8 +124,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
               showImage
                   ? Positioned(
                       child: InkWell(
-                          onTap: () => _onTapCardImage(game!.imageUrl!),
-                          child: Image.network(game!.imageUrl!, semanticLabel: "Sports")))
+                          onTap: () => _onTapCardImage(wrappedImageUrl),
+                          child: Image.network(wrappedImageUrl ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, semanticLabel: "Sports")))
                   : Container(),
               showImage
                   ? Container(

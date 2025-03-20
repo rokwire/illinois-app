@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
@@ -189,7 +191,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     if (video == null) {
       return Container();
     }
-    String? imageUrl = video.thumbUrl;
+    String? imageUrl = Config().wrapWebProxyUrl(sourceUrl: video.thumbUrl);
     String? title = video.title;
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
@@ -212,7 +214,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
-                                  child: Image.network(imageUrl!,
+                                  child: Image.network(imageUrl!, headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders,
                                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                     return (loadingProgress == null) ? child : emptyImagePlaceholder;
                                   }))

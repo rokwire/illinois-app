@@ -20,10 +20,12 @@ import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -251,7 +253,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                     Semantics(button: true, label: "advisor image", hint: "Double tap to expand image", child:
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(person.imageUrl) ?
-                          Image.network(person.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
+                          Image.network(Config().wrapWebProxyUrl(sourceUrl: person.imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true, fit: BoxFit.cover,) :
                           Styles().images.getImage('profile-placeholder', excludeFromSemantics: true)
                       ),
                     ),

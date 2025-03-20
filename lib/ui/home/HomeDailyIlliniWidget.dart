@@ -27,6 +27,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -268,7 +269,7 @@ class _MainStoryWidget extends _StoryWidget {
     double preferredWidth = screenWidth / 3.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 600) : null;
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, width: imageWidth, loadingBuilder: (context, child, loadingProgress) {
+        ? ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: illiniItem!.thumbImageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true, width: imageWidth, loadingBuilder: (context, child, loadingProgress) {
       if (loadingProgress == null) {
         return child;
       }
