@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exposed ability for switching to test Illini cash url from Debug panel [#698](https://github.com/rokwire/illinois-app/issues/698).
 ### Removed
 - Deleted Event2AttendanceDetailPanel (unused).
+### Changed
+- Android: Upgrade Android Gradle Plugin to version 8.2.1.
+### Fixed
+- Fixed assess to Onboarding2Panel states [#4826](https://github.com/rokwire/illinois-app/issues/4826).
 
 ## [7.0.0] - 2025-03-17
 ### Added
