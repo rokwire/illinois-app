@@ -25,21 +25,19 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:universal_io/io.dart' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2AuthNotificationsPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2AuthNotificationsPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2AuthNotificationsPanelState>());
+  Onboarding2AuthNotificationsPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  GlobalKey<_Onboarding2AuthNotificationsPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2AuthNotificationsPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2AuthNotificationsPanelState>) : null;
+  _Onboarding2AuthNotificationsPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
-
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
   Future<bool> isOnboardingEnabled() async {
@@ -56,7 +54,7 @@ class Onboarding2AuthNotificationsPanel extends StatefulWidget with Onboarding2P
   }
 
   @override
-  State<Onboarding2AuthNotificationsPanel> createState() => _Onboarding2AuthNotificationsPanelState();
+  State<StatefulWidget> createState() => _Onboarding2AuthNotificationsPanelState();
 }
 
 class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotificationsPanel> {
