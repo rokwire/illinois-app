@@ -41,7 +41,7 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     internalEventId: event.id,
     startDate: AppDateTime().getUniLocalTimeFromUtcTime(event.startTimeUtc),
     endDate: AppDateTime().getUniLocalTimeFromUtcTime(event.endTimeUtc),
-    deepLinkUrl: Events2.eventDetailUrl(event),
+    deepLinkUrl: (event.id != null) ? Events2.eventDetailUrl(event.id ?? '') : null,
   );
 
   factory DeviceCalendarEvent.fromGame(Game game) => DeviceCalendarEvent(
