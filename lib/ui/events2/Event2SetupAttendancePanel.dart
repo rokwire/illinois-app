@@ -1,22 +1,17 @@
 
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2ShareSelfCheckInPdfPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -24,10 +19,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
-import 'package:share_plus/share_plus.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
@@ -249,7 +240,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
           _buildSelfCheckToggle(),
           _buildSelfCheckLimitedToRegisteredOnlyToggle(),
           if (_isEditing)
-            _buildSelfCheckPdf(),
+            _buildSelfCheckPdfButton(),
         ],)
     );
 
@@ -329,126 +320,26 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  Widget _buildSelfCheckPdf() =>
+  bool get _canSelfCheckPdf => _selfCheckEnabled || true /* TMP */;
+
+  Widget _buildSelfCheckPdfButton() =>
     Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight), child:
       RoundedButton(
         label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Download Self Check-In PDF'),
         hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
-        textStyle: _selfCheckEnabled ? Styles().textStyles.getTextStyle('widget.button.title.medium') : Styles().textStyles.getTextStyle('widget.button.title.medium.variant3'),
-        borderColor: _selfCheckEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant3'),
+        borderColor: _canSelfCheckPdf ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
         backgroundColor: Styles().colors.white,
-        onTap: _selfCheckEnabled ? _onTapSelfCheckPdf : null,
+        onTap: _canSelfCheckPdf ? _onTapSelfCheckPdf : null,
         contentWeight: 0.75,
         progress: _selfCheckPdfProgress,
       ),
     );
 
   void _onTapSelfCheckPdf() async {
-    final int _imageSize = 1024;
     Analytics().logSelect(target: "Download Self Check-In PDF");
     Event2CreatePanel.hideKeyboard(context);
-    String? eventId = widget.eventId;
-    if (eventId != null) {
-      setState(() {
-        _selfCheckPdfProgress = true;
-      });
-      String? secret = await Events2().getEventSelfCheckSecret(eventId);
-      if (mounted) {
-        if (secret != null) {
-          String selfCheckurl = Events2.eventSelfCheckUrl(eventId, secret: secret);
-          Uint8List? qrCodeImageData = await NativeCommunicator().getBarcodeImageData({
-                'content': selfCheckurl,
-                'format': 'qrCode',
-                'width': _imageSize,
-                'height': _imageSize,
-              });
-          if (mounted) {
-            if (qrCodeImageData != null) {
-              Uint8List pdfData = await _generateSelfCheckPdf(qrCodeImageData);
-              String pdfFileNale = await _saveSelfCheckPdfToFile(pdfData);
-              if (mounted) {
-                Share.shareXFiles([XFile(pdfFileNale, mimeType: 'application/pdf',)],
-                  text: Localization().getStringEx('panel.event2.setup.self_check.title', 'Event Check In'),
-                );
-              }
-            }
-            else {
-              setState(() {
-                _selfCheckPdfProgress = false;
-              });
-              Event2Popup.showMessage(context,
-                title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"),
-                message: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.error.qr_code.msg', 'Failed to generate Self Check-In QR code image.'),
-              );
-            }
-          }
-        }
-        else {
-          setState(() {
-            _selfCheckPdfProgress = false;
-          });
-          Event2Popup.showMessage(context,
-            title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"),
-            message: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.error.secret.msg', 'Failed to retrieve Self Check-In token.'),
-          );
-        }
-      }
-    }
-  }
-
-  Future<Uint8List> _generateSelfCheckPdf(Uint8List qrCodeImageData, { PdfPageFormat format = PdfPageFormat.letter }) async {
-    pw.Document doc = pw.Document(
-        title: Localization().getStringEx('panel.event2.setup.self_check.title', 'Event Check In'),
-        author: Auth2().profile?.fullName
-    );
-
-    pw.PageTheme pageTheme = pw.PageTheme(
-      pageFormat: format.applyMargin(
-        left: 1.0 * PdfPageFormat.inch,
-        right: 1.0 * PdfPageFormat.inch,
-        top: 2.0 * PdfPageFormat.inch,
-        bottom: 1.0 * PdfPageFormat.inch
-      ),
-      theme: pw.ThemeData.withFont(
-          base: await PdfGoogleFonts.openSansRegular(),
-          bold: await PdfGoogleFonts.openSansBold(),
-          icons: await PdfGoogleFonts.materialIcons(),
-        ),
-        buildBackground: (pw.Context context) =>
-          pw.FullPage(
-            ignoreMargins: true,
-            child: pw.Container(
-              margin: const pw.EdgeInsets.all(PdfPageFormat.inch / 5.0),
-              decoration: pw.BoxDecoration(
-                border: pw.Border.all(
-                  color: PdfColor.fromInt(Styles().colors.surfaceAccent.toARGB32()),
-                  width: 1
-                ),
-            ),
-          ),
-        ),
-      );
-
-    pw.MemoryImage logoImage = pw.MemoryImage((await rootBundle.load('images/block-i-orange-blue.png')).buffer.asUint8List(),);
-    pw.MemoryImage qrCodeImage = pw.MemoryImage(qrCodeImageData);
-
-    doc.addPage(
-      pw.MultiPage(
-        pageTheme: pageTheme,
-        build: (pw.Context context) => [],
-      ),
-    );
-
-    return doc.save();
-  }
-
-  Future<String> _saveSelfCheckPdfToFile(Uint8List pdfData) async {
-    final String dir = (await getApplicationDocumentsDirectory()).path;
-    final String saveFileName = '${widget.event?.name} SelfCheck-In ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
-    final String fullPath = '$dir/$saveFileName.pdf';
-    File capturedFile = File(fullPath);
-    await capturedFile.writeAsBytes(pdfData);
-    return capturedFile.path;
+    Event2ShareSelfCheckInPdfPanel.present(context, event: _event ?? Event2());
   }
 
   // Attendance Taker

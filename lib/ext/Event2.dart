@@ -168,6 +168,25 @@ extension Event2Ext on Event2 {
     }
   }
 
+  String? get shortDisplayStartDateTime => hasGame ? game!.displayTime : _buildDisplayStartDateTime(longFormat: false);
+  String? get longDisplayStartDateTime => hasGame ? game!.displayTime : _buildDisplayStartDateTime(longFormat: true);
+
+  String? _buildDisplayStartDateTime({bool longFormat = false}) {
+    if (startTimeUtc != null) {
+      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      String startDateFormat = (longFormat ? 'EEEE, MMMM d, yyyy' : 'MMM d, yyyy');
+      String displayStartDate = DateFormat(startDateFormat).format(startDateTimeLocal);
+      String startTimeFormat = 'h:mma';
+      String displayStartTime = DateFormat(startTimeFormat).format(startDateTimeLocal).toLowerCase();
+      return Localization().getStringEx('model.explore.date_time.at.format', '{{day}} at {{time}}').
+        replaceAll('{{day}}', displayStartDate).
+        replaceAll('{{time}}', displayStartTime);
+    }
+    else {
+      return null;
+    }
+  }
+
   String? get shortDisplayDate => hasGame ? game!.displayTime : _buildDisplayDate(longFormat: false);
   String? get longDisplayDate => hasGame ? game!.displayTime : _buildDisplayDate(longFormat: true);
 

@@ -1395,12 +1395,14 @@
     "panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.hint": "",
     "panel.event2.setup.attendance.self_check.generate_pdf.title": "Download Self Check-In PDF",
    	"panel.event2.setup.attendance.self_check.generate_pdf.hint": "",
-    "panel.event2.setup.attendance.self_check.generate_pdf.error.secret.msg": "Failed to retrieve Self Check-In token.",
-   	"panel.event2.setup.attendance.self_check.generate_pdf.error.qr_code.msg": "Failed to generate Self Check-In QR code image.",
     "panel.event2.setup.attendance.takers.label.title": "NetIDs para las personas adicionales que pasan la lista:",
     "panel.event2.setup.attendance.takers.label.hint": "Una lista de NetIDs separados por espacios o comas.",
     "panel.event2.setup.attendance.takers.label.info": "Para marcar la asistencia de un asistente específico, la persona debe estar registrada en tu número total de registrados dentro de la Illinois App.",
     "panel.event2.setup.attendance.takers.duplicated_netids.error.msg": "Los asistentes adicionales no deben persistir entre los inscritos. Los siguientes NetID no pueden promocionarse como asistentes:\n\n%s",
+
+    "panel.event2.share.self_check.title": "Event Check In",
+    "panel.event2.share.self_check.error.secret.msg": "Failed to retrieve Self Check-In security token.",
+	  "panel.event2.share.self_check.error.qr_code.msg": "Failed to generate Self Check-In QR code image.",
 
     "panel.event2.setup.survey.header.title": "Encuesta de Seguimiento del Evento",
     "panel.event2.setup.survey.has_survey.toggle.title": "ENVIAR LA ENCUESTA DE SEGUIMIENTO",
