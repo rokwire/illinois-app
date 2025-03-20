@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update UI to use dark theme (progress) [#80](https://github.com/rokmetro/neom-app/issues/80)
 ### Fixed
 - Fix poll option long text overflow
+- Fix inaccurate poll widget data when voting
 
 ## [0.5.14] = 2025-03-19
 ### Changed

@@ -268,7 +268,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
             backgroundColor: Styles().colors.fillColorSecondaryVariant,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: Styles().colors.fillColorSecondaryVariant,
             onTap: _onContinue
           ),       
       );

@@ -109,6 +109,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Polls.notifyDeleted,
     ]);
 
     if (widget.updateController != null) {
@@ -164,13 +165,16 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       _onPollCreated(param);
     }
     else if (name == Polls.notifyVoteChanged) {
-      _onPollUpdated(param);
+      _onVoteChanged(param);
     }
     else if (name == Polls.notifyResultsChanged) {
       _onPollUpdated(param);
     }
     else if (name == Polls.notifyStatusChanged) {
       _onPollUpdated(param);
+    }
+    else if (name == Polls.notifyDeleted) {
+      _onPollDeleted(param);
     }
   }
 
@@ -433,6 +437,15 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     }
   }
 
+  void _onVoteChanged(String? pollId) {
+    if (_recentPolls != null) {
+      Poll? poll = Polls().getPoll(pollId: pollId);
+      if (poll != null) {
+        _recentPolls?.insert(0, poll);
+      }
+    }
+  }
+
   void _updatePoll(Poll poll) {
     if (_recentPolls != null) {
       for (int index = 0; index < _recentPolls!.length; index++) {
@@ -440,6 +453,14 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
           _recentPolls![index] = poll;
         }
       }
+    }
+  }
+
+  void _onPollDeleted(String? pollId) {
+    if (pollId != null) {
+      setStateIfMounted(() {
+        _recentPolls?.removeWhere((poll) => poll.pollId == pollId);
+      });
     }
   }
 }

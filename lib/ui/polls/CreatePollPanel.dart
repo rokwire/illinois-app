@@ -310,22 +310,24 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   List<Widget> _buildSettingsButtons() {
-    TextStyle? _textStyle = Styles().textStyles.getTextStyle("widget.button.title.medium");
+    TextStyle? _textStyle = Styles().textStyles.getTextStyle("widget.button.light.title.medium");
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
     List<Widget> widgets =  [];
 
-    widgets.add(ToggleRibbonButton(
-        label: Localization().getStringEx("panel.create_poll.setting.multi_choice", "Allow selecting more than one choice"),
-        toggled: _selectedMultichoice,
-        borderRadius: rounding,
-        textStyle: _textStyle,
-        onTap: () {
-          if (_progressPollStatus == null) {
-            setState(() {
-              _selectedMultichoice = !_selectedMultichoice;
-            });
-          }
-        }));
+    // widgets.add(ToggleRibbonButton(
+    //     label: Localization().getStringEx("panel.create_poll.setting.multi_choice", "Allow selecting more than one choice"),
+    //     toggled: _selectedMultichoice,
+    //     borderRadius: rounding,
+    //     textStyle: _textStyle,
+    //     backgroundColor: Styles().colors.background,
+    //     border: Border.all(color: Styles().colors.surface, width: 1),
+    //     onTap: () {
+    //       if (_progressPollStatus == null) {
+    //         setState(() {
+    //           _selectedMultichoice = !_selectedMultichoice;
+    //         });
+    //       }
+    //     }));
     /*widgets.add(Container(
       height: 16,
     ));
@@ -349,6 +351,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         toggled: _selectedHideResult,
         borderRadius: rounding,
         textStyle: _textStyle,
+        backgroundColor: Styles().colors.background,
+        border: Border.all(color: Styles().colors.surface, width: 1),
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
