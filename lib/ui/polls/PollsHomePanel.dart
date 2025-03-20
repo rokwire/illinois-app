@@ -344,7 +344,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 16,),
           Text(description,
             textAlign: TextAlign.center,
-            style:Styles().textStyles.getTextStyle("widget.item.regular.thin") ),
+            style:Styles().textStyles.getTextStyle("widget.item.light.regular.thin") ),
         ]
     ));
   }
