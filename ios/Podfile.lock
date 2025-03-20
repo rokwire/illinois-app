@@ -214,7 +214,6 @@ PODS:
     - PromisesObjC (= 2.4.0)
   - record_darwin (1.0.0):
     - Flutter
-    - FlutterMacOS
   - rokwire_plugin (1.9.0):
     - Flutter
   - SDWebImage (5.20.0):
@@ -502,7 +501,7 @@ SPEC CHECKSUMS:
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  record_darwin: df0a677188e5fed18472550298e675f19ddaffbe
+  record_darwin: 3b1a8e7d5c0cbf45ad6165b4d83a6ca643d929c3
   rokwire_plugin: 3802aedd181374984b690c5c5f1b048c3205162a
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
   SeosMobileKeysSDK-Debug: 41dc15710ad56f340a9ef3e82d987623c289d9ce
