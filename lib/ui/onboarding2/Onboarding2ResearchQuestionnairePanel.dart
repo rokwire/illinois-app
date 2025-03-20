@@ -13,22 +13,20 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2ResearchQuestionnairePanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
   final void Function()? onContinue;
-  Onboarding2ResearchQuestionnairePanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
-    super(key: GlobalKey<_Onboarding2ResearchQuestionnairePanelState>());
+  Onboarding2ResearchQuestionnairePanel({ super.key, this.onboardingCode = '', this.onboardingContext, this.onContinue });
 
-  GlobalKey<_Onboarding2ResearchQuestionnairePanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnairePanelState>) ?
-    (super.key as GlobalKey<_Onboarding2ResearchQuestionnairePanelState>) : null;
+  _Onboarding2ResearchQuestionnairePanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
-
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
   Future<bool> isOnboardingEnabled() async {
@@ -46,7 +44,7 @@ class Onboarding2ResearchQuestionnairePanel extends StatefulWidget with Onboardi
   }
 
   @override
-  State<Onboarding2ResearchQuestionnairePanel> createState() => _Onboarding2ResearchQuestionnairePanelState();
+  State<StatefulWidget> createState() => _Onboarding2ResearchQuestionnairePanelState();
 }
 
 class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2ResearchQuestionnairePanel> {

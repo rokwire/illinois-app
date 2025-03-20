@@ -41,19 +41,17 @@ import 'package:video_player/video_player.dart';
 class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2VideoTutorialPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2VideoTutorialPanelState>());
+  Onboarding2VideoTutorialPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  GlobalKey<_Onboarding2VideoTutorialPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2VideoTutorialPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2VideoTutorialPanelState>) : null;
+  _Onboarding2VideoTutorialPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
-  State<Onboarding2VideoTutorialPanel> createState() => _Onboarding2VideoTutorialPanelState();
+  State<StatefulWidget> createState() => _Onboarding2VideoTutorialPanelState();
 }
 
 class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> implements NotificationsListener {

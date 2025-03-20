@@ -11,20 +11,19 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2ProfileInfoPanel({ this.onboardingCode = '', this.onboardingContext }) :
-    super(key: GlobalKey<_Onboarding2ProfileInfoPanelState>());
+  Onboarding2ProfileInfoPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  GlobalKey<_Onboarding2ProfileInfoPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ProfileInfoPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2ProfileInfoPanelState>) : null;
+  _Onboarding2ProfileInfoPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
