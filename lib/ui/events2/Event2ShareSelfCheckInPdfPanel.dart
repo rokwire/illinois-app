@@ -48,9 +48,20 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   bool _isPreparing = false;
   String? _contentMessage;
   String? _eventSecret;
-  Uint8List? _universityLogoImageData;
-  Uint8List? _appStoreImageData;
-  Uint8List? _googlePlayImageData;
+
+  Map<String, Uint8List?>? _imagesData;
+  Map<String, pw.Font?>? _fontsData;
+
+  Uint8List? get _universityLogo  => _imagesData?['images/block-i-orange-blue.png'];
+  Uint8List? get _appStore        => _imagesData?['images/app-store.png'];
+  Uint8List? get _googlePlay      => _imagesData?['images/google-play.png'];
+
+  pw.Font? get _openSansMedium    => _fontsData?['OpenSans-Medium'];
+  pw.Font? get _openSansBold      => _fontsData?['OpenSans-Bold'];
+  //pw.Font? get _openSansLight     => _fontsData?['OpenSans-Light'];
+  //pw.Font? get _openSansRegular   => _fontsData?['OpenSans-Regular'];
+  //pw.Font? get _openSansSemiBold  => _fontsData?['OpenSans-SemiBold'];
+  //pw.Font? get _openSansExtraBold => _fontsData?['OpenSans-ExtraBold'];
 
   //static final int _qrCodeImageSize = 512;
   //Uint8List? _qrCodeImageData;
@@ -58,8 +69,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
 
   @override
   void initState() {
-    _preloadImages();
-    _preparePdf();
+    _initData();
     super.initState();
   }
 
@@ -139,6 +149,8 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     });
   }
 
+
+
   /*Uint8List? qrCodeImageData = await NativeCommunicator().getBarcodeImageData({
     'content': _selfCheckInUrl,
     'format': 'qrCode',
@@ -168,6 +180,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     ]);
 
     PdfColor borderColor = PdfColor.fromInt(Styles().colors.dividerLineAccent.toARGB32());
+    PdfColor textColor = PdfColor.fromInt(Styles().colors.textColorPrimary.toARGB32());
     PdfColor bottomBackColor = PdfColor.fromInt(Styles().colors.fillColorPrimary.toARGB32());
     PdfColor bottomTextColor = PdfColor.fromInt(Styles().colors.textColorPrimary.toARGB32());
 
@@ -177,8 +190,8 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
         pageFormat: pageFormat,
         margin: pw.EdgeInsets.all(0),
         theme: pw.ThemeData.withFont(
-          base: fonts[0],
-          bold: fonts[1],
+          base: _openSansMedium,
+          bold: _openSansBold,
         ),
       ),
       build: (context) =>
@@ -191,17 +204,17 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
             pw.Expanded(child:
               pw.Padding(padding: const pw.EdgeInsets.all(24), child:
                 pw.Column(children: [
-                  pw.Spacer(),
-                  pw.Image(pw.MemoryImage(_universityLogoImageData ?? Uint8List(0),), width: 30, height: 30, ),
-                  pw.Spacer(),
+                  pw.Spacer(flex: 2),
+                  pw.Image(pw.MemoryImage(_universityLogo ?? Uint8List(0),), width: 30, height: 30, ),
+                  pw.Spacer(flex: 2),
                   pw.Text('Event Check-In', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 24,),),
-                  pw.Spacer(), //pw.Padding(padding: const pw.EdgeInsets.only(top: 16),),
+                  pw.Spacer(flex: 1),
                   pw.Text(widget.event.name ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,),),
                   pw.Text(widget.event.longDisplayStartDateTime ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 18,),),
-                  pw.Spacer(),
+                  pw.Spacer(flex: 3),
                   //pw.Image(pw.MemoryImage(_qrCodeImageData ?? Uint8List(0),), width: 192, height: 192, ),
                   pw.BarcodeWidget(data: _selfCheckInUrl, width: 192, height: 192, barcode: pw.Barcode.qrCode(), drawText: false,),
-                  pw.Spacer(), //pw.Padding(padding: const pw.EdgeInsets.only(top: 16),),
+                  pw.Spacer(flex: 3), //pw.Padding(padding: const pw.EdgeInsets.only(top: 16),),
                 ]),
               ),
             ),
@@ -217,7 +230,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
                   pw.Spacer(),
                   if (Config().upgradeIOSUrl?.isNotEmpty == true)
                     pw.UrlLink(destination: Config().upgradeIOSUrl ?? '', child:
-                      pw.Image(pw.MemoryImage(_appStoreImageData ?? Uint8List(0),), width: 50 * 2020 / 610, height: 50, )
+                      pw.Image(pw.MemoryImage(_appStore ?? Uint8List(0),), width: 50 * 2020 / 610, height: 50, )
                     ),
 
                   if ((Config().upgradeIOSUrl?.isNotEmpty == true) && (Config().upgradeAndroidUrl?.isNotEmpty == true))
@@ -225,7 +238,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
 
                   if (Config().upgradeAndroidUrl?.isNotEmpty == true)
                     pw.UrlLink(destination: Config().upgradeAndroidUrl ?? '', child:
-                      pw.Image(pw.MemoryImage(_googlePlayImageData ?? Uint8List(0),), width: 50 * 2020 / 610, height: 50, )
+                      pw.Image(pw.MemoryImage(_googlePlay ?? Uint8List(0),), width: 50 * 2020 / 610, height: 50, )
                     ),
                   pw.Spacer(),
                 ]),
@@ -239,17 +252,62 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     return pdf.save();
   }
 
-  Future<void> _preloadImages() async {
-    List<ByteData?> imagesData = await Future.wait([
-      AppBundle.loadBytes('images/block-i-orange-blue.png'),
-      AppBundle.loadBytes('images/app-store.png'),
-      AppBundle.loadBytes('images/google-play.png'),
-    ]);
-    setStateIfMounted((){
-      _universityLogoImageData = imagesData[0]?.buffer.asUint8List();
-      _appStoreImageData = imagesData[1]?.buffer.asUint8List();
-      _googlePlayImageData = imagesData[2]?.buffer.asUint8List();
+  Future<void> _initData() async {
+    setState(() {
+      _isPreparing = true;
     });
+    List<dynamic> results = await Future.wait([
+      Events2().getEventSelfCheckSecret(widget.eventId),
+      _preloadImages(),
+      _preloadFonts(),
+    ]);
+    if (mounted) {
+      String? secret = JsonUtils.stringValue(results[0]);
+      Map<String, Uint8List?>? imagesData = JsonUtils.mapCastValue(JsonUtils.mapValue(results[1]));
+      Map<String, pw.Font?>? fontsData = JsonUtils.mapCastValue(JsonUtils.mapValue(results[2]));
+      setState(() {
+        _isPreparing = false;
+        if (secret != null) {
+          _eventSecret = secret;
+        }
+        else {
+          _contentMessage = Localization().getStringEx('panel.event2.share.self_check.error.secret.msg', 'Failed to retrieve Self Check-In security token.');
+        }
+        _imagesData = imagesData;
+        _fontsData = fontsData;
+      });
+    }
+  }
+
+  Future<Map<String, Uint8List?>> _preloadImages() async {
+    List<String> imageNames = [
+      'images/block-i-orange-blue.png',
+      'images/app-store.png',
+      'images/google-play.png',
+    ];
+    Iterable<Future<ByteData?>> imageFutures = imageNames.map((String imageName) => AppBundle.loadBytes(imageName));
+    List<ByteData?> images = await Future.wait(imageFutures);
+    Map<String, Uint8List?> imagesMap = <String, Uint8List>{};
+    for (int index = 0; index < imageNames.length; index++) {
+      imagesMap[imageNames[index]] = ListUtils.entry<ByteData?>(images, index)?.buffer.asUint8List();
+    }
+    return imagesMap;
+  }
+
+  Future<Map<String, pw.Font?>> _preloadFonts() async {
+    List<pw.Font> fonts = await Future.wait([
+      PdfGoogleFonts.openSansLight(),
+      PdfGoogleFonts.openSansRegular(),
+      PdfGoogleFonts.openSansMedium(),
+      PdfGoogleFonts.openSansSemiBold(),
+      PdfGoogleFonts.openSansBold(),
+      PdfGoogleFonts.openSansExtraBold(),
+    ]);
+    Map<String, pw.Font?> fontsMap = <String, pw.Font>{};
+    for (pw.Font font in fonts) {
+      fontsMap[font.fontName] = font;
+    }
+    return fontsMap;
   }
 
   void _onTapClose() {
