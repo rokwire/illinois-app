@@ -33,6 +33,8 @@
     "dialog.edit.hint":"",
     "dialog.delete.title":"Delete",
     "dialog.delete.hint":"",
+    "dialog.share.title":"Share",
+    "dialog.share.hint":"",
 
     "tabbar.home.title":"Inicio",
     "tabbar.home.hint":"Página de inicio",

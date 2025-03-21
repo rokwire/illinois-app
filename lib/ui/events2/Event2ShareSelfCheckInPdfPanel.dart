@@ -1,11 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -47,15 +45,16 @@ class Event2ShareSelfCheckInPdfPanel extends StatefulWidget {
 class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInPdfPanel> {
 
   bool _isPreparing = false;
+  bool _preparingShare = false;
   String? _contentMessage;
   String? _eventSecret;
 
   Map<String, Uint8List?>? _imagesData;
   Map<String, pw.Font?>? _fontsData;
 
-  static final String _universityLogoKey = 'images/block-i-orange-blue-large.png';
-  static final String _appStoreKey = 'images/app-store.png';
-  static final String _googlePlayKey = 'images/google-play.png';
+  static const String _universityLogoKey = 'images/block-i-orange-blue-large.png';
+  static const String _appStoreKey = 'images/app-store.png';
+  static const String _googlePlayKey = 'images/google-play.png';
 
   Uint8List? get _universityLogo  => _imagesData?[_universityLogoKey];
   Uint8List? get _appStore        => _imagesData?[_appStoreKey];
@@ -68,9 +67,17 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   //pw.Font? get _openSansSemiBold  => _fontsData?['OpenSans-SemiBold'];
   //pw.Font? get _openSansExtraBold => _fontsData?['OpenSans-ExtraBold'];
 
-  //static final int _qrCodeImageSize = 512;
+  //static const int _qrCodeImageSize = 512;
   //Uint8List? _qrCodeImageData;
 
+  static const double _barIconSize = 20;
+  static const double _barIconPadding = 16;
+
+  String get _selfCheckInUrl =>
+    Events2.eventSelfCheckUrl(widget.eventId, secret: _eventSecret ?? '');
+
+  String get _saveFileName =>
+    'Check-In PDF "${widget.event.name}" - ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
 
   @override
   void initState() {
@@ -79,10 +86,12 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   }
 
   @override
-  Widget build(BuildContext context) => Stack(children: [
-    _panelContent,
-    Align(alignment: Alignment.topRight, child: _closeButton),
-  ],);
+  Widget build(BuildContext context) => Column(children: [
+    _headerBar,
+    Expanded(child: _panelContent,)
+  ]);
+
+  // Panel Content
 
   Widget get _panelContent {
     if (_isPreparing) {
@@ -96,6 +105,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     }
   }
 
+  // PDF Content
 
   Widget get _pdfContent =>
     Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
@@ -103,43 +113,14 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
         Expanded(child:
           PdfPreview(
             build: (format) => generatePdf(format),
-            scrollViewDecoration: BoxDecoration(color: Styles().colors.background),
-            actions: null,
             initialPageFormat: PdfPageFormat.letter,
-            canChangePageFormat: false,
-            canChangeOrientation: false,
-            canDebug: false,
+            scrollViewDecoration: BoxDecoration(color: Styles().colors.background),
+            useActions: false,
+            loadingWidget: _progressControl,
           ),
         ),
       ]),
     );
-
-  Widget get _progressContent => Center(child:
-      SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
-      )
-  );
-
-  Widget get _messageContent => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 38), child:
-      Column(children: [
-        Expanded(child: Center(child:
-          Text(_contentMessage ?? '', style: Styles().textStyles.getTextStyle('widget.message.regular'), textAlign: TextAlign.center,),
-        )),
-        Expanded(child: Container()),
-      ],)
-    );
-
-  Widget get _closeButton =>
-    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-      InkWell(onTap : _onTapClose, child:
-        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-          Styles().images.getImage('close-circle', excludeFromSemantics: true),
-        ),
-      ),
-    );
-
-  String get _selfCheckInUrl =>
-    Events2.eventSelfCheckUrl(widget.eventId, secret: _eventSecret ?? '');
 
   Future<Uint8List> generatePdf(PdfPageFormat pageFormat) async {
 
@@ -167,7 +148,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
       ),
       build: (context) =>
         pw.Container(
-          margin: const pw.EdgeInsets.all(24),
+          margin: const pw.EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           decoration: pw.BoxDecoration(border: pw.Border.all(color: borderColor, width: 1.5),),
           width: double.infinity,
           height: double.infinity,
@@ -222,6 +203,108 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
 
     return pdf.save();
   }
+
+  // Other Content Types
+
+  Widget get _progressContent =>
+    Center(child:_progressControl  );
+
+  Widget get _progressControl => SizedBox(width: 32, height: 32, child:
+    CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+  );
+
+  Widget get _messageContent => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 38), child:
+      Column(children: [
+        Expanded(child: Center(child:
+          Text(_contentMessage ?? '', style: Styles().textStyles.getTextStyle('widget.message.regular'), textAlign: TextAlign.center,),
+        )),
+        Expanded(child: Container()),
+      ],)
+    );
+
+  // Header Bar && Commands
+
+  Widget get _headerBar => Row(children: [
+    Expanded(child: _isHeaderBarActionsAvailable ? _headerBarActions : Container()),
+    _closeButton,
+  ],);
+
+  bool get _isHeaderBarActionsAvailable => !_isPreparing && (_contentMessage?.isNotEmpty != true);
+
+  Widget get _headerBarActions => Wrap(children: [
+    _printButton, _shareButton
+  ],);
+
+  Widget get _printButton => _iconButton('print',
+    label: Localization().getStringEx('dialog.print.title', 'Print'),
+    hint: Localization().getStringEx('dialog.print.hint', ''),
+    padding: const EdgeInsets.only(left: _barIconPadding, right: _barIconPadding / 2, top: _barIconPadding, bottom: _barIconPadding),
+    onTap: _onTapPrint,
+  );
+
+  void _onTapPrint() {
+    Analytics().logSelect(target: 'Print', source: runtimeType.toString());
+    Printing.layoutPdf(onLayout: (PdfPageFormat format) async => generatePdf(format));
+  }
+
+  /*Widget get _saveButton => _iconButton('download',
+    label: Localization().getStringEx('dialog.save.title', 'Save'),
+    hint: Localization().getStringEx('dialog.save.hint', ''),
+    padding: const EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
+    onTap: _onTapSave,
+  );
+
+  void _onTapSave() {
+    Analytics().logSelect(target: 'Save', source: runtimeType.toString());
+  }*/
+
+  Widget get _shareButton => _iconButton('share-nodes',
+    label: Localization().getStringEx('dialog.share.title', 'Share'),
+    hint: Localization().getStringEx('dialog.share.hint', ''),
+    padding: const EdgeInsets.only(left: _barIconPadding / 2, right: _barIconPadding, top: _barIconPadding, bottom: _barIconPadding),
+    progress: _preparingShare,
+    onTap: _onTapShare,
+  );
+
+  void _onTapShare() async {
+    Analytics().logSelect(target: 'Share', source: runtimeType.toString());
+    setState(() { _preparingShare = true; });
+    Uint8List pdf = await generatePdf(PdfPageFormat.letter);
+    if (mounted) {
+      setState(() { _preparingShare = false; });
+      Printing.sharePdf(bytes: pdf, filename: _saveFileName);
+    }
+  }
+  Widget get _closeButton => _iconButton('close-circle',
+    label: Localization().getStringEx('dialog.close.title', 'Close'),
+    hint: Localization().getStringEx('dialog.close.hint', ''),
+    iconSize: _barIconSize * 1.2,
+    onTap: _onTapClose,
+  );
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
+  Widget _iconButton(String? iconName, {
+    void Function()? onTap,
+    double iconSize = _barIconSize,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(_barIconPadding),
+    bool progress = false,
+    String? label, String? hint,
+  }) => Semantics(label: label, hint: hint, inMutuallyExclusiveGroup: true, button: true, child:
+    InkWell(onTap : onTap, child:
+      Container(padding: padding, child: progress ?
+        SizedBox(width: iconSize * 0.8, height: iconSize * 0.8, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+        ) :
+        Styles().images.getImage(iconName, excludeFromSemantics: true, size: iconSize),
+      ),
+    ),
+  );
+
+  // Data
 
   Future<void> _initData() async {
     setState(() {
@@ -295,8 +378,4 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     });
   } */
 
-  void _onTapClose() {
-    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
-    Navigator.of(context).pop();
-  }
 }
