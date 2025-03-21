@@ -10,6 +10,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -137,58 +138,24 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
       ),
     );
 
-  Future<void> _preparePdf() async {
-    setState(() {
-      _isPreparing = true;
-    });
-    String? secret = await Events2().getEventSelfCheckSecret(widget.eventId);
-    setStateIfMounted(() {
-      _isPreparing = false;
-      if (secret != null) {
-        _eventSecret = secret;
-      }
-      else {
-        _contentMessage = Localization().getStringEx('panel.event2.share.self_check.error.secret.msg', 'Failed to retrieve Self Check-In security token.');
-      }
-    });
-  }
-
-
-
-  /*Uint8List? qrCodeImageData = await NativeCommunicator().getBarcodeImageData({
-    'content': _selfCheckInUrl,
-    'format': 'qrCode',
-    'width': _qrCodeImageSize,
-    'height': _qrCodeImageSize,
-  });
-  if (mounted) {
-    setState(() {
-      _isPreparing = false;
-      if (qrCodeImageData != null) {
-        _qrCodeImageData = qrCodeImageData;
-      }
-      else {
-        _contentMessage = Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.error.qr_code.msg', 'Failed to generate Self Check-In QR code image.');
-      }
-    });
-  } */
-
   String get _selfCheckInUrl =>
     Events2.eventSelfCheckUrl(widget.eventId, secret: _eventSecret ?? '');
 
   Future<Uint8List> generatePdf(PdfPageFormat pageFormat) async {
 
-    List<pw.Font> fonts = await Future.wait([
-      PdfGoogleFonts.openSansRegular(),
-      PdfGoogleFonts.openSansBold(),
-    ]);
-
     PdfColor borderColor = PdfColor.fromInt(Styles().colors.dividerLineAccent.toARGB32());
-    PdfColor textColor = PdfColor.fromInt(Styles().colors.textColorPrimary.toARGB32());
     PdfColor bottomBackColor = PdfColor.fromInt(Styles().colors.fillColorPrimary.toARGB32());
     PdfColor bottomTextColor = PdfColor.fromInt(Styles().colors.textColorPrimary.toARGB32());
 
-    final pdf = pw.Document();
+    String title = Localization().getStringEx('panel.event2.share.self_check.title', 'Event Check In');
+    String? appStoreUrl = Config().upgradeIOSUrl;
+    String? playStoreUrl = Config().upgradeAndroidUrl;
+    final Size storeButtonSize = Size(50 * 2020 / 610, 50);
+
+    final pdf = pw.Document(
+      title: title,
+      author: Auth2().uiucUser?.fullName,
+    );
     pdf.addPage(pw.Page(
       pageTheme: pw.PageTheme(
         pageFormat: pageFormat,
@@ -211,7 +178,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
                   pw.Spacer(flex: 2),
                   pw.Image(pw.MemoryImage(_universityLogo ?? Uint8List(0),), width: 30, height: 30, ),
                   pw.Spacer(flex: 2),
-                  pw.Text('Event Check-In', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 24,),),
+                  pw.Text(title, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 24,),),
                   pw.Spacer(flex: 1),
                   pw.Text(widget.event.name ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,),),
                   pw.Text(widget.event.longDisplayStartDateTime ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 18,),),
@@ -224,25 +191,25 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
             ),
             pw.Container(color: bottomBackColor, padding: const pw.EdgeInsets.all(24), child:
               pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                pw.Text('1. To check in, you must be in signed in to the Illinois app at a privacy level 4 or 5.', style: pw.TextStyle(fontSize: 16, color: bottomTextColor),),
+                pw.Text(Localization().getStringEx('panel.event2.share.self_check.description.1', '1. To check in, you must be in signed in to the Illinois app at a privacy level 4 or 5.'), style: pw.TextStyle(fontSize: 16, color: bottomTextColor),),
                 pw.Padding(padding: const pw.EdgeInsets.only(top: 8),),
-                pw.Text('2. Using your phone’s camera, scan the QR code.', style: pw.TextStyle(fontSize: 16, color: bottomTextColor),),
+                pw.Text(Localization().getStringEx('panel.event2.share.self_check.description.2', '2. Using your phone’s camera, scan the QR code.'), style: pw.TextStyle(fontSize: 16, color: bottomTextColor),),
                 pw.Padding(padding: const pw.EdgeInsets.only(top: 8),),
-                pw.Text('3. You should see a confirm action in the Illinois app that you are now checked in for this event.', style: pw.TextStyle(fontSize: 16, color: bottomTextColor),),
+                pw.Text(Localization().getStringEx('panel.event2.share.self_check.description.3', '3. You should see a confirm action in the Illinois app that you are now checked in for this event.'), style: pw.TextStyle(fontSize: 16, color: bottomTextColor),),
                 pw.Padding(padding: const pw.EdgeInsets.only(top: 24),),
                 pw.Row(children: [
                   pw.Spacer(),
-                  if (Config().upgradeIOSUrl?.isNotEmpty == true)
-                    pw.UrlLink(destination: Config().upgradeIOSUrl ?? '', child:
-                      pw.Image(pw.MemoryImage(_appStore ?? Uint8List(0),), width: 50 * 2020 / 610, height: 50, )
+                  if ((appStoreUrl != null) && appStoreUrl.isNotEmpty)
+                    pw.UrlLink(destination: appStoreUrl, child:
+                      pw.Image(pw.MemoryImage(_appStore ?? Uint8List(0),), width: storeButtonSize.width, height: storeButtonSize.height, )
                     ),
 
-                  if ((Config().upgradeIOSUrl?.isNotEmpty == true) && (Config().upgradeAndroidUrl?.isNotEmpty == true))
+                  if ((appStoreUrl?.isNotEmpty == true) && (playStoreUrl?.isNotEmpty == true))
                     pw.Container(width: 32),
 
-                  if (Config().upgradeAndroidUrl?.isNotEmpty == true)
-                    pw.UrlLink(destination: Config().upgradeAndroidUrl ?? '', child:
-                      pw.Image(pw.MemoryImage(_googlePlay ?? Uint8List(0),), width: 50 * 2020 / 610, height: 50, )
+                  if ((playStoreUrl != null) && playStoreUrl.isNotEmpty)
+                    pw.UrlLink(destination: playStoreUrl, child:
+                      pw.Image(pw.MemoryImage(_googlePlay ?? Uint8List(0),), width: storeButtonSize.width, height: storeButtonSize.height, )
                     ),
                   pw.Spacer(),
                 ]),
@@ -309,6 +276,24 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     }
     return fontsMap;
   }
+
+  /*Uint8List? qrCodeImageData = await NativeCommunicator().getBarcodeImageData({
+    'content': _selfCheckInUrl,
+    'format': 'qrCode',
+    'width': _qrCodeImageSize,
+    'height': _qrCodeImageSize,
+  });
+  if (mounted) {
+    setState(() {
+      _isPreparing = false;
+      if (qrCodeImageData != null) {
+        _qrCodeImageData = qrCodeImageData;
+      }
+      else {
+        _contentMessage = Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.error.qr_code.msg', 'Failed to generate Self Check-In QR code image.');
+      }
+    });
+  } */
 
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: runtimeType.toString());

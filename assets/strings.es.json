@@ -1401,6 +1401,9 @@
     "panel.event2.setup.attendance.takers.duplicated_netids.error.msg": "Los asistentes adicionales no deben persistir entre los inscritos. Los siguientes NetID no pueden promocionarse como asistentes:\n\n%s",
 
     "panel.event2.share.self_check.title": "Event Check In",
+    "panel.event2.share.self_check.description.1": "1. To check in, you must be in signed in to the Illinois app at a privacy level 4 or 5.",
+    "panel.event2.share.self_check.description.2": "2. Using your phone’s camera, scan the QR code.",
+    "panel.event2.share.self_check.description.3": "3. You should see a confirm action in the Illinois app that you are now checked in for this event.",
     "panel.event2.share.self_check.error.secret.msg": "Failed to retrieve Self Check-In security token.",
 	  "panel.event2.share.self_check.error.qr_code.msg": "Failed to generate Self Check-In QR code image.",
 
