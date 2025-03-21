@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -24,15 +25,31 @@ class Event2ShareSelfCheckInPdfPanel extends StatefulWidget {
   static void present(BuildContext context, {
     required Event2 event,
   }) {
+    final double iconSize = _Event2ShareSelfCheckInPdfPanelState._barIconSize;
+    final double iconPadding = _Event2ShareSelfCheckInPdfPanelState._barIconPadding;
+    final double barHeight = _Event2ShareSelfCheckInPdfPanelState._barHeight;
+    final EdgeInsets previewPageMargin = _Event2ShareSelfCheckInPdfPanelState._previewPageMargin;
+    final PdfPageFormat pdfPageFormat = _Event2ShareSelfCheckInPdfPanelState._pdfPageFormat;
+
     MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 128;
+    double screenWidth = max(mediaQuery.size.width - mediaQuery.viewPadding.horizontal - mediaQuery.viewInsets.horizontal, 0);
+    double pageWidth = max(screenWidth - previewPageMargin.horizontal, 0);
+    double pageHeight = pageWidth * pdfPageFormat.height / pdfPageFormat.width;
+    pageHeight += barHeight;
+    pageHeight += previewPageMargin.vertical;
+    pageHeight += mediaQuery.viewPadding.bottom + mediaQuery.viewInsets.bottom;
+    pageHeight += 72;
+
+    double screenHeight = max(mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top, 0);
+    pageHeight = min(screenHeight, pageHeight);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
       clipBehavior: Clip.antiAlias,
       backgroundColor: Styles().colors.background,
-      constraints: BoxConstraints(maxHeight: height),
+      constraints: BoxConstraints(maxHeight: pageHeight),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => Event2ShareSelfCheckInPdfPanel._(event),
     );
@@ -72,6 +89,9 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
 
   static const double _barIconSize = 20;
   static const double _barIconPadding = 16;
+  static const _pdfPageFormat = PdfPageFormat.letter;
+  static double get _barHeight => _barIconSize * 1.2 + 2 * _barIconPadding;
+  static const EdgeInsets _previewPageMargin = const EdgeInsets.symmetric(horizontal: 20);
 
   String get _selfCheckInUrl =>
     Events2.eventSelfCheckUrl(widget.eventId, secret: _eventSecret ?? '');
@@ -86,9 +106,11 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   }
 
   @override
-  Widget build(BuildContext context) => Column(children: [
+  Widget build(BuildContext context) =>
+    Column(children: [
     _headerBar,
-    Expanded(child: _panelContent,)
+    Expanded(child: _panelContent,),
+    _footerSpacer,
   ]);
 
   // Panel Content
@@ -113,10 +135,11 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
         Expanded(child:
           PdfPreview(
             build: (format) => generatePdf(format),
-            initialPageFormat: PdfPageFormat.letter,
+            initialPageFormat: _pdfPageFormat,
             scrollViewDecoration: BoxDecoration(color: Styles().colors.background),
             useActions: false,
             loadingWidget: _progressControl,
+            previewPageMargin: _previewPageMargin,
           ),
         ),
       ]),
@@ -222,7 +245,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
       ],)
     );
 
-  // Header Bar && Commands
+  // Header/Footer Bars && Commands
 
   Widget get _headerBar => Row(children: [
     Expanded(child: _isHeaderBarActionsAvailable ? _headerBarActions : Container()),
@@ -269,12 +292,13 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   void _onTapShare() async {
     Analytics().logSelect(target: 'Share', source: runtimeType.toString());
     setState(() { _preparingShare = true; });
-    Uint8List pdf = await generatePdf(PdfPageFormat.letter);
+    Uint8List pdf = await generatePdf(_pdfPageFormat);
     if (mounted) {
       setState(() { _preparingShare = false; });
       Printing.sharePdf(bytes: pdf, filename: _saveFileName);
     }
   }
+
   Widget get _closeButton => _iconButton('close-circle',
     label: Localization().getStringEx('dialog.close.title', 'Close'),
     hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -303,6 +327,9 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
       ),
     ),
   );
+
+  Widget get _footerSpacer =>
+    Container(height: 0); // _barHeight
 
   // Data
 
