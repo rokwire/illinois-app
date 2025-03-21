@@ -25,8 +25,8 @@ class Event2ShareSelfCheckInPdfPanel extends StatefulWidget {
   static void present(BuildContext context, {
     required Event2 event,
   }) {
-    final double iconSize = _Event2ShareSelfCheckInPdfPanelState._barIconSize;
-    final double iconPadding = _Event2ShareSelfCheckInPdfPanelState._barIconPadding;
+    //final double iconSize = _Event2ShareSelfCheckInPdfPanelState._barIconSize;
+    //final double iconPadding = _Event2ShareSelfCheckInPdfPanelState._barIconPadding;
     final double barHeight = _Event2ShareSelfCheckInPdfPanelState._barHeight;
     final EdgeInsets previewPageMargin = _Event2ShareSelfCheckInPdfPanelState._previewPageMargin;
     final PdfPageFormat pdfPageFormat = _Event2ShareSelfCheckInPdfPanelState._pdfPageFormat;
@@ -35,10 +35,10 @@ class Event2ShareSelfCheckInPdfPanel extends StatefulWidget {
     double screenWidth = max(mediaQuery.size.width - mediaQuery.viewPadding.horizontal - mediaQuery.viewInsets.horizontal, 0);
     double pageWidth = max(screenWidth - previewPageMargin.horizontal, 0);
     double pageHeight = pageWidth * pdfPageFormat.height / pdfPageFormat.width;
-    pageHeight += barHeight;
+    pageHeight += 2 * barHeight;
     pageHeight += previewPageMargin.vertical;
-    pageHeight += mediaQuery.viewPadding.bottom + mediaQuery.viewInsets.bottom;
-    pageHeight += 72;
+    //pageHeight += mediaQuery.viewPadding.bottom + mediaQuery.viewInsets.bottom;
+    //pageHeight += 12; // 72
 
     double screenHeight = max(mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top, 0);
     pageHeight = min(screenHeight, pageHeight);
@@ -91,7 +91,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   static const double _barIconPadding = 16;
   static const _pdfPageFormat = PdfPageFormat.letter;
   static double get _barHeight => _barIconSize * 1.2 + 2 * _barIconPadding;
-  static const EdgeInsets _previewPageMargin = const EdgeInsets.symmetric(horizontal: 20);
+  static const EdgeInsets _previewPageMargin = const EdgeInsets.symmetric(horizontal: _barIconPadding);
 
   String get _selfCheckInUrl =>
     Events2.eventSelfCheckUrl(widget.eventId, secret: _eventSecret ?? '');
@@ -109,7 +109,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   Widget build(BuildContext context) =>
     Column(children: [
     _headerBar,
-    Expanded(child: _panelContent,),
+    Expanded(child: _panelContent),
     _footerSpacer,
   ]);
 
@@ -130,20 +130,19 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   // PDF Content
 
   Widget get _pdfContent =>
-    Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
-      Column(children: [
-        Expanded(child:
-          PdfPreview(
-            build: (format) => generatePdf(format),
-            initialPageFormat: _pdfPageFormat,
-            scrollViewDecoration: BoxDecoration(color: Styles().colors.background),
-            useActions: false,
-            loadingWidget: _progressControl,
-            previewPageMargin: _previewPageMargin,
-          ),
+    Column(children: [
+      Expanded(child:
+        PdfPreview(
+          build: (format) => generatePdf(format),
+          initialPageFormat: _pdfPageFormat,
+          scrollViewDecoration: BoxDecoration(color: Styles().colors.background),
+          useActions: false,
+          enableScrollToPage: true,
+          loadingWidget: _progressControl,
+          previewPageMargin: _previewPageMargin,
         ),
-      ]),
-    );
+      ),
+    ]);
 
   Future<Uint8List> generatePdf(PdfPageFormat pageFormat) async {
 
@@ -329,7 +328,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   );
 
   Widget get _footerSpacer =>
-    Container(height: 0); // _barHeight
+    Container(height: _barHeight);
 
   // Data
 
