@@ -52,9 +52,13 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   Map<String, Uint8List?>? _imagesData;
   Map<String, pw.Font?>? _fontsData;
 
-  Uint8List? get _universityLogo  => _imagesData?['images/block-i-orange-blue.png'];
-  Uint8List? get _appStore        => _imagesData?['images/app-store.png'];
-  Uint8List? get _googlePlay      => _imagesData?['images/google-play.png'];
+  static final String _universityLogoKey = 'images/block-i-orange-blue-large.png';
+  static final String _appStoreKey = 'images/app-store.png';
+  static final String _googlePlayKey = 'images/google-play.png';
+
+  Uint8List? get _universityLogo  => _imagesData?[_universityLogoKey];
+  Uint8List? get _appStore        => _imagesData?[_appStoreKey];
+  Uint8List? get _googlePlay      => _imagesData?[_googlePlayKey];
 
   pw.Font? get _openSansMedium    => _fontsData?['OpenSans-Medium'];
   pw.Font? get _openSansBold      => _fontsData?['OpenSans-Bold'];
@@ -280,11 +284,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   }
 
   Future<Map<String, Uint8List?>> _preloadImages() async {
-    List<String> imageNames = [
-      'images/block-i-orange-blue.png',
-      'images/app-store.png',
-      'images/google-play.png',
-    ];
+    List<String> imageNames = [_universityLogoKey, _appStoreKey, _googlePlayKey, ];
     Iterable<Future<ByteData?>> imageFutures = imageNames.map((String imageName) => AppBundle.loadBytes(imageName));
     List<ByteData?> images = await Future.wait(imageFutures);
     Map<String, Uint8List?> imagesMap = <String, Uint8List>{};
