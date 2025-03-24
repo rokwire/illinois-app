@@ -9,7 +9,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum RadioStation { will, willfm, willhd, wpgufm, }
 
-class RadioPlayer with Service implements NotificationsListener {
+class RadioPlayer with Service, NotificationsListener {
 
   static const String notifyCreateStatusChanged  = "edu.illinois.rokwire.wpgufmradio.create.status.changed";
   static const String notifyPlayerStateChanged   = "edu.illinois.rokwire.wpgufmradio.player.state.changed";

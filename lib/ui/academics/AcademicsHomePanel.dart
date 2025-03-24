@@ -100,8 +100,7 @@ class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _AcademicsHomePanelState extends State<AcademicsHomePanel>
-    with AutomaticKeepAliveClientMixin<AcademicsHomePanel>
-    implements NotificationsListener {
+    with NotificationsListener, AutomaticKeepAliveClientMixin<AcademicsHomePanel> {
 
   static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;

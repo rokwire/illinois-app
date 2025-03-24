@@ -39,7 +39,7 @@ class SettingsNotificationPreferencesContentWidget extends StatefulWidget{
   State<StatefulWidget> createState() => _SettingsNotificationPreferencesContentWidgetState();
 }
 
-class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsNotificationPreferencesContentWidget> implements NotificationsListener{
+class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsNotificationPreferencesContentWidget> with NotificationsListener{
   bool _notificationsAuthorized = false;
 
   bool _newAppointmentProgress = false;

@@ -27,7 +27,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CustomCourses with Service implements NotificationsListener {
+class CustomCourses with Service, NotificationsListener {
   Map<String, Course>? _courses;
   Map<String, UserCourse>? _userCourses;
   Map<String, List<UserUnit>>? _userUnits;

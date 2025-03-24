@@ -129,7 +129,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _WalletHomePanelState extends State<WalletHomePanel> implements NotificationsListener {
+class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsListener {
   late List<WalletContentType> _contentTypes;
   WalletContentType? _selectedContentType;
   bool _contentValuesVisible = false;

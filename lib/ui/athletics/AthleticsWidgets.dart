@@ -67,7 +67,7 @@ class AthleticsEventCard extends StatefulWidget {
   _AthleticsEventCardState createState() => _AthleticsEventCardState();
 }
 
-class _AthleticsEventCardState extends State<AthleticsEventCard> implements NotificationsListener {
+class _AthleticsEventCardState extends State<AthleticsEventCard> with NotificationsListener {
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 12, left: 24, right: 24);
   static const EdgeInsets _iconPadding = EdgeInsets.only(right: 5);
 
@@ -378,7 +378,7 @@ class AthleticsTeamsFilterWidget extends StatefulWidget {
   State<AthleticsTeamsFilterWidget> createState() => _AthleticsTeamsFilterWidgetState();
 }
 
-class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget> implements NotificationsListener {
+class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget> with NotificationsListener {
   @override
   void initState() {
     super.initState();

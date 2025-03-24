@@ -54,7 +54,7 @@ class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel
   State<StatefulWidget> createState() => _Onboarding2VideoTutorialPanelState();
 }
 
-class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> implements NotificationsListener {
+class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> with NotificationsListener {
   Video? _video;
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;

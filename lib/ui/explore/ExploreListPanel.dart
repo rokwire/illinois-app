@@ -61,7 +61,7 @@ class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
     { Analytics.LogAttributeLocation : explores?.first.exploreLocation?.description } : null;
 }
 
-class _ExploreListPanelState extends State<ExploreListPanel> implements NotificationsListener {
+class _ExploreListPanelState extends State<ExploreListPanel> with NotificationsListener {
 
   List<Explore>? _explores;
   Set<String> _mtdExpanded = <String>{};

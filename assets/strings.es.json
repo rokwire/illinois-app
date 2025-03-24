@@ -361,6 +361,7 @@
     "panel.assistant.content.conversation.label": "Pregunta al asistente de Illinois",
     "panel.assistant.content.conversation.google.label": "Pregunta al asistente de Google",
     "panel.assistant.content.conversation.grok.label": "Pregunta al asistente de Grok",
+    "panel.assistant.content.conversation.perplexity.label": "Pregunta al Asistente de Perplexity",
     "panel.assistant.content.conversation.all.label": "Usar todos los asistentes",
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.sources_links.label": "Fuentes y enlaces",
@@ -4301,6 +4302,7 @@
     "model.assistant.provider.uiuc.label": "Illinois",
     "model.assistant.provider.google.label": "Google",
     "model.assistant.provider.grok.label": "Grok",
+    "model.assistant.provider.perplexity.label": "Perplexity",
     "model.assistant.provider.unknown.label": "Unknown",
 
     "logic.date_time.greeting.morning": "Buenos días",

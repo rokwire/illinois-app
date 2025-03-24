@@ -39,7 +39,7 @@ class GiesCanvasCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsGiesCanvasCourses;
 }
 
-class _GiesCanvasCoursesContentWidgetState extends State<GiesCanvasCoursesContentWidget> implements NotificationsListener {
+class _GiesCanvasCoursesContentWidgetState extends State<GiesCanvasCoursesContentWidget> with NotificationsListener {
   List<CanvasCourse>? _courses;
 
   @override

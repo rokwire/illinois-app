@@ -87,7 +87,7 @@ class WalletIlliniCashContentWidget extends StatefulWidget with WalletHomeConten
   Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
-class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentWidget> implements NotificationsListener {
+class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentWidget> with NotificationsListener {
 
   List<IlliniCashTransaction>? _transactions;
   bool _transactionHistoryVisible = false;

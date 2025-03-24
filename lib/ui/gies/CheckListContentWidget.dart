@@ -48,7 +48,7 @@ class CheckListContentWidget extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _CheckListContentWidgetState();
 }
 
-class _CheckListContentWidgetState extends State<CheckListContentWidget> implements NotificationsListener{
+class _CheckListContentWidgetState extends State<CheckListContentWidget> with NotificationsListener{
   GlobalKey _titleKey = GlobalKey();
   GlobalKey _pageKey = GlobalKey();
 
@@ -738,7 +738,7 @@ class _StepsHorizontalListWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _StepsHorizontalListState();
 }
 
-class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implements NotificationsListener{
+class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> with NotificationsListener{
   PageController? _pageController;
   GlobalKey _tabKey = GlobalKey();
   int _currentPage = 0;

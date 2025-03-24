@@ -53,7 +53,7 @@ class AthleticsMyTeamsPanel extends StatefulWidget {
   }
 }
 
-class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implements NotificationsListener {
+class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> with NotificationsListener {
   List<SportDefinition>? _sports;
   Set<String>? _preferredSports;
 

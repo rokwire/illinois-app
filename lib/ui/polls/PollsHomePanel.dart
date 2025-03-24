@@ -45,7 +45,7 @@ class PollsHomePanel extends StatefulWidget {
   _PollsHomePanelState createState() => _PollsHomePanelState();
 }
 
-class _PollsHomePanelState extends State<PollsHomePanel> implements NotificationsListener{
+class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListener{
 
   _PollType? _selectedPollType;
 

@@ -68,7 +68,7 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
-class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> implements NotificationsListener {
+class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {
 
   Event2? _event;
   Survey? _survey;
