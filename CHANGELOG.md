@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Exposed ability for switching to test Illini cash url from Debug panel [#698](https://github.com/rokwire/illinois-app/issues/698).
+- Perplexity Assistant Provider [#4906](https://github.com/rokwire/illinois-app/issues/4906).
 ### Removed
 - Deleted Event2AttendanceDetailPanel (unused).
 ### Changed
