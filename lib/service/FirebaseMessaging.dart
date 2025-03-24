@@ -50,6 +50,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyPollOpen                                   = "$notifyBase.poll.create";
   static const String notifyEventsNotification                         = "$notifyBase.events";
   static const String notifyEventDetail                                = "$notifyBase.event.detail";
+  static const String notifyEventSelfCheckIn                           = "$notifyBase.event.self_checkin";
   static const String notifyEventAttendeeSurveyInvitation              = "$notifyBase.event.attendee.survey.invitation";
   static const String notifyGameDetail                                 = "$notifyBase.game.detail";
   static const String notifyAthleticsGameStarted                       = "$notifyBase.athletics_game.started";
@@ -200,6 +201,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeOpenPoll = 'poll_open';
   static const String payloadTypeEvents = 'events';
   static const String payloadTypeEventDetail = 'event_detail';
+  static const String payloadTypeEventSelfCheckIn = 'event.self_checkin';
   static const String payloadTypeEvent = 'event';
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
@@ -396,11 +398,17 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     else if (type == payloadTypeEventDetail) {
       NotificationService().notify(notifyEventDetail, data);
     }
+    else if (type == payloadTypeEventSelfCheckIn) {
+      NotificationService().notify(notifyEventSelfCheckIn, data);
+    }
     else if (type == payloadTypeEvent) {
       String? entityType = JsonUtils.stringValue(data?['entity_type']);
       String? operation = JsonUtils.stringValue(data?['operation']);
       if ((entityType == 'event_attendance') && (operation == 'survey_invite')) {
         NotificationService().notify(notifyEventAttendeeSurveyInvitation, data);
+      }
+      else if ((entityType == 'event.self_checkin') && (operation == 'self_checkin_invite')) {
+        NotificationService().notify(notifyEventSelfCheckIn, data);
       } else if (entityType == 'event') {
         // Handle 'upcoming_event' and 'event_notification' operations as showing event detail
         NotificationService().notify(notifyEventDetail, data);

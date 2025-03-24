@@ -56,20 +56,20 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final Position? userLocation;
   final Event2Selector2? eventSelector;
+  final void Function(Event2DetailPanelState)? onInitialized;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.analyticsFeature});
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.onInitialized, this.analyticsFeature});
   
   @override
-  State<StatefulWidget> createState() => _Event2DetailPanelState();
+  State<StatefulWidget> createState() => Event2DetailPanelState();
 
   // AnalyticsInfo
-
   @override
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
-class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {
+class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {
 
   Event2? _event;
   Survey? _survey;
@@ -116,7 +116,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
     _survey = widget.survey;
     _displayCategories = _buildDisplayCategories(widget.event);
 
-    _initEvent();
+    _initEvent().then((_) {
+      widget.onInitialized?.call(this);
+    });
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -1123,7 +1125,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
 
           String? eventId = JsonUtils.stringValue(urlParams?['event_id']) ;
           if ((eventId != null) && (eventId == _eventId)) {
-            _selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
+            selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
           }
           else {
             setState(() { _selfCheckingIn = false; });
@@ -1144,7 +1146,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   bool _preprocessSelfCheckInNotification(Map<String, dynamic>? urlParams) {
     String? eventId = JsonUtils.stringValue(urlParams?['event_id']);
     if ((eventId != null) && (eventId == _eventId)) {
-      _selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
+      selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
       return true;
     }
     else {
@@ -1152,7 +1154,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
     }
   }
 
-  Future<void> _selfCheckIn(String eventId, { String? secret }) async {
+  Future<void> selfCheckIn(String eventId, { String? secret }) async {
     if (mounted && !_selfCheckingIn) {
       setState(() { _selfCheckingIn = true; });
     }
@@ -1600,8 +1602,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   bool get _canSelfCheckIn => _isSelfCheckInEnabled && ((_event?.attendanceDetails?.selfCheckLimitedToRegisteredOnly != true) || _isParticipant);
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
+  bool get _isGroupEvent => (_event?.isGroupEvent == true);
 
-  bool get _isGroupEvent => (widget.event?.isGroupEvent == true);
+  Event2? get event => _event;
 }
 
 abstract class Event2Selector2State<T extends StatefulWidget> extends State<T> {
