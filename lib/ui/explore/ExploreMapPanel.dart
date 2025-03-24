@@ -179,8 +179,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _ExploreMapPanelState extends State<ExploreMapPanel>
-  with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel>
-  implements NotificationsListener {
+  with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel> {
 
   static const double _filterLayoutSortKey = 1.0;
   static const String _privacyUrl = 'privacy://level';

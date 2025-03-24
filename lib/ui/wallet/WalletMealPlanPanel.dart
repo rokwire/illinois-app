@@ -91,7 +91,7 @@ class WalletMealPlanContentWidget extends StatefulWidget with WalletHomeContentW
   Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
-class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidget> implements NotificationsListener {
+class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidget> with NotificationsListener {
   bool _authLoading = false;
 
   bool _illiniCashLoading = false;

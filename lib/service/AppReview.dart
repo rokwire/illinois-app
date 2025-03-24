@@ -14,7 +14,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AppReview with Service implements NotificationsListener {
+class AppReview with Service, NotificationsListener {
 
   DateTime? _sessionStartDateTime;
   Timer? _awakeTimer;

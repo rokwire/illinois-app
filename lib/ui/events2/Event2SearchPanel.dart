@@ -62,7 +62,7 @@ class Event2SearchPanel extends StatefulWidget {
   _Event2SearchPanelState createState() => _Event2SearchPanelState();
 }
 
-class _Event2SearchPanelState extends State<Event2SearchPanel> implements NotificationsListener {
+class _Event2SearchPanelState extends State<Event2SearchPanel> with NotificationsListener {
 
   ScrollController _scrollController = ScrollController();
   TextEditingController _searchTextController = TextEditingController();

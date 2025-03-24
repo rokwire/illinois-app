@@ -117,7 +117,7 @@ class WalletMTDBusPassContentWidget extends StatefulWidget with WalletHomeConten
   Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
-class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentWidget> implements NotificationsListener {
+class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentWidget> with NotificationsListener {
   final double _headingH1 = 180;
   final double _headingH2 = 80;
   final double _photoSize = 240;

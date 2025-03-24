@@ -47,7 +47,7 @@ class HomeGroupsWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeGroupsWidgetState();
 }
 
-class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
+class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsListener{
   List<Group>? _groups;
   Map<String, GlobalKey> _groupCardKeys = <String, GlobalKey>{};
   DateTime? _pausedDateTime;

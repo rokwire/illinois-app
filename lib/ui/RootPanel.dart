@@ -108,7 +108,7 @@ class RootPanel extends StatefulWidget {
   _RootPanelState createState()  => _RootPanelState();
 }
 
-class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
+class _RootPanelState extends State<RootPanel> with NotificationsListener, TickerProviderStateMixin {
 
   List<RootTab>  _tabs = [];
   Map<RootTab, Widget?> _panels = {};

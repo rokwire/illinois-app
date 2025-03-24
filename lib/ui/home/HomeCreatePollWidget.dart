@@ -46,7 +46,7 @@ class HomeCreatePollWidget extends StatefulWidget {
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();
 }
 
-class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements NotificationsListener {
+class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> with NotificationsListener {
   bool _visible = true;
   bool _authLoading = false;
 

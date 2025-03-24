@@ -39,7 +39,7 @@ class HomeStudentCoursesWidget extends StatefulWidget {
   _HomeStudentCoursesWidgetState createState() => _HomeStudentCoursesWidgetState();
 }
 
-class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> implements NotificationsListener {
+class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> with NotificationsListener {
 
   List<StudentCourse>? _courses;
   bool _loading = false;

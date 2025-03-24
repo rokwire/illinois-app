@@ -10,29 +10,26 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2ResearchQuestionnairePromptPanel extends StatefulWidget with Onboarding2Panel {
 
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
   final void Function(BuildContext context, Onboarding2Panel panel, bool? participateInResearch)? onContinue;
-  Onboarding2ResearchQuestionnairePromptPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue }) :
-    super(key: GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>());
+  Onboarding2ResearchQuestionnairePromptPanel({ super.key, this.onboardingCode = '', this.onboardingContext, this.onContinue });
 
-  GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2ResearchQuestionnairePromptPanelState>) : null;
+  _Onboarding2ResearchQuestionnairePromptPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
-
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
-
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
   @override
   Future<bool> isOnboardingEnabled() async => Questionnaires().participateInResearch != true;
 
   @override
-  _Onboarding2ResearchQuestionnairePromptPanelState createState() => _Onboarding2ResearchQuestionnairePromptPanelState();
+  State<StatefulWidget> createState() => _Onboarding2ResearchQuestionnairePromptPanelState();
 }
 
 class _Onboarding2ResearchQuestionnairePromptPanelState extends State<Onboarding2ResearchQuestionnairePromptPanel> {

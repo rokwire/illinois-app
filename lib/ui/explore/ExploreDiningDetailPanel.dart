@@ -63,7 +63,7 @@ class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => dining?.analyticsAttributes;
 }
 
-class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements NotificationsListener {
+class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with NotificationsListener {
 
   Dining? _dining;
   bool _isDiningLoading = false;
@@ -703,7 +703,7 @@ class _DiningDetail extends StatefulWidget {
   _DiningDetailState createState() => _DiningDetailState();
 }
 
-class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener {
+class _DiningDetailState extends State<_DiningDetail> with NotificationsListener {
 
   List<DiningSpecial>? _specials;
 

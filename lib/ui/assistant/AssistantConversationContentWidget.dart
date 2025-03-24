@@ -47,8 +47,7 @@ class AssistantConversationContentWidget extends StatefulWidget {
 }
 
 class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
-    with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>, WidgetsBindingObserver
-    implements NotificationsListener {
+    with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantConversationContentWidget> {
   static final String resourceName = 'assistant';
 
   TextEditingController _inputController = TextEditingController();

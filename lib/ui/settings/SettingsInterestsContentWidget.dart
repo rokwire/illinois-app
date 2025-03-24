@@ -34,7 +34,7 @@ class SettingsInterestsContentWidget extends StatefulWidget {
   _SettingsManageInterestsState createState() => _SettingsManageInterestsState();
 }
 
-class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget> implements NotificationsListener {
+class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget> with NotificationsListener {
   //Tabs
   List<_InterestTab> _tabs = [];
   _InterestTab? _selectedTab;

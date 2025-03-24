@@ -33,7 +33,7 @@ class GroupAllEventsPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
-class _GroupAllEventsState extends State<GroupAllEventsPanel> implements NotificationsListener {
+class _GroupAllEventsState extends State<GroupAllEventsPanel> with NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;

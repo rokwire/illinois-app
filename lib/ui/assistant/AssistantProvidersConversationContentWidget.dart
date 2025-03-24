@@ -47,8 +47,7 @@ class AssistantProvidersConversationContentWidget extends StatefulWidget {
 }
 
 class _AssistantProvidersConversationContentWidgetState extends State<AssistantProvidersConversationContentWidget>
-    with AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget>, WidgetsBindingObserver
-    implements NotificationsListener {
+    with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget> {
 
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();

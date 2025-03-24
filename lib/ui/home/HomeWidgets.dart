@@ -40,7 +40,7 @@ class HomeHandleWidget extends StatefulWidget {
   _HomeHandleWidgetState createState() => _HomeHandleWidgetState();
 }
 
-class _HomeHandleWidgetState extends State<HomeHandleWidget> implements NotificationsListener {
+class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsListener {
 
   final GlobalKey _contentKey = GlobalKey();
   CrossAxisAlignment? _dropAnchorAlignment;
@@ -716,7 +716,7 @@ class HomeProgressWidget extends StatelessWidget {
 ////////////////////////////
 // HomeCompoundWidgetState
 
-abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> implements NotificationsListener {
+abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> with NotificationsListener {
 
   final Axis direction;
   HomeCompoundWidgetState({this.direction = Axis.vertical});

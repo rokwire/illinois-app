@@ -67,10 +67,10 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   factory QrCodePanel.fromEvent(Event2? event, {Key? key, AnalyticsFeature? analyticsFeature }) => QrCodePanel(
     key: key,
-    deepLinkUrl: Events2.eventDetailUrl(event),
-      saveFileName: 'event - ${event?.name}',
-      saveWatermarkText: event?.name,
-      saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    deepLinkUrl: (event?.id != null) ? Events2.eventDetailUrl(event?.id ?? '') : null,
+    saveFileName: 'event - ${event?.name}',
+    saveWatermarkText: event?.name,
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event.title', 'Share this event'),
     description: Localization().getStringEx('panel.qr_code.event.description', 'Want to invite other Illinois app users to view this event? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,

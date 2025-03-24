@@ -75,7 +75,7 @@ class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
-  with SingleTickerProviderStateMixin implements NotificationsListener {
+  with NotificationsListener, SingleTickerProviderStateMixin {
 
   List<Explore>? _explores;
   bool _exploreProgress = false;

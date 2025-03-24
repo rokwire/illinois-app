@@ -43,7 +43,7 @@ class HomeTwitterWidget extends StatefulWidget {
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
 }
 
-class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
+class _HomeTwitterWidgetState extends State<HomeTwitterWidget> with NotificationsListener {
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
   String? _tweetsAccountKey;
@@ -378,7 +378,7 @@ class TwitterPanel extends StatefulWidget {
   _TwitterPanelState createState() => _TwitterPanelState();
 }
 
-class _TwitterPanelState extends State<TwitterPanel> implements NotificationsListener  {
+class _TwitterPanelState extends State<TwitterPanel> with NotificationsListener  {
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
   String? _tweetsAccountKey;

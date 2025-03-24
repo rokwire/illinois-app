@@ -27,7 +27,7 @@ class HomeLoginWidget extends StatefulWidget {
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();
 }
 
-class _HomeLoginWidgetState extends State<HomeLoginWidget> implements NotificationsListener {
+class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsListener {
 
   bool? _visible;
 

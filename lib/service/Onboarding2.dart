@@ -23,8 +23,9 @@ import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2 with Service implements NotificationsListener {
+class Onboarding2 with Service, NotificationsListener {
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
 
@@ -70,6 +71,7 @@ class Onboarding2 with Service implements NotificationsListener {
   // Content
 
   late List<String> _contentCodes;
+  Map<String, GlobalKey<State<StatefulWidget>>> _panelKeys = <String, GlobalKey<State<StatefulWidget>>>{};
 
   @protected
   String get flexUIEntry => 'onboarding2';
@@ -78,12 +80,18 @@ class Onboarding2 with Service implements NotificationsListener {
 
   // Flow
 
-  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first, context: {})?.asWidget : null;
+  Widget? get first => _contentCodes.isNotEmpty ? Onboarding2Panel._fromCode(_contentCodes.first,
+    context: {},
+    panelKeys: _panelKeys,
+  )?.asWidget : null;
 
   Future<void> next(BuildContext context, Onboarding2Panel panel) async {
     int index = _contentCodes.indexOf(panel.onboardingCode);
     while ((0 <= index) && ((index + 1) < _contentCodes.length)) {
-      Onboarding2Panel? nextPanel = Onboarding2Panel._fromCode(_contentCodes[index + 1], context: panel.onboardingContext);
+      Onboarding2Panel? nextPanel = Onboarding2Panel._fromCode(_contentCodes[index + 1],
+        context: panel.onboardingContext,
+        panelKeys: _panelKeys,
+      );
       Widget? nextWidget = nextPanel?.asWidget;
       if ((nextPanel != null) && (nextWidget != null)) {
         if (panel.onboardingProgress != true) {
@@ -125,76 +133,83 @@ class Onboarding2 with Service implements NotificationsListener {
 typedef Onboarding2Context = Map<String, dynamic>;
 
 class Onboarding2Panel {
+
+  // Public API
   String get onboardingCode => '';
   Onboarding2Context? get onboardingContext => null;
 
   Future<bool> isOnboardingEnabled() async => true;
 
-  Widget? get asWidget => (this is Widget) ? (this as Widget) : null;
-
   bool get onboardingProgress => false;
   set onboardingProgress(bool value) {}
 
-  static Onboarding2Panel? _fromCode(String code, { Onboarding2Context? context }) {
+  // Helpers
+  Widget? get asWidget => JsonUtils.cast<Widget>(this);
+  GlobalKey? get globalKey => JsonUtils.cast<GlobalKey>(this.asWidget?.key);
+
+  // Creation
+  static Onboarding2Panel? _fromCode(String code, { Onboarding2Context? context, Map<String, GlobalKey<State<StatefulWidget>>>? panelKeys }) {
     if (code == "get_started") {
-      return Onboarding2GetStartedPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2GetStartedPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "video_tutorial") {
-      return Onboarding2VideoTutorialPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2VideoTutorialPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "privacy_statement") {
-      return Onboarding2PrivacyStatementPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2PrivacyStatementPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "privacy_location_services") {
-      return Onboarding2PrivacyLocationServicesPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2PrivacyLocationServicesPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "privacy_store_activity") {
-      return Onboarding2PrivacyStoreActivityPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2PrivacyStoreActivityPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "privacy_share_activity") {
-      return Onboarding2PrivacyShareActivityPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2PrivacyShareActivityPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "privacy_level") {
-      return Onboarding2PrivacyLevelPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2PrivacyLevelPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "roles") {
-      return Onboarding2RolesPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2RolesPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "notifications_auth") {
-      return Onboarding2AuthNotificationsPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2AuthNotificationsPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "login_netid") {
-      return Onboarding2LoginNetIdPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2LoginNetIdPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "login_phone_or_email_statement") {
-      return Onboarding2LoginPhoneOrEmailStatementPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2LoginPhoneOrEmailStatementPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "login_phone_or_email") {
-      return Onboarding2LoginPhoneOrEmailPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2LoginPhoneOrEmailPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "login_email") {
-      return Onboarding2LoginEmailPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2LoginEmailPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "login_phone") {
-      return Onboarding2LoginPhoneConfirmPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2LoginPhoneConfirmPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "profile_info") {
-      return Onboarding2ProfileInfoPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2ProfileInfoPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "research_questionnaire_participate_prompt") {
-      return Onboarding2ResearchQuestionnairePromptPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2ResearchQuestionnairePromptPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "research_questionnaire") {
-      return Onboarding2ResearchQuestionnairePanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2ResearchQuestionnairePanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
     else if (code == "research_questionnaire_acknowledgement") {
-      return Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingCode: code, onboardingContext: context,);
+      return Onboarding2ResearchQuestionnaireAcknowledgementPanel(key: _panelKey(code, panelKeys), onboardingCode: code, onboardingContext: context,);
     }
-
     else {
       return null;
     }
   }
+
+  static GlobalKey<State<StatefulWidget>>? _panelKey(String code, Map<String, GlobalKey<State<StatefulWidget>>>? panelKeys) =>
+    (panelKeys != null) ? (panelKeys[code] ??= GlobalKey<State<StatefulWidget>>()) : null;
 
 }
 

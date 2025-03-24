@@ -51,8 +51,7 @@ class WalletICardContentWidget extends StatefulWidget {
 }
 
 class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
-  with SingleTickerProviderStateMixin
-  implements NotificationsListener {
+  with NotificationsListener, SingleTickerProviderStateMixin {
 
   final double _headingH1 = 200;
   final double _headingH2 = 80;

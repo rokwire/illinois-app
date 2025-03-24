@@ -45,7 +45,7 @@ class AthleticsTeamsWidget extends StatefulWidget {
   AthleticsTeamsWidgetState createState() => AthleticsTeamsWidgetState();
 }
 
-class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements NotificationsListener {
+class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> with NotificationsListener {
   List<SportDefinition>? _menSports;
   List<SportDefinition>? _womenSports;
   Set<String>? _preferredSports;
