@@ -673,7 +673,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
   _GroupCardState createState() => _GroupCardState();
 }
 
-class _GroupCardState extends State<GroupCard> implements NotificationsListener {
+class _GroupCardState extends State<GroupCard> with NotificationsListener {
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
@@ -2213,7 +2213,7 @@ class GroupPollCard extends StatefulWidget{
   }
 }
 
-class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener {
+class _GroupPollCardState extends State<GroupPollCard> with NotificationsListener {
   GroupStats? _groupStats;
 
   List<GlobalKey>? _progressKeys;
@@ -2795,7 +2795,7 @@ class GroupMemberProfileImage extends StatefulWidget {
   State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
 }
 
-class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> implements NotificationsListener {
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with NotificationsListener {
   Uint8List? _imageBytes;
   bool _loading = false;
 
@@ -3613,7 +3613,7 @@ class GroupReactionsLayout extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupReactionsState();
 }
 
-class _GroupReactionsState extends State<GroupReactionsLayout> implements NotificationsListener{
+class _GroupReactionsState extends State<GroupReactionsLayout> with NotificationsListener{
   List<Reaction>? _reactions;
   bool _loading = false;
 

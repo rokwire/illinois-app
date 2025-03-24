@@ -133,7 +133,7 @@ class NotificationsHomePanel extends StatefulWidget {
   _NotificationsHomePanelState createState() => _NotificationsHomePanelState();
 }
 
-class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
+class _NotificationsHomePanelState extends State<NotificationsHomePanel> with NotificationsListener {
   static final int _messagesPageSize = 8;
   static final double _defaultPaddingValue = 16;
 
@@ -939,7 +939,7 @@ class InboxMessageCard extends StatefulWidget {
   }
 }
 
-class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
+class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsListener {
   bool _deleting = false;
 
   @override

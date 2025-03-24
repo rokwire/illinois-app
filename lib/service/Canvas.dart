@@ -38,7 +38,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-class Canvas with Service implements NotificationsListener {
+class Canvas with Service, NotificationsListener {
 
   static const String notifyCoursesUpdated  = "edu.illinois.rokwire.canvas.courses.updated";
   static const String notifyCanvasEventDetail = "edu.illinois.rokwire.canvas.event.detail";

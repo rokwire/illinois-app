@@ -73,7 +73,7 @@ class AssistantHomePanel extends StatefulWidget {
   }
 }
 
-class _AssistantHomePanelState extends State<AssistantHomePanel> implements NotificationsListener {
+class _AssistantHomePanelState extends State<AssistantHomePanel> with NotificationsListener {
   late List<AssistantContent> _contentTypes;
   AssistantContent? _selectedContent;
   static AssistantContent? _lastSelectedContent;

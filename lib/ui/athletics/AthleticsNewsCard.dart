@@ -35,7 +35,7 @@ class AthleticsNewsCard extends StatefulWidget {
   _AthleticsNewsCardState createState() => _AthleticsNewsCardState();
 }
 
-class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements NotificationsListener {
+class _AthleticsNewsCardState extends State<AthleticsNewsCard> with NotificationsListener {
 
   static const EdgeInsets _detailPadding = EdgeInsets.only(left: 24, right: 24);
   static const EdgeInsets _iconPadding = EdgeInsets.only(right: 5);

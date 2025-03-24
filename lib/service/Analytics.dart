@@ -54,7 +54,7 @@ import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 
-class Analytics extends rokwire.Analytics implements NotificationsListener {
+class Analytics extends rokwire.Analytics with NotificationsListener {
 
   static const String notifyEvent = "edu.illinois.rokwire.analytics.event";
 

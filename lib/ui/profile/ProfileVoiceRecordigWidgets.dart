@@ -34,7 +34,7 @@ class ProfileNamePronouncementWidget extends StatefulWidget {
   EdgeInsetsGeometry get vertMargin => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
 }
 
-class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> implements NotificationsListener {
+class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> with NotificationsListener {
   AudioPlayer? _audioPlayer;
   bool _playbackActivity = false;
   bool _editActivity = false;

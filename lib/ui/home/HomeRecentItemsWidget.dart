@@ -75,7 +75,7 @@ class HomeRecentItemsWidget extends StatefulWidget {
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
 }
 
-class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implements NotificationsListener {
+class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with NotificationsListener {
 
   Iterable<RecentItem>? _recentItems;
   
@@ -271,7 +271,7 @@ class HomeRecentItemsPanel extends StatefulWidget {
   _HomeRecentItemsPanelState createState() => _HomeRecentItemsPanelState();
 }
 
-class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements NotificationsListener {
+class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with NotificationsListener {
 
   Iterable<RecentItem>? _recentItems;
 
@@ -427,7 +427,7 @@ class HomeRecentItemCard extends StatefulWidget {
   _HomeRecentItemCardState createState() => _HomeRecentItemCardState();
 }
 
-class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements NotificationsListener {
+class _HomeRecentItemCardState extends State<HomeRecentItemCard> with NotificationsListener {
 
   @override
   void initState() {

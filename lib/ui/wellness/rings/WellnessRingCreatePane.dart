@@ -34,7 +34,7 @@ class WellnessRingCreatePanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> implements NotificationsListener {
+class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> with NotificationsListener {
   Color? _selectedColor;
   Color? _tmpColor;
   TextEditingController _nameController = TextEditingController();

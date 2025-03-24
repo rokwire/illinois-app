@@ -46,7 +46,7 @@ class AssignmentPanel extends StatefulWidget with AnalyticsInfo {
   State<AssignmentPanel> createState() => _AssignmentPanelState();
 }
 
-class _AssignmentPanelState extends State<AssignmentPanel> implements NotificationsListener {
+class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsListener {
 
   late Content _content;
   List<Content>? _helpContent;

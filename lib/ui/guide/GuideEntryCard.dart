@@ -28,7 +28,7 @@ class GuideEntryCard extends StatefulWidget {
   _GuideEntryCardState createState() => _GuideEntryCardState();
 }
 
-class _GuideEntryCardState extends State<GuideEntryCard> implements NotificationsListener {
+class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListener {
 
   bool _isFavorite = false;
 

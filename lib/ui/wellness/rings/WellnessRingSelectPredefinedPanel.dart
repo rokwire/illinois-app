@@ -18,7 +18,7 @@ class WellnessRingSelectPredefinedPanel extends StatefulWidget{
   State<StatefulWidget> createState() => _WellnessRingSelectPredefinedPanelState();
 }
 
-class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> implements NotificationsListener{
+class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> with NotificationsListener{
   static const List<Map<String,dynamic>> PREDEFINED_RING_BUTTONS = [
     {"ring":{'name': "Hobby", 'value': 1, 'color_hex': '#f5821e', 'ring_id': "id_predefined_0", 'unit':'session'},
       "name":"Hobby Ring",

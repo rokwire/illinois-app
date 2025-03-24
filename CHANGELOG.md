@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deleted Event2AttendanceDetailPanel (unused).
 ### Changed
 - Android: Upgrade Android Gradle Plugin to version 8.2.1.
+- Extended NotificationService APIs [#576](https://github.com/rokwire/app-flutter-plugin/issues/5726).
 ### Fixed
 - Fixed assess to Onboarding2Panel states [#4826](https://github.com/rokwire/illinois-app/issues/4826).
 

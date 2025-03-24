@@ -41,7 +41,7 @@ class AppointmentCard extends StatefulWidget with AnalyticsInfo {
   _AppointmentCardState createState() => _AppointmentCardState();
 }
 
-class _AppointmentCardState extends State<AppointmentCard> implements NotificationsListener {
+class _AppointmentCardState extends State<AppointmentCard> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [

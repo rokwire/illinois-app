@@ -61,7 +61,7 @@ class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _GuideListPanelState extends State<GuideListPanel> implements NotificationsListener {
+class _GuideListPanelState extends State<GuideListPanel> with NotificationsListener {
 
   List<Map<String, dynamic>>? _guideItems = <Map<String, dynamic>>[];
   LinkedHashSet<String>? _features = LinkedHashSet<String>();

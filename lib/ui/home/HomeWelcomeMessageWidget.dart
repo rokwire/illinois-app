@@ -24,7 +24,7 @@ class HomeWelcomeMessageWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeWelcomeMessageWidgetState();
 }
 
-class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> implements NotificationsListener {
+class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> with NotificationsListener {
 
   late bool _isUserVisible;
   late bool _isFavoritesEmpty;

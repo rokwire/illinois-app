@@ -30,7 +30,7 @@ class WellnessRing extends StatefulWidget{
   State<WellnessRing> createState() => _WellnessRingState();
 }
 
-class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMixin implements NotificationsListener{
+class _WellnessRingState extends State<WellnessRing> with NotificationsListener, TickerProviderStateMixin {
   static const int OUTER_SIZE = 270;
   static const int STROKE_SIZE = 35;
   static const int PADDING_SIZE = 4;

@@ -140,7 +140,7 @@ class BrowseContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Browse;
 }
 
-class _BrowseContentWidgetState extends State<BrowseContentWidget> implements NotificationsListener {
+class _BrowseContentWidgetState extends State<BrowseContentWidget> with NotificationsListener {
 
   List<String>? _contentCodes;
   Set<String> _expandedCodes = <String>{};
@@ -1041,7 +1041,7 @@ class _BrowseToutWidget extends StatefulWidget {
   State<_BrowseToutWidget> createState() => _BrowseToutWidgetState();
 }
 
-class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements NotificationsListener {
+class _BrowseToutWidgetState extends State<_BrowseToutWidget> with NotificationsListener {
 
   String? _imageUrl;
   DateTime? _imageDateTime;

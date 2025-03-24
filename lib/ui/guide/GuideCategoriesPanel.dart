@@ -26,7 +26,7 @@ class GuideCategoriesPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.fromName(guide);
 }
 
-class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements NotificationsListener {
+class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> with NotificationsListener {
 
   List<String>? _categories;
   Map<String, List<GuideSection>>? _categorySections;

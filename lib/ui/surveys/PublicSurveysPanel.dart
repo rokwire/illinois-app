@@ -33,7 +33,7 @@ class PublicSurveysPanel extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements NotificationsListener  {
+class _PublicSurveysPanelState extends State<PublicSurveysPanel> with NotificationsListener  {
 
   late PublicSurveysContentType _selectedContentType;
   bool _contentTypeDropdownExpanded = false;

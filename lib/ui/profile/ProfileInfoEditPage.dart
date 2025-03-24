@@ -51,7 +51,7 @@ class ProfileInfoEditPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoEditPageState();
 }
 
-class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver implements NotificationsListener {
+class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with NotificationsListener, WidgetsBindingObserver {
 
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;

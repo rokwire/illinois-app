@@ -39,7 +39,7 @@ class HomeAthliticsNewsWidget extends StatefulWidget {
   State<HomeAthliticsNewsWidget> createState() => _HomeAthleticsNewsWidgetState();
 }
 
-class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> implements NotificationsListener {
+class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with NotificationsListener {
 
   List<News>? _news;
   bool _loadingNews = false;
