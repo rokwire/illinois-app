@@ -108,6 +108,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
       Events2.notifyUpdated,
+      Events2.notifySelfCheckIn,
     ]);
     _scrollController.addListener(_scrollListener);
     _event = widget.event;
@@ -138,6 +139,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   }
 
   // NotificationsListener
+
+  @override
+  bool preprocessNotification(String name, dynamic param) {
+    if (name == Events2.notifySelfCheckIn) {
+      return _preprocessSelfCheckInNotification(JsonUtils.mapValue(param));
+    }
+    else {
+      return super.preprocessNotification(name, param);
+    }
+  }
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
@@ -1111,19 +1123,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
 
           String? eventId = JsonUtils.stringValue(urlParams?['event_id']) ;
           if ((eventId != null) && (eventId == _eventId)) {
-            String? secret = JsonUtils.stringValue(urlParams?['secret']);
-            Event2Person? person = await Events2().selfCheckInEvent(eventId, secret: secret);
-            if (mounted) {
-              setState(() {
-                _selfCheckingIn = false;
-                if (person != null) {
-                  _persons?.attendees?.add(person);
-                }
-              });
-              if (person == null) {
-                Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.self_checkin.api.failed.message', 'Self Check-In failed.'));
-              }
-            }
+            _selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
           }
           else {
             setState(() { _selfCheckingIn = false; });
@@ -1137,6 +1137,36 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       }
       else {
         setState(() { _selfCheckingIn = false; });
+      }
+    }
+  }
+
+  bool _preprocessSelfCheckInNotification(Map<String, dynamic>? urlParams) {
+    String? eventId = JsonUtils.stringValue(urlParams?['event_id']);
+    if ((eventId != null) && (eventId == _eventId)) {
+      _selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  Future<void> _selfCheckIn(String eventId, { String? secret }) async {
+    if (mounted && !_selfCheckingIn) {
+      setState(() { _selfCheckingIn = true; });
+    }
+
+    Event2Person? person = await Events2().selfCheckInEvent(eventId, secret: secret);
+    if (mounted) {
+      setState(() {
+        _selfCheckingIn = false;
+        if (person != null) {
+          _persons?.attendees?.add(person);
+        }
+      });
+      if (person == null) {
+        Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.self_checkin.api.failed.message', 'Self Check-In failed.'));
       }
     }
   }
