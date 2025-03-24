@@ -77,7 +77,7 @@ class HomeIlliniCashWalletWidget extends StatefulWidget {
   State<HomeIlliniCashWalletWidget> createState() => _HomeIlliniCashWalletWidgetState();
 }
 
-class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget> implements NotificationsListener {
+class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -204,7 +204,7 @@ class HomeMealPlanWalletWidget extends StatefulWidget {
   State<HomeMealPlanWalletWidget> createState() => _HomeMealPlanWalletWidgetState();
 }
 
-class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> implements NotificationsListener {
+class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -345,7 +345,7 @@ class HomeBusPassWalletWidget extends StatefulWidget {
   State<HomeBusPassWalletWidget> createState() => _HomeBusPassWalletWidgetState();
 }
 
-class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> implements NotificationsListener {
+class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -438,7 +438,7 @@ class HomeIlliniIdWalletWidget extends StatefulWidget {
   State<HomeIlliniIdWalletWidget> createState() => _HomeIlliniIdWalletWidgetState();
 }
 
-class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> implements NotificationsListener {
+class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [

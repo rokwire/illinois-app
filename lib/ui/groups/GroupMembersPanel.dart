@@ -57,7 +57,7 @@ class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
-class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener {
+class _GroupMembersPanelState extends State<GroupMembersPanel> with NotificationsListener {
   static final int _defaultMembersLimit = 10;
 
   Group? _group;

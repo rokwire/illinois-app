@@ -19,7 +19,7 @@ class SettingsRecentItemsContentWidget extends StatefulWidget{
 
 }
 
-class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsContentWidget> implements NotificationsListener {
+class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsContentWidget> with NotificationsListener {
 
   @override
   void initState() {

@@ -50,7 +50,7 @@ class ProfileInfoPage extends StatefulWidget {
   }
 }
 
-class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPage> implements NotificationsListener {
+class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPage> with NotificationsListener {
 
   final GlobalKey<ProfileInfoPreviewPageState> _profileInfoPreviewKey = GlobalKey<ProfileInfoPreviewPageState>();
   final GlobalKey<ProfileInfoEditPageState> _profileInfoEditKey = GlobalKey<ProfileInfoEditPageState>();

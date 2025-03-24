@@ -37,7 +37,7 @@ class Event2SetupNotificationsPanel extends StatefulWidget {
   _Event2SetupNotificationsPanelState createState() => _Event2SetupNotificationsPanelState();
 }
 
-class _Event2SetupNotificationsPanelState extends State<Event2SetupNotificationsPanel> implements NotificationsListener {
+class _Event2SetupNotificationsPanelState extends State<Event2SetupNotificationsPanel> with NotificationsListener {
   static final EdgeInsets _defaultBottomPadding = EdgeInsets.only(bottom: 8);
   static final int _notificationsCount = 2;
 

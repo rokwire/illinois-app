@@ -29,7 +29,7 @@ class AssistantFaqsContentWidget extends StatefulWidget {
   State<AssistantFaqsContentWidget> createState() => _AssistantFaqsContentWidgetState();
 }
 
-class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> implements NotificationsListener {
+class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> with NotificationsListener {
 
   @override
   void initState() {

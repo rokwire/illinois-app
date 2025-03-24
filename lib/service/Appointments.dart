@@ -40,7 +40,7 @@ import 'package:uuid/uuid.dart';
 
 enum AppointmentsTimeSource { upcoming, past }
 
-class Appointments with Service implements NotificationsListener {
+class Appointments with Service, NotificationsListener {
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
   static const String notifyPastAppointmentsChanged = "edu.illinois.rokwire.appointments.past.changed";
   static const String notifyUpcomingAppointmentsChanged = "edu.illinois.rokwire.appointments.upcoming.changed";

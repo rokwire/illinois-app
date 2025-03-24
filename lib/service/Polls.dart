@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/polls.dart' as rokwire;
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:sprintf/sprintf.dart';
 
-class Polls extends rokwire.Polls implements NotificationsListener {
+class Polls extends rokwire.Polls with NotificationsListener {
 
   // Singletone Factory
 

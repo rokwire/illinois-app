@@ -41,7 +41,7 @@ class MessagesConversationPanel extends StatefulWidget {
 enum _ScrollTarget { bottom, targetMessage }
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
-    with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
+    with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<MessagesConversationPanel> {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _chatBarKey = GlobalKey();

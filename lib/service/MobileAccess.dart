@@ -28,7 +28,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class MobileAccess with Service implements NotificationsListener {
+class MobileAccess with Service, NotificationsListener {
   static const String notifyStartFinished  = "edu.illinois.rokwire.mobile_access.start.finished";
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
   static const String notifyMobileStudentIdChanged  = "edu.illinois.rokwire.mobile_access.student_id.changed";

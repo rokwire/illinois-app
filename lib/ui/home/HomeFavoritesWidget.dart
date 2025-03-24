@@ -132,7 +132,7 @@ class HomeFavoritesWidget extends StatefulWidget {
   }
 }
 
-class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements NotificationsListener {
+class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with NotificationsListener {
 
   List<Favorite>? _favorites;
   LinkedHashSet<String>? _favoriteIds;

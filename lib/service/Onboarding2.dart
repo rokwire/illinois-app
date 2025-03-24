@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2 with Service implements NotificationsListener {
+class Onboarding2 with Service, NotificationsListener {
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
 

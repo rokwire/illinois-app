@@ -40,7 +40,7 @@ class WellnessAppointmentsContentWidget extends StatefulWidget {
   State<WellnessAppointmentsContentWidget> createState() => _WellnessAppointmentsContentWidgetState();
 }
 
-class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointmentsContentWidget> implements NotificationsListener {
+class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointmentsContentWidget> with NotificationsListener {
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
   late bool _appointmentsCanDisplay;

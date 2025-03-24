@@ -56,7 +56,7 @@ class WellnessToDoItemDetailPanel extends StatefulWidget  with AnalyticsInfo {
   }
 }
 
-class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> implements NotificationsListener {
+class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> with NotificationsListener {
   static final String _workDayFormat = 'yyyy-MM-dd';
 
   WellnessToDoItem? _item;

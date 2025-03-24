@@ -63,7 +63,7 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
+class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsListener {
   final Color _dimmedBackgroundColor = Color(0x99000000);
 
   bool _loadingProgress = false;

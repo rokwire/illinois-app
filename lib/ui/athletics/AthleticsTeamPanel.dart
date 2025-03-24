@@ -58,7 +58,7 @@ class AthleticsTeamPanel extends StatefulWidget {
   _AthleticsTeamPanelState createState() => _AthleticsTeamPanelState();
 }
 
-class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements NotificationsListener {
+class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with NotificationsListener {
   List<Game>? _games;
   TeamRecord? _record;
   List<News>? _teamNews;

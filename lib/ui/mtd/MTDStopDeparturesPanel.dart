@@ -40,7 +40,7 @@ class MTDStopDeparturesPanel extends StatefulWidget with AnalyticsInfo  {
   State<MTDStopDeparturesPanel> createState() => _MTDStopDeparturesPanelState();
 }
 
-class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> implements NotificationsListener {
+class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> with NotificationsListener {
 
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;

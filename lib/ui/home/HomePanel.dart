@@ -540,7 +540,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
   static Key? _globalKey(Map<String, GlobalKey>? globalKeys, String code) => (globalKeys != null) ? (globalKeys[code] ??= GlobalKey()) : null;
 }
 
-class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
+class _HomePanelState extends State<HomePanel> with NotificationsListener, AutomaticKeepAliveClientMixin<HomePanel> {
 
   late HomeContentType _contentType;
   Set<String>? _availableSystemCodes;

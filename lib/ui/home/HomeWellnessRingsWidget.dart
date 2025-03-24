@@ -32,7 +32,7 @@ class HomeWellnessRingsWidget extends StatefulWidget {
   State<HomeWellnessRingsWidget> createState() => _HomeWellnessRingsWidgetState();
 }
 
-class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> implements NotificationsListener {
+class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [

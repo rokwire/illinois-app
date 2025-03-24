@@ -54,7 +54,7 @@ class AthleticsGameDetailHeading extends StatefulWidget {
   _AthleticsGameDetailHeadingState createState() => _AthleticsGameDetailHeadingState();
 }
 
-class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading> implements NotificationsListener {
+class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -567,7 +567,7 @@ class _SportScoreWidget extends StatefulWidget {
   _SportScoreWidgetState createState() => _SportScoreWidgetState();
 }
 
-class _SportScoreWidgetState extends State<_SportScoreWidget> implements NotificationsListener {
+class _SportScoreWidgetState extends State<_SportScoreWidget> with NotificationsListener {
   late LiveStats _livestatsLogic;
   LiveGame? _currentLiveGame;
 

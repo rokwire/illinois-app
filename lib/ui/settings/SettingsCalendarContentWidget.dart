@@ -30,7 +30,7 @@ class SettingsCalendarContentWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _SettingsCalendarContentWidgetState();
 }
 
-class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentWidget> implements NotificationsListener {
+class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentWidget> with NotificationsListener {
 
   @override
   void initState() {

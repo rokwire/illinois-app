@@ -85,7 +85,7 @@ class HomeCampusSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
   @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources.");
 }
 
-class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBaseWidget> implements NotificationsListener {
+class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBaseWidget> with NotificationsListener {
 
   List<Map<String, dynamic>>? _resourceItems;
 

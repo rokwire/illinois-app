@@ -84,7 +84,7 @@ class PollContentWidget extends StatefulWidget{
   State<StatefulWidget> createState() => _PollContentState();
 }
 
-class _PollContentState extends State<PollContentWidget> implements NotificationsListener{
+class _PollContentState extends State<PollContentWidget> with NotificationsListener{
   Poll? _poll;
   bool _voteDone = false;
   Map<int, int> _votingOptions = {};
