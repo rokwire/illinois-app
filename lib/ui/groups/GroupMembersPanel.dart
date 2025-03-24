@@ -650,10 +650,16 @@ class GroupMemberCard extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: Styles().textStyles.getTextStyle('widget.group.members.title')
+                          Wrap(
+                            // alignment: WrapAlignment.start,
+                            children: [
+                              Text(StringUtils.ensureNotEmpty(_memberDisplayName),
+                                  style: Styles().textStyles.getTextStyle('widget.group.members.title')
+                              ),
+                              GroupProfilePronouncementWidget(accountId: member?.userId,)
+                            ],
                           )
-                        )
+                        ),
                       ],
                     ),
                     Container(height: 4,),

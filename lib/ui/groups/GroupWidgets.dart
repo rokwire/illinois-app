@@ -2872,6 +2872,62 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
   }
 }
 
+class GroupProfilePronouncementWidget extends StatefulWidget {
+  final String? accountId;
+
+  const GroupProfilePronouncementWidget({super.key, this.accountId});
+
+  @override
+  State<StatefulWidget> createState() => GroupProfilePronouncementState();
+}
+
+class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidget> {
+  final _contentPadding = EdgeInsets.symmetric(horizontal: 13, vertical: 8);
+
+  Uint8List? _pronunciationAudioData;
+  bool? _hasPronouncement;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    setStateIfMounted(() => _loading = true);
+    Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
+          if(hasPronunciation == true){
+            Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+              setStateIfMounted(() {
+                _loading = false;
+                _hasPronouncement = hasPronunciation;
+                _pronunciationAudioData = audio?.audioData;
+              });
+            });
+          } else {
+            setStateIfMounted(() {
+              _loading = false;
+              _hasPronouncement = hasPronunciation;
+            });
+          }
+    });
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) => _loading ?
+    _loadingContent : _content;
+
+  Widget get _content =>
+    Visibility(visible: _hasPronouncement == true,
+        child: DirectoryPronunciationButton(
+            url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
+            data: _pronunciationAudioData,
+            padding: _contentPadding
+        ));
+
+  Widget get _loadingContent =>
+    Padding(padding: _contentPadding,
+      child: SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+      ));
+}
+
 class GroupsSelectionPopup extends StatefulWidget {
   final List<Group>? groups;
 
