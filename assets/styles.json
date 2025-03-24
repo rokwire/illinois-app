@@ -868,6 +868,7 @@
     "paper-plane-top": {"src": "0xe20a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "person-walking": {"src": "0xf554", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "web": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15, "todo":  "same as external-link"},
+    "camera-viewfinder": {"src": "0xe0da", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "share-nodes": {"src": "0xf1e0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "share": {"src": "0xf064", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "print": {"src": "0xf02f", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
@@ -994,7 +995,7 @@
     "add-gray": {"src": "images/icons-control-add-blue.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
 
     "check-green": {"src": "images/green-check-mark.png", "type": "flutter.asset", "size": 18},
-    "check-accent": {"src": "0xf00c", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
+    "check-accent": {"src": "0xf00c", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
 
     "close-dark": {"src": "images/close-blue.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 24},
     "italic-dark": {"src": "images/icon-italic.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},

@@ -94,7 +94,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   static const EdgeInsets _previewPageMargin = const EdgeInsets.symmetric(horizontal: _barIconPadding);
 
   String get _selfCheckInUrl =>
-    Events2.eventSelfCheckUrl(widget.eventId, secret: _eventSecret ?? '');
+    Events2.eventSelfCheckInUrl(widget.eventId, secret: _eventSecret ?? '');
 
   String get _saveFileName =>
     'Check-In PDF "${widget.event.name}" - ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
@@ -337,7 +337,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
       _isPreparing = true;
     });
     List<dynamic> results = await Future.wait([
-      Events2().getEventSelfCheckSecret(widget.eventId),
+      Events2().getEventSelfCheckInSecret(widget.eventId),
       _preloadImages(),
       _preloadFonts(),
     ]);
