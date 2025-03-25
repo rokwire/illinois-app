@@ -639,9 +639,15 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
 
   List<Widget>? get _selfCheckInWidget {
     if (_isSelfCheckInEnabled) {
-      if (_isAttendee) { // Already registered
+      if (_eventProcessing) {
         return <Widget>[
-          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.checked_in.title', 'You are checked in!'), "check-accent"),
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.self_checkin.checking.title', 'Checking Self Check-In status'), 'check-accent', showProgress: true),
+          _detailSpacerWidget
+        ];
+      }
+      else if (_isAttendee) { // Already registered
+        return <Widget>[
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.checked_in.title', 'You are checked in!'), 'check-accent'),
           _detailSpacerWidget
         ];
       }

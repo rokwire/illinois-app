@@ -46,7 +46,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   bool _manualCheckProgress = false;
   bool _selfCheckProgress = false;
   bool _selfCheckLimitedToRegisteredOnlyProgress = false;
-  bool _selfCheckPdfProgress = false;
   bool _applyProgress = false;
   
   final TextEditingController _attendanceTakersController = TextEditingController();
@@ -329,16 +328,15 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildSelfCheckPdfButton() => RoundedButton(
     label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
     hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
-    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant3'),
+    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.regular') : Styles().textStyles.getTextStyle('widget.button.title.regular.variant3'),
     borderColor: _canSelfCheckPdf ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
     backgroundColor: Styles().colors.white,
     onTap: _canSelfCheckPdf ? _onTapSelfCheckPdf : null,
-    contentWeight: 0.75,
-    progress: _selfCheckPdfProgress,
+    contentWeight: 0.6,
   );
 
   void _onTapSelfCheckPdf() async {
-    Analytics().logSelect(target: "Download Self Check-In PDF");
+    Analytics().logSelect(target: "Self Check-In PDF");
     Event2CreatePanel.hideKeyboard(context);
     Event2ShareSelfCheckInPdfPanel.present(context, event: _event ?? Event2());
   }
