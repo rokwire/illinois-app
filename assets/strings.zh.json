@@ -1467,6 +1467,7 @@
 	"panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
 	"panel.event2.detail.general.promote.title": "Share This Event",
 	"panel.event2.detail.general.self_checkin.title": "Check In with QR Code",
+	"panel.event2.detail.general.self_checkin.checking.title": "Checking Self Check-In status",
 	"panel.event2.detail.general.checked_in.title": "You are checked in!",
 	"panel.event2.detail.self_checkin.url.invalid.message": "Invalid Self Check-In QR Code.",
 	"panel.event2.detail.self_checkin.event.mismatch.message": "The Self Check-In QR Code refers different event.",
