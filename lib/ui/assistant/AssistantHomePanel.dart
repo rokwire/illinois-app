@@ -21,7 +21,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
-import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -32,7 +31,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, all_assistants, faqs }
+enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, all_assistants }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -293,8 +292,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantContent.perplexity_conversation;
       case 'all_assistants':
         return AssistantContent.all_assistants;
-      case 'uiuc_faqs':
-        return AssistantContent.faqs;
       default:
         return null;
     }
@@ -322,8 +319,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.all_assistants:
         return AssistantProvidersConversationContentWidget();
-      case AssistantContent.faqs:
-        return AssistantFaqsContentWidget();
       default:
         return null;
     }
@@ -339,8 +334,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
       case AssistantContent.all_assistants:
         return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
-      case AssistantContent.faqs:
-        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
         return null;
     }
