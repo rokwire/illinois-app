@@ -23,6 +23,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
@@ -45,7 +46,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
-import 'package:illinois/ui/debug/DebugGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugGuideEditPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -382,12 +383,24 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
-                      label: "Campus Guide",
+                      label: "Edit Guide",
                       backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
-                      onTap: _onTapGuide
+                      onTap: _onTapGuideEdit
+                    )
+                  )
+                ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Browse Guide",
+                      backgroundColor: Styles().colors.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
+                      onTap: _onTapGuideBrowse
                     )
                   )
                 ),
@@ -853,8 +866,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
   }
 
   
-  void _onTapGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
+  void _onTapGuideEdit() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuideEditPanel()));
+  }
+
+  void _onTapGuideBrowse() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuideBrowsePanel()));
   }
 
   void _onTapStudentCourses() {
