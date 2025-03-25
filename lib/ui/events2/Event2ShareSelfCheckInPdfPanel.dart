@@ -97,7 +97,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     Events2.eventSelfCheckInUrl(widget.eventId, secret: _eventSecret ?? '');
 
   String get _saveFileName =>
-    'Check-In PDF "${widget.event.name}" - ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
+    'Check-In PDF "${widget.event.name}" - ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}.pdf';
 
   @override
   void initState() {
@@ -254,13 +254,13 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   bool get _isHeaderBarActionsAvailable => !_isPreparing && (_contentMessage?.isNotEmpty != true);
 
   Widget get _headerBarActions => Wrap(children: [
-    _printButton, _shareButton
+    _shareButton, _printButton
   ],);
 
   Widget get _printButton => _iconButton('print',
     label: Localization().getStringEx('dialog.print.title', 'Print'),
     hint: Localization().getStringEx('dialog.print.hint', ''),
-    padding: const EdgeInsets.only(left: _barIconPadding, right: _barIconPadding / 2, top: _barIconPadding, bottom: _barIconPadding),
+    padding: const EdgeInsets.only(left: _barIconPadding / 2, right: _barIconPadding, top: _barIconPadding, bottom: _barIconPadding),
     onTap: _onTapPrint,
   );
 
@@ -283,7 +283,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   Widget get _shareButton => _iconButton('share-nodes',
     label: Localization().getStringEx('dialog.share.title', 'Share'),
     hint: Localization().getStringEx('dialog.share.hint', ''),
-    padding: const EdgeInsets.only(left: _barIconPadding / 2, right: _barIconPadding, top: _barIconPadding, bottom: _barIconPadding),
+    padding: const EdgeInsets.only(left: _barIconPadding, right: _barIconPadding / 2, top: _barIconPadding, bottom: _barIconPadding),
     progress: _preparingShare,
     onTap: _onTapShare,
   );
