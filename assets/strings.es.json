@@ -1544,6 +1544,7 @@
     "panel.event2.detail.attendance.message.not_available.title": "No disponible",
     "panel.event2.detail.attendance.manual_check.disabled": "La verificación manual no está activada para este evento.",
     "panel.event2.detail.attendance.scan.disabled": "Escanear la Illini ID no está activado para este evento.",
+    "panel.event2.detail.attendance.self_checkin.disabled": "Self Check-In is not enabled for this event.",
     "panel.event2.detail.attendance.attendees.description": "Visita <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> para cargar o descargar una lista.",
     "panel.event2.detail.attendance.additional.netids.label": "NetIDs para las personas adicionales que pasan la lista:",
     "panel.event2.detail.attendance.attendees.netids.description": "Carga una lista en <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a>.",

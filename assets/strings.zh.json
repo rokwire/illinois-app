@@ -1531,6 +1531,7 @@
 	"panel.event2.detail.attendance.message.not_available.title": "无法提供",
 	"panel.event2.detail.attendance.manual_check.disabled": "此活动无法使用人工签到。",
 	"panel.event2.detail.attendance.scan.disabled": "此活动无法扫描Illini ID。",
+	"panel.event2.detail.attendance.self_checkin.disabled": "Self Check-In is not enabled for this event.",
 	"panel.event2.detail.attendance.attendees.description": "前往<a href='{{event_attendance_url}}'>{{event_attendance_url}}</a>上传或下载名单。",
 	"panel.event2.detail.attendance.additional.netids.label": "签到使用之NetID名单",
 	"panel.event2.detail.attendance.attendees.netids.description": "若要上传名单，请至<a href='{{event_attendance_url}}'>{{event_attendance_url}}</a>。",
