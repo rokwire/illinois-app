@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add name pronunciation to list of group members [#4084](https://github.com/rokwire/illinois-app/issues/4084).
 - Created Browse Guide panel in Debug [#4910](https://github.com/rokwire/illinois-app/issues/4910).
 - open ai Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
+- Added self-registration feature to events [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
 ### Removed
 - Deleted Event2AttendanceDetailPanel (unused).
 - Illinois Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
