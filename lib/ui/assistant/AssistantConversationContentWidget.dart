@@ -38,9 +38,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
-  final AssistantProvider provider;
+  final AssistantProvider? provider;
 
-  AssistantConversationContentWidget({required this.shouldClearAllMessages, required AssistantProvider this.provider});
+  AssistantConversationContentWidget({required this.shouldClearAllMessages, this.provider});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
@@ -210,6 +210,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBubble(Message message) {
+    if (_provider == null) {
+      return Container();
+    }
     bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
     String answer = message.isAnswerUnknown
@@ -237,8 +240,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             child: InkWell(
                                 onTap: message.example
                                     ? () {
-                                        Assistant().removeMessage(provider: _provider, message: message);
-                                        _submitMessage(message: message.content, provider: _provider);
+                                        Assistant().removeMessage(provider: _provider!, message: message);
+                                        _submitMessage(message: message.content, provider: _provider!);
                                       }
                                     : null,
                                 child: Container(
@@ -426,7 +429,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _sendFeedback(Message message, bool good) {
-    if (message.feedbackExplanation != null) {
+    if ((_provider == null) || message.feedbackExplanation != null) {
       return;
     }
 
@@ -439,7 +442,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         } else {
           message.feedback = MessageFeedback.good;
           Assistant().addMessage(
-              provider: _provider,
+              provider: _provider!,
               message: Message(
                   content:
                       Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
@@ -454,7 +457,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         } else {
           message.feedback = MessageFeedback.bad;
           Assistant().addMessage(
-              provider: _provider,
+              provider: _provider!,
               message: Message(
                   content:
                       Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
@@ -469,7 +472,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
 
     if (!bad && _feedbackMessage != null) {
-      Assistant().removeLastMessage(provider: _provider);
+      Assistant().removeLastMessage(provider: _provider!);
       _feedbackMessage = null;
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -567,6 +570,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBar() {
+    if (_provider == null) {
+      return Container();
+    }
     int? queryLimit = _queryLimit;
     bool enabled = (queryLimit == null) || (queryLimit > 0);
     return Semantics(container: true,
@@ -594,7 +600,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     textInputAction: TextInputAction.send,
                                     focusNode: _inputFieldFocus,
                                     onSubmitted: (value) {
-                                      _submitMessage(message: value, provider: _provider);
+                                      _submitMessage(message: value, provider: _provider!);
                                     },
                                     onChanged: (_) => setStateIfMounted((){}),
                                     decoration: InputDecoration(
@@ -620,9 +626,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           child: IconButton(
             splashRadius: 24,
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
-            onPressed: enabled
+            onPressed: ((_provider != null) && enabled)
                 ? () {
-              _submitMessage(message: _inputController.text, provider: _provider);
+              _submitMessage(message: _inputController.text, provider: _provider!);
             }
                 : null)));
     } else {
@@ -841,7 +847,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Future<void> _submitMessage({required String message, required AssistantProvider provider}) async {
     FocusScope.of(context).requestFocus(FocusNode());
-    if (_loadingResponse) {
+    if ((_provider == null) || _loadingResponse) {
       return;
     }
 
@@ -859,7 +865,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if ((queryLimit != null) && (queryLimit <= 0)) {
       setState(() {
         Assistant().addMessage(
-            provider: _provider,
+            provider: _provider!,
             message: Message(
                 content: Localization().getStringEx(
                     'panel.assistant.label.queries.limit.title',
@@ -877,7 +883,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (mounted) {
       setState(() {
         if (response != null) {
-          Assistant().addMessage(provider: _provider, message: response);
+          Assistant().addMessage(provider: _provider!, message: response);
           if (response.queryLimit != null) {
             _queryLimit = response.queryLimit;
           } else if (_queryLimit != null) {
@@ -885,7 +891,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           }
         } else {
           Assistant().addMessage(
-              provider: _provider,
+              provider: _provider!,
               message: Message(
                   content: Localization().getStringEx('panel.assistant.label.error.title',
                       'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
@@ -899,13 +905,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _submitNegativeFeedbackMessage({required Message systemMessage, required String negativeFeedbackExplanation}) async {
-    if ((_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
+    if ((_provider == null) || (_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
       return;
     }
     FocusScope.of(context).requestFocus(FocusNode());
     setStateIfMounted(() {
       Assistant().addMessage(
-          provider: _provider, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
+          provider: _provider!, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
       _negativeFeedbackController.text = '';
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -942,11 +948,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapCloseNegativeFeedbackForm(Message message) {
-    Assistant().removeMessage(provider: _provider, message: message);
-    setStateIfMounted(() {
-      _negativeFeedbackController.text = '';
-      _feedbackMessage = null;
-    });
+    if (_provider != null) {
+      Assistant().removeMessage(provider: _provider!, message: message);
+      setStateIfMounted(() {
+        _negativeFeedbackController.text = '';
+        _feedbackMessage = null;
+      });
+    }
   }
 
   void _startListening() {
@@ -1079,7 +1087,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   
   AssistantLocation? _getLocation(Position? position) => Storage().debugAssistantLocation ?? AssistantLocation.fromPosition(position);
 
-  AssistantProvider get _provider => widget.provider;
+  AssistantProvider? get _provider => widget.provider;
 
   List<Message> get _messages => Assistant().getMessages(provider: _provider);
 
