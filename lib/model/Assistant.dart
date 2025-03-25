@@ -239,7 +239,7 @@ enum MessageFeedback { good, bad }
 ///
 /// AssistantProvider
 ///
-enum AssistantProvider { google, grok, perplexity }
+enum AssistantProvider { google, grok, perplexity, openai }
 
 String? assistantProviderToKeyString(AssistantProvider? provider) {
   switch (provider) {
@@ -249,6 +249,8 @@ String? assistantProviderToKeyString(AssistantProvider? provider) {
       return 'grok';
     case AssistantProvider.perplexity:
       return 'perplexity';
+    case AssistantProvider.openai:
+      return 'openai';
     default:
       return null;
   }
@@ -262,6 +264,8 @@ String assistantProviderToDisplayString(AssistantProvider? provider) {
       return Localization().getStringEx('model.assistant.provider.grok.label', 'Grok');
     case AssistantProvider.perplexity:
       return Localization().getStringEx('model.assistant.provider.perplexity.label', 'Perplexity');
+    case AssistantProvider.openai:
+      return Localization().getStringEx('model.assistant.provider.openai.label', 'open ai');
     default:
       return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
   }

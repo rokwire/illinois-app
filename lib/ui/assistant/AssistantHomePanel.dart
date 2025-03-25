@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, all_assistants }
+enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, openai_conversation, all_assistants }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -294,6 +294,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantContent.grok_conversation;
       case 'perplexity_assistant':
         return AssistantContent.perplexity_conversation;
+      case 'openai_assistant':
+        return AssistantContent.openai_conversation;
       case 'all_assistants':
         return AssistantContent.all_assistants;
       default:
@@ -321,6 +323,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.perplexity_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContent.openai_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.all_assistants:
         return AssistantProvidersConversationContentWidget();
       default:
@@ -336,6 +340,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
       case AssistantContent.perplexity_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
+      case AssistantContent.openai_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the open ai Assistant');
       case AssistantContent.all_assistants:
         return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
       default:
@@ -351,6 +357,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantProvider.grok;
       case AssistantContent.perplexity_conversation:
         return AssistantProvider.perplexity;
+      case AssistantContent.openai_conversation:
+        return AssistantProvider.openai;
       default:
         return null;
     }

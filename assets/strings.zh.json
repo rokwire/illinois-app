@@ -359,6 +359,7 @@
 	"panel.assistant.content.conversation.google.label": "詢問 Google 助理",
 	"panel.assistant.content.conversation.grok.label": "詢問 Grok 助理",
 	"panel.assistant.content.conversation.perplexity.label": "詢問困惑助手",
+	"panel.assistant.content.conversation.openai.label": "詢問 Open AI 助手",
 	"panel.assistant.content.conversation.all.label": "使用所有助手",
 	"panel.assistant.content.missing.assistant.msg": "沒有可用的助手。",
 	"panel.assistant.sources_links.label": "來源和連結",
@@ -4255,6 +4256,7 @@
 	"model.assistant.provider.google.label": "Google",
 	"model.assistant.provider.grok.label": "Grok",
 	"model.assistant.provider.perplexity.label": "Perplexity",
+	"model.assistant.provider.openai.label": "open ai",
 	"model.assistant.provider.unknown.label": "Unknown",
 
 	"logic.date_time.greeting.morning": "早上好",

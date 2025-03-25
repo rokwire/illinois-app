@@ -360,6 +360,7 @@
     "panel.assistant.content.conversation.google.label": "Ask the Google Assistant",
     "panel.assistant.content.conversation.grok.label": "Ask the Grok Assistant",
     "panel.assistant.content.conversation.perplexity.label": "Ask the Perplexity Assistant",
+    "panel.assistant.content.conversation.openai.label": "Ask the open ai Assistant",
     "panel.assistant.content.conversation.all.label": "Use All Assistants",
     "panel.assistant.content.missing.assistant.msg": "There is no assistant available.",
     "panel.assistant.sources_links.label": "Sources and Links",
@@ -4284,6 +4285,7 @@
     "model.assistant.provider.google.label": "Google",
     "model.assistant.provider.grok.label": "Grok",
     "model.assistant.provider.perplexity.label": "Perplexity",
+    "model.assistant.provider.openai.label": "open ai",
     "model.assistant.provider.unknown.label": "Unknown",
 
     "logic.date_time.greeting.morning": "Good morning",

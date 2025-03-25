@@ -20,7 +20,8 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
     AssistantProvider.google: List<Message>.empty(growable: true),
     AssistantProvider.grok: List<Message>.empty(growable: true),
-    AssistantProvider.perplexity: List<Message>.empty(growable: true)
+    AssistantProvider.perplexity: List<Message>.empty(growable: true),
+    AssistantProvider.openai: List<Message>.empty(growable: true)
   };
 
   // Singleton Factory
@@ -172,6 +173,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       _loadMessages(provider: AssistantProvider.google),
       _loadMessages(provider: AssistantProvider.grok),
       _loadMessages(provider: AssistantProvider.perplexity),
+      _loadMessages(provider: AssistantProvider.openai),
     ]);
   }
 
