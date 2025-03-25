@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { uiuc_conversation, google_conversation, grok_conversation, perplexity_conversation, all_assistants, faqs }
+enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, all_assistants, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -141,7 +141,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            Visibility(visible: (_selectedContent == AssistantContent.uiuc_conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
+            // was: visible: (_selectedContent == AssistantContent.uiuc_conversation)
+            Visibility(visible: false, child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -284,8 +285,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   AssistantContent? _assistantContentFromString(String? value) {
     switch (value) {
-      case 'uiuc_assistant':
-        return AssistantContent.uiuc_conversation;
       case 'google_assistant':
         return AssistantContent.google_conversation;
       case 'grok_assistant':
@@ -315,8 +314,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   Widget? get _contentWidget {
     switch (_selectedContent) {
-      case AssistantContent.uiuc_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider,);
       case AssistantContent.google_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.grok_conversation:
@@ -334,8 +331,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   String? _getContentItemName(AssistantContent? contentItem) {
     switch (contentItem) {
-      case AssistantContent.uiuc_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.label', 'Ask the Illinois Assistant');
       case AssistantContent.google_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
       case AssistantContent.grok_conversation:
@@ -351,10 +346,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     }
   }
 
-  AssistantProvider get _selectedProvider {
+  AssistantProvider? get _selectedProvider {
     switch (_selectedContent) {
-      case AssistantContent.uiuc_conversation:
-        return AssistantProvider.uiuc;
       case AssistantContent.google_conversation:
         return AssistantProvider.google;
       case AssistantContent.grok_conversation:
@@ -362,9 +355,9 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       case AssistantContent.perplexity_conversation:
         return AssistantProvider.perplexity;
       default:
-        return AssistantProvider.uiuc;
+        return null;
     }
   }
 
-  AssistantContent? get _initialSelectedContent => AssistantContent.uiuc_conversation;
+  AssistantContent? get _initialSelectedContent => CollectionUtils.isNotEmpty(_contentTypes) ? _contentTypes.first : null;
 }

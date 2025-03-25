@@ -239,12 +239,10 @@ enum MessageFeedback { good, bad }
 ///
 /// AssistantProvider
 ///
-enum AssistantProvider { uiuc, google, grok, perplexity }
+enum AssistantProvider { google, grok, perplexity }
 
 String? assistantProviderToKeyString(AssistantProvider? provider) {
   switch (provider) {
-    case AssistantProvider.uiuc:
-      return 'uiuc';
     case AssistantProvider.google:
       return 'google';
     case AssistantProvider.grok:
@@ -258,8 +256,6 @@ String? assistantProviderToKeyString(AssistantProvider? provider) {
 
 String assistantProviderToDisplayString(AssistantProvider? provider) {
   switch (provider) {
-    case AssistantProvider.uiuc:
-      return Localization().getStringEx('model.assistant.provider.uiuc.label', 'Illinois');
     case AssistantProvider.google:
       return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
     case AssistantProvider.grok:

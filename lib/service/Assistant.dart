@@ -18,7 +18,6 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   Map<String, dynamic>? _faqsContent;
 
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
-    AssistantProvider.uiuc: List<Message>.empty(growable: true),
     AssistantProvider.google: List<Message>.empty(growable: true),
     AssistantProvider.grok: List<Message>.empty(growable: true),
     AssistantProvider.perplexity: List<Message>.empty(growable: true)
@@ -111,8 +110,12 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   // Messages
 
-  List<Message> getMessages({required AssistantProvider provider}) {
-    return _displayMessages[provider] ?? List<Message>.empty();
+  List<Message> getMessages({AssistantProvider? provider}) {
+    if (provider != null) {
+      return _displayMessages[provider] ?? List<Message>.empty();
+    } else {
+      return List<Message>.empty();
+    }
   }
 
   void _initMessages({required AssistantProvider provider}) {
@@ -166,7 +169,6 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   Future<void> _loadAllMessages() async {
     await Future.wait([
-      _loadMessages(provider: AssistantProvider.uiuc),
       _loadMessages(provider: AssistantProvider.google),
       _loadMessages(provider: AssistantProvider.grok),
       _loadMessages(provider: AssistantProvider.perplexity),
