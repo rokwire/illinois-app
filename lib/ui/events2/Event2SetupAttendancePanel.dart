@@ -329,11 +329,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildSelfCheckPdfButton() => RoundedButton(
     label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
     hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
-    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant3'),
+    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.title.large.fat.variant3'),
     borderColor: _canSelfCheckPdf ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
     backgroundColor: Styles().colors.white,
     onTap: _canSelfCheckPdf ? _onTapSelfCheckPdf : null,
-    contentWeight: 0.75,
+    contentWeight: 0.6,
     progress: _selfCheckPdfProgress,
   );
 
