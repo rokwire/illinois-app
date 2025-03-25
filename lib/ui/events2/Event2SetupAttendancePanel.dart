@@ -238,9 +238,13 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     Padding(padding: _sectionPadding, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
           _buildSelfCheckToggle(),
-          _buildSelfCheckLimitedToRegisteredOnlyToggle(),
+          Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight / 2), child:
+            _buildSelfCheckLimitedToRegisteredOnlyToggle(),
+          ),
           if (_isEditing)
-            _buildSelfCheckPdfButton(),
+            Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight), child:
+              _buildSelfCheckPdfButton(),
+            ),
         ],)
     );
 
@@ -320,21 +324,18 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  bool get _canSelfCheckPdf => _selfCheckEnabled || true /* TMP */;
+  bool get _canSelfCheckPdf => _selfCheckEnabled /* TMP: || true */;
 
-  Widget _buildSelfCheckPdfButton() =>
-    Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight), child:
-      RoundedButton(
-        label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
-        hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
-        textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant3'),
-        borderColor: _canSelfCheckPdf ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-        backgroundColor: Styles().colors.white,
-        onTap: _canSelfCheckPdf ? _onTapSelfCheckPdf : null,
-        contentWeight: 0.75,
-        progress: _selfCheckPdfProgress,
-      ),
-    );
+  Widget _buildSelfCheckPdfButton() => RoundedButton(
+    label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
+    hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
+    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant3'),
+    borderColor: _canSelfCheckPdf ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+    backgroundColor: Styles().colors.white,
+    onTap: _canSelfCheckPdf ? _onTapSelfCheckPdf : null,
+    contentWeight: 0.75,
+    progress: _selfCheckPdfProgress,
+  );
 
   void _onTapSelfCheckPdf() async {
     Analytics().logSelect(target: "Download Self Check-In PDF");

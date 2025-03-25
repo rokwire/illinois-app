@@ -1598,7 +1598,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   bool get _isInternalRegistrationAvailable => (_event?.registrationDetails?.type == Event2RegistrationType.internal) &&
     (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) == true);
   bool? get _hasMoreLinkedEvents => (_totalLinkedEventsCount != null) ? ((_linkedEvents?.length ?? 0) < _totalLinkedEventsCount!) : _lastPageLoadedAllLinkedEvents;
-  bool get _isSelfCheckInEnabled => (_event?.attendanceDetails?.selfCheckEnabled == true) || true /* TMP */;
+  bool get _isSelfCheckInEnabled => (_event?.attendanceDetails?.selfCheckEnabled == true) /* TMP: || true */;
   bool get _canSelfCheckIn => _isSelfCheckInEnabled && ((_event?.attendanceDetails?.selfCheckLimitedToRegisteredOnly != true) || _isParticipant);
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
