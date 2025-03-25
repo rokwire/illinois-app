@@ -67,7 +67,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
 
   @override
   void initState() {
-    _link = widget.onboardingContext?["link"] ?? widget.link ?? (Auth2().isLoggedIn && !Auth2().isPasskeyLinked);
+    _link = widget.onboardingContext?["link"] ?? widget.link ?? (Auth2().isLoggedIn && !Auth2().hasPasskeyForPlatform);
 
     if ((Storage().auth2PasskeySaved ?? false) && (widget.onboardingContext?["afterLogout"] != true) && !_link && !kIsWeb) {
       _onboardingProgress = true;
@@ -375,7 +375,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
           TextSpan(
             text: _state == Auth2PasskeyAccountState.failed ?
               Localization().getStringEx("panel.settings.passkey.sign_up.alternative.text", "Don't have a passkey or can't use it?") :
-              Localization().getStringEx("panel.settings.passkey.sign_up.text", "Don't have an account?"),
+              Localization().getStringEx("panel.settings.passkey.sign_up.text", "Don't have an account or can't find your passkey?"),
             style: Styles().textStyles.getTextStyle('widget.description.medium.light'),
           ),
           WidgetSpan(
@@ -385,7 +385,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
               child: Text(
                 _state == Auth2PasskeyAccountState.failed ?
                   Localization().getStringEx('panel.settings.passkey.sign_up.alternative.button.text', 'Try another way or sign up') :
-                  Localization().getStringEx("panel.settings.passkey.sign_up.button.text", "Sign up"),
+                  Localization().getStringEx("panel.settings.passkey.sign_up.button.text", "Sign up or try another way"),
                 textAlign: TextAlign.center,
                 style: Styles().textStyles.getTextStyle('widget.button.title.regular.secondary.underline'),
               )

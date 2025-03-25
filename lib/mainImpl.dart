@@ -238,6 +238,11 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
 
     _checkForceOnboarding();
 
+    if (Auth2().isLoggedIn && !Auth2().isAuthenticated && !Auth2().hasPasskeyForPlatform) {
+      // cannot link a passkey when user is not newly authenticated
+      Auth2().logout();
+    }
+
     if ((_lastRunVersion == null) || (_lastRunVersion != Config().appVersion)) {
       Storage().lastRunVersion = Config().appVersion;
     }
@@ -290,7 +295,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (!Auth2().isLoggedIn || !Auth2().isPasskeyLinked) {
+    else if (!Auth2().isLoggedIn || !Auth2().hasPasskeyForPlatform) {
       return ProfileLoginPasskeyPanel(onboardingContext: _onboardingContext,);
     }
     else if (!(ListUtils.contains(Auth2().prefs?.roles, UserRole.values) ?? false)) {
