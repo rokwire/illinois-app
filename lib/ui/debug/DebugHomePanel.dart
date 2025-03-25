@@ -23,6 +23,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
@@ -388,6 +389,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapGuideEdit
+                    )
+                  )
+                ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Browse Guide",
+                      backgroundColor: Styles().colors.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
+                      onTap: _onTapGuideBrowse
                     )
                   )
                 ),
@@ -855,6 +868,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
   
   void _onTapGuideEdit() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuideEditPanel()));
+  }
+
+  void _onTapGuideBrowse() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuideBrowsePanel()));
   }
 
   void _onTapStudentCourses() {
