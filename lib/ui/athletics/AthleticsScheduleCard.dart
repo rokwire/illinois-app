@@ -46,7 +46,7 @@ class AthleticsScheduleCard extends StatefulWidget {
   _AthleticsScheduleCardState createState() => _AthleticsScheduleCardState();
 }
 
-class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implements NotificationsListener {
+class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [

@@ -52,7 +52,7 @@ class Event2SetupSuperEventPanel extends StatefulWidget{
       ]);
 }
 
-class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> implements NotificationsListener{
+class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> with NotificationsListener{
   final TextEditingController _subEventController = TextEditingController();
 
   String? _searchText;

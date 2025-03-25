@@ -29,7 +29,7 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
 }
 
-class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
+class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> with NotificationsListener, Onboarding2ProgressableState {
 
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey<ProfileInfoPageState>();
   bool _onboardingProgress = false;

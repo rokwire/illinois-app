@@ -34,7 +34,7 @@ class AthleticsGameDayContentWidget extends StatefulWidget {
   _AthleticsGameDayContentWidgetState createState() => _AthleticsGameDayContentWidgetState();
 }
 
-class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentWidget> implements NotificationsListener {
+class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentWidget> with NotificationsListener {
   List<Game>? _todayGames;
 
   bool _loading = false;

@@ -28,7 +28,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class RecentItems with Service implements NotificationsListener {
+class RecentItems with Service, NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.recentitems.changed";
   static const String notifySettingChanged  = "edu.illinois.rokwire.recentitems.setting.changed";

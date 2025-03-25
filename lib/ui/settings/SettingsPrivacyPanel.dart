@@ -50,7 +50,7 @@ class SettingsPrivacyPanel extends StatefulWidget with OnboardingPanel {
   State createState() => _SettingsPrivacyPanelState();
 }
 
-class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements NotificationsListener {
+class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> with NotificationsListener {
   PrivacyData? _data;
   double? _sliderValue;
 

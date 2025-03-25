@@ -45,7 +45,7 @@ class HomeVoterRegistrationWidget extends StatefulWidget {
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();
 }
 
-class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidget> implements NotificationsListener {
+class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidget> with NotificationsListener {
   bool _hiddenByUser = false;
   VoterRule? _voterRule;
   bool _nrvPlaceVisible = false;

@@ -33,7 +33,7 @@ class PollBubbleResultPanel extends StatefulWidget {
   _PollBubbleResultPanelState createState() => _PollBubbleResultPanelState();
 }
 
-class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implements NotificationsListener {
+class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> with NotificationsListener {
   bool _resultsVisible = false;
 
   List<GlobalKey>? _progressKeys;

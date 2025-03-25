@@ -38,7 +38,7 @@ class ProfileLoginPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileLoginPageState();
 }
 
-class _ProfileLoginPageState extends State<ProfileLoginPage> implements NotificationsListener {
+class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsListener {
 
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));

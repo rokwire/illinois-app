@@ -56,7 +56,7 @@ class ExploreCard extends StatefulWidget {
   _ExploreCardState createState() => _ExploreCardState();
 }
 
-class _ExploreCardState extends State<ExploreCard> implements NotificationsListener {
+class _ExploreCardState extends State<ExploreCard> with NotificationsListener {
 
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
   static const EdgeInsets _iconPadding = EdgeInsets.only(right: 8);

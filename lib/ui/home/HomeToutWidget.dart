@@ -34,7 +34,7 @@ class HomeToutWidget extends StatefulWidget {
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
 }
 
-class _HomeToutWidgetState extends State<HomeToutWidget> implements NotificationsListener {
+class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListener {
 
   String? _imageUrl;
   DateTime? _imageDateTime;

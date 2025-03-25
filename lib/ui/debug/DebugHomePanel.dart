@@ -64,7 +64,7 @@ class DebugHomePanel extends StatefulWidget {
   _DebugHomePanelState createState() => _DebugHomePanelState();
 }
 
-class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
+class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListener {
 
   DateTime? _offsetDate;
   rokwire.ConfigEnvironment? _selectedEnv;

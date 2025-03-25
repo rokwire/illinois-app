@@ -109,7 +109,7 @@ class GuideDetailWidget extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get _theGuideEntry => Guide().entryById(guideEntryId) ?? guideEntry;
 }
 
-class _GuideDetailWidgetState extends State<GuideDetailWidget> implements NotificationsListener {
+class _GuideDetailWidgetState extends State<GuideDetailWidget> with NotificationsListener {
   Map<String, dynamic>? _guideEntry;
   String? _guideEntryId;
   bool _isFavorite = false;

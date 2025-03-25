@@ -163,7 +163,7 @@ class Event2Card extends StatefulWidget {
   static BorderRadiusGeometry get linkContentBorderRadius => _Event2CardState._linkContentBorderRadius;
 }
 
-class _Event2CardState extends State<Event2Card>  implements NotificationsListener {
+class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.

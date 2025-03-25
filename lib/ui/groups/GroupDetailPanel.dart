@@ -110,7 +110,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
-class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
+class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
   static final int          _postsPageSize = 8;
   static final int          _animationDurationInMilliSeconds = 200;
   static final List<DetailTab> _permanentTabs = [DetailTab.Scheduled];
@@ -1650,7 +1650,7 @@ class _GroupEventsContent extends StatefulWidget{
   State<StatefulWidget> createState() => _GroupEventsState();
 }
 
-class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAliveClientMixin<_GroupEventsContent> implements NotificationsListener {
+class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsListener, AutomaticKeepAliveClientMixin<_GroupEventsContent> {
 
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
@@ -1808,8 +1808,7 @@ class _GroupPostsContent extends StatefulWidget{
   String get _emptyText => Localization().getStringEx("", "No group posts");
 }
 
-class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
-    implements NotificationsListener {
+class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupPostsContent> {
   List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
@@ -2085,8 +2084,7 @@ class _GroupPollsContent extends StatefulWidget {
   String get _emptyText => Localization().getStringEx("", "No group polls");
 }
 
-class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAliveClientMixin<_GroupPollsContent>
-    implements NotificationsListener {
+class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupPollsContent> {
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
   bool               _pollsLoading = false;
@@ -2242,8 +2240,7 @@ class _GroupMessagesContent extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupMessagesState();
 }
 
-class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKeepAliveClientMixin<_GroupMessagesContent>
-    implements NotificationsListener{
+class _GroupMessagesState extends State<_GroupMessagesContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupMessagesContent> {
   List<Post>         _messages = <Post>[];
   GlobalKey          _lastMessageKey = GlobalKey();
   bool?              _refreshingMessages;
@@ -2470,8 +2467,7 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   String get _emptyText => Localization().getStringEx("", "No scheduled posts");
 }
 
-class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with AutomaticKeepAliveClientMixin<_GroupScheduledPostsContent>
-    implements NotificationsListener {
+class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupScheduledPostsContent> {
   List<Post> _scheduledPosts = <Post>[];
   GlobalKey _lastScheduledPostKey = GlobalKey();
   bool? _refreshingScheduledPosts;

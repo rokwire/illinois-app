@@ -189,7 +189,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
   }, FirebaseCrashlytics().handleZoneError);
 }
 
-class AppExitListener implements NotificationsListener {
+class AppExitListener with NotificationsListener {
   
   // NotificationsListener
   @override
@@ -224,7 +224,7 @@ class App extends StatefulWidget {
   _AppState createState() => (_data[_stateKey] = _AppState());
 }
 
-class _AppState extends State<App> with TickerProviderStateMixin implements NotificationsListener {
+class _AppState extends State<App> with NotificationsListener, TickerProviderStateMixin {
 
   Key _key = UniqueKey();
   String? _lastRunVersion;

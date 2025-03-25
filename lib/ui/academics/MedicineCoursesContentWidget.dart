@@ -39,7 +39,7 @@ class MedicineCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsMedicineCourses;
 }
 
-class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWidget> implements NotificationsListener {
+class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWidget> with NotificationsListener {
   List<CanvasCourse>? _medicineCourses;
 
   @override

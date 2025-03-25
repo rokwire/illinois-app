@@ -24,7 +24,7 @@ import 'package:timezone/timezone.dart';
 
 enum GuideContentSource { Net, Debug }
 
-class Guide with Service implements NotificationsListener {
+class Guide with Service, NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuide = "edu.illinois.rokwire.guide";

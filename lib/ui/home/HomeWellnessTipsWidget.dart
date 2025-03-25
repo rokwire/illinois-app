@@ -33,7 +33,7 @@ class HomeWellnessTipsWidget extends StatefulWidget {
   State<HomeWellnessTipsWidget> createState() => _HomeWellnessTipsWidgetState();
 }
 
-class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> implements NotificationsListener {
+class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with NotificationsListener {
 
   Color? _tipColor;
   bool _loadingTipColor = false;

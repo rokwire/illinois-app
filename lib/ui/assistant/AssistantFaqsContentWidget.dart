@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+//TBD: DD - remove if not used
 class AssistantFaqsContentWidget extends StatefulWidget {
   AssistantFaqsContentWidget();
 
@@ -29,7 +29,7 @@ class AssistantFaqsContentWidget extends StatefulWidget {
   State<AssistantFaqsContentWidget> createState() => _AssistantFaqsContentWidgetState();
 }
 
-class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> implements NotificationsListener {
+class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> with NotificationsListener {
 
   @override
   void initState() {

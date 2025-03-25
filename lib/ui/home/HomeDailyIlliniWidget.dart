@@ -55,7 +55,7 @@ class HomeDailyIlliniWidget extends StatefulWidget {
 }
 
 
-class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implements NotificationsListener {
+class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with NotificationsListener {
   List<DailyIlliniItem>? _illiniItems;
   bool _loadingItems = false;
   DateTime? _pausedDateTime;

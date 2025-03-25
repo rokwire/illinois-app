@@ -36,7 +36,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
-class FirebaseMessaging extends rokwire.FirebaseMessaging implements NotificationsListener {
+class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsListener {
 
   static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;

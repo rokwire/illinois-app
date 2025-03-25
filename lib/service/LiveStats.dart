@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class LiveStats with Service implements NotificationsListener {
+class LiveStats with Service, NotificationsListener {
 
   static const String notifyLiveGamesLoaded   = "edu.illinois.rokwire.livestats.games.loaded";
   static const String notifyLiveGamesUpdated  = "edu.illinois.rokwire.livestats.games.updated";

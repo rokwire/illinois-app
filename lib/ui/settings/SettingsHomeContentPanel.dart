@@ -102,7 +102,7 @@ class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> implements NotificationsListener {
+class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> with NotificationsListener {
   static SettingsContent? _lastSelectedContent;
   late SettingsContent _selectedContent;
   bool _contentValuesVisible = false;

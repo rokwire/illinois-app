@@ -62,7 +62,7 @@ class DiningHomePanel extends StatefulWidget with AnalyticsInfo {
   _DiningHomePanelState createState() => _DiningHomePanelState();
 }
 
-class _DiningHomePanelState extends State<DiningHomePanel> implements NotificationsListener {
+class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsListener {
   static const EdgeInsets cardPadding = EdgeInsets.symmetric(horizontal: 16);
   
   List<Dining>? _dinings;

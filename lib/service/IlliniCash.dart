@@ -40,7 +40,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 
-class IlliniCash with Service, NetworkAuthProvider implements NotificationsListener {
+class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
 
   static const String notifyPaymentSuccess  = "edu.illinois.rokwire.illinicash.payment.success";
   static const String notifyBallanceUpdated  = "edu.illinois.rokwire.illinicash.ballance.updated";

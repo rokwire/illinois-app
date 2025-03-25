@@ -18,7 +18,7 @@ import 'package:http/http.dart' as http;
 
 enum WellnessRingsStatus {unknown, initializing, initialized, failed}
 
-class WellnessRings with Service implements NotificationsListener{
+class WellnessRings with Service, NotificationsListener{
   static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.ring.updated";
   static const String notifyUserRingsAccomplished = "edu.illinois.rokwire.wellness.user.ring.accomplished";
 

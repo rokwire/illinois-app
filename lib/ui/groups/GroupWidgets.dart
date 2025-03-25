@@ -674,7 +674,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
   _GroupCardState createState() => _GroupCardState();
 }
 
-class _GroupCardState extends State<GroupCard> implements NotificationsListener {
+class _GroupCardState extends State<GroupCard> with NotificationsListener {
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
@@ -2214,7 +2214,7 @@ class GroupPollCard extends StatefulWidget{
   }
 }
 
-class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener {
+class _GroupPollCardState extends State<GroupPollCard> with NotificationsListener {
   GroupStats? _groupStats;
 
   List<GlobalKey>? _progressKeys;
@@ -2796,7 +2796,7 @@ class GroupMemberProfileImage extends StatefulWidget {
   State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
 }
 
-class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> implements NotificationsListener {
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with NotificationsListener {
   Uint8List? _imageBytes;
   bool _loading = false;
 
@@ -2871,6 +2871,62 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
       }
     }
   }
+}
+
+class GroupProfilePronouncementWidget extends StatefulWidget {
+  final String? accountId;
+
+  const GroupProfilePronouncementWidget({super.key, this.accountId});
+
+  @override
+  State<StatefulWidget> createState() => GroupProfilePronouncementState();
+}
+
+class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidget> {
+  final _contentPadding = EdgeInsets.symmetric(horizontal: 13, vertical: 8);
+
+  Uint8List? _pronunciationAudioData;
+  bool? _hasPronouncement;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    setStateIfMounted(() => _loading = true);
+    Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
+          if(hasPronunciation == true){
+            Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+              setStateIfMounted(() {
+                _loading = false;
+                _hasPronouncement = hasPronunciation;
+                _pronunciationAudioData = audio?.audioData;
+              });
+            });
+          } else {
+            setStateIfMounted(() {
+              _loading = false;
+              _hasPronouncement = hasPronunciation;
+            });
+          }
+    });
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) => _loading ?
+    _loadingContent : _content;
+
+  Widget get _content =>
+    Visibility(visible: _hasPronouncement == true,
+        child: DirectoryPronunciationButton(
+            url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
+            data: _pronunciationAudioData,
+            padding: _contentPadding
+        ));
+
+  Widget get _loadingContent =>
+    Padding(padding: _contentPadding,
+      child: SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+      ));
 }
 
 class GroupsSelectionPopup extends StatefulWidget {
@@ -3614,7 +3670,7 @@ class GroupReactionsLayout extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupReactionsState();
 }
 
-class _GroupReactionsState extends State<GroupReactionsLayout> implements NotificationsListener{
+class _GroupReactionsState extends State<GroupReactionsLayout> with NotificationsListener{
   List<Reaction>? _reactions;
   bool _loading = false;
 

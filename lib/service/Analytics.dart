@@ -55,7 +55,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:universal_io/io.dart';
 
-class Analytics extends rokwire.Analytics implements NotificationsListener {
+class Analytics extends rokwire.Analytics with NotificationsListener {
 
   static const String notifyEvent = "edu.illinois.rokwire.analytics.event";
 

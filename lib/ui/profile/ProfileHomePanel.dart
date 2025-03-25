@@ -74,7 +74,7 @@ class ProfileHomePanel extends StatefulWidget {
   }
 }
 
-class _ProfileHomePanelState extends State<ProfileHomePanel> implements NotificationsListener {
+class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsListener {
   ProfileContent? _selectedContent;
   static ProfileContent? _lastSelectedContent;
   bool _contentValuesVisible = false;

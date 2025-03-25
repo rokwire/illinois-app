@@ -49,7 +49,7 @@ class AthleticsNewsContentWidget extends StatefulWidget {
   _AthleticsNewsContentWidgetState createState() => _AthleticsNewsContentWidgetState();
 }
 
-class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget> implements NotificationsListener {
+class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget> with NotificationsListener {
   List<News>? _news;
   List<News>? _displayNews;
 

@@ -22,7 +22,7 @@ class ProfileInfoWrapperPage extends StatefulWidget {
   ProfileInfoWrapperPageState createState() => ProfileInfoWrapperPageState();
 }
 
-class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implements NotificationsListener {
+class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with NotificationsListener {
 
   GestureRecognizer? _signInRecognizer;
   GestureRecognizer? _privacyRecognizer;

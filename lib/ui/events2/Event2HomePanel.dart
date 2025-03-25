@@ -398,7 +398,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
+class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsListener {
 
   List<Event2>? _events;
   bool? _lastPageLoadedAll;

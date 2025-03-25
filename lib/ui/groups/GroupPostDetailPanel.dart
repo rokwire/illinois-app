@@ -58,7 +58,7 @@ class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
 }
 
-class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with NotificationsListener {
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
   Post? _post; //Main post {Data Presentation}

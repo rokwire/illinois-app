@@ -39,7 +39,7 @@ class WellnessMentalHealthContentWidget extends StatefulWidget {
   State<WellnessMentalHealthContentWidget> createState() => _WellnessMentalHealthContentWidgetState();
 }
 
-class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealthContentWidget> implements NotificationsListener {
+class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealthContentWidget> with NotificationsListener {
 
   Map<String, List<Map<String, dynamic>>> _sectionLists = <String, List<Map<String, dynamic>>>{};
   List<String> _sections = <String>[];

@@ -90,7 +90,7 @@ class SkillsSelfEvaluation extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements NotificationsListener {
+class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with NotificationsListener {
   Map<String, SkillsSelfEvaluationContent> _infoContentItems = {};
 
   @override

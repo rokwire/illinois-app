@@ -84,8 +84,7 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _WellnessHomePanelState extends State<WellnessHomePanel>
-  with AutomaticKeepAliveClientMixin<WellnessHomePanel>
-  implements NotificationsListener
+  with NotificationsListener, AutomaticKeepAliveClientMixin<WellnessHomePanel>
 {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;

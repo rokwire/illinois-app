@@ -48,7 +48,7 @@ class HomeFavoritesPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
 }
 
-class _HomeFavoritesPanelState extends State<HomeFavoritesPanel> with AutomaticKeepAliveClientMixin<HomeFavoritesPanel> implements NotificationsListener {
+class _HomeFavoritesPanelState extends State<HomeFavoritesPanel> with NotificationsListener, AutomaticKeepAliveClientMixin<HomeFavoritesPanel> {
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _contentWrapperKey = GlobalKey();
   GlobalKey _favoritesKey = GlobalKey();
@@ -120,7 +120,7 @@ class HomeFavoritesContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Favorites;
 }
 
-class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget> implements NotificationsListener {
+class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget> with NotificationsListener {
 
   List<String>? _systemCodes;
   List<String>? _favoriteCodes;
