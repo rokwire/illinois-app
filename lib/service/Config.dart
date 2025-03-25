@@ -89,6 +89,11 @@ class Config extends rokwire.Config {
   String? get canvasToken            => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.canvas.token' : JsonUtils.stringValue(secretCanvas['token']);
   String? get canvasTokenType        => kIsWeb ? '${rokwire.Config.configSecretKeysPathPrefix}.canvas.token_type' : JsonUtils.stringValue(secretCanvas['token_type']);
 
+  // Getters: Upgrade Urls
+  Map<String, dynamic>? get upgradeUrlInfo => JsonUtils.mapValue(upgradeInfo['url']);
+  String? get upgradeIOSUrl         => JsonUtils.stringValue(MapUtils.get(upgradeUrlInfo, 'ios'));
+  String? get upgradeAndroidUrl     => JsonUtils.stringValue(MapUtils.get(upgradeUrlInfo, 'android'));
+
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
   String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);

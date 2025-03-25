@@ -129,6 +129,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventsNotification,
       FirebaseMessaging.notifyEventDetail,
+      FirebaseMessaging.notifyEventSelfCheckIn,
       FirebaseMessaging.notifyEventAttendeeSurveyInvitation,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
@@ -204,6 +205,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Events.notifyEventDetail,
       Events2.notifyLaunchDetail,
       Events2.notifyLaunchQuery,
+      Events2.notifySelfCheckIn,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Social.notifyMessageDetail,
@@ -274,6 +276,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
+    }
+    else if (name == FirebaseMessaging.notifyEventSelfCheckIn) {
+      _onFirebaseEventSelfCheckIn(param);
     }
     else if (name == FirebaseMessaging.notifyEventAttendeeSurveyInvitation) {
       _onFirebaseEventAttendeeSurveyInvitation(param);
@@ -500,6 +505,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == Events2.notifyLaunchQuery) {
       _onFirebaseEventsQuery(param);
+    }
+    else if (name == Events2.notifySelfCheckIn) {
+      _onFirebaseEventSelfCheckIn(param);
     }
     else if (name == Sports.notifyGameDetail) {
       _onFirebaseGameDetail(param);
@@ -997,10 +1005,21 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
+  Future<void> _onFirebaseEventSelfCheckIn(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? (JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, onInitialized: (Event2DetailPanelState state) {
+        if ((eventId != null) && eventId.isNotEmpty) {
+          state.selfCheckIn(eventId, secret: JsonUtils.stringValue(content?['secret']));
+        }
+      },)));
+    }
+  }
+
   void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
     if (StringUtils.isNotEmpty(eventId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId)));
     }
   }
   

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/DeviceCalendar.dart';
@@ -54,20 +55,20 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final Position? userLocation;
   final Event2Selector2? eventSelector;
+  final void Function(Event2DetailPanelState)? onInitialized;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.analyticsFeature});
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.onInitialized, this.analyticsFeature});
   
   @override
-  State<StatefulWidget> createState() => _Event2DetailPanelState();
+  State<StatefulWidget> createState() => Event2DetailPanelState();
 
   // AnalyticsInfo
-
   @override
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
-class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {
+class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {
 
   Event2? _event;
   Survey? _survey;
@@ -95,6 +96,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   bool _registrationLaunching = false;
   bool _websiteLaunching = false;
   bool _onlineLaunching = false;
+  bool _selfCheckingIn = false;
 
   List<String>? _displayCategories;
   Map<String?, GestureRecognizer> _contactGestureRecognizers = <String?, GestureRecognizer>{};
@@ -105,6 +107,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
       Events2.notifyUpdated,
+      Events2.notifySelfCheckIn,
     ]);
     _scrollController.addListener(_scrollListener);
     _event = widget.event;
@@ -112,7 +115,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
     _survey = widget.survey;
     _displayCategories = _buildDisplayCategories(widget.event);
 
-    _initEvent();
+    _initEvent().then((_) {
+      widget.onInitialized?.call(this);
+    });
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -135,6 +140,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   }
 
   // NotificationsListener
+
+  @override
+  bool preprocessNotification(String name, dynamic param) {
+    if (name == Events2.notifySelfCheckIn) {
+      return _preprocessSelfCheckInNotification(JsonUtils.mapValue(param));
+    }
+    else {
+      return super.preprocessNotification(name, param);
+    }
+  }
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
@@ -318,10 +334,11 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       ...?_publishedDetailWidget,
       ...?_superEventDetailWidget,
       ...?_promoteButton,
-      ...?_addToCalendarButton,
+      ...?_addToCalendarWidget,
       ...?_adminCommandsButton,
       ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
+      ...?_selfCheckInWidget,
       ...?_detailsInfoWidget,
     ];
 
@@ -471,18 +488,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   ] : null;
 
 
-  List<Widget>? get _attendanceDetailWidget {
-    if (_isAdmin || _isAttendanceTaker) {
-      return <Widget>[
-        InkWell(
-            onTap: _onTapTakeAttendance,
-            child: _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'attendance', underlined: true)),
-        _detailSpacerWidget
-      ];
-    } else {
-      return null;
-    }
-  }
+  List<Widget>? get _attendanceDetailWidget => (_isAdmin || _isAttendanceTaker) ?
+    <Widget>[
+      InkWell(onTap: _onTapTakeAttendance, child:
+        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'attendance', underlined: true)),
+      _detailSpacerWidget
+    ] :  null;
 
   List<Widget>? get _detailsInfoWidget {
     String? description;
@@ -619,11 +630,32 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
     _detailSpacerWidget
   ] : null;
 
-  List<Widget>? get _addToCalendarButton => <Widget>[
+  List<Widget>? get _addToCalendarWidget => <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)
+    ),
     _detailSpacerWidget
   ];
+
+  List<Widget>? get _selfCheckInWidget {
+    if (_isSelfCheckInEnabled) {
+      if (_isAttendee) { // Already registered
+        return <Widget>[
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.checked_in.title', 'You are checked in!'), "check-accent"),
+          _detailSpacerWidget
+        ];
+      }
+      else if (_canSelfCheckIn) {
+        return <Widget>[
+          InkWell(onTap: _selfCheckingIn ? null : _onSelfCheckIn, child:
+             _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.self_checkin.title', 'Check In with QR Code'), 'camera-viewfinder', underlined: true, showProgress: _selfCheckingIn)
+          ),
+          _detailSpacerWidget
+        ];
+      }
+    }
+    return null;
+  }
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
@@ -671,7 +703,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       return null;
 
     if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { // Require App registration
-        if (_event?.userRole == Event2UserRole.participant) {// Already registered
+        if (_isParticipant) {// Already registered
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2.detail.button.unregister.title', 'Unregister'),
               onTap: _onUnregister,
@@ -784,15 +816,13 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
     )
   );
 
-  Widget get _extendingLinkedEventsIndicator => Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-      child: Align(
-          alignment: Alignment.center,
-          child: SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
+  Widget get _extendingLinkedEventsIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+    Align(alignment: Alignment.center, child:
+      SizedBox(width: 24, height: 24, child:
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))
+      )
+    )
+  );
 
   List<Widget>? get _selectorWidget {
     Widget? selectorWidget = (_event != null) ? widget.eventSelector?.buildUI(this, event: _event!) : null;
@@ -1038,12 +1068,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
     }
   }
 
-  void _onExternalRegistration(){
+  void _onExternalRegistration() {
     Analytics().logSelect(target: 'Register me', attributes: _event?.analyticsAttributes);
     _launchUrl(_event?.registrationDetails?.externalLink, updateProgress: (bool value) => setStateDelayedIfMounted(() { _registrationLaunching = value; }));
   }
 
-  void _onFollowUpSurvey(){
+  void _onFollowUpSurvey() {
     Analytics().logSelect(target: "Follow up survey", attributes: _event?.analyticsAttributes);
     Survey displaySurvey = Survey.fromOther(_survey!);
     displaySurvey.replaceKey('event_name', _event?.name);
@@ -1051,7 +1081,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       SurveyPanel(survey: displaySurvey, onComplete: _onCompleteSurvey, analyticsFeature: widget.analyticsFeature,)));
   }
 
-  void _onLogIn(){
+  void _onLogIn() {
     Analytics().logSelect(target: "Log in");
     if (!FlexUI().isAuthenticationAvailable) {
       AppAlert.showAuthenticationNAMessage(context);
@@ -1067,24 +1097,89 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
       );
     }
   }  
-  void _onAddToCalendar(){
+  void _onAddToCalendar() {
     Analytics().logSelect(target: "Add to Calendar", attributes: _event?.analyticsAttributes);
     DeviceCalendar().addToCalendar(context, _event);
   }
 
-  void _onPromote(){
+  void _onPromote() {
     Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEvent(_event, analyticsFeature: widget.analyticsFeature,)));
   }
 
-  void _onContactEmail(String? email){
+  void _onSelfCheckIn() async {
+    Analytics().logSelect(target: "Self Check-In", attributes: _event?.analyticsAttributes);
+    setState(() { _selfCheckingIn = true; });
+
+    String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+    String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
+    String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
+    if (mounted) {
+      if (scanResult != '-1') { // The user did not hit "Cancel button"
+        Uri? uri = Uri.tryParse(scanResult);
+        if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(Events2.eventSelfCheckInRawUrl))) {
+          Map<String, dynamic>? urlParams;
+          try { urlParams = uri.queryParameters.cast<String, dynamic>(); }
+          catch (e) { debugPrint(e.toString()); }
+
+          String? eventId = JsonUtils.stringValue(urlParams?['event_id']) ;
+          if ((eventId != null) && (eventId == _eventId)) {
+            selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
+          }
+          else {
+            setState(() { _selfCheckingIn = false; });
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.self_checkin.event.mismatch.message', 'The Self Check-In QR Code refers different event.'));
+          }
+        }
+        else {
+          setState(() { _selfCheckingIn = false; });
+          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.self_checkin.url.invalid.message', 'Invalid Self Check-In QR Code.'));
+        }
+      }
+      else {
+        setState(() { _selfCheckingIn = false; });
+      }
+    }
+  }
+
+  bool _preprocessSelfCheckInNotification(Map<String, dynamic>? urlParams) {
+    String? eventId = JsonUtils.stringValue(urlParams?['event_id']);
+    if ((eventId != null) && (eventId == _eventId)) {
+      selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']));
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  Future<void> selfCheckIn(String eventId, { String? secret }) async {
+    if (mounted && !_selfCheckingIn) {
+      setState(() { _selfCheckingIn = true; });
+    }
+
+    Event2Person? person = await Events2().selfCheckInEvent(eventId, secret: secret);
+    if (mounted) {
+      setState(() {
+        _selfCheckingIn = false;
+        if (person != null) {
+          _persons?.attendees?.add(person);
+        }
+      });
+      if (person == null) {
+        Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.self_checkin.api.failed.message', 'Self Check-In failed.'));
+      }
+    }
+  }
+
+  void _onContactEmail(String? email) {
     Analytics().logSelect(target: Analytics.LogAnonymousEmail, attributes: _event?.analyticsAttributes);
     if(StringUtils.isNotEmpty(email)) {
       _launchUrl("mailto:$email");
     }
   }
 
-  void _onContactPhone(String? phone){
+  void _onContactPhone(String? phone) {
     Analytics().logSelect(target: Analytics.LogAnonymousPhone, attributes: _event?.analyticsAttributes);
     if(StringUtils.isNotEmpty(phone)) {
       _launchUrl("tel:$phone");
@@ -1228,13 +1323,11 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
                 if (subDeleteResultSuccess == true) {
                   Navigator.pop(context);
                 } else {
-                  Event2Popup.showErrorResult(
-                      context, "Unable to delete sub events");
+                  Event2Popup.showErrorResult(context, "Unable to delete sub events");
                 }
               }
             } else {
-              Event2Popup.showErrorResult(
-                  context, "Unable to delete event");
+              Event2Popup.showErrorResult(context, "Unable to delete event");
             }
           });
         }
@@ -1499,16 +1592,19 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wi
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
-  //bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
+  bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
   bool get _hasDisplayCategories => (_displayCategories?.isNotEmpty == true);
   bool get _isInternalRegistrationAvailable => (_event?.registrationDetails?.type == Event2RegistrationType.internal) &&
     (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) == true);
   bool? get _hasMoreLinkedEvents => (_totalLinkedEventsCount != null) ? ((_linkedEvents?.length ?? 0) < _totalLinkedEventsCount!) : _lastPageLoadedAllLinkedEvents;
+  bool get _isSelfCheckInEnabled => (_event?.attendanceDetails?.selfCheckEnabled == true) /* TMP: || true */;
+  bool get _canSelfCheckIn => _isSelfCheckInEnabled && ((_event?.attendanceDetails?.selfCheckLimitedToRegisteredOnly != true) || _isParticipant);
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
+  bool get _isGroupEvent => (_event?.isGroupEvent == true);
 
-  bool get _isGroupEvent => (widget.event?.isGroupEvent == true);
+  Event2? get event => _event;
 }
 
 abstract class Event2Selector2State<T extends StatefulWidget> extends State<T> {
