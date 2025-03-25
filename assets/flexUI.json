@@ -47,7 +47,7 @@
 
 			"wallet": ["illini_id", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "grok_assistant", "perplexity_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant", "all_assistants"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
@@ -210,6 +210,7 @@
 				"assistant.google_assistant"              : { "environment":  "dev"},
 				"assistant.grok_assistant"                : { "environment":  "dev"},
 				"assistant.perplexity_assistant"          : { "environment":  "dev"},
+				"assistant.openai_assistant"              : { "environment":  "dev"},
 				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {

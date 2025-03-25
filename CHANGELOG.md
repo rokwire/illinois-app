@@ -10,11 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Perplexity Assistant Provider [#4906](https://github.com/rokwire/illinois-app/issues/4906).
 - Add name pronunciation to list of group members [#4084](https://github.com/rokwire/illinois-app/issues/4084).
 - Created Browse Guide panel in Debug [#4910](https://github.com/rokwire/illinois-app/issues/4910).
+- open ai Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
 ### Removed
 - Deleted Event2AttendanceDetailPanel (unused).
+- Illinois Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
 ### Changed
 - Android: Upgrade Android Gradle Plugin to version 8.2.1.
-- Extended NotificationService APIs [#576](https://github.com/rokwire/app-flutter-plugin/issues/5726).
+- Extended NotificationService APIs [#576](https://github.com/rokwire/app-flutter-plugin/issues/576).
 ### Fixed
 - Fixed assess to Onboarding2Panel states [#4826](https://github.com/rokwire/illinois-app/issues/4826).
 
