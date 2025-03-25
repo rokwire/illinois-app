@@ -361,6 +361,7 @@
     "panel.assistant.content.conversation.grok.label": "Ask the Grok Assistant",
     "panel.assistant.content.conversation.perplexity.label": "Ask the Perplexity Assistant",
     "panel.assistant.content.conversation.all.label": "Use All Assistants",
+    "panel.assistant.content.missing.assistant.msg": "There is no assistant available.",
     "panel.assistant.sources_links.label": "Sources and Links",
     "panel.assistant.related.label": "Related:",
     "panel.assistant.label.welcome_message.title": "The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.",

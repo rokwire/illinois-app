@@ -180,7 +180,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   Widget _buildContent() {
-    return Stack(children: [(_contentWidget ?? Container()), Container(height: _contentHeight), _buildContentValuesContainer()]);
+    return Stack(children: [(_contentWidget ?? _buildMissingContentWidget()), Container(height: _contentHeight), _buildContentValuesContainer()]);
   }
 
   Widget _buildContentValuesContainer() {
@@ -193,6 +193,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     return Positioned.fill(
         child:
             BlockSemantics(child: GestureDetector(onTap: _onTapDismissLayer, child: Container(color: Styles().colors.blackTransparent06))));
+  }
+
+  Widget _buildMissingContentWidget() {
+    return Positioned.fill(child: Center(child: Text(Localization().getStringEx('panel.assistant.content.missing.assistant.msg', 'There is no assistant available.'), style: Styles().textStyles.getTextStyle('widget.message.medium.thin'))));
   }
 
   Widget _buildContentValuesWidget() {
