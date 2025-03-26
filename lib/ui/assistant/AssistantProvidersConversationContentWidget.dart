@@ -49,6 +49,8 @@ class AssistantProvidersConversationContentWidget extends StatefulWidget {
 class _AssistantProvidersConversationContentWidgetState extends State<AssistantProvidersConversationContentWidget>
     with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget> {
 
+  List<AssistantProvider>? _availableProviders;
+
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
@@ -84,10 +86,12 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       SpeechToText.notifyError,
       LocationServices.notifyStatusChanged,
       LocationServices.notifyLocationChanged,
+      FlexUI.notifyChanged,
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
 
+    _buildAvailableProviders();
     _loadLocationStatus();
     _onPullToRefresh();
 
@@ -109,6 +113,36 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     _inputFieldFocus.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _buildAvailableProviders() {
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
+    if (contentCodes != null) {
+      _availableProviders = <AssistantProvider>[];
+      for (String code in contentCodes) {
+        AssistantProvider? provider = _providerFromCode(code);
+        if (provider != null) {
+          _availableProviders!.add(provider);
+        }
+      }
+    } else {
+      _availableProviders = null;
+    }
+  }
+
+  AssistantProvider? _providerFromCode(String? code) {
+    switch (code) {
+      case 'google_assistant':
+        return AssistantProvider.google;
+      case 'grok_assistant':
+        return AssistantProvider.grok;
+      case 'perplexity_assistant':
+        return AssistantProvider.perplexity;
+      case 'openai_assistant':
+        return AssistantProvider.openai;
+      default:
+        return null;
+    }
   }
 
   // AutomaticKeepAliveClientMixin
@@ -143,6 +177,9 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       } else {
         _currentLocation = null;
       }
+    } else if (name == FlexUI.notifyChanged) {
+      _buildAvailableProviders();
+      _onPullToRefresh();
     }
   }
 
@@ -681,6 +718,11 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       return;
     }
 
+    if (CollectionUtils.isEmpty(_availableProviders)) {
+      // Do not allow sending message if there is no available providers
+      return;
+    }
+
     if (message.isNotEmpty) {
       _addMessage(Message(content: message, user: true));
     }
@@ -709,8 +751,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     List<Future<dynamic>> assistantFutures = [];
     Map<int, AssistantProvider> providerPositions = {};
-    for (int i = 0; i < AssistantProvider.values.length; i++) {
-      AssistantProvider provider = AssistantProvider.values[i];
+    for (int i = 0; i < _availableProviders!.length; i++) {
+      AssistantProvider provider = _availableProviders![i];
       providerPositions.addAll({i: provider});
       assistantFutures.add(Assistant().sendQuery(message, provider: provider, location: _currentLocation, context: userContext));
     }
@@ -719,7 +761,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     for (int j = 0; j<queryResults.length;j++) {
       dynamic result = queryResults[j];
-      AssistantProvider provider = AssistantProvider.values[j];
+      AssistantProvider provider = _availableProviders![j];
       if (result is Message) {
         result.provider = provider;
         _addMessage(result);
