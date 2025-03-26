@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
+- Acknowledged deep links redirect URL for event self check-in [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
 
 ## [7.0.1] - 2025-03-25
 ### Added
