@@ -8,6 +8,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:rokwire_plugin/ext/config.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -93,8 +94,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   static double get _barHeight => _barIconSize * 1.2 + 2 * _barIconPadding;
   static const EdgeInsets _previewPageMargin = const EdgeInsets.symmetric(horizontal: _barIconPadding);
 
-  String get _selfCheckInUrl =>
-    Events2.eventSelfCheckInUrl(widget.eventId, secret: _eventSecret ?? '');
+  String get _selfCheckInUrl => Config().deepLinkUrl(Events2.eventSelfCheckInUrl(widget.eventId, secret: _eventSecret ?? ''));
 
   String get _saveFileName =>
     'Check-In PDF "${widget.event.name}" - ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}.pdf';
