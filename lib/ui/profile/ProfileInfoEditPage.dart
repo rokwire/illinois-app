@@ -101,6 +101,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
+  bool get _showAddressControls => widget.profile?.isFacultyStaff == true;
 
   @override
   void initState() {
@@ -196,12 +197,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
+          _universityRoleSection,
           _collegeSection,
           _departmentSection,
           _majorSection,
+          _department2Section,
+          _major2Section,
           _emailSection,
           _email2Section,
           _phoneSection,
+          if (_showAddressControls)
+            _addressSection,
           _websiteSection,
 
           if (_showProfileCommands)
@@ -586,19 +592,34 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     available: _showPrivacyControls,
   );
 
+  Widget get _universityRoleSection => _textFieldSection(_ProfileField.universityRole,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.university_role.text', 'University Role'),
+    locked: true, enabled: false, available: _showPrivacyControls,
+  );
+
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
     headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
-    enabled: false, available: _showPrivacyControls,
+    locked: true, enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _departmentSection => _textFieldSection(_ProfileField.department,
     headingTitle: Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
-    enabled: false, available: _showPrivacyControls,
+    locked: true, enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
-    enabled: false, available: _showPrivacyControls,
+    locked: true, enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _department2Section => _textFieldSection(_ProfileField.department2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.department2.text', 'Second Department'),
+    locked: true, enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _major2Section => _textFieldSection(_ProfileField.major2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.major2.text', 'Second Major'),
+    locked: true, enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
@@ -620,6 +641,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.phone,
     enabled: (widget.authType?.loginType?.shouldHavePhone != true) || StringUtils.isEmpty(widget.profile?.phone),
     locked: (widget.authType?.loginType?.shouldHavePhone == true),
+    available: _showPrivacyControls,
+  );
+
+  Widget get _addressSection => _textFieldSection(_ProfileField.address,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.address.text', 'Address'),
+    textInputType: TextInputType.streetAddress,
     available: _showPrivacyControls,
   );
 
@@ -1184,8 +1211,9 @@ class _ProfileSaveResult {
 enum _ProfileField {
   firstName, middleName, lastName, pronouns,
   photoUrl, pronunciationUrl,
-  email, email2, phone, website,
-  college, department, major, title,
+  email, email2, phone, website, address,
+  universityRole, college, department, major,
+  department2, major2, title,
 }
 
 extension _ProfileFieldExt on _ProfileField {
@@ -1221,9 +1249,14 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.phone: return phone;
       case _ProfileField.website: return website;
 
+      case _ProfileField.address: return address;
+
+      case _ProfileField.universityRole: return universityRole;
       case _ProfileField.college: return college;
       case _ProfileField.department: return department;
       case _ProfileField.major: return major;
+      case _ProfileField.department2: return department2;
+      case _ProfileField.major2: return major2;
       case _ProfileField.title: return title;
     }
   }
@@ -1244,10 +1277,15 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
         website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
 
+        address: StringUtils.ensureNotEmpty(fields[_ProfileField.address]?.text),
+
         data: {
+          Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.universityRole]?.text),
           Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.college]?.text),
           Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department]?.text),
           Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major]?.text),
+          Auth2UserProfile.department2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department2]?.text),
+          Auth2UserProfile.major2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major2]?.text),
           Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.title]?.text),
           Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
         }
@@ -1277,10 +1315,15 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         phone: StringUtils.ensureNotEmpty(other?.phone),
         website: StringUtils.ensureNotEmpty(other?.website),
 
+        address: StringUtils.ensureNotEmpty(other?.address),
+
         data: {
+          Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(other?.universityRole),
           Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(other?.college),
           Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(other?.department),
           Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(other?.major),
+          Auth2UserProfile.department2DataKey: StringUtils.ensureNotEmpty(other?.department2),
+          Auth2UserProfile.major2DataKey: StringUtils.ensureNotEmpty(other?.major2),
           Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(other?.title),
           Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
         }
@@ -1315,9 +1358,14 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.phone: phone,
     _ProfileField.website: website,
 
+    _ProfileField.address: address,
+
+    _ProfileField.universityRole: universityRole,
     _ProfileField.college: college,
     _ProfileField.department: department,
     _ProfileField.major: major,
+    _ProfileField.department2: department2,
+    _ProfileField.major2: major2,
     _ProfileField.title: title,
   };
 
@@ -1336,7 +1384,11 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       phone : fields?[_ProfileField.phone],
       website : fields?[_ProfileField.website],
 
+      address: fields?[_ProfileField.address],
+
       data: MapUtils.ensureEmpty({
+        if (fields?[_ProfileField.universityRole] != null)
+          Auth2UserProfile.universityRoleDataKey: fields?[_ProfileField.universityRole],
 
         if (fields?[_ProfileField.college] != null)
           Auth2UserProfile.collegeDataKey: fields?[_ProfileField.college],
@@ -1346,6 +1398,12 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
 
         if (fields?[_ProfileField.major] != null)
           Auth2UserProfile.majorDataKey: fields?[_ProfileField.major],
+
+        if (fields?[_ProfileField.department2] != null)
+          Auth2UserProfile.department2DataKey: fields?[_ProfileField.department2],
+
+        if (fields?[_ProfileField.major2] != null)
+          Auth2UserProfile.major2DataKey: fields?[_ProfileField.major2],
 
         if (fields?[_ProfileField.title] != null)
           Auth2UserProfile.titleDataKey: fields?[_ProfileField.title],

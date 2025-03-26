@@ -470,12 +470,18 @@ class DirectoryProfileDetails extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (profile?.title?.isNotEmpty == true)
           _textDetail(profile?.title ?? ''),
+        if (profile?.universityRole?.isNotEmpty == true)
+          _textDetail(profile?.universityRole ?? ''),
         if (profile?.college?.isNotEmpty == true)
           _textDetail(profile?.college ?? ''),
         if (profile?.department?.isNotEmpty == true)
           _textDetail(profile?.department ?? ''),
         if (profile?.major?.isNotEmpty == true)
           _textDetail(profile?.major ?? ''),
+        if (profile?.department2?.isNotEmpty == true)
+          _textDetail(profile?.department2 ?? ''),
+        if (profile?.major2?.isNotEmpty == true)
+          _textDetail(profile?.major2 ?? ''),
         if (profile?.email?.isNotEmpty == true)
           _linkDetail(profile?.email ?? '', 'mailto:${profile?.email}', analyticsTarget: Analytics.LogAnonymousEmail),
         if (profile?.email2?.isNotEmpty == true)

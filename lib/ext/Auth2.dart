@@ -18,9 +18,12 @@ extension Auth2UserProfileExt on Auth2UserProfile {
     (middleName?.isNotEmpty == true) ||
     (lastName?.isNotEmpty == true) ||
     (title?.isNotEmpty == true) ||
+    (universityRole?.isNotEmpty == true) ||
     (college?.isNotEmpty == true) ||
     (department?.isNotEmpty == true) ||
     (major?.isNotEmpty == true) ||
+    (department2?.isNotEmpty == true) ||
+    (major2?.isNotEmpty == true) ||
     (email?.isNotEmpty == true) ||
     (email2?.isNotEmpty == true) ||
     (phone?.isNotEmpty == true) ||
@@ -56,8 +59,8 @@ extension Auth2UserProfileVCard on Auth2UserProfile {
 
   String? get vcardFullName => StringUtils.fullName([firstName, lastName]);
   String get _vcardName => "${lastName ?? ''};${firstName ?? ''};${middleName ?? ''};;";
-  String get _vcardOrg => "$_textUniversityName;$_vcardCollegeAndDepartment";
-  String get _vcardCollegeAndDepartment => (college?.isNotEmpty == true) ? ((department?.isNotEmpty == true) ? "$college / $department" : (college ?? '')) : (department ?? '');
+  String get _vcardOrg => "$_textUniversityName;$_vcardCollegeAndDepartment;$universityRole";
+  String get _vcardCollegeAndDepartment => (college?.isNotEmpty == true) ? ((department?.isNotEmpty == true) ? "$college / $department" : (college ?? '')) : (department ?? ''); //TODO: add department2?
 }
 
 extension Auth2UserProfileDisplayText on Auth2UserProfile {
@@ -78,7 +81,7 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
   String? get _textOrgColDept => StringUtils.fullName([
     title,
     StringUtils.fullName([
-      college,department, _textUniversityName
+      universityRole, college, department, _textUniversityName //TODO: add department2?
     ], delimiter: ' • '),
   ], delimiter: ' - ');
 
