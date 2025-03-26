@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.0.2] - 2025-03-26
 ### Changed
 - Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
 - Acknowledged deep links redirect URL for event self check-in [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
