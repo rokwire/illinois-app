@@ -294,10 +294,10 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
   Widget _buildSourcesExpandedWidget(Message message) {
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sourceDatEntries) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
-    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
+    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sourceDatEntries);
 
     return Visibility(
         visible: additionalControlsVisible,
@@ -369,19 +369,21 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                         flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
   }
 
-  List<Widget> _buildWebLinkWidgets(List<String> sources) {
+  List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
     List<Widget> sourceLinks = [];
-    for (String source in sources) {
-      Uri? uri = Uri.tryParse(source);
-      if ((uri != null) && uri.host.isNotEmpty) {
-        sourceLinks.add(_buildWebLinkWidget(source));
+    if (CollectionUtils.isNotEmpty(sourceDataEntries)) {
+      for (SourceDataEntry sourceDataEntry in sourceDataEntries!) {
+        String? actionLink = sourceDataEntry.actionLink;
+        Uri? uri = UriExt.tryParse(actionLink);
+        if (uri?.isValid ?? false) {
+          sourceLinks.add(_buildWebLinkWidget(uri: uri!));
+        }
       }
     }
     return sourceLinks;
   }
 
-  Widget _buildWebLinkWidget(String source) {
-    Uri? uri = Uri.tryParse(source);
+  Widget _buildWebLinkWidget({required Uri uri}) {
     return Padding(
         padding: EdgeInsets.only(bottom: 8, right: 140),
         child: Material(
@@ -389,14 +391,16 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                 borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
             color: Styles().colors.white,
             child: InkWell(
-                onTap: () => _onTapSourceLink(source),
+                onTap: () {
+                  UriExt.launchExternal(uri);
+                },
                 borderRadius: BorderRadius.circular(22),
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')),
                       Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(uri?.host),
+                          child: Text(StringUtils.ensureNotEmpty(uri.host),
                               overflow: TextOverflow.ellipsis,
                               style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
                     ])))));
@@ -807,10 +811,6 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     }
 
     return context.isNotEmpty ? context : null;
-  }
-
-  void _onTapSourceLink(String source) {
-    UrlUtils.launchExternal(source);
   }
 
   void _startListening() {
