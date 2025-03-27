@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
+- Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
 
 ## [7.0.2] - 2025-03-26
 ### Changed
