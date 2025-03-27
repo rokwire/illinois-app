@@ -614,6 +614,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.streetAddress,
     enabled: _isFacultyStaff,
     available: _showPrivacyControls,
+    maxLines: 2,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
@@ -665,6 +666,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true, bool enabled = true,
     bool available = true, bool locked = false,
+    int maxLines = 1,
   }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) && _isFieldAvailable(field)) ?
     _fieldSection(
       headingTitle: headingTitle,
@@ -675,6 +677,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           enabled: enabled,
           available: available,
           locked: locked,
+          maxLines: maxLines,
       )
     ) : Container();
 
@@ -682,10 +685,11 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true, bool enabled = true,
     bool locked = false, bool available = true,
+    int maxLines = 1,
     }) =>
       Row(children: [
         Expanded(child:
-          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled, locked: locked && !enabled && !available)
+          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled, locked: locked && !enabled && !available, maxLines: maxLines)
         ),
         if (_showPrivacyControls)
           Padding(padding: EdgeInsets.only(left: 6), child:
@@ -722,6 +726,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     bool autocorrect = true,
     bool enabled = true,
     bool locked = false,
+    int maxLines = 1,
   }) =>
     Container(decoration: _controlDecoration, child:
       Row(children: [
@@ -732,7 +737,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
               focusNode: _fieldFocusNodes[field],
               decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.zero),
               style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
-              maxLines: 1,
+              maxLines: maxLines,
               keyboardType: textInputType,
               autocorrect: autocorrect,
               readOnly: ((enabled != true) || (locked == true)),
