@@ -101,7 +101,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
-  bool get _showAddressControls => widget.profile?.isFacultyStaff == true;
+  bool get _isFacultyStaff => widget.profile?.isFacultyStaff == true;
 
   @override
   void initState() {
@@ -197,17 +197,19 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
-          _universityRoleSection,
+          // _universityRoleSection,
           _collegeSection,
           _departmentSection,
-          _majorSection,
+          if (!_isFacultyStaff)
+            _majorSection,
           _department2Section,
-          _major2Section,
+          if (_isFacultyStaff)
+            _addressSection,
+          if (!_isFacultyStaff)
+            _major2Section,
           _emailSection,
           _email2Section,
           _phoneSection,
-          if (_showAddressControls)
-            _addressSection,
           _websiteSection,
 
           if (_showProfileCommands)
@@ -592,34 +594,41 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     available: _showPrivacyControls,
   );
 
-  Widget get _universityRoleSection => _textFieldSection(_ProfileField.universityRole,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.university_role.text', 'University Role'),
-    locked: true, enabled: false, available: _showPrivacyControls,
-  );
+  // Widget get _universityRoleSection => _textFieldSection(_ProfileField.universityRole,
+  //   headingTitle: Localization().getStringEx('panel.profile.info.title.university_role.text', 'University Role'),
+  //   enabled: false, available: _showPrivacyControls,
+  // );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
     headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
-    locked: true, enabled: false, available: _showPrivacyControls,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _departmentSection => _textFieldSection(_ProfileField.department,
     headingTitle: Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
-    locked: true, enabled: false, available: _showPrivacyControls,
+    enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _addressSection => _textFieldSection(_ProfileField.address,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
+    textInputType: TextInputType.streetAddress,
+    enabled: _isFacultyStaff,
+    available: _showPrivacyControls,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
-    locked: true, enabled: false, available: _showPrivacyControls,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _department2Section => _textFieldSection(_ProfileField.department2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.department2.text', 'Second Department'),
-    locked: true, enabled: false, available: _showPrivacyControls,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _major2Section => _textFieldSection(_ProfileField.major2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major2.text', 'Second Major'),
-    locked: true, enabled: false, available: _showPrivacyControls,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
@@ -641,12 +650,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.phone,
     enabled: (widget.authType?.loginType?.shouldHavePhone != true) || StringUtils.isEmpty(widget.profile?.phone),
     locked: (widget.authType?.loginType?.shouldHavePhone == true),
-    available: _showPrivacyControls,
-  );
-
-  Widget get _addressSection => _textFieldSection(_ProfileField.address,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.address.text', 'Address'),
-    textInputType: TextInputType.streetAddress,
     available: _showPrivacyControls,
   );
 
@@ -1293,7 +1296,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       scope: <Auth2UserProfileScope> {
         Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,
         Auth2UserProfileScope.pronouns,
-        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
+        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl, Auth2UserProfileScope.address,
         Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
         /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
       }

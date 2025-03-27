@@ -2335,7 +2335,7 @@
 	"panel.profile.info.title.email.text": "Email Address",
 	"panel.profile.info.title.email2.text": "Alternate Email Address",
 	"panel.profile.info.title.phone.text": "Phone Number",
-	"panel.profile.info.title.address.text": "Address",
+	"panel.profile.info.title.work_address.text": "Work Address",
 	"panel.profile.info.title.website.text": "Website URL",
 	"panel.profile.info.title.website.hint": "(Ex: Linkedin)",
 	"panel.profile.info.cancel.save.privacy.prompt.text": "Save your privacy settings changes?",
