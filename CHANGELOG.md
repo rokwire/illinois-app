@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
 - Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
+- Implemented extended error handling and reporting in event self checking in. [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+### Fixed
+- Fixed QR Code processing in event self checking in [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
 
 ## [7.0.2] - 2025-03-26
 ### Changed
