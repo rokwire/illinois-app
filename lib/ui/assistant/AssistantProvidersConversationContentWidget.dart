@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -276,11 +277,13 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
-                                                  TextSpan(
-                                                      text: (message.user ? message.content : '[${assistantProviderToDisplayString(message.provider)}] ${message.content}'),
-                                                      style: message.user
-                                                          ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
-                                                          : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
+                                                  WidgetSpan(
+                                                      child: MarkdownBody(
+                                                          data: (message.user ? message.content : '**[${assistantProviderToDisplayString(message.provider)}]** ${message.content}'),
+                                                          styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                          onTapLink: (text, href, title) {
+                                                            AppLaunchUrl.launch(url: href, context: context);
+                                                          }))
                                                 ])),
                                           ])),
                                     ]))))))
@@ -302,7 +305,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Visibility(
                 visible: areSourcesLabelsVisible,
-                child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)),
+                child: Padding(padding: EdgeInsets.only(top: 10, left: 5),
                     child: Semantics(
                         child: InkWell(
                             onTap: () => _onTapSourcesAndLinksLabel(message),
