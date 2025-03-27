@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.3] - 2025-03-27
+### Changed
+- Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
+- Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
+- Implemented extended error handling and reporting in event self checking in. [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+### Fixed
+- Fixed QR Code processing in event self checking in [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+- Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
+
 ## [7.0.2] - 2025-03-26
 ### Changed
 - Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
