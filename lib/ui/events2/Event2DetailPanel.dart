@@ -1131,16 +1131,11 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
       String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
       if (mounted) {
         if (scanResult != '-1') { // The user did not hit "Cancel button"
-          Uri? uri = Uri.tryParse(scanResult);
-          //TBD: Handle redirect URL
-          if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(Events2.eventSelfCheckInRawUrl))) {
-            Map<String, dynamic>? urlParams;
-            try { urlParams = uri.queryParameters.cast<String, dynamic>(); }
-            catch (e) { debugPrint(e.toString()); }
-
-            String? eventId = JsonUtils.stringValue(urlParams?['event_id']) ;
+          Map<String, dynamic>? selfCheckInParams = _selfCheckScanInUrlParamters(scanResult);
+          if (selfCheckInParams != null) {
+            String? eventId = JsonUtils.stringValue(selfCheckInParams['event_id']) ;
             if ((eventId != null) && (eventId == _eventId)) {
-              selfCheckIn(eventId, secret: JsonUtils.stringValue(urlParams?['secret']), checkPrerequirements: false);
+              selfCheckIn(eventId, secret: JsonUtils.stringValue(selfCheckInParams['secret']), checkPrerequirements: false);
             }
             else {
               setState(() { _selfCheckingIn = false; });
@@ -1163,6 +1158,16 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         }
       }
     }
+  }
+
+  Map<String, dynamic>? _selfCheckScanInUrlParamters(String? scanResult) {
+    Uri? uri = (scanResult != null) ? Uri.tryParse(scanResult) : null;
+    if ((uri != null) && uri.isWebScheme) {
+      String? targetUrl = JsonUtils.stringValue(uri.jsonParams?['target']);
+      uri = (targetUrl != null) ? Uri.tryParse(targetUrl) : null;
+    }
+    return ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(Events2.eventSelfCheckInRawUrl))) ?
+      uri.jsonParams : null;
   }
 
   bool _preprocessSelfCheckInNotification(Map<String, dynamic>? urlParams) {
