@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -270,12 +271,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
-                                                  TextSpan(
-                                                      text: answer,
-                                                      style: message.user
-                                                          ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
-                                                          : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
-                                                ])),
+                                                  WidgetSpan(
+                                                          child: MarkdownBody(
+                                                              data: answer,
+                                                              styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                              onTapLink: (text, href, title) {
+                                                                AppLaunchUrl.launch(url: href, context: context);
+                                                              }))
+                                                    ])),
                                             Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
                                             Visibility(
                                                 visible: (message.feedbackResponseType == FeedbackResponseType.positive),
