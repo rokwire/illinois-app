@@ -346,7 +346,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       case AssistantContent.perplexity_conversation:
         return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
       case AssistantContent.openai_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the open ai Assistant');
+        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
       case AssistantContent.all_assistants:
         return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
       default:

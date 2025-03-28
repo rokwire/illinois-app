@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show "Use All Assistants" only if they are more than one [#4933](https://github.com/rokwire/illinois-app/issues/4933).
 - Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
+- Rename "open ai" to "Open AI" [#4937](https://github.com/rokwire/illinois-app/issues/4937).
 
 ## [7.0.3] - 2025-03-27
 ### Changed
