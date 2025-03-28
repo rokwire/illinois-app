@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
 - Rename "open ai" to "Open AI" [#4937](https://github.com/rokwire/illinois-app/issues/4937).
 - Improve Accessibility for  AccessibleViewPagerNavigationButtons [#2093](https://github.com/rokwire/illinois-app/issues/2093).
+### Added
+- "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
 
 ## [7.0.3] - 2025-03-27
 ### Changed
