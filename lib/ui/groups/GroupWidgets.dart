@@ -703,31 +703,33 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildHeading(),
-            Container(height: 6),
-            Row(children:[
-              Expanded(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                  _buildCategories(),
-                  _buildTitle(),
-                  _buildProperties(),
-                ]),
-              ),
-              _buildImage()
+    return Semantics(container: true, child:
+      GestureDetector(onTap: () => _onTapCard(context), child:
+        Padding(padding: widget.margin, child:
+          Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              _buildHeading(),
+              Container(height: 6),
+              Row(children:[
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                    _buildCategories(),
+                    _buildTitle(),
+                    _buildProperties(),
+                  ]),
+                ),
+                _buildImage()
+              ]),
+              Container(height: 4),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                  _buildUpdateTime(),
+                ),
+                _buildMembersCount()
+              ])
+              // : Container()
             ]),
-            Container(height: 4),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(child:
-                _buildUpdateTime(),
-              ),
-              _buildMembersCount()
-            ])
-            // : Container()
-          ]),
+          )
         )
       )
     );

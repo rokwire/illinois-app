@@ -185,12 +185,6 @@ class AppSemantics {
       child: child );
     }
 
-    static void announceMessage(BuildContext? context, String message){
-        if(context != null){
-          context.findRenderObject()!.sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
-        }
-    }
-
     static void requestSemanticsUpdates(BuildContext? context){
       if(context != null){
         context.findRenderObject()?.markNeedsSemanticsUpdate();
@@ -198,6 +192,35 @@ class AppSemantics {
       }
     }
 
+    static bool isAccessibilityEnabled(BuildContext context) =>
+        MediaQuery.of(context).accessibleNavigation;
+
+    static void announceMessage(BuildContext? context, String message) =>
+        context?.findRenderObject()?.
+          sendSemanticsEvent(
+            AnnounceSemanticsEvent(message,TextDirection.ltr));
+
+    static void triggerAccessibilityTap(GlobalKey? groupKey) =>
+        groupKey?.currentContext?.findRenderObject()?.
+          sendSemanticsEvent(
+            TapSemanticEvent());
+
+    static void triggerAccessibilityFocus(GlobalKey? groupKey) =>
+      groupKey?.currentContext?.findRenderObject()?.
+        sendSemanticsEvent(
+          FocusSemanticEvent());
+
+    static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
+        groupKey?.currentContext?.findRenderObject()?.debugSemantics;
+
+// final SemanticsNode? semanticsNode = renderObject.debugSemantics;
+// final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
+// Send a SemanticsActionEvent with the tap action
+// AppToast.showMessage("owner =   ${owner}");
+// owner?.performAction(
+//   semanticsNode?.id ?? -1,
+//   SemanticsAction.didGainAccessibilityFocus,
+// );
 
     //These navigation buttons are designed to improve the Accessibility support for horizontal scroll elements
     // static Widget createPageViewNavigationButtons({Function? onTapPrevious, Function? onTapNext}){
