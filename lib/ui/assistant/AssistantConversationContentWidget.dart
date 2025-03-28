@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -309,7 +310,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               fontSize: 12,
               conentAlignment: MainAxisAlignment.end,
               padding: EdgeInsets.symmetric(vertical: 3.5),
-              contentWeight: 0.35,
+              contentWeight: kIsWeb ? 0.17 : 0.35,
               onTap: () => _onTapCopy(message),
             )));
   }
