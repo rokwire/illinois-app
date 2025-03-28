@@ -181,9 +181,9 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       for (Group group in visibleGroups!) {
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
         pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
-          Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
+          // Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
             GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-          )
+          // )
         ));
       }
 
