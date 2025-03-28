@@ -88,6 +88,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       LocationServices.notifyStatusChanged,
       LocationServices.notifyLocationChanged,
       FlexUI.notifyChanged,
+      Assistant.notifyProvidersChanged,
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
@@ -117,33 +118,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   }
 
   void _buildAvailableProviders() {
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    if (contentCodes != null) {
-      _availableProviders = <AssistantProvider>[];
-      for (String code in contentCodes) {
-        AssistantProvider? provider = _providerFromCode(code);
-        if (provider != null) {
-          _availableProviders!.add(provider);
-        }
-      }
-    } else {
-      _availableProviders = null;
-    }
-  }
-
-  AssistantProvider? _providerFromCode(String? code) {
-    switch (code) {
-      case 'google_assistant':
-        return AssistantProvider.google;
-      case 'grok_assistant':
-        return AssistantProvider.grok;
-      case 'perplexity_assistant':
-        return AssistantProvider.perplexity;
-      case 'openai_assistant':
-        return AssistantProvider.openai;
-      default:
-        return null;
-    }
+    _availableProviders = Assistant().providers;
   }
 
   // AutomaticKeepAliveClientMixin
@@ -179,8 +154,9 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         _currentLocation = null;
       }
     } else if (name == FlexUI.notifyChanged) {
-      _buildAvailableProviders();
       _onPullToRefresh();
+    } else if (name == Assistant.notifyProvidersChanged) {
+      _buildAvailableProviders();
     }
   }
 

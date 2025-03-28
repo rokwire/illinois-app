@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
@@ -89,6 +90,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
+      Assistant.notifyProvidersChanged,
     ]);
 
     _contentTypes = _buildAssistantContentTypes();
@@ -120,6 +122,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     if (name == Auth2.notifyLoginChanged) {
       _updateContentTypes();
     } else if (name == FlexUI.notifyChanged) {
+      _updateContentTypes();
+    } else if (name == Assistant.notifyProvidersChanged) {
       _updateContentTypes();
     }
   }
@@ -274,30 +278,31 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   List<AssistantContent> _buildAssistantContentTypes() {
     List<AssistantContent> contentTypes = <AssistantContent>[];
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    if (contentCodes != null) {
-      for (String code in contentCodes) {
-        AssistantContent? value = _assistantContentFromString(code);
+    List<AssistantProvider>? availableProviders = Assistant().providers;
+    if (availableProviders != null) {
+      for (AssistantProvider provider in availableProviders) {
+        AssistantContent? value = _assistantContentFromProvider(provider);
         if (value != null) {
           contentTypes.add(value);
         }
+      }
+      if (contentTypes.length > 1) {
+        contentTypes.add(AssistantContent.all_assistants);
       }
     }
     return contentTypes;
   }
 
-  AssistantContent? _assistantContentFromString(String? value) {
-    switch (value) {
-      case 'google_assistant':
+  AssistantContent? _assistantContentFromProvider(AssistantProvider? provider) {
+    switch (provider) {
+      case AssistantProvider.google:
         return AssistantContent.google_conversation;
-      case 'grok_assistant':
+      case AssistantProvider.grok:
         return AssistantContent.grok_conversation;
-      case 'perplexity_assistant':
+      case AssistantProvider.perplexity:
         return AssistantContent.perplexity_conversation;
-      case 'openai_assistant':
+      case AssistantProvider.openai:
         return AssistantContent.openai_conversation;
-      case 'all_assistants':
-        return AssistantContent.all_assistants;
       default:
         return null;
     }
