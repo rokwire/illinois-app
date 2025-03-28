@@ -4291,7 +4291,7 @@
 	"model.assistant.provider.google.label": "Google",
 	"model.assistant.provider.grok.label": "Grok",
 	"model.assistant.provider.perplexity.label": "Perplexity",
-	"model.assistant.provider.openai.label": "open ai",
+	"model.assistant.provider.openai.label": "Open AI",
 	"model.assistant.provider.unknown.label": "Unknown",
 
 	"logic.date_time.greeting.morning": "早上好",
