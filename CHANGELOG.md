@@ -5,18 +5,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.4] - 2025-03-28
+### Changed
+- Show "Use All Assistants" only if they are more than one [#4933](https://github.com/rokwire/illinois-app/issues/4933).
+- Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
+- Rename "open ai" to "Open AI" [#4937](https://github.com/rokwire/illinois-app/issues/4937).
+- Improve Accessibility for  AccessibleViewPagerNavigationButtons [#2093](https://github.com/rokwire/illinois-app/issues/2093).
+### Added
+- "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
+
+## [7.0.3] - 2025-03-27
 ### Changed
 - Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
 - Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
-- Implemented extended error handling and reporting in event self checking in. [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+- Implemented extended error handling and reporting in event self checking in. [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 ### Fixed
-- Fixed QR Code processing in event self checking in [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+- Fixed QR Code processing in event self checking in [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 - Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
 
 ## [7.0.2] - 2025-03-26
 ### Changed
 - Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
-- Acknowledged deep links redirect URL for event self check-in [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+- Acknowledged deep links redirect URL for event self check-in [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 
 ## [7.0.1] - 2025-03-25
 ### Added
@@ -25,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add name pronunciation to list of group members [#4084](https://github.com/rokwire/illinois-app/issues/4084).
 - Created Browse Guide panel in Debug [#4910](https://github.com/rokwire/illinois-app/issues/4910).
 - open ai Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
-- Added self-registration feature to events [#4888](https://github.com/rokwire/app-flutter-plugin/issues/4888).
+- Added self-registration feature to events [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 ### Removed
 - Deleted Event2AttendanceDetailPanel (unused).
 - Illinois Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).

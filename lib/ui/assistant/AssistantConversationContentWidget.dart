@@ -16,9 +16,11 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -152,11 +154,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _loadLocationStatus();
       } else if (param is LocationServicesStatus) {
         _locationStatus = param;
-        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
-          _loadLocationStatus();
-        } else {
-          _loadLocationIfAllowed();
-        }
+        _loadLocationIfAllowed();
       }
     } else if (name == LocationServices.notifyLocationChanged) {
       if (_locationStatus == LocationServicesStatus.permissionAllowed) {
@@ -295,8 +293,60 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           )
                                     ])))))))
               ])),
+
+      _buildCopyButton(message),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
+  }
+
+  Widget _buildCopyButton(Message message) {
+    return Visibility(
+        visible: _isCopyButtonVisible(message),
+        child: Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: RoundedButton(
+              label: Localization().getStringEx('panel.assistant.copy_to_clipboard.button', 'Copy To Clipboard'),
+              fontSize: 12,
+              conentAlignment: MainAxisAlignment.end,
+              padding: EdgeInsets.symmetric(vertical: 3.5),
+              contentWeight: 0.35,
+              onTap: () => _onTapCopy(message),
+            )));
+  }
+
+  void _onTapCopy(Message message) {
+    Analytics().logSelect(target: 'Copy To Clipboard');
+    String? question = message.content;
+    String? answer;
+    int? questionIndex = _getMessageIndex(message);
+    if (questionIndex != null) {
+      int answerIndex = questionIndex + 1;
+      if (_messages.length > answerIndex) {
+        answer = _messages[answerIndex].content;
+      }
+    }
+    String textContent = 'Q: ${StringUtils.ensureNotEmpty(question)}\nA: ${StringUtils.ensureNotEmpty(answer)}';
+    Clipboard.setData(ClipboardData(text: textContent));
+  }
+
+  bool _isCopyButtonVisible(Message message) {
+    if (!message.user) {
+      return false;
+    }
+    int? messageIndex = _getMessageIndex(message);
+    if (messageIndex == null) {
+      return false;
+    }
+    if (messageIndex == (_messages.length - 1)) {
+      return !_loadingResponse;
+    } else {
+      return true;
+    }
+  }
+
+  int? _getMessageIndex(Message message) {
+    int index = _messages.indexOf(message);
+    return (index > -1) ? index : null;
   }
 
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
@@ -1053,23 +1103,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _loadLocationStatus() {
     LocationServices().status.then((LocationServicesStatus? status) {
-      if (status == LocationServicesStatus.serviceDisabled) {
-        LocationServices().requestService().then((status) {
-          if (status == LocationServicesStatus.permissionNotDetermined) {
-            LocationServices().requestPermission().then((LocationServicesStatus? status) {
-              _onLocationStatus(status);
-            });
-          } else {
-            _onLocationStatus(status);
-          }
-        });
-      } else if (status == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices().requestPermission().then((LocationServicesStatus? status) {
-          _onLocationStatus(status);
-        });
-      } else {
-        _onLocationStatus(status);
-      }
+      _onLocationStatus(status);
     });
   }
 
