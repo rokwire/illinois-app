@@ -152,11 +152,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _loadLocationStatus();
       } else if (param is LocationServicesStatus) {
         _locationStatus = param;
-        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
-          _loadLocationStatus();
-        } else {
-          _loadLocationIfAllowed();
-        }
+        _loadLocationIfAllowed();
       }
     } else if (name == LocationServices.notifyLocationChanged) {
       if (_locationStatus == LocationServicesStatus.permissionAllowed) {
@@ -1053,23 +1049,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _loadLocationStatus() {
     LocationServices().status.then((LocationServicesStatus? status) {
-      if (status == LocationServicesStatus.serviceDisabled) {
-        LocationServices().requestService().then((status) {
-          if (status == LocationServicesStatus.permissionNotDetermined) {
-            LocationServices().requestPermission().then((LocationServicesStatus? status) {
-              _onLocationStatus(status);
-            });
-          } else {
-            _onLocationStatus(status);
-          }
-        });
-      } else if (status == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices().requestPermission().then((LocationServicesStatus? status) {
-          _onLocationStatus(status);
-        });
-      } else {
-        _onLocationStatus(status);
-      }
+      _onLocationStatus(status);
     });
   }
 
