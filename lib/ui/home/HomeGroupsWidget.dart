@@ -181,9 +181,10 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       for (Group group in visibleGroups!) {
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
         pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
-          Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+          Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
             GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-        )));
+          )
+        ));
       }
 
       if (_pageController == null) {
@@ -204,7 +205,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
     }
     else if (visibleCount == 1) {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
-        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true, child:
           GroupCard(group: visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
       ));
     }
@@ -217,6 +218,21 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
           onTap: _onSeeAll,
         ),
+        // pageSemanticsLabel: (index) => ((CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) ? visibleGroups![index].title : null) ?? "",
+        pageKey: (index) => (CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) ? _groupCardKeys[visibleGroups![index].id] : null,
+        //Approach with custom LongPress which basically do what the default lonPress is (when pageKey is passed)
+        // onSemanticsLongPress: (index) {
+        //   if (CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) {
+        //     GlobalKey? groupCardKey = _groupCardKeys[visibleGroups![index].id];
+        //     if (groupCardKey != null) {
+        //       AppSemantics.triggerAccessibilityFocus(groupCardKey);
+        //       AppSemantics.triggerAccessibilityTap(groupCardKey);
+        //     }
+        //   }
+        // }
+
+        //Approach with reworking the card and use static method that simulate the tap. //If we want to directly open the Card Details instead of just focusing the card
+        // GroupCard.handleTapGroup(context, group: _getGroupAt(index), displayType: GroupCardDisplayType.homeGroups) ,
       ),
     ],) : _buildEmpty();
 
@@ -283,4 +299,5 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
   }
+
 }
