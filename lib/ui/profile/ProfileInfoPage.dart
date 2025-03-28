@@ -78,6 +78,8 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get _directoryVisibilityEnabled =>
     _profile?.isNameNotEmpty == true;
 
+  bool get _directoryShouldAutoOptIn => _directoryVisibilityAvailable && _directoryVisibilityEnabled && (_privacy?.public == null);
+
   Future<bool?> saveModified() async => _profileInfoEditKey.currentState?.saveModified();
 
   @override
@@ -469,6 +471,12 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       _loading = true;
       widget.onStateChanged?.call();
     });
+
+    if (_directoryShouldAutoOptIn) {
+      // user has not previously set directory visibility
+      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(_privacy, public: true);
+      await Auth2().saveUserPrivacy(privacy); // ignore the result of this request (Auth2().loadUserPrivacy will show the privacy state regardless of Auth2().saveUserPrivacy failure)
+    }
 
     List<dynamic> results = await Future.wait([
       Auth2().loadUserProfile(),
