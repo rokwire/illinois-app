@@ -1559,8 +1559,8 @@
     "panel.event2.detail.attendance.prompt.event_capacity_reached.description": "Mark as attended?",
     "panel.event2.detail.attendance.prompt.attendee_already_registered.description": "Already marked as attended.",
 
-    "panel.event2.detail.self_checkin.massage.succeeded.title": "Succeeded",
-    "panel.event2.detail.self_checkin.massage.succeeded.description": "You have successfully checked in for this event.",
+    "panel.event2.detail.self_checkin.massage.succeeded.title": "Success",
+    "panel.event2.detail.self_checkin.massage.succeeded.description": "You are checked in for this event.",
     "panel.event2.detail.self_checkin.massage.failed.title": "Failed",
     "panel.event2.detail.self_checkin.massage.failed.description": "Unable to check in for this event.",
     "panel.event2.detail.self_checkin.massage.signed_out.title": "You CANNOT check in for this event.",
