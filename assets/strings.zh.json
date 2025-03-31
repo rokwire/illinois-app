@@ -256,7 +256,7 @@
 	"panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
 	"panel.browse.section.music_and_news.title": "Illini Music & News",
 	"panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
-	"panel.browse.section.recent.title": "Recently Viewed",
+	"panel.browse.section.recent.title": "Visited Recently",
  	"panel.browse.section.recent.description": "Revisit your recent app activity.",
 	"panel.browse.section.safety.title": "Safety",
 	"panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and protect yourself and others.",
@@ -329,7 +329,7 @@
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
 
-	"panel.browse.entry.recent.recent_items.title": "最近瀏覽過的",
+	"panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
 	"panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
 	"panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
@@ -1543,8 +1543,8 @@
 	"panel.event2.detail.attendance.prompt.event_capacity_reached.description": "Mark as attended?",
 	"panel.event2.detail.attendance.prompt.attendee_already_registered.description": "Already marked as attended.",
 
-	"panel.event2.detail.self_checkin.massage.succeeded.title": "Succeeded",
-	"panel.event2.detail.self_checkin.massage.succeeded.description": "You have successfully checked in for this event.",
+	"panel.event2.detail.self_checkin.massage.succeeded.title": "Success",
+	"panel.event2.detail.self_checkin.massage.succeeded.description": "You are checked in for this event.",
 	"panel.event2.detail.self_checkin.massage.failed.title": "Failed",
 	"panel.event2.detail.self_checkin.massage.failed.description": "Unable to check in for this event.",
 	"panel.event2.detail.self_checkin.massage.signed_out.title": "You CANNOT check in for this event.",
@@ -1922,7 +1922,7 @@
 
 	"panel.settings.home.recent_items.title": "Browsing History",
 	"panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
-	"panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites.",
+	"panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites.",
 	"panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
 	"panel.settings.home.appointments.description.format": "在 {{app_title}} 應用程序中顯示約會：",
@@ -3676,10 +3676,10 @@
 	"widget.home.suggested_events.button.all.title":"查看全部",
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
 
-	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
+	"widget.home.recent_items.label.header.title":"Visited Recently",
 	"widget.home.recent_items.label.browsing_history.title":"Browsing History",
-	"widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
-	"widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
+	"widget.home.recent_items.text.empty.description": "There is no visited recently app content to display.",
+	"widget.home.recent_items.text.disabled.description": "Displaying visited recently app content is turned off.",
 	"widget.home.recent_items.button.view_all.title":"查看全部",
 	"widget.home.recent_items.button.view_all.hint":"點擊查看所有項目",
 	"widget.home.recent_items.button.clear_all.title":"Clear All",

@@ -280,7 +280,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
     Analytics().logSelect(target: 'Save', source: runtimeType.toString());
   }*/
 
-  Widget get _shareButton => _iconButton('share-nodes',
+  Widget get _shareButton => _iconButton('event-save-to-calendar',
     label: Localization().getStringEx('dialog.share.title', 'Share'),
     hint: Localization().getStringEx('dialog.share.hint', ''),
     padding: const EdgeInsets.only(left: _barIconPadding, right: _barIconPadding / 2, top: _barIconPadding, bottom: _barIconPadding),
