@@ -1197,8 +1197,8 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         });
         if (result is Event2Person) {
           await _showPopupMessage(
-            title: ({String? lng}) => Localization().getStringEx('panel.event2.detail.self_checkin.massage.succeeded.title', 'Succeeded', language: lng),
-            description: ({String? lng}) => Localization().getStringEx('panel.event2.detail.self_checkin.massage.succeeded.description', 'You have successfully checked in for this event.', language: lng),
+            title: ({String? lng}) => Localization().getStringEx('panel.event2.detail.self_checkin.massage.succeeded.title', 'Success', language: lng),
+            description: ({String? lng}) => Localization().getStringEx('panel.event2.detail.self_checkin.massage.succeeded.description', 'You are checked in for this event.', language: lng),
           );
         }
         else {
