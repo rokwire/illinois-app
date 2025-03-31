@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/DeviceCalendar.dart';
@@ -1125,14 +1125,32 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     if (canSelfCheckIn) {
       setState(() { _selfCheckingIn = true; });
 
-      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
-      String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
+      // WEB: FlutterBarcodeScanner does not work for web
+      // String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+      // String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
+      // String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
+      dynamic pushResult = await Navigator.of(context).push(CupertinoPageRoute(
+          builder: (context) => AiBarcodeScanner(
+              controller: MobileScannerController(
+                detectionSpeed: DetectionSpeed.noDuplicates,
+              ),
+              onDetect: (barcodeCapture) => _onBarcodeDetected(barcodeCapture))));
+      if (pushResult != true) {
+        setState(() { _selfCheckingIn = false; });
+      }
+    }
+  }
+
+  void _onBarcodeDetected(BarcodeCapture barcodeCapture) async {
+    List<Barcode> barcodes = barcodeCapture.barcodes;
+    Barcode? firstBarcode = CollectionUtils.isNotEmpty(barcodes) ? barcodes.first : null;
+    if (firstBarcode != null) {
+      String? scanResult = firstBarcode.displayValue;
       if (mounted) {
-        if (scanResult != '-1') { // The user did not hit "Cancel button"
+        if (scanResult != null) { // The user did not hit "Cancel button"
           Map<String, dynamic>? selfCheckInParams = _selfCheckScanInUrlParamters(scanResult);
           if (selfCheckInParams != null) {
-            String? eventId = JsonUtils.stringValue(selfCheckInParams['event_id']) ;
+            String? eventId = JsonUtils.stringValue(selfCheckInParams['event_id']);
             if ((eventId != null) && (eventId == _eventId)) {
               selfCheckIn(eventId, secret: JsonUtils.stringValue(selfCheckInParams['secret']), checkPrerequirements: false);
             }
@@ -1156,6 +1174,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
           setState(() { _selfCheckingIn = false; });
         }
       }
+      Navigator.of(context).pop(true); // Popped with successful scan result
     }
   }
 

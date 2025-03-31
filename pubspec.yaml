@@ -79,6 +79,7 @@ dependencies:
   universal_io: ^2.2.2
   csv: ^6.0.0
   webview_flutter_web: ^0.2.3+4
+  ai_barcode_scanner: ^6.0.1
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
@@ -88,14 +89,15 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: plugin
 
+  # WEB: Commented because it does not work on web
   # https://community.flutterflow.io/ask-the-community/post/flutter-barcode-scanner-not-compatible-with-latest-flutter-in-android-build-PCf2OlE2dK64lFU
   # flutter_barcode_scanner: ^2.0.0
-  local_auth_android: 1.0.46
-  flutter_barcode_scanner:
-    git:
-      url: https://github.com/decodevM/flutter_barcode_scanner.git
-      ref: flutter-3.29
-  flutter_plugin_android_lifecycle: ^2.0.24
+  #  local_auth_android: 1.0.46
+  #  flutter_barcode_scanner:
+  #    git:
+  #      url: https://github.com/decodevM/flutter_barcode_scanner.git
+  #      ref: flutter-3.29
+  #  flutter_plugin_android_lifecycle: ^2.0.24
 
   # google_maps_flutter: ^2.5.0
   google_maps_flutter:

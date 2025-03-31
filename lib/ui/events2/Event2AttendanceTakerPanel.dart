@@ -1,8 +1,9 @@
 //import 'dart:math';
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 //import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -592,7 +593,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     padding: EdgeInsets.zero,
   );
 
-  void _onTapScanButton() {
+  void _onTapScanButton() async {
     Analytics().logSelect(target: 'Scan Illini Id');
     Event2CreatePanel.hideKeyboard(context);
 
@@ -610,41 +611,57 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         int uin = 100000000 + Random().nextInt(900000000);
         _onScanFinished("$uin");
       }); */
-      
-      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
-      String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
-        if (mounted) {
-          _onScanFinished(scanResult);
-        }
-      });
+
+      // WEB: FlutterBarcodeScanner does not work for web
+      // String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+      // String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
+      // FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
+      //   if (mounted) {
+      //     _onScanFinished(scanResult);
+      //   }
+      // });
+      dynamic pushResult = await Navigator.of(context).push(CupertinoPageRoute(
+          builder: (context) => AiBarcodeScanner(
+              controller: MobileScannerController(
+                detectionSpeed: DetectionSpeed.noDuplicates,
+              ),
+              onDetect: (barcodeCapture) => _onScanFinished(barcodeCapture))));
+      if (pushResult != true) {
+        setState(() { _scanning = false; });
+      }
     }
   }
 
-  void _onScanFinished(String scanResult) {
-    if (scanResult != '-1') { // The user did not hit "Cancel button"
-      String? uin = _extractUin(scanResult);
-      String? eventId = widget.event?.id;
-      if (uin == null) {
-        setState(() {
-          _scanning = false;
-        });
-        Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
-      }
-      else if (eventId == null) {
-        setState(() {
-          _scanning = false;
-        });
-        Event2Popup.showErrorResult(context, _internalErrorString);
+  void _onScanFinished(BarcodeCapture barcodeCapture) {
+    List<Barcode> barcodes = barcodeCapture.barcodes;
+    Barcode? firstBarcode = CollectionUtils.isNotEmpty(barcodes) ? barcodes.first : null;
+    if (firstBarcode != null) {
+      String? scanResult = firstBarcode.displayValue;
+      if (scanResult != null) { // The user did not hit "Cancel button"
+        String? uin = _extractUin(scanResult);
+        String? eventId = widget.event?.id;
+        if (uin == null) {
+          setState(() {
+            _scanning = false;
+          });
+          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
+        }
+        else if (eventId == null) {
+          setState(() {
+            _scanning = false;
+          });
+          Event2Popup.showErrorResult(context, _internalErrorString);
+        }
+        else {
+          _scanAttendEvent_CheckAttendee(eventId: eventId, uin: uin);
+        }
       }
       else {
-        _scanAttendEvent_CheckAttendee(eventId: eventId, uin: uin);
+        setState(() {
+          _scanning = false;
+        });
       }
-    }
-    else {
-      setState(() {
-        _scanning = false;
-      });
+    Navigator.of(context).pop(true); // Popped with successful scan result
     }
   }
 
