@@ -149,7 +149,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
     if(widget.semanticsPageIdentifier != null)
       return widget.semanticsPageIdentifier!(_currentPageIndex);
     else if(widget.semanticsController is SemanticsController<int>)
-      return _currentPageIdentifier;
+      return _currentPageIndex;
     return null;
   }
 
@@ -185,5 +185,6 @@ class SemanticsController <T>{
 
   void tapPage(T item) => AppSemantics.triggerAccessibilityTap(getPageKeyFor(item));
 
-  void pronouncePage(T item, {String prefix="", String suffix=""}) => AppSemantics.announceMessage(getPageKeyFor(item)?.currentContext, "$prefix "+ (getPageSemanticsNode(item)?.label ?? "") + " $suffix");
+  void pronouncePage(T item, {String prefix="", String suffix=""}) => AppSemantics.announceMessage(getPageKeyFor(item)?.currentContext,
+      "$prefix "+ (getPageSemanticsNode(item)?.label ?? "") + " $suffix");
 }
