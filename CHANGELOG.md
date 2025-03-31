@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated succeeded popup message text in Event Self Check-In [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 - Updated share command icon in Event Self Check-In PDF [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 - Renamed "Recently Viewed" to "Visited Recently" [#4923](https://github.com/rokwire/illinois-app/issues/4923).
+- Cleanup Athletics News build, handled bad news images [#4922](https://github.com/rokwire/illinois-app/issues/4922).
 
 ## [7.0.4] - 2025-03-28
 ### Changed
