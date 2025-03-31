@@ -197,7 +197,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _pronunciationSection,
           _pronounsSection,
           _titleSection,
-          // _universityRoleSection,
           _collegeSection,
           _departmentSection,
           if (!_isFacultyStaff)
@@ -593,11 +592,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)'),
     available: _showPrivacyControls,
   );
-
-  // Widget get _universityRoleSection => _textFieldSection(_ProfileField.universityRole,
-  //   headingTitle: Localization().getStringEx('panel.profile.info.title.university_role.text', 'University Role'),
-  //   enabled: false, available: _showPrivacyControls,
-  // );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
     headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
