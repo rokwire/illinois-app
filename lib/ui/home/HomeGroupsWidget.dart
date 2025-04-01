@@ -218,21 +218,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
           onTap: _onSeeAll,
         ),
-        // pageSemanticsLabel: (index) => ((CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) ? visibleGroups![index].title : null) ?? "",
-        pageKey: (index) => (CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) ? _groupCardKeys[visibleGroups![index].id] : null,
-        //Approach with custom LongPress which basically do what the default lonPress is (when pageKey is passed)
-        // onSemanticsLongPress: (index) {
-        //   if (CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) {
-        //     GlobalKey? groupCardKey = _groupCardKeys[visibleGroups![index].id];
-        //     if (groupCardKey != null) {
-        //       AppSemantics.triggerAccessibilityFocus(groupCardKey);
-        //       AppSemantics.triggerAccessibilityTap(groupCardKey);
-        //     }
-        //   }
-        // }
-
-        //Approach with reworking the card and use static method that simulate the tap. //If we want to directly open the Card Details instead of just focusing the card
-        // GroupCard.handleTapGroup(context, group: _getGroupAt(index), displayType: GroupCardDisplayType.homeGroups) ,
+        semanticsController: SemanticsPagesController(pageKeys: _groupCardKeys.values.toList()),
+        // semanticsController: MappedSemanticsController<String, int>(pages: _groupCardKeys, mapper: (int index) => visibleGroups?[index].id),
       ),
     ],) : _buildEmpty();
 
