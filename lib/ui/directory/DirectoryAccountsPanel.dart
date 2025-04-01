@@ -23,6 +23,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
 
   final GlobalKey<DirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
+  static const List<String> alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"];
 
   @override
   void dispose() {
@@ -48,12 +49,30 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   }
 
   Widget get _scaffoldContent =>
-    RefreshIndicator(onRefresh: _onRefresh, child:
-      SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Flexible(
+          flex: 10,
+          child: RefreshIndicator(onRefresh: _onRefresh, child:
+            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+                DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+              )
+            ),
+          )
+        ),
+        Flexible(
+          flex: 1,
+          child: ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: alphabet.length,
+            itemBuilder: (BuildContext context, int index) => Text(alphabet[index], style: Styles().textStyles.getTextStyle('widget.button.title.tiny'), textAlign: TextAlign.center,),
+            separatorBuilder: (BuildContext context, int index) => SizedBox(height: 4),
+          ),
         )
-      )
+      ]
     );
 
   void _onEditProfile(DirectoryAccounts contentType) {
