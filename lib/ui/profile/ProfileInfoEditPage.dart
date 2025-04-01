@@ -202,10 +202,10 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           if (!_isFacultyStaff)
             _majorSection,
           _department2Section,
-          if (_isFacultyStaff)
-            _addressSection,
           if (!_isFacultyStaff)
             _major2Section,
+          if (_isFacultyStaff)
+            _addressSection,
           _emailSection,
           _email2Section,
           _phoneSection,
@@ -606,9 +606,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget get _addressSection => _textFieldSection(_ProfileField.address,
     headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
     textInputType: TextInputType.streetAddress,
-    enabled: _isFacultyStaff,
-    available: _showPrivacyControls,
-    maxLines: 2,
+    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
