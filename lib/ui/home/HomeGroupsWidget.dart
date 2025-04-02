@@ -218,8 +218,10 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
           onTap: _onSeeAll,
         ),
-        semanticsController: SemanticsPagesController(pageKeys: _groupCardKeys.values.toList()),
-        // semanticsController: MappedSemanticsController<String, int>(pages: _groupCardKeys, mapper: (int index) => visibleGroups?[index].id),
+        semanticsController: SemanticsController(
+            // adapter: SemanticsPageAdapter.fromList(keys: _groupCardKeys.values.toList())),
+            adapter: SemanticsPageAdapter.fromMap(keys: _groupCardKeys,
+                mapper: (dynamic index) => index is int ? (visibleGroups?[index].id) : null))
       ),
     ],) : _buildEmpty();
 
