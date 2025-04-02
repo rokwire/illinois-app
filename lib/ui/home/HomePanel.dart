@@ -299,7 +299,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       if (title) {
         return HomeGroupsWidget.title(contentType: GroupsContentType.my);
       } else if (handle) {
-        return HomeGroupsWidget.handle(contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeGroupsWidget.handle(key: ValueKey(GroupsContentType.my), contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeGroupsWidget(key: _globalKey(globalKeys, code), contentType: GroupsContentType.my, favoriteId: code, updateController: updateController,);
       }
@@ -308,7 +308,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       if (title) {
         return HomeGroupsWidget.titleForContentType(GroupsContentType.all);
       } else if (handle) {
-        return HomeGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeGroupsWidget.handle(key: ValueKey(GroupsContentType.all), contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeGroupsWidget(key: _globalKey(globalKeys, code), contentType: GroupsContentType.all, favoriteId: code, updateController: updateController,);
       }
