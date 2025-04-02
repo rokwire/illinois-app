@@ -23,6 +23,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
 
   final GlobalKey<DirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
+  int? _lastSelectedLetterIndex;
   static const List<String> alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"];
 
   @override
@@ -67,8 +68,15 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
           flex: 1,
           child: ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
             itemCount: alphabet.length,
-            itemBuilder: (BuildContext context, int index) => Text(alphabet[index], style: Styles().textStyles.getTextStyle('widget.button.title.tiny'), textAlign: TextAlign.center,),
+            itemBuilder: (BuildContext context, int index) {
+              bool isSelected = _lastSelectedLetterIndex == index;
+              return InkWell(
+                child: Text(alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.tiny.fat' : 'widget.button.title.tiny'), textAlign: TextAlign.center,),
+                onTap: () => _onTapIndexLetter(index), //TODO
+              );
+            },
             separatorBuilder: (BuildContext context, int index) => SizedBox(height: 4),
           ),
         )
@@ -88,6 +96,12 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
     ProfileInfoSharePanel.present(context,
       profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
     );
+  }
+
+  void _onTapIndexLetter(int index) {
+    setState(() {
+      _lastSelectedLetterIndex = index;
+    });
   }
 
   Future<void> _onRefresh() async =>
