@@ -8,6 +8,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class WalletLibraryCardPage extends StatefulWidget {
@@ -17,26 +18,50 @@ class WalletLibraryCardPage extends StatefulWidget {
   State<StatefulWidget> createState() => _WalletLibraryCardPageState();
 }
 
-class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> {
+class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with NotificationsListener {
 
   MemoryImage? _barcodeImage;
+  String? _barcodeNumber;
   DateTime? _accessTime = DateTime.now();
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2.notifyCardChanged,
+    ]);
+
+    _barcodeNumber = Auth2().iCard?.libraryNumber;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadBarcodeImage().then((MemoryImage? barcodeImage) {
+      _loadBarcodeImage(_barcodeNumber).then((MemoryImage? barcodeImage) {
         setStateIfMounted(() {
           _barcodeImage = barcodeImage;
         });
       });
     });
+
     super.initState();
   }
 
   @override
   void deactivate() {
+    NotificationService().unsubscribe(this);
     super.deactivate();
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Auth2.notifyCardChanged) && (Auth2().iCard?.libraryNumber != _barcodeNumber) && mounted) {
+      String? barcodeNumber = Auth2().iCard?.libraryNumber;
+      if (_barcodeNumber != barcodeNumber) {
+        _loadBarcodeImage(barcodeNumber).then((MemoryImage? barcodeImage) {
+          setStateIfMounted(() {
+            _barcodeImage = barcodeImage;
+            _barcodeNumber = barcodeNumber;
+          });
+        });
+      }
+    }
   }
 
   @override
@@ -55,7 +80,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> {
       Container(height: 16),
 
       _barcodeImageWidget,
-      Text(Auth2().iCard?.libraryNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+      Text(_barcodeNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
 
       Container(height: 32,),
 
@@ -77,11 +102,10 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> {
     Container(width: _barcodeWidth, height: _barcodeHeight, decoration: BoxDecoration(
       shape: BoxShape.rectangle,
       color: Colors.white,
-      image: (_barcodeImage != null) ? DecorationImage(fit: BoxFit.fil, image:_barcodeImage! ,) : null
+      image: (_barcodeImage != null) ? DecorationImage(fit: BoxFit.fill, image:_barcodeImage! ,) : null
     ),);
 
-  Future<MemoryImage?> _loadBarcodeImage() async {
-    String? libraryCode = Auth2().iCard?.libraryNumber;
+  Future<MemoryImage?> _loadBarcodeImage(String? libraryCode) async {
     Uint8List? barcodeBytes = (libraryCode != null) ? await NativeCommunicator().getBarcodeImageData({
       'content': libraryCode,
       'format': 'codabar',

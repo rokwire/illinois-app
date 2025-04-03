@@ -80,7 +80,6 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
   }
 
   // NotificationsListener
-
   @override
   void onNotification(String name, dynamic param) {
     if ((name == Auth2.notifyCardChanged) && mounted) {
