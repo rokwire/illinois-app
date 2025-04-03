@@ -14,7 +14,7 @@ class WalletPhotoWrapper extends StatefulWidget {
 
   final double topOffset;
   final Color? headingColor;
-  final Color? backgroundColor;
+  final Color backgroundColor;
   final Widget? child;
 
   WalletPhotoWrapper({super.key, this.topOffset = 0, this.headingColor, this.backgroundColor = Colors.white, this.child });
@@ -40,7 +40,7 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
   double get _illiniIconSize => 64;
 
   Color get _displayBorderColor => widget.headingColor ?? _headingColor ?? Styles().colors.fillColorSecondary;
-  Color get _displayHeadingColor => widget.headingColor ?? _headingColor ?? Styles().colors.fillColorPrimary;
+  Color get _displayHeadingColor => widget.headingColor ?? _headingColor ?? widget.backgroundColor; // ?? Styles().colors.fillColorPrimary;
 
   @override
   void initState() {
