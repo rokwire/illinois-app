@@ -73,7 +73,6 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Auth2.notifyCardChanged,
       MobileAccess.notifyMobileStudentIdChanged,
       MobileAccess.notifyStartFinished,
       AppLivecycle.notifyStateChanged,
