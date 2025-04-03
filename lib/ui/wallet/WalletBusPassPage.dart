@@ -19,6 +19,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -33,9 +34,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class WalletBusPassPage extends StatefulWidget with WalletHomePage {
-  final bool expandHeight;
-  final bool canClose;
-  WalletBusPassPage({super.key, this.expandHeight = true, this.canClose = true});
+  final double topOffset;
+  WalletBusPassPage({super.key, this.topOffset = 0});
 
   @override
   State<StatefulWidget> createState() => _WalletBusPassPageState();
@@ -45,25 +45,26 @@ class WalletBusPassPage extends StatefulWidget with WalletHomePage {
 }
 
 class _WalletBusPassPageState extends State<WalletBusPassPage> with NotificationsListener {
-  final double _headingH1 = 180;
-  final double _headingH2 = 80;
-  final double _photoSize = 240;
-  final double _iconSize = 64;
-
   Color? _activeBusColor;
   String? _activeBusNumber;
   bool _loadingActiveBusDetails = false;
   Set<String> _rangingRegionIds = Set();
   GeoFenceBeacon? _currentBeacon;
 
-  MemoryImage? _photoImage;
+  Color get _headingColor =>
+    _loadingActiveBusDetails ? widget.backgroundColor : (_activeBusColor ?? Styles().colors.fillColorSecondary);
+
+  Color get _displayBusColor =>
+    _loadingActiveBusDetails ? Styles().colors.white : (_activeBusColor ?? Styles().colors.fillColorSecondary);
+
+  String? get _busNumber =>
+    StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');
 
   @override
   void initState() {
     super.initState();
 
     NotificationService().subscribe(this, [
-      Auth2.notifyCardChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
       FlexUI.notifyChanged,
@@ -71,7 +72,6 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
 
     _updateRangingRegions();
     _loadBusPass();
-    _loadPhotoImage();
     // Auth2().updateAuthCard();
   }
 
@@ -82,58 +82,31 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
     super.dispose();
   }
 
-  void _loadPhotoImage(){
-    _loadAsyncPhotoImage().then((MemoryImage? photoImage){
-      _photoImage = photoImage;
-      setState(() {});
-    });
-  }
-
-  Future<MemoryImage?> _loadAsyncPhotoImage() async{
-    Uint8List? photoBytes = await  Auth2().iCard?.photoBytes;
-    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
-  }
-
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyCardChanged) {
-      if (mounted) {
-        _loadPhotoImage();
-      }
-    } else if (name == FlexUI.notifyChanged) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-    else if (name == GeoFence.notifyCurrentRegionsUpdated) {
+    if (name == GeoFence.notifyCurrentRegionsUpdated) {
       _updateRangingRegions();
     }
     else if (name == GeoFence.notifyCurrentBeaconsUpdated) {
       _updateCurrentBeacon();
     }
+    else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    //return Column(children: <Widget>[Expanded(child: )]);
-    //return Container();
-    return Stack(children: <Widget>[
-      Column(children: <Widget>[
-        Container(height: _headingH1, color: _activeColor,),
-        Container(height: _headingH2, color: _activeColor, child:
-          CustomPaint(painter: TrianglePainter(painterColor: _backgroundColor), child: Container(),),
-        ),
-        widget.expandHeight ? Expanded(child:
-          Container(color: _backgroundColor,),
-        ) : Container(color: _backgroundColor,)
-      ],),
-      Column(children: <Widget>[
-        widget.expandHeight ? Expanded(child: _buildBusContent()) : _buildBusContent(),
-      ]),
-    ],);
-  }
+  Widget build(BuildContext context) =>
+    WalletPhotoWrapper(
+      topOffset: widget.topOffset,
+      headingColor: _headingColor,
+      backgroundColor: widget.backgroundColor,
+      child: _buildBusContent(),
+    );
 
   Widget _buildBusContent() {
     bool busPassAvailable = FlexUI().isMTDBusPassAvailable;
@@ -142,9 +115,8 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
       Localization().getStringEx("panel.bus_pass.error.disabled.text", "You do not have an MTD Bus Pass.");
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(children: <Widget>[
-        _buildAvatar(),
         Text(Auth2().iCard?.role ?? '', style: Styles().textStyles.getTextStyle("panel.mtd_bus.role")),
-        BusClockWidget(),
+        _BusClock(),
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 10), child:
             _buildBusNumberContent()
@@ -158,62 +130,12 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
           ),
         ),
         Align(alignment: Alignment.center, child:
-          Container(width: _photoSize, padding: EdgeInsets.only(top: 12, left: 6, right: 6), child:
+          Container(width: WalletPhotoWrapper.photoSize(context), padding: EdgeInsets.only(top: 12, left: 6, right: 6), child:
             Text(description, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.mtd_bus.description.label")),
           ),
         ),
       ],)
     );
-  }
-
-  Widget _buildAvatar() {
-
-    return Padding(
-      padding: EdgeInsets.only(top: _headingH1 + (_headingH2 - _photoSize) / 2),
-      child: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topCenter,
-            child: RotatingBorder(
-              activeColor: _activeColor,
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: _buildPhotoImage()
-                )),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-                padding: EdgeInsets.only(top: _photoSize - _iconSize / 2 - 5, left: 15),
-                child: Styles().images.getImage(
-                  'university-logo-circle-dark',
-                  excludeFromSemantics: true,
-                  width: _iconSize,
-                  height: _iconSize,
-                )),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPhotoImage(){
-    return _photoImage != null
-        ? Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
-              image: _photoImage!,
-            ),
-          ))
-        : Container(
-            decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-          ));
   }
 
   Widget _buildBusNumberContent() {
@@ -231,17 +153,9 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
   }
 
   Widget _buildBusIcon(){
-    double iconSize = 24;
-    return Container(
-      width: iconSize-1,
-      height: iconSize-1,
-      color: _activeColor,
-      child: Styles().images.getImage(
-        'transit-logo-cutout-dark',
-        excludeFromSemantics: true,
-        width: iconSize,
-        height: iconSize,
-      ),
+    final double iconSize = 24;
+    return Container(width: iconSize-1, height: iconSize-1, color: _displayBusColor, child:
+      Styles().images.getImage('transit-logo-cutout-dark', excludeFromSemantics: true, width: iconSize, height: iconSize,),
     );
   }
 
@@ -272,11 +186,7 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
           String? message = ((result is int) && (result == 403)) ?
             Localization().getStringEx("panel.bus_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
             Localization().getStringEx("panel.bus_pass.error.default.text", "Unable to load bus pass");
-          AppAlert.showDialogResult(context, message,).then((result){
-            if (widget.canClose) {
-              Navigator.pop(context);
-            }
-          });
+          AppAlert.showDialogResult(context, message,);
         }
       }
     });
@@ -303,7 +213,7 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
 
   void _updateRangingRegions() {
     Set<String> currentRegionIds = GeoFence().currentRegionIds;
-    
+
     // 1. Remove all ranging regions that are not current (inside)
     Set<String>? removeRegionIds;
     for (String regionId in _rangingRegionIds) {
@@ -336,91 +246,15 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
     }
     _rangingRegionIds.clear();
   }
-
-  Color get _backgroundColor =>
-    widget.backgroundColor;
-
-  Color get _activeColor =>
-    _loadingActiveBusDetails ? Styles().colors.white : (_activeBusColor ?? Styles().colors.fillColorSecondary);
-
-  String? get _busNumber {
-    return StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');
-  }
 }
 
-class RotatingBorder extends StatefulWidget{
-  final Widget? child;
-  final Color? activeColor;
-  final Color? baseGradientColor;
-  const RotatingBorder({Key? key, this.child, this.activeColor, this.baseGradientColor}) : super(key: key);
-
-  @override
-  _RotatingBorderState createState() => _RotatingBorderState();
-
-}
-
-class _RotatingBorderState extends State<RotatingBorder>
-    with SingleTickerProviderStateMixin{
-  final double _photoSize = 240;
-  late Animation<double> animation;
-  late AnimationController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = AnimationController(vsync: this, duration: Duration(hours: 1),animationBehavior: AnimationBehavior.preserve);
-    animation = Tween<double>(begin: 0, end: 15000,).animate(controller)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controller.repeat().orCancel;
-
-        } else if (status == AnimationStatus.dismissed) {
-          controller.forward();
-        }
-      });
-    controller.forward();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double angle = animation.value;
-    return Container( width: _photoSize, height: _photoSize,
-        child:Stack(children: <Widget>[
-      Transform.rotate(
-          angle: angle,
-          child:Container(
-            height: _photoSize,
-            width: _photoSize,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors.fillColorSecondary],
-                  stops:  [0.0, 1.0],
-                )
-            ),
-          )),
-      widget.child ?? Container(),
-    ], ));
-  }
-
-}
-
-class BusClockWidget extends StatefulWidget{
+class _BusClock extends StatefulWidget{
   @override
   State<StatefulWidget> createState() =>_BusClockState();
 
 }
 
-class _BusClockState extends State<BusClockWidget> {
+class _BusClockState extends State<_BusClock> {
   Timer? _timer;
 
   @override

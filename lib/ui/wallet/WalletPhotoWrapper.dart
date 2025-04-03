@@ -19,6 +19,8 @@ class WalletPhotoWrapper extends StatefulWidget {
 
   WalletPhotoWrapper({super.key, this.topOffset = 0, this.headingColor, this.backgroundColor = Colors.white, this.child });
 
+  static double photoSize(BuildContext context) => _WalletPhotoWrapperState._defaultPhotoSize(context);
+
   @override
   State<StatefulWidget> createState() => _WalletPhotoWrapperState();
 }
@@ -29,7 +31,8 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
   MemoryImage? _photoImage;
   late AnimationController _animationController;
 
-  double get _photoSize => MediaQuery.of(context).size.width * 0.56;
+  static double _defaultPhotoSize(BuildContext context) => MediaQuery.of(context).size.width * 0.56;
+  double get _photoSize => _defaultPhotoSize(context);
   double get _photoTopOffset => widget.topOffset + 16;
   double get _childTopOffset => _photoTopOffset + _photoSize + _illiniIconSize / 2 + 16;
   double get _headingH1 => _photoTopOffset + _photoSize / 2 - _headingH2 / 5;
@@ -55,23 +58,11 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
     });
     _animationController.repeat();
 
-    if (widget.headingColor == null) {
-      Transportation().loadBusColor(deviceId: Auth2().deviceId, userId: Auth2().accountId).then((Color? color) {
-        if (mounted) {
-          setState(() {
-            _headingColor = color;
-          });
-        }
-      });
-    }
+    _updatePhotoImage();
 
-    loadPhotoImage().then((MemoryImage? photoImage){
-      if (mounted) {
-        setState(() {
-          _photoImage = photoImage;
-        });
-      }
-    });
+    if (widget.headingColor == null) {
+      _updateHeadingColor();
+    }
   }
 
   @override
@@ -81,16 +72,20 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant WalletPhotoWrapper oldWidget) {
+    if ((widget.headingColor == null) && (_headingColor == null)) {
+      _updateHeadingColor();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
     if ((name == Auth2.notifyCardChanged) && mounted) {
-      loadPhotoImage().then((MemoryImage? photoImage){
-        setStateIfMounted(() {
-          _photoImage = photoImage;
-        });
-      });
+      _updatePhotoImage();
     }
   }
 
@@ -100,7 +95,7 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Container(height: _headingH1, color: _displayHeadingColor,), //
         Container(height: _headingH2, color: _displayHeadingColor, child:
-          CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),
+          CustomPaint(painter: TrianglePainter(painterColor: widget.backgroundColor), child: Container(),),
         ),
       ],),
 
@@ -114,12 +109,6 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
           widget.child,
         ),
     ],);
-  }
-
-  Future<MemoryImage?> loadPhotoImage() async {
-    Uint8List? photoBytes = await  Auth2().iCard?.photoBytes;
-    try { return ((photoBytes != null) && photoBytes.isNotEmpty) ? MemoryImage(photoBytes) : null; }
-    catch(e) { debugPrint(e.toString()); return null; }
   }
 
   Widget get _photoWidget =>
@@ -162,5 +151,31 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
         ))
       ),
     );
+
+  Future<MemoryImage?> loadPhotoImage() async {
+    Uint8List? photoBytes = await  Auth2().iCard?.photoBytes;
+    try { return ((photoBytes != null) && photoBytes.isNotEmpty) ? MemoryImage(photoBytes) : null; }
+    catch(e) { debugPrint(e.toString()); return null; }
+  }
+
+  void _updatePhotoImage() {
+    loadPhotoImage().then((MemoryImage? photoImage){
+      if (mounted) {
+        setState(() {
+          _photoImage = photoImage;
+        });
+      }
+    });
+  }
+
+  void _updateHeadingColor() {
+    Transportation().loadBusColor(deviceId: Auth2().deviceId, userId: Auth2().accountId).then((Color? color) {
+      if (mounted && (color != null)) {
+        setState(() {
+          _headingColor = color;
+        });
+      }
+    });
+  }
 
 }

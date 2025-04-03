@@ -239,8 +239,8 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
 
   Widget? get _contentPage {
     switch(_selectedContentType) {
-      case WalletContentType.illiniId:      return WalletICardPage(key: _contentPageKey);
-      case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, expandHeight: false, canClose: false,);
+      case WalletContentType.illiniId:      return WalletICardPage(key: _contentPageKey, topOffset: 80,);
+      case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.libraryCard:   return WalletLibraryCardPage(key: _contentPageKey, topOffset: 80,);
       case WalletContentType.mealPlan:      return WalletMealPlanPage(key: _contentPageKey, headerHeight: 82,);
       case WalletContentType.illiniCash:    return WalletIlliniCashPage(key: _contentPageKey, headerHeight: 88);
