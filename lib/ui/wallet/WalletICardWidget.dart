@@ -44,13 +44,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
 
-class WalletICardContentWidget extends StatefulWidget {
-  WalletICardContentWidget({super.key});
+class WalletICardWidget extends StatefulWidget {
+  WalletICardWidget({super.key});
 
-  _WalletICardContentWidgetState createState() => _WalletICardContentWidgetState();
+  _WalletICardWidgetState createState() => _WalletICardWidgetState();
 }
 
-class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
+class _WalletICardWidgetState extends State<WalletICardWidget>
   with NotificationsListener, SingleTickerProviderStateMixin {
 
   final double _headingH1 = 200;

@@ -21,7 +21,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
+import 'package:illinois/ui/wallet/WalletICardWidget.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletLibraryCardWidget.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
@@ -235,7 +235,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
 
   Widget? get _contentPage {
     switch(_selectedContentType) {
-      case WalletContentType.illiniId:      return WalletICardContentWidget(key: _contentPageKey);
+      case WalletContentType.illiniId:      return WalletICardWidget(key: _contentPageKey);
       case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false, canClose: false,);
       case WalletContentType.libraryCard:   return WalletLibraryCardWidget(key: _contentPageKey, topOffset: 80,);
       case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);

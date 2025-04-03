@@ -8,7 +8,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletICardPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -362,7 +362,7 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
+    WalletICardHomePanel.present(context);
   }
 
   void _navigateLaundry() {
