@@ -316,11 +316,11 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
     else if (feature == 'saved') {
       return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), iconKey: "guide-saved", onTap: _navigateSaved) : null;
     }
+    else if (feature == 'library-card') {
+      return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), iconKey: "guide-library-card", onTap: _navigateLibraryCard) : null;
+    }
     else if (feature == 'parking') {
       return null; // We do not support parking any more
-    }
-    else if (feature == 'library-card') {
-      return null; // We do not support library card any more
     }
     else {
       return null;
@@ -393,6 +393,11 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
   void _navigateSaved() {
     Analytics().logSelect(target: "Saved");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  }
+
+  void _navigateLibraryCard() {
+    Analytics().logSelect(target: "Library Card");
+    WalletHomePanel.present(context, contentType: WalletContentType.libraryCard);
   }
 }
 
