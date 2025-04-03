@@ -401,6 +401,7 @@
 	"panel.wallet.content_type.meal_plan.label": "Meal Plan",
 	"panel.wallet.content_type.illini_cash.label": "Illini Cash",
 	"panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
+	"panel.wallet.content_type.library_card.label": "Univerity Library Card",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",

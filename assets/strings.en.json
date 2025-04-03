@@ -404,6 +404,7 @@
     "panel.wallet.content_type.meal_plan.label": "Meal Plan",
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
+    "panel.wallet.content_type.library_card.label": "Univerity Library Card",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Search by Event Title",
