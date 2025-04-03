@@ -16,7 +16,6 @@
 
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
@@ -25,69 +24,32 @@ import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class WalletIlliniCashPanel extends StatelessWidget {
+class WalletIlliniCashPage extends StatefulWidget with WalletHomePage {
 
-  static final String routeName = 'settings_illini_cash';
-
-  WalletIlliniCashPanel({super.key});
-
-  static void present(BuildContext context) {
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.illini_cash', 'Illini Cash is not available while offline.'));
-    }
-    else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_cash', 'Illini Cash'));
-    }
-    else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletIlliniCashPanel()));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: CustomScrollView(slivers: <Widget>[
-      SliverHeaderBar(
-        leadingIconKey: 'chevron-left-white',
-        title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-        textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
-      ),
-      SliverList(delegate: SliverChildListDelegate([
-        WalletIlliniCashContentWidget(),
-      ]),),
-    ],),
-    backgroundColor: Styles().colors.background,
-    bottomNavigationBar: uiuc.TabBar(),
-  );
-}
-
-class WalletIlliniCashContentWidget extends StatefulWidget with WalletHomeContentWidget {
+  static const String notifyAddIlliniCash = "edu.illinois.rokwire.wallet.illini_cash.add";
 
   final double headerHeight;
-  WalletIlliniCashContentWidget({super.key, this.headerHeight = 0});
+  WalletIlliniCashPage({super.key, this.headerHeight = 0});
 
   @override
-  _WalletIlliniCashContentWidgetState createState() => _WalletIlliniCashContentWidgetState();
+  _WalletIlliniCashPageState createState() => _WalletIlliniCashPageState();
 
   @override
   Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
-class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentWidget> with NotificationsListener {
+class _WalletIlliniCashPageState extends State<WalletIlliniCashPage> with NotificationsListener {
 
   List<IlliniCashTransaction>? _transactions;
   bool _transactionHistoryVisible = false;
@@ -530,14 +492,7 @@ class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentW
 
   void _onAddIlliniCashTapped(){
     Analytics().logSelect(target: "Add Illini Cash");
-    Navigator.push(context, CupertinoPageRoute(
-        settings: RouteSettings(
-            name:"settings_add_illini_cash"
-        ),
-        builder: (context){
-          return WalletAddIlliniCashPanel();
-        }
-    ));
+    NotificationService().notify(WalletIlliniCashPage.notifyAddIlliniCash);
   }
 
   void _onTapLogIn() {
