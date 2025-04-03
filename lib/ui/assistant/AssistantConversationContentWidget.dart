@@ -16,8 +16,11 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -151,11 +154,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _loadLocationStatus();
       } else if (param is LocationServicesStatus) {
         _locationStatus = param;
-        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
-          _loadLocationStatus();
-        } else {
-          _loadLocationIfAllowed();
-        }
+        _loadLocationIfAllowed();
       }
     } else if (name == LocationServices.notifyLocationChanged) {
       if (_locationStatus == LocationServicesStatus.permissionAllowed) {
@@ -270,12 +269,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
-                                                  TextSpan(
-                                                      text: answer,
-                                                      style: message.user
-                                                          ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
-                                                          : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
-                                                ])),
+                                                  WidgetSpan(
+                                                          child: MarkdownBody(
+                                                              data: answer,
+                                                              styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                              onTapLink: (text, href, title) {
+                                                                AppLaunchUrl.launch(url: href, context: context);
+                                                              }))
+                                                    ])),
                                             Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
                                             Visibility(
                                                 visible: (message.feedbackResponseType == FeedbackResponseType.positive),
@@ -292,18 +293,70 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           )
                                     ])))))))
               ])),
+
+      _buildCopyButton(message),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
+  }
+
+  Widget _buildCopyButton(Message message) {
+    return Visibility(
+        visible: _isCopyButtonVisible(message),
+        child: Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: RoundedButton(
+              label: Localization().getStringEx('panel.assistant.copy_to_clipboard.button', 'Copy To Clipboard'),
+              fontSize: 12,
+              conentAlignment: MainAxisAlignment.end,
+              padding: EdgeInsets.symmetric(vertical: 3.5),
+              contentWeight: 0.35,
+              onTap: () => _onTapCopy(message),
+            )));
+  }
+
+  void _onTapCopy(Message message) {
+    Analytics().logSelect(target: 'Copy To Clipboard');
+    String? question = message.content;
+    String? answer;
+    int? questionIndex = _getMessageIndex(message);
+    if (questionIndex != null) {
+      int answerIndex = questionIndex + 1;
+      if (_messages.length > answerIndex) {
+        answer = _messages[answerIndex].content;
+      }
+    }
+    String textContent = 'Q: ${StringUtils.ensureNotEmpty(question)}\nA: ${StringUtils.ensureNotEmpty(answer)}';
+    Clipboard.setData(ClipboardData(text: textContent));
+  }
+
+  bool _isCopyButtonVisible(Message message) {
+    if (!message.user) {
+      return false;
+    }
+    int? messageIndex = _getMessageIndex(message);
+    if (messageIndex == null) {
+      return false;
+    }
+    if (messageIndex == (_messages.length - 1)) {
+      return !_loadingResponse;
+    } else {
+      return true;
+    }
+  }
+
+  int? _getMessageIndex(Message message) {
+    int index = _messages.indexOf(message);
+    return (index > -1) ? index : null;
   }
 
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
     bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sourceDatEntries) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
-    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
+    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sourceDatEntries);
 
     return Visibility(
         visible: additionalControlsVisible,
@@ -496,19 +549,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                         flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
   }
 
-  List<Widget> _buildWebLinkWidgets(List<String> sources) {
+  List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
     List<Widget> sourceLinks = [];
-    for (String source in sources) {
-      Uri? uri = Uri.tryParse(source);
-      if ((uri != null) && uri.host.isNotEmpty) {
-        sourceLinks.add(_buildWebLinkWidget(source));
+    if (CollectionUtils.isNotEmpty(sourceDataEntries)) {
+      for (SourceDataEntry sourceDataEntry in sourceDataEntries!) {
+        String? actionLink = sourceDataEntry.actionLink;
+        Uri? uri = UriExt.tryParse(actionLink);
+        if (uri?.isValid ?? false) {
+          sourceLinks.add(_buildWebLinkWidget(uri: uri!));
+        }
       }
     }
     return sourceLinks;
   }
 
-  Widget _buildWebLinkWidget(String source) {
-    Uri? uri = Uri.tryParse(source);
+  Widget _buildWebLinkWidget({required Uri uri}) {
     return Padding(
         padding: EdgeInsets.only(bottom: 8, right: 140),
         child: Material(
@@ -516,14 +571,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
             color: Styles().colors.white,
             child: InkWell(
-                onTap: () => _onTapSourceLink(source),
+                onTap: () {
+                  UriExt.launchExternal(uri);
+                },
                 borderRadius: BorderRadius.circular(22),
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')),
                       Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(uri?.host),
+                          child: Text(StringUtils.ensureNotEmpty(uri.host),
                               overflow: TextOverflow.ellipsis,
                               style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
                     ])))));
@@ -943,10 +1000,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return context.isNotEmpty ? context : null;
   }
 
-  void _onTapSourceLink(String source) {
-    UrlUtils.launchExternal(source);
-  }
-
   void _onTapCloseNegativeFeedbackForm(Message message) {
     if (_provider != null) {
       Assistant().removeMessage(provider: _provider!, message: message);
@@ -1050,23 +1103,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _loadLocationStatus() {
     LocationServices().status.then((LocationServicesStatus? status) {
-      if (status == LocationServicesStatus.serviceDisabled) {
-        LocationServices().requestService().then((status) {
-          if (status == LocationServicesStatus.permissionNotDetermined) {
-            LocationServices().requestPermission().then((LocationServicesStatus? status) {
-              _onLocationStatus(status);
-            });
-          } else {
-            _onLocationStatus(status);
-          }
-        });
-      } else if (status == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices().requestPermission().then((LocationServicesStatus? status) {
-          _onLocationStatus(status);
-        });
-      } else {
-        _onLocationStatus(status);
-      }
+      _onLocationStatus(status);
     });
   }
 

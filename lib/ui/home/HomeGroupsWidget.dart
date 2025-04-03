@@ -181,9 +181,10 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       for (Group group in visibleGroups!) {
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
         pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
-          Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+          // Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
             GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-        )));
+          // )
+        ));
       }
 
       if (_pageController == null) {
@@ -204,7 +205,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
     }
     else if (visibleCount == 1) {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
-        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true, child:
           GroupCard(group: visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
       ));
     }
@@ -217,6 +218,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
           onTap: _onSeeAll,
         ),
+        semanticsController: SemanticsPagesController(pageKeys: _groupCardKeys.values.toList()),
+        // semanticsController: MappedSemanticsController<String, int>(pages: _groupCardKeys, mapper: (int index) => visibleGroups?[index].id),
       ),
     ],) : _buildEmpty();
 
@@ -283,4 +286,5 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
   }
+
 }

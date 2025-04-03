@@ -10,6 +10,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2ShareSelfCheckInPdfPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -33,7 +34,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
     body: RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Event2AttendanceTakerWidget(event, updateController: _updateController,),
+          Event2AttendanceTakerWidget(event, updateController: _updateController, showSelfCheckInPdf: true),
         ),
       ),
     ),
@@ -50,11 +51,13 @@ class Event2AttendanceTakerWidget extends StatefulWidget {
 
   final Event2? event;
   final StreamController<String>? updateController;
+  final bool showSelfCheckInPdf;
 
-  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController }) : super(key: key);
+  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController, this.showSelfCheckInPdf = false }) : super(key: key);
 
   bool get scanEnabled => event?.attendanceDetails?.scanningEnabled ?? false;
   bool get manualCheckEnabled => event?.attendanceDetails?.manualCheckEnabled ?? false;
+  bool get selfCheckInEnabled => event?.attendanceDetails?.selfCheckEnabled ?? false;
 
   @override
   State<StatefulWidget> createState() => _Event2AttendanceTakerWidgetState();
@@ -137,7 +140,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       _buildEventDetailsSection(),
       _buildAttendeesListDropDownSection(),
       _buildManualNetIdInputSection(),
-      _buildScanIlliniIdSection()
+      _buildScanAndSelfCheckinPdfSection(),
     ]);
   }
 
@@ -539,16 +542,55 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     }
   }
 
-  Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
-    RoundedButton(
+  Widget _buildScanAndSelfCheckinPdfSection() {
+      return (_isAdmin && widget.showSelfCheckInPdf) ? Row(children: [
+        Expanded(flex: 50, child: _buildSelfCheckinPdfSection()),
+        Container(width: 6,),
+        Expanded(flex: 50, child: _buildScanIlliniIdSection()),
+      ],) : _buildScanIlliniIdSection(contentWeight: 0.5);
+  }
+
+  Widget _buildSelfCheckinPdfSection({ double contentWeight = 1.0 }) => Event2CreatePanel.buildSectionWidget(
+      body: RoundedButton(
+        label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
+        hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle(widget.selfCheckInEnabled ? 'widget.button.title.regular' : 'widget.button.title.regular.variant3'),
+        borderColor: widget.selfCheckInEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 8),
+        backgroundColor: Styles().colors.white,
+        onTap: _onTapSelfCheckInPdfButton,
+        contentWeight: contentWeight,
+      ),
+      padding: EdgeInsets.zero,
+    );
+
+  void _onTapSelfCheckInPdfButton() {
+    Analytics().logSelect(target: "Self Check-In PDF");
+    Event2CreatePanel.hideKeyboard(context);
+
+    if (widget.selfCheckInEnabled != true) {
+      Event2Popup.showMessage(context,
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.self_checkin.disabled", "Self Check-In is not enabled for this event."));
+    }
+    else {
+      Event2ShareSelfCheckInPdfPanel.present(context, event: widget.event ?? Event2());
+    }
+  }
+
+  Widget _buildScanIlliniIdSection({ double contentWeight = 1.0 }) => Event2CreatePanel.buildSectionWidget(
+    body: RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-      textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
+      textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.regular' : 'widget.button.title.regular.variant3'),
       borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 8),
       backgroundColor: Styles().colors.white,
       onTap: _onTapScanButton,
-      contentWeight: 0.5,
+      contentWeight: contentWeight,
       progress: _scanning,
-    ),);
+    ),
+    padding: EdgeInsets.zero,
+  );
 
   void _onTapScanButton() {
     Analytics().logSelect(target: 'Scan Illini Id');

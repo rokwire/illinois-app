@@ -1022,4 +1022,35 @@ class Event2Popup {
       actionsPadding: EdgeInsets.zero,
     ));
   }
+
+  static Future<void> showWindow(BuildContext context, {
+    required Widget content,
+    String? analyticsMessage
+  }) =>
+    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      surfaceTintColor: Styles().colors.surface,
+      contentPadding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        Align(alignment: Alignment.topRight, child:
+          _closeWindowButton(context, analyticsMessage: analyticsMessage),
+        ),
+        Padding(padding: EdgeInsets.only(left: 24, right: 36, bottom: 32,), child:
+        content,
+        )
+      ],),
+    ));
+
+  static Widget _closeWindowButton(BuildContext context, { String? analyticsMessage }) =>
+    InkWell(onTap: () => _onCloseWindow(context, analyticsMessage: analyticsMessage), child:
+      Padding(padding: EdgeInsets.only(left: 6, right: 12, top: 12, bottom: 6), child:
+        Styles().images.getImage('close-circle', size: 18),
+      )
+    );
+
+  static void _onCloseWindow(BuildContext context, { String? analyticsMessage }) {
+    Analytics().logAlert(text: analyticsMessage, selection: "Close");
+    Navigator.pop(context);
+  }
+
 }

@@ -90,6 +90,11 @@ class Config extends rokwire.Config {
   String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
   String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
 
+  // Getters: Upgrade Urls
+  Map<String, dynamic>? get upgradeUrlInfo => JsonUtils.mapValue(upgradeInfo['url']);
+  String? get upgradeIOSUrl         => JsonUtils.stringValue(MapUtils.get(upgradeUrlInfo, 'ios'));
+  String? get upgradeAndroidUrl     => JsonUtils.stringValue(MapUtils.get(upgradeUrlInfo, 'android'));
+
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
   String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);

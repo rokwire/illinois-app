@@ -74,7 +74,7 @@ class Message {
   final bool user;
   final bool example;
   final List<Link>? links;
-  final List<String> sources;
+  final List<SourceDataEntry>? sourceDatEntries;
   final bool acceptsFeedback;
   final int? queryLimit;
   MessageFeedback? feedback;
@@ -87,21 +87,12 @@ class Message {
   bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
+    this.links, this.sourceDatEntries, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
     this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
     Map<String, dynamic>? answerJson = JsonUtils.mapValue(json['answer']);
     Map<String, dynamic>? feedbackJson = JsonUtils.mapValue(json['feedback']);
-
-    List<String>? sources = JsonUtils.stringListValue(answerJson?['sources']);
-    if (sources == null) {
-      String? source = JsonUtils.stringValue(answerJson?['sources']);
-      if (StringUtils.isNotEmpty(source)) {
-        sources = source!.split((RegExp(r'[,\n]')));
-        sources = sources.map((e) => e.trim()).toList();
-      }
-    }
 
     List<Link>? deeplinks = Link.listFromJson(answerJson?['deeplinks']);
     String? deeplink = JsonUtils.stringValue(answerJson?['deeplink'])?.trim();
@@ -120,7 +111,7 @@ class Message {
       queryLimit: JsonUtils.intValue(answerJson?['query_limit']),
       acceptsFeedback: JsonUtils.boolValue(answerJson?['accepts_feedback']) ?? true,
       links: deeplinks,
-      sources: sources ?? [],
+      sourceDatEntries: SourceDataEntry.listFromJson(answerJson?['source_data_entries']),
       feedback: _feedbackFromString(JsonUtils.stringValue(feedbackJson?['feedback'])),
       feedbackExplanation: JsonUtils.stringValue(feedbackJson?['explanation']),
     );
@@ -151,6 +142,37 @@ class Message {
   }
 
   bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
+}
+
+///
+/// SourceDataEntry
+///
+class SourceDataEntry {
+  final String? actionLink;
+  final dynamic metaData;
+  final String? title;
+  final String? subTitle;
+  final String? type;
+
+  SourceDataEntry({this.actionLink, this.metaData, this.title, this.subTitle, this.type});
+
+  static SourceDataEntry? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return SourceDataEntry(actionLink: JsonUtils.stringValue(json['action_link']), metaData: json['meta_data'], title: JsonUtils.stringValue(json['title']), subTitle: JsonUtils.stringValue(json['subtitle']), type: JsonUtils.stringValue(json['type']));
+  }
+
+  static List<SourceDataEntry>? listFromJson(List<dynamic>? jsonList) {
+    List<SourceDataEntry>? items;
+    if (CollectionUtils.isNotEmpty(jsonList)) {
+      items = <SourceDataEntry>[];
+      for (dynamic jsonEntry in jsonList!) {
+        ListUtils.add(items, SourceDataEntry.fromJson(jsonEntry));
+      }
+    }
+    return items;
+  }
 }
 
 ///
@@ -265,7 +287,7 @@ String assistantProviderToDisplayString(AssistantProvider? provider) {
     case AssistantProvider.perplexity:
       return Localization().getStringEx('model.assistant.provider.perplexity.label', 'Perplexity');
     case AssistantProvider.openai:
-      return Localization().getStringEx('model.assistant.provider.openai.label', 'open ai');
+      return Localization().getStringEx('model.assistant.provider.openai.label', 'Open AI');
     default:
       return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
   }

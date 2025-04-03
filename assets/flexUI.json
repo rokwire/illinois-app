@@ -124,6 +124,9 @@
 				"medicine_courses"                        : ["${config.settings.groups.canvas}"],
 				"mtd_bus_pass"                            : ["${config.settings.groups.mtd_bus_pass}"],
 				"assistant"                               : ["${config.settings.groups.assistant}", "OR", "${config.settings.groups.assistant_managed}"],
+				"assistant.grok_assistant"                : ["${config.settings.groups.grok_assistant}"],
+				"assistant.perplexity_assistant"          : ["${config.settings.groups.perplexity_assistant}"],
+				"assistant.openai_assistant"              : ["${config.settings.groups.openai_assistant}"],
 				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"]
 			},
 			"locations": {
@@ -207,11 +210,6 @@
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
-				"assistant.google_assistant"              : { "environment":  "dev"},
-				"assistant.grok_assistant"                : { "environment":  "dev"},
-				"assistant.perplexity_assistant"          : { "environment":  "dev"},
-				"assistant.openai_assistant"              : { "environment":  "dev"},
-				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
