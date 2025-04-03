@@ -20,7 +20,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -33,91 +32,19 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class WalletMTDBusPassPanel extends StatelessWidget {
-  static void present(BuildContext context) {
-    if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.bus_pass', 'MTD Bus Pass'));
-    }
-    else if (Auth2().iCard == null) {
-      AppAlert.showTextMessage(context, Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.'));
-    }
-    else {
-      showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => WalletMTDBusPassPanel());
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-    Scaffold(body:
-      Stack(children: [
-        Positioned.fill(child: WalletMTDBusPassContentWidget()),
-        Positioned.fill(child:
-          SafeArea(child:
-            Align(alignment: Alignment.topCenter, child:
-              Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.bottom), child:
-                Row(children: [
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(left: 16), child:
-                      Semantics(header: true, child:
-                        Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
-                      )
-                    )
-                  ),
-                  Semantics(
-                    label: Localization().getStringEx('dialog.close.title', 'Close'),
-                    hint: Localization().getStringEx('dialog.close.hint', ''),
-                    inMutuallyExclusiveGroup: true,
-                    button: true,
-                    child: InkWell(onTap: () => _onClose(context), child:
-                      Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                        Styles().images.getImage('close-circle', excludeFromSemantics: true)
-                      )
-                    )
-                  )
-                ]),
-              ),
-            ),
-          ),
-        ),
-        Positioned.fill(child:
-          SafeArea(child:
-            Align(alignment: Alignment.bottomCenter, child:
-                Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: () => _onClose(context), child:
-                    Padding(padding: EdgeInsets.only(bottom: 10), child:
-                      Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],),
-    );
-
-  void _onClose(BuildContext context) {
-    Analytics().logSelect(target: 'Close');
-    Navigator.of(context).pop();
-  }
-}
-
-class WalletMTDBusPassContentWidget extends StatefulWidget with WalletHomeContentWidget {
+class WalletBusPassPage extends StatefulWidget with WalletHomePage {
   final bool expandHeight;
   final bool canClose;
-  WalletMTDBusPassContentWidget({super.key, this.expandHeight = true, this.canClose = true});
+  WalletBusPassPage({super.key, this.expandHeight = true, this.canClose = true});
 
   @override
-  State<StatefulWidget> createState() => _WalletMTDBusPassContentWidgetState();
+  State<StatefulWidget> createState() => _WalletBusPassPageState();
 
   @override
   Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
-class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentWidget> with NotificationsListener {
+class _WalletBusPassPageState extends State<WalletBusPassPage> with NotificationsListener {
   final double _headingH1 = 180;
   final double _headingH2 = 80;
   final double _photoSize = 240;

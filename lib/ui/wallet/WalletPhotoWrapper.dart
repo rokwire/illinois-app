@@ -10,19 +10,19 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-class WalletPhotoWrapperWidget extends StatefulWidget {
+class WalletPhotoWrapper extends StatefulWidget {
 
   final Color? headingColor;
   final Color? backgroundColor;
   final double topOffset;
 
-  WalletPhotoWrapperWidget({super.key, this.headingColor, this.backgroundColor = Colors.white, this.topOffset = 0 });
+  WalletPhotoWrapper({super.key, this.headingColor, this.backgroundColor = Colors.white, this.topOffset = 0 });
 
   @override
-  State<StatefulWidget> createState() => _WalletPhotoWrapperWidgetState();
+  State<StatefulWidget> createState() => _WalletPhotoWrapperState();
 }
 
-class _WalletPhotoWrapperWidgetState extends State<WalletPhotoWrapperWidget> with NotificationsListener, SingleTickerProviderStateMixin {
+class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with NotificationsListener, SingleTickerProviderStateMixin {
 
   Color? _headingColor;
   MemoryImage? _photoImage;

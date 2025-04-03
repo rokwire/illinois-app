@@ -20,12 +20,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletICardWidget.dart';
-import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletLibraryCardWidget.dart';
-import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
-import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletAddIlliniCashPage.dart';
+import 'package:illinois/ui/wallet/WalletICardPage.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPage.dart';
+import 'package:illinois/ui/wallet/WalletLibraryCardPage.dart';
+import 'package:illinois/ui/wallet/WalletBusPassPage.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -143,7 +143,8 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
     super.initState();
 
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged
+      FlexUI.notifyChanged,
+      WalletIlliniCashPage.notifyAddIlliniCash,
     ]);
 
     _contentTypes = widget.contentTypes ?? WalletHomePanel.buildContentTypes();
@@ -165,6 +166,9 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   void onNotification(String name, param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentTypes();
+    }
+    else if (name == WalletIlliniCashPage.notifyAddIlliniCash) {
+      _onTapDropdownItem(WalletContentType.addIlliniCash);
     }
   }
 
@@ -204,7 +208,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   Widget get _panelContent {
 
     Widget? pageWidget = _contentPage;
-    Color backColor = (pageWidget is WalletHomeContentWidget) ? (pageWidget as WalletHomeContentWidget).backgroundColor  : Styles().colors.white;
+    Color backColor = (pageWidget is WalletHomePage) ? (pageWidget as WalletHomePage).backgroundColor  : Styles().colors.white;
 
     return Column(children: <Widget>[
       Expanded(child:
@@ -235,12 +239,12 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
 
   Widget? get _contentPage {
     switch(_selectedContentType) {
-      case WalletContentType.illiniId:      return WalletICardWidget(key: _contentPageKey);
-      case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false, canClose: false,);
-      case WalletContentType.libraryCard:   return WalletLibraryCardWidget(key: _contentPageKey, topOffset: 80,);
-      case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);
-      case WalletContentType.illiniCash:    return WalletIlliniCashContentWidget(key: _contentPageKey, headerHeight: 88);
-      case WalletContentType.addIlliniCash: return WalletAddIlliniCashContentWidget(key: _contentPageKey, topOffset: 82, hasCancel: false,);
+      case WalletContentType.illiniId:      return WalletICardPage(key: _contentPageKey);
+      case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, expandHeight: false, canClose: false,);
+      case WalletContentType.libraryCard:   return WalletLibraryCardPage(key: _contentPageKey, topOffset: 80,);
+      case WalletContentType.mealPlan:      return WalletMealPlanPage(key: _contentPageKey, headerHeight: 82,);
+      case WalletContentType.illiniCash:    return WalletIlliniCashPage(key: _contentPageKey, headerHeight: 88);
+      case WalletContentType.addIlliniCash: return WalletAddIlliniCashPage(key: _contentPageKey, topOffset: 82, hasCancel: false,);
       default: return null;
     }
   }
@@ -378,6 +382,6 @@ extension _StorageWalletExt on Storage {
   set _contentType(WalletContentType? value) => walletContentType = _walletContentTypeToString(value);
 }
 
-class WalletHomeContentWidget {
+class WalletHomePage {
   Color get backgroundColor => Styles().colors.white;
 }
