@@ -21,13 +21,14 @@ class DirectoryAccountsList extends StatefulWidget {
   final DirectoryAccounts contentType;
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
+  final String? indexLetter;
   final String? searchText;
   final Map<String, dynamic>? filterAttributes;
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
 
   DirectoryAccountsList(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
-    this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
+    this.indexLetter, this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsListState();
