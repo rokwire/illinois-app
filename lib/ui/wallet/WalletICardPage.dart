@@ -15,8 +15,6 @@
  */
 
 import 'dart:io';
-import 'dart:math' as math;
-import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Identity.dart';
@@ -27,6 +25,7 @@ import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -36,41 +35,29 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Transportation.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
 
 //////////////////////////
-// WalletICardWidget
+// WalletICardPage
 
 class WalletICardPage extends StatefulWidget {
-  WalletICardPage({super.key});
+  final double topOffset;
+  WalletICardPage({super.key, this.topOffset = 0});
 
   _WalletICardPageState createState() => _WalletICardPageState();
 }
 
-class _WalletICardPageState extends State<WalletICardPage>
-  with NotificationsListener, SingleTickerProviderStateMixin {
+class _WalletICardPageState extends State<WalletICardPage> with NotificationsListener {
 
-  final double _headingH1 = 200;
-  final double _headingH2 = 80;
-  final double _photoSize = 240;
-  final double _illiniIconSize = 64;
   final double _buildingAccessIconSize = 84;
 
-  Color? _activeColor;
-  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
-  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
-
-  MemoryImage? _photoImage;
   bool? _buildingAccess;
   DateTime? _buildingAccessTime;
   late bool _loadingBuildingAccess;
-  late AnimationController _animationController;
 
   int _mobileAccessLoadingProgress = 0;
   bool _isIcardMobileAvailable = false;
@@ -93,30 +80,6 @@ class _WalletICardPageState extends State<WalletICardPage>
     ]);
 
     MobileAccess().startIfNeeded();
-    
-    _animationController = AnimationController(duration: Duration(milliseconds: 1500), lowerBound: 0, upperBound: 2 * math.pi, animationBehavior: AnimationBehavior.preserve, vsync: this)
-    ..addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    _animationController.repeat();
-
-    _loadActiveColor().then((Color? color){
-      if (mounted) {
-        setState(() {
-          _activeColor = color;
-        });
-      }
-    });
-    
-    _loadAsyncPhotoImage().then((MemoryImage? photoImage){
-      if (mounted) {
-        setState(() {
-          _photoImage = photoImage;
-        });
-      }
-    });
 
     _loadingBuildingAccess = true;
     _loadBuildingAccess().then((bool? buildingAccess) {
@@ -141,23 +104,15 @@ class _WalletICardPageState extends State<WalletICardPage>
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _animationController.dispose();
     _mobileAccessPageController?.dispose();
     super.dispose();
   }
 
   // NotificationsListener
-  
+
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyCardChanged) {
-      _loadAsyncPhotoImage().then((MemoryImage? photoImage){
-        setStateIfMounted(() {
-          _photoImage = photoImage;
-        });
-      });
-    }
-    else if (name == MobileAccess.notifyMobileStudentIdChanged) {
+    if (name == MobileAccess.notifyMobileStudentIdChanged) {
       MobileAccess().startIfNeeded();
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
@@ -171,22 +126,14 @@ class _WalletICardPageState extends State<WalletICardPage>
       }
     }
   }
-  
+
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(children: <Widget>[
-      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Container(height: _headingH1, color: _activeHeadingColor,),
-        Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
-      ],),
-
-      (Auth2().iCard != null) ? _buildCardContent() : Container(),
-    ],);
-  }
+  Widget build(BuildContext context) =>
+    WalletPhotoWrapper(topOffset: widget.topOffset, child: _buildCardContent(),);
 
   Widget _buildCardContent() {
-    
+
     String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Expires');
     String? expirationDate = Auth2().iCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
@@ -205,7 +152,7 @@ class _WalletICardPageState extends State<WalletICardPage>
 
     if (_loadingBuildingAccess) {
       buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
-        Align(alignment: Alignment.center, child: 
+        Align(alignment: Alignment.center, child:
           SizedBox(height: 42, width: 42, child:
             CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
           )
@@ -222,19 +169,13 @@ class _WalletICardPageState extends State<WalletICardPage>
     bool hasBuildingAccess = _hasBuildingAccess && (0 < (Auth2().iCard?.uin?.length ?? 0));
 
     return Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 5 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
-        _buildPhotoSection(),
-      ),
-
-      Container(height: 8,),
-      
       Text(Auth2().iCard?.fullName?.trim() ?? '', style:Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
       Text(roleDisplayString, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.regular")),
-      
+
       Container(height: 16,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        
+
         Visibility(visible: hasQrCode, child: Column(children: [
           Text(Auth2().iCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
@@ -272,7 +213,7 @@ class _WalletICardPageState extends State<WalletICardPage>
       Text(cardExpiresText, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.tiny")),
 
       Container(height: 16,),
-      
+
       Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
         Text(Localization().getStringEx('widget.id_card.text.card_instructions', 'This ID must be presented to university officials upon request.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic")),
       ),
@@ -283,69 +224,7 @@ class _WalletICardPageState extends State<WalletICardPage>
     ]);
   }
 
-  Widget _buildPhotoSection() => Stack(children: <Widget>[
-    Align(alignment: Alignment.topCenter, child:
-      Container(width: _photoSize, height: _photoSize, child:
-        Stack(children: <Widget>[
-          Transform.rotate(angle: _animationController.value, child:
-            Container(width: _photoSize, height: _photoSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.0, 1.0],),
-                color: Styles().colors.fillColorSecondary,),
-            ),
-          ),
-          _buildPhotoImage()
-        ],),
-      ),
-      /*
-      Container(width: _photoSize, height: _photoSize,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [Styles().colors.fillColorSecondary, Styles().colors.fillColorSecondary],
-            begin: Alignment.topCenter,
-            end:Alignment.bottomCenter,
-            stops: [0.0, 1.0],),
-          color: Styles().colors.fillColorSecondary,),
-        child: Padding(padding: EdgeInsets.all(16),
-          child: Container(decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth2().authCard?.photoBytes),),
-          )),
-        )
-      ),
-      */
-    ),
-    Align(alignment: Alignment.topCenter, child:
-      Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
-        Styles().images.getImage('university-logo-circle-white', excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
-      ),
-    ),
-  ],);
 
-
-  Widget _buildPhotoImage(){
-    return Container(width: _photoSize, height: _photoSize, child:
-      Padding(padding: EdgeInsets.all(16),
-        child: _photoImage != null
-            ? Container(decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                image: DecorationImage(fit: BoxFit.cover, image:_photoImage! ,),
-              ))
-            : Container(decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ))
-      ),
-    );
-  }
 
   Widget _buildMobileAccessContent() {
     if (!_isIcardMobileAvailable) {
@@ -460,16 +339,6 @@ class _WalletICardPageState extends State<WalletICardPage>
               textAlign: TextAlign.center,
               style: Styles().textStyles.getTextStyle('panel.id_card.mobile_access.description.italic')))
     ]);
-  }
-
-  Future<MemoryImage?> _loadAsyncPhotoImage() async{
-    Uint8List? photoBytes = await  Auth2().iCard?.photoBytes;
-    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
-  }
-
-  Future<Color?> _loadActiveColor() async{
-    String? deviceId = Auth2().deviceId;
-    return await Transportation().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
   }
 
   Future<bool?> _loadBuildingAccess() async {

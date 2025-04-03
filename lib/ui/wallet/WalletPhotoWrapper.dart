@@ -12,11 +12,12 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class WalletPhotoWrapper extends StatefulWidget {
 
+  final double topOffset;
   final Color? headingColor;
   final Color? backgroundColor;
-  final double topOffset;
+  final Widget? child;
 
-  WalletPhotoWrapper({super.key, this.headingColor, this.backgroundColor = Colors.white, this.topOffset = 0 });
+  WalletPhotoWrapper({super.key, this.topOffset = 0, this.headingColor, this.backgroundColor = Colors.white, this.child });
 
   @override
   State<StatefulWidget> createState() => _WalletPhotoWrapperState();
@@ -30,6 +31,7 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
 
   double get _photoSize => MediaQuery.of(context).size.width * 0.56;
   double get _photoTopOffset => widget.topOffset + 16;
+  double get _childTopOffset => _photoTopOffset + _photoSize + _illiniIconSize / 2 + 16;
   double get _headingH1 => _photoTopOffset + _photoSize / 2 - _headingH2 / 5;
   double get _headingH2 => _photoSize / 3;
   double get _illiniIconSize => 64;
@@ -105,6 +107,11 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
       if (Auth2().iCard != null)
         Padding(padding: EdgeInsets.only(top: _photoTopOffset), child:
           _photoWidget,
+        ),
+
+      if (widget.child != null)
+        Padding(padding: EdgeInsets.only(top: _childTopOffset), child:
+          widget.child,
         ),
     ],);
   }
