@@ -45,7 +45,7 @@
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
 
-			"wallet": ["illini_id", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
+			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
 
 			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant", "all_assistants"],
 

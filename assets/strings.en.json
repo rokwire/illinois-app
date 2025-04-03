@@ -404,6 +404,7 @@
     "panel.wallet.content_type.meal_plan.label": "Meal Plan",
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
+    "panel.wallet.content_type.library_card.label": "Univerity Library Card",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Search by Event Title",
@@ -3285,6 +3286,7 @@
     "panel.guide_list.button.groups.title": "Groups",
     "panel.guide_list.button.illini_cash.title": "Illini Cash",
     "panel.guide_list.button.illini_id.title": "Illini ID",
+    "panel.guide_list.button.library_card.title": "Library Card",
     "panel.guide_list.button.laundry.title": "Laundry",
     "panel.guide_list.button.meal_plan.title": "Meal Plan",
     "panel.guide_list.button.my_illini.title": "My Illini",
@@ -4074,6 +4076,8 @@
     "widget.id_card.mobile_access.issuing.label": "Issuing",
     "widget.id_card.mobile_access.renew.success.msg": "Mobile access was successfully renewed.",
     "widget.id_card.mobile_access.renew.fail.msg": "Failed to renew mobile access. Reason: %s",
+
+    "widget.library_card.text.card_instructions": "This card is needed for Univerity Library services such as picking up an equipment loan or checking out a book or keys to a study room.",
 
     "widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
