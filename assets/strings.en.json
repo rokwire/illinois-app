@@ -3175,11 +3175,14 @@
     "panel.research_projects.home.status.my_projects.logged_out": "You are not logged in. To access your research projects, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.research_projects.home.status.my_projects.logged_out.link.login": "sign in",
 
-    "panel.content.attributes.button.apply.title": "Apply Attributes",
+    "panel.content.attributes.button.apply.title": "Apply",
+    "panel.content.attributes.button.apply_attributes.title": "Apply Attributes",
     "panel.content.attributes.button.filter.title": "Filter",
     "panel.content.attributes.button.clear.title": "Clear",
     "panel.content.attributes.label.no_selection.title": "None",
     "panel.content.attributes.label.no_selection.title.format": "No %s",
+    "panel.content.attributes.prompt.apply_changes.title": "Apply your changes?",
+    "panel.content.attributes.prompt.loose_changes.title": "Loose your changes?",
 
     "panel.mtd_stops.home.header_bar.title": "Bus Stops",
     "panel.mtd_stops.home.content_type.all.title": "All Bus Stops",

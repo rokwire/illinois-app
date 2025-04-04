@@ -3151,11 +3151,14 @@
 	"panel.research_projects.home.status.my_projects.logged_out": "You are not logged in. To access your research projects, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
  "panel.research_projects.home.status.my_projects.logged_out.link.login": "sign in",
 
-	"panel.content.attributes.button.apply.title": "套用属性",
+	"panel.content.attributes.button.apply.title": "Apply",
+	"panel.content.attributes.button.apply_attributes.title": "套用属性",
 	"panel.content.attributes.button.filter.title": "筛选",
 	"panel.content.attributes.button.clear.title": "清除",
 	"panel.content.attributes.label.no_selection.title": "无",
 	"panel.content.attributes.label.no_selection.title.format": "无 %s",
+	"panel.content.attributes.prompt.apply_changes.title": "Apply your changes?",
+	"panel.content.attributes.prompt.loose_changes.title": "Loose your changes?",
 
 	"panel.mtd_stops.home.header_bar.title": "公交车站",
 	"panel.mtd_stops.home.content_type.all.title": "所有公交车站",

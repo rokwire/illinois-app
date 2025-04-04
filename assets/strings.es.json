@@ -3173,11 +3173,14 @@
     "panel.research_projects.home.status.my_projects.logged_out": "You are not logged in. To access your research projects, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.research_projects.home.status.my_projects.logged_out.link.login": "sign in",
 
-    "panel.content.attributes.button.apply.title": "Aplicar los Atributos",
+    "panel.content.attributes.button.apply.title": "Apply",
+    "panel.content.attributes.button.apply_attributes.title": "Aplicar los Atributos",
     "panel.content.attributes.button.filter.title": "Filtrar",
     "panel.content.attributes.button.clear.title": "Limpar",
     "panel.content.attributes.label.no_selection.title": "Ninguno",
     "panel.content.attributes.label.no_selection.title.format": "Ningún %s",
+    "panel.content.attributes.prompt.apply_changes.title": "Apply your changes?",
+    "panel.content.attributes.prompt.loose_changes.title": "Loose your changes?",
 
     "panel.mtd_stops.home.header_bar.title": "Paradas de Autobús",
     "panel.mtd_stops.home.content_type.all.title": "Todas las Paradas de Autobús",
