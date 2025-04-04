@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -286,6 +287,10 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
   }
 
   void _checkNotificationsEnabled() {
+    if (kIsWeb) {
+      _notificationsAuthorized = false;
+      return;
+    }
     _increaseProgress();
     firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
       firebase.AuthorizationStatus status = settings.authorizationStatus;

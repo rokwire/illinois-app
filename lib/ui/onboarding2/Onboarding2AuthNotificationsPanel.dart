@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -41,15 +42,19 @@ class Onboarding2AuthNotificationsPanel extends StatefulWidget with Onboarding2P
 
   @override
   Future<bool> isOnboardingEnabled() async {
-    firebase.NotificationSettings settings = await firebase.FirebaseMessaging.instance.getNotificationSettings();
-    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
-    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
-    if (Platform.isAndroid) {
-      return (authorizationStatus == firebase.AuthorizationStatus.denied);
-    } else if (Platform.isIOS) {
-      return (authorizationStatus == firebase.AuthorizationStatus.notDetermined);
-    } else {
+    if (kIsWeb) {
       return false;
+    } else {
+      firebase.NotificationSettings settings = await firebase.FirebaseMessaging.instance.getNotificationSettings();
+      firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
+      // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+      if (Platform.isAndroid) {
+        return (authorizationStatus == firebase.AuthorizationStatus.denied);
+      } else if (Platform.isIOS) {
+        return (authorizationStatus == firebase.AuthorizationStatus.notDetermined);
+      } else {
+        return false;
+      }
     }
   }
 
@@ -123,6 +128,9 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
   }
 
 Future<bool> _requestAuthorization() async {
+    if (kIsWeb) {
+      return false;
+    }
     firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
     firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
     firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;

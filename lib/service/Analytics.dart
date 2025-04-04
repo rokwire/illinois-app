@@ -625,6 +625,10 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   }
 
   void _updateNotificationServices() {
+    if (kIsWeb) {
+      _notificationServices = "not_enabled";
+      return;
+    }
     firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
       firebase.AuthorizationStatus status = settings.authorizationStatus;
       _notificationServices = (status == firebase.AuthorizationStatus.authorized) ? 'enabled' : "not_enabled";

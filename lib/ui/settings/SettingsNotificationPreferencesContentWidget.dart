@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:app_settings/app_settings.dart';
@@ -67,6 +68,10 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   }
 
   void _checkNotificationsEnabled() {
+    if (kIsWeb) {
+      _notificationsAuthorized = false;
+      return;
+    }
     firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
       firebase.AuthorizationStatus status = settings.authorizationStatus;
       setState(() {
@@ -284,6 +289,9 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   }
 
   void _requestAuthorization(BuildContext context) async {
+    if (kIsWeb) {
+      return;
+    }
     firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
     firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
     firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;

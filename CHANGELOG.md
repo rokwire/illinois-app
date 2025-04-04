@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- WEB: Do not use Firebase messaging for web because it crashes [#4949](https://github.com/rokwire/illinois-app/issues/4949).
 
 ## [7.0.5] - 2025-03-31
 ### Changed
