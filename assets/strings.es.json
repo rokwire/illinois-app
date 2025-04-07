@@ -365,6 +365,7 @@
     "panel.assistant.content.conversation.all.label": "Usar todos los asistentes",
     "panel.assistant.content.missing.assistant.msg": "No hay ningún asistente disponible.",
     "panel.assistant.copy_to_clipboard.button": "Copiar al portapapeles",
+    "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.sources_links.label": "Fuentes y enlaces",
     "panel.assistant.related.label": "Relacionado:",
     "panel.assistant.label.welcome_message.title": "El Asistente de Illinois es una función de búsqueda que pone a su alcance recursos universitarios oficiales. Haga una pregunta a continuación para comenzar.",

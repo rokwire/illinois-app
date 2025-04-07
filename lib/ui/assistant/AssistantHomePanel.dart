@@ -22,6 +22,7 @@ import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
+import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -32,7 +33,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, openai_conversation, all_assistants }
+enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, openai_conversation, all_assistants, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -286,8 +287,12 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
           contentTypes.add(value);
         }
       }
-      if (contentTypes.length > 1) {
+      int contentTypesLength = contentTypes.length;
+      if ((contentTypesLength > 1) && FlexUI().isAllAssistantsAvailable) {
         contentTypes.add(AssistantContent.all_assistants);
+      }
+      if ((contentTypesLength > 0) && FlexUI().isAssistantFaqsAvailable) {
+        contentTypes.add(AssistantContent.faqs);
       }
     }
     return contentTypes;
@@ -332,6 +337,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.all_assistants:
         return AssistantProvidersConversationContentWidget();
+      case AssistantContent.faqs:
+        return AssistantFaqsContentWidget();
       default:
         return null;
     }
@@ -349,6 +356,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
       case AssistantContent.all_assistants:
         return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
+      case AssistantContent.faqs:
+        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
         return null;
     }
