@@ -365,6 +365,7 @@
 	"panel.assistant.content.conversation.all.label": "使用所有助手",
 	"panel.assistant.content.missing.assistant.msg": "沒有可用的助手。",
 	"panel.assistant.copy_to_clipboard.button": "複製到剪貼簿",
+	"panel.assistant.content.faqs.label": "伊利諾伊州助理常見問題解答",
 	"panel.assistant.sources_links.label": "來源和連結",
 	"panel.assistant.related.label": "有關的：",
 	"panel.assistant.label.welcome_message.title": "伊利諾伊州助手是一項搜尋功能，可讓您觸手可及的官方大學資源。請在下面提出問題以開始使用。",
