@@ -562,6 +562,20 @@ String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
   }
 }
 
+// Event2TypeGroup
+
+String? event2TypeGroupToDisplayString(Event2TypeGroup? value) {
+  switch (value) {
+    case Event2TypeGroup.cost: return Localization().getStringEx('model.event2.event_type_group.cost', 'Cost');
+    case Event2TypeGroup.format: return Localization().getStringEx('model.event2.event_type_group.format', 'Format');
+    case Event2TypeGroup.access: return Localization().getStringEx('model.event2.event_type_group.access', 'Access');
+    case Event2TypeGroup.other: return Localization().getStringEx('model.event2.event_type_group.other', 'Other');
+    default: return null;
+  }
+}
+
+Map<String, dynamic> get event2TypeGroupDisplayStrings => Map.fromEntries(Event2TypeGroup.values.map((group) => MapEntry(group.name, event2TypeGroupToDisplayString(group))));
+
 // Event2TimeFilter
 
 String? event2TimeFilterToDisplayString(Event2TimeFilter? value) {

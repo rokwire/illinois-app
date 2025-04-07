@@ -44,12 +44,12 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
 
   int get _requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
-  bool get _hasRequirements => widget.attribute.requirements?.hasFunctionalScope(_requirementsFunctionalScope) ?? false;
-  int get _minRequiredSelectedCount => widget.attribute.requirements?.minSelectedCount ?? 0;
-  bool get _canClearSelection => _hasRequirements ? (_minRequiredSelectedCount == 0) : true;
-
-  bool get _multipleSelection => widget.attribute.isMultipleSelection(_requirementsFunctionalScope);
-  bool get _multipleValueGroups => widget.attribute.hasMultipleValueGroups;
+  bool get _hasAnyRequirements => widget.attribute.hasAnyRequirements(_requirementsFunctionalScope);
+  bool get _canSelectMore => widget.attribute.canSelectMore(_requirementsFunctionalScope);
+  bool get _canClearSelection => widget.attribute.canClearSelection(_requirementsFunctionalScope);
+  bool get _isMultipleSelection => widget.attribute.isMultipleSelection(_requirementsFunctionalScope);
+  bool _isGroupMultipleSelection({String? group}) => widget.attribute.isGroupMultipleSelection(_requirementsFunctionalScope, group: group);
+  bool _canDeselect(dynamic attributeRawValue) => widget.attribute.canDeselect(_requirementsFunctionalScope, _selection, attributeRawValue);
 
   @override
   void initState() {
@@ -62,11 +62,15 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     if (widget.attributeValues != null) {
       LinkedHashMap<String, List<ContentAttributeValue>> contentMap = LinkedHashMap<String, List<ContentAttributeValue>>();
       for (ContentAttributeValue attributeValue in widget.attributeValues!) {
-        Map<String, dynamic>? attributeRequirements = attributeValue.requirements;
+
+        /* Map<String, dynamic>? attributeRequirements = attributeValue.requirements;
         String? requirementAttributeId = ((attributeRequirements != null) && attributeRequirements.isNotEmpty) ? attributeRequirements.keys.first : null;
         ContentAttribute? requirementAttribute = (requirementAttributeId != null) ? widget.contentAttributes?.findAttribute(id: requirementAttributeId) : null;
         dynamic requirementAttributeRawValue = ((attributeRequirements != null) && (requirementAttributeId != null)) ? attributeRequirements[requirementAttributeId] : null;
         String contentMapKey = requirementAttribute?.displaySelectLabel(requirementAttributeRawValue) ?? '';
+        (contentMap[contentMapKey] ??= <ContentAttributeValue>[]).add(attributeValue); */
+
+        String contentMapKey = widget.attribute.displayString(attributeValue.group) ?? attributeValue.group  ?? '';
         (contentMap[contentMapKey] ??= <ContentAttributeValue>[]).add(attributeValue);
       }
 
@@ -81,14 +85,12 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         _contentList.add(section); 
 
         // section entries
-        String? attributeGroup;
         int startCount = _contentList.length;
         for (ContentAttributeValue attributeValue in sectionAttributeValues) {
           if (startCount < _contentList.length) {
-            _contentList.add((attributeGroup != attributeValue.group) ? _ContentItem.groupSeparator : _ContentItem.separator);
+            _contentList.add(_ContentItem.separator);
           }
           _contentList.add(attributeValue);
-          attributeGroup = attributeValue.group;
         }
 
         // spacing
@@ -190,15 +192,16 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
       Styles().textStyles.getTextStyle("widget.label.regular.thin");
     
+    bool multipleSelection = _isGroupMultipleSelection(group: attributeValue.group);
     String? imageAsset = (attributeValue.value != null) ?
-      (_multipleSelection ?
+      (multipleSelection ?
         (isSelected ? "check-box-filled" : "box-outline-gray") :
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
 
     String? semanticsValue = isSelected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
 
-    return Semantics(button: true, inMutuallyExclusiveGroup: !_multipleSelection, value: semanticsValue,  child:
+    return Semantics(button: true, inMutuallyExclusiveGroup: !multipleSelection, value: semanticsValue,  child:
         InkWell(onTap: (){
             _onTapAttributeValue(attributeValue);
             AppSemantics.announceCheckBoxStateChange(context, !isSelected, title);
@@ -249,16 +252,11 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     dynamic attributeRawValue = attributeValue.value;
     if (attributeRawValue != null) {
       if (_selection.contains(attributeRawValue)) {
-        if (_hasRequirements) {
-          if (_minRequiredSelectedCount < _selection.length) {
-            _selection.remove(attributeRawValue);
-          }
-          else if (!forceProcessing) {
-            return;
-          }
-        }
-        else {
+        if (_canDeselect(attributeRawValue)) {
           _selection.remove(attributeRawValue);
+        }
+        else if (!forceProcessing) {
+          return;
         }
       }
       else {
@@ -269,11 +267,11 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (_hasRequirements) {
+    if (_hasAnyRequirements) {
       widget.attribute.validateAttributeValuesSelection(_selection);
     }
 
-    if (_multipleSelection || _multipleValueGroups) {
+    if (_isMultipleSelection || _canSelectMore) {
       setStateIfMounted(() { });
     }
     else {

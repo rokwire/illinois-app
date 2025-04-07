@@ -263,13 +263,24 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
     for (Event2TypeFilter value in Event2TypeFilter.values) {
       if ((value != Event2TypeFilter.nearby) || locationAvailable) {
+        Event2TypeGroup? group = eventTypeFilterGroups[value];
         values.add(ContentAttributeValue(
           label: event2TypeFilterToDisplayString(value),
           value: value,
-          group: eventTypeFilterGroups[value],
+          group: group?.name,
         ));
       } 
     }
+
+    Locale? locale = Localization().currentLocale ?? Localization().defaultLocale;
+    Map<String, dynamic>? translations = (locale != null) ? <String, dynamic>{
+      locale.languageCode : event2TypeGroupDisplayStrings,
+    } : null;
+
+    Map<String, ContentAttributeRequirements> groupRequirements = <String, ContentAttributeRequirements>{
+      ContentAttribute.anyGroupRequirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
+      Event2TypeGroup.other.name: ContentAttributeRequirements(functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
+    };
 
     return ContentAttribute(
       id: eventTypeContentAttributeId,
@@ -278,8 +289,9 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ Events2.contentAttributesScope },
-      requirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
-      values: values
+      groupsRequirements: groupRequirements,
+      values: values,
+      translations: translations,
     );
   }
 

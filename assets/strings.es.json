@@ -4244,6 +4244,11 @@
     "model.event2.event_type.admin": "Administrador",
     "model.event2.event_type.favorite": "Protagonizado",
 
+    "model.event2.event_type_group.cost": "Cost",
+    "model.event2.event_type_group.format": "Format",
+    "model.event2.event_type_group.access": "Access",
+    "model.event2.event_type_group.other": "Other",
+
     "model.event2.event_time.past": "Pasado",
     "model.event2.event_time.upcoming": "Próximos",
     "model.event2.event_time.today": "Hoy",
