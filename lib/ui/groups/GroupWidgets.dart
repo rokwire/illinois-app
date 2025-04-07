@@ -3215,7 +3215,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
-                              EnabledToggleButton(
+                              //Since the setting "view email address" does work, we do not need the option to view a member's NetID.
+                              /* EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
@@ -3225,7 +3226,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
