@@ -6,32 +6,53 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
+/// //Approach with SemanticsPagesController
+/// semanticsController: SemanticsPagesController(pageKeys: _groupCardKeys.values.toList()),
+/// //Approach with custom association key [Group.id]
+/// semanticsController: SemanticsController(keys: _groupCardKeys),
+/// pageIdentifier: (index) => visibleGroups?[index].id,
+/// pageSemanticsLabel: (index) => ((CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) ? visibleGroups![index].title : null) ?? "",
+/// //Approach with custom LongPress which basically do what the default lonPress is (when SemanticsController is passed)
+/// onSemanticsLongPress: (index) {
+///   if (CollectionUtils.isNotEmpty(visibleGroups) && index < visibleCount) {
+///     GlobalKey? groupCardKey = _groupCardKeys[visibleGroups![index].id];
+///     if (groupCardKey != null) {
+///       AppSemantics.triggerAccessibilityFocus(groupCardKey);
+///       AppSemantics.triggerAccessibilityTap(groupCardKey);
+///     }
+///   }
+/// }
+///
+/// //Approach with reworking the card and use static method that simulate the tap. //If we want to directly open the Card Details instead of just focusing the card
+///   onSemanticsLongPress: (index) {
+///     GroupCard.handleTapGroup(context, group: _getGroupAt(index), displayType: GroupCardDisplayType.homeGroups) ,
+///    }
+
 class AccessibleViewPagerNavigationButtons extends StatefulWidget{
   final PageController? controller;
   final int? initialPage;
   final int Function()? pagesCount; //This must be a function in order to receive updates if the count changes
-  final String Function(int index)? pageSemanticsLabel;
-  final void Function(int index)? onSemanticsLongPress;
-  final GlobalKey<State<StatefulWidget>>? Function(dynamic index)? pageKey;//Used if we want to use the default long press -> focus page
+  final void Function(int index)? onSemanticsLongPress; //If want to override default ficus page behaviour
+  final String Function(int index)? semanticsPageLabel;//If want to override default ficus page behaviour
+  final SemanticsController? semanticsController;//Used if we want to use the default long press -> focus page
   final Widget? centerWidget;
 
-  const AccessibleViewPagerNavigationButtons({Key? key, this.controller, this.initialPage, this.pagesCount, this.centerWidget, this.pageSemanticsLabel, this.onSemanticsLongPress, this.pageKey}) : super(key: key);
+  const AccessibleViewPagerNavigationButtons({Key? key, this.controller, this.initialPage, this.pagesCount, this.centerWidget, this.semanticsPageLabel, this.onSemanticsLongPress, this.semanticsController}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AccessibleViewPagerNavigationButtonsState();
-
 }
 
 class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPagerNavigationButtons>{
-  int _currentPage = 0;
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
-    _currentPage = widget.initialPage ?? _currentPage;
+    _currentPageIndex = widget.initialPage ?? _currentPageIndex;
     widget.controller?.addListener(() {
       if (mounted) {
         setState(() {
-          _currentPage = widget.controller?.page?.round() ?? _currentPage;
+          _currentPageIndex = widget.controller?.page?.round() ?? _currentPageIndex;
         });
       }
     });
@@ -86,51 +107,110 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
   void _onLongPress(){
     if(_hasLongPress){
         if(widget.onSemanticsLongPress != null) {
-          widget.onSemanticsLongPress?.call(_currentPage);
-        } else if(widget.pageKey != null){
-          GlobalKey? pageKey = widget.pageKey!(_currentPage);
-          if(pageKey != null) {
-            AppSemantics.triggerAccessibilityFocus(pageKey);
-            AppSemantics.triggerAccessibilityTap(pageKey);
-          }
+          widget.onSemanticsLongPress?.call(_currentPageIndex);
+        } else if(widget.semanticsController != null){
+          widget.semanticsController?.focusPage(_currentPageIdentifier);
+          widget.semanticsController?.tapPage(_currentPageIdentifier);
         }
     }
   }
 
   void _onCurrentPageChanged(){
-    _pronouncePageAt(_currentPage);
+    _pronouncePageAt(_currentPageIndex);
   }
 
   bool get _nextButtonAvailable{
     int count = widget.pagesCount?.call() ?? 0;
-    return _currentPage < (count - 1);
+    return _currentPageIndex < (count - 1);
   }
 
   bool get _previousButtonAvailable{
-    return _currentPage > 0;
+    return _currentPageIndex > 0;
   }
 
   //Accessibility
   void _pronouncePageAt(int index) {
-    if (widget.pageKey != null)
+    if (widget.semanticsController != null)
       AppSemantics.announceMessage(context, "Double tap and hold to focus card");
-    Future.delayed(Duration(milliseconds: Platform.isIOS ? 3000 : 0), () {
-      if (widget.pageSemanticsLabel != null) {
-        AppSemantics.announceMessage(context,
-            "Showing: " + (widget.pageSemanticsLabel?.call(index) ?? ""));
-      } else if(widget.pageKey != null){
-        AppSemantics.announceMessage(context, "Showing: $_pageSemanticsLabel");
-      }
+    Future.delayed(Duration(
+      milliseconds: widget.semanticsController != null && Platform.isIOS ? 3000 : 0), () {
+        if (widget.semanticsPageLabel != null) {
+          AppSemantics.announceMessage(context,
+              "Showing: " + (widget.semanticsPageLabel?.call(index) ?? ""));
+        } else if(widget.semanticsController != null){
+          widget.semanticsController?.pronouncePage(_currentPageIdentifier, prefix: "Showing: ");
+        }
     });
   }
+
+  dynamic get _currentPageIdentifier => _currentPageIndex;
 
   String? get _iosHint => Platform.isIOS  && _hasLongPress ? "Double tap and hold to  $_longPressHint" : "";
   String? get _longPressHint => _hasLongPress ? "focus card" : null;
 
   bool get _hasLongPress => AppSemantics.isAccessibilityEnabled(context) &&
-      (widget.onSemanticsLongPress != null || widget.pageKey !=null);
-
-  String? get _pageSemanticsLabel => _pageSemanticsNode?.label;
-
-  SemanticsNode? get _pageSemanticsNode => AppSemantics.extractSemanticsNote(widget.pageKey?.call(_currentPage));
+      (widget.onSemanticsLongPress != null || widget.semanticsController !=null);
 }
+
+class SemanticsController <T>{
+  final SemanticsPageAdapter<T>? adapter;
+
+  SemanticsController({required this.adapter});
+
+  GlobalKey? getPage(dynamic key) => adapter?.getPageFor(key);
+
+  SemanticsNode? getPageSemanticsNode(dynamic item)  => AppSemantics.extractSemanticsNote(getPage(item));
+
+  void focusPage(dynamic item) =>AppSemantics.triggerAccessibilityFocus(getPage(item));
+
+  void tapPage(dynamic item) => AppSemantics.triggerAccessibilityTap(getPage(item));
+
+  void pronouncePage(dynamic item, {String prefix="", String suffix=""}) => AppSemantics.announceMessage(getPage(item)?.currentContext,
+      "$prefix "+ (getPageSemanticsNode(item)?.label ?? "") + " $suffix");
+}
+
+class SemanticsPageMapAdapter<T> extends SemanticsPageAdapter<T> {
+  final Map<T, GlobalKey> keys;
+  SemanticsPageMapAdapter({required this.keys, super.mapper});
+
+  @override
+  GlobalKey? getPage(T key) => keys[key];
+}
+
+class SemanticsPageListAdapter extends SemanticsPageAdapter<int> { // Should be <int>, but it is not in order to support SemanticsPageAdapter.fromList
+  final List<GlobalKey> keys;
+  SemanticsPageListAdapter({required this.keys, super.mapper});
+
+  @override
+  GlobalKey<State<StatefulWidget>>? getPage(int index) =>
+      0 <= index && index < keys.length ? keys[index] : null;
+}
+
+typedef SemanticsPageMapper<T> = T? Function(dynamic mappedKey);
+
+abstract class SemanticsPageAdapter<T> {
+  final SemanticsPageMapper<T>? mapper;// Optional mapping function
+  SemanticsPageAdapter({this.mapper});
+
+  //Factory
+  static  SemanticsPageAdapter<int> fromList({required List<GlobalKey> keys, SemanticsPageMapper<int>? mapper}) =>
+      SemanticsPageListAdapter(keys: keys, mapper: mapper);
+
+  static  SemanticsPageAdapter<T> fromMap<T>({required Map<T, GlobalKey> keys, SemanticsPageMapper<T>? mapper}) =>
+      SemanticsPageMapAdapter(keys: keys, mapper: mapper);
+
+    GlobalKey? getPage(T key);
+
+    @protected
+    GlobalKey? getPageFor(dynamic key){
+      T? mappedKey = _mapper.call(key);
+      if(mappedKey != null)
+        return getPage(mappedKey);
+
+      return null;
+    }
+
+    SemanticsPageMapper<T> get _mapper => this.mapper ?? _defaultMapper;
+    SemanticsPageMapper<T>  get _defaultMapper => (key) => key is T  ? key : null;
+}
+

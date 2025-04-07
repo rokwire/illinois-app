@@ -213,6 +213,9 @@ class AppSemantics {
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
         groupKey?.currentContext?.findRenderObject()?.debugSemantics;
 
+    static String getIosHintLongPress(String? hint) => Platform.isIOS ? "Double tap and hold to  $hint" : "";
+
+    static String getIosHintDrag(String? hint) => Platform.isIOS ? "Double tap hold move to  $hint" : "";
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;
 // final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
 // Send a SemanticsActionEvent with the tap action
