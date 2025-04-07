@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Bring back Assistant FAQs and update their content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
 - Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Add Group post formatting options when editing a post [#4958](https://github.com/rokwire/illinois-app/issues/4958).
 ### Removed
 - Hide Perplexity and Use All Assistants [#4960](https://github.com/rokwire/illinois-app/issues/4960).
 - Hide group setting: view University ID (NetID) [#4917](https://github.com/rokwire/illinois-app/issues/4917).
