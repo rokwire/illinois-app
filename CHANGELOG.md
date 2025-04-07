@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
 ### Removed
 - Hide Perplexity and Use All Assistants [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+### Changed
+- Accessibility improvements for drag and drop [#1971](https://github.com/rokwire/illinois-app/issues/1971)
 
 ## [7.0.6] - 2025-04-03
 ### Changed
