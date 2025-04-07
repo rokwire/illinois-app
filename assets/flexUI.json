@@ -47,7 +47,7 @@
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant", "all_assistants"],
+			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant", "all_assistants", "assistant_faqs"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
