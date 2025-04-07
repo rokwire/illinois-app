@@ -288,10 +288,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         }
       }
       int contentTypesLength = contentTypes.length;
-      if (contentTypesLength > 1) {
+      if ((contentTypesLength > 1) && FlexUI().isAllAssistantsAvailable) {
         contentTypes.add(AssistantContent.all_assistants);
       }
-      if (contentTypesLength > 0) {
+      if ((contentTypesLength > 0) && FlexUI().isAssistantFaqsAvailable) {
         contentTypes.add(AssistantContent.faqs);
       }
     }

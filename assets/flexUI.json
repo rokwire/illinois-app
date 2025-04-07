@@ -47,7 +47,7 @@
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant", "all_assistants", "assistant_faqs"],
+			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
@@ -95,7 +95,7 @@
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "safewalk_request", "privacy"],
+				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "all_assistants", "assistant_faqs", "safewalk_request", "privacy"],
 
 			"attributes": ["groups", "events"],
 			"attributes.groups": ["rso"],
@@ -241,7 +241,13 @@
 				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
 				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
-				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}"
+				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}",
+				"google_assistant"                        : "${config.settings.assistant.enable.google}",
+				"grok_assistant"                          : "${config.settings.assistant.enable.grok}",
+				"openai_assistant"                        : "${config.settings.assistant.enable.openai}",
+				"perplexity_assistant"                    : "${config.settings.assistant.enable.perplexity}",
+				"all_assistants"                          : "${config.settings.assistant.enable.all}",
+				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}"
 			}
 		}
 	},
