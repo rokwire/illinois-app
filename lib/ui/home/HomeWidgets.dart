@@ -81,9 +81,10 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
         key: _contentKey,
         container: true,
         inMutuallyExclusiveGroup: true,
-        // increasedValue:  "${(widget.position ?? 0) + 1}",
-        // decreasedValue: widget.position! > 0 ? "${(widget.position??0 - 1)}" : 0.toString()  ,
-        // value:"${(widget.position??0)}"   ,
+        increasedValue:  "${(widget.position ?? 0) + 1}",
+        decreasedValue: widget.position! > 0 ? "${(widget.position??0) +1}" : 0.toString()  ,
+        value:"Position ${(widget.position??0) + 1}"   ,
+        hint: "Position",
         onIncrease: (){
           widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: 1);
           // AppSemantics.requestSemanticsUpdates(context);
@@ -118,7 +119,10 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
         child: widget.childBuilder?.call(context) ?? Container(color: Styles().colors.background, child:
           Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-            Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
+            Semantics(label: 'Drag Handle', button: true, /* TBD: Localization */
+              hint: AppSemantics.getIosHintLongPress("start drag"),
+              onLongPressHint: "start drag",
+              onLongPress: () => Future.delayed(Duration(seconds: 1), ()=>AppSemantics.announceMessage(context, "Started dragging")), child:
               Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
                 Styles().images.getImage('drag-white', excludeFromSemantics: true),
               ),

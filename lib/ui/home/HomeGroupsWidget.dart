@@ -219,9 +219,9 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           onTap: _onSeeAll,
         ),
         semanticsController: SemanticsController(
-            // adapter: SemanticsPageAdapter.fromList(keys: _groupCardKeys.values.toList())),
-            adapter: SemanticsPageAdapter.fromMap(keys: _groupCardKeys,
-                mapper: (dynamic index) => index is int ? (visibleGroups?[index].id) : null))
+            adapter: SemanticsPageAdapter.fromList(keys: _groupCardKeys.values.toList())),
+            // adapter: SemanticsPageAdapter.fromMap(keys: _groupCardKeys,
+            //     mapper: (dynamic index) => index is int ? (visibleGroups?[index].id) : null))
       ),
     ],) : _buildEmpty();
 

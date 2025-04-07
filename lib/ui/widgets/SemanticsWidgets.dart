@@ -189,6 +189,8 @@ class SemanticsPageListAdapter extends SemanticsPageAdapter<int> { // Should be 
 typedef SemanticsPageMapper<T> = T? Function(dynamic mappedKey);
 
 abstract class SemanticsPageAdapter<T> {
+  final SemanticsPageMapper<T>? mapper;// Optional mapping function
+  SemanticsPageAdapter({this.mapper});
 
   //Factory
   static  SemanticsPageAdapter<int> fromList({required List<GlobalKey> keys, SemanticsPageMapper<int>? mapper}) =>
@@ -196,10 +198,6 @@ abstract class SemanticsPageAdapter<T> {
 
   static  SemanticsPageAdapter<T> fromMap<T>({required Map<T, GlobalKey> keys, SemanticsPageMapper<T>? mapper}) =>
       SemanticsPageMapAdapter(keys: keys, mapper: mapper);
-
-    final SemanticsPageMapper<T>? mapper;// Optional mapping function
-
-    SemanticsPageAdapter({this.mapper});
 
     GlobalKey? getPage(T key);
 
