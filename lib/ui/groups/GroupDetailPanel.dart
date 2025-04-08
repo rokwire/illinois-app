@@ -1080,7 +1080,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                         textAlign: TextAlign.left, style:  Styles().textStyles.getTextStyle('widget.dialog.message.medium'))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   Expanded(flex: leftAreaFlex, child: Container()),
-                  Expanded(flex: negativeButtonFlex, child: RoundedButton(
+                  Expanded(flex: negativeButtonFlex, child: PointerInterceptor(child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large"),
                       borderColor: Styles().colors.white,
@@ -1089,9 +1089,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
                         Navigator.pop(context);
-                      }),),
+                      })),),
                   Container(width: 16),
-                  Expanded(flex: positiveButtonFlex, child: RoundedButton(
+                  Expanded(flex: positiveButtonFlex, child: PointerInterceptor(child: RoundedButton(
                     label: positiveButtonLabel ?? '',
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                     borderColor: Styles().colors.white,
@@ -1102,7 +1102,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                       Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
                       onPositiveTap!();
                     },
-                  ),),
+                  )),),
                 ])
               ]));
         }));
@@ -1315,7 +1315,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       alignment: Alignment.center,
       //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       //infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
-      infoTextWidget: _policyInfoTextWidget,
+      infoTextWidget: PointerInterceptor(child: _policyInfoTextWidget),
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
       closeIconMargin: EdgeInsets.only(left: 24, right: 8, top: 8, bottom: 24),
     ),);

@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class InfoPopup extends StatelessWidget {
@@ -55,11 +56,12 @@ class InfoPopup extends StatelessWidget {
               Row(children: [
                 Expanded(child: Container()),
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
-                  InkWell(onTap : () => _onClose(context), child:
-                    Padding(padding:closeIconMargin, child: 
-                      closeIcon,
-                    ),
-                  ),
+                  PointerInterceptor(child:
+                    InkWell(onTap : () => _onClose(context), child:
+                      Padding(padding:closeIconMargin, child:
+                        closeIcon,
+                      ),
+                  )),
                 ),
               ]),
             ],)
