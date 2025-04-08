@@ -38,6 +38,7 @@ import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -1131,49 +1132,49 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 ),
                 Visibility(
                     visible: _canAboutSettings,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "info",
                         label: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
                         onTap: () {
                           Analytics().logSelect(target: "Group About", attributes: _group?.analyticsAttributes);
                           GroupAboutContentWidget.showPanel(context: context, group: _group, admins: _groupAdmins);
-                        })),
+                        }))),
                 Visibility(
                     visible: _canEditGroup,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "settings",
                         label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("_panel.group_detail.button.group.edit.title", "Group admin settings"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
                           _onTapSettings();
-                        })),
+                        }))),
                 Visibility(
                     visible: _canManageMembers,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "person-circle",
                         label: _isResearchProject ? 'Manage participants' : Localization().getStringEx("", "Manage members"),
-                        onTap: _onTapMembers)),
+                        onTap: _onTapMembers))),
                 Visibility(
                     visible: _canNotificationSettings,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "reminder",
                         label: Localization().getStringEx("panel.group_detail.button.group.notifications.title", "Notification Preferences"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
                           _onTapNotifications();
-                        })),
+                        }))),
                 Visibility(
                     visible: _canShareSettings, //TBD do we restrict sharing?
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "share-nodes",
                         label: Localization().getStringEx("panel.group_detail.button.group.share.title", "Share group"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
                           _onTapShare();
-                        })),
+                        }))),
                 Visibility(
                     visible: _canLeaveGroup,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "trash",
                         label: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
@@ -1186,10 +1187,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                                   Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
                                   positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
                                   onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
-                        })),
+                        }))),
                 Visibility(
                     visible: _canDeleteGroup,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "trash",
                         label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
@@ -1201,12 +1202,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                                   positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
                                   negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
                                   onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
-                        })),
-                Visibility(visible: _canReportAbuse, child: RibbonButton(
+                        }))),
+                Visibility(visible: _canReportAbuse, child: PointerInterceptor(child: RibbonButton(
                   leftIconKey: "report",
                   label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
-                )),
+                ))),
               ]));
         });
   }
@@ -1229,49 +1230,49 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 ),
                 Visibility(
                     visible: _canCreatePost,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
                         label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost();
-                        })),
+                        }))),
                 Visibility(
                     visible: _canCreateMessage,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
                         label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost(type: PostType.direct_message);
-                        })),
+                        }))),
                 Visibility(
                     visible: _canAddEvent,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
                         label: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
-                        })),
+                        }))),
                 Visibility(
                     visible: _canAddEvent,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
                         label: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
-                        })),
+                        }))),
                 Visibility(
                     visible: _canCreatePoll,
-                    child: RibbonButton(
+                    child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
                         label: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreatePoll();
-                        })),
+                        }))),
               ]));
         });
   }
