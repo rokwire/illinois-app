@@ -71,6 +71,8 @@ class _WebEmbedState extends State<WebEmbed> {
       }
       // Load the new URL into the existing controller
       _controller.loadRequest(Uri.parse(_embedUrl!));
+    } else {
+      _embedUrl = null;
     }
   }
 

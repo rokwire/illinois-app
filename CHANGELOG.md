@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- Web: Allow click over web views in GroupDetailPanel.
+- Web: Allow click over web views in GroupDetailPanel [#4952](https://github.com/rokwire/illinois-app/issues/4952).
+- Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
 
 ## [7.0.7] - 2025-04-07
 ### Added
@@ -99,7 +100,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
-## [6.1.X]
+## [6.1.70] - 2025-04-08
+### Fixed
+- Do not edit privacy of users that are not OIDC logged in [#4964](https://github.com/rokwire/illinois-app/issues/4964).
+- Do not show directory content to users that are not OIDC logged in [#4965](https://github.com/rokwire/illinois-app/issues/4965).
 
 ## [6.1.69] - 2025-03-12
 ### Fixed
