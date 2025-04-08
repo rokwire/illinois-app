@@ -1313,9 +1313,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (!(_group?.currentUserIsAdmin ?? false)) {
       return false;
     }
-    if (_isAuthManGroup) {
+    /*if (_isAuthManGroup) { // #4879 give group admins full group admin permission. BB disables only delete of authman group for not ManagedGroupAdmins user
       return _isUserManagedGroupAdmin;
-    } else {
+    } */else {
       return true;
     }
   }

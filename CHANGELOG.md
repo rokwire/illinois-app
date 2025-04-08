@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Web: Allow click over web views in GroupDetailPanel [#4952](https://github.com/rokwire/illinois-app/issues/4952).
 - Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
+- All group admins can update the group settings (including managed groups) [#4879](https://github.com/rokwire/illinois-app/issues/4879).
 
 ## [7.0.7] - 2025-04-07
 ### Added
