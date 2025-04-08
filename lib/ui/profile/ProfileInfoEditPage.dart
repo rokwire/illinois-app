@@ -123,13 +123,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _fieldFocusNodes[field] = FocusNode();
     }
 
-    _profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
+    _profileVisibility = _showPrivacyControls ? Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
       lastName: Auth2FieldVisibility.public,
-      email: (widget.authType?.loginType?.shouldHaveEmail == true) ? Auth2FieldVisibility.public : null,
-      phone: (widget.authType?.loginType?.shouldHavePhone == true) ? Auth2FieldVisibility.public : null,
-    );
+      email: ((widget.authType?.loginType?.canEditPrivacy == true) && (widget.authType?.loginType?.shouldHaveEmail == true)) ? Auth2FieldVisibility.public : null,
+      phone: ((widget.authType?.loginType?.canEditPrivacy == true) && (widget.authType?.loginType?.shouldHavePhone == true)) ? Auth2FieldVisibility.public : null,
+    ) : Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile);
 
     _fieldVisibilities.addAll(_profileVisibility.fieldsVisibility);
 
@@ -993,15 +993,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+      Auth2UserPrivacy? privacy = _showPrivacyControls ? Auth2UserPrivacy.fromOther(widget.privacy,
+        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        ) : null
-      );
+        )
+      ) : null;
 
       bool? shouldSave = await _shouldSaveModified(
         profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
-        privacyModified: (privacy != widget.privacy)
+        privacyModified: (privacy != null) && (privacy != widget.privacy)
       );
       if (shouldSave == true) {
         _ProfileSaveResult result = await _saveEdit(profile, privacy);
@@ -1078,12 +1078,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
+        ) : null
       );
 
-      _ProfileSaveResult result = await _saveEdit(profile, privacy);
+      _ProfileSaveResult result = await _saveEdit(profile, _showPrivacyControls ? privacy : null);
 
       if (result.succeeded) {
         widget.onFinishEdit?.call(
@@ -1097,16 +1097,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
   }
 
-  Future<_ProfileSaveResult> _saveEdit(Auth2UserProfile profile, Auth2UserPrivacy privacy) async {
+  Future<_ProfileSaveResult> _saveEdit(Auth2UserProfile? profile, Auth2UserPrivacy? privacy) async {
 
     List<Future> futures = [];
 
-    int? profileIndex = (widget.profile != profile) ? futures.length : null;
+    int? profileIndex = ((profile != null) && (profile != _Auth2UserProfileUtils.buildCopy(widget.profile))) ? futures.length : null;
     if (profileIndex != null) {
       futures.add(Auth2().saveUserProfile(profile));
     }
 
-    int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
+    int? privacyIndex = ((privacy != null) && (widget.privacy != privacy)) ? futures.length : null;
     if (privacyIndex != null) {
       futures.add(Auth2().saveUserPrivacy(privacy));
     }
@@ -1141,17 +1141,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     if (mounted && (_saving == false)) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
           profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
+        ) : null
       );
 
       bool? shouldSave = await _shouldSaveModified(
         profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
-        privacyModified: (privacy != widget.privacy)
+        privacyModified: _showPrivacyControls && (privacy != widget.privacy)
       );
       if (shouldSave == true) {
-        await _saveEdit(profile, privacy);
+        await _saveEdit(profile, _showPrivacyControls ? privacy : null);
       }
       return (shouldSave != null);
     }
@@ -1196,6 +1196,7 @@ extension _ProfileFieldExt on _ProfileField {
 // Auth2LoginTypeProfileUtils
 
 extension Auth2LoginTypeProfileUtils on Auth2LoginType {
+  bool get canEditPrivacy => (this == Auth2LoginType.oidcIllinois);
   bool get shouldHaveName => (this == Auth2LoginType.oidcIllinois);
   bool get shouldHaveEmail => (this == Auth2LoginType.oidcIllinois) || (this == Auth2LoginType.email);
   bool get shouldHavePhone => (this == Auth2LoginType.phone) || (this == Auth2LoginType.phoneTwilio);

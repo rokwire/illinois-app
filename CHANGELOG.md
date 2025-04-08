@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
+- All group admins can update the group settings (including managed groups) [#4879](https://github.com/rokwire/illinois-app/issues/4879).
+
 ## [7.0.7] - 2025-04-07
 ### Added
 - Bring back Assistant FAQs and update their content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
@@ -91,7 +95,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
-## [6.1.X]
+## [6.1.70] - 2025-04-08
+### Fixed
+- Do not edit privacy of users that are not OIDC logged in [#4964](https://github.com/rokwire/illinois-app/issues/4964).
+- Do not show directory content to users that are not OIDC logged in [#4965](https://github.com/rokwire/illinois-app/issues/4965).
 
 ## [6.1.69] - 2025-03-12
 ### Fixed
