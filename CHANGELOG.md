@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not edit privacy of users that are not OIDC logged in [#4964](https://github.com/rokwire/illinois-app/issues/4964).
+- Do not show directory content to users that are not OIDC logged in [#4965](https://github.com/rokwire/illinois-app/issues/4965).
 
 ## [6.1.69] - 2025-03-12
 ### Fixed
