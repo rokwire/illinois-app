@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.8] - 2025-04-08
 ### Fixed
 - Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
 - All group admins can update the group settings (including managed groups) [#4879](https://github.com/rokwire/illinois-app/issues/4879).
