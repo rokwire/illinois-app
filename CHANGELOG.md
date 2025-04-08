@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.8] - 2025-04-08
 ### Fixed
 - Web: Allow click over web views in GroupDetailPanel [#4952](https://github.com/rokwire/illinois-app/issues/4952).
 - Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
