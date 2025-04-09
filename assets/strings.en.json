@@ -1564,6 +1564,8 @@
     "panel.event2.detail.admin_settings.header.title": "Admin Settings",
     "panel.event2.detail.admin_settings.survey.missing.msg": "There is no survey for this event.",
     "panel.event2.detail.admin_settings.survey.responses.missing.msg": "There are no survey responses available.",
+    "panel.event2.detail.admin_settings.download.registrants.type.not.internal.msg": "This operation is available only for events with internal registration.",
+    "panel.event2.detail.admin_settings.download.registrants.persons.missing.msg": "There are no registrants for this event.",
 
     "panel.event2.detail.self_checkin.massage.succeeded.title": "Success",
     "panel.event2.detail.self_checkin.massage.succeeded.description": "You are checked in for this event.",

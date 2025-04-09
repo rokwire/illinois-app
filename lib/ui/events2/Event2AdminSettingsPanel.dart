@@ -115,7 +115,6 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     Navigator.push(context,  CupertinoPageRoute(builder: (context) => Event2SetupSuperEventPanel(event: _event, subEvents: subEvents)));
   }
 
-  //TBD: DD - localize
   void _onDownloadRegistrants() async {
     Analytics().logSelect(target: 'Download Registrants');
     if (_downloadingRegistrants) {
