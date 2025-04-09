@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.0.8] - 2025-04-08
+### Fixed
+- Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
+- All group admins can update the group settings (including managed groups) [#4879](https://github.com/rokwire/illinois-app/issues/4879).
+
+## [7.0.7] - 2025-04-07
+### Added
+- Bring back Assistant FAQs and update their content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
+- Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Add Group post formatting options when editing a post [#4958](https://github.com/rokwire/illinois-app/issues/4958).
+### Removed
+- Hide Perplexity and Use All Assistants [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Hide group setting: view University ID (NetID) [#4917](https://github.com/rokwire/illinois-app/issues/4917).
+### Changed
+- Accessibility improvements for drag and drop [#1971](https://github.com/rokwire/illinois-app/issues/1971)
+
+## [7.0.6] - 2025-04-03
+### Changed
+- Cleaned up Wallet panel ecosystem, created sample library card page in Wallet [#4916](https://github.com/rokwire/illinois-app/issues/4916).
+
 ## [7.0.5] - 2025-03-31
 ### Changed
 - Updated succeeded popup message text in Event Self Check-In [#4888](https://github.com/rokwire/illinois-app/issues/4888).
@@ -77,7 +97,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
 
-## [6.1.X]
+## [6.1.70] - 2025-04-08
+### Fixed
+- Do not edit privacy of users that are not OIDC logged in [#4964](https://github.com/rokwire/illinois-app/issues/4964).
+- Do not show directory content to users that are not OIDC logged in [#4965](https://github.com/rokwire/illinois-app/issues/4965).
 
 ## [6.1.69] - 2025-03-12
 ### Fixed

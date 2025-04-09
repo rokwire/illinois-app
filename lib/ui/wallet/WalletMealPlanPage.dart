@@ -14,84 +14,37 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
-import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-//////////////////////////
-// WalletMealPlanPanel
-
-class WalletMealPlanPanel extends StatelessWidget {
-
-  WalletMealPlanPanel({super.key});
-
-  static void present(BuildContext context) {
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.meal_plan', 'University Housing Meal Plan is not available while offline.'));
-    }
-    else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.meal_plan', 'University Housing Meal Plan'));
-    }
-    else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletMealPlanPanel()));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: _buildScaffoldBody(),
-    backgroundColor: Styles().colors.background,
-    bottomNavigationBar: uiuc.TabBar()
-  );
-
-  Widget _buildScaffoldBody() => CustomScrollView(
-    slivers: <Widget>[
-      SliverHeaderBar(
-        leadingIconKey: 'chevron-left-white',
-        title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
-        textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
-      ),
-      SliverList(
-        delegate: SliverChildListDelegate([
-          WalletMealPlanContentWidget(),
-        ]),
-      )
-    ],
-  );
-}
-
 /////////////////////////////////
-// WalletMealPlanContentWidget
+// WalletMealPlanWidget
 
-class WalletMealPlanContentWidget extends StatefulWidget with WalletHomeContentWidget {
+class WalletMealPlanPage extends StatefulWidget with WalletHomePage {
 
   final double headerHeight;
-  WalletMealPlanContentWidget({super.key, this.headerHeight = 0});
+  WalletMealPlanPage({super.key, this.headerHeight = 0});
 
   @override
-  _WalletMealPlanContentWidgetState createState() => _WalletMealPlanContentWidgetState();
+  _WalletMealPlanPageState createState() => _WalletMealPlanPageState();
 
   @override
   Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
-class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidget> with NotificationsListener {
+class _WalletMealPlanPageState extends State<WalletMealPlanPage> with NotificationsListener {
   bool _authLoading = false;
 
   bool _illiniCashLoading = false;
@@ -105,7 +58,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
 
   final int _historyNumberOfDays = 14;
 
-  _WalletMealPlanContentWidgetState();
+  _WalletMealPlanPageState();
 
   @override
   void initState() {

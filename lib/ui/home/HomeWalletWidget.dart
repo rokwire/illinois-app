@@ -6,7 +6,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -165,11 +164,9 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       Expanded(child:
                         contentWidget
                       ),
-                      Visibility(visible: WalletAddIlliniCashPanel.canPresent, child:
-                        Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
-                        ),
-                      )
+                      Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
+                        IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
+                      ),
                     ]),
                   ),
                 ),

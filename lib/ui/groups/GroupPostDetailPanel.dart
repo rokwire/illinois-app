@@ -268,19 +268,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                               children: [
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                                    child: TextField(
-                                        onChanged: (txt) => _mainPostUpdateData?.body = txt,
-                                        controller: bodyController,
-                                        maxLines: null,
-                                        autofocus: true,
-                                        decoration: InputDecoration(
-                                            hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
-                                                    width: 0.0))),
-                                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                                       )),
+                                    child: PostInputField(
+                                      onBodyChanged: (txt) => _mainPostUpdateData?.body = txt,
+                                      text:  _mainPostUpdateData?.body ?? '',
+                                      minLines: 1,
+                                      maxLines: null,
+                                      autofocus: true,
+                                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
+                                      boxDecoration: BoxDecoration(color: Styles().colors.background),
+                                      inputDecoration: InputDecoration(
+                                          hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Styles().colors.mediumGray,
+                                                  width: 0.0))),
+                                    )
+                                ),
                                 Visibility(visible: _isPost && _canPinPost,
                                     child: Container(
                                       padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
