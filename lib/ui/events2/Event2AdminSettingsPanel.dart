@@ -31,6 +31,8 @@ class Event2AdminSettingsPanel extends StatefulWidget{
 }
 
 class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
+  static final _csvFileDateFormat = 'yyyy-MM-dd-HH-mm';
+
   bool _duplicating = false;
   //TBD: DD - change member name and check when it's true
   bool _loadingSurveyResponses = false;
@@ -242,14 +244,14 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
           ]);
         }
       }
-      String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: 'yyyy-MM-dd-HH-mm');
-      String fileName = 'event_survey_results_$dateExported.csv';
-      AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
-        setStateIfMounted(() {
-          _loadingSurveyResponses = false;
-        });
-      });
     }
+    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
+    String fileName = 'event_survey_results_$dateExported.csv';
+    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+      setStateIfMounted(() {
+        _loadingSurveyResponses = false;
+      });
+    });
   }
 
   void _onSettingDuplicateEvent() {
