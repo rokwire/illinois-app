@@ -160,7 +160,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       rows.add([eventName, eventStartDate, eventStartTime, StringUtils.ensureNotEmpty(account?.uin, defaultValue: defaultEmptyValue), netId, StringUtils.ensureNotEmpty(account?.firstName, defaultValue: defaultEmptyValue), StringUtils.ensureNotEmpty(account?.lastName, defaultValue: defaultEmptyValue)]);
     }
 
-    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: 'yyyy-MM-dd-HH-mm');
+    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
     String fileName = 'event_registrants_$dateExported.csv';
     AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
