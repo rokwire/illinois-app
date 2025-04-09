@@ -182,6 +182,8 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
             eventName,
             eventStartDate,
             eventStartTime,
+            StringUtils.ensureNotEmpty(account?.uin, defaultValue: defaultEmptyValue),
+            StringUtils.ensureNotEmpty(account?.netId, defaultValue: defaultEmptyValue),
             StringUtils.ensureNotEmpty(account?.firstName, defaultValue: defaultEmptyValue),
             StringUtils.ensureNotEmpty(account?.lastName, defaultValue: defaultEmptyValue),
             question,
