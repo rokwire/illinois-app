@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Event filters cleaned up and restructured [#4904](https://github.com/rokwire/illinois-app/issues/4904).
 
 ## [7.0.8] - 2025-04-08
 ### Fixed
@@ -20,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hide Perplexity and Use All Assistants [#4960](https://github.com/rokwire/illinois-app/issues/4960).
 - Hide group setting: view University ID (NetID) [#4917](https://github.com/rokwire/illinois-app/issues/4917).
 ### Changed
-- Accessibility improvements for drag and drop [#1971](https://github.com/rokwire/illinois-app/issues/1971)
+- Accessibility improvements for drag and drop [#1971](https://github.com/rokwire/illinois-app/issues/1971).
 
 ## [7.0.6] - 2025-04-03
 ### Changed
