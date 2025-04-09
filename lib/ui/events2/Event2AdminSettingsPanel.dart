@@ -32,7 +32,9 @@ class Event2AdminSettingsPanel extends StatefulWidget{
 
 class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   bool _duplicating = false;
+  //TBD: DD - change member name and check when it's true
   bool _loadingSurveyResponses = false;
+  bool _downloadingRegistrants = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +113,58 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     Navigator.push(context,  CupertinoPageRoute(builder: (context) => Event2SetupSuperEventPanel(event: _event, subEvents: subEvents)));
   }
 
-  void _onDownloadRegistrants() {
-    Analytics().logSelect(target: "Download Registrants");
-   AppToast.showMessage("TBD");
+  //TBD: DD - localize
+  void _onDownloadRegistrants() async {
+    Analytics().logSelect(target: 'Download Registrants');
+    if (_downloadingRegistrants) {
+      return;
+    }
+    if (_event?.registrationDetails?.type != Event2RegistrationType.internal) {
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.event2.detail.admin_settings.download.registrants.type.not.internal.msg', 'This operation is available only for events with internal registration.'));
+      return;
+    }
+    setStateIfMounted(() {
+      _downloadingRegistrants = true;
+    });
+    Event2PersonsResult? personsResult = await Events2().loadEventPeople(_event!.id!);
+    List<Event2Person>? registrants = personsResult?.registrants;
+    Set<String>? eventRegistrantNetIds = Event2Person.netIdsInList(registrants, role: Event2UserRole.participant);
+    if (CollectionUtils.isEmpty(eventRegistrantNetIds)) {
+      setStateIfMounted((){
+        _downloadingRegistrants = true;
+      });
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.event2.detail.admin_settings.download.registrants.persons.missing.msg', 'There are no registrants for this event.'));
+      return;
+    }
+    List<Event2Account>? accounts = await Events2().loadEventAccounts(eventId: _event!.id!, netIds: eventRegistrantNetIds!.toList());
+    bool hasAccounts = CollectionUtils.isNotEmpty(accounts);
+    if (hasAccounts) {
+      debugPrint('Download registrants - failed to load event accounts.');
+    }
+    final String defaultEmptyValue = '---';
+    String eventName = StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: defaultEmptyValue);
+    String eventStartDate = StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'yyyy-MM-dd'), defaultValue: defaultEmptyValue);
+    String eventStartTime = StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'HH:mm'), defaultValue: defaultEmptyValue);
+    List<List<dynamic>> rows = <List<dynamic>>[];
+
+    for (String netId in eventRegistrantNetIds) {
+      Event2Account? account = hasAccounts ? accounts!.firstWhereOrNull((account) => (account.netId == netId)) : null;
+      rows.add([eventName, eventStartDate, eventStartTime, StringUtils.ensureNotEmpty(account?.uin, defaultValue: defaultEmptyValue), netId, StringUtils.ensureNotEmpty(account?.firstName, defaultValue: defaultEmptyValue), StringUtils.ensureNotEmpty(account?.lastName, defaultValue: defaultEmptyValue)]);
+    }
+
+    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: 'yyyy-MM-dd-HH-mm');
+    String fileName = 'event_registrants_$dateExported.csv';
+    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+      setStateIfMounted(() {
+        _downloadingRegistrants = false;
+      });
+    });
   }
 
   void _onUploadRegistrants() {
