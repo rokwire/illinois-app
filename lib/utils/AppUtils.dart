@@ -17,6 +17,7 @@
 import 'dart:convert';
 
 import 'package:csv/csv.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -68,7 +69,7 @@ class AppAlert {
     bool? alertDismissed = await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(content: contentWidget, actions: actions, contentPadding: contentPadding,);
+        return AlertDialog(content: (contentWidget != null ? PointerInterceptor(child: contentWidget) : contentWidget), actions: actions, contentPadding: contentPadding,);
       },
     );
     return alertDismissed;
