@@ -103,12 +103,16 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
         ))).then((result) {
           Map<String, dynamic>? selection = JsonUtils.mapValue(result);
           if (selection != null) {
-            
-            List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+
+            List<Event2TypeFilter>? typesList = ListUtils.combine([
+              event2TypeFilterListFromSelection(selection[eventDetailsContentAttributeId]),
+              event2TypeFilterListFromSelection(selection[eventLimitsContentAttributeId]),
+            ]);
             Storage().events2Types = event2TypeFilterListToStringList(typesList) ;
 
             Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
-            attributes.remove(eventTypeContentAttributeId);
+            attributes.remove(eventDetailsContentAttributeId);
+            attributes.remove(eventLimitsContentAttributeId);
             Storage().events2Attributes = attributes;
 
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
@@ -251,35 +255,71 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   static ContentAttributes? buildContentAttributesV1({LocationServicesStatus? status}) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
-    contentAttributes?.attributes?.insert(0, buildEventTypeContentAttribute(status: status));
+    contentAttributes?.attributes?.insert(0, buildEventDetailsContentAttribute());
+    contentAttributes?.attributes?.add(buildEventLimitsContentAttribute(status: status));
     return contentAttributes;
   }
 
-  static const String eventTypeContentAttributeId = 'event-type';
+  static const String eventDetailsContentAttributeId = 'event-details';
+  static const String eventLimitsContentAttributeId = 'event-limits';
   static const String eventTimeContentAttributeId = 'event-time';
 
-  static ContentAttribute buildEventTypeContentAttribute({ LocationServicesStatus? status }) {
+  static ContentAttribute buildEventDetailsContentAttribute() {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
-    bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
     for (Event2TypeFilter value in Event2TypeFilter.values) {
-      if ((value != Event2TypeFilter.nearby) || locationAvailable) {
+      Event2TypeGroup? group = eventTypeFilterGroups[value];
+      if (group != Event2TypeGroup.limits) {
         values.add(ContentAttributeValue(
           label: event2TypeFilterToDisplayString(value),
           value: value,
-          group: eventTypeFilterGroups[value],
+          group: group?.name,
         ));
       } 
     }
 
     return ContentAttribute(
-      id: eventTypeContentAttributeId,
-      title: Localization().getStringEx('panel.events2.home.attributes.event_type.title', 'Event Type'),
-      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type'),
-      semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
+      id: eventDetailsContentAttributeId,
+      title: Localization().getStringEx('panel.events2.home.attributes.event_details.title', 'Event Details'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_details.hint.empty', 'Select event details'),
+      semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_details.hint.semantics', 'Double type to show event details.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ Events2.contentAttributesScope },
-      requirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
-      values: values
+      groupsRequirements: <String, ContentAttributeRequirements>{
+        ContentAttribute.anyGroupRequirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
+      },
+      values: values,
+      translations: event2TypeGroupToTranslationsMap(),
+    );
+  }
+
+  static ContentAttribute buildEventLimitsContentAttribute({ LocationServicesStatus? status }) {
+    List<ContentAttributeValue> values = <ContentAttributeValue>[];
+    bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
+    for (Event2TypeFilter value in Event2TypeFilter.values) {
+      Event2TypeGroup? group = eventTypeFilterGroups[value];
+      if ((group == Event2TypeGroup.limits) && ((value != Event2TypeFilter.nearby) || locationAvailable)) {
+        values.add(ContentAttributeValue(
+          label: event2TypeFilterToDisplayString(value),
+          selectLabel: event2TypeFilterToSelectDisplayString(value),
+          value: value,
+          group: group?.name,
+        ));
+      }
+    }
+
+    return ContentAttribute(
+      id: eventLimitsContentAttributeId,
+      title: Localization().getStringEx('panel.events2.home.attributes.event_limits.title', 'Event Limits'),
+      longTitle: Localization().getStringEx('panel.events2.home.attributes.event_limits.long_title', 'Limit Results To'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_limits.hint.empty', 'Choose limits'),
+      semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_limits.hint.semantics', 'Double type to show event limits.'),
+      widget: ContentAttributeWidget.dropdown,
+      scope: <String>{ Events2.contentAttributesScope },
+      groupsRequirements: <String, ContentAttributeRequirements>{
+        Event2TypeGroup.limits.name: ContentAttributeRequirements(functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
+      },
+      values: values,
+      translations: event2TypeGroupToTranslationsMap(),
     );
   }
 
@@ -331,7 +371,8 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     if (contentAttributes != null) {
       Map<String, dynamic>? selection = (filterParam.attributes != null) ? Map<String, dynamic>.from(filterParam.attributes!) : <String, dynamic> {};
       selection[eventTimeContentAttributeId] = (filterParam.timeFilter != null) ? <Event2TimeFilter>[filterParam.timeFilter!] : <Event2TimeFilter>[];
-      selection[eventTypeContentAttributeId] = (filterParam.types != null) ? filterParam.types!.toList() : <Event2TypeFilter>[];
+      selection[eventDetailsContentAttributeId] = (filterParam.types != null) ? List<Event2TypeFilter>.from(filterParam.types?.where((type) => eventTypeFilterGroups[type] != Event2TypeGroup.limits) ?? <Event2TypeFilter>[]) : <Event2TypeFilter>[];
+      selection[eventLimitsContentAttributeId] = (filterParam.types != null) ? List<Event2TypeFilter>.from(filterParam.types?.where((type) => eventTypeFilterGroups[type] == Event2TypeGroup.limits) ?? <Event2TypeFilter>[]) : <Event2TypeFilter>[];
 
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
@@ -356,11 +397,15 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
           customEndTime = Event2TimeRangePanel.getEndTime(customData);
         }
 
-        List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+        List<Event2TypeFilter>? typesList = ListUtils.combine([
+          event2TypeFilterListFromSelection(selection[eventDetailsContentAttributeId]),
+          event2TypeFilterListFromSelection(selection[eventLimitsContentAttributeId]),
+        ]);
 
         Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
         attributes.remove(Event2HomePanel.eventTimeContentAttributeId);
-        attributes.remove(Event2HomePanel.eventTypeContentAttributeId);
+        attributes.remove(Event2HomePanel.eventDetailsContentAttributeId);
+        attributes.remove(Event2HomePanel.eventLimitsContentAttributeId);
 
         return Event2FilterParam(
           timeFilter: timeFilter,
