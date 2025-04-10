@@ -12,7 +12,7 @@ PODS:
     - FlutterMacOS
   - device_calendar (0.0.1):
     - Flutter
-  - device_info (0.0.1):
+  - device_info_plus (0.0.1):
     - Flutter
   - emoji_picker_flutter (0.0.1):
     - Flutter
@@ -89,7 +89,11 @@ PODS:
     - Flutter
   - flutter_pdfview (1.0.2):
     - Flutter
+  - flutter_secure_storage (6.0.0):
+    - Flutter
   - flutter_timezone (0.0.1):
+    - Flutter
+  - flutter_web_auth_2 (3.0.0):
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
@@ -137,6 +141,9 @@ PODS:
   - GoogleUtilities/UserDefaults (8.0.2):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
+  - image_cropper (0.0.4):
+    - Flutter
+    - TOCropViewController (~> 2.7.4)
   - image_picker_ios (0.0.1):
     - Flutter
   - in_app_review (0.2.0):
@@ -160,13 +167,13 @@ PODS:
     - CocoaLumberjack
     - JSONModel
     - Mixpanel (~> 5.0.2)
-  - package_info (0.0.1):
-    - Flutter
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - permission_handler_apple (9.3.0):
+    - Flutter
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -189,6 +196,8 @@ PODS:
     - Mixpanel
   - share (0.0.1):
     - Flutter
+  - share_plus (0.0.1):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -201,6 +210,7 @@ PODS:
     - Flutter
     - FlutterMacOS
   - Toast (4.1.1)
+  - TOCropViewController (2.7.4)
   - Try (2.1.1)
   - uni_links (0.0.1):
     - Flutter
@@ -222,7 +232,7 @@ DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
   - device_calendar (from `.symlinks/plugins/device_calendar/ios`)
-  - device_info (from `.symlinks/plugins/device_info/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
@@ -234,25 +244,29 @@ DEPENDENCIES:
   - flutter_exif_rotation (from `.symlinks/plugins/flutter_exif_rotation/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_pdfview (from `.symlinks/plugins/flutter_pdfview/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_timezone (from `.symlinks/plugins/flutter_timezone/ios`)
+  - flutter_web_auth_2 (from `.symlinks/plugins/flutter_web_auth_2/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - gal (from `.symlinks/plugins/gal/darwin`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - OrigoSDK-Debug (from `../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec`)
   - OrigoSDK-Release (from `../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec`)
-  - package_info (from `.symlinks/plugins/package_info/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - quick_actions_ios (from `.symlinks/plugins/quick_actions_ios/ios`)
   - record_darwin (from `.symlinks/plugins/record_darwin/ios`)
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
   - SeosMobileKeysSDK-Debug (from `../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec`)
   - SeosMobileKeysSDK-Release (from `../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec`)
   - share (from `.symlinks/plugins/share/ios`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sms_mms (from `.symlinks/plugins/sms_mms/ios`)
   - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
@@ -287,6 +301,7 @@ SPEC REPOS:
     - PromisesObjC
     - PromisesSwift
     - Toast
+    - TOCropViewController
     - Try
     - ZXingObjC
 
@@ -299,8 +314,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/connectivity_plus/darwin"
   device_calendar:
     :path: ".symlinks/plugins/device_calendar/ios"
-  device_info:
-    :path: ".symlinks/plugins/device_info/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   emoji_picker_flutter:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   firebase_core:
@@ -323,8 +338,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_pdfview:
     :path: ".symlinks/plugins/flutter_pdfview/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   flutter_timezone:
     :path: ".symlinks/plugins/flutter_timezone/ios"
+  flutter_web_auth_2:
+    :path: ".symlinks/plugins/flutter_web_auth_2/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   gal:
@@ -333,6 +352,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   in_app_review:
@@ -343,12 +364,12 @@ EXTERNAL SOURCES:
     :path: "../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec"
   OrigoSDK-Release:
     :path: "../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec"
-  package_info:
-    :path: ".symlinks/plugins/package_info/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   quick_actions_ios:
     :path: ".symlinks/plugins/quick_actions_ios/ios"
   record_darwin:
@@ -361,6 +382,8 @@ EXTERNAL SOURCES:
     :path: "../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec"
   share:
     :path: ".symlinks/plugins/share/ios"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sms_mms:
@@ -385,9 +408,9 @@ SPEC CHECKSUMS:
   audio_session: f08db0697111ac84ba46191b55488c0563bb29c6
   BerTlv: c94b89a7b93bf8c1881691a8d105ec87a4a10759
   CocoaLumberjack: 6a459bc897d6d80bd1b8c78482ec7ad05dffc3f0
-  connectivity_plus: 3f6c9057f4cd64198dc826edfb0542892f825343
+  connectivity_plus: b21496ab28d1324eb59885d888a4d83b98531f01
   device_calendar: b55b2c5406cfba45c95a59f9059156daee1f74ed
-  device_info: 52e8c0c9c61def8d0a92bf175f5f500abbea04bc
+  device_info_plus: 71ffc6ab7634ade6267c7a93088ed7e4f74e5896
   emoji_picker_flutter: ece213fc274bdddefb77d502d33080dc54e616cc
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
   firebase_core: 2337982fb78ee4d8d91e608b0a3d4f44346a93c8
@@ -408,7 +431,9 @@ SPEC CHECKSUMS:
   flutter_exif_rotation: 5406455759acacf1f7b1b83e85dbb545340d6e9c
   flutter_local_notifications: ad39620c743ea4c15127860f4b5641649a988100
   flutter_pdfview: 54e283d5851b0b247b3cc57877d35f1a05a204de
+  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
   flutter_timezone: ee50ce7786b5fde27e2fe5375bbc8c9661ffc13f
+  flutter_web_auth_2: 3464a7c16dc6480b6194fc89913bae6e82f28405
   fluttertoast: 76fea30fcf04176325f6864c87306927bd7d2038
   gal: 44e5b10dbd347c8247a2851acee6c1fbe282c1d3
   geolocator_apple: d981750b9f47dbdb02427e1476d9a04397beb8d9
@@ -417,6 +442,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
+  image_cropper: 5f162dcf988100dc1513f9c6b7eb42cd6fbf9156
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   in_app_review: 8efcf4a4d3ba72d5d776d29e5a268f1abf64d184
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
@@ -425,9 +451,9 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OrigoSDK-Debug: ddce2aa647451fd65e8941a884d12d41e523b4b7
   OrigoSDK-Release: b9a38aa4675d68f45a62e2b595929bf93ffbab30
-  package_info: cce50adca9873c79f931618469d2114b91d71189
   package_info_plus: 580e9a5f1b6ca5594e7c9ed5f92d1dfb2a66b5e1
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   quick_actions_ios: 4b07fb49d8d8f3518d7565fbb7a91014067a7d82
@@ -436,11 +462,13 @@ SPEC CHECKSUMS:
   SeosMobileKeysSDK-Debug: 904c47d1a191addfa7ad5af4f41d1253ab7a73d4
   SeosMobileKeysSDK-Release: daed718b42c97f3d5337de9f081881077d9815f0
   share: a34936589f3090d59481bcdc5c30cc9dd47c75f6
+  share_plus: 011d6fb4f9d2576b83179a3a5c5e323202cdabcf
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   sms_mms: b4f3aca9cc8105b1c5ad66afc982df8625223294
   speech_to_text: ae2abc312e619ff1c53e675a9fc4d785a15c03bb
   sqflite: c35dad70033b8862124f8337cc994a809fcd9fa3
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   uni_links: ed8c961e47ed9ce42b6d91e1de8049e38a4b3152
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
