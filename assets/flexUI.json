@@ -55,7 +55,7 @@
 
 			"wallet": ["illini_id", "illini_id_faq", "bus_pass", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
@@ -103,7 +103,7 @@
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "safewalk_request", "privacy"],
+				"gies", "new_student", "canvas", "safer", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "all_assistants", "assistant_faqs", "safewalk_request", "privacy"],
 
 			"attributes": ["groups", "events"],
 			"attributes.groups": ["rso"],
@@ -133,6 +133,9 @@
 				"medicine_courses"                        : ["${config.settings.groups.canvas}"],
 				"mtd_bus_pass"                            : ["${config.settings.groups.mtd_bus_pass}"],
 				"assistant"                               : ["${config.settings.groups.assistant}", "OR", "${config.settings.groups.assistant_managed}"],
+				"assistant.grok_assistant"                : ["${config.settings.groups.grok_assistant}"],
+				"assistant.perplexity_assistant"          : ["${config.settings.groups.perplexity_assistant}"],
+				"assistant.openai_assistant"              : ["${config.settings.groups.openai_assistant}"],
 				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"]
 			},
 			"locations": {
@@ -213,9 +216,6 @@
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
-				"assistant.google_assistant"              : { "environment":  "dev"},
-				"assistant.grok_assistant"                : { "environment":  "dev"},
-				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
@@ -255,7 +255,13 @@
 				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
 				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
-				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}"
+				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}",
+				"google_assistant"                        : "${config.settings.assistant.enable.google}",
+				"grok_assistant"                          : "${config.settings.assistant.enable.grok}",
+				"openai_assistant"                        : "${config.settings.assistant.enable.openai}",
+				"perplexity_assistant"                    : "${config.settings.assistant.enable.perplexity}",
+				"all_assistants"                          : "${config.settings.assistant.enable.all}",
+				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}"
 			}
 		}
 	},
