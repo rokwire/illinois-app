@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Open AI Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
 - "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
 - Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Log reactions to Analytics/Splunk [#4977](https://github.com/rokwire/illinois-app/issues/4977).
 ### Removed
 - Illinois Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
 ### Fixed
