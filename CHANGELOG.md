@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Illinois Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
 ### Fixed
 - Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
+- Loading Canvas Courses [#4982](https://github.com/rokwire/illinois-app/issues/4982).
 
 ## [6.1.70] - 2025-04-08
 ### Fixed
