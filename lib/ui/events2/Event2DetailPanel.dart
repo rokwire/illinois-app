@@ -1193,7 +1193,12 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         setState(() {
           _selfCheckingIn = false;
           if (result is Event2Person) {
-            _persons?.attendees?.add(result);
+            if (_persons?.attendees == null) {
+              _persons = Event2PersonsResult.fromOther(_persons, attendees: [result]);
+            }
+            else {
+              _persons?.attendees?.add(result);
+            }
           }
         });
         if (result is Event2Person) {
@@ -1501,7 +1506,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
-      int? peopleIndex = (((_event?.hasSurvey == true) || (_event?.registrationDetails?.type == Event2RegistrationType.internal)) && (_persons == null)) ? futures.length : null;
+      int? peopleIndex = (((_event?.hasSurvey == true) || (_event?.registrationDetails?.type == Event2RegistrationType.internal) || (_event?.attendanceDetails?.isNotEmpty == true)) && (_persons == null)) ? futures.length : null;
       if (peopleIndex != null) {
         futures.add(Events2().loadEventPeople(eventId));
       }
