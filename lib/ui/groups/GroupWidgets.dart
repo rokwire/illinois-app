@@ -1587,13 +1587,23 @@ class _GroupReactionState extends State<GroupReaction> {
 typedef void OnBodyChangedListener(String text);
 
 class PostInputField extends StatefulWidget{
+  static const int defaultMaxLines = 15;
+  static const int defaultMinLines = 7;
+
   final EdgeInsets? padding;
   final String? title;
   final String? hint;
   final String? text;
   final OnBodyChangedListener? onBodyChanged;
+  final int? maxLines;
+  final int? minLines;
+  final bool autofocus;
+  final InputDecoration? inputDecoration;
+  final BoxDecoration? boxDecoration;
+  final TextStyle? style;
 
-  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title}) : super(key: key);
+  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title,
+    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines, this.autofocus = false, this.inputDecoration, this.boxDecoration, this.style}) : super(key: key);
 
   static get fieldDecoration => BoxDecoration(
       color: Styles().colors.white,
@@ -1650,24 +1660,22 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            Visibility(visible: StringUtils.isNotEmpty(widget.title), child:
+              Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            ),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Container(
-                    decoration: PostInputField.fieldDecoration,
+                    decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
                     child: TextField(
                       controller: _bodyController,
                       onChanged: _notifyChanged,
-                      maxLines: 15,
-                      minLines: 7,
+                      maxLines: widget.maxLines,
+                      minLines: widget.minLines,
+                      autofocus: widget.autofocus,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration:
-                      InputDecoration(
-                          hintText: _hint,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(8)
-                      ),
-                        style: Styles().textStyles.getTextStyle('')))),
+                      decoration: widget.inputDecoration ?? _defaultInputDecoration,
+                      style: widget.style ?? Styles().textStyles.getTextStyle('')))),
               Padding(
                   padding: EdgeInsets.zero,
                   child: Row(
@@ -1834,6 +1842,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
+
+  InputDecoration get _defaultInputDecoration => InputDecoration(
+      hintText: _hint,
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.all(8)
+  );
 }
 
 class GroupMembersSelectionWidget extends StatefulWidget{
@@ -3214,7 +3228,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
-                              EnabledToggleButton(
+                              //Since the setting "view email address" does work, we do not need the option to view a member's NetID.
+                              /* EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
@@ -3224,7 +3239,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
