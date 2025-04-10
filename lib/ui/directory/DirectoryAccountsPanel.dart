@@ -1,5 +1,4 @@
 
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -53,55 +52,31 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   }
 
   Widget get _scaffoldContent =>
-    Row(
+    Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Flexible(
-          flex: 10,
-          child: RefreshIndicator(onRefresh: _onRefresh, child:
-            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-                _buildViewPager(),
-              )
-            ),
-          )
+        ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          itemCount: _alphabet.length,
+          itemBuilder: (BuildContext context, int index) {
+            bool isSelected = _lastSelectedLetterIndex == index;
+            return InkWell(
+              child: Text(_alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.tiny.fat' : 'widget.button.title.tiny'), textAlign: TextAlign.center,),
+              onTap: () => _onTapIndexLetter(index),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) => SizedBox(width: 4),
         ),
-        Flexible(
-          flex: 1,
-          child: ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            itemCount: _alphabet.length,
-            itemBuilder: (BuildContext context, int index) {
-              bool isSelected = _lastSelectedLetterIndex == index;
-              return InkWell(
-                child: Text(_alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.tiny.fat' : 'widget.button.title.tiny'), textAlign: TextAlign.center,),
-                onTap: () => _onTapIndexLetter(index),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => SizedBox(height: 4),
+        RefreshIndicator(onRefresh: _onRefresh, child:
+          SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+              DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+            )
           ),
-        )
+        ),
       ]
     );
-
-  Widget _buildViewPager(){
-    List<Widget> pages = [];
-
-    for (String letter in _alphabet) {
-      pages.add(DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, indexLetter: letter, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,));
-    }
-
-    return ExpandablePageView(
-      children: pages,
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      onPageChanged: (int index){
-        _lastSelectedLetterIndex = index;
-      }
-    );
-  }
 
   void _onEditProfile(DirectoryAccounts contentType) {
     ProfileHomePanel.present(context,
