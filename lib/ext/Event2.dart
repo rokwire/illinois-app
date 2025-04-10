@@ -557,9 +557,39 @@ String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
     case Event2TypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby', 'Nearby');
     case Event2TypeFilter.superEvent: return Localization().getStringEx('model.event2.event_type.super_event', 'Multi-event');
     case Event2TypeFilter.favorite: return Localization().getStringEx('model.event2.event_type.favorite', 'Starred');
-    case Event2TypeFilter.admin: return Localization().getStringEx('model.event2.event_type.admin', 'Admin');
+    case Event2TypeFilter.admin: return Localization().getStringEx('model.event2.event_type.admin', 'Аdministered');
     default: return null;
   }
+}
+
+String? event2TypeFilterToSelectDisplayString(Event2TypeFilter? value) {
+  switch (value) {
+    case Event2TypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby.select', 'Nearby Events');
+    case Event2TypeFilter.superEvent: return Localization().getStringEx('model.event2.event_type.super_event.select', 'Multi-event series');
+    case Event2TypeFilter.favorite: return Localization().getStringEx('model.event2.event_type.favorite.select', 'My starred events');
+    case Event2TypeFilter.admin: return Localization().getStringEx('model.event2.event_type.admin.select', 'Events I administer');
+    default: return null;
+  }
+}
+
+// Event2TypeGroup
+
+String? event2TypeGroupToDisplayString(Event2TypeGroup? value, {String? language}) {
+  switch (value) {
+    case Event2TypeGroup.cost: return Localization().getStringEx('model.event2.event_type_group.cost', 'Cost', language: language);
+    case Event2TypeGroup.format: return Localization().getStringEx('model.event2.event_type_group.format', 'Format', language: language);
+    case Event2TypeGroup.access: return Localization().getStringEx('model.event2.event_type_group.access', 'Access', language: language);
+    case Event2TypeGroup.limits: return Localization().getStringEx('model.event2.event_type_group.limits', 'Limit Results To', language: language);
+    default: return null;
+  }
+}
+
+Map<String, dynamic> event2TypeGroupToTranslationsMap() {
+  Map<String, dynamic> translations = <String, dynamic>{};
+  for (String language in Localization().supportedLanguages) {
+    translations[language] = Map.fromEntries(Event2TypeGroup.values.map((group) => MapEntry(group.name, event2TypeGroupToDisplayString(group, language: language))));
+  }
+  return translations;
 }
 
 // Event2TimeFilter

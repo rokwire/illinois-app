@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - WEB: Insert UIN and NetID in the .csv file for survey responses [#4799](https://github.com/rokwire/illinois-app/issues/4799).
+### Fixed
+- Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
+
+## [7.0.9] - 2025-04-09
+### Changed
+- Event filters cleaned up and restructured [#4904](https://github.com/rokwire/illinois-app/issues/4904).
 
 ## [7.0.8] - 2025-04-08
 ### Fixed
