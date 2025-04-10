@@ -5,6 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Updated title and description texts of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
+- Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
+- Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
+- Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
+- Show "Use All Assistants" only if they are more than one [#4933](https://github.com/rokwire/illinois-app/issues/4933).
+- Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
+- Illinois Assistant FAQs content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
+### Added
+- Perplexity Assistant Provider [#4906](https://github.com/rokwire/illinois-app/issues/4906).
+- Open AI Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
+- "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
+- Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+### Removed
+- Illinois Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
+### Fixed
+- Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
+
+## [6.1.70] - 2025-04-08
+### Fixed
+- Do not edit privacy of users that are not OIDC logged in [#4964](https://github.com/rokwire/illinois-app/issues/4964).
+- Do not show directory content to users that are not OIDC logged in [#4965](https://github.com/rokwire/illinois-app/issues/4965).
 
 ## [6.1.69] - 2025-03-12
 ### Fixed

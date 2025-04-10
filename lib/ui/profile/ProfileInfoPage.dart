@@ -72,11 +72,9 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get isLoading => _loading;
   bool get directoryVisibility => (_privacy?.public == true);
 
-  bool get _directoryVisibilityAvailable =>
-    FlexUI().isPrivacyAvailable;
-
-  bool get _directoryVisibilityEnabled =>
-    _profile?.isNameNotEmpty == true;
+  bool get _privacyAvailable => FlexUI().isPrivacyAvailable;
+  bool get _directoryVisibilityAvailable =>  _privacyAvailable;
+  bool get _directoryVisibilityEnabled => _profile?.isNameNotEmpty == true;
 
   Future<bool?> saveModified() async => _profileInfoEditKey.currentState?.saveModified();
 
@@ -629,7 +627,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     }
 
     bool isProfileNameNotEmpty = StringUtils.isNotEmpty(profileFirstName) || StringUtils.isNotEmpty(profileMiddleName) || StringUtils.isNotEmpty(profileLastName);
-    bool? privacyIsPublic = ((privacy?.public == null) && isProfileNameNotEmpty) ? true : privacy?.public;
+    bool? privacyIsPublic = (_privacyAvailable && (privacy?.public == null) && isProfileNameNotEmpty) ? true : privacy?.public;
     Auth2UserPrivacy? updatedPrivacy = (privacyIsPublic != null) ? Auth2UserPrivacy.fromOther(privacy,
       public: privacyIsPublic,
       fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(privacy?.fieldsVisibility,
@@ -646,12 +644,12 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
     List<Future<bool>> updateFutures = <Future<bool>>[];
 
-    int updateProfileIndex = (updatedProfile != null) ? updateFutures.length : -1;
+    int updateProfileIndex = ((updatedProfile != null) && (updatedProfile != profile)) ? updateFutures.length : -1;
     if (0 <= updateProfileIndex) {
       updateFutures.add(Auth2().saveUserProfile(updatedProfile));
     }
 
-    int updatePrivacyIndex = ((updatedPrivacy != null) && (updatedPrivacy != privacy)) ? updateFutures.length : -1;
+    int updatePrivacyIndex = (_privacyAvailable && (updatedPrivacy != null) && (updatedPrivacy != privacy)) ? updateFutures.length : -1;
     if (0 <= updatePrivacyIndex) {
       updateFutures.add(Auth2().saveUserPrivacy(updatedPrivacy));
     }

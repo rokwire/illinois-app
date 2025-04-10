@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -14,13 +16,17 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Assistant with Service implements NotificationsListener, ContentItemCategoryClient {
 
   static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
+  static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
   static const String _faqContentCategory = "assistant_faqs";
+
+  List<AssistantProvider>? _providers;
   Map<String, dynamic>? _faqsContent;
 
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
-    AssistantProvider.uiuc: List<Message>.empty(growable: true),
     AssistantProvider.google: List<Message>.empty(growable: true),
-    AssistantProvider.grok: List<Message>.empty(growable: true)
+    AssistantProvider.grok: List<Message>.empty(growable: true),
+    AssistantProvider.perplexity: List<Message>.empty(growable: true),
+    AssistantProvider.openai: List<Message>.empty(growable: true)
   };
 
   // Singleton Factory
@@ -43,12 +49,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
       Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
     ]);
   }
 
   @override
   Future<void> initService() async {
     if (Auth2().isLoggedIn) {
+      _buildAvailableProviders();
       _loadAllMessages();
     }
     _initFaqs();
@@ -62,7 +70,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Auth2(), Content()]);
+    return Set.from([Auth2(), Content(), FlexUI()]);
   }
 
   // NotificationsListener
@@ -72,11 +80,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
+      _buildAvailableProviders();
       if (Auth2().isLoggedIn) {
         _loadAllMessages();
       } else {
         _clearAllMessages();
       }
+    } else if (name == FlexUI.notifyChanged) {
+      _buildAvailableProviders();
     }
   }
 
@@ -108,10 +119,53 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     return JsonUtils.stringValue(_faqsContent![selectedLocaleCode]) ?? defaultFaqs;
   }
 
+  // Providers
+
+  List<AssistantProvider>? get providers => _providers;
+
+  void _buildAvailableProviders() {
+    List<AssistantProvider>? updatedProviders;
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
+    if (contentCodes != null) {
+      updatedProviders = <AssistantProvider>[];
+      for (String code in contentCodes) {
+        AssistantProvider? provider = _providerFromCode(code);
+        if (provider != null) {
+          updatedProviders.add(provider);
+        }
+      }
+    } else {
+      updatedProviders = null;
+    }
+    if (!DeepCollectionEquality().equals(_providers, updatedProviders)) {
+      _providers = updatedProviders;
+      NotificationService().notify(notifyProvidersChanged);
+    }
+  }
+
+  AssistantProvider? _providerFromCode(String? code) {
+    switch (code) {
+      case 'google_assistant':
+        return AssistantProvider.google;
+      case 'grok_assistant':
+        return AssistantProvider.grok;
+      case 'perplexity_assistant':
+        return AssistantProvider.perplexity;
+      case 'openai_assistant':
+        return AssistantProvider.openai;
+      default:
+        return null;
+    }
+  }
+
   // Messages
 
-  List<Message> getMessages({required AssistantProvider provider}) {
-    return _displayMessages[provider] ?? List<Message>.empty();
+  List<Message> getMessages({AssistantProvider? provider}) {
+    if (provider != null) {
+      return _displayMessages[provider] ?? List<Message>.empty();
+    } else {
+      return List<Message>.empty();
+    }
   }
 
   void _initMessages({required AssistantProvider provider}) {
@@ -165,8 +219,10 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   Future<void> _loadAllMessages() async {
     await Future.wait([
-      _loadMessages(provider: AssistantProvider.uiuc),
       _loadMessages(provider: AssistantProvider.google),
+      _loadMessages(provider: AssistantProvider.grok),
+      _loadMessages(provider: AssistantProvider.perplexity),
+      _loadMessages(provider: AssistantProvider.openai),
     ]);
   }
 
