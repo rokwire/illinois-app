@@ -6,12 +6,9 @@ import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -34,6 +31,8 @@ class Event2AdminSettingsPanel extends StatefulWidget{
 }
 
 class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
+  static final _csvFileDateFormat = 'yyyy-MM-dd-HH-mm';
+
   bool _duplicating = false;
   bool _loadingSurveyResponses = false;
 
@@ -64,27 +63,27 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                   title: 'SUPER EVENT',
                   subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
                   onTap: _onSuperEvent)),
-              Visibility(visible: _canUploadCsv,
+              Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                   title: 'DOWNLOAD REGISTRANTS .csv',
                   onTap: _onDownloadRegistrants)
               ),
-              Visibility(visible: _canUploadCsv,
+              Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                     title: 'UPLOAD REGISTRANTS .csv',
                     onTap: _onUploadRegistrants),
               ),
-              Visibility(visible: _canUploadCsv,
+              Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                       title: 'DOWNLOAD ATTENDANCE .csv',
                       onTap: _onDownloadAttendance),
               ),
-              Visibility(visible: _canUploadCsv,
+              Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                     title: 'UPLOAD ATTENDANCE .csv',
                     onTap: _onUploadAttendance),
               ),
-              Visibility(visible: (_canUploadCsv && _hasSurvey),
+              Visibility(visible: (_isCsvAvailable && _hasSurvey),
                 child: _ButtonWidget(
                     title: 'DOWNLOAD SURVEY RESULTS .csv',
                     onTap: _onDownloadSurveyResults,
@@ -157,9 +156,9 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       return;
     }
     List<String>? accountIds = responses!.map((response) => StringUtils.ensureNotEmpty(response.userId)).toList();
-    List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(ids: accountIds);
+    List<Event2Account>? accounts = await Events2().loadEventAccounts(eventId: _event!.id!, accountIds: accountIds);
     if (CollectionUtils.isEmpty(accounts)) {
-      debugPrint('Download survey responses - failed to load public accounts.');
+      debugPrint('Download survey responses - failed to load event accounts.');
     }
     final String defaultEmptyValue = '---';
     String eventName = StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: defaultEmptyValue);
@@ -173,8 +172,8 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     List<List<dynamic>> rows = <List<dynamic>>[];
     for (SurveyResponse response in responses) {
       String? accountId = response.userId;
-      Auth2PublicAccount? account =
-          ((accountId != null) && hasAccounts) ? accounts!.firstWhereOrNull((account) => (account.id == accountId)) : null;
+      Event2Account? account =
+          ((accountId != null) && hasAccounts) ? accounts!.firstWhereOrNull((account) => (account.accountId == accountId)) : null;
       Map<String, SurveyData> data = response.survey.data;
       for (String key in data.keys) {
         SurveyData? value = data[key];
@@ -185,21 +184,23 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
             eventName,
             eventStartDate,
             eventStartTime,
-            StringUtils.ensureNotEmpty(account?.profile?.firstName, defaultValue: defaultEmptyValue),
-            StringUtils.ensureNotEmpty(account?.profile?.lastName, defaultValue: defaultEmptyValue),
+            StringUtils.ensureNotEmpty(account?.uin, defaultValue: defaultEmptyValue),
+            StringUtils.ensureNotEmpty(account?.netId, defaultValue: defaultEmptyValue),
+            StringUtils.ensureNotEmpty(account?.firstName, defaultValue: defaultEmptyValue),
+            StringUtils.ensureNotEmpty(account?.lastName, defaultValue: defaultEmptyValue),
             question,
             answer
           ]);
         }
       }
-      String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: 'yyyy-MM-dd-HH-mm');
-      String fileName = 'event_survey_results_$dateExported.csv';
-      AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
-        setStateIfMounted(() {
-          _loadingSurveyResponses = false;
-        });
-      });
     }
+    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
+    String fileName = 'event_survey_results_$dateExported.csv';
+    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+      setStateIfMounted(() {
+        _loadingSurveyResponses = false;
+      });
+    });
   }
 
   void _onSettingDuplicateEvent() {
@@ -261,7 +262,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
 
   bool get _showSuperEvent => widget.event?.isRecurring != true;
 
-  bool get _canUploadCsv => PlatformUtils.isWeb;
+  bool get _isCsvAvailable => PlatformUtils.isWeb;
 
   bool get _hasSurvey => StringUtils.isNotEmpty(widget.surveyId);
 }
