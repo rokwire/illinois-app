@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.71] - 2025-04-10
 ### Changed
 - Updated title and description texts of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
 - Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
