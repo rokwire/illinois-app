@@ -82,16 +82,16 @@ class RecentItems with Service, NotificationsListener {
   // Implementation
 
   void addRecentItem(RecentItem? item) {
-    if (_recentItemsEnabled) {
-      if ((item != null) && !_recentItems.contains(item)) {
-        _recentItems.addFirst(item);
+    if ((_recentItemsEnabled) && (item != null)) {
+      _recentItems.removeWhere((recentItem) => recentItem.contentId == item.contentId);
 
-        while (_recentItems.length > Config().recentItemsCount) {
-          _recentItems.removeLast();
-        }
-        _saveRecentItems(_recentItems);
-        NotificationService().notify(notifyChanged, null);
+      _recentItems.addFirst(item);
+
+      while (_recentItems.length > Config().recentItemsCount) {
+        _recentItems.removeLast();
       }
+      _saveRecentItems(_recentItems);
+      NotificationService().notify(notifyChanged, null);
     }
   }
 
