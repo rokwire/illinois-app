@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:collection/collection.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -14,6 +17,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
+import 'package:universal_io/io.dart';
 
 import '../../service/Analytics.dart';
 import '../widgets/HeaderBar.dart';
@@ -38,6 +43,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   bool _downloadingSurveyResponses = false;
   bool _downloadingRegistrants = false;
   bool _downloadingAttendees = false;
+  bool _uploadingAttendees = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +75,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
               Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                   title: 'DOWNLOAD REGISTRANTS .csv',
+                  progress: _downloadingRegistrants,
                   onTap: _onDownloadRegistrants)
               ),
               Visibility(visible: _isCsvAvailable,
@@ -79,11 +86,13 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
               Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                       title: 'DOWNLOAD ATTENDANCE .csv',
+                      progress: _downloadingAttendees,
                       onTap: _onDownloadAttendance),
               ),
               Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                     title: 'UPLOAD ATTENDANCE .csv',
+                    progress: _uploadingAttendees,
                     onTap: _onUploadAttendance),
               ),
               Visibility(visible: (_isCsvAvailable && _hasSurvey),
@@ -210,12 +219,76 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   }
 
   void _onUploadAttendance() {
-    Analytics().logSelect(target: "Upload Attendance");
-    AppToast.showMessage("TBD");
+    Analytics().logSelect(target: 'Upload Attendance');
+    if (_uploadingAttendees) {
+      return;
+    }
+    setStateIfMounted(() {
+      _uploadingAttendees = true;
+    });
+    FilePicker.platform.pickFiles(allowedExtensions: ['csv'], type: FileType.custom).then((result) {
+      if (result != null) {
+        String? fileContent;
+        if (PlatformUtils.isWeb) {
+          Uint8List? fileBytes = result.files.single.bytes;
+          if (fileBytes != null) {
+            fileContent = String.fromCharCodes(fileBytes);
+          }
+        } else {
+          String? filePath = result.files.single.path;
+          File? selectedFile = StringUtils.isNotEmpty(filePath) ? File(filePath!) : null;
+          fileContent = (selectedFile != null) ? selectedFile.readAsStringSync() : null;
+        }
+        if (StringUtils.isEmpty(fileContent)) {
+          setStateIfMounted(() {
+            _uploadingAttendees = false;
+          });
+          AppAlert.showDialogResult(context,
+              Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.file.invalid.msg', 'Invalid file selected.'));
+          return;
+        }
+        List<String> attendeesNetIds = fileContent!.split(ListUtils.commonDelimiterRegExp);
+        _uploadAttendees(attendeesNetIds);
+      } else {
+        setStateIfMounted(() {
+          _uploadingAttendees = false;
+        });
+        AppAlert.showDialogResult(context,
+            Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.operation.cancelled.msg', 'Upload was canceled by the user.'));
+      }
+    });
+  }
+
+  void _uploadAttendees(List<String> attendeeNetIds) {
+    Events2().attendAllNetIds(eventId: widget.event!.id!, netIds: attendeeNetIds).then((result) {
+      setStateIfMounted(() {
+        _uploadingAttendees = false;
+      });
+      late String message;
+      if (result is String) {
+        message = sprintf(Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.failed.msg', "Failed to upload attendees' NetIDs. Reason: %s"), result);
+      } else if (result is List<Event2AttendeeResult>) {
+        if (Event2AttendeeResult.allSucceeded(result)) {
+          message = Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.succeeded.msg', "Successfully uploaded attendees' NetIDs.");
+        } else {
+          List<String> succeededResults = result.where((element) => (element.succeeded == true)).map((element) => element.netId).toList();
+          List<String> failedResults = result.where((element) => (element.succeeded == false)).map((element) => element.netId).toList();
+          String succeededString = succeededResults.join(',');
+          String failedString = failedResults.join(',');
+          message = sprintf(Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.mixed.msg', 'Succeeded NetIDs: %s \n\nFailed NetIds: %s'), [succeededString, failedString]);
+        }
+      } else {
+        message = Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.failed.unknown.msg', 'Unknown error occurred.');
+      }
+      AppAlert.showDialogResult(context, message);
+    });
   }
 
   void _onDownloadSurveyResults() async {
     Analytics().logSelect(target: "Download Survey Results");
+    if (_downloadingSurveyResponses) {
+      return;
+    }
     String? surveyId = widget.surveyId;
     if (StringUtils.isEmpty(surveyId)) {
       AppAlert.showDialogResult(context,

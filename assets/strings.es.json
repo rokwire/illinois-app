@@ -1574,6 +1574,12 @@
     "panel.event2.detail.admin_settings.download.registrants.type.not.internal.msg": "Esta operación está disponible sólo para eventos con registro interno.",
     "panel.event2.detail.admin_settings.download.registrants.persons.missing.msg": "No hay inscritos para este evento.",
     "panel.event2.detail.admin_settings.download.attendees.persons.missing.msg": "No hay asistentes para este evento.",
+    "panel.event2.detail.admin_settings.upload.attendees.file.invalid.msg": "Archivo no válido seleccionado.",
+    "panel.event2.detail.admin_settings.upload.attendees.operation.cancelled.msg": "La carga fue cancelada por el usuario.",
+    "panel.event2.detail.admin_settings.upload.attendees.failed.msg": "No se pudieron cargar los NetID de los asistentes. Motivo: %s",
+    "panel.event2.detail.admin_settings.upload.attendees.succeeded.msg": "Subió con éxito los NetID de los asistentes.",
+    "panel.event2.detail.admin_settings.upload.attendees.mixed.msg": "NetIDs exitosos: %s\n\nNetIDs fallidos: %s",
+    "panel.event2.detail.admin_settings.upload.attendees.failed.unknown.msg": "Se produjo un error desconocido.",
 
     "panel.event2.detail.self_checkin.massage.succeeded.title": "Success",
     "panel.event2.detail.self_checkin.massage.succeeded.description": "You are checked in for this event.",

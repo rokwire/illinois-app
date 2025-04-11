@@ -81,6 +81,7 @@ dependencies:
   webview_flutter_web: ^0.2.3+4
   ai_barcode_scanner: ^6.0.1
   pointer_interceptor: ^0.10.1+2
+  file_picker: ^10.1.0
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
