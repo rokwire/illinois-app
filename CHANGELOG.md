@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WEB: Insert UIN and NetID in the .csv file for survey responses [#4799](https://github.com/rokwire/illinois-app/issues/4799).
 ### Fixed
 - Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
+- Updated Config.eventAttendanceUrl attendace processing [#4950](https://github.com/rokwire/illinois-app/issues/4950).
 ### Added
 - WEB: Upload attendees with .csv file [#4957](https://github.com/rokwire/illinois-app/issues/4957).
 - WEB: Upload registrants with .csv file [#4957](https://github.com/rokwire/illinois-app/issues/4957).
