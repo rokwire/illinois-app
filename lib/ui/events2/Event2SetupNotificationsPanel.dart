@@ -118,7 +118,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                     onTap: _onTapClearAll)),
                             ]))
                   ])
-            )));
+        )),
+        backgroundColor: Styles().colors.white,
+    );
   }
 
   Widget _buildNotificationsContent({required EdgeInsets defaultBottomPadding, required EdgeInsets bottom10Padding}) {

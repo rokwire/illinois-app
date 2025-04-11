@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated again title text of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
 - Make sure recent items do not contain duplicated items, use more reliable identification of recent items [#4984](https://github.com/rokwire/illinois-app/issues/4984).
+### Fixed
+- Fixed background color of Event2SetupNotificationsPanel [#4973](https://github.com/rokwire/illinois-app/issues/4973).
 
 ## [6.1.71] - 2025-04-10
 ### Changed
