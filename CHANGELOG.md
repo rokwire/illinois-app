@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.10] - 2025-04-11
 ### Fixed
 - Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
 - Updated Config.eventAttendanceUrl attendace processing [#4950](https://github.com/rokwire/illinois-app/issues/4950).
