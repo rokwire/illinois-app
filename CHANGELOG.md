@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
+- Updated Config.eventAttendanceUrl attendace processing [#4950](https://github.com/rokwire/illinois-app/issues/4950).
 
 ## [7.0.9] - 2025-04-09
 ### Changed

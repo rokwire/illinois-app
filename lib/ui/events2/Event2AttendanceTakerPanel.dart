@@ -20,6 +20,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
   final Event2? event;
@@ -409,7 +410,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   bool _onTapHtmlLink(String? url) {
     Analytics().logSelect(target: '($url)');
-    UrlUtils.launchExternal(url);
+    UrlUtils.launchExternal(url, mode: LaunchMode.externalApplication);
     return true;
   }
 
