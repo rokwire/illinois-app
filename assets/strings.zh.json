@@ -1411,7 +1411,8 @@
 
 	"panel.event2.setup.survey.header.title": "活动建议问卷",
 	"panel.event2.setup.survey.has_survey.toggle.title": "发送建议问卷",
-	"panel.event2.setup.survey.hours.title": "How many hours after the event ends should the survey be sent to attendees? (Use whole positive numbers only; enter 0 to send immediately after the event.)",
+	"panel.event2.setup.survey.hours.title": "START TIME",
+	"panel.event2.setup.survey.hours.description": "How many hours after the event's end time should the survey notification be sent to attendees (or hours after the start time, if no end time is set)? Enter 0 for immediate delivery or a whole positive number to delay sending.",
 	"panel.event2.setup.survey.survey.title": "问卷",
 	"panel.event2.setup.survey.preview.title": "预览问卷",
 	"panel.event2.setup.survey.preview.subtitle": "Try out the survey by filling out a sample.",
