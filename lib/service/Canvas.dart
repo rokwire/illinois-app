@@ -71,6 +71,7 @@ class Canvas with Service, NotificationsListener {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
+      Auth2.notifyAccountChanged,
       Connectivity.notifyStatusChanged,
       Storage.notifySettingChanged,
       DeepLink.notifyUiUri,
@@ -777,6 +778,10 @@ class Canvas with Service, NotificationsListener {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
+      if (isInitialized) {
+        _updateCourses();
+      }
+    } else if (name == Auth2.notifyAccountChanged) {
       if (isInitialized) {
         _updateCourses();
       }

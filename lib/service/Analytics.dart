@@ -25,6 +25,7 @@ import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -195,6 +196,19 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   // Widget Favorite Event
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogWidgetFavoriteEventName          = "widget_favorite";
+
+  // Reaction Event
+  // {  "event" : { "name":"reaction", "action":"on/off", "target":"...", "source":"..." }}
+  static const String   LogReactionEventName                 = "reaction";
+  static const String   LogReactionActionName                = "action";
+  static const String   LogReactionTargetName                = "target";
+  static const String   LogReactionTypeName                  = "type";
+  static const String   LogReactionValueName                 = "value";
+  static const String   LogReactionDetailName                = "detail";
+  static const String   LogReactionFeatureName               = "feature";
+
+  static const String   LogReactionOnActionName              = "on";
+  static const String   LogReactionOffActionName             = "off";
 
   // Poll Event
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
@@ -933,6 +947,20 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogFavoriteTitleName  : title ?? favorite?.favoriteTitle,
     });
   }
+
+  void logReaction(Reaction? reaction, { String? target, AnalyticsFeature? feature, Map<String, dynamic>? attributes }) =>
+    logEvent({
+      LogEventName          : LogReactionEventName,
+      LogReactionActionName : (reaction?.id == null) ? LogReactionOnActionName : LogReactionOffActionName,
+      LogReactionTargetName : target,
+      LogReactionTypeName   : reaction?.type?.name,
+      LogReactionValueName  : JsonUtils.stringValue(reaction?.data?['emoji_source']),
+      LogReactionDetailName : JsonUtils.stringValue(reaction?.data?['emoji_name']),
+      if (feature != null)
+        LogReactionFeatureName: feature.name,
+      if (attributes != null)
+        ...attributes
+    });
 
   void logWidgetFavorite(dynamic favorite, bool? selected, { List<Favorite>? used, List<Favorite>? unused }) {
     dynamic target;

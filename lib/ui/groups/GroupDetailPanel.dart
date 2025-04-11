@@ -439,7 +439,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _postId = null; // Clear _postId in order not to redirect on the next group load.
         _decreaseProgress();
         if (post != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post, analyticsFeature: widget.analyticsFeature)));
         }
       });
     }
@@ -839,15 +839,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   Widget _buildPageFromTab(DetailTab? data){
     switch(data){
       case DetailTab.Events:
-        return _GroupEventsContent(group: _group, updateController: _updateController);
+        return _GroupEventsContent(group: _group, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins, analyticsFeature: widget.analyticsFeature,);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
+        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
-        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
+        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Scheduled:
-        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
       default: Container();
     }
@@ -1640,8 +1640,9 @@ class _GroupEventsContent extends StatefulWidget{
 
   final Group? group;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupEventsContent({this.updateController, this.group});
+  const _GroupEventsContent({this.updateController, this.group, this.analyticsFeature });
 
   String get _emptyText => Localization().getStringEx("", "No group events");
 
@@ -1800,8 +1801,9 @@ class _GroupPostsContent extends StatefulWidget{
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1900,7 +1902,8 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
-        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
+        analyticsFeature: widget.analyticsFeature,
+        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin,
       ));
       }
     }
@@ -2076,8 +2079,9 @@ class _GroupPollsContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   _GroupPollsState createState() => _GroupPollsState();
@@ -2232,8 +2236,9 @@ class _GroupMessagesContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
 
@@ -2286,6 +2291,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
             post: message,
             group: _group!,
             isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            analyticsFeature: widget.analyticsFeature,
             // creator: _getMessageCreatorAsMember(message),
             // updateController: widget.updateController,
         ));
@@ -2459,8 +2465,9 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupScheduledPostsState();
@@ -2515,6 +2522,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
           key: (i == 0) ? _lastScheduledPostKey : null,
           post: post,
           group: _group!,
+          analyticsFeature: widget.analyticsFeature,
           isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
           // updateController: widget.updateController,
           // creator: _getPostCreatorAsMember(post),
