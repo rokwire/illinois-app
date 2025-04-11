@@ -32,6 +32,7 @@ class Event2AdminSettingsPanel extends StatefulWidget{
 
 class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   static final _csvFileDateFormat = 'yyyy-MM-dd-HH-mm';
+  static final _csvFileDefaultEmptyValue = '---';
 
   bool _duplicating = false;
   //TBD: DD - change member name and check when it's true
@@ -148,19 +149,14 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     if (hasAccounts) {
       debugPrint('Download registrants - failed to load event accounts.');
     }
-    final String defaultEmptyValue = '---';
-    String eventName = StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: defaultEmptyValue);
-    String eventStartDate = StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'yyyy-MM-dd'), defaultValue: defaultEmptyValue);
-    String eventStartTime = StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'HH:mm'), defaultValue: defaultEmptyValue);
     List<List<dynamic>> rows = <List<dynamic>>[];
-
     for (String netId in eventRegistrantNetIds) {
       Event2Account? account = hasAccounts ? accounts!.firstWhereOrNull((account) => (account.netId == netId)) : null;
-      rows.add([eventName, eventStartDate, eventStartTime, StringUtils.ensureNotEmpty(account?.uin, defaultValue: defaultEmptyValue), netId, StringUtils.ensureNotEmpty(account?.firstName, defaultValue: defaultEmptyValue), StringUtils.ensureNotEmpty(account?.lastName, defaultValue: defaultEmptyValue)]);
+      rows.add([_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
+        _buildCsvAccountUin(account), netId, _buildCsvAccountFirstName(account), _buildCsvAccountLastName(account)]);
     }
 
-    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
-    String fileName = 'event_registrants_$dateExported.csv';
+    String fileName = 'event_registrants_$_csvFormattedDateExported.csv';
     AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
         _downloadingRegistrants = false;
@@ -210,14 +206,6 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     if (CollectionUtils.isEmpty(accounts)) {
       debugPrint('Download survey responses - failed to load event accounts.');
     }
-    final String defaultEmptyValue = '---';
-    String eventName = StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: defaultEmptyValue);
-    String eventStartDate = StringUtils.ensureNotEmpty(
-        AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'yyyy-MM-dd'),
-        defaultValue: defaultEmptyValue);
-    String eventStartTime = StringUtils.ensureNotEmpty(
-        AppDateTime().formatDateTime(widget.event?.startTimeUtc?.toLocalTZ(), format: 'HH:mm'),
-        defaultValue: defaultEmptyValue);
     bool hasAccounts = CollectionUtils.isNotEmpty(accounts);
     List<List<dynamic>> rows = <List<dynamic>>[];
     for (SurveyResponse response in responses) {
@@ -230,22 +218,15 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
         if (value != null) {
           String question = value.text;
           String answer = value.response;
-          rows.add([
-            eventName,
-            eventStartDate,
-            eventStartTime,
-            StringUtils.ensureNotEmpty(account?.uin, defaultValue: defaultEmptyValue),
-            StringUtils.ensureNotEmpty(account?.netId, defaultValue: defaultEmptyValue),
-            StringUtils.ensureNotEmpty(account?.firstName, defaultValue: defaultEmptyValue),
-            StringUtils.ensureNotEmpty(account?.lastName, defaultValue: defaultEmptyValue),
+          rows.add([_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
+            _buildCsvAccountUin(account), _buildCsvAccountNetId(account), _buildCsvAccountFirstName(account), _buildCsvAccountLastName(account),
             question,
             answer
           ]);
         }
       }
     }
-    String? dateExported = AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
-    String fileName = 'event_survey_results_$dateExported.csv';
+    String fileName = 'event_survey_results_$_csvFormattedDateExported.csv';
     AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
         _loadingSurveyResponses = false;
@@ -308,6 +289,11 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     }
   }
 
+  String _buildCsvAccountUin(Event2Account? account) => StringUtils.ensureNotEmpty(account?.uin, defaultValue: _csvFileDefaultEmptyValue);
+  String _buildCsvAccountNetId(Event2Account? account) => StringUtils.ensureNotEmpty(account?.netId, defaultValue: _csvFileDefaultEmptyValue);
+  String _buildCsvAccountFirstName(Event2Account? account) => StringUtils.ensureNotEmpty(account?.firstName, defaultValue: _csvFileDefaultEmptyValue);
+  String _buildCsvAccountLastName(Event2Account? account) => StringUtils.ensureNotEmpty(account?.lastName, defaultValue: _csvFileDefaultEmptyValue);
+
   Event2? get _event => widget.event;
 
   bool get _showSuperEvent => widget.event?.isRecurring != true;
@@ -315,6 +301,11 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   bool get _isCsvAvailable => PlatformUtils.isWeb;
 
   bool get _hasSurvey => StringUtils.isNotEmpty(widget.surveyId);
+
+  String get _csvFormattedEventName => StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: _csvFileDefaultEmptyValue);
+  String get _csvFormattedEventStartDate => StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_event?.startTimeUtc?.toLocalTZ(), format: 'yyyy-MM-dd'), defaultValue: _csvFileDefaultEmptyValue);
+  String get _csvFormattedEventStartTime => StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_event?.startTimeUtc?.toLocalTZ(), format: 'HH:mm'), defaultValue: _csvFileDefaultEmptyValue);
+  String? get _csvFormattedDateExported => AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
 }
 
 class _ButtonWidget extends StatelessWidget{
