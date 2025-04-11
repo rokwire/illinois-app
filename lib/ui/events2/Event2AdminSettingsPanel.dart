@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -232,7 +233,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
         if (PlatformUtils.isWeb) {
           Uint8List? fileBytes = result.files.single.bytes;
           if (fileBytes != null) {
-            fileContent = String.fromCharCodes(fileBytes);
+            fileContent = Utf8Decoder().convert(fileBytes);
           }
         } else {
           String? filePath = result.files.single.path;
