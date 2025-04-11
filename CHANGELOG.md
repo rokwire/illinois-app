@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
 ### Added
 - WEB: Upload attendees with .csv file [#4957](https://github.com/rokwire/illinois-app/issues/4957).
+- WEB: Upload registrants with .csv file [#4957](https://github.com/rokwire/illinois-app/issues/4957).
 
 ## [7.0.9] - 2025-04-09
 ### Changed

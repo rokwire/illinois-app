@@ -43,6 +43,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   bool _duplicating = false;
   bool _downloadingSurveyResponses = false;
   bool _downloadingRegistrants = false;
+  bool _uploadingRegistrants = false;
   bool _downloadingAttendees = false;
   bool _uploadingAttendees = false;
 
@@ -82,6 +83,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
               Visibility(visible: _isCsvAvailable,
                 child: _ButtonWidget(
                     title: 'UPLOAD REGISTRANTS .csv',
+                    progress: _uploadingRegistrants,
                     onTap: _onUploadRegistrants),
               ),
               Visibility(visible: _isCsvAvailable,
@@ -176,7 +178,58 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
 
   void _onUploadRegistrants() {
     Analytics().logSelect(target: 'Upload Registrants');
-   AppToast.showMessage("TBD");
+    if (_uploadingRegistrants) {
+      return;
+    }
+    Event2RegistrationDetails? registrationDetails = _event?.registrationDetails;
+    Event2RegistrationType? registrationType = registrationDetails?.type;
+    if ((registrationType == null) || (registrationType == Event2RegistrationType.none)) {
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.event2.detail.admin_settings.upload.registrants.type.not.allowed.msg', 'This operation is available only for events with registration.'));
+      return;
+    }
+    setStateIfMounted(() {
+      _uploadingRegistrants = true;
+    });
+    _buildNetIdsFromCsvFile().then((result) {
+      if (result is String) {
+        setStateIfMounted(() {
+          _uploadingRegistrants = false;
+        });
+        AppAlert.showDialogResult(context, result);
+      } else if (result is List<String>) {
+        _uploadRegistrants(registrationDetails: registrationDetails!, newRegistrantNetIds: result);
+      } else {
+        setStateIfMounted(() {
+          _uploadingRegistrants = false;
+        });
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.failed.unknown.msg', 'Unknown error occurred.'));
+      }
+    });
+  }
+
+  void _uploadRegistrants({required Event2RegistrationDetails registrationDetails, required List<String> newRegistrantNetIds}) {
+    List<String>? oldRegistrantNetIds = registrationDetails.registrants;
+    if (CollectionUtils.isNotEmpty(oldRegistrantNetIds)) {
+      newRegistrantNetIds.addAll(oldRegistrantNetIds!);
+    }
+    Event2RegistrationDetails updatedDetails = Event2RegistrationDetails.fromOther(registrationDetails, registrants: newRegistrantNetIds)!;
+    Events2().updateEventRegistrationDetails(_event!.id!, updatedDetails).then((result) {
+      setStateIfMounted(() {
+        _uploadingRegistrants = false;
+      });
+      late String message;
+      if (result is String) {
+        message = sprintf(Localization().getStringEx('panel.event2.detail.admin_settings.upload.registrants.failed.msg', "Failed to upload registrants' NetIDs. Reason: %s"), result);
+      } else if (result is Event2) {
+        message = Localization().getStringEx('panel.event2.detail.admin_settings.upload.registrants.succeeded.msg', "Successfully uploaded registrants' NetIDs.");
+      } else {
+        message = Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.failed.unknown.msg', 'Unknown error occurred.');
+      }
+      AppAlert.showDialogResult(context, message);
+    });
   }
 
   void _onDownloadAttendance() async {
@@ -227,35 +280,19 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     setStateIfMounted(() {
       _uploadingAttendees = true;
     });
-    FilePicker.platform.pickFiles(allowedExtensions: ['csv'], type: FileType.custom).then((result) {
-      if (result != null) {
-        String? fileContent;
-        if (PlatformUtils.isWeb) {
-          Uint8List? fileBytes = result.files.single.bytes;
-          if (fileBytes != null) {
-            fileContent = Utf8Decoder().convert(fileBytes);
-          }
-        } else {
-          String? filePath = result.files.single.path;
-          File? selectedFile = StringUtils.isNotEmpty(filePath) ? File(filePath!) : null;
-          fileContent = (selectedFile != null) ? selectedFile.readAsStringSync() : null;
-        }
-        if (StringUtils.isEmpty(fileContent)) {
-          setStateIfMounted(() {
-            _uploadingAttendees = false;
-          });
-          AppAlert.showDialogResult(context,
-              Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.file.invalid.msg', 'Invalid file selected.'));
-          return;
-        }
-        List<String> attendeesNetIds = fileContent!.split(ListUtils.commonDelimiterRegExp);
-        _uploadAttendees(attendeesNetIds);
+    _buildNetIdsFromCsvFile().then((result) {
+      if (result is String) {
+        setStateIfMounted(() {
+          _uploadingAttendees = false;
+        });
+        AppAlert.showDialogResult(context, result);
+      } else if (result is List<String>) {
+        _uploadAttendees(result);
       } else {
         setStateIfMounted(() {
           _uploadingAttendees = false;
         });
-        AppAlert.showDialogResult(context,
-            Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.operation.cancelled.msg', 'Upload was canceled by the user.'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.failed.unknown.msg', 'Unknown error occurred.'));
       }
     });
   }
@@ -279,10 +316,41 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
           message = sprintf(Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.mixed.msg', 'Succeeded NetIDs: %s \n\nFailed NetIds: %s'), [succeededString, failedString]);
         }
       } else {
-        message = Localization().getStringEx('panel.event2.detail.admin_settings.upload.attendees.failed.unknown.msg', 'Unknown error occurred.');
+        message = Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.failed.unknown.msg', 'Unknown error occurred.');
       }
       AppAlert.showDialogResult(context, message);
     });
+  }
+
+  ///
+  /// returns List<String> with NetIDs if successful and error message String - otherwise
+  ///
+  Future<dynamic> _buildNetIdsFromCsvFile() async {
+    FilePickerResult? pickResult = await FilePicker.platform.pickFiles(allowedExtensions: ['csv'], type: FileType.custom);
+    if (pickResult != null) {
+      String? fileContent;
+      if (PlatformUtils.isWeb) {
+        Uint8List? fileBytes = pickResult.files.single.bytes;
+        if (fileBytes != null) {
+          fileContent = Utf8Decoder().convert(fileBytes);
+        }
+      } else {
+        String? filePath = pickResult.files.single.path;
+        File? selectedFile = StringUtils.isNotEmpty(filePath) ? File(filePath!) : null;
+        fileContent = (selectedFile != null) ? selectedFile.readAsStringSync() : null;
+      }
+      if (StringUtils.isEmpty(fileContent)) {
+        return Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.file.invalid.msg', 'Invalid file selected.');
+      }
+      List<String> attendeesNetIds = fileContent!.split(ListUtils.commonDelimiterRegExp);
+      if (CollectionUtils.isNotEmpty(attendeesNetIds)) {
+        return attendeesNetIds;
+      } else {
+        return Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.netds.missing.msg', 'There are no NetIDs in this file.');
+      }
+    } else {
+      return Localization().getStringEx('panel.event2.detail.admin_settings.upload.common.operation.cancelled.msg', 'Upload was canceled by the user.');
+    }
   }
 
   void _onDownloadSurveyResults() async {
