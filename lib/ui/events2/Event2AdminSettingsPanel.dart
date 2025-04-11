@@ -35,9 +35,9 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   static final _csvFileDefaultEmptyValue = '---';
 
   bool _duplicating = false;
-  //TBD: DD - change member name and check when it's true
-  bool _loadingSurveyResponses = false;
+  bool _downloadingSurveyResponses = false;
   bool _downloadingRegistrants = false;
+  bool _downloadingAttendees = false;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                 child: _ButtonWidget(
                     title: 'DOWNLOAD SURVEY RESULTS .csv',
                     onTap: _onDownloadSurveyResults,
-                    progress: _loadingSurveyResponses),
+                    progress: _downloadingSurveyResponses),
               )
           ]),
         )
@@ -165,13 +165,48 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
   }
 
   void _onUploadRegistrants() {
-    Analytics().logSelect(target: "Upload Registrants");
+    Analytics().logSelect(target: 'Upload Registrants');
    AppToast.showMessage("TBD");
   }
 
-  void _onDownloadAttendance() {
-    Analytics().logSelect(target: "Download Attendance");
-    AppToast.showMessage("TBD");
+  void _onDownloadAttendance() async {
+    Analytics().logSelect(target: 'Download Attendance');
+    if (_downloadingAttendees) {
+      return;
+    }
+    setStateIfMounted(() {
+      _downloadingAttendees = true;
+    });
+    Event2PersonsResult? personsResult = await Events2().loadEventPeople(_event!.id!);
+    Set<String>? attendeesNetIds = Event2Person.netIdsFromList(personsResult?.attendees);
+    if (CollectionUtils.isEmpty(attendeesNetIds)) {
+      setStateIfMounted(() {
+        _downloadingAttendees = true;
+      });
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.event2.detail.admin_settings.download.attendees.persons.missing.msg', 'There are no attendees for this event.'));
+      return;
+    }
+    List<Event2Account>? accounts = await Events2().loadEventAccounts(eventId: _event!.id!, netIds: attendeesNetIds!.toList());
+    bool hasAccounts = CollectionUtils.isNotEmpty(accounts);
+    if (hasAccounts) {
+      debugPrint('Download attendees - failed to load event accounts.');
+    }
+    List<List<dynamic>> rows = <List<dynamic>>[];
+    for (String netId in attendeesNetIds) {
+      Event2Account? account = hasAccounts ? accounts!.firstWhereOrNull((account) => (account.netId == netId)) : null;
+      rows.add([_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
+        _buildCsvAccountUin(account), netId, _buildCsvAccountFirstName(account), _buildCsvAccountLastName(account)]);
+    }
+
+    String fileName = 'event_attendees_$_csvFormattedDateExported.csv';
+    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+      setStateIfMounted(() {
+        _downloadingAttendees = false;
+      });
+    });
   }
 
   void _onUploadAttendance() {
@@ -188,12 +223,12 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
       return;
     }
     setStateIfMounted(() {
-      _loadingSurveyResponses = true;
+      _downloadingSurveyResponses = true;
     });
     List<SurveyResponse>? responses = await Surveys().loadAllSurveyResponses(surveyId!);
     if (CollectionUtils.isEmpty(responses)) {
       setStateIfMounted(() {
-        _loadingSurveyResponses = false;
+        _downloadingSurveyResponses = false;
       });
       AppAlert.showDialogResult(
           context,
@@ -229,7 +264,7 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
     String fileName = 'event_survey_results_$_csvFormattedDateExported.csv';
     AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
-        _loadingSurveyResponses = false;
+        _downloadingSurveyResponses = false;
       });
     });
   }
