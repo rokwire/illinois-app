@@ -1424,7 +1424,7 @@
 
     "panel.event2.setup.survey.header.title": "Encuesta de Seguimiento del Evento",
     "panel.event2.setup.survey.has_survey.toggle.title": "ENVIAR LA ENCUESTA DE SEGUIMIENTO",
-    "panel.event2.setup.survey.hours.title": "START TIME",
+    "panel.event2.setup.survey.hours.title": "SEND TIME",
     "panel.event2.setup.survey.hours.description": "How many hours after the event's end time should the survey notification be sent to attendees (or hours after the start time, if no end time is set)? Enter 0 for immediate delivery or a whole positive number to delay sending.",
     "panel.event2.setup.survey.preview.title": "Vista Preliminar de la Encuesta",
     "panel.event2.setup.survey.preview.subtitle": "Try out the survey by filling out a sample.",

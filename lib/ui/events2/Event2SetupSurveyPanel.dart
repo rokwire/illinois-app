@@ -263,7 +263,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildHoursSection() => Visibility(visible: (_displaySurvey != null), child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'START TIME'), required: true),
+        Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'SEND TIME'), required: true),
         Padding(padding: EdgeInsets.only(top: 2), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(flex: 5, child:
