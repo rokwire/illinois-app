@@ -47,6 +47,9 @@ class RecentItem {
 
   Map<String, dynamic>? sourceJson;
 
+  String get contentId => "${type?.name}-$id";
+
+
   RecentItem({this.type, this.id, this.title, this.descripton, this.time, this.sourceJson});
 
   static RecentItem? fromJson(Map<String, dynamic>? json){
@@ -204,7 +207,7 @@ class RecentItem {
       queue = Queue<RecentItem>();
       for (dynamic jsonEntry in jsonList) {
         RecentItem? recentItem = RecentItem.fromJson(JsonUtils.mapValue(jsonEntry));
-        if (recentItem != null) {
+        if ((recentItem != null) && (queue.findItem(recentItem.contentId) == null)) {
           queue.add(recentItem);
         }
       }
@@ -222,8 +225,10 @@ class RecentItem {
     }
     return jsonList;
   }
+}
 
-
+extension RecentItemsQueue on Queue<RecentItem> {
+  RecentItem? findItem(String contentId) => firstWhereOrNull((recentItem) => (recentItem.contentId == contentId));
 }
 
 

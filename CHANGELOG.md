@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.10] - 2025-04-11
 ### Fixed
 - Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
+- Updated Config.eventAttendanceUrl attendace processing [#4950](https://github.com/rokwire/illinois-app/issues/4950).
 
 ## [7.0.9] - 2025-04-09
 ### Changed
@@ -19,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.0.7] - 2025-04-07
 ### Added
-- Bring back Assistant FAQs and update their content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
-- Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
 - Add Group post formatting options when editing a post [#4958](https://github.com/rokwire/illinois-app/issues/4958).
 ### Removed
 - Hide Perplexity and Use All Assistants [#4960](https://github.com/rokwire/illinois-app/issues/4960).
@@ -41,21 +42,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.0.4] - 2025-03-28
 ### Changed
-- Show "Use All Assistants" only if they are more than one [#4933](https://github.com/rokwire/illinois-app/issues/4933).
-- Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
 - Rename "open ai" to "Open AI" [#4937](https://github.com/rokwire/illinois-app/issues/4937).
 - Improve Accessibility for  AccessibleViewPagerNavigationButtons [#2093](https://github.com/rokwire/illinois-app/issues/2093).
-### Added
-- "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
 
 ## [7.0.3] - 2025-03-27
 ### Changed
-- Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
-- Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
 - Implemented extended error handling and reporting in event self checking in. [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 ### Fixed
 - Fixed QR Code processing in event self checking in [#4888](https://github.com/rokwire/illinois-app/issues/4888).
-- Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
 
 ## [7.0.2] - 2025-03-26
 ### Changed
@@ -65,14 +59,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.0.1] - 2025-03-25
 ### Added
 - Exposed ability for switching to test Illini cash url from Debug panel [#698](https://github.com/rokwire/illinois-app/issues/698).
-- Perplexity Assistant Provider [#4906](https://github.com/rokwire/illinois-app/issues/4906).
 - Add name pronunciation to list of group members [#4084](https://github.com/rokwire/illinois-app/issues/4084).
 - Created Browse Guide panel in Debug [#4910](https://github.com/rokwire/illinois-app/issues/4910).
-- open ai Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
 - Added self-registration feature to events [#4888](https://github.com/rokwire/illinois-app/issues/4888).
 ### Removed
 - Deleted Event2AttendanceDetailPanel (unused).
-- Illinois Assistant provider [#4911](https://github.com/rokwire/app-flutter-plugin/issues/4911).
 ### Changed
 - Android: Upgrade Android Gradle Plugin to version 8.2.1.
 - Extended NotificationService APIs [#576](https://github.com/rokwire/app-flutter-plugin/issues/576).
@@ -102,6 +93,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure to dispose TapGestureRecognizer objects.
 ### Removed
 - Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
+
+## [6.1.72] - 2025-04-11
+### Changed
+- Updated again title text of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
+- Make sure recent items do not contain duplicated items, use more reliable identification of recent items [#4984](https://github.com/rokwire/illinois-app/issues/4984).
+### Fixed
+- Fixed background color of Event2SetupNotificationsPanel [#4973](https://github.com/rokwire/illinois-app/issues/4973).
+
+## [6.1.71] - 2025-04-10
+### Changed
+- Updated title and description texts of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
+- Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
+- Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
+- Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
+- Show "Use All Assistants" only if they are more than one [#4933](https://github.com/rokwire/illinois-app/issues/4933).
+- Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
+- Illinois Assistant FAQs content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
+### Added
+- Perplexity Assistant Provider [#4906](https://github.com/rokwire/illinois-app/issues/4906).
+- Open AI Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
+- "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
+- Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Log reactions to Analytics/Splunk [#4977](https://github.com/rokwire/illinois-app/issues/4977).
+### Removed
+- Illinois Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
+### Fixed
+- Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
 
 ## [6.1.70] - 2025-04-08
 ### Fixed

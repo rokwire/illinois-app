@@ -262,20 +262,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   Widget _buildHoursSection() => Visibility(visible: (_displaySurvey != null), child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
-      Row(children: [
-        Flexible(flex: 3, child:
-          Row( crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Expanded( child:
-              Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends should the survey be sent to attendees? (Use whole positive numbers only; enter 0 to send immediately after the event.)'), required: true)
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'SEND TIME'), required: true),
+        Padding(padding: EdgeInsets.only(top: 2), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(flex: 5, child:
+            Event2CreatePanel.buildSectionSubTitleWidget(Localization().getStringEx("panel.event2.setup.survey.hours.description", "How many hours after the event's end time should the survey notification be sent to attendees (or hours after the start time, if no end time is set)? Enter 0 for immediate delivery or a whole positive number to delay sending.")),
+          ),
+          Expanded(flex: 1, child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              Event2CreatePanel.buildTextEditWidget(_hoursController, keyboardType: TextInputType.number, maxLines: 1)
             )
-          ]),
-        ),
-        Flexible(flex: 1, child:
-          Padding(padding: EdgeInsets.only(left: 6), child:
-            Event2CreatePanel.buildTextEditWidget(_hoursController, keyboardType: TextInputType.number, maxLines: 1)
           )
+        ])
         )
-      ])
+      ],)
     )
   );
 
