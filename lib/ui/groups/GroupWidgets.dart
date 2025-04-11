@@ -1037,19 +1037,22 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
 //////////////////////////////////////
 // GroupPostCard
+
 enum GroupPostCardDisplayMode { list, page }
+
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
   final bool? isAdmin;
   final bool? isClickable;
   final GroupPostCardDisplayMode displayMode;
+  final AnalyticsFeature? analyticsFeature;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list, this.analyticsFeature}) :
     super(key: key);
 
   @override
@@ -1158,7 +1161,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post, analyticsFeature: widget.analyticsFeature,)
                               )
                             ),
                             Visibility(
@@ -1258,8 +1261,9 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
+  final AnalyticsFeature? analyticsFeature;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1396,7 +1400,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                         Expanded(
                           child: Visibility(visible: _reactionsEnabled,
-                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment,)
+                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment, analyticsFeature: widget.analyticsFeature,)
                           )
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
@@ -3678,9 +3682,10 @@ class GroupReactionsLayout extends StatefulWidget {
   final Group? group;
   final String? entityId;
   final SocialEntityType reactionSource;
+  final AnalyticsFeature? analyticsFeature;
   final bool? enabled;
 
-  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource,});
+  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _GroupReactionsState();
@@ -3786,6 +3791,11 @@ class _GroupReactionsState extends State<GroupReactionsLayout> with Notification
     setStateIfMounted(() {
       _loading = true;
     });
+    Analytics().logReaction(reaction,
+      target: 'group.${widget.reactionSource.name}',
+      feature: widget.analyticsFeature,
+      attributes: widget.group?.analyticsAttributes,
+    );
     Social().react(entityId: widget.entityId!, source: widget.reactionSource, reaction: reaction).then((succeeded) {
       //If success then we will receive notification Social.notifyReactionsUpdated and will load reactions
       if (!succeeded) {
