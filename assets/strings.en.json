@@ -1558,7 +1558,7 @@
     "panel.event2.detail.attendance.manual_check.disabled": "Manual check is not enabled for this event.",
     "panel.event2.detail.attendance.scan.disabled": "Scanning Illini ID is not enabled for this event.",
     "panel.event2.detail.attendance.self_checkin.disabled": "Self Check-In is not enabled for this event.",
-    "panel.event2.detail.attendance.attendees.description": "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.",
+    "panel.event2.detail.attendance.attendees.description": "Visit {{event_attendance_url}} to upload or download a list.",
     "panel.event2.detail.attendance.additional.netids.label": "NetIDs for additional attendance takers:",
     "panel.event2.detail.attendance.attendees.netids.description": "Upload a list at <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a>.",
     "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must already be registered. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
