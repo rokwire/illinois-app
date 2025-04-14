@@ -1536,6 +1536,7 @@
     "panel.event2.detail.survey.description.att.svy.single": "Attendance will be taken at this event, and you will receive a notification with a follow-up survey 1 hour after the event.",
     "panel.event2.detail.survey.description.att.svy.none": "Attendance will be taken at this event, and you will receive a notification with a follow-up survey after the event.",
     "panel.event2.detail.survey.description.att.svy.admin": "Attendance will be taken at this event, and a follow-up survey will be sent.",
+    "panel.event2.detail.survey.download.results.description": "Download survey results at {{event_attendance_url}}.",
     "panel.event2.detail.survey.button.follow_up_survey.title": "Take Survey",
     "panel.event2.detail.survey.button.follow_up_survey.completed.message": "You have completed this event's survey.",
 

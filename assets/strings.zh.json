@@ -1520,6 +1520,7 @@
 	"panel.event2.detail.survey.description.att.svy.single": "本次活动将纪录每一位参与者的出席纪录，并将在活动结束后发送活动问卷。问卷将于一小时后寄出，参与者会在邮件中收到通知。请参与者踊跃填写。",
 	"panel.event2.detail.survey.description.att.svy.none": "本次活动将纪录每一位参与者的出席纪录，并将在活动结束后发送活动问卷。请参与者踊跃填写。",
 	"panel.event2.detail.survey.description.att.svy.admin": "Attendance will be taken at this event, and a follow-up survey will be sent.",
+	"panel.event2.detail.survey.download.results.description": "Download survey results at {{event_attendance_url}}.",
 	"panel.event2.detail.survey.button.follow_up_survey.title": "填写问卷",
 	"panel.event2.detail.survey.button.follow_up_survey.completed.message": "您已完成活动问卷的填写",
 

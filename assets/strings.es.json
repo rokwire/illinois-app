@@ -1533,6 +1533,7 @@
     "panel.event2.detail.survey.description.att.svy.single": "Se pasará la lista en este evento y recibirás una notificación con una encuesta de seguimiento una hora después del evento.",
     "panel.event2.detail.survey.description.att.svy.none": "Se pasará la lista en este evento y recibirás una notificación con una encuesta de seguimiento después del evento.",
     "panel.event2.detail.survey.description.att.svy.admin": "Se pasará la lista en este evento y una encuesta de seguimiento existe.",
+    "panel.event2.detail.survey.download.results.description": "Download survey results at {{event_attendance_url}}.",
     "panel.event2.detail.survey.button.follow_up_survey.title": "Contesta la Encuesta",
     "panel.event2.detail.survey.button.follow_up_survey.completed.message": "Has completado la encuesta para este evento",
 

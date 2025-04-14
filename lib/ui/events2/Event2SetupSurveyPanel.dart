@@ -17,10 +17,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -35,6 +37,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'Event2SetupSurveyPanel';
@@ -154,6 +157,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
           _buildSurveysSection(),
           _buildHoursSection(),
           _buildSurveyPreviewSection(),
+          _buildDownloadResultsDescription()
         ])
       )
     );
@@ -308,6 +312,37 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         Event2SetupSurveyPanel.popUntil(context);
       },
     );
+  }
+
+  Widget _buildDownloadResultsDescription() {
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.survey.download.results.description',
+      "Download survey results at {{event_attendance_url}}.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, displayAttendanceUrl ?? '');
+    return Visibility(visible: PlatformUtils.isMobile && (_survey != null) && StringUtils.isNotEmpty(displayAttendanceUrl), child:
+      Padding(padding: EdgeInsets.zero, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles().images.getImage('info') ?? Container(),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+              )
+            ),
+          ),
+        ])
+      ),
+    );
+  }
+
+  bool _onTapHtmlLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url, mode: LaunchMode.externalApplication);
+    return true;
   }
 
   String get surveyTitleMacro => '{{survey_title}}';
