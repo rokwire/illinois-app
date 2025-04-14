@@ -495,7 +495,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   ] : null;
 
 
-  List<Widget>? get _attendanceDetailWidget => (_isAdmin || _isAttendanceTaker) ?
+  List<Widget>? get _attendanceDetailWidget => ((_event?.attendanceDetails?.isNotEmpty == true) && (_isAdmin || _isAttendanceTaker)) ?
     <Widget>[
       InkWell(onTap: _onTapTakeAttendance, child:
         _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'attendance', underlined: true)),
@@ -848,8 +848,10 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
           _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
-          _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
-          _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          if (_event?.attendanceDetails?.isNotEmpty == true)
+            _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
+          if (_event?.hasSurvey == true)
+            _buildSettingButton(title:"Event follow-up survey responses", onTap: _onSettingSurveyResponses),
           _buildSettingButton(title: "Additional Settings", onTap: _onSettingAdditionalSettings),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
@@ -939,16 +941,15 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         ] )
       ) : Container();
   
-  Widget _buildSettingButton({String? title, VoidCallback? onTap}) =>  StringUtils.isNotEmpty(title) ?
+  Widget _buildSettingButton({required String title, VoidCallback? onTap}) =>
     Padding(padding: EdgeInsets.only(bottom: 6),
       child: RibbonButton(
-        label: title ?? "",
+        label: title,
         onTap: () {
           Navigator.of(context).pop();
-          if(onTap!=null)
-            onTap();
+          onTap?.call();
         }),
-    ) : Container();
+    );
 
   //Actions
 

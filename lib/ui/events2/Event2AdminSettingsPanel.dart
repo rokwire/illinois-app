@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -10,6 +12,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../service/Analytics.dart';
 import '../widgets/HeaderBar.dart';
@@ -79,10 +82,42 @@ class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
                 child: _ButtonWidget(
                     title: 'DOWNLOAD SURVEY RESULTS',
                     onTap: _onDownloadSurveyResults),
-              )
+              ),
+              _buildDownloadResultsDescription(),
           ]),
         )
     );
+
+  Widget _buildDownloadResultsDescription() {
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.survey.download.results.description',
+      "Download survey results at {{event_attendance_url}}.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, displayAttendanceUrl ?? '');
+    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(displayAttendanceUrl), child:
+      Padding(padding: EdgeInsets.zero, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles().images.getImage('info') ?? Container(),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+              )
+            ),
+          ),
+        ])
+      ),
+    );
+  }
+
+  bool _onTapHtmlLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url, mode: LaunchMode.externalApplication);
+    return true;
+  }
 
   void _onCustomNotifications() {
     Analytics().logSelect(target: "Custom Notifications");
