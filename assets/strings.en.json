@@ -1536,6 +1536,7 @@
     "panel.event2.detail.survey.description.att.svy.single": "Attendance will be taken at this event, and you will receive a notification with a follow-up survey 1 hour after the event.",
     "panel.event2.detail.survey.description.att.svy.none": "Attendance will be taken at this event, and you will receive a notification with a follow-up survey after the event.",
     "panel.event2.detail.survey.description.att.svy.admin": "Attendance will be taken at this event, and a follow-up survey will be sent.",
+    "panel.event2.detail.survey.download.results.description": "Download survey results at {{event_attendance_url}}.",
     "panel.event2.detail.survey.button.follow_up_survey.title": "Take Survey",
     "panel.event2.detail.survey.button.follow_up_survey.completed.message": "You have completed this event's survey.",
 
@@ -1558,7 +1559,7 @@
     "panel.event2.detail.attendance.manual_check.disabled": "Manual check is not enabled for this event.",
     "panel.event2.detail.attendance.scan.disabled": "Scanning Illini ID is not enabled for this event.",
     "panel.event2.detail.attendance.self_checkin.disabled": "Self Check-In is not enabled for this event.",
-    "panel.event2.detail.attendance.attendees.description": "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.",
+    "panel.event2.detail.attendance.attendees.description": "Visit {{event_attendance_url}} to upload or download a list.",
     "panel.event2.detail.attendance.additional.netids.label": "NetIDs for additional attendance takers:",
     "panel.event2.detail.attendance.attendees.netids.description": "Upload a list at <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a>.",
     "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must already be registered. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
