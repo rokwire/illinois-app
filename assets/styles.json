@@ -172,6 +172,7 @@
     "widget.message.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.message.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.message.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.message.small.underline": {"extends": "widget.message.small", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "mediumGray"},
     "widget.message.tiny": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},

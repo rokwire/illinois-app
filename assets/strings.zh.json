@@ -350,7 +350,7 @@
 	"panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
 	"panel.browse.entry.wellness.wellness_resources.title": "一般資源",
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
-	"panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
+	"panel.browse.entry.wellness.wellness_success_team.title": "My Primary Care Provider",
 	"panel.browse.entry.wellness.wellness_recreation.title": "Campus Recreation",
 
 	"panel.assistant.header.title": "伊利諾伊州助理",
@@ -1837,7 +1837,7 @@
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "Add to My Device's Calendar",
 	"panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
-	"panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
+	"panel.settings.home.settings.sections.appointments.label": "My Appointments",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
 	"panel.settings.home.settings.sections.i_card.label": "Illini ID",
@@ -2502,6 +2502,7 @@
 	"panel.wellness.section.screener.label": "Illinois Health Screener",
 	"panel.wellness.section.resources.label": "一般資源",
 	"panel.wellness.section.mental_health.label": "心理健康資源",
+	"panel.wellness.section.success_team.label": "My Primary Care Provider",
 
 	"panel.wellness.sections.description.footer.wellness.text": "健康 ",
 	"panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
@@ -2607,6 +2608,12 @@
 	"panel.wellness.appointments.home.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
 	"panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
 	"panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
+
+	"panel.wellness.successteam.empty.content.description": "<p>There are no primary care providers (PCP) to display. As an Illinois student, you are automatically assigned a PCP at McKinley when you enroll. Call <a href='tel:{{mckinley_phone}}'>{{mckinley_phone}}</a> for more information.</p>",
+	"panel.wellness.successteam.dial.nurse.description": "<p><a href='tel:{{mckinley_phone}}'>Call Dial-A-Nurse at {{mckinley_phone}}</a> 24/hrs/7 days to coordinate healthcare needs and answer questions about illnesses, injuries, or other health concerns.</p>",
+	"panel.wellness.successteam.upcoming.appointments.link": "View your upcoming McKinley appointments.",
+	"panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
+	"panel.wellness.successteam.advisor.info.description": "An academic advisor is your go-to person for course\nregistration, degree planning, and academic support\nservices.",
 
 	"panel.academics.appointments.home.header.title": "预约",
 	"panel.academics.appointments.home.message.providers.failed": "无法加载提供者。",
