@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Text Updates: "My Success Team" [#5000](https://github.com/rokwire/illinois-app/issues/5000).
-- Change the wording from "Public Event" to "All App Users" [#5001](https://github.com/rokwire/illinois-app/issues/5001).
+- Changed the wording from "Public Event" to "All App Users" [#5001](https://github.com/rokwire/illinois-app/issues/5001).
+- Changed the send scheduled post button title [#5002](https://github.com/rokwire/illinois-app/issues/5002).
 
 ## [7.0.11] - 2025-04-14
 ### Changed

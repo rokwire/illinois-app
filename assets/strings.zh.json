@@ -3121,6 +3121,7 @@
 	"panel.group.detail.post.create.dialog.link.text.label": "链接文字：",
 	"panel.group.detail.post.create.dialog.link.url.label": "连结URL：",
 	"panel.group.detail.post.create.button.send.title": "送出",
+	"panel.group.detail.post.create.button.schedule.title": "安排帖子",
 	"panel.group.detail.post.update.button.update.title": "更新",
 	"panel.group.detail.post.options.label": "选项",
 	"panel.group.detail.post.button.report.label": "回报",

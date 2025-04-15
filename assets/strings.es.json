@@ -3143,6 +3143,7 @@
     "panel.group.detail.post.create.dialog.link.text.label": "Texto para el Enlace:",
     "panel.group.detail.post.create.dialog.link.url.label": "URL para el Enlace:",
     "panel.group.detail.post.create.button.send.title": "Enviar",
+    "panel.group.detail.post.create.button.schedule.title": "Programar publicación",
     "panel.group.detail.post.update.button.update.title": "Actualizar",
     "panel.group.detail.post.options.label": "Opciones",
     "panel.group.detail.post.button.report.label": "Reportar",

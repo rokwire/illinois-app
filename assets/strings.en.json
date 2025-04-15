@@ -3141,6 +3141,7 @@
     "panel.group.detail.post.create.dialog.link.text.label": "Link Text:",
     "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
     "panel.group.detail.post.create.button.send.title": "Send",
+    "panel.group.detail.post.create.button.schedule.title": "Schedule Post",
     "panel.group.detail.post.update.button.update.title": "Update",
     "panel.group.detail.post.options.label": "Options",
     "panel.group.detail.post.button.report.label": "Report",
