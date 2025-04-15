@@ -750,22 +750,24 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   // App Info
 
-  Widget _buildAppInfo() => Column(children: [
-    Container(
-      padding: const EdgeInsets.all(6),
-      child: SizedBox(width: 51, height: 51, child:
+  Widget _buildAppInfo() => Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.center, children: [
+    Column(children: [
+      Container(
+        padding: const EdgeInsets.all(6),
+        child: SizedBox(width: 51, height: 51, child:
         Styles().images.getImage('university-logo-oval-white', fit: BoxFit.contain),
+        ),
       ),
-    ),
-    Padding(padding: const EdgeInsets.only(top: 8)),
-    RichText(textAlign: TextAlign.left, text:
+      Padding(padding: const EdgeInsets.only(top: 8)),
+      RichText(textAlign: TextAlign.left, text:
       TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
         TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
         TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.fat")),
       ])
-    ),
-    Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin"))
-  ],);
+      ),
+      Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin"))
+    ],)
+  ]);
 
   String get _appVersion => Config().appVersion ?? '';
 
