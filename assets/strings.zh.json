@@ -1140,7 +1140,7 @@
 	"panel.explore_detail.label.privacy.title":"隱私",
 	"panel.explore_detail.label.privacy.private.title":"僅上傳賓客名單",
 	"panel.explore_detail.label.privacy.group_members.title":"僅限團體成員",
-	"panel.explore_detail.label.privacy.public.title":"公共活動",
+	"panel.explore_detail.label.privacy.public.title":"All App Users",
 	"panel.explore_detail.button.order_online":"Order Online with Order Ahead App",
 	"panel.explore_detail.event_type.online": "在线活动",
 	"panel.explore_detail.event_type.in_person": "现场活动",
