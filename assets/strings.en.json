@@ -360,7 +360,7 @@
     "panel.assistant.offline.label": "The Illinois Assistant is not available while offline.",
     "panel.assistant.clear_all.label": "Clear All",
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
-    "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
+    "panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{settings_privacy_url}}'><b>sign in</b></a> with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.google.label": "Ask the Google Assistant",
     "panel.assistant.content.conversation.grok.label": "Ask the Grok Assistant",
     "panel.assistant.content.conversation.perplexity.label": "Ask the Perplexity Assistant",
