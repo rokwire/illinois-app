@@ -353,7 +353,7 @@
     "panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
     "panel.browse.entry.wellness.wellness_resources.title": "General Resources",
     "panel.browse.entry.wellness.wellness_mental_health.title": "Mental Health Resources",
-    "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
+    "panel.browse.entry.wellness.wellness_success_team.title": "My Primary Care Provider",
     "panel.browse.entry.wellness.wellness_recreation.title": "Campus Recreation",
 
     "panel.assistant.header.title": "Illinois Assistant",
@@ -1143,7 +1143,7 @@
     "panel.explore_detail.label.privacy.title":"Privacy",
     "panel.explore_detail.label.privacy.private.title":"Uploaded Guest List Only",
     "panel.explore_detail.label.privacy.group_members.title":"Group Members Only",
-    "panel.explore_detail.label.privacy.public.title":"Public Event",
+    "panel.explore_detail.label.privacy.public.title":"All App Users",
     "panel.explore_detail.button.order_online":"Order Online with Order Ahead App",
     "panel.explore_detail.event_type.online": "Online Event",
     "panel.explore_detail.event_type.in_person": "In-person event",
@@ -1870,7 +1870,7 @@
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.calendar.label": "Add to My Device's Calendar",
     "panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
-    "panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
+    "panel.settings.home.settings.sections.appointments.label": "My Appointments",
     "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
     "panel.settings.home.settings.sections.i_card.label": "Illini ID",
@@ -2534,7 +2534,7 @@
     "panel.wellness.section.screener.label": "Illinois Health Screener",
     "panel.wellness.section.resources.label": "General Resources",
     "panel.wellness.section.mental_health.label": "Mental Health Resources",
-    "panel.wellness.section.success_team.label": "My Success Team",
+    "panel.wellness.section.success_team.label": "My Primary Care Provider",
 
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
     "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving toward enhancing your ",
@@ -2641,6 +2641,9 @@
     "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
     "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
 
+    "panel.wellness.successteam.empty.content.description": "<p>There are no primary care providers (PCP) to display. As an Illinois student, you are automatically assigned a PCP at McKinley when you enroll. Call <a href='tel:{{mckinley_phone}}'>{{mckinley_phone}}</a> for more information.</p>",
+    "panel.wellness.successteam.dial.nurse.description": "<p><a href='tel:{{mckinley_phone}}'>Call Dial-A-Nurse at {{mckinley_phone}}</a> 24/hrs/7 days to coordinate healthcare needs and answer questions about illnesses, injuries, or other health concerns.</p>",
+    "panel.wellness.successteam.upcoming.appointments.link": "View your upcoming McKinley appointments.",
     "panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
     "panel.wellness.successteam.advisor.info.description": "An academic advisor is your go-to person for course\nregistration, degree planning, and academic support\nservices.",
 
@@ -3155,6 +3158,7 @@
     "panel.group.detail.post.create.dialog.link.text.label": "Link Text:",
     "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
     "panel.group.detail.post.create.button.send.title": "Send",
+    "panel.group.detail.post.create.button.schedule.title": "Schedule Post",
     "panel.group.detail.post.update.button.update.title": "Update",
     "panel.group.detail.post.options.label": "Options",
     "panel.group.detail.post.button.report.label": "Report",

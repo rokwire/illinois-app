@@ -467,7 +467,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
 
   String get _privacyStatus =>
       (_event?.isPublic == true)
-    ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')
+    ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'All App Users')
     : (_eventProcessing
       ? '...'
       : (_isGroupEvent

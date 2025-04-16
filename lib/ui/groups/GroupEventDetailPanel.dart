@@ -388,7 +388,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   Widget _eventPrivacyDetail() {
     String privacyText = _isPrivateGroupEvent
         ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'All App Users');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
         value: privacyText,

@@ -1007,7 +1007,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapWellnessSuccessTeam(BuildContext context) {
-    Analytics().logSelect(target: "My Success Team");
+    Analytics().logSelect(target: "My Primary Care Provider");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
   }
 
