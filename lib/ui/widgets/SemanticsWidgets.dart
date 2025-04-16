@@ -1,6 +1,8 @@
 
 import 'dart:io';
+import 'dart:math' as math;
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -214,3 +216,10 @@ abstract class SemanticsPageAdapter<T> {
     SemanticsPageMapper<T>  get _defaultMapper => (key) => key is T  ? key : null;
 }
 
+
+class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
+  AccessibleDropDownMenuItem({super.key, required super.child, super.value});
+
+  @override
+  Widget build(BuildContext context) => MergeSemantics(child: Semantics( container: true, child: super.build(context)));
+}
