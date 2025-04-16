@@ -47,7 +47,7 @@
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
 
-			"assistant": ["google_assistant", "grok_assistant", "perplexity_assistant", "openai_assistant"],
+			"assistant": ["openai_assistant", "google_assistant", "grok_assistant", "perplexity_assistant"],
 
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
@@ -126,7 +126,7 @@
 				"assistant"                               : ["${config.settings.groups.assistant}", "OR", "${config.settings.groups.assistant_managed}"],
 				"assistant.grok_assistant"                : ["${config.settings.groups.grok_assistant}"],
 				"assistant.perplexity_assistant"          : ["${config.settings.groups.perplexity_assistant}"],
-				"assistant.openai_assistant"              : ["${config.settings.groups.openai_assistant}"],
+				"assistant.google_assistant"              : ["${config.settings.groups.google_assistant}"],
 				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"]
 			},
 			"locations": {

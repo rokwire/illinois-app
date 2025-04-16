@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved accessibility for EventsHomePanel [#4417](https://github.com/rokwire/illinois-app/issues/4417).
 - Update the popup screen for signed out users in the Assistant [#5009](https://github.com/rokwire/illinois-app/issues/5009).
 - Update the initial Assistant message [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+- Set Open AI as default assistant provider [#5009](https://github.com/rokwire/illinois-app/issues/5009).
 
 ## [7.0.12] - 2025-04-15
 ### Changed
