@@ -27,6 +27,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -469,6 +470,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   ScrollController _scrollController = ScrollController();
 
+  GlobalKey? _sortButtonKey;
+  GlobalKey? _filtersButtonKey;
+
   @override
   void initState() {
     
@@ -595,11 +599,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     return Row(children: [
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
-          leftIconKey: 'filters',
-          rightIconKey: 'chevron-right',
-          onTap: _onFilters,
+        MergeSemantics(key: _filtersButtonKey ??= GlobalKey(), child:
+          Semantics(value: _currentFilterParam.descriptionText, child:
+            Event2FilterCommandButton(
+              title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
+              leftIconKey: 'filters',
+              rightIconKey: 'chevron-right',
+              onTap: _onFilters,
+            )
+          )
         ),
         _sortButton,
 
@@ -633,17 +641,19 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
-    return DropdownButtonHideUnderline(child:
-      DropdownButton2<Event2SortType>(
-        dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
-        customButton: Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
-          leftIconKey: 'sort'
-        ),
-        isExpanded: false,
-        items: _buildSortDropdownItems(),
-        onChanged: _onSortType,
-      ),
+    return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child: Semantics(value: event2SortTypeToDisplayString(_sortType), child:
+      DropdownButtonHideUnderline(child:
+        DropdownButton2<Event2SortType>(
+          dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
+          customButton: Event2FilterCommandButton(
+            title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
+            leftIconKey: 'sort'
+          ),
+          isExpanded: false,
+          items: _buildSortDropdownItems(),
+          onChanged: _onSortType,
+        )
+      )),
     );
   }
 
@@ -653,9 +663,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     for (Event2SortType sortType in Event2SortType.values) {
       if ((sortType != Event2SortType.proximity) || locationAvailable) {
         String? displaySortType = _sortDropdownItemTitle(sortType);
-        items.add(DropdownMenuItem<Event2SortType>(
+        items.add(AccessibleDropDownMenuItem<Event2SortType>(
+          key: ObjectKey(sortType),
           value: sortType,
-          child: Semantics(label: displaySortType, container: true, button: true,
+          child: Semantics(label: displaySortType, button: true, container: true, inMutuallyExclusiveGroup: true,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
               Styles().textStyles.getTextStyle("widget.message.regular.fat") :
               Styles().textStyles.getTextStyle("widget.message.regular"),
@@ -859,7 +870,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             _types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
             _attributes = filterResult.attributes ?? <String, dynamic>{};
           });
-          
+
           Storage().events2Time = event2TimeFilterToString(_timeFilter);
           Storage().events2CustomStartTime = JsonUtils.encode(_customStartTime?.toJson());
           Storage().events2CustomEndTime = JsonUtils.encode(_customEndTime?.toJson());
@@ -868,7 +879,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
           Event2FilterParam.notifySubscribersChanged(except: this);
 
-          _reload();
+          _reload().then((_) =>
+              Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
+                  AppSemantics.triggerAccessibilityFocus(_filtersButtonKey))
+          );
       }
     });
   }
@@ -1087,7 +1101,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
           _sortType = value;
         });
         Storage().events2SortType = event2SortTypeToString(_sortType);
-        _reload();
+        _reload().then((_)=>
+            Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
+                AppSemantics.triggerAccessibilityFocus(_sortButtonKey)));
+
       }
     }
   }
@@ -1252,6 +1269,47 @@ class Event2FilterParam {
     }
 
     return descriptionList;
+  }
+
+  String get descriptionText {
+      String descriptionText = "";
+
+      String? timeDescription = (timeFilter != Event2TimeFilter.customRange) ?
+      event2TimeFilterToDisplayString(timeFilter) :
+      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: customStartTime, customEndTime: customEndTime);
+
+      if (timeDescription != null) {
+        if (StringUtils.isNotEmpty(descriptionText)) {
+          descriptionText += ", ";
+        }
+        descriptionText += timeDescription;
+      }
+
+      if (types != null) {
+        for (Event2TypeFilter type in types!) {
+          if (StringUtils.isNotEmpty(descriptionText)) {
+            descriptionText += ", ";
+          }
+          descriptionText += event2TypeFilterToDisplayString(type) ?? "";
+        }
+      }
+
+      ContentAttributes? contentAttributes = Events2().contentAttributes;
+      List<ContentAttribute>? attributesList = contentAttributes?.attributes;
+      if ((attributes?.isNotEmpty == true) && (contentAttributes != null) && (attributesList != null)) {
+        for (ContentAttribute attribute in attributesList) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(attributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            for (String attributeValue in displayAttributeValues) {
+              if (StringUtils.isNotEmpty(descriptionText)) {
+                descriptionText += ", ";
+              }
+              descriptionText += attributeValue;
+            }
+          }
+        }
+      }
+      return descriptionText;
   }
 
   static void notifySubscribersChanged({NotificationsListener? except}) {

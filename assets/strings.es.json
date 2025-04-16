@@ -357,7 +357,7 @@
     "panel.assistant.offline.label": "El Asistente de Illinois no está disponible sin conexión.",
     "panel.assistant.clear_all.label": "Limpiar todo",
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
-    "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
+    "panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{settings_privacy_url}}'><b>sign in</b></a> with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.google.label": "Pregunta al asistente de Google",
     "panel.assistant.content.conversation.grok.label": "Pregunta al asistente de Grok",
     "panel.assistant.content.conversation.perplexity.label": "Pregunta al Asistente de Perplexity",
@@ -368,7 +368,7 @@
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.sources_links.label": "Fuentes y enlaces",
     "panel.assistant.related.label": "Relacionado:",
-    "panel.assistant.label.welcome_message.title": "El Asistente de Illinois es una función de búsqueda que pone a su alcance recursos universitarios oficiales. Haga una pregunta a continuación para comenzar.",
+    "panel.assistant.label.welcome_message.title": "**¡Haz una pregunta a continuación para explorar los recursos universitarios con el NUEVO Asistente de Illinois!**\nComprueba la precisión de las respuestas. Tus comentarios nos ayudarán a mejorar el Asistente con el tiempo.",
     "panel.assistant.label.example.eg.title": "p.ej. ",
     "panel.assistant.label.example.question.title": "¿Cuántos estudiantes asisten a UIUC?",
     "panel.assistant.unknown.answer.value": "No pude encontrar una respuesta de una fuente universitaria oficial.",
@@ -402,7 +402,7 @@
     "panel.wallet.content_type.meal_plan.label": "Meal Plan",
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
-    "panel.wallet.content_type.library_card.label": "Univerity Library Card",
+    "panel.wallet.content_type.library_card.label": "University Library Card",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar por Título del Evento",
@@ -4117,7 +4117,7 @@
     "widget.id_card.mobile_access.renew.success.msg": "Mobile Access was successfully renewed.",
     "widget.id_card.mobile_access.renew.fail.msg": "Failed to renew Mobile Access. Reason: %s",
 
-    "widget.library_card.text.card_instructions": "This card is needed for Univerity Library services such as picking up an equipment loan or checking out a book or keys to a study room.",
+    "widget.library_card.text.card_instructions": "This card is needed for University Library services such as picking up an equipment loan or checking out a book or keys to a study room.",
 
     "widget.bus_pass.header.title": "Pase de Autobús MTD",
     "widget.card.label.uin.title": "UIN",

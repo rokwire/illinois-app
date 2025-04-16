@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -24,6 +25,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -50,10 +52,7 @@ class AssistantHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showTextMessage(
-          context,
-          Localization().getStringEx('panel.assistant.logged_out.label',
-              'To access the Illinois Assistant, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
+      showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
     } else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -379,4 +378,69 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   AssistantContent? get _initialSelectedContent => CollectionUtils.isNotEmpty(_contentTypes) ? _contentTypes.first : null;
+}
+
+class _AssistantSignInInfoPopup extends StatefulWidget {
+  _AssistantSignInInfoPopup();
+
+  @override
+  State<_AssistantSignInInfoPopup> createState() => _AssistantSignInInfoPopupState();
+}
+
+class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
+
+  static const String _privacyUrl = 'settings://privacy';
+  static const String _privacyUrlMacro = '{{settings_privacy_url}}';
+
+  @override
+  Widget build(BuildContext context) {
+    String message = Localization().getStringEx('panel.assistant.logged_out.label',
+                "To access the Illinois Assistant, <a href='$_privacyUrlMacro'><b>sign in</b></a> with your NetID and set your privacy level to 4 or 5 under Settings.")
+        .replaceAll(_privacyUrlMacro, _privacyUrl);
+    return AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, children: [
+              Padding(
+                  padding: EdgeInsets.only(top: 30, bottom: 22),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 28),
+                      child: Column(children: [
+                        Padding(
+                            padding: EdgeInsets.only(top: 14),
+                            child:
+                                HtmlWidget(message,
+                                    onTapUrl: (url) => _onTapUrl(url),
+                                    textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null))
+                      ]),
+                    ),
+                  ])),
+              Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Semantics(
+                          button: true,
+                          label: "close",
+                          child: InkWell(
+                              onTap: () {
+                                Analytics().logSelect(target: 'Close Assistant Sign-In info popup');
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(padding: EdgeInsets.all(12), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))),
+            ])));
+  }
+
+  bool _onTapUrl(String url) {
+    if (url == _privacyUrl) {
+      Analytics().logSelect(target: 'Settings: My App Privacy', source: widget.runtimeType.toString());
+      Navigator.of(context).pop();
+      SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

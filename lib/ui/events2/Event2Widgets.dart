@@ -69,7 +69,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey) : null;
+    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey, excludeFromSemantics: true) : null;
     if (leftIconWidget != null) {
       contentList.add(
         Padding(padding: leftIconPadding, child: leftIconWidget,)
@@ -82,7 +82,7 @@ class Event2FilterCommandButton extends StatelessWidget {
       );
     }
 
-    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey) : null;
+    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey, excludeFromSemantics: true) : null;
     if (rightIconWidget != null) {
       contentList.add(
         Padding(padding: rightIconPadding, child: rightIconWidget,)

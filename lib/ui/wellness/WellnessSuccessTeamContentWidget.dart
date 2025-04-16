@@ -87,12 +87,12 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
 
     SuccessTeamMember? pcp = primaryCareProviders.isNotEmpty ? primaryCareProviders.first : null;
     if (pcp != null) {
-      widgetList.add(_buildSuccessTeamItem("MCKINLEY HEALTH CENTER", "Primary Care Provider", "${pcp.firstName} ${pcp.lastName}", pcp.externalLink ?? '', pcp.image ?? '', widgetList.isNotEmpty ? 16 : 0));
+      widgetList.add(_buildSuccessTeamItem("MCKINLEY HEALTH CENTER", "Primary Care Provider", "${pcp.firstName} ${pcp.lastName}", pcp.externalLink ?? '', pcp.image, widgetList.isNotEmpty ? 16 : 0));
     }
 
     SuccessTeamMember? advisor = ((0 <= advisorIndex) && (advisorIndex < academicAdvisors.length)) ? academicAdvisors[advisorIndex] : null;
     if (advisor != null) {
-      widgetList.add(_buildSuccessTeamItem("THE GRAINGER COLLEGE OF ENGINEERING", "Academic Advisor", "${advisor?.firstName} ${advisor?.lastName}", "https://my.engr.illinois.edu/advising", advisor.image ?? '', widgetList.isNotEmpty ? 16 : 0));
+      widgetList.add(_buildSuccessTeamItem("THE GRAINGER COLLEGE OF ENGINEERING", "Academic Advisor", "${advisor.firstName} ${advisor.lastName}", "https://my.engr.illinois.edu/advising", advisor.image, widgetList.isNotEmpty ? 16 : 0));
     }
 
     if (this.academicAdvisors.length > 1) {

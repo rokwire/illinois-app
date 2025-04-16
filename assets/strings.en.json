@@ -360,7 +360,7 @@
     "panel.assistant.offline.label": "The Illinois Assistant is not available while offline.",
     "panel.assistant.clear_all.label": "Clear All",
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
-    "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
+    "panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{settings_privacy_url}}'><b>sign in</b></a> with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.google.label": "Ask the Google Assistant",
     "panel.assistant.content.conversation.grok.label": "Ask the Grok Assistant",
     "panel.assistant.content.conversation.perplexity.label": "Ask the Perplexity Assistant",
@@ -371,7 +371,7 @@
     "panel.assistant.content.faqs.label": "Illinois Assistant FAQs",
     "panel.assistant.sources_links.label": "Sources and Links",
     "panel.assistant.related.label": "Related:",
-    "panel.assistant.label.welcome_message.title": "The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.",
+    "panel.assistant.label.welcome_message.title": "**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback will help improve the Assistant over time.",
     "panel.assistant.label.example.eg.title": "e.g., ",
     "panel.assistant.label.example.question.title": "How many students attend UIUC?",
     "panel.assistant.unknown.answer.value": "I wasn’t able to find an answer from an official university source.",
@@ -405,7 +405,7 @@
     "panel.wallet.content_type.meal_plan.label": "Meal Plan",
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
-    "panel.wallet.content_type.library_card.label": "Univerity Library Card",
+    "panel.wallet.content_type.library_card.label": "University Library Card",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Search by Event Title",
@@ -4113,7 +4113,7 @@
     "widget.id_card.mobile_access.renew.success.msg": "Mobile access was successfully renewed.",
     "widget.id_card.mobile_access.renew.fail.msg": "Failed to renew mobile access. Reason: %s",
 
-    "widget.library_card.text.card_instructions": "This card is needed for Univerity Library services such as picking up an equipment loan or checking out a book or keys to a study room.",
+    "widget.library_card.text.card_instructions": "This card is needed for University Library services such as picking up an equipment loan or checking out a book or keys to a study room.",
 
     "widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",

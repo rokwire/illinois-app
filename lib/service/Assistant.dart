@@ -176,7 +176,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
         provider: provider,
         message: Message(
             content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-                'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
+                '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback will help improve the Assistant over time.'),
             user: false));
   }
 
