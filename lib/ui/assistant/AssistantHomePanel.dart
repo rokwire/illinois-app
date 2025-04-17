@@ -95,6 +95,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Assistant.notifyProvidersChanged,
+      Assistant.notifySettingsChanged,
     ]);
 
     _contentTypes = _buildAssistantContentTypes();
@@ -107,8 +108,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       _selectedContent = _initialSelectedContent;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Force to calculate correct content height
+      // 1. Force to calculate correct content height
       setStateIfMounted((){});
+      // 2. Check if the Assistant is available
+      _checkAvailable();
     });
   }
 
@@ -123,11 +126,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _updateContentTypes();
-    } else if (name == FlexUI.notifyChanged) {
-      _updateContentTypes();
-    } else if (name == Assistant.notifyProvidersChanged) {
+    if (name == Auth2.notifyLoginChanged ||
+        name == FlexUI.notifyChanged ||
+        name == Assistant.notifyProvidersChanged ||
+        name == Assistant.notifySettingsChanged) {
+      _checkAvailable();
       _updateContentTypes();
     }
   }
@@ -301,6 +304,40 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     return contentTypes;
   }
 
+  // Global On/Off / Available
+
+  void _checkAvailable() {
+    if (!_isAvailable) {
+      String unavailableMessage = Assistant().localizedUnavailableText ??
+          Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
+          'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
+      AppAlert.showDialogResult(context, unavailableMessage);
+    }
+  }
+
+  bool get _isAvailable => Assistant().isAvailable;
+
+  // Utilities
+
+  String? _getContentItemName(AssistantContent? contentItem) {
+    switch (contentItem) {
+      case AssistantContent.google_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
+      case AssistantContent.grok_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
+      case AssistantContent.perplexity_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
+      case AssistantContent.openai_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
+      case AssistantContent.all_assistants:
+        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
+      case AssistantContent.faqs:
+        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
+      default:
+        return null;
+    }
+  }
+
   AssistantContent? _assistantContentFromProvider(AssistantProvider? provider) {
     switch (provider) {
       case AssistantProvider.google:
@@ -315,8 +352,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return null;
     }
   }
-
-  // Utilities
 
   double? get _contentHeight {
     RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
@@ -342,25 +377,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantProvidersConversationContentWidget();
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
-      default:
-        return null;
-    }
-  }
-
-  String? _getContentItemName(AssistantContent? contentItem) {
-    switch (contentItem) {
-      case AssistantContent.google_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
-      case AssistantContent.grok_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
-      case AssistantContent.perplexity_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
-      case AssistantContent.openai_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
-      case AssistantContent.all_assistants:
-        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
-      case AssistantContent.faqs:
-        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
         return null;
     }
