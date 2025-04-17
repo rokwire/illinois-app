@@ -257,24 +257,22 @@ class AssistantLocation {
 /// AssistantUser
 ///
 class AssistantUser {
-  final DateTime? dateTermsAcceptedUtc;
+  final DateTime? termsAcceptedDateUtc;
 
-  AssistantUser({this.dateTermsAcceptedUtc});
+  AssistantUser({this.termsAcceptedDateUtc});
 
   static AssistantUser? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return AssistantUser(dateTermsAcceptedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_terms_accepted']), isUtc: true));
+    return AssistantUser(termsAcceptedDateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['terms_accepted_date']), isUtc: true));
   }
 
-  Map<String, dynamic> toJson() => {'date_terms_accepted': DateTimeUtils.utcDateTimeToString(dateTermsAcceptedUtc)};
+  @override
+  bool operator ==(Object other) => (other is AssistantUser) && (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
 
   @override
-  bool operator ==(Object other) => (other is AssistantUser) && (dateTermsAcceptedUtc == other.dateTermsAcceptedUtc);
-
-  @override
-  int get hashCode => (dateTermsAcceptedUtc?.hashCode ?? 0);
+  int get hashCode => (termsAcceptedDateUtc?.hashCode ?? 0);
 }
 
 ///
@@ -282,11 +280,11 @@ class AssistantUser {
 ///
 class AssistantSettings {
   final bool? available;
-  final DateTime? termsDateIntroducedUtc;
+  final DateTime? termsTextIntroducedDateUtc;
   final Map<String, String?>? termsTextJson;
   final Map<String, String?>? unavailableTextJson;
 
-  AssistantSettings({this.available, this.termsDateIntroducedUtc, this.termsTextJson, this.unavailableTextJson});
+  AssistantSettings({this.available, this.termsTextIntroducedDateUtc, this.termsTextJson, this.unavailableTextJson});
 
   static AssistantSettings? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -294,7 +292,7 @@ class AssistantSettings {
     }
     return AssistantSettings(
         available: JsonUtils.boolValue(json['available']),
-        termsDateIntroducedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['terms_text_date_introduced']), isUtc: true),
+        termsTextIntroducedDateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['terms_text_introduced_date']), isUtc: true),
         termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
         unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
     );
@@ -303,11 +301,11 @@ class AssistantSettings {
   @override
   bool operator ==(Object other) => (other is AssistantSettings) && (available == other.available) &&
       (termsTextJson == other.termsTextJson) && (unavailableTextJson == other.unavailableTextJson) &&
-      (termsDateIntroducedUtc == other.termsDateIntroducedUtc);
+      (termsTextIntroducedDateUtc == other.termsTextIntroducedDateUtc);
 
   @override
   int get hashCode => (available?.hashCode ?? 0) ^ (termsTextJson?.hashCode ?? 0) ^ (unavailableTextJson?.hashCode ?? 0) ^
-    (termsDateIntroducedUtc?.hashCode ?? 0);
+    (termsTextIntroducedDateUtc?.hashCode ?? 0);
 }
 
 ///
