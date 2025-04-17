@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -19,6 +20,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
   static const String _faqContentCategory = "assistant_faqs";
 
+  AssistantUser? _user;
   List<AssistantProvider>? _providers;
   Map<String, dynamic>? _faqsContent;
 
@@ -56,8 +58,9 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   @override
   Future<void> initService() async {
     if (Auth2().isLoggedIn) {
-      _buildAvailableProviders();
+      _loadUser();
       _loadAllMessages();
+      _buildAvailableProviders();
     }
     _initFaqs();
   }
@@ -80,6 +83,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
+      _loadUser();
       _buildAvailableProviders();
       if (Auth2().isLoggedIn) {
         _loadAllMessages();
@@ -117,6 +121,71 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     String? selectedLocaleCode = Localization().currentLocale?.languageCode;
     String? defaultFaqs = JsonUtils.stringValue(_faqsContent![defaultLocaleCode]);
     return JsonUtils.stringValue(_faqsContent![selectedLocaleCode]) ?? defaultFaqs;
+  }
+
+  // Settings
+
+  Future<AssistantSettings?> loadSettings() async {
+    if (_isEnabled) {
+      debugPrint('Assistant settings - missing url.');
+      return null;
+    }
+    String? url = '${Config().aiProxyUrl}/client-settings';
+    Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
+    } else {
+      debugPrint('Failed to load assistant settings. Reason: $responseCode, $responseString');
+      return null;
+    }
+  }
+
+  // User
+
+  AssistantUser? get user => _user;
+
+  Future<bool> acceptTerms() async {
+    if (_isEnabled) {
+      debugPrint('Assistant acceptTerms - missing url.');
+      return false;
+    }
+    if (!Auth2().isLoggedIn) {
+      debugPrint('Assistant acceptTerms - user not signed in.');
+      return false;
+    }
+    String? url = '${Config().aiProxyUrl}/user-consent';
+    Response? response = await Network().post(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      await _loadUser();
+      return true;
+    } else {
+      debugPrint('Failed to accept assistant terms. Reason: $responseCode, $responseString');
+      return false;
+    }
+  }
+
+  Future<void> _loadUser() async {
+    AssistantUser? user;
+    if (_isEnabled) {
+      debugPrint('Assistant loading user - missing url.');
+    } else if (!Auth2().isLoggedIn) {
+      debugPrint('Assistant - loading user is not allowed - not signed in.');
+    } else {
+      String? url = '${Config().aiProxyUrl}/user-settings';
+      Response? response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        user = AssistantUser.fromJson(JsonUtils.decodeMap(responseString));
+      } else {
+        debugPrint('Failed to load assistant user. Reason: $responseCode, $responseString');
+      }
+    }
+    _user = user;
   }
 
   // Providers
