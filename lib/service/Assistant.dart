@@ -1,11 +1,13 @@
+import 'dart:ui';
+
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/ext/network.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -18,11 +20,15 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
   static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
+  static const String notifySettingsChanged = "edu.illinois.rokwire.assistant.settings.changed";
   static const String _faqContentCategory = "assistant_faqs";
 
   AssistantUser? _user;
+  AssistantSettings? _settings;
   List<AssistantProvider>? _providers;
   Map<String, dynamic>? _faqsContent;
+
+  DateTime?  _pausedDateTime;
 
   Map<AssistantProvider, List<Message>> _displayMessages = <AssistantProvider, List<Message>>{
     AssistantProvider.google: List<Message>.empty(growable: true),
@@ -52,17 +58,19 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       Content.notifyContentItemsChanged,
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
   }
 
   @override
   Future<void> initService() async {
+    _initFaqs();
+    _loadSettings();
     if (Auth2().isLoggedIn) {
       _loadUser();
       _loadAllMessages();
       _buildAvailableProviders();
     }
-    _initFaqs();
   }
 
   @override
@@ -83,6 +91,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
+      _loadSettings();
       _loadUser();
       _buildAvailableProviders();
       if (Auth2().isLoggedIn) {
@@ -92,6 +101,8 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       }
     } else if (name == FlexUI.notifyChanged) {
       _buildAvailableProviders();
+    } else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
   }
 
@@ -99,6 +110,19 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     if (categoriesDiff?.contains(_faqContentCategory) == true) {
       _initFaqs();
       NotificationService().notify(notifyFaqsContentChanged);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    } else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadSettings();
+        }
+      }
     }
   }
 
@@ -125,20 +149,26 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   // Settings
 
-  Future<AssistantSettings?> loadSettings() async {
-    if (_isEnabled) {
-      debugPrint('Assistant settings - missing url.');
-      return null;
-    }
-    String? url = '${Config().aiProxyUrl}/client-settings';
-    Response? response = await Network().get(url, auth: Auth2());
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      return AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
+  AssistantSettings? get settings => _settings;
+
+  Future<void> _loadSettings() async {
+    AssistantSettings? settings;
+    if (!_isEnabled) {
+      Log.w('Assistant settings - missing url.');
     } else {
-      debugPrint('Failed to load assistant settings. Reason: $responseCode, $responseString');
-      return null;
+      String? url = '${Config().aiProxyUrl}/client-settings';
+      Response? response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        settings = AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
+      } else {
+        Log.w('Failed to load assistant settings. Reason: $responseCode, $responseString');
+      }
+    }
+    if (_settings != settings) {
+      _settings = settings;
+      NotificationService().notify(notifySettingsChanged);
     }
   }
 
@@ -147,12 +177,12 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   AssistantUser? get user => _user;
 
   Future<bool> acceptTerms() async {
-    if (_isEnabled) {
-      debugPrint('Assistant acceptTerms - missing url.');
+    if (!_isEnabled) {
+      Log.w('Assistant acceptTerms - missing url.');
       return false;
     }
     if (!Auth2().isLoggedIn) {
-      debugPrint('Assistant acceptTerms - user not signed in.');
+      Log.w('Assistant acceptTerms - user not signed in.');
       return false;
     }
     String? url = '${Config().aiProxyUrl}/user-consent';
@@ -163,17 +193,17 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       await _loadUser();
       return true;
     } else {
-      debugPrint('Failed to accept assistant terms. Reason: $responseCode, $responseString');
+      Log.w('Failed to accept assistant terms. Reason: $responseCode, $responseString');
       return false;
     }
   }
 
   Future<void> _loadUser() async {
     AssistantUser? user;
-    if (_isEnabled) {
-      debugPrint('Assistant loading user - missing url.');
+    if (!_isEnabled) {
+      Log.w('Assistant loading user - missing url.');
     } else if (!Auth2().isLoggedIn) {
-      debugPrint('Assistant - loading user is not allowed - not signed in.');
+      Log.w('Assistant - loading user is not allowed - not signed in.');
     } else {
       String? url = '${Config().aiProxyUrl}/user-settings';
       Response? response = await Network().get(url, auth: Auth2());
@@ -182,7 +212,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       if (responseCode == 200) {
         user = AssistantUser.fromJson(JsonUtils.decodeMap(responseString));
       } else {
-        debugPrint('Failed to load assistant user. Reason: $responseCode, $responseString');
+        Log.w('Failed to load assistant user. Reason: $responseCode, $responseString');
       }
     }
     _user = user;
