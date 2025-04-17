@@ -149,7 +149,11 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   // Settings
 
-  AssistantSettings? get settings => _settings;
+  bool get isAvailable => _settings?.available ?? false;
+  String? get localizedTermsText => _settings?.getTermsText(locale: _localeCode);
+  String? get localizedUnavailableText => _settings?.getUnavailableText(locale: _localeCode);
+
+  String? get _localeCode => (Localization().currentLocale ?? Localization().defaultLocale)?.languageCode;
 
   Future<void> _loadSettings() async {
     AssistantSettings? settings;
@@ -174,7 +178,17 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   // User
 
-  AssistantUser? get user => _user;
+  bool areTermsAccepted() {
+    DateTime? termsAcceptedDate = _user?.termsAcceptedDateUtc;
+    if (termsAcceptedDate == null) {
+      return false;
+    }
+    DateTime? termsIntroducedDate = _settings?.termsIntroducedDateUtc;
+    if (termsIntroducedDate == null) {
+      return true;
+    }
+    return termsIntroducedDate.isBefore(termsAcceptedDate);
+  }
 
   Future<bool> acceptTerms() async {
     if (!_isEnabled) {
