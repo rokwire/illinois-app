@@ -298,6 +298,9 @@ class AssistantSettings {
     );
   }
 
+  String? getTermsText({String locale = 'en'}) => termsTextJson?[locale];
+  String? getUnavailableText({String locale = 'en'}) => unavailableTextJson?[locale];
+
   @override
   bool operator ==(Object other) => (other is AssistantSettings) && (available == other.available) &&
       (termsTextJson == other.termsTextJson) && (unavailableTextJson == other.unavailableTextJson) &&
