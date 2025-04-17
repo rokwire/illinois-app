@@ -17,7 +17,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
-import 'package:illinois/ui/events2/Event2AdminSettingsPanel.dart';
+import 'package:illinois/ui/events2/Event2AdvancedSettingsPanel.dart';
+import 'package:illinois/ui/events2/Event2ManageDataPanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
@@ -852,8 +853,13 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
             _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
           if (_event?.hasSurvey == true)
             _buildSettingButton(title:"Event follow-up survey responses", onTap: _onSettingSurveyResponses),
-          _buildSettingButton(title: "Additional Settings", onTap: _onSettingAdditionalSettings),
-          _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
+          if (Event2ManageDataPanel.canManage)
+            _buildSettingButton(title: "Manage registration, attendance, and survey data", onTap: _onSettingManageData),
+          _buildSettingButton(title: "Advanced settings", onTap: _onSettingAdvancedSettings),
+          if (Auth2().isCalendarAdmin)
+            _buildSettingButton(title: "Duplicate event", onTap: _onSettingDuplicateEvent),
+          if (Auth2().isCalendarAdmin)
+            _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
 
@@ -1346,10 +1352,19 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         });
   }
 
-  void _onSettingAdditionalSettings() {
-    Analytics().logSelect(target: "Additional Settings", attributes: _event?.analyticsAttributes);
+  void _onSettingManageData() {
+    Analytics().logSelect(target: "Manage registration, attendance, and survey data", attributes: _event?.analyticsAttributes);
     if (_event != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2ManageDataPanel(
+        event: _event,
+      )));
+    }
+  }
+
+  void _onSettingAdvancedSettings() {
+    Analytics().logSelect(target: "Advanced Settings", attributes: _event?.analyticsAttributes);
+    if (_event != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdvancedSettingsPanel(
         event: _event,
       )));
     }
@@ -1409,6 +1424,11 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
       eventName: _event?.name,
       analyticsFeature: widget.analyticsFeature,
     )));
+  }
+
+  void _onSettingDuplicateEvent() {
+    Analytics().logSelect(target: 'Duplicate Event', attributes: _event?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: Event2.fromOther(_event),)));
   }
 
   void _onSettingDeleteEvent(){
