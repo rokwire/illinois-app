@@ -265,7 +265,7 @@ class AssistantUser {
     if (json == null) {
       return null;
     }
-    return AssistantUser(termsAcceptedDateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['terms_accepted_date']), isUtc: true));
+    return AssistantUser(termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true));
   }
 
   @override
@@ -292,7 +292,7 @@ class AssistantSettings {
     }
     return AssistantSettings(
         available: JsonUtils.boolValue(json['available']),
-        termsIntroducedDateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['terms_introduced_date']), isUtc: true),
+        termsIntroducedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_introduced_date']), isUtc: true),
         termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
         unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
     );
