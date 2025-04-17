@@ -19,16 +19,16 @@ import '../widgets/HeaderBar.dart';
 import '../widgets/RibbonButton.dart';
 import 'Event2CreatePanel.dart';
 
-class Event2AdminSettingsPanel extends StatefulWidget{
+class Event2AdvancedSettingsPanel extends StatefulWidget{
   final Event2? event;
 
-  const Event2AdminSettingsPanel({super.key, this.event});
+  const Event2AdvancedSettingsPanel({super.key, this.event});
 
   @override
   State<StatefulWidget> createState() => Event2AdminSettingsState();
 }
 
-class Event2AdminSettingsState extends State<Event2AdminSettingsPanel>{
+class Event2AdminSettingsState extends State<Event2AdvancedSettingsPanel>{
   bool _duplicating = false;
 
   @override
