@@ -178,7 +178,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
 
   // User
 
-  bool areTermsAccepted() {
+  bool hasUserAcceptedTerms() {
     DateTime? termsAcceptedDate = _user?.termsAcceptedDateUtc;
     if (termsAcceptedDate == null) {
       return false;
