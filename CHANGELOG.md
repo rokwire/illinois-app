@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.14] - 2025-04-17
 ### Changed
 - Updated Setup Attendance panel [#4777](https://github.com/rokwire/illinois-app/issues/4777).
 - Reworked Event admin settings menu and panels [#5013](https://github.com/rokwire/illinois-app/issues/5013).
