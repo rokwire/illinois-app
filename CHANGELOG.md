@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.14] - 2025-04-17
+### Changed
+- Updated Setup Attendance panel [#4777](https://github.com/rokwire/illinois-app/issues/4777).
+- Reworked Event admin settings menu and panels [#5013](https://github.com/rokwire/illinois-app/issues/5013).
+
+## [7.0.13] - 2025-04-16
+### Changed
+- Improved accessibility for EventsHomePanel [#4417](https://github.com/rokwire/illinois-app/issues/4417).
+- Update the popup screen for signed out users in the Assistant [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+- Update the initial Assistant message [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+- Set Open AI as default assistant provider [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+
 ## [7.0.12] - 2025-04-15
 ### Changed
 - Text Updates: "My Success Team" [#5000](https://github.com/rokwire/illinois-app/issues/5000).
