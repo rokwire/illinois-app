@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated Setup Attendance panel [#4777](https://github.com/rokwire/illinois-app/issues/4777).
+- Reworked Event admin settings menu and panels [#5013](https://github.com/rokwire/illinois-app/issues/5013).
 
 ## [7.0.13] - 2025-04-16
 ### Changed
