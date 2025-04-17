@@ -594,9 +594,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _speaker = widget.event?.speaker;
     _contacts = widget.event?.contacts;
 
-    _dateTimeSectionExpanded = widget.isUpdate;
-    _typeAndLocationSectionExpanded = widget.isUpdate;
-    _costSectionExpanded = widget.isUpdate;
+    _dateTimeSectionExpanded = widget.isUpdate || (widget.event?.startTimeUtc != null);
+    _typeAndLocationSectionExpanded = widget.isUpdate || (widget.event?.eventType != null);
+    _costSectionExpanded = widget.isUpdate || (widget.event?.free != null) || (widget.event?.cost != null);
 
     _errorMap = _buildErrorMap();
 
@@ -1179,9 +1179,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                               icon: Styles().images.getImage('chevron-down'),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                              hint: Text(
-                                _repeatTypeToDisplayString(_recurrenceRepeatType) ?? '-----',
-                              ),
+                              hint: Text(_repeatTypeToDisplayString(_recurrenceRepeatType) ?? '-----',),
                               items: _buildRepeatTypeDropDownItems(),
                               onChanged: _onRepeatTypeChanged)))))
         ]));

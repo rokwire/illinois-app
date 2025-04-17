@@ -32,7 +32,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance')),
+    appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Take Attendance')),
     body: RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.all(16), child:

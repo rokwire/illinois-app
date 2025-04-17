@@ -1398,6 +1398,8 @@
     "panel.event2.setup.attendance.header.title": "Asistencia al Evento",
     "panel.event2.setup.attendance.header.description1": "Attendance taking in the Illinois app is limited to event attendees with NetIDs.",
     "panel.event2.setup.attendance.header.description2": "If you are taking registration in the Illinois app or uploading a registration list to the Illinois app, scanning Illini IDs and using manual attendance will alert attendance takers if the individual has NOT registered for that event. The attendance taker can choose to mark the individual as attended or not.",
+    "panel.event2.setup.attendance.footer.description": "Event admins and assigned attendance takers can access this feature from the event panel under \"{{link.take_attendance}}\".",
+    "panel.event2.setup.attendance.footer.link.take_attendance": "Take Attendance",
     "panel.event2.setup.attendance.scan.toggle.title": "Escanear Illini ID",
     "panel.event2.setup.attendance.scan.toggle.hint": "",
     "panel.event2.setup.attendance.scan.toggle.description": "No requiere el registro por adelantado.",
@@ -1537,7 +1539,7 @@
     "panel.event2.detail.survey.button.follow_up_survey.title": "Contesta la Encuesta",
     "panel.event2.detail.survey.button.follow_up_survey.completed.message": "Has completado la encuesta para este evento",
 
-    "panel.event2.detail.attendance.header.title": "Asistencia al Evento",
+    "panel.event2.detail.attendance.header.title": "Tomar asistencia",
     "panel.event2.detail.attendance.scan.toggle.title": "Escanear la Illini ID",
     "panel.event2.detail.attendance.scan.toggle.description": "No requiere el registro previo.",
     "panel.event2.detail.attendance.manual.toggle.title": "Permitir pasar la lista a mano",

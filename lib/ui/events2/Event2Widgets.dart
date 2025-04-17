@@ -1064,3 +1064,39 @@ class Event2Popup {
   }
 
 }
+
+//
+// Event2SettingsButton
+//
+
+class Event2SettingsButton extends StatelessWidget{
+  final String? title;
+  final String? subTitle;
+  final bool progress;
+  final Function? onTap;
+
+  const Event2SettingsButton({this.title, this.subTitle, this.onTap, this.progress = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildWidget();
+  }
+
+  // Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  //   heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+  //       title: title?? "",
+  //       subTitle: subTitle,
+  //       onTap: () => onTap?.call()
+  //   ),
+  // );
+
+Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  heading: RibbonButton(
+        label: title?? "",
+        description: subTitle,
+        progress: progress,
+        onTap: () => onTap?.call(),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        progressSize: 18,
+      ));
+}
