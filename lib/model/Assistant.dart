@@ -254,6 +254,63 @@ class AssistantLocation {
 }
 
 ///
+/// AssistantUser
+///
+class AssistantUser {
+  final DateTime? dateTermsAcceptedUtc;
+
+  AssistantUser({this.dateTermsAcceptedUtc});
+
+  static AssistantUser? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantUser(dateTermsAcceptedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_terms_accepted']), isUtc: true));
+  }
+
+  Map<String, dynamic> toJson() => {'date_terms_accepted': DateTimeUtils.utcDateTimeToString(dateTermsAcceptedUtc)};
+
+  @override
+  bool operator ==(Object other) => (other is AssistantUser) && (dateTermsAcceptedUtc == other.dateTermsAcceptedUtc);
+
+  @override
+  int get hashCode => (dateTermsAcceptedUtc?.hashCode ?? 0);
+}
+
+///
+/// AssistantSettings
+///
+class AssistantSettings {
+  final bool? available;
+  final DateTime? termsDateIntroducedUtc;
+  final Map<String, String?>? termsTextJson;
+  final Map<String, String?>? unavailableTextJson;
+
+  AssistantSettings({this.available, this.termsDateIntroducedUtc, this.termsTextJson, this.unavailableTextJson});
+
+  static AssistantSettings? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantSettings(
+        available: JsonUtils.boolValue(json['available']),
+        termsDateIntroducedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['terms_text_date_introduced']), isUtc: true),
+        termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
+        unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
+    );
+  }
+
+  @override
+  bool operator ==(Object other) => (other is AssistantSettings) && (available == other.available) &&
+      (termsTextJson == other.termsTextJson) && (unavailableTextJson == other.unavailableTextJson) &&
+      (termsDateIntroducedUtc == other.termsDateIntroducedUtc);
+
+  @override
+  int get hashCode => (available?.hashCode ?? 0) ^ (termsTextJson?.hashCode ?? 0) ^ (unavailableTextJson?.hashCode ?? 0) ^
+    (termsDateIntroducedUtc?.hashCode ?? 0);
+}
+
+///
 /// MessageFeedback
 ///
 enum MessageFeedback { good, bad }
