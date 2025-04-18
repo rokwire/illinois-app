@@ -295,11 +295,11 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
     _account = widget.account;
     if ((_account == null) && (widget.accountId != null)) {
       _loadingAccount = true;
-      Auth2().loadDirectoryAccounts(ids: [widget.accountId!], limit: 1).then((List<Auth2PublicAccount>? accounts){
+      Auth2().loadDirectoryAccounts(ids: [widget.accountId!], limit: 1).then((Auth2PublicAccountsResult? result){
         if (mounted) {
           setState(() {
             _loadingAccount = false;
-            _account = (accounts?.isNotEmpty == true) ? accounts?.first : null;
+            _account = (result?.accounts?.isNotEmpty == true) ? result?.accounts?.first : null;
           });
         }
       });

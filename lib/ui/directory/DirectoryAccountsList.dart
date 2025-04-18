@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
+import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -21,14 +22,14 @@ class DirectoryAccountsList extends StatefulWidget {
   final DirectoryAccounts contentType;
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
-  final String? indexLetter;
+  final int? letterIndex;
   final String? searchText;
   final Map<String, dynamic>? filterAttributes;
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
 
   DirectoryAccountsList(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
-    this.indexLetter, this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
+    this.letterIndex, this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsListState();
@@ -36,11 +37,14 @@ class DirectoryAccountsList extends StatefulWidget {
 
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
 
-  List<Auth2PublicAccount>? _accounts;
+  Map<String, List<Auth2PublicAccount>>? _accounts;
+  Map<String, int> _nameGapIndices = Map.fromIterable(DirectoryAccountsPanel.alphabet, value: (_) => 0);
+  int _totalAccounts = 0; //TODO: display in UI
+  Map<String, int>? _letterCounts;
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
-  bool _canExtend = false;
+  bool _reverseExtending = false;
   static const int _pageLength = 32;
 
   String? _expandedAccountId;
@@ -69,6 +73,15 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     NotificationService().unsubscribe(this);
     widget.scrollController?.removeListener(_scrollListener);
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant DirectoryAccountsList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.letterIndex != widget.letterIndex) {
+      _load();
+    }
   }
 
   @override
@@ -113,7 +126,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Widget get _accountsContent {
     List<Widget> contentList = <Widget>[];
 
-    List<Auth2PublicAccount>? accounts = _accounts;
+    List<Auth2PublicAccount>? accounts = _accounts?[currentLetter];
     if ((accounts != null) && accounts.isNotEmpty) {
       String? directoryIndex;
       for (Auth2PublicAccount account in accounts) {
@@ -205,6 +218,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     ScrollController? scrollController = widget.scrollController;
     if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend && !_loading && !_extending) {
       _extend();
+    } else if ((scrollController != null) && (scrollController.offset <= scrollController.position.minScrollExtent) && _canReverseExtend && !_loading && !_reverseExtending) {
+      _extend(reverse: true);
     }
   }
 
@@ -216,22 +231,33 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         _extending = false;
       });
 
-      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+      Auth2PublicAccountsResult? result = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
-        attriutes: widget.filterAttributes,
+        attributes: widget.filterAttributes,
+        nameOffset: _getNameOffset(),
         limit: limit,
       );
 
       setStateIfMounted(() {
         _loading = false;
         _loadingProgress = false;
-        if (accounts != null) {
-          _accounts = List.from(accounts);
-          _canExtend = (accounts.length >= limit);
+        _totalAccounts = result?.totalCount ?? 0;
+        _letterCounts = result?.indexCounts;
+        if (result?.accounts != null) {
+          _accounts ??= {};
+          for (Auth2PublicAccount account in result?.accounts?.reversed ?? []) {
+            String? indexLetter = account.profile?.lastName?.substring(0, 1);
+            if (indexLetter != null) {
+              int? gapIndex = _nameGapIndices[indexLetter];
+              if (gapIndex != null) {
+                _accounts![indexLetter] ??= [];
+                _accounts![indexLetter]!.insert(gapIndex, account);
+              }
+            }
+          }
         }
         else if (!silent) {
           _accounts = null;
-          _canExtend = false;
         }
       });
     }
@@ -240,30 +266,40 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Future<void> refresh() =>
     _load(limit: max(_accountsCount, _pageLength), silent: true);
 
-  Future<void> _extend() async {
+  Future<void> _extend({bool reverse = false}) async {
     if (!_loading && !_extending) {
       setStateIfMounted(() {
         _extending = true;
       });
 
-      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+      Auth2PublicAccountsResult? result = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
-        attriutes: widget.filterAttributes,
-        offset: _accountsCount,
+        attributes: widget.filterAttributes,
+        nameOffset: _getNameOffset(reverse: reverse),
         limit: _pageLength
       );
 
       if (mounted && _extending && !_loading) {
         setState(() {
-          if (accounts != null) {
-            if (_accounts != null) {
-              _accounts?.addAll(accounts);
+          _totalAccounts = result?.totalCount ?? 0;
+          _letterCounts = result?.indexCounts;
+          if (result?.accounts != null) {
+            _accounts ??= {};
+            for (Auth2PublicAccount account in result?.accounts?.reversed ?? []) {
+              String? indexLetter = account.profile?.lastName?.substring(0, 1);
+              //TODO: check for duplicates
+              if (indexLetter != null) {
+                int? gapIndex = _nameGapIndices[indexLetter];
+                if (gapIndex != null) {
+                  _accounts![indexLetter] ??= [];
+                  if (reverse) {
+                    _accounts![indexLetter]!.insert(gapIndex + 1, account);
+                  } else {
+                    _accounts![indexLetter]!.insert(gapIndex, account);
+                  }
+                }
+              }
             }
-            else {
-              _accounts = List.from(accounts);
-            }
-
-            _canExtend = (accounts.length >= _pageLength);
           }
           _extending = false;
         });
@@ -271,7 +307,68 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  int get _accountsCount => _accounts?.length ?? 0;
+  int get _accountsCount {
+    int total = 0;
+    for (List<Auth2PublicAccount> letterAccounts in _accounts?.values ?? []) {
+      total += letterAccounts.length;
+    }
+    return total;
+  }
+
+  bool _hasLoadedAllAccountsForLetter({String? letter}) {
+    letter ??= currentLetter;
+    int? loadedAccounts = _accounts?[letter]?.length;
+    int? letterAccounts = _letterCounts?[letter];
+    return letterAccounts == null || (loadedAccounts != null && loadedAccounts < letterAccounts);
+  }
+
+  String? _getNameOffset({bool reverse = false}) {
+    if (reverse) {
+      if (_accounts?[currentLetter]?.isEmpty != true) {
+        int? gapIndex = _nameGapIndices[currentLetter];
+        if (gapIndex != null && gapIndex < (_accounts?[currentLetter]?.length ?? 0) - 1) {
+          Auth2PublicAccount? account = _accounts?[currentLetter]?[gapIndex+1];
+          return account?.profile?.lastName;
+        }
+      }
+      return previousLetter;
+    }
+    if (_accounts?[currentLetter]?.isEmpty != true) {
+      int? gapIndex = _nameGapIndices[currentLetter];
+      if (gapIndex != null) {
+        Auth2PublicAccount? account = _accounts?[currentLetter]?[gapIndex];
+        return account?.profile?.lastName;
+      }
+    }
+    return currentLetter;
+  }
+
+  bool get _canExtend {
+    if (widget.letterIndex != null) {
+      for (int i = widget.letterIndex!; i < DirectoryAccountsPanel.alphabet.length; i++) {
+        String? letter = DirectoryAccountsPanel.alphabet[i];
+        if (!_hasLoadedAllAccountsForLetter(letter: letter)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool get _canReverseExtend {
+    if (widget.letterIndex != null) {
+      for (int i = widget.letterIndex!; i >= 0; i--) {
+        String? letter = DirectoryAccountsPanel.alphabet[i];
+        if (!_hasLoadedAllAccountsForLetter(letter: letter)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  String get currentLetter => widget.letterIndex != null ? DirectoryAccountsPanel.alphabet[widget.letterIndex!] : '';
+  String get previousLetter => widget.letterIndex != null ? DirectoryAccountsPanel.alphabet[widget.letterIndex! - 1] : '';
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {

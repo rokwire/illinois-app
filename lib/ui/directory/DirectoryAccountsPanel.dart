@@ -17,6 +17,8 @@ class DirectoryAccountsPanel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountsPanelState();
+
+  static const List<String> alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"];
 }
 
 class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
@@ -25,7 +27,6 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController(viewportFraction: 1, initialPage: 0, keepPage: true);
   int? _lastSelectedLetterIndex;
-  static const List<String> _alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"];
 
   @override
   void dispose() {
@@ -58,11 +59,11 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
         ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.zero,
-          itemCount: _alphabet.length,
+          itemCount: DirectoryAccountsPanel.alphabet.length,
           itemBuilder: (BuildContext context, int index) {
             bool isSelected = _lastSelectedLetterIndex == index;
             return InkWell(
-              child: Text(_alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.tiny.fat' : 'widget.button.title.tiny'), textAlign: TextAlign.center,),
+              child: Text(DirectoryAccountsPanel.alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.tiny.fat' : 'widget.button.title.tiny'), textAlign: TextAlign.center,),
               onTap: () => _onTapIndexLetter(index),
             );
           },
@@ -71,7 +72,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
         RefreshIndicator(onRefresh: _onRefresh, child:
           SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-              DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+              DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, letterIndex: _lastSelectedLetterIndex, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
             )
           ),
         ),

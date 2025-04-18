@@ -18,11 +18,11 @@ class DirectoryAccountsPage extends StatefulWidget {
 
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
-  final String? indexLetter;
+  final int? letterIndex;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
   final void Function(DirectoryAccounts contentType)? onShareProfile;
 
-  DirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.indexLetter, this.onEditProfile, this.onShareProfile});
+  DirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.letterIndex, this.onEditProfile, this.onShareProfile});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
@@ -83,7 +83,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
     scrollController: widget.scrollController,
     searchText: _searchText,
     filterAttributes: _filterAttributes,
-    indexLetter: widget.indexLetter,
+    letterIndex: widget.letterIndex,
   );
 
   static const String _linkEditMacro = "{{link.edit.info}}";
