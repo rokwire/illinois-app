@@ -38,7 +38,7 @@ class DirectoryAccountsList extends StatefulWidget {
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
 
   Map<String, List<Auth2PublicAccount>>? _accounts;
-  Map<String, int> _nameGapIndices = Map.fromIterable(DirectoryAccountsPanel.alphabet, value: (_) => 0);
+  Map<String, int> _nameGapIndices = Map.fromIterable(DirectoryAccountsPanel.alphabet, value: (_) => -1);
   int _totalAccounts = 0; //TODO: display in UI
   Map<String, int>? _letterCounts;
   bool _loading = false;
@@ -80,6 +80,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.letterIndex != widget.letterIndex) {
+      //TODO: load or jump to letter with accounts already loaded
       _load();
     }
   }
@@ -234,7 +235,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       Auth2PublicAccountsResult? result = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
         attributes: widget.filterAttributes,
-        nameOffset: _getNameOffset(),
+        offset: _getOffset(),
         limit: limit,
       );
 
@@ -255,6 +256,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
               }
             }
           }
+          //TODO: set gap index for all necessary index letters
         }
         else if (!silent) {
           _accounts = null;
@@ -263,11 +265,12 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
+  //TODO:
   Future<void> refresh() =>
     _load(limit: max(_accountsCount, _pageLength), silent: true);
 
   Future<void> _extend({bool reverse = false}) async {
-    if (!_loading && !_extending) {
+    if (!_loading && ((!reverse && !_extending) || (reverse && !_reverseExtending))) {
       setStateIfMounted(() {
         _extending = true;
       });
@@ -275,7 +278,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       Auth2PublicAccountsResult? result = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
         attributes: widget.filterAttributes,
-        nameOffset: _getNameOffset(reverse: reverse),
+        offset: _getOffset(reverse: reverse),
         limit: _pageLength
       );
 
@@ -285,21 +288,17 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
           _letterCounts = result?.indexCounts;
           if (result?.accounts != null) {
             _accounts ??= {};
-            for (Auth2PublicAccount account in result?.accounts?.reversed ?? []) {
+            for (Auth2PublicAccount account in (reverse ? result?.accounts : result?.accounts?.reversed) ?? []) {
               String? indexLetter = account.profile?.lastName?.substring(0, 1);
-              //TODO: check for duplicates
               if (indexLetter != null) {
                 int? gapIndex = _nameGapIndices[indexLetter];
                 if (gapIndex != null) {
                   _accounts![indexLetter] ??= [];
-                  if (reverse) {
-                    _accounts![indexLetter]!.insert(gapIndex + 1, account);
-                  } else {
-                    _accounts![indexLetter]!.insert(gapIndex, account);
-                  }
+                  _accounts![indexLetter]!.insert(gapIndex, account);
                 }
               }
             }
+            //TODO: set gap index for all necessary index letters
           }
           _extending = false;
         });
@@ -322,13 +321,13 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     return letterAccounts == null || (loadedAccounts != null && loadedAccounts < letterAccounts);
   }
 
-  String? _getNameOffset({bool reverse = false}) {
+  String? _getOffset({bool reverse = false}) {
     if (reverse) {
       if (_accounts?[currentLetter]?.isEmpty != true) {
         int? gapIndex = _nameGapIndices[currentLetter];
         if (gapIndex != null && gapIndex < (_accounts?[currentLetter]?.length ?? 0) - 1) {
           Auth2PublicAccount? account = _accounts?[currentLetter]?[gapIndex+1];
-          return account?.profile?.lastName;
+          return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
         }
       }
       return previousLetter;
@@ -337,7 +336,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       int? gapIndex = _nameGapIndices[currentLetter];
       if (gapIndex != null) {
         Auth2PublicAccount? account = _accounts?[currentLetter]?[gapIndex];
-        return account?.profile?.lastName;
+        return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
       }
     }
     return currentLetter;
