@@ -248,6 +248,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   bool get _canShowScheduled => _isAdmin;
 
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -869,11 +871,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (Groups().isContentAttributeEnabled(attribute)) {
+        if (Groups().isContentAttributeEnabled(attribute, researchProject: _isResearchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(Row(children: [

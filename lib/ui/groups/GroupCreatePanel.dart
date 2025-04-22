@@ -594,7 +594,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
@@ -603,7 +603,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
+              requiredMark: (!_isResearchProject) && (_contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
@@ -627,9 +627,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   List<Widget> _constructAttributesContent() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
         List<String>? displayAttributes = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
@@ -658,8 +657,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
-      scope: Groups.contentAttributesScope,
-      contentAttributes: Groups().contentAttributes,
+      scope: _contentAttributesScope,
+      contentAttributes: _contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
@@ -1247,11 +1246,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (Groups().contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
+        (_contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount >= 0));
   }
 
   bool get _loading => false;
+
+  String get _contentAttributesScope => Groups.contentAttributesScope(researchProject: _isResearchProject);
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 }
