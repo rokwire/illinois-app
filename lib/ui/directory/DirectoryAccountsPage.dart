@@ -36,6 +36,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
   GestureRecognizer? _editInfoRecognizer;
   GestureRecognizer? _shareInfoRecognizer;
   GestureRecognizer? _signInRecognizer;
+  int? _accountTotal;
 
   @override
   void initState() {
@@ -84,6 +85,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
     searchText: _searchText,
     filterAttributes: _filterAttributes,
     letterIndex: widget.letterIndex,
+    onAccountTotalUpdated: _onAccountTotalUpdated,
   );
 
   static const String _linkEditMacro = "{{link.edit.info}}";
@@ -114,8 +116,14 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
     );
 
     return Padding(padding: EdgeInsets.only(bottom: 16), child:
-      RichText(textAlign: TextAlign.left, text:
-        TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          RichText(textAlign: TextAlign.left, text:
+            TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
+          ),
+          Text('${(_accountTotal ?? 0).toString()} Users', style: Styles().textStyles.getTextStyleEx("widget.detail.small.fat")),
+        ],
       )
     );
   }
@@ -158,6 +166,12 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
     setStateIfMounted((){
       _filterAttributes = filterAttributes;
       _accountsListKey = GlobalKey();
+    });
+  }
+
+  void _onAccountTotalUpdated(int? accountTotal) {
+    setStateIfMounted(() {
+      _accountTotal = accountTotal;
     });
   }
 

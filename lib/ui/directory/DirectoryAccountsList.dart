@@ -1,6 +1,4 @@
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
@@ -27,9 +25,10 @@ class DirectoryAccountsList extends StatefulWidget {
   final Map<String, dynamic>? filterAttributes;
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
+  final void Function(int?)? onAccountTotalUpdated;
 
   DirectoryAccountsList(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
-    this.letterIndex, this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
+    this.letterIndex, this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.onAccountTotalUpdated, this.selectedAccountIds});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsListState();
@@ -38,8 +37,7 @@ class DirectoryAccountsList extends StatefulWidget {
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
 
   Map<String, List<Auth2PublicAccount>>? _accounts;
-  Map<String, int> _nameGapIndices = Map.fromIterable(DirectoryAccountsPanel.alphabet, value: (_) => -1);
-  int _totalAccounts = 0; //TODO: display in UI
+  Map<String, int> _nameGapIndices = Map.fromIterable(DirectoryAccountsPanel.alphabet, value: (_) => 0);
   Map<String, int>? _letterCounts;
   bool _loading = false;
   bool _loadingProgress = false;
@@ -239,13 +237,14 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         limit: limit,
       );
 
+      widget.onAccountTotalUpdated?.call(result?.totalCount);
       setStateIfMounted(() {
         _loading = false;
         _loadingProgress = false;
-        _totalAccounts = result?.totalCount ?? 0;
         _letterCounts = result?.indexCounts;
         if (result?.accounts != null) {
-          _accounts ??= {};
+          _accounts = {};
+          Map<String, int> accountsInserted = {};
           for (Auth2PublicAccount account in result?.accounts?.reversed ?? []) {
             String? indexLetter = account.profile?.lastName?.substring(0, 1);
             if (indexLetter != null) {
@@ -253,10 +252,16 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
               if (gapIndex != null) {
                 _accounts![indexLetter] ??= [];
                 _accounts![indexLetter]!.insert(gapIndex, account);
+
+                int added = accountsInserted[indexLetter] ?? 0;
+                accountsInserted[indexLetter] = ++added;
               }
             }
           }
-          //TODO: set gap index for all necessary index letters
+
+          for (MapEntry<String, int> inserted in accountsInserted.entries) {
+            _nameGapIndices[inserted.key] = (_nameGapIndices[inserted.key] ?? 0) + inserted.value;
+          }
         }
         else if (!silent) {
           _accounts = null;
@@ -265,9 +270,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  //TODO:
   Future<void> refresh() =>
-    _load(limit: max(_accountsCount, _pageLength), silent: true);
+    _load(silent: true);
 
   Future<void> _extend({bool reverse = false}) async {
     if (!_loading && ((!reverse && !_extending) || (reverse && !_reverseExtending))) {
@@ -282,12 +286,13 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         limit: _pageLength
       );
 
+      widget.onAccountTotalUpdated?.call(result?.totalCount);
       if (mounted && _extending && !_loading) {
         setState(() {
-          _totalAccounts = result?.totalCount ?? 0;
           _letterCounts = result?.indexCounts;
           if (result?.accounts != null) {
             _accounts ??= {};
+            Map<String, int> accountsInserted = {};
             for (Auth2PublicAccount account in (reverse ? result?.accounts : result?.accounts?.reversed) ?? []) {
               String? indexLetter = account.profile?.lastName?.substring(0, 1);
               if (indexLetter != null) {
@@ -295,10 +300,18 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
                 if (gapIndex != null) {
                   _accounts![indexLetter] ??= [];
                   _accounts![indexLetter]!.insert(gapIndex, account);
+
+                  int added = accountsInserted[indexLetter] ?? 0;
+                  accountsInserted[indexLetter] = ++added;
                 }
               }
             }
-            //TODO: set gap index for all necessary index letters
+
+            for (MapEntry<String, int> inserted in accountsInserted.entries) {
+              if (!reverse) {
+                _nameGapIndices[inserted.key] = (_nameGapIndices[inserted.key] ?? 0) + inserted.value;
+              }
+            }
           }
           _extending = false;
         });
@@ -306,13 +319,13 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  int get _accountsCount {
-    int total = 0;
-    for (List<Auth2PublicAccount> letterAccounts in _accounts?.values ?? []) {
-      total += letterAccounts.length;
-    }
-    return total;
-  }
+  // int get _accountsCount {
+  //   int total = 0;
+  //   for (List<Auth2PublicAccount> letterAccounts in _accounts?.values ?? []) {
+  //     total += letterAccounts.length;
+  //   }
+  //   return total;
+  // }
 
   bool _hasLoadedAllAccountsForLetter({String? letter}) {
     letter ??= currentLetter;
@@ -323,7 +336,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   String? _getOffset({bool reverse = false}) {
     if (reverse) {
-      if (_accounts?[currentLetter]?.isEmpty != true) {
+      if (_accounts?[currentLetter]?.isEmpty == false) {
         int? gapIndex = _nameGapIndices[currentLetter];
         if (gapIndex != null && gapIndex < (_accounts?[currentLetter]?.length ?? 0) - 1) {
           Auth2PublicAccount? account = _accounts?[currentLetter]?[gapIndex+1];
@@ -332,7 +345,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       }
       return previousLetter;
     }
-    if (_accounts?[currentLetter]?.isEmpty != true) {
+    if (_accounts?[currentLetter]?.isEmpty == false) {
       int? gapIndex = _nameGapIndices[currentLetter];
       if (gapIndex != null) {
         Auth2PublicAccount? account = _accounts?[currentLetter]?[gapIndex];

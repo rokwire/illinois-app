@@ -26,7 +26,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   final GlobalKey<DirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController(viewportFraction: 1, initialPage: 0, keepPage: true);
-  int? _lastSelectedLetterIndex;
+  int _lastSelectedLetterIndex = 0;
 
   @override
   void dispose() {
@@ -56,18 +56,21 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
     Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.zero,
-          itemCount: DirectoryAccountsPanel.alphabet.length,
-          itemBuilder: (BuildContext context, int index) {
-            bool isSelected = _lastSelectedLetterIndex == index;
-            return InkWell(
-              child: Text(DirectoryAccountsPanel.alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.tiny.fat' : 'widget.button.title.tiny'), textAlign: TextAlign.center,),
-              onTap: () => _onTapIndexLetter(index),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) => SizedBox(width: 4),
+        Container(
+          height: 24.0,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            itemCount: DirectoryAccountsPanel.alphabet.length,
+            itemBuilder: (BuildContext context, int index) {
+              bool isSelected = _lastSelectedLetterIndex == index;
+              return InkWell(
+                child: Text(DirectoryAccountsPanel.alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.small.fat' : 'widget.button.title.small'), textAlign: TextAlign.center,),
+                onTap: () => _onTapIndexLetter(index),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) => SizedBox(width: 6),
+          ),
         ),
         RefreshIndicator(onRefresh: _onRefresh, child:
           SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
