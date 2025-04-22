@@ -141,6 +141,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   Widget _buildSheet(BuildContext context) {
+    bool clearAllVisible = (_selectedContent != null) && (_selectedContent != AssistantContent.all_assistants) && (_selectedContent != AssistantContent.faqs);
     return Column(children: [
       Container(
           color: Styles().colors.white,
@@ -151,8 +152,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            // was: visible: (_selectedContent == AssistantContent.uiuc_conversation)
-            Visibility(visible: false, child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
+            Visibility(visible: clearAllVisible, child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
