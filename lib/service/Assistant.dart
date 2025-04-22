@@ -65,8 +65,8 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   @override
   Future<void> initService() async {
     _initFaqs();
-    _loadSettings();
     if (Auth2().isLoggedIn) {
+      _loadSettings();
       _loadUser();
       _loadAllMessages();
       _buildAvailableProviders();
@@ -159,7 +159,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     AssistantSettings? settings;
     if (!_isEnabled) {
       Log.w('Assistant settings - missing url.');
-    } else {
+    } else if (Auth2().isLoggedIn) {
       String? url = '${Config().aiProxyUrl}/client-settings';
       Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
@@ -183,7 +183,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     if (termsAcceptedDate == null) {
       return false;
     }
-    DateTime? termsIntroducedDate = _settings?.termsIntroducedDateUtc;
+    DateTime? termsIntroducedDate = _settings?.termsAcceptedDateUtc;
     if (termsIntroducedDate == null) {
       return true;
     }
@@ -216,9 +216,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     AssistantUser? user;
     if (!_isEnabled) {
       Log.w('Assistant loading user - missing url.');
-    } else if (!Auth2().isLoggedIn) {
-      Log.w('Assistant - loading user is not allowed - not signed in.');
-    } else {
+    } else if (Auth2().isLoggedIn) {
       String? url = '${Config().aiProxyUrl}/user-settings';
       Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
