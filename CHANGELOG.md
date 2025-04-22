@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-- Always display My Primary Care desriptions at the bottom, nevertheless the actual care providers content [#5000](https://github.com/rokwire/illinois-app/issues/5000).
+### Changed
+- Always display My Primary Care descriptions at the bottom, nevertheless the actual care providers content [#5000](https://github.com/rokwire/illinois-app/issues/5000).
 
 ## [7.0.14] - 2025-04-17
 ### Changed
