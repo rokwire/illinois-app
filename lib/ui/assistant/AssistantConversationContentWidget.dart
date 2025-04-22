@@ -631,7 +631,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (_provider == null) {
       return Container();
     }
-    int? queryLimit = _queryLimit;
+    int? queryLimit = _availableQueryLimit;
     bool enabled = (queryLimit == null) || (queryLimit > 0);
     return Semantics(container: true,
         child: Material(
@@ -709,7 +709,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildQueryLimit() {
-    int? queryLimit = _queryLimit;
+    int? queryLimit = _availableQueryLimit;
     if ((queryLimit == null) && !_evaluatingQueryLimit) {
       return Container();
     }
@@ -757,8 +757,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       padding: const EdgeInsets.only(top: 8.0),
       child: Semantics(container: true,
         child: RoundedButton(
+          enabled: _isAssistantAvailable,
           label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
-          onTap: _showContext,
+          borderColor: _isAssistantAvailable ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+          textColor: _isAssistantAvailable ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
+          onTap: _isAssistantAvailable ? () => _showContext() : null,
         ),
     ));
   }
@@ -1157,4 +1160,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return _checkKeyboardVisible; //Check again
     }
   }
+
+  int? get _availableQueryLimit => _isAssistantAvailable ? _queryLimit : 0;
+  bool get _isAssistantAvailable => Assistant().isAvailable;
 }
