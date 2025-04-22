@@ -101,6 +101,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _initGroup(){
     _group = (widget.group != null) ? Group.fromOther(widget.group) : Group();
     _group?.onlyAdminsCanCreatePolls ??= true;
+    if (_group?.researchProject == true)
+      _group?.canJoinAutomatically ??= true;
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
     _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group);
@@ -1071,7 +1073,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.authManGroupName = null;
         _group!.attendanceGroup = false;
         //Unlocked Advanced setting
-        // _group?.canJoinAutomatically = false;
+        // _group?.canJoinAutomatically = true;
         // _group?.onlyAdminsCanCreatePolls = true;
       }
       else {
