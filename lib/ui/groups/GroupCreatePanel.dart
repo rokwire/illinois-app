@@ -240,7 +240,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         //_buildTitle("Research", "images/icon-gear.png"),
         //_buildResearchOptionLayout(),
         //_buildResearchOpenLayout(),
-        _buildResearchConsentDetailsField(),
+        //_buildResearchConsentDetailsField(),
         // #2626: Hide consent checkbox and edit control.
         // _buildResearchConfirmationLayout(),
         _buildLinkField(),
@@ -494,7 +494,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //
   //Research Description
-  Widget _buildResearchConsentDetailsField() {
+  /*Widget _buildResearchConsentDetailsField() {
     String? title = "PROJECT DETAILS";
     String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
@@ -521,7 +521,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ],),
       ),
     );
-  }
+  }*/
   //
   // Research Confirmation
   // #2626: Hide consent checkbox and edit control.
