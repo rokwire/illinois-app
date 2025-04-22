@@ -95,9 +95,40 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
 
       Container(height: 16,),
 
-      Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
-        Text(Localization().getStringEx('widget.library_card.text.card_instructions', 'This card is needed for University Library services such as picking up an equipment loan or checking out a book or keys to a study room.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic"))
-      ),
+      Padding(
+  padding: EdgeInsets.symmetric(horizontal: 48),
+  child: RichText(
+    textAlign: TextAlign.center,
+    text: TextSpan(
+      style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic"),
+      children: [
+        TextSpan(text: 'This card is needed for '),
+        WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: GestureDetector(
+            onTap: () => launchUrl(Uri.parse("https://www.library.illinois.edu/"), mode: LaunchMode.externalApplication),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'University Library',
+                  style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic")?.copyWith(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.open_in_new, size: 16, color: Colors.blue),
+              ],
+            ),
+          ),
+        ),
+        TextSpan(text: ' services such as picking up an equipment loan or checking out a book or keys to a study room.'),
+      ],
+    ),
+  ),
+)
 
       Container(height: 16,),
 
