@@ -4209,7 +4209,7 @@
 
 	"model.research_project.member.status.pending": "等待中",
 	"model.research_project.member.status.member": "受试者",
-	"model.research_project.member.status.admin": "计划主持人",
+	"model.research_project.member.status.admin": "Admin",
 	"model.research_project.member.status.rejected": "已拒绝",
 	"model.research_project.member.status.unknown": "不明",
 

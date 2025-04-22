@@ -4238,7 +4238,7 @@
 
     "model.research_project.member.status.pending": "Pendiente",
     "model.research_project.member.status.member": "Participante",
-    "model.research_project.member.status.admin": "Investigador Principal",
+    "model.research_project.member.status.admin": "Admin",
     "model.research_project.member.status.rejected": "Rechazado",
     "model.research_project.member.status.unknown": "Desconocido",
 

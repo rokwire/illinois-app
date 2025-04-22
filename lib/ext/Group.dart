@@ -196,7 +196,7 @@ String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
     } else if (value == GroupMemberStatus.member) {
       return Localization().getStringEx('model.research_project.member.status.member', 'Participant');
     } else if (value == GroupMemberStatus.admin) {
-      return Localization().getStringEx('model.research_project.member.status.admin', 'Principal Investigator');
+      return Localization().getStringEx('model.research_project.member.status.admin', 'Admin');
     } else if (value == GroupMemberStatus.rejected) {
       return Localization().getStringEx('model.research_project.member.status.rejected', 'Denied');
     }
