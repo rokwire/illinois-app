@@ -244,8 +244,8 @@
     "panel.browse.section.feeds.description": "Catch the latest from {{app_title}} social media and The Daily Illini.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Discover a new group or start your own.",
-    "panel.browse.section.research_projects.title": "Investigación en {{app_title}}",
-    "panel.browse.section.research_projects.description": "Discover and participate in research projects.",
+    "panel.browse.section.research_projects.title": "Research Participation",
+    "panel.browse.section.research_projects.description": "Discover research projects.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.messages.title": "Conversaciones",
@@ -315,7 +315,7 @@
     "panel.browse.entry.groups.my_groups.title": "Mis grupos",
 
     "panel.browse.entry.research_projects.open_research_projects.title": "Proyectos de Investigación Abierta",
-    "panel.browse.entry.research_projects.my_research_projects.title": "Mi participación en la investigación",
+    "panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
     "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
@@ -2679,7 +2679,7 @@
     "panel.groups_create.description.group.title": "DESCRIPCIÓN",
     "panel.groups_create.description.project.title": "DESCRIPCIÓN BREVE",
     "panel.groups_create.description.group.description": "¿Cuál es el propósito de tu grupo? ¿Quién debe participar? ¿Qué harán en tus eventos?",
-    "panel.groups_create.description.project.description": "¿Cuál es el propósito de tu proyecto? ¿Quién debe participar? ¿Qué harán en tus eventos?",
+    "panel.groups_create.description.project.description": "What’s the purpose of your project? Who should join? What will participation involve?",
     "panel.groups_create.description.group.field": "CAMPO DE DESCRIPCIÓN",
     "panel.groups_create.description.project.field": "CAMPO DE DESCRIPCIÓN BREVE",
     "panel.groups_create.description.group.field.hint": "",
@@ -2738,6 +2738,7 @@
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
     "panel.groups.common.private.search.hidden.description": "Un grupo oculto no es visible en las búsquedas.",
 
+    "panel.group_detail.header.project.title": "Research Project Details",
     "panel.group_detail.label.options": "Opciones",
     "panel.group_detail.label.error_message": "Error al cargar los datos del grupo.",
     "panel.group_detail.members.count.empty": "No Hay Miembros Actuales",
@@ -2791,7 +2792,7 @@
     "panel.group_detail.label.title.hidden":  "Este es un Grupo Oculto",
     "panel.group_detail.label.description.hidden":  "Solo los administradores pueden ver a los miembros.\nSolo los miembros pueden ver las publicaciones y los eventos del grupo.\nTodos los usuarios pueden ver los eventos del grupo si están marcados como públicos.\nTodos los usuarios pueden ver a los administradores.",
     "panel.group_detail.label.admins":  "Administradores",
-    "panel.group_detail.label.project.admins":  "Investigador(es) Principal(es)",
+    "panel.group_detail.label.project.admins":  "Research Team",
     "panel.group_detail.label.become_member": "Convertirse en Miembro",
     "panel.group_detail.button.request_to_join.title":  "Solicitarse a participar",
     "panel.group_detail.button.cancel_request.title":  "Cancelar la Solicitud",
@@ -2976,7 +2977,7 @@
     "panel.membership_questions.label.question.alert": "Favor de ingresar la pregunta #",
 
     "panel.recruitment_questions.label.title": "Preguntas de Reclutamiento",
-    "panel.recruitment_questions.label.description": "Aprende más sobre las personas que desean participar en tu proyecto de investigación por hacer las preguntas. Solo el/los Investigador(es) Principal(es) de tu proyecto de investigación verán las respuestas.",
+    "panel.recruitment_questions.label.description": "Learn more about people who want to participate to your research project by asking them some questions. Only the research team will see the answers",
 
     "panel.membership_request.label.request.membership.title": "Preguntas de Membresía",
     "panel.membership_request.label.request.participate.title": "Preguntas de Invitación",
@@ -4238,7 +4239,7 @@
 
     "model.research_project.member.status.pending": "Pendiente",
     "model.research_project.member.status.member": "Participante",
-    "model.research_project.member.status.admin": "Investigador Principal",
+    "model.research_project.member.status.admin": "Admin",
     "model.research_project.member.status.rejected": "Rechazado",
     "model.research_project.member.status.unknown": "Desconocido",
 
