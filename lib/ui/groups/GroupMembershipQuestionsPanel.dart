@@ -225,7 +225,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   void _onSubmit() {
-    Analytics().logSelect(target: 'Update questions');
+    Analytics().logSelect(target: 'Save Questions');
     for (int index = 0; index < _questions!.length; index++) {
       String question = _controllers![index].text;
       if ((0 < question.length)) {
