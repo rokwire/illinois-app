@@ -2955,7 +2955,7 @@
 	"panel.membership_questions.label.question.alert": "请输入问题 #",
 
 	"panel.recruitment_questions.label.title": "会员资格问题",
-	"panel.recruitment_questions.label.description": "问一些问题来了解想要加入群组的人。只有群组管理员会看到回答。",
+	"panel.recruitment_questions.label.description": "Learn more about people who want to participate to your research project by asking them some questions. Only the research team will see the answers",
 
 	"panel.membership_request.label.request.membership.title": "会员资格问题",
 	"panel.membership_request.label.request.participate.title": "邀请问题",

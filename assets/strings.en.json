@@ -2974,7 +2974,7 @@
     "panel.membership_questions.label.question.alert": "Please input question #",
 
     "panel.recruitment_questions.label.title": "Recruitment Questions",
-    "panel.recruitment_questions.label.description": "Learn more about people who want to participate in your research project by asking them some questions. Only the principal investigator(s) of your research project will see the answers.",
+    "panel.recruitment_questions.label.description": "Learn more about people who want to participate to your research project by asking them some questions. Only the research team will see the answers",
 
     "panel.membership_request.label.request.membership.title": "Membership Questions",
     "panel.membership_request.label.request.participate.title": "Invitation Questions",
