@@ -2791,7 +2791,7 @@
     "panel.group_detail.label.title.hidden":  "Este es un Grupo Oculto",
     "panel.group_detail.label.description.hidden":  "Solo los administradores pueden ver a los miembros.\nSolo los miembros pueden ver las publicaciones y los eventos del grupo.\nTodos los usuarios pueden ver los eventos del grupo si están marcados como públicos.\nTodos los usuarios pueden ver a los administradores.",
     "panel.group_detail.label.admins":  "Administradores",
-    "panel.group_detail.label.project.admins":  "Investigador(es) Principal(es)",
+    "panel.group_detail.label.project.admins":  "Research Team",
     "panel.group_detail.label.become_member": "Convertirse en Miembro",
     "panel.group_detail.button.request_to_join.title":  "Solicitarse a participar",
     "panel.group_detail.button.cancel_request.title":  "Cancelar la Solicitud",

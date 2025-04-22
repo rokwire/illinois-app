@@ -2770,7 +2770,7 @@
 	"panel.group_detail.label.title.hidden":  "这是一个隐藏的群组 ",
 	"panel.group_detail.label.description.hidden":  "只有管理员可以看到成员。\n只有成员可以看到贴文与群组活动。\n当活动设为公开，所有此用者可以看到活动。\n所有成员可以看到管理员。",
 	"panel.group_detail.label.admins":  "管理员",
-	"panel.group_detail.label.project.admins":  "计划主持人",
+	"panel.group_detail.label.project.admins":  "Research Team",
 	"panel.group_detail.label.become_member": "成为成员",
 	"panel.group_detail.button.request_to_join.title":  "请求加入",
 	"panel.group_detail.button.cancel_request.title":  "取消请求",
