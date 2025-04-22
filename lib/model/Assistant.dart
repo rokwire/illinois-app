@@ -254,6 +254,64 @@ class AssistantLocation {
 }
 
 ///
+/// AssistantUser
+///
+class AssistantUser {
+  final DateTime? termsAcceptedDateUtc;
+
+  AssistantUser({this.termsAcceptedDateUtc});
+
+  static AssistantUser? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantUser(termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true));
+  }
+
+  @override
+  bool operator ==(Object other) => (other is AssistantUser) && (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
+
+  @override
+  int get hashCode => (termsAcceptedDateUtc?.hashCode ?? 0);
+}
+
+///
+/// AssistantSettings
+///
+class AssistantSettings {
+  final bool? available;
+  final DateTime? termsAcceptedDateUtc;
+  final Map<String, String?>? termsTextJson;
+  final Map<String, String?>? unavailableTextJson;
+
+  AssistantSettings({this.available, this.termsAcceptedDateUtc, this.termsTextJson, this.unavailableTextJson});
+
+  static AssistantSettings? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantSettings(
+        available: JsonUtils.boolValue(json['available']),
+        termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true),
+        termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
+        unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
+    );
+  }
+
+  String? getTermsText({String? locale}) => termsTextJson?[locale ?? 'en'];
+  String? getUnavailableText({String? locale}) => unavailableTextJson?[locale ?? 'en'];
+
+  @override
+  bool operator ==(Object other) => (other is AssistantSettings) && (available == other.available) &&
+      (termsTextJson == other.termsTextJson) && (unavailableTextJson == other.unavailableTextJson) &&
+      (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
+
+  @override
+  int get hashCode => (available?.hashCode ?? 0) ^ (termsTextJson?.hashCode ?? 0) ^ (unavailableTextJson?.hashCode ?? 0) ^
+    (termsAcceptedDateUtc?.hashCode ?? 0);
+}
+
+///
 /// MessageFeedback
 ///
 enum MessageFeedback { good, bad }

@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -33,6 +34,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, openai_conversation, all_assistants, faqs }
@@ -53,6 +55,8 @@ class AssistantHomePanel extends StatefulWidget {
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isOidcLoggedIn) {
       showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
+    } else if (!Assistant().hasUserAcceptedTerms()) {
+      showDialog(context: context, builder: (context) => _AssistantTermsPopup());
     } else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -91,6 +95,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Assistant.notifyProvidersChanged,
+      Assistant.notifySettingsChanged,
     ]);
 
     _contentTypes = _buildAssistantContentTypes();
@@ -103,8 +108,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       _selectedContent = _initialSelectedContent;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Force to calculate correct content height
+      // 1. Force to calculate correct content height
       setStateIfMounted((){});
+      // 2. Check if the Assistant is available
+      _checkAvailable();
     });
   }
 
@@ -119,11 +126,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _updateContentTypes();
-    } else if (name == FlexUI.notifyChanged) {
-      _updateContentTypes();
-    } else if (name == Assistant.notifyProvidersChanged) {
+    if (name == Auth2.notifyLoginChanged ||
+        name == FlexUI.notifyChanged ||
+        name == Assistant.notifyProvidersChanged ||
+        name == Assistant.notifySettingsChanged) {
+      _checkAvailable();
       _updateContentTypes();
     }
   }
@@ -297,6 +304,40 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     return contentTypes;
   }
 
+  // Global On/Off / Available
+
+  void _checkAvailable() {
+    if (!_isAvailable) {
+      String unavailableMessage = Assistant().localizedUnavailableText ??
+          Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
+          'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
+      AppAlert.showDialogResult(context, unavailableMessage);
+    }
+  }
+
+  bool get _isAvailable => Assistant().isAvailable;
+
+  // Utilities
+
+  String? _getContentItemName(AssistantContent? contentItem) {
+    switch (contentItem) {
+      case AssistantContent.google_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
+      case AssistantContent.grok_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
+      case AssistantContent.perplexity_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
+      case AssistantContent.openai_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
+      case AssistantContent.all_assistants:
+        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
+      case AssistantContent.faqs:
+        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
+      default:
+        return null;
+    }
+  }
+
   AssistantContent? _assistantContentFromProvider(AssistantProvider? provider) {
     switch (provider) {
       case AssistantProvider.google:
@@ -311,8 +352,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return null;
     }
   }
-
-  // Utilities
 
   double? get _contentHeight {
     RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
@@ -338,25 +377,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         return AssistantProvidersConversationContentWidget();
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
-      default:
-        return null;
-    }
-  }
-
-  String? _getContentItemName(AssistantContent? contentItem) {
-    switch (contentItem) {
-      case AssistantContent.google_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
-      case AssistantContent.grok_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
-      case AssistantContent.perplexity_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
-      case AssistantContent.openai_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Illinois Assistant');
-      case AssistantContent.all_assistants:
-        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
-      case AssistantContent.faqs:
-        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
         return null;
     }
@@ -442,5 +462,83 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
     } else {
       return false;
     }
+  }
+}
+
+class _AssistantTermsPopup extends StatefulWidget {
+  _AssistantTermsPopup();
+
+  @override
+  State<_AssistantTermsPopup> createState() => _AssistantTermsPopupState();
+}
+
+class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
+
+  bool _accepting = false;
+
+  @override
+  Widget build(BuildContext context) {
+    String text = Assistant().localizedTermsText ??
+        Localization().getStringEx('panel.assistant.terms.default.msg',
+            'The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the Illinois Assistant is a supplemental tool and not a substitute for official university sources.');
+    return AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, children: [
+              Padding(
+                  padding: EdgeInsets.only(top: 36, bottom: 22),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 28),
+                      child: Column(children: [
+                        Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
+                        Padding(
+                            padding: EdgeInsets.only(top: 14),
+                            child:
+                            MarkdownBody(
+                                data: text,
+                                styleSheet: MarkdownStyleSheet(
+                                    p: Styles().textStyles.getTextStyle('widget.detail.small'),
+                                    a: TextStyle(decoration: TextDecoration.underline)))),
+                        Padding(padding: EdgeInsets.only(top: 14), child: RoundedButton(
+                            label: Localization().getStringEx('panel.assistant.terms.accept.button', 'I Accept'),
+                            onTap: _onTapAccept, fontSize: 16,
+                            progress: _accepting,
+                            conentAlignment: MainAxisAlignment.center,
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            contentWeight: 0.5))]))
+                  ])),
+              Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Semantics(
+                          button: true,
+                          label: "close",
+                          child: InkWell(
+                              onTap: () {
+                                Analytics().logSelect(target: 'Close Assistant Terms Popup');
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(padding: EdgeInsets.all(12), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))),
+            ])));
+  }
+
+  void _onTapAccept() {
+    Analytics().logSelect(target: 'Accept Assistant Terms');
+    setStateIfMounted(() {
+      _accepting = true;
+    });
+    Assistant().acceptTerms().then((accepted) {
+      setStateIfMounted(() {
+        _accepting = false;
+      });
+      if (accepted) {
+        Navigator.of(context).pop();
+        AssistantHomePanel.present(context);
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.assistant.terms.accepted.fail.msg', 'Something went wrong. Please, try again later.'));
+      }
+    });
   }
 }
