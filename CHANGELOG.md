@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.15] - 2025-04-22
 ### Changed
 - Always display My Primary Care descriptions at the bottom, nevertheless the actual care providers content [#5000](https://github.com/rokwire/illinois-app/issues/5000).
 - Rename "Ask the Open AI Assistant" to "Ask the Illinois Assistant" [#5034](https://github.com/rokwire/illinois-app/issues/5034).
