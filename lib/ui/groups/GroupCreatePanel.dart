@@ -372,7 +372,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Localization().getStringEx("panel.groups_create.description.project.title", "SHORT DESCRIPTION") :
       Localization().getStringEx("panel.groups_create.description.group.title", "DESCRIPTION");
     String? description = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will participation involve?") :
       Localization().getStringEx("panel.groups_create.description.group.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldTitle = (_group?.researchProject == true) ?
       Localization().getStringEx("panel.groups_create.description.project.field", "SHORT DESCRIPTION FIELD") :

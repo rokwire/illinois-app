@@ -2675,7 +2675,7 @@
     "panel.groups_create.description.group.title": "DESCRIPTION",
     "panel.groups_create.description.project.title": "SHORT DESCRIPTION",
     "panel.groups_create.description.group.description": "What's the purpose of your group? Who should join? What will you do at your events?",
-    "panel.groups_create.description.project.description": "What's the purpose of your project? Who should join? What will you do at your events?",
+    "panel.groups_create.description.project.description": "What’s the purpose of your project? Who should join? What will participation involve?",
     "panel.groups_create.description.group.field": "DESCRIPTION FIELD",
     "panel.groups_create.description.project.field": "SHORT DESCRIPTION FIELD",
     "panel.groups_create.description.group.field.hint": "",

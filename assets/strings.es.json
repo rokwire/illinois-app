@@ -2679,7 +2679,7 @@
     "panel.groups_create.description.group.title": "DESCRIPCIÓN",
     "panel.groups_create.description.project.title": "DESCRIPCIÓN BREVE",
     "panel.groups_create.description.group.description": "¿Cuál es el propósito de tu grupo? ¿Quién debe participar? ¿Qué harán en tus eventos?",
-    "panel.groups_create.description.project.description": "¿Cuál es el propósito de tu proyecto? ¿Quién debe participar? ¿Qué harán en tus eventos?",
+    "panel.groups_create.description.project.description": "What’s the purpose of your project? Who should join? What will participation involve?",
     "panel.groups_create.description.group.field": "CAMPO DE DESCRIPCIÓN",
     "panel.groups_create.description.project.field": "CAMPO DE DESCRIPCIÓN BREVE",
     "panel.groups_create.description.group.field.hint": "",

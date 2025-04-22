@@ -2660,7 +2660,7 @@
 	"panel.groups_create.description.group.title": "描述",
 	"panel.groups_create.description.project.title": "简短的描述",
 	"panel.groups_create.description.group.description": "您的群组目的为和？谁可以参与？您的活动中会进行什么活动？",
-	"panel.groups_create.description.project.description": "您的计划目的为和？谁可以参与？您的活动中会进行什么活动？",
+	"panel.groups_create.description.project.description": "What’s the purpose of your project? Who should join? What will participation involve?",
 	"panel.groups_create.description.group.field": "描述栏",
 	"panel.groups_create.description.project.field": "描述栏",
 	"panel.groups_create.description.group.field.hint": "",
