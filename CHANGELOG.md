@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Always display My Primary Care descriptions at the bottom, nevertheless the actual care providers content [#5000](https://github.com/rokwire/illinois-app/issues/5000).
 - Rename "Ask the Open AI Assistant" to "Ask the Illinois Assistant" [#5034](https://github.com/rokwire/illinois-app/issues/5034).
+- Bring back "Clear All" messages in Assistant [#5036](https://github.com/rokwire/illinois-app/issues/5036).
 
 ## [7.0.14] - 2025-04-17
 ### Changed
