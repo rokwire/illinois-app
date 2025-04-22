@@ -287,7 +287,7 @@ String assistantProviderToDisplayString(AssistantProvider? provider) {
     case AssistantProvider.perplexity:
       return Localization().getStringEx('model.assistant.provider.perplexity.label', 'Perplexity');
     case AssistantProvider.openai:
-      return Localization().getStringEx('model.assistant.provider.openai.label', 'Open AI');
+      return Localization().getStringEx('model.assistant.provider.openai.label', 'Illinois');
     default:
       return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
   }
