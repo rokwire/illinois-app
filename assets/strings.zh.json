@@ -2717,6 +2717,7 @@
 	"panel.groups.common.private.search.hidden.label": "隐藏群组",
 	"panel.groups.common.private.search.hidden.description": "隐藏的群组无法被搜寻到。",
 
+	"panel.group_detail.header.project.title": "Research Project Details",
 	"panel.group_detail.label.options": "选项",
 	"panel.group_detail.label.error_message": "无法加载群组数据。",
 	"panel.group_detail.members.count.empty": "目前没有成员",

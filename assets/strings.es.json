@@ -2738,6 +2738,7 @@
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
     "panel.groups.common.private.search.hidden.description": "Un grupo oculto no es visible en las búsquedas.",
 
+    "panel.group_detail.header.project.title": "Research Project Details",
     "panel.group_detail.label.options": "Opciones",
     "panel.group_detail.label.error_message": "Error al cargar los datos del grupo.",
     "panel.group_detail.members.count.empty": "No Hay Miembros Actuales",

@@ -291,7 +291,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       content = _buildErrorContent();
     }
 
-    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? Localization().getStringEx("panel.group_detail.header.project.title", 'Research Project Details') : null;
 
     return Scaffold(
       appBar: HeaderBar(title: barTitle,),
