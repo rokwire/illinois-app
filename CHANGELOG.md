@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Research at Illinois miscellaneous updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
 - Sort past events descending by time [#5019](https://github.com/rokwire/illinois-app/issues/5019).
+- Added Past Events tab in groups detail panel [#5022](https://github.com/rokwire/illinois-app/issues/5022).
 ### Fixed
 - Fixed survey response header bar outlook [#5018](https://github.com/rokwire/illinois-app/issues/5018).
 
