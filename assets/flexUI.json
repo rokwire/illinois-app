@@ -97,9 +97,10 @@
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "all_assistants", "assistant_faqs", "safewalk_request", "privacy"],
 
-			"attributes": ["groups", "events"],
+			"attributes": ["groups", "research_projects", "events"],
 			"attributes.groups": ["rso"],
-			
+			"attributes.research_projects": ["rso"],
+
 			"launch":["emergency"]
 			
 		},

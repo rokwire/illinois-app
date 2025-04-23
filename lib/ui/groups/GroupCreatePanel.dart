@@ -103,6 +103,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _initGroup(){
     _group = (widget.group != null) ? Group.fromOther(widget.group) : Group();
     _group?.onlyAdminsCanCreatePolls ??= true;
+    if (_group?.researchProject == true)
+      _group?.canJoinAutomatically ??= true;
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
     _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group);
@@ -242,7 +244,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         //_buildTitle("Research", "images/icon-gear.png"),
         //_buildResearchOptionLayout(),
         //_buildResearchOpenLayout(),
-        _buildResearchConsentDetailsField(),
+        //_buildResearchConsentDetailsField(),
         // #2626: Hide consent checkbox and edit control.
         // _buildResearchConfirmationLayout(),
         _buildLinkField(),
@@ -374,7 +376,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Localization().getStringEx("panel.groups_create.description.project.title", "SHORT DESCRIPTION") :
       Localization().getStringEx("panel.groups_create.description.group.title", "DESCRIPTION");
     String? description = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will participation involve?") :
       Localization().getStringEx("panel.groups_create.description.group.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldTitle = (_group?.researchProject == true) ?
       Localization().getStringEx("panel.groups_create.description.project.field", "SHORT DESCRIPTION FIELD") :
@@ -404,7 +406,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     child: TextField(
                       onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
                       controller: _groupDescriptionController,
-                      maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                     )),
@@ -496,7 +497,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //
   //Research Description
-  Widget _buildResearchConsentDetailsField() {
+  /*Widget _buildResearchConsentDetailsField() {
     String? title = "PROJECT DETAILS";
     String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
@@ -523,7 +524,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ],),
       ),
     );
-  }
+  }*/
   //
   // Research Confirmation
   // #2626: Hide consent checkbox and edit control.
@@ -595,7 +596,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
@@ -604,7 +605,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
+              requiredMark: (!_isResearchProject) && (_contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
@@ -628,9 +629,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   List<Widget> _constructAttributesContent() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
         List<String>? displayAttributes = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
@@ -659,8 +659,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
-      scope: Groups.contentAttributesScope,
-      contentAttributes: Groups().contentAttributes,
+      scope: _contentAttributesScope,
+      contentAttributes: _contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
@@ -1074,7 +1074,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.authManGroupName = null;
         _group!.attendanceGroup = false;
         //Unlocked Advanced setting
-        // _group?.canJoinAutomatically = false;
+        // _group?.canJoinAutomatically = true;
         // _group?.onlyAdminsCanCreatePolls = true;
       }
       else {
@@ -1248,11 +1248,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (Groups().contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
+        (_contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount >= 0));
   }
 
   bool get _loading => false;
+
+  String get _contentAttributesScope => Groups.contentAttributesScope(researchProject: _isResearchProject);
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 }

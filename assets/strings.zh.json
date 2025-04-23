@@ -244,8 +244,8 @@
 	"panel.browse.section.feeds.description": "Catch the latest from {{app_title}} social media and The Daily Illini.",
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "Discover a new group or start your own.",
-	"panel.browse.section.research_projects.title": "{{app_title}}研究",
-	"panel.browse.section.research_projects.description": "Discover and participate in research projects.",
+	"panel.browse.section.research_projects.title": "Research Participation",
+	"panel.browse.section.research_projects.description": "Discover research projects.",
 	"panel.browse.section.laundry.title": "洗衣房",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.messages.title": "對話",
@@ -315,7 +315,7 @@
 	"panel.browse.entry.groups.my_groups.title": "我的群組",
 
 	"panel.browse.entry.research_projects.open_research_projects.title": "開放研究項目",
-	"panel.browse.entry.research_projects.my_research_projects.title": "我的研究參與",
+	"panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣房",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣房",
@@ -2677,7 +2677,7 @@
 	"panel.groups_create.description.group.title": "描述",
 	"panel.groups_create.description.project.title": "简短的描述",
 	"panel.groups_create.description.group.description": "您的群组目的为和？谁可以参与？您的活动中会进行什么活动？",
-	"panel.groups_create.description.project.description": "您的计划目的为和？谁可以参与？您的活动中会进行什么活动？",
+	"panel.groups_create.description.project.description": "What’s the purpose of your project? Who should join? What will participation involve?",
 	"panel.groups_create.description.group.field": "描述栏",
 	"panel.groups_create.description.project.field": "描述栏",
 	"panel.groups_create.description.group.field.hint": "",
@@ -2734,6 +2734,7 @@
 	"panel.groups.common.private.search.hidden.label": "隐藏群组",
 	"panel.groups.common.private.search.hidden.description": "隐藏的群组无法被搜寻到。",
 
+	"panel.group_detail.header.project.title": "Research Project Details",
 	"panel.group_detail.label.options": "选项",
 	"panel.group_detail.label.error_message": "无法加载群组数据。",
 	"panel.group_detail.members.count.empty": "目前没有成员",
@@ -2759,7 +2760,9 @@
 	"panel.group_detail.button.more_info.title": "了解更多",
 	"panel.group_detail.label.tags": "群组标签： ",
 	"panel.group_detail.button.events.title": "活动",
+	"panel.group_detail.button.past_events.title": "Past Events",
 	"panel.group_detail.button.posts.title": "贴文",
+	"panel.group_detail.button.schediled_posts.title": "Scheduled",
 	"panel.group_detail.button.messages.title": "Messages",
 	"panel.group_detail.button.polls.title": "投票",
 	"panel.group_detail.button.about.title": "关于",
@@ -2787,7 +2790,7 @@
 	"panel.group_detail.label.title.hidden":  "这是一个隐藏的群组 ",
 	"panel.group_detail.label.description.hidden":  "只有管理员可以看到成员。\n只有成员可以看到贴文与群组活动。\n当活动设为公开，所有此用者可以看到活动。\n所有成员可以看到管理员。",
 	"panel.group_detail.label.admins":  "管理员",
-	"panel.group_detail.label.project.admins":  "计划主持人",
+	"panel.group_detail.label.project.admins":  "Research Team",
 	"panel.group_detail.label.become_member": "成为成员",
 	"panel.group_detail.button.request_to_join.title":  "请求加入",
 	"panel.group_detail.button.cancel_request.title":  "取消请求",
@@ -2972,7 +2975,7 @@
 	"panel.membership_questions.label.question.alert": "请输入问题 #",
 
 	"panel.recruitment_questions.label.title": "会员资格问题",
-	"panel.recruitment_questions.label.description": "问一些问题来了解想要加入群组的人。只有群组管理员会看到回答。",
+	"panel.recruitment_questions.label.description": "Learn more about people who want to participate to your research project by asking them some questions. Only the research team will see the answers",
 
 	"panel.membership_request.label.request.membership.title": "会员资格问题",
 	"panel.membership_request.label.request.participate.title": "邀请问题",
@@ -4226,7 +4229,7 @@
 
 	"model.research_project.member.status.pending": "等待中",
 	"model.research_project.member.status.member": "受试者",
-	"model.research_project.member.status.admin": "计划主持人",
+	"model.research_project.member.status.admin": "Admin",
 	"model.research_project.member.status.rejected": "已拒绝",
 	"model.research_project.member.status.unknown": "不明",
 

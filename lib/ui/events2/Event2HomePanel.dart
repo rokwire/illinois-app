@@ -986,7 +986,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       groupings: Event2Grouping.individualEvents(),
       attributes: _attributes,
       sortType: _sortType,
-      sortOrder: Event2SortOrder.ascending,
+      sortOrder: ((_timeFilter == Event2TimeFilter.past) && (_sortType == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending,
       location: _currentLocation,
     );
   } 
