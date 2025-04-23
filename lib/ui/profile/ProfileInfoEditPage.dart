@@ -205,7 +205,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           if (!_isFacultyStaff)
             _major2Section,
           if (_isFacultyStaff)
+            _poBoxSection,
+          if (_isFacultyStaff)
             _addressSection,
+          if (_isFacultyStaff)
+            _address2Section,
+          if (_isFacultyStaff)
+            _citySection,
           _emailSection,
           _email2Section,
           _phoneSection,
@@ -606,6 +612,24 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget get _addressSection => _textFieldSection(_ProfileField.address,
     headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
     textInputType: TextInputType.streetAddress,
+    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
+  );
+
+  Widget get _address2Section => _textFieldSection(_ProfileField.address2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
+    textInputType: TextInputType.streetAddress,
+    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
+  );
+
+  Widget get _citySection => _textFieldSection(_ProfileField.city,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.city.text', 'City'),
+    textInputType: TextInputType.text,
+    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
+  );
+
+  Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
+    textInputType: TextInputType.text,
     enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
   );
 
@@ -1213,7 +1237,7 @@ enum _ProfileField {
   photoUrl, pronunciationUrl,
   email, email2, phone, website, address,
   universityRole, college, department, major,
-  department2, major2, title,
+  department2, major2, title, address2, poBox, city
 }
 
 extension _ProfileFieldExt on _ProfileField {
@@ -1250,6 +1274,9 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.website: return website;
 
       case _ProfileField.address: return address;
+      case _ProfileField.address2: return address2;
+      case _ProfileField.city: return city;
+      case _ProfileField.poBox: return poBox;
 
       case _ProfileField.universityRole: return universityRole;
       case _ProfileField.college: return college;
@@ -1278,6 +1305,9 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
 
         address: StringUtils.ensureNotEmpty(fields[_ProfileField.address]?.text),
+        address2: StringUtils.ensureNotEmpty(fields[_ProfileField.address2]?.text),
+        city: StringUtils.ensureNotEmpty(fields[_ProfileField.city]?.text),
+        poBox: StringUtils.ensureNotEmpty(fields[_ProfileField.poBox]?.text),
 
         data: {
           Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.universityRole]?.text),
@@ -1316,6 +1346,9 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         website: StringUtils.ensureNotEmpty(other?.website),
 
         address: StringUtils.ensureNotEmpty(other?.address),
+        address2: StringUtils.ensureNotEmpty(other?.address2),
+        city: StringUtils.ensureNotEmpty(other?.city),
+        poBox: StringUtils.ensureNotEmpty(other?.poBox),
 
         data: {
           Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(other?.universityRole),
@@ -1359,6 +1392,9 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.website: website,
 
     _ProfileField.address: address,
+    _ProfileField.address2: address2,
+    _ProfileField.city: city,
+    _ProfileField.poBox: poBox,
 
     _ProfileField.universityRole: universityRole,
     _ProfileField.college: college,
@@ -1385,6 +1421,9 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       website : fields?[_ProfileField.website],
 
       address: fields?[_ProfileField.address],
+      address2: fields?[_ProfileField.address2],
+      city: fields?[_ProfileField.city],
+      poBox: fields?[_ProfileField.poBox],
 
       data: MapUtils.ensureEmpty({
         if (fields?[_ProfileField.universityRole] != null)
