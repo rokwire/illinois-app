@@ -78,7 +78,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum DetailTab {Events, Posts, Scheduled, Messages, Polls }
+enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Polls }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -113,7 +113,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
   static final int          _postsPageSize = 8;
   static final int          _animationDurationInMilliSeconds = 200;
-  static final List<DetailTab> _permanentTabs = [DetailTab.Scheduled];
+  static final List<DetailTab> _permanentTabs = [ DetailTab.ScheduledPosts, DetailTab.PastEvents];
 
   Group?                _group;
   GroupStats?        _groupStats;
@@ -245,8 +245,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   bool get _showPolicyIcon {
     return _isResearchProject != true;
   }
-
-  bool get _canShowScheduled => _isAdmin;
 
   ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 
@@ -423,10 +421,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   void _trimForbiddenTabs(){
     if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
-      _tabs?.removeWhere((DetailTab? tab) => tab == null ||
-          (tab == DetailTab.Scheduled &&
-              ( _canShowScheduled == false || _tabs?.contains(DetailTab.Posts) != true)
-          ));
+      _tabs?.removeWhere((DetailTab? tab) =>
+        (tab == null) ||
+        (tab == DetailTab.ScheduledPosts && ((_isAdmin == false) || (_tabs?.contains(DetailTab.Posts) != true))) ||
+        (tab == DetailTab.PastEvents && ((_isAdmin == false) || (_tabs?.contains(DetailTab.Events) != true)))
+      );
     }
   }
 
@@ -744,8 +743,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         case DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
           break;
+        case DetailTab.PastEvents:
+          title = Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
+          break;
         case DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+          break;
+        case DetailTab.ScheduledPosts:
+          title = Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
           break;
         case DetailTab.Messages:
           title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
@@ -756,9 +761,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         // case DetailTab.About:
         //   title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
         //   break;
-        case DetailTab.Scheduled:
-          title = Localization().getStringEx("", 'Scheduled'); //localize
-          break;
         default: title = "Unknown";
       }
 
@@ -840,15 +842,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   Widget _buildPageFromTab(DetailTab? data){
     switch(data){
       case DetailTab.Events:
-        return _GroupEventsContent(group: _group, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
+        return _GroupEventsContent(group: _group, timeFilter: Event2TimeFilter.upcoming, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
+      case DetailTab.PastEvents:
+        return _GroupEventsContent(group: _group, timeFilter: Event2TimeFilter.past, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Posts:
         return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins, analyticsFeature: widget.analyticsFeature,);
+      case DetailTab.ScheduledPosts:
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
-      case DetailTab.Scheduled:
-        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
       default: Container();
     }
@@ -1639,10 +1643,11 @@ class _GroupEventsContent extends StatefulWidget{
   static const String notifyEventsRefresh  = "edu.illinois.rokwire.group_detail.events.refresh";
 
   final Group? group;
+  final Event2TimeFilter? timeFilter;
   final StreamController<dynamic>? updateController;
   final AnalyticsFeature? analyticsFeature;
 
-  const _GroupEventsContent({this.updateController, this.group, this.analyticsFeature });
+  const _GroupEventsContent({this.updateController, this.group, this.timeFilter, this.analyticsFeature });
 
   String get _emptyText => Localization().getStringEx("", "No group events");
 
@@ -1751,7 +1756,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
     if (showProgress)
       setStateIfMounted(() => _updatingEvents = true);
 
-    Events2().loadGroupEvents(groupId: widget.groupId, limit: 3)
+    Events2().loadGroupEvents(groupId: widget.groupId, timeFilter: widget.timeFilter, limit: 3)
         .then((Events2ListResult? eventsResult) {
           setStateIfMounted(() {
             // _allEventsCount = eventsResult?.totalCount ?? 0;
