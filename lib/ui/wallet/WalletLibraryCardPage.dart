@@ -122,7 +122,6 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
       Container(height: 16,),
 
       Padding(padding: EdgeInsets.symmetric(horizontal: 48), child: _libraryCardInfoWidget
-        // Text(Localization().getStringEx('widget.library_card.text.card_instructions', 'This card is needed for University Library services such as picking up an equipment loan or checking out a book or keys to a study room.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic"))
       ),
 
       Container(height: 16,),
