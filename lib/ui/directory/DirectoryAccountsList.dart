@@ -179,7 +179,13 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   Widget _sectionHeading(String dirEntry) =>
     Padding(padding: EdgeInsets.zero, child:
-      Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),),
+          Text('${_letterCounts?[dirEntry.toLowerCase()] ?? 0} Users', style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),),
+        ],
+      )
     );
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);

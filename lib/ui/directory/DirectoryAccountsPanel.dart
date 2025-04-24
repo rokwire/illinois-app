@@ -19,6 +19,7 @@ class DirectoryAccountsPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _DirectoryAccountsPanelState();
 
   static const List<String> alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "#"];
+  //TODO: make not static to filter alphabet based on counts map returned with accounts list (when filters are applied)
 }
 
 class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {

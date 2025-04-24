@@ -122,7 +122,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
           RichText(textAlign: TextAlign.left, text:
             TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
           ),
-          Text('${(_accountTotal ?? 0).toString()} Users', style: Styles().textStyles.getTextStyleEx("widget.detail.small.fat")),
+          Text('${_accountTotal ?? 0} Users', style: Styles().textStyles.getTextStyleEx("widget.detail.small.fat")),
         ],
       )
     );
