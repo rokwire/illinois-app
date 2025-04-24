@@ -18,7 +18,7 @@ class DirectoryAccountsPanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _DirectoryAccountsPanelState();
 
-  static const List<String> alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"];
+  static const List<String> alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "#"];
 }
 
 class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
@@ -26,6 +26,8 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   final GlobalKey<DirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController(viewportFraction: 1, initialPage: 0, keepPage: true);
+  final _selectedIndexNotifier = ValueNotifier<int>(0);
+  // final _positionNotifier = ValueNotifier<Offset>(const Offset(0, 0));
   int _lastSelectedLetterIndex = 0;
 
   @override
@@ -56,27 +58,38 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
     Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: 24.0,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.zero,
-            itemCount: DirectoryAccountsPanel.alphabet.length,
-            itemBuilder: (BuildContext context, int index) {
-              bool isSelected = _lastSelectedLetterIndex == index;
-              return InkWell(
-                child: Text(DirectoryAccountsPanel.alphabet[index], style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.small.fat' : 'widget.button.title.small'), textAlign: TextAlign.center,),
-                onTap: () => _onTapIndexLetter(index),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => SizedBox(width: 6),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Container(
+            height: 48.0,
+              child: ValueListenableBuilder<int>(
+                  valueListenable: _selectedIndexNotifier,
+                  builder: (context, int selected, Widget? child) {
+                    return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: DirectoryAccountsPanel.alphabet.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        bool isSelected = _lastSelectedLetterIndex == index;
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          // key: isSelected ? letterKey : null,
+                          child: Text(DirectoryAccountsPanel.alphabet[index].toUpperCase(), style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.small.fat' : 'widget.button.title.small'), textAlign: TextAlign.center,),
+                          onTap: () => _onTapIndexLetter(index),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) => SizedBox(width: 6),
+                    );
+                  })
           ),
         ),
-        RefreshIndicator(onRefresh: _onRefresh, child:
-          SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-              DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, letterIndex: _lastSelectedLetterIndex, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
-            )
+        Expanded(
+          child: RefreshIndicator(onRefresh: _onRefresh, child:
+            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+              Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
+                DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, letterIndex: _lastSelectedLetterIndex, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+              )
+            ),
           ),
         ),
       ]
@@ -98,6 +111,8 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   }
 
   void _onTapIndexLetter(int index) {
+    // _selectedIndexNotifier.value = x;
+    // scrollToIndex(x, positionNotifier.value);
     setState(() {
       _lastSelectedLetterIndex = index;
     });

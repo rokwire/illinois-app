@@ -206,6 +206,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with No
   Widget get _allUsersContent =>
     DirectoryAccountsList(DirectoryAccounts.directory,
       key: _allUsersPageKey,
+      letterIndex: 0, //TODO: add alphabet scrolling here (similar to directory)
       displayMode: DirectoryDisplayMode.select,
       scrollController: _allUsersScrollController,
       searchText: _searchText,

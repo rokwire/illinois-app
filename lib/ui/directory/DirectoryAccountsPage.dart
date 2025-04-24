@@ -18,11 +18,11 @@ class DirectoryAccountsPage extends StatefulWidget {
 
   final DirectoryAccounts contentType;
   final ScrollController? scrollController;
-  final int? letterIndex;
+  final int letterIndex;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
   final void Function(DirectoryAccounts contentType)? onShareProfile;
 
-  DirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.letterIndex, this.onEditProfile, this.onShareProfile});
+  DirectoryAccountsPage(this.contentType, { super.key, required this.letterIndex, this.scrollController, this.onEditProfile, this.onShareProfile});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
