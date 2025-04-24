@@ -46,6 +46,7 @@ extension Auth2UserProfileVCard on Auth2UserProfile {
     vcfContent += _fieldValue('N', _vcardName);
     vcfContent += _fieldValue('TITLE', title);
     vcfContent += _fieldValue('ORG', _vcardOrg);
+    vcfContent += _fieldValue('ADR', _vcardAddr);
     vcfContent += _fieldValue('EMAIL;TYPE=primary', email);
     vcfContent += _fieldValue('EMAIL;TYPE=secondary', email2);
     vcfContent += _fieldValue('TEL', phone);
@@ -66,7 +67,36 @@ extension Auth2UserProfileVCard on Auth2UserProfile {
   String? get vcardFullName => StringUtils.fullName([firstName, lastName]);
   String get _vcardName => "${lastName ?? ''};${firstName ?? ''};${middleName ?? ''};;";
   String get _vcardOrg => "$displayUniversityName;$_vcardCollegeAndDepartment";
-  String get _vcardCollegeAndDepartment => (college?.isNotEmpty == true) ? ((department?.isNotEmpty == true) ? "$college / $department" : (college ?? '')) : (department ?? '');
+  String get _vcardCollegeAndDepartment {
+    if (college?.isNotEmpty == true) {
+      if (department?.isNotEmpty == true) {
+        if (department2?.isNotEmpty == true) {
+          return "$college / $department, $department2";
+        }
+        else {
+          return "$college / $department";
+        }
+      }
+      else if (department2?.isNotEmpty == true) {
+        return "$college / $department2";
+      }
+      else {
+        return college ?? '';
+      }
+    }
+    else if (department?.isNotEmpty == true) {
+      return (department2?.isNotEmpty == true) ? "$department, $department2" : (department ?? '');
+    }
+    else if (department2?.isNotEmpty == true) {
+      return (department2 ?? '');
+    }
+    else {
+      return '';
+    }
+  }
+
+  String get _vcardAddr => "$poBox;$address2;$address;$city;$state;$zip;$country";
+
 }
 
 extension Auth2UserProfileDisplayText on Auth2UserProfile {
