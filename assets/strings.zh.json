@@ -3167,7 +3167,8 @@
 	"panel.group.detail.policy.text": "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrator(s) about obscene, threatening, or harassing content. Users may also choose to report content in violation of the {{student_code}} {{external_link_icon}} to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.",
 	"panel.group.detail.policy.text.student_code": "Student Code",
 
-	"panel.groups_all_events.label.heading": "即将举行的活动",
+	"panel.groups_all_events.upcoming.label.heading": "即将举行的活动",
+	"panel.groups_all_events.past.label.heading": "Past Events",
 
 	"panel.group_polls.label.heading": "。  所有投票",
 	"panel.group_polls.empty.message": "没有群组投票。",
