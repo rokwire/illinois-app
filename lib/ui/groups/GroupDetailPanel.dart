@@ -1716,7 +1716,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
             contentWeight: 0.5,
             onTap: () {
               Navigator.push(context, CupertinoPageRoute(
-                  builder: (context) => GroupAllEventsPanel(group: widget.group)));
+                  builder: (context) => GroupAllEventsPanel(group: widget.group, timeFilter: widget.timeFilter,)));
             })
         )
       );
