@@ -143,7 +143,7 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
     }
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
 
-    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Research Team') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
 
     return Stack(children: [
       Container(

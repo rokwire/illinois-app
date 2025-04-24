@@ -123,7 +123,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
       ));
     }
 
-    if (widgetList.length < 1) {
+    if (widgetList.isEmpty) {
       widgetList.add(Padding(padding: EdgeInsets.zero, child:
         Container(
           decoration: BoxDecoration(
@@ -145,31 +145,30 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
         )
       ));
     }
-    else {
-      widgetList.add(Padding(padding: EdgeInsets.zero, child:
-        Align(alignment: Alignment.centerLeft, child:
-          InkWell(onTap: _onTapUpcomingAppointments, child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-              Text(Localization().getStringEx('panel.wellness.successteam.upcoming.appointments.link', 'View your upcoming McKinley appointments.'), style:
-                Styles().textStyles.getTextStyle('widget.message.small.underline')
-              )
+
+    widgetList.add(Padding(padding: EdgeInsets.zero, child:
+      Align(alignment: Alignment.centerLeft, child:
+        InkWell(onTap: _onTapUpcomingAppointments, child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+            Text(Localization().getStringEx('panel.wellness.successteam.upcoming.appointments.link', 'View your upcoming McKinley appointments.'), style:
+              Styles().textStyles.getTextStyle('widget.message.small.underline')
             )
           )
         )
-      ));
+      )
+    ));
 
-      widgetList.add(Padding(padding: EdgeInsets.zero, child:
-        Row(children: [
-          Flexible(child:
-            HtmlWidget(_dialNurseHtml,
-              onTapUrl: _onTapUrl,
-              textStyle: Styles().textStyles.getTextStyle("widget.description.small"),
-              customStylesBuilder: (element) => (element.localName == "a") ? _htmlAnchorStyle : null,
-            )
-          ),
-        ])
-      ));
-    }
+    widgetList.add(Padding(padding: EdgeInsets.zero, child:
+      Row(children: [
+        Flexible(child:
+          HtmlWidget(_dialNurseHtml,
+            onTapUrl: _onTapUrl,
+            textStyle: Styles().textStyles.getTextStyle("widget.description.small"),
+            customStylesBuilder: (element) => (element.localName == "a") ? _htmlAnchorStyle : null,
+          )
+        ),
+      ])
+    ));
 
     return Padding(padding: const EdgeInsets.all(16), child:
       Column(children: widgetList)
