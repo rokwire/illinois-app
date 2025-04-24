@@ -637,7 +637,8 @@
     "panel.id_card.detail.title.medium": {"extends": "widget.title.large.fat"},
     "panel.id_card.detail.title.small": {"extends": "widget.title.regular"},
     "panel.id_card.detail.title.tiny": {"extends": "widget.title.small"},
-    "panel.id_card.detail.description.itallic": {"extends": "widget.detail.small", "font_family": "regular_italic" },
+    "panel.id_card.detail.description.italic": {"extends": "widget.detail.small", "font_family": "regular_italic" },
+    "panel.id_card.detail.description.italic.link": { "extends": "panel.id_card.detail.description.italic", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "panel.id_card.mobile_access.description.italic": {"font_family": "medium_italic", "size": 12.0, "color": "mediumGray"},
     "panel.id_card.mobile_access.link_button.description.medium.underline": {"font_family": "medium", "size": 14.0, "color": "mediumGray", "decoration": "underline", "decoration_thickness": 1.0, "decoration_color": "fillColorSecondary"},
 

@@ -214,7 +214,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       Container(height: 16,),
 
       Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
-        Text(Localization().getStringEx('widget.id_card.text.card_instructions', 'This ID must be presented to university officials upon request.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic")),
+        Text(Localization().getStringEx('widget.id_card.text.card_instructions', 'This ID must be presented to university officials upon request.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.italic")),
       ),
 
       Container(height: 32,),
