@@ -75,18 +75,26 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   double? _visibilityDropdownItemsWidth;
   Timer? _onScreenInsetsBottomChangedTimer;
 
-  final Map<Auth2LoginType, Set<_ProfileField>> fieldAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
-    Auth2LoginType.oidc: _oidcFieldAvailabilities,
-    Auth2LoginType.oidcIllinois: _oidcFieldAvailabilities,
-    Auth2LoginType.email: _emailFieldAvailabilities,
-    Auth2LoginType.phone: _phoneFieldAvailabilities,
-    Auth2LoginType.phoneTwilio: _phoneFieldAvailabilities,
-    Auth2LoginType.username: _defaultFieldAvailabilities,
+  final Map<Auth2LoginType, Set<_ProfileField>> fieldLoginTypeAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
+    Auth2LoginType.oidc: _oidcLoginTypeFieldAvailabilities,
+    Auth2LoginType.oidcIllinois: _oidcLoginTypeFieldAvailabilities,
+    Auth2LoginType.email: _emailLoginTypeFieldAvailabilities,
+    Auth2LoginType.phone: _phoneLoginTypeFieldAvailabilities,
+    Auth2LoginType.phoneTwilio: _phoneLoginTypeFieldAvailabilities,
+    Auth2LoginType.username: _defaultLoginTypeFieldAvailabilities,
   };
-  static Set<_ProfileField> _oidcFieldAvailabilities = _ProfileField.values.toSet();
-  static Set<_ProfileField> _defaultFieldAvailabilities = <_ProfileField>{_ProfileField.firstName, _ProfileField.middleName, _ProfileField.lastName, _ProfileField.photoUrl};
-  static Set<_ProfileField> _emailFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
-  static Set<_ProfileField> _phoneFieldAvailabilities = _defaultFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
+  static Set<_ProfileField> _oidcLoginTypeFieldAvailabilities = _ProfileField.values.toSet();
+  static Set<_ProfileField> _defaultLoginTypeFieldAvailabilities = <_ProfileField>{_ProfileField.firstName, _ProfileField.middleName, _ProfileField.lastName, _ProfileField.photoUrl};
+  static Set<_ProfileField> _emailLoginTypeFieldAvailabilities = _defaultLoginTypeFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
+  static Set<_ProfileField> _phoneLoginTypeFieldAvailabilities = _defaultLoginTypeFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
+  Set<_ProfileField>? get fieldLoginTypeAvailability => fieldLoginTypeAvailabilities[widget.authType?.loginType];
+
+  final Map<String, Set<_ProfileField>> fieldUniverityRoleUnavailabilities = <String, Set<_ProfileField>>{
+    Auth2UserProfile.universityRoleFacultyStaff : _facultyStuffUniversityRoleFieldUnavailabilities,
+  };
+  static Set<_ProfileField> _facultyStuffUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.major, _ProfileField.major2 };
+  static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city };
+  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[ widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
 
   static const double _buttonIconSize = 16;
   static const double _dropdownItemInnerIconPaddingX = 6;
@@ -95,13 +103,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   static const EdgeInsetsGeometry _dropdownMenuItemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
   static const EdgeInsetsGeometry _dropdownButtonPadding = const EdgeInsets.only(left: 16, right: 8, top: 15, bottom: 15);
 
-  bool _isFieldAvailable(_ProfileField field) => (fieldAvailabilities[widget.authType?.loginType]?.contains(field) == true);
+  bool _isFieldAvailable(_ProfileField field) => (_isFieldLoginTypeAvailable(field) && _isFieldUniversityRoleAvailable(field));
+  bool _isFieldLoginTypeAvailable(_ProfileField field) => (fieldLoginTypeAvailability?.contains(field) == true);
+  bool _isFieldUniversityRoleAvailable(_ProfileField field) => (_universityRoleFieldUnavailability.contains(field) != true);
+
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
-  bool get _isFacultyStaff => widget.profile?.isFacultyStaff == true;
 
   @override
   void initState() {
@@ -199,19 +209,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _titleSection,
           _collegeSection,
           _departmentSection,
-          if (!_isFacultyStaff)
-            _majorSection,
+          _majorSection,
           _department2Section,
-          if (!_isFacultyStaff)
-            _major2Section,
-          if (_isFacultyStaff)
-            _poBoxSection,
-          if (_isFacultyStaff)
-            _addressSection,
-          if (_isFacultyStaff)
-            _address2Section,
-          if (_isFacultyStaff)
-            _citySection,
+          _major2Section,
+          _poBoxSection,
+          _addressSection,
+          _address2Section,
+          _citySection,
           _emailSection,
           _email2Section,
           _phoneSection,
@@ -609,30 +613,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     enabled: false, available: _showPrivacyControls,
   );
 
-  Widget get _addressSection => _textFieldSection(_ProfileField.address,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
-    textInputType: TextInputType.streetAddress,
-    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
-  );
-
-  Widget get _address2Section => _textFieldSection(_ProfileField.address2,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
-    textInputType: TextInputType.streetAddress,
-    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
-  );
-
-  Widget get _citySection => _textFieldSection(_ProfileField.city,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.city.text', 'City'),
-    textInputType: TextInputType.text,
-    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
-  );
-
-  Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
-    textInputType: TextInputType.text,
-    enabled: _isFacultyStaff, available: _showPrivacyControls, maxLines: 2,
-  );
-
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
     enabled: false, available: _showPrivacyControls,
@@ -646,6 +626,30 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget get _major2Section => _textFieldSection(_ProfileField.major2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major2.text', 'Second Major'),
     enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _addressSection => _textFieldSection(_ProfileField.address,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
+    textInputType: TextInputType.streetAddress,
+    available: _showPrivacyControls, maxLines: 2,
+  );
+
+  Widget get _address2Section => _textFieldSection(_ProfileField.address2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
+    textInputType: TextInputType.streetAddress,
+    available: _showPrivacyControls, maxLines: 2,
+  );
+
+  Widget get _citySection => _textFieldSection(_ProfileField.city,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.city.text', 'City'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
