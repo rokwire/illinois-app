@@ -400,12 +400,15 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
             return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
           }
         }
-        return previousLetter;
+        return letter;
       }
       if (_accounts?[letter]?.isEmpty == false) {
         int gapIndex = _nameGapIndices[letter] ?? 0;
-        Auth2PublicAccount? account = _accounts?[letter]?[gapIndex];
-        return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
+        if (gapIndex > 0) {
+          Auth2PublicAccount? account = _accounts?[letter]?[gapIndex - 1];
+          return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
+        }
+        return letter;
       }
     }
     return currentLetter;
@@ -415,14 +418,17 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     if (reverse) {
       for (int i = _letterIndex; i >= 0; i--) {
         String? letter = alphabet[i];
-        if (!_hasLoadedAllAccountsForLetter(letter: letter)) {
+        int gapIndex = _nameGapIndices[letter] ?? 0;
+        if (!_hasLoadedAllAccountsForLetter(letter: letter) && (gapIndex == 0 || i > 0)) {
           return i;
         }
       }
     } else {
       for (int i = _letterIndex; i < alphabet.length; i++) {
         String? letter = alphabet[i];
-        if (!_hasLoadedAllAccountsForLetter(letter: letter)) {
+        int gapIndex = _nameGapIndices[letter] ?? 0;
+        int loadedAccounts = _accounts?[letter]?.length ?? 0;
+        if (!_hasLoadedAllAccountsForLetter(letter: letter) && (gapIndex == loadedAccounts || i < alphabet.length - 1)) {
           return i;
         }
       }
