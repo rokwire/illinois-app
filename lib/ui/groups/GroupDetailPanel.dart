@@ -1015,8 +1015,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                   ),
                 ]),
               ),
+
               Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
-                RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
+                RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) && (_group?.canJoinAutomatically == true) ? "Continue" : "Request to participate",
                     textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Styles().colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
@@ -1717,7 +1718,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
             contentWeight: 0.5,
             onTap: () {
               Navigator.push(context, CupertinoPageRoute(
-                  builder: (context) => GroupAllEventsPanel(group: widget.group)));
+                  builder: (context) => GroupAllEventsPanel(group: widget.group, timeFilter: widget.timeFilter,)));
             })
         )
       );

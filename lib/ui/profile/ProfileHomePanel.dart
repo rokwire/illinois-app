@@ -152,13 +152,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   Widget _buildSheet() {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return PopScopeFix(onClose: _closeSheet, child:
-      Column(children: [
-        _buildHeaderBar(),
-        Container(color: Styles().colors.surfaceAccent, height: 1,),
-        Expanded(child:
-          _buildPage(),
-        )
-      ],),
+      Padding(padding: MediaQuery.of(context).viewInsets, child:
+        Column(children: [
+          _buildHeaderBar(),
+          Container(color: Styles().colors.surfaceAccent, height: 1,),
+          Expanded(child:
+            _buildPage(),
+          )
+        ],),
+      ),
     );
   }
 

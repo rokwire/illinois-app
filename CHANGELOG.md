@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.0.17] - 2025-04-24
+### Added
+- Directory of User and My Profile Data Improvements [#4865](https://github.com/rokwire/illinois-app/issues/4865).
+### Changed
+- GroupAllEventsPanel extended to work with upcoming and past events [#5022](https://github.com/rokwire/illinois-app/issues/5022).
+- Minor Research at Illinois updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
+
 ## [7.0.16] - 2025-04-23
 ### Changed
 - Research at Illinois miscellaneous updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).

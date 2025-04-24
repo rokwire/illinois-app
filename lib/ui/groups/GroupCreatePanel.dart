@@ -406,8 +406,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     child: TextField(
                       onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
                       controller: _groupDescriptionController,
+                      maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
+                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                     )),
             )],)
           ),
