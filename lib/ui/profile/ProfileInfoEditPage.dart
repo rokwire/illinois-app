@@ -93,8 +93,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     Auth2UserProfile.universityRoleFacultyStaff : _facultyStuffUniversityRoleFieldUnavailabilities,
   };
   static Set<_ProfileField> _facultyStuffUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.major, _ProfileField.major2 };
-  static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city };
-  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[ widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
+  static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city, _ProfileField.zip, _ProfileField.state, _ProfileField.country };
+  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
 
   static const double _buttonIconSize = 16;
   static const double _dropdownItemInnerIconPaddingX = 6;
@@ -212,10 +212,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _majorSection,
           _department2Section,
           _major2Section,
-          _poBoxSection,
           _addressSection,
           _address2Section,
+          _poBoxSection,
           _citySection,
+          _stateSection,
+          _zipSection,
+          _countrySection,
           _emailSection,
           _email2Section,
           _phoneSection,
@@ -628,6 +631,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     enabled: false, available: _showPrivacyControls,
   );
 
+  Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
   Widget get _addressSection => _textFieldSection(_ProfileField.address,
     headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
     textInputType: TextInputType.streetAddress,
@@ -646,8 +655,20 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     available: _showPrivacyControls,
   );
 
-  Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
+  Widget get _stateSection => _textFieldSection(_ProfileField.state,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.state.text', 'State Abbreviation'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _zipSection => _textFieldSection(_ProfileField.zip,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.zip.text', 'Zip Code'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _countrySection => _textFieldSection(_ProfileField.country,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.country.text', 'Country Abbreviation'),
     textInputType: TextInputType.text,
     available: _showPrivacyControls,
   );
@@ -1239,9 +1260,9 @@ class _ProfileSaveResult {
 enum _ProfileField {
   firstName, middleName, lastName, pronouns,
   photoUrl, pronunciationUrl,
-  email, email2, phone, website, address,
-  universityRole, college, department, major,
-  department2, major2, title, address2, poBox, city
+  email, email2, phone, website,
+  universityRole, college, department, major, department2, major2, title,
+  address, address2, poBox, city, zip, state, country
 }
 
 extension _ProfileFieldExt on _ProfileField {
@@ -1267,7 +1288,6 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.firstName: return firstName;
       case _ProfileField.middleName: return middleName;
       case _ProfileField.lastName: return lastName;
-
       case _ProfileField.pronouns: return pronouns;
 
       case _ProfileField.photoUrl: return photoUrl;
@@ -1280,8 +1300,11 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 
       case _ProfileField.address: return address;
       case _ProfileField.address2: return address2;
-      case _ProfileField.city: return city;
       case _ProfileField.poBox: return poBox;
+      case _ProfileField.city: return city;
+      case _ProfileField.zip: return zip;
+      case _ProfileField.state: return state;
+      case _ProfileField.country: return country;
 
       case _ProfileField.universityRole: return universityRole;
       case _ProfileField.college: return college;
@@ -1311,10 +1334,14 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 
         address: StringUtils.ensureNotEmpty(fields[_ProfileField.address]?.text),
         address2: StringUtils.ensureNotEmpty(fields[_ProfileField.address2]?.text),
-        city: StringUtils.ensureNotEmpty(fields[_ProfileField.city]?.text),
         poBox: StringUtils.ensureNotEmpty(fields[_ProfileField.poBox]?.text),
+        city: StringUtils.ensureNotEmpty(fields[_ProfileField.city]?.text),
+        zip: StringUtils.ensureNotEmpty(fields[_ProfileField.zip]?.text),
+        state: StringUtils.ensureNotEmpty(fields[_ProfileField.state]?.text),
+        country: StringUtils.ensureNotEmpty(fields[_ProfileField.country]?.text),
 
         data: {
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
           Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.universityRole]?.text),
           Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.college]?.text),
           Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department]?.text),
@@ -1322,14 +1349,14 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
           Auth2UserProfile.department2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department2]?.text),
           Auth2UserProfile.major2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major2]?.text),
           Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.title]?.text),
-          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
         }
       ),
       scope: <Auth2UserProfileScope> {
         Auth2UserProfileScope.firstName, Auth2UserProfileScope.middleName, Auth2UserProfileScope.lastName,
         Auth2UserProfileScope.pronouns,
-        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl, Auth2UserProfileScope.address,
+        Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
         Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        Auth2UserProfileScope.address, Auth2UserProfileScope.address2, Auth2UserProfileScope.poBox, Auth2UserProfileScope.city, Auth2UserProfileScope.zip, Auth2UserProfileScope.state, Auth2UserProfileScope.country,
         /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
       }
     );
@@ -1352,10 +1379,14 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
 
         address: StringUtils.ensureNotEmpty(other?.address),
         address2: StringUtils.ensureNotEmpty(other?.address2),
-        city: StringUtils.ensureNotEmpty(other?.city),
         poBox: StringUtils.ensureNotEmpty(other?.poBox),
+        city: StringUtils.ensureNotEmpty(other?.city),
+        zip: StringUtils.ensureNotEmpty(other?.zip),
+        state: StringUtils.ensureNotEmpty(other?.state),
+        country: StringUtils.ensureNotEmpty(other?.country),
 
         data: {
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
           Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(other?.universityRole),
           Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(other?.college),
           Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(other?.department),
@@ -1363,7 +1394,6 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
           Auth2UserProfile.department2DataKey: StringUtils.ensureNotEmpty(other?.department2),
           Auth2UserProfile.major2DataKey: StringUtils.ensureNotEmpty(other?.major2),
           Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(other?.title),
-          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
         }
       ),
       scope: <Auth2UserProfileScope> {
@@ -1371,6 +1401,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         Auth2UserProfileScope.pronouns,
         Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
         Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        Auth2UserProfileScope.address, Auth2UserProfileScope.address2, Auth2UserProfileScope.poBox, Auth2UserProfileScope.city, Auth2UserProfileScope.zip, Auth2UserProfileScope.state, Auth2UserProfileScope.country,
         /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
       }
     );
@@ -1398,8 +1429,11 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
 
     _ProfileField.address: address,
     _ProfileField.address2: address2,
-    _ProfileField.city: city,
     _ProfileField.poBox: poBox,
+    _ProfileField.city: city,
+    _ProfileField.zip: zip,
+    _ProfileField.state: state,
+    _ProfileField.country: country,
 
     _ProfileField.universityRole: universityRole,
     _ProfileField.college: college,
@@ -1427,10 +1461,16 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
 
       address: fields?[_ProfileField.address],
       address2: fields?[_ProfileField.address2],
-      city: fields?[_ProfileField.city],
       poBox: fields?[_ProfileField.poBox],
+      city: fields?[_ProfileField.city],
+      zip: fields?[_ProfileField.zip],
+      state: fields?[_ProfileField.state],
+      country: fields?[_ProfileField.country],
 
       data: MapUtils.ensureEmpty({
+        if (fields?[_ProfileField.email2] != null)
+          Auth2UserProfile.email2DataKey: fields?[_ProfileField.email2],
+
         if (fields?[_ProfileField.universityRole] != null)
           Auth2UserProfile.universityRoleDataKey: fields?[_ProfileField.universityRole],
 
@@ -1452,8 +1492,6 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
         if (fields?[_ProfileField.title] != null)
           Auth2UserProfile.titleDataKey: fields?[_ProfileField.title],
 
-        if (fields?[_ProfileField.email2] != null)
-          Auth2UserProfile.email2DataKey: fields?[_ProfileField.email2],
       }),
     );
 }
