@@ -640,13 +640,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget get _addressSection => _textFieldSection(_ProfileField.address,
     headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
     textInputType: TextInputType.streetAddress,
-    available: _showPrivacyControls, maxLines: 2,
+    available: _showPrivacyControls,
   );
 
   Widget get _address2Section => _textFieldSection(_ProfileField.address2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
     textInputType: TextInputType.streetAddress,
-    available: _showPrivacyControls, maxLines: 2,
+    available: _showPrivacyControls,
   );
 
   Widget get _citySection => _textFieldSection(_ProfileField.city,
