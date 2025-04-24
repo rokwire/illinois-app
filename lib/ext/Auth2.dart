@@ -12,6 +12,12 @@ extension Auth2UserProfileExt on Auth2UserProfile {
     StringUtils.isNotEmpty(middleName) ||
     StringUtils.isNotEmpty(lastName);
 
+  bool get isCityStateZipCountryNotEmpty =>
+    StringUtils.isNotEmpty(city) ||
+    StringUtils.isNotEmpty(state) ||
+    StringUtils.isNotEmpty(zip) ||
+    StringUtils.isNotEmpty(country);
+
   bool get isNotEmpty =>
     (photoUrl?.isNotEmpty == true) ||
     (firstName?.isNotEmpty == true) ||
@@ -59,15 +65,19 @@ extension Auth2UserProfileVCard on Auth2UserProfile {
 
   String? get vcardFullName => StringUtils.fullName([firstName, lastName]);
   String get _vcardName => "${lastName ?? ''};${firstName ?? ''};${middleName ?? ''};;";
-  String get _vcardOrg => "$_textUniversityName;$_vcardCollegeAndDepartment";
+  String get _vcardOrg => "$displayUniversityName;$_vcardCollegeAndDepartment";
   String get _vcardCollegeAndDepartment => (college?.isNotEmpty == true) ? ((department?.isNotEmpty == true) ? "$college / $department" : (college ?? '')) : (department ?? '');
 }
 
 extension Auth2UserProfileDisplayText on Auth2UserProfile {
   String toDisplayText() {
     String displayText = "";
-    displayText += _fieldValue(_textFullName, delimiter: '\n\n');
-    displayText += _fieldValue(_textOrgColDept, delimiter: '\n\n');
+    displayText += _fieldValue(displayFullName, delimiter: '\n\n');
+
+    displayText += _fieldValue(displayUniverirySection, delimiter: '\n\n');
+
+    displayText += _fieldValue(displayAddressSection, delimiter: '\n\n');
+
     displayText += _fieldValue(phone, label: Localization().getStringEx('generic.app.field.phone', 'Phone'));
     displayText += _fieldValue(email, label: Localization().getStringEx('generic.app.field.email', 'Email'));
     displayText += _fieldValue(email2, label: Localization().getStringEx('generic.app.field.email2', 'Email2'));
@@ -76,14 +86,40 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
     return displayText;
   }
 
-  String? get _textFullName => StringUtils.fullName([firstName, middleName, lastName]);
+  String? get displayFullName => StringUtils.fullName([firstName, middleName, lastName]);
 
-  String? get _textOrgColDept => StringUtils.fullName([
-    title,
+  String? get displayUniverirySection => StringUtils.fullName([
+    displayUniversityName,
     StringUtils.fullName([
-      college, department, _textUniversityName
-    ], delimiter: ' • '),
-  ], delimiter: ' - ');
+      title,
+      StringUtils.fullName([
+        college, department, major,
+      ], delimiter: ' • '),
+      StringUtils.fullName([
+        department2, major2,
+      ], delimiter: ' • '),
+    ], delimiter: ' - '),
+  ], delimiter: '\n');
+
+  String? get displayAddressSection => StringUtils.fullName([
+    address,
+    address2,
+    displayPOBox,
+    displayCityStateZipCountry,
+  ], delimiter: '\n');
+
+  static const String _poBoxMacro = '{{po_box}}';
+  String? get displayPOBox => (poBox?.isNotEmpty == true) ?
+    Localization().getStringEx('generic.app.field.po_box.format', 'PO Box $_poBoxMacro').
+      replaceAll(_poBoxMacro, poBox ?? '') : null;
+
+  String? get displayCityStateZipCountry => StringUtils.fullName([
+    city,
+    StringUtils.fullName([
+      state, zip
+    ], delimiter: ' '),
+    country,
+  ], delimiter: ', ');
 
   String _fieldValue(String? value, { String? label = null, String delimiter = '\n' }) {
     if ((value != null) && value.isNotEmpty) {
@@ -99,7 +135,7 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
     }
   }
 
-  String get _textUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
+  String get displayUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
 }
 
 extension Auth2AccountEx on Auth2Account {

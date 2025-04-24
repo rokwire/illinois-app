@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -467,57 +468,66 @@ class DirectoryProfileDetails extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (profile?.title?.isNotEmpty == true)
-          _textDetail(profile?.title ?? ''),
-        if (profile?.college?.isNotEmpty == true)
-          _textDetail(profile?.college ?? ''),
-        if (profile?.department?.isNotEmpty == true)
-          _textDetail(profile?.department ?? ''),
-        if (profile?.major?.isNotEmpty == true)
-          _textDetail(profile?.major ?? ''),
-        if (profile?.department2?.isNotEmpty == true)
-          _textDetail(profile?.department2 ?? ''),
-        if (profile?.address?.isNotEmpty == true)
-          _textDetail(profile?.address ?? ''),
-        if (profile?.major2?.isNotEmpty == true)
-          _textDetail(profile?.major2 ?? ''),
-        if (profile?.email?.isNotEmpty == true)
-          _linkDetail(profile?.email ?? '', 'mailto:${profile?.email}', analyticsTarget: Analytics.LogAnonymousEmail),
-        if (profile?.email2?.isNotEmpty == true)
-          _linkDetail(profile?.email2 ?? '', 'mailto:${profile?.email2}', analyticsTarget: Analytics.LogAnonymousEmail),
-        if (profile?.phone?.isNotEmpty == true)
-          _linkDetail(profile?.phone ?? '', 'tel:${profile?.phone}', analyticsTarget: Analytics.LogAnonymousPhone),
-        if (profile?.website?.isNotEmpty == true)
-          _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? '', analyticsTarget: Analytics.LogAnonymousWebsite),
-      ],);
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (profile?.title?.isNotEmpty == true)
+        _textDetail(profile?.title ?? ''),
+      if (profile?.college?.isNotEmpty == true)
+        _textDetail(profile?.college ?? ''),
+      if (profile?.department?.isNotEmpty == true)
+        _textDetail(profile?.department ?? ''),
+      if (profile?.major?.isNotEmpty == true)
+        _textDetail(profile?.major ?? ''),
+      if (profile?.department2?.isNotEmpty == true)
+        _textDetail(profile?.department2 ?? ''),
+      if (profile?.major2?.isNotEmpty == true)
+        _textDetail(profile?.major2 ?? ''),
 
-  Widget _textDetail(String text) =>
-    Text(text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
+      if (profile?.address?.isNotEmpty == true)
+        _textDetail(profile?.address ?? ''),
+      if (profile?.address2?.isNotEmpty == true)
+        _textDetail(profile?.address2 ?? ''),
+      if (profile?.poBox?.isNotEmpty == true)
+        _textDetail(profile?.displayPOBox ?? ''),
+      if (profile?.isCityStateZipCountryNotEmpty == true)
+        _textDetail(profile?.displayCityStateZipCountry ?? ''),
 
-  Widget _linkDetail(String text, String url, { String? analyticsTarget } ) =>
-    InkWell(onTap: () => _onTapLink(url, analyticsTarget: analyticsTarget ?? text), child:
-      Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline', decorationColor: Styles().colors.fillColorPrimary),),
-    );
+      if (profile?.email?.isNotEmpty == true)
+        _linkDetail(profile?.email ?? '', 'mailto:${profile?.email}', analyticsTarget: Analytics.LogAnonymousEmail),
+      if (profile?.email2?.isNotEmpty == true)
+        _linkDetail(profile?.email2 ?? '', 'mailto:${profile?.email2}', analyticsTarget: Analytics.LogAnonymousEmail),
+      if (profile?.phone?.isNotEmpty == true)
+        _linkDetail(profile?.phone ?? '', 'tel:${profile?.phone}', analyticsTarget: Analytics.LogAnonymousPhone),
+      if (profile?.website?.isNotEmpty == true)
+        _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? '', analyticsTarget: Analytics.LogAnonymousWebsite),
+    ],);
 
-  void _onTapLink(String url, { String? analyticsTarget }) {
-    Analytics().logSelect(target: analyticsTarget ?? url);
-    _launchUrl(url);
-  }
-}
 
-void _launchUrl(String? url) {
-  if (StringUtils.isNotEmpty(url)) {
-    if (DeepLink().isAppUrl(url)) {
-      DeepLink().launchUrl(url);
+    Widget _textDetail(String text) =>
+      Text(text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
+
+    Widget _linkDetail(String text, String url, { String? analyticsTarget } ) =>
+      InkWell(onTap: () => _onTapLink(url, analyticsTarget: analyticsTarget ?? text), child:
+        Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline', decorationColor: Styles().colors.fillColorPrimary),),
+      );
+
+    void _onTapLink(String url, { String? analyticsTarget }) {
+      Analytics().logSelect(target: analyticsTarget ?? url);
+      _launchUrl(url);
     }
-    else {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+
+    void _launchUrl(String? url) {
+      if (StringUtils.isNotEmpty(url)) {
+        if (DeepLink().isAppUrl(url)) {
+          DeepLink().launchUrl(url);
+        }
+        else {
+          Uri? uri = Uri.tryParse(url!);
+          if (uri != null) {
+            launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+          }
+        }
       }
     }
-  }
 }
 
 // DirectoryProfilePhoto

@@ -134,6 +134,7 @@
     "generic.app.field.email": "Email",
     "generic.app.field.email2": "Email2",
     "generic.app.field.website": "Website",
+    "generic.app.field.po_box.format": "PO Box {{po_box}}",
 
     "generic.time.now": "ahora",
     "generic.time.minutes": "minutos",
