@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Directory of User and My Profile Data Improvements [#4865](https://github.com/rokwire/illinois-app/issues/4865).
 ### Changed
 - GroupAllEventsPanel extended to work with upcoming and past events [#5022](https://github.com/rokwire/illinois-app/issues/5022).
 
