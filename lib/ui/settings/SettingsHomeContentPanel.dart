@@ -348,7 +348,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
       case SettingsContent.recent_items:
         return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History');
       case SettingsContent.appointments:
-        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Success Team & Appointments');
+        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
       case SettingsContent.assessments:

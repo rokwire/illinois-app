@@ -27,6 +27,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -103,12 +104,16 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
         ))).then((result) {
           Map<String, dynamic>? selection = JsonUtils.mapValue(result);
           if (selection != null) {
-            
-            List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+
+            List<Event2TypeFilter>? typesList = ListUtils.combine([
+              event2TypeFilterListFromSelection(selection[eventDetailsContentAttributeId]),
+              event2TypeFilterListFromSelection(selection[eventLimitsContentAttributeId]),
+            ]);
             Storage().events2Types = event2TypeFilterListToStringList(typesList) ;
 
             Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
-            attributes.remove(eventTypeContentAttributeId);
+            attributes.remove(eventDetailsContentAttributeId);
+            attributes.remove(eventLimitsContentAttributeId);
             Storage().events2Attributes = attributes;
 
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
@@ -251,35 +256,71 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   static ContentAttributes? buildContentAttributesV1({LocationServicesStatus? status}) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
-    contentAttributes?.attributes?.insert(0, buildEventTypeContentAttribute(status: status));
+    contentAttributes?.attributes?.insert(0, buildEventDetailsContentAttribute());
+    contentAttributes?.attributes?.add(buildEventLimitsContentAttribute(status: status));
     return contentAttributes;
   }
 
-  static const String eventTypeContentAttributeId = 'event-type';
+  static const String eventDetailsContentAttributeId = 'event-details';
+  static const String eventLimitsContentAttributeId = 'event-limits';
   static const String eventTimeContentAttributeId = 'event-time';
 
-  static ContentAttribute buildEventTypeContentAttribute({ LocationServicesStatus? status }) {
+  static ContentAttribute buildEventDetailsContentAttribute() {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
-    bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
     for (Event2TypeFilter value in Event2TypeFilter.values) {
-      if ((value != Event2TypeFilter.nearby) || locationAvailable) {
+      Event2TypeGroup? group = eventTypeFilterGroups[value];
+      if (group != Event2TypeGroup.limits) {
         values.add(ContentAttributeValue(
           label: event2TypeFilterToDisplayString(value),
           value: value,
-          group: eventTypeFilterGroups[value],
+          group: group?.name,
         ));
       } 
     }
 
     return ContentAttribute(
-      id: eventTypeContentAttributeId,
-      title: Localization().getStringEx('panel.events2.home.attributes.event_type.title', 'Event Type'),
-      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type'),
-      semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
+      id: eventDetailsContentAttributeId,
+      title: Localization().getStringEx('panel.events2.home.attributes.event_details.title', 'Event Details'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_details.hint.empty', 'Select event details'),
+      semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_details.hint.semantics', 'Double type to show event details.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ Events2.contentAttributesScope },
-      requirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
-      values: values
+      groupsRequirements: <String, ContentAttributeRequirements>{
+        ContentAttribute.anyGroupRequirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
+      },
+      values: values,
+      translations: event2TypeGroupToTranslationsMap(),
+    );
+  }
+
+  static ContentAttribute buildEventLimitsContentAttribute({ LocationServicesStatus? status }) {
+    List<ContentAttributeValue> values = <ContentAttributeValue>[];
+    bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
+    for (Event2TypeFilter value in Event2TypeFilter.values) {
+      Event2TypeGroup? group = eventTypeFilterGroups[value];
+      if ((group == Event2TypeGroup.limits) && ((value != Event2TypeFilter.nearby) || locationAvailable)) {
+        values.add(ContentAttributeValue(
+          label: event2TypeFilterToDisplayString(value),
+          selectLabel: event2TypeFilterToSelectDisplayString(value),
+          value: value,
+          group: group?.name,
+        ));
+      }
+    }
+
+    return ContentAttribute(
+      id: eventLimitsContentAttributeId,
+      title: Localization().getStringEx('panel.events2.home.attributes.event_limits.title', 'Event Limits'),
+      longTitle: Localization().getStringEx('panel.events2.home.attributes.event_limits.long_title', 'Limit Results To'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_limits.hint.empty', 'Choose limits'),
+      semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_limits.hint.semantics', 'Double type to show event limits.'),
+      widget: ContentAttributeWidget.dropdown,
+      scope: <String>{ Events2.contentAttributesScope },
+      groupsRequirements: <String, ContentAttributeRequirements>{
+        Event2TypeGroup.limits.name: ContentAttributeRequirements(functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
+      },
+      values: values,
+      translations: event2TypeGroupToTranslationsMap(),
     );
   }
 
@@ -331,7 +372,8 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     if (contentAttributes != null) {
       Map<String, dynamic>? selection = (filterParam.attributes != null) ? Map<String, dynamic>.from(filterParam.attributes!) : <String, dynamic> {};
       selection[eventTimeContentAttributeId] = (filterParam.timeFilter != null) ? <Event2TimeFilter>[filterParam.timeFilter!] : <Event2TimeFilter>[];
-      selection[eventTypeContentAttributeId] = (filterParam.types != null) ? filterParam.types!.toList() : <Event2TypeFilter>[];
+      selection[eventDetailsContentAttributeId] = (filterParam.types != null) ? List<Event2TypeFilter>.from(filterParam.types?.where((type) => eventTypeFilterGroups[type] != Event2TypeGroup.limits) ?? <Event2TypeFilter>[]) : <Event2TypeFilter>[];
+      selection[eventLimitsContentAttributeId] = (filterParam.types != null) ? List<Event2TypeFilter>.from(filterParam.types?.where((type) => eventTypeFilterGroups[type] == Event2TypeGroup.limits) ?? <Event2TypeFilter>[]) : <Event2TypeFilter>[];
 
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
@@ -356,11 +398,15 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
           customEndTime = Event2TimeRangePanel.getEndTime(customData);
         }
 
-        List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+        List<Event2TypeFilter>? typesList = ListUtils.combine([
+          event2TypeFilterListFromSelection(selection[eventDetailsContentAttributeId]),
+          event2TypeFilterListFromSelection(selection[eventLimitsContentAttributeId]),
+        ]);
 
         Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
         attributes.remove(Event2HomePanel.eventTimeContentAttributeId);
-        attributes.remove(Event2HomePanel.eventTypeContentAttributeId);
+        attributes.remove(Event2HomePanel.eventDetailsContentAttributeId);
+        attributes.remove(Event2HomePanel.eventLimitsContentAttributeId);
 
         return Event2FilterParam(
           timeFilter: timeFilter,
@@ -423,6 +469,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   Position? _currentLocation;
 
   ScrollController _scrollController = ScrollController();
+
+  GlobalKey? _sortButtonKey;
+  GlobalKey? _filtersButtonKey;
 
   @override
   void initState() {
@@ -550,11 +599,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     return Row(children: [
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
-          leftIconKey: 'filters',
-          rightIconKey: 'chevron-right',
-          onTap: _onFilters,
+        MergeSemantics(key: _filtersButtonKey ??= GlobalKey(), child:
+          Semantics(value: _currentFilterParam.descriptionText, child:
+            Event2FilterCommandButton(
+              title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
+              leftIconKey: 'filters',
+              rightIconKey: 'chevron-right',
+              onTap: _onFilters,
+            )
+          )
         ),
         _sortButton,
 
@@ -588,17 +641,19 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
-    return DropdownButtonHideUnderline(child:
-      DropdownButton2<Event2SortType>(
-        dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
-        customButton: Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
-          leftIconKey: 'sort'
-        ),
-        isExpanded: false,
-        items: _buildSortDropdownItems(),
-        onChanged: _onSortType,
-      ),
+    return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child: Semantics(value: event2SortTypeToDisplayString(_sortType), child:
+      DropdownButtonHideUnderline(child:
+        DropdownButton2<Event2SortType>(
+          dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
+          customButton: Event2FilterCommandButton(
+            title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
+            leftIconKey: 'sort'
+          ),
+          isExpanded: false,
+          items: _buildSortDropdownItems(),
+          onChanged: _onSortType,
+        )
+      )),
     );
   }
 
@@ -608,9 +663,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     for (Event2SortType sortType in Event2SortType.values) {
       if ((sortType != Event2SortType.proximity) || locationAvailable) {
         String? displaySortType = _sortDropdownItemTitle(sortType);
-        items.add(DropdownMenuItem<Event2SortType>(
+        items.add(AccessibleDropDownMenuItem<Event2SortType>(
+          key: ObjectKey(sortType),
           value: sortType,
-          child: Semantics(label: displaySortType, container: true, button: true,
+          child: Semantics(label: displaySortType, button: true, container: true, inMutuallyExclusiveGroup: true,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
               Styles().textStyles.getTextStyle("widget.message.regular.fat") :
               Styles().textStyles.getTextStyle("widget.message.regular"),
@@ -814,7 +870,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             _types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
             _attributes = filterResult.attributes ?? <String, dynamic>{};
           });
-          
+
           Storage().events2Time = event2TimeFilterToString(_timeFilter);
           Storage().events2CustomStartTime = JsonUtils.encode(_customStartTime?.toJson());
           Storage().events2CustomEndTime = JsonUtils.encode(_customEndTime?.toJson());
@@ -823,7 +879,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
           Event2FilterParam.notifySubscribersChanged(except: this);
 
-          _reload();
+          _reload().then((_) =>
+              Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
+                  AppSemantics.triggerAccessibilityFocus(_filtersButtonKey))
+          );
       }
     });
   }
@@ -927,7 +986,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       groupings: Event2Grouping.individualEvents(),
       attributes: _attributes,
       sortType: _sortType,
-      sortOrder: Event2SortOrder.ascending,
+      sortOrder: ((_timeFilter == Event2TimeFilter.past) && (_sortType == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending,
       location: _currentLocation,
     );
   } 
@@ -1042,7 +1101,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
           _sortType = value;
         });
         Storage().events2SortType = event2SortTypeToString(_sortType);
-        _reload();
+        _reload().then((_)=>
+            Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
+                AppSemantics.triggerAccessibilityFocus(_sortButtonKey)));
+
       }
     }
   }
@@ -1207,6 +1269,47 @@ class Event2FilterParam {
     }
 
     return descriptionList;
+  }
+
+  String get descriptionText {
+      String descriptionText = "";
+
+      String? timeDescription = (timeFilter != Event2TimeFilter.customRange) ?
+      event2TimeFilterToDisplayString(timeFilter) :
+      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: customStartTime, customEndTime: customEndTime);
+
+      if (timeDescription != null) {
+        if (StringUtils.isNotEmpty(descriptionText)) {
+          descriptionText += ", ";
+        }
+        descriptionText += timeDescription;
+      }
+
+      if (types != null) {
+        for (Event2TypeFilter type in types!) {
+          if (StringUtils.isNotEmpty(descriptionText)) {
+            descriptionText += ", ";
+          }
+          descriptionText += event2TypeFilterToDisplayString(type) ?? "";
+        }
+      }
+
+      ContentAttributes? contentAttributes = Events2().contentAttributes;
+      List<ContentAttribute>? attributesList = contentAttributes?.attributes;
+      if ((attributes?.isNotEmpty == true) && (contentAttributes != null) && (attributesList != null)) {
+        for (ContentAttribute attribute in attributesList) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(attributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            for (String attributeValue in displayAttributeValues) {
+              if (StringUtils.isNotEmpty(descriptionText)) {
+                descriptionText += ", ";
+              }
+              descriptionText += attributeValue;
+            }
+          }
+        }
+      }
+      return descriptionText;
   }
 
   static void notifySubscribersChanged({NotificationsListener? except}) {

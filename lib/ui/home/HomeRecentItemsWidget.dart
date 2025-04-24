@@ -103,7 +103,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
               _pageViewKey = UniqueKey();
               // _pageController = null;
               _pageController?.jumpToPage(0);
-              _contentKeys.clear();
             });
           }
         }
@@ -132,7 +131,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
               _pageViewKey = UniqueKey();
               _pageController = null;
-              _contentKeys.clear();
             });
           }
         });
@@ -144,7 +142,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
           _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
           _pageViewKey = UniqueKey();
           _pageController = null;
-          _contentKeys.clear();
         });
      }
     }
@@ -184,10 +181,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
 
       // Config().homeRecentItemsCount
       for (RecentItem item in _recentItems!) {
-        pages.add(Padding(key: _contentKeys[item.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(key: _contentKeys[item.contentId] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           HomeRecentItemCard(recentItem: item),
         ));
       }
+      debugPrint("HomeRecentItemsWidget._contentKeys: $_contentKeys");
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
@@ -607,4 +605,3 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
   }
 
 }
-

@@ -78,7 +78,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum DetailTab {Events, Posts, Scheduled, Messages, Polls }
+enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Polls }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -113,7 +113,7 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
   static final int          _postsPageSize = 8;
   static final int          _animationDurationInMilliSeconds = 200;
-  static final List<DetailTab> _permanentTabs = [DetailTab.Scheduled];
+  static final List<DetailTab> _permanentTabs = [ DetailTab.ScheduledPosts, DetailTab.PastEvents];
 
   Group?                _group;
   GroupStats?        _groupStats;
@@ -246,7 +246,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     return _isResearchProject != true;
   }
 
-  bool get _canShowScheduled => _isAdmin;
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 
   @override
   void initState() {
@@ -291,7 +291,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       content = _buildErrorContent();
     }
 
-    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? Localization().getStringEx("panel.group_detail.header.project.title", 'Research Project Details') : null;
 
     return Scaffold(
       appBar: HeaderBar(title: barTitle,),
@@ -421,10 +421,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   void _trimForbiddenTabs(){
     if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
-      _tabs?.removeWhere((DetailTab? tab) => tab == null ||
-          (tab == DetailTab.Scheduled &&
-              ( _canShowScheduled == false || _tabs?.contains(DetailTab.Posts) != true)
-          ));
+      _tabs?.removeWhere((DetailTab? tab) =>
+        (tab == null) ||
+        (tab == DetailTab.ScheduledPosts && ((_isAdmin == false) || (_tabs?.contains(DetailTab.Posts) != true))) ||
+        (tab == DetailTab.PastEvents && ((_isAdmin == false) || (_tabs?.contains(DetailTab.Events) != true)))
+      );
     }
   }
 
@@ -438,7 +439,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _postId = null; // Clear _postId in order not to redirect on the next group load.
         _decreaseProgress();
         if (post != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post, analyticsFeature: widget.analyticsFeature)));
         }
       });
     }
@@ -742,8 +743,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         case DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
           break;
+        case DetailTab.PastEvents:
+          title = Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
+          break;
         case DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+          break;
+        case DetailTab.ScheduledPosts:
+          title = Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
           break;
         case DetailTab.Messages:
           title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
@@ -754,9 +761,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         // case DetailTab.About:
         //   title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
         //   break;
-        case DetailTab.Scheduled:
-          title = Localization().getStringEx("", 'Scheduled'); //localize
-          break;
         default: title = "Unknown";
       }
 
@@ -838,15 +842,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   Widget _buildPageFromTab(DetailTab? data){
     switch(data){
       case DetailTab.Events:
-        return _GroupEventsContent(group: _group, updateController: _updateController);
+        return _GroupEventsContent(group: _group, timeFilter: Event2TimeFilter.upcoming, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
+      case DetailTab.PastEvents:
+        return _GroupEventsContent(group: _group, timeFilter: Event2TimeFilter.past, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins, analyticsFeature: widget.analyticsFeature,);
+      case DetailTab.ScheduledPosts:
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
+        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
-        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
-      case DetailTab.Scheduled:
-        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
+        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
       default: Container();
     }
@@ -869,11 +875,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (Groups().isContentAttributeEnabled(attribute)) {
+        if (Groups().isContentAttributeEnabled(attribute, researchProject: _isResearchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(Row(children: [
@@ -1638,9 +1643,11 @@ class _GroupEventsContent extends StatefulWidget{
   static const String notifyEventsRefresh  = "edu.illinois.rokwire.group_detail.events.refresh";
 
   final Group? group;
+  final Event2TimeFilter? timeFilter;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupEventsContent({this.updateController, this.group});
+  const _GroupEventsContent({this.updateController, this.group, this.timeFilter, this.analyticsFeature });
 
   String get _emptyText => Localization().getStringEx("", "No group events");
 
@@ -1749,7 +1756,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
     if (showProgress)
       setStateIfMounted(() => _updatingEvents = true);
 
-    Events2().loadGroupEvents(groupId: widget.groupId, limit: 3)
+    Events2().loadGroupEvents(groupId: widget.groupId, timeFilter: widget.timeFilter, limit: 3)
         .then((Events2ListResult? eventsResult) {
           setStateIfMounted(() {
             // _allEventsCount = eventsResult?.totalCount ?? 0;
@@ -1799,8 +1806,9 @@ class _GroupPostsContent extends StatefulWidget{
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1899,7 +1907,8 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
-        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
+        analyticsFeature: widget.analyticsFeature,
+        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin,
       ));
       }
     }
@@ -2075,8 +2084,9 @@ class _GroupPollsContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   _GroupPollsState createState() => _GroupPollsState();
@@ -2231,8 +2241,9 @@ class _GroupMessagesContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
 
@@ -2285,6 +2296,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
             post: message,
             group: _group!,
             isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            analyticsFeature: widget.analyticsFeature,
             // creator: _getMessageCreatorAsMember(message),
             // updateController: widget.updateController,
         ));
@@ -2458,8 +2470,9 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupScheduledPostsState();
@@ -2514,6 +2527,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
           key: (i == 0) ? _lastScheduledPostKey : null,
           post: post,
           group: _group!,
+          analyticsFeature: widget.analyticsFeature,
           isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
           // updateController: widget.updateController,
           // creator: _getPostCreatorAsMember(post),

@@ -1,7 +1,10 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
@@ -49,6 +52,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   bool _applyProgress = false;
   
   final TextEditingController _attendanceTakersController = TextEditingController();
+  GestureRecognizer? _takeAttendanceRecognizer;
 
   late bool _initialScanningEnabled;
   late bool _initialManualCheckEnabled;
@@ -58,7 +62,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   late String _initialAttendanceTakersDisplayString;
 
   Event2? _event;
-  final StreamController<String> _updateController = StreamController.broadcast();
 
   bool _modified = false;
   bool _updatingAttendance = false;
@@ -72,6 +75,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     _initDetails(widget.attendanceDetails);
     if (_isEditing) {
       _attendanceTakersController.addListener(_checkModified);
+      _takeAttendanceRecognizer = TapGestureRecognizer()..onTap = _onTapTakeAttendance;
     }
     super.initState();
   }
@@ -79,6 +83,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   @override
   void dispose() {
     _attendanceTakersController.dispose();
+    _takeAttendanceRecognizer?.dispose();
     super.dispose();
   }
 
@@ -93,27 +98,28 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   );
 
   Widget _buildPanelContent() =>
-    RefreshIndicator(onRefresh: _onRefresh, child:
-      SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
-        Column(children: [
-          Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildHeadingDescription()),
-              _sectionDivider,
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _dividerLine),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _dividerLine),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSelfCheckSection()),
-              if (_isEditing)
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakerSection()),
-              _sectionDivider,
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
-            ]),
-          )
+    SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+      Column(children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildHeadingDescription()),
+            _sectionDivider,
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _dividerLine),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _dividerLine),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSelfCheckSection()),
+            //if (_isEditing)
+            //  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakerSection()),
+            _sectionDivider,
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
+            _sectionDivider,
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildTrailingDescription()),
+            Padding(padding: _sectionPadding),
+          ]),
+        )
 
-        ],),
-      )
+      ],),
     );
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
@@ -121,23 +127,58 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
-  // Heading Description
+  // Heading & Trailing Descriptions
   
   Widget _buildHeadingDescription() =>
     Padding(padding: _sectionPadding, child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description1', 'Attendance taking in the Illinois app is limited to event attendees with NetIDs.'), style: _headingDescriptionTextStyle,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description1', 'Attendance taking in the Illinois app is limited to event attendees with NetIDs.'), style: _descriptionTextStyle,),
         Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight)),
-        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description2', 'If you are taking registration in the Illinois app or uploading a registration list to the Illinois app, scanning Illini IDs and using manual attendance will alert attendance takers if the individual has NOT registered for that event. The attendance taker can choose to mark the individual as attended or not.'), style: _headingDescriptionTextStyle,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description2', 'If you are taking registration in the Illinois app or uploading a registration list to the Illinois app, scanning Illini IDs and using manual attendance will alert attendance takers if the individual has NOT registered for that event. The attendance taker can choose to mark the individual as attended or not.'), style: _descriptionTextStyle,),
       ],),
     );
 
-  TextStyle? get _headingDescriptionTextStyle =>
-      Styles().textStyles.getTextStyle('widget.item.small.thin'); // widget.info.small
+  Widget _buildTrailingDescription() {
+    final String linkTakeAttendanceMacro = "{{link.take_attendance}}";
+    String descriptionTemplate = Localization().getStringEx("panel.event2.setup.attendance.footer.description", "Event admins and assigned attendance takers can access this feature from the event panel under \"$linkTakeAttendanceMacro\".");
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionTemplate,
+      macros: [linkTakeAttendanceMacro],
+      builder: (String entry) {
+        if (entry == linkTakeAttendanceMacro) {
+          return TextSpan(
+            text: Localization().getStringEx('panel.event2.setup.attendance.footer.link.take_attendance', 'Take Attendance'),
+            style : _isEditing ? _descriptionLinkTextStyle : null,
+            recognizer: _isEditing ? _takeAttendanceRecognizer : null,
+          );
+        }
+        else {
+          return TextSpan(text: entry);
+        }
+      }
+    );
 
-  // Section Divider
+    return Padding(padding: _sectionPadding, child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: _descriptionTextStyle, children: spanList)
+      )
+    );
+  }
 
-  Widget get _sectionDivider => Padding(padding: EdgeInsets.symmetric(vertical: _sectionPaddingHeight), child:
+  TextStyle? get _descriptionTextStyle =>
+    Styles().textStyles.getTextStyle('widget.item.small.thin'); // widget.info.small
+
+  TextStyle? get _descriptionLinkTextStyle =>
+    Styles().textStyles.getTextStyle('widget.item.small.thin.underline'); // widget.info.small
+
+  void _onTapTakeAttendance() {
+    Analytics().logSelect(target: 'Take Attendance', attributes: _event?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      Event2AttendanceTakerPanel(_event, analyticsFeature: widget.analyticsFeature,)));
+  }
+
+// Section Divider
+
+  Widget get _sectionDivider => Padding(padding: _sectionPadding, child:
     _dividerLine,
   );
 
@@ -341,16 +382,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     Event2ShareSelfCheckInPdfPanel.present(context, event: _event ?? Event2());
   }
 
-  // Attendance Taker
-
-  Widget _buildAttendanceTakerSection() =>
-    Column(mainAxisSize: MainAxisSize.min, children: [
-      _sectionDivider,
-      Padding(padding: _sectionPadding, child:
-        Event2AttendanceTakerWidget(_event, updateController: _updateController,),
-      ),
-    ],);
-
   // Attendance Takers
 
   Widget _buildAttendanceTakersSection() => Event2CreatePanel.buildSectionWidget(
@@ -371,10 +402,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   );
 
   TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
-
-  Future<void> _onRefresh() async {
-    _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);
-  }
 
   // HeaderBar
 

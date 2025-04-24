@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/SyrveyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -84,7 +86,7 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
     for(int i = 0; i < _surveyResponses.length; i++) {
       SurveyResponse response = _surveyResponses[i];
       response.survey.replaceKey('event_name', widget.eventName);
-      Widget responseCard = SurveyBuilder.surveyResponseCard(context, response, title: 'Response ${i+1}');
+      Widget responseCard = SurveyBuilder.surveyResponseCard(context, response, title: 'Response ${i+1}', onTap: () => _onTapSurveyResponse(response));
       content.add(responseCard);
       content.add(Container(height: 16.0));
     }
@@ -94,6 +96,9 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
     }
     return content;
   }
+
+  void _onTapSurveyResponse(SurveyResponse response) =>
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: response.survey, inputEnabled: false, dateTaken: response.dateTaken, showResult: true)));
 
   List<Widget> _buildEmptyResponsesContent() {
     return <Widget>[

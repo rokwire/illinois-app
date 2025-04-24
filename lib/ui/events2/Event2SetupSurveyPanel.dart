@@ -17,10 +17,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -35,6 +37,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'Event2SetupSurveyPanel';
@@ -154,6 +157,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
           _buildSurveysSection(),
           _buildHoursSection(),
           _buildSurveyPreviewSection(),
+          _buildDownloadResultsDescription()
         ])
       )
     );
@@ -262,20 +266,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   Widget _buildHoursSection() => Visibility(visible: (_displaySurvey != null), child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
-      Row(children: [
-        Flexible(flex: 3, child:
-          Row( crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Expanded( child:
-              Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends should the survey be sent to attendees? (Use whole positive numbers only; enter 0 to send immediately after the event.)'), required: true)
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'SEND TIME'), required: true),
+        Padding(padding: EdgeInsets.only(top: 2), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(flex: 5, child:
+            Event2CreatePanel.buildSectionSubTitleWidget(Localization().getStringEx("panel.event2.setup.survey.hours.description", "How many hours after the event's end time should the survey notification be sent to attendees (or hours after the start time, if no end time is set)? Enter 0 for immediate delivery or a whole positive number to delay sending.")),
+          ),
+          Expanded(flex: 1, child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              Event2CreatePanel.buildTextEditWidget(_hoursController, keyboardType: TextInputType.number, maxLines: 1)
             )
-          ]),
-        ),
-        Flexible(flex: 1, child:
-          Padding(padding: EdgeInsets.only(left: 6), child:
-            Event2CreatePanel.buildTextEditWidget(_hoursController, keyboardType: TextInputType.number, maxLines: 1)
           )
+        ])
         )
-      ])
+      ],)
     )
   );
 
@@ -307,6 +312,37 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         Event2SetupSurveyPanel.popUntil(context);
       },
     );
+  }
+
+  Widget _buildDownloadResultsDescription() {
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.survey.download.results.description',
+      "Download survey results at {{event_attendance_url}}.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, displayAttendanceUrl ?? '');
+    return Visibility(visible: PlatformUtils.isMobile && (_survey != null) && StringUtils.isNotEmpty(displayAttendanceUrl), child:
+      Padding(padding: EdgeInsets.zero, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles().images.getImage('info') ?? Container(),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+              )
+            ),
+          ),
+        ])
+      ),
+    );
+  }
+
+  bool _onTapHtmlLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url, mode: LaunchMode.externalApplication);
+    return true;
   }
 
   String get surveyTitleMacro => '{{survey_title}}';

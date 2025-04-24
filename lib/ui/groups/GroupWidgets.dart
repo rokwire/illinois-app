@@ -750,7 +750,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.label);
+    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -827,7 +827,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
+    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -842,11 +842,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   Widget _buildProperties() {
     List<Widget> propertiesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = Groups().contentAttributes(researchProject: widget.group?.researchProject)?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
+        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute, researchProject: widget.group?.researchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
@@ -1037,19 +1036,22 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
 //////////////////////////////////////
 // GroupPostCard
+
 enum GroupPostCardDisplayMode { list, page }
+
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
   final bool? isAdmin;
   final bool? isClickable;
   final GroupPostCardDisplayMode displayMode;
+  final AnalyticsFeature? analyticsFeature;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list, this.analyticsFeature}) :
     super(key: key);
 
   @override
@@ -1158,7 +1160,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post, analyticsFeature: widget.analyticsFeature,)
                               )
                             ),
                             Visibility(
@@ -1258,8 +1260,9 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
+  final AnalyticsFeature? analyticsFeature;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1396,7 +1399,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                         Expanded(
                           child: Visibility(visible: _reactionsEnabled,
-                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment,)
+                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment, analyticsFeature: widget.analyticsFeature,)
                           )
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
@@ -1587,13 +1590,23 @@ class _GroupReactionState extends State<GroupReaction> {
 typedef void OnBodyChangedListener(String text);
 
 class PostInputField extends StatefulWidget{
+  static const int defaultMaxLines = 15;
+  static const int defaultMinLines = 7;
+
   final EdgeInsets? padding;
   final String? title;
   final String? hint;
   final String? text;
   final OnBodyChangedListener? onBodyChanged;
+  final int? maxLines;
+  final int? minLines;
+  final bool autofocus;
+  final InputDecoration? inputDecoration;
+  final BoxDecoration? boxDecoration;
+  final TextStyle? style;
 
-  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title}) : super(key: key);
+  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title,
+    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines, this.autofocus = false, this.inputDecoration, this.boxDecoration, this.style}) : super(key: key);
 
   static get fieldDecoration => BoxDecoration(
       color: Styles().colors.white,
@@ -1650,24 +1663,22 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            Visibility(visible: StringUtils.isNotEmpty(widget.title), child:
+              Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            ),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Container(
-                    decoration: PostInputField.fieldDecoration,
+                    decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
                     child: TextField(
                       controller: _bodyController,
                       onChanged: _notifyChanged,
-                      maxLines: 15,
-                      minLines: 7,
+                      maxLines: widget.maxLines,
+                      minLines: widget.minLines,
+                      autofocus: widget.autofocus,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration:
-                      InputDecoration(
-                          hintText: _hint,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(8)
-                      ),
-                        style: Styles().textStyles.getTextStyle('')))),
+                      decoration: widget.inputDecoration ?? _defaultInputDecoration,
+                      style: widget.style ?? Styles().textStyles.getTextStyle('')))),
               Padding(
                   padding: EdgeInsets.zero,
                   child: Row(
@@ -1834,6 +1845,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
+
+  InputDecoration get _defaultInputDecoration => InputDecoration(
+      hintText: _hint,
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.all(8)
+  );
 }
 
 class GroupMembersSelectionWidget extends StatefulWidget{
@@ -3214,7 +3231,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
-                              EnabledToggleButton(
+                              //Since the setting "view email address" does work, we do not need the option to view a member's NetID.
+                              /* EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
@@ -3224,7 +3242,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
@@ -3663,9 +3681,10 @@ class GroupReactionsLayout extends StatefulWidget {
   final Group? group;
   final String? entityId;
   final SocialEntityType reactionSource;
+  final AnalyticsFeature? analyticsFeature;
   final bool? enabled;
 
-  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource,});
+  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _GroupReactionsState();
@@ -3771,6 +3790,11 @@ class _GroupReactionsState extends State<GroupReactionsLayout> with Notification
     setStateIfMounted(() {
       _loading = true;
     });
+    Analytics().logReaction(reaction,
+      target: 'group.${widget.reactionSource.name}',
+      feature: widget.analyticsFeature,
+      attributes: widget.group?.analyticsAttributes,
+    );
     Social().react(entityId: widget.entityId!, source: widget.reactionSource, reaction: reaction).then((succeeded) {
       //If success then we will receive notification Social.notifyReactionsUpdated and will load reactions
       if (!succeeded) {

@@ -476,7 +476,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
@@ -508,11 +508,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   List<Widget> _constructAttributesContent() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (Groups().isContentAttributeEnabled(attribute)) {
+        if (Groups().isContentAttributeEnabled(attribute, researchProject: _isResearchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(
@@ -543,8 +542,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
-      scope: Groups.contentAttributesScope,
-      contentAttributes: Groups().contentAttributes,
+      scope: _contentAttributesScope,
+      contentAttributes: _contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
@@ -1311,9 +1310,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (!(_group?.currentUserIsAdmin ?? false)) {
       return false;
     }
-    if (_isAuthManGroup) {
+    /*if (_isAuthManGroup) { // #4879 give group admins full group admin permission. BB disables only delete of authman group for not ManagedGroupAdmins user
       return _isUserManagedGroupAdmin;
-    } else {
+    } */else {
       return true;
     }
   }
@@ -1341,6 +1340,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   bool get _isPublicGroup {
     return _group?.privacy == GroupPrivacy.public;
   }
+
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
+  String get _contentAttributesScope => Groups.contentAttributesScope(researchProject: _isResearchProject);
 }
 
 extension _GroupValidation on Group {

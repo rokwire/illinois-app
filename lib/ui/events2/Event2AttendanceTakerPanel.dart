@@ -20,6 +20,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
   final Event2? event;
@@ -30,7 +31,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance')),
+    appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Take Attendance')),
     body: RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.all(16), child:
@@ -387,11 +388,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
-        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
-    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
-    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(eventAttendanceUrl), child:
+        "Visit {{event_attendance_url}} to upload or download a list.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, displayAttendanceUrl ?? '');
+    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(displayAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Styles().images.getImage('info') ?? Container(),
@@ -409,7 +411,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   bool _onTapHtmlLink(String? url) {
     Analytics().logSelect(target: '($url)');
-    UrlUtils.launchExternal(url);
+    UrlUtils.launchExternal(url, mode: LaunchMode.externalApplication);
     return true;
   }
 

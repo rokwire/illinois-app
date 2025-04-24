@@ -17,7 +17,6 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -209,6 +208,9 @@ class AppSemantics {
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
         groupKey?.currentContext?.findRenderObject()?.debugSemantics;
 
+    static String getIosHintLongPress(String? hint) => Platform.isIOS ? "Double tap and hold to  $hint" : "";
+
+    static String getIosHintDrag(String? hint) => Platform.isIOS ? "Double tap hold move to  $hint" : "";
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;
 // final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
 // Send a SemanticsActionEvent with the tap action
@@ -509,11 +511,6 @@ class AppTextUtils {
       Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
     return message.replaceAll(featureMacro, featureName);
   }
-}
-
-class PlatformUtils {
-  static bool get isWeb => kIsWeb == true;
-  static bool get isMobile => kIsWeb == false;
 }
 
 class AppLaunchUrl {

@@ -17,7 +17,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
-import 'package:illinois/ui/events2/Event2AdminSettingsPanel.dart';
+import 'package:illinois/ui/events2/Event2AdvancedSettingsPanel.dart';
+import 'package:illinois/ui/events2/Event2ManageDataPanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
@@ -468,7 +469,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
 
   String get _privacyStatus =>
       (_event?.isPublic == true)
-    ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')
+    ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'All App Users')
     : (_eventProcessing
       ? '...'
       : (_isGroupEvent
@@ -495,7 +496,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   ] : null;
 
 
-  List<Widget>? get _attendanceDetailWidget => (_isAdmin || _isAttendanceTaker) ?
+  List<Widget>? get _attendanceDetailWidget => ((_event?.attendanceDetails?.isNotEmpty == true) && (_isAdmin || _isAttendanceTaker)) ?
     <Widget>[
       InkWell(onTap: _onTapTakeAttendance, child:
         _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'attendance', underlined: true)),
@@ -848,10 +849,17 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
           _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
-          _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
-          _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
-          _buildSettingButton(title: "Additional Settings", onTap: _onSettingAdditionalSettings),
-          _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
+          if (_event?.attendanceDetails?.isNotEmpty == true)
+            _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
+          if (_event?.hasSurvey == true)
+            _buildSettingButton(title:"Event follow-up survey responses", onTap: _onSettingSurveyResponses),
+          if (Event2ManageDataPanel.canManage)
+            _buildSettingButton(title: "Manage registration, attendance, and survey data", onTap: _onSettingManageData),
+          _buildSettingButton(title: "Advanced settings", onTap: _onSettingAdvancedSettings),
+          if (Auth2().isCalendarAdmin)
+            _buildSettingButton(title: "Duplicate event", onTap: _onSettingDuplicateEvent),
+          if (Auth2().isCalendarAdmin)
+            _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
 
@@ -939,16 +947,15 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         ] )
       ) : Container();
   
-  Widget _buildSettingButton({String? title, VoidCallback? onTap}) =>  StringUtils.isNotEmpty(title) ?
+  Widget _buildSettingButton({required String title, VoidCallback? onTap}) =>
     Padding(padding: EdgeInsets.only(bottom: 6),
       child: RibbonButton(
-        label: title ?? "",
+        label: title,
         onTap: () {
           Navigator.of(context).pop();
-          if(onTap!=null)
-            onTap();
+          onTap?.call();
         }),
-    ) : Container();
+    );
 
   //Actions
 
@@ -1193,7 +1200,12 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         setState(() {
           _selfCheckingIn = false;
           if (result is Event2Person) {
-            _persons?.attendees?.add(result);
+            if (_persons?.attendees == null) {
+              _persons = Event2PersonsResult.fromOther(_persons, attendees: [result]);
+            }
+            else {
+              _persons?.attendees?.add(result);
+            }
           }
         });
         if (result is Event2Person) {
@@ -1340,10 +1352,19 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         });
   }
 
-  void _onSettingAdditionalSettings() {
-    Analytics().logSelect(target: "Additional Settings", attributes: _event?.analyticsAttributes);
+  void _onSettingManageData() {
+    Analytics().logSelect(target: "Manage registration, attendance, and survey data", attributes: _event?.analyticsAttributes);
     if (_event != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdminSettingsPanel(
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2ManageDataPanel(
+        event: _event,
+      )));
+    }
+  }
+
+  void _onSettingAdvancedSettings() {
+    Analytics().logSelect(target: "Advanced Settings", attributes: _event?.analyticsAttributes);
+    if (_event != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AdvancedSettingsPanel(
         event: _event,
       )));
     }
@@ -1403,6 +1424,11 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
       eventName: _event?.name,
       analyticsFeature: widget.analyticsFeature,
     )));
+  }
+
+  void _onSettingDuplicateEvent() {
+    Analytics().logSelect(target: 'Duplicate Event', attributes: _event?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: Event2.fromOther(_event),)));
   }
 
   void _onSettingDeleteEvent(){
@@ -1501,7 +1527,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
-      int? peopleIndex = (((_event?.hasSurvey == true) || (_event?.registrationDetails?.type == Event2RegistrationType.internal)) && (_persons == null)) ? futures.length : null;
+      int? peopleIndex = (((_event?.hasSurvey == true) || (_event?.registrationDetails?.type == Event2RegistrationType.internal) || (_event?.attendanceDetails?.isNotEmpty == true)) && (_persons == null)) ? futures.length : null;
       if (peopleIndex != null) {
         futures.add(Events2().loadEventPeople(eventId));
       }

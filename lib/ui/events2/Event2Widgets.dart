@@ -65,7 +65,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey) : null;
+    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey, excludeFromSemantics: true) : null;
     if (leftIconWidget != null) {
       contentList.add(
         Padding(padding: leftIconPadding, child: leftIconWidget,)
@@ -78,7 +78,7 @@ class Event2FilterCommandButton extends StatelessWidget {
       );
     }
 
-    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey) : null;
+    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey, excludeFromSemantics: true) : null;
     if (rightIconWidget != null) {
       contentList.add(
         Padding(padding: rightIconPadding, child: rightIconWidget,)
@@ -1053,4 +1053,40 @@ class Event2Popup {
     Navigator.pop(context);
   }
 
+}
+
+//
+// Event2SettingsButton
+//
+
+class Event2SettingsButton extends StatelessWidget{
+  final String? title;
+  final String? subTitle;
+  final bool progress;
+  final Function? onTap;
+
+  const Event2SettingsButton({this.title, this.subTitle, this.onTap, this.progress = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildWidget();
+  }
+
+  // Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  //   heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+  //       title: title?? "",
+  //       subTitle: subTitle,
+  //       onTap: () => onTap?.call()
+  //   ),
+  // );
+
+Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  heading: RibbonButton(
+        label: title?? "",
+        description: subTitle,
+        progress: progress,
+        onTap: () => onTap?.call(),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        progressSize: 18,
+      ));
 }
