@@ -68,6 +68,8 @@ class Auth2 extends rokwire.Auth2 {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Content.notifyUserProfilePictureChanged,
+      Auth2.notifyAccountChanged,
+      Auth2.notifyProfileChanged,
     ]);
   }
 
@@ -76,6 +78,8 @@ class Auth2 extends rokwire.Auth2 {
     NotificationService().unsubscribe(this, [
       FlexUI.notifyChanged,
       Content.notifyUserProfilePictureChanged,
+      Auth2.notifyAccountChanged,
+      Auth2.notifyProfileChanged,
     ]);
     super.destroyService();
   }
@@ -100,7 +104,9 @@ class Auth2 extends rokwire.Auth2 {
     if (name == FlexUI.notifyChanged) {
       _checkEnabled();
     }
-    else if (name == Content.notifyUserProfilePictureChanged) {
+    else if (name == Content.notifyUserProfilePictureChanged ||
+        name == Auth2.notifyAccountChanged ||
+        name == Auth2.notifyProfileChanged) {
       _refreshProfilePicture();
     }
   }
