@@ -1503,7 +1503,7 @@ extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
 
   String get displayTitle {
     switch(this) {
-      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.title', 'Public');
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.title', 'Enable sharing');
       case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.title', 'Only My Connections');
       case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.title', 'Only me');
     }
@@ -1511,7 +1511,7 @@ extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
 
   String get displayDescription {
     switch(this) {
-      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Anyone can view');
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'User directory, business card');
       case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
       case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
     }

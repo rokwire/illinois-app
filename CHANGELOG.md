@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added library link to library card [#5024](https://github.com/rokwire/illinois-app/issues/5024).
+### Changed
+- Updated public visibility display strings in Prfile Edit page [#5027](https://github.com/rokwire/illinois-app/issues/5027).
 
 ## [7.0.17] - 2025-04-24
 ### Added
