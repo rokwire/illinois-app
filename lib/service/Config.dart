@@ -104,6 +104,7 @@ class Config extends rokwire.Config {
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
   String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
+  String? get iCardLostReportUrl     => JsonUtils.stringValue(otherUniversityServices['icard_lost_report_url']);
   String? get illiniCashUrl          => (Storage().debugUseIlliniCashTestUrl == true) ? (illiniCashTestUrl ?? illiniCashBaseUrl) : illiniCashBaseUrl;
   String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);
   String? get illiniCashTestUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_test_url']);
