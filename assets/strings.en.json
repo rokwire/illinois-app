@@ -4116,7 +4116,8 @@
     "widget.id_card.mobile_access.renew.success.msg": "Mobile access was successfully renewed.",
     "widget.id_card.mobile_access.renew.fail.msg": "Failed to renew mobile access. Reason: %s",
 
-    "widget.library_card.text.card_instructions": "This card is needed for University Library services such as picking up an equipment loan or checking out a book or keys to a study room.",
+    "widget.library_card.text.card_instructions.library_name": "University Library",
+    "widget.library_card.text.card_instructions": "This card is needed for {{library_name}} {{external_link_icon}} services such as picking up an equipment loan or checking out a book or keys to a study room.",
 
     "widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
