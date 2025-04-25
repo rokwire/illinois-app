@@ -105,6 +105,7 @@ class Config extends rokwire.Config {
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
   String? get illiniCashBaseUrl      => getOtherServicesUrl(key: 'illini_cash_base_url');
   String? get illiniCashTestUrl      => getOtherServicesUrl(key: 'illini_cash_test_url');
+  String? get iCardLostReportUrl     => JsonUtils.stringValue(otherUniversityServices['icard_lost_report_url']);
   String? get illiniCashUrl          => (Storage().debugUseIlliniCashTestUrl == true) ? (illiniCashTestUrl ?? illiniCashBaseUrl) : illiniCashBaseUrl;
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
@@ -129,6 +130,7 @@ class Config extends rokwire.Config {
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get studentCodeUrl         => JsonUtils.stringValue(otherUniversityServices['student_code_url']);
+  String? get universityLibraryUrl   => JsonUtils.stringValue(otherUniversityServices['university_library_url']);
   String? get universityHomepageUrl  => JsonUtils.stringValue(otherUniversityServices['university_homepage_url']);
   String? get dailyIlliniHomepageUrl => JsonUtils.stringValue(otherUniversityServices['daily_illini_homepage_url']);
   String? get dailyIlliniFeedUrl     => getOtherServicesUrl(key: 'daily_illini_feed_url');

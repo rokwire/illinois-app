@@ -114,7 +114,6 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
   static final int          _postsPageSize = 8;
   static final int          _animationDurationInMilliSeconds = 200;
-  static final List<DetailTab> _permanentTabs = [ DetailTab.ScheduledPosts, DetailTab.PastEvents];
 
   Group?                _group;
   GroupStats?        _groupStats;
@@ -261,7 +260,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       Groups.notifyGroupStatsUpdated,
     ]);
     _initUpdateController();
-    _initTabs();
+    _tabs = _buildDetailTabs();
     _postId = widget.groupPostId;
     _studentCodeLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchStudentCode;
 
@@ -392,7 +391,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         // if (_isResearchProject && _isMember) {
         //   _currentTab = DetailTab.About; //TBD
         // }
-        _initTabs();
+        _tabs = _buildDetailTabs();
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
 
@@ -410,24 +409,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
+          _tabs = _buildDetailTabs();
           _refreshGroupAdmins();
-          _initTabs();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
         if(refreshEvents)
           _updateController.add(_GroupEventsContent.notifyEventsRefresh);
       }
     });
-  }
-
-  void _trimForbiddenTabs(){
-    if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
-      _tabs?.removeWhere((DetailTab? tab) =>
-        (tab == null) ||
-        (tab == DetailTab.ScheduledPosts && ((_isAdmin == false) || (_tabs?.contains(DetailTab.Posts) != true))) ||
-        (tab == DetailTab.PastEvents && ((_isAdmin == false) || (_tabs?.contains(DetailTab.Events) != true)))
-      );
-    }
   }
 
   ///
@@ -568,11 +557,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   });
 
-  void _initTabs() {
-    _tabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
-    _tabs?.addAll(_permanentTabs);
-    _tabs = _tabs?.toSet().toList();// exclude duplicated
-    _trimForbiddenTabs();
+  List<DetailTab?> _buildDetailTabs() {
+    List<DetailTab?> resultTabs = <DetailTab?>[];
+    List<DetailTab?> sourceTabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
+
+    for (DetailTab? tab in sourceTabs) {
+      if ((tab != null) && (resultTabs.contains(tab) == false)) {
+        resultTabs.add(tab);
+      }
+    }
+
+    if (_isAdmin) {
+      if (resultTabs.contains(DetailTab.Posts)) {
+        resultTabs.add(DetailTab.ScheduledPosts);
+      }
+      if (resultTabs.contains(DetailTab.Events)) {
+        resultTabs.add(DetailTab.PastEvents);
+      }
+    }
+    return resultTabs;
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -1553,12 +1556,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
     if ((group != null)) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           _group = group;
+          _tabs = _buildDetailTabs();
         });
       }
-      _initTabs();
       _refreshGroupAdmins();
       _refreshGroupStats();
       _updateController.add(GroupDetailPanel.notifyRefresh);
