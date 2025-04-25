@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added lost or stollen i-card link [#5023](https://github.com/rokwire/illinois-app/issues/5023).
 ### Changed
 - Updated public visibility display strings in Prfile Edit page [#5027](https://github.com/rokwire/illinois-app/issues/5027).
+- Updated sign in description, fixed insane rich text build [#5056](https://github.com/rokwire/illinois-app/issues/5056).
 ### Removed
 - Removed physical i-card number frim wallet page [#5023](https://github.com/rokwire/illinois-app/issues/5023).
 ### Fixed
