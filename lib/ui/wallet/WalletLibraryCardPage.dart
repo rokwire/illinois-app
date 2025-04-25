@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -73,7 +74,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
 
   void _onLaunchLibrary() {
     Analytics().logSelect(target: 'University Library');
-    _launchUrl("https://www.library.illinois.edu/");
+    _launchUrl(Config().universityLibraryUrl);
   }
 
   static void _launchUrl(String? url) {
@@ -150,7 +151,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
       }
     });
     return RichText(textAlign: TextAlign.center, text:
-    TextSpan(style: regularTextStyle, children: spanList)
+      TextSpan(style: regularTextStyle, children: spanList)
     );
   }
 
