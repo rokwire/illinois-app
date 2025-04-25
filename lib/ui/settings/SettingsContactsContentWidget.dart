@@ -83,7 +83,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.");
     descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, "https://rokwire.illinois.edu/people-page"/*Config().smartHealthyInitiativeUrl ?? ''*/); // TBD add as config value if needed
-    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, "https://illinois.edu"/*Config().universityHomepageUrl ?? ''*/); //TBD add as config value if needed
+    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, Config().universityHomepageUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
 
     return  Semantics(container: true, child:

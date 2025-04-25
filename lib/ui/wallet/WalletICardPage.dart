@@ -16,11 +16,13 @@
 
 import 'dart:io';
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
@@ -40,6 +42,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //////////////////////////
 // WalletICardPage
@@ -69,6 +72,8 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
   bool _deleteMobileCredential = false;
   bool _renewingMobileId = false;
 
+  GestureRecognizer? _lostCardLaunchRecognizer;
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +82,8 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       MobileAccess.notifyStartFinished,
       AppLivecycle.notifyStateChanged,
     ]);
+
+    _lostCardLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchLostCardUrl;
 
     MobileAccess().startIfNeeded();
 
@@ -104,6 +111,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
   void dispose() {
     NotificationService().unsubscribe(this);
     _mobileAccessPageController?.dispose();
+    _lostCardLaunchRecognizer?.dispose();
     super.dispose();
   }
 
@@ -176,8 +184,8 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
 
         Visibility(visible: hasQrCode, child: Column(children: [
-          Text(Auth2().iCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
-          Container(height: 8),
+          //Text(Auth2().iCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+          //Container(height: 8),
           showQRCode ?
             QrImageView(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
             Container(width: qrCodeImageSize, height: qrCodeImageSize, color: Colors.transparent,),
@@ -214,7 +222,13 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       Container(height: 16,),
 
       Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
-        Text(Localization().getStringEx('widget.id_card.text.card_instructions', 'This ID must be presented to university officials upon request.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic")),
+        Text(Localization().getStringEx('widget.id_card.text.card_instructions', 'This ID must be presented to university officials upon request.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.italic")),
+      ),
+
+      Container(height: 8,),
+
+      Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
+        _lostCardInfoWidget,
       ),
 
       Container(height: 32,),
@@ -222,8 +236,6 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       _buildMobileAccessContent(),
     ]);
   }
-
-
 
   Widget _buildMobileAccessContent() {
     if (!_isIcardMobileAvailable) {
@@ -381,6 +393,50 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
         _mobileAccessKeys = null;
         _mobileIdCredentials = null;
       });
+    }
+  }
+
+  Widget get _lostCardInfoWidget {
+    final String lostLinkMacro = '{{lost_link}}';
+    final String externalLinkMacro = '{{external_link_icon}}';
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic');
+    TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic.link');
+
+    String infoText = Localization().getStringEx('widget.id_card.text.lost_instructions.format', '$externalLinkMacro $lostLinkMacro');
+    String linkText = Localization().getStringEx('widget.id_card.text.lost_instructions.link', 'Lost or stolen i-card?');
+
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(infoText, macros: [lostLinkMacro, externalLinkMacro], builder: (String entry){
+      if (entry == lostLinkMacro) {
+        return TextSpan(text: linkText, style : linkTextStyle, recognizer: _lostCardLaunchRecognizer,);
+      }
+      else if (entry == externalLinkMacro) {
+        return WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images.getImage('external-link', size: 14) ?? Container());
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+    return RichText(textAlign: TextAlign.center, text:
+      TextSpan(style: regularTextStyle, children: spanList)
+    );
+  }
+
+  void _onLaunchLostCardUrl() {
+    Analytics().logSelect(target: 'Lost iCard Report');
+    _launchUrl(Config().iCardLostReportUrl);
+  }
+
+  static void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        }
+      }
     }
   }
 

@@ -1,15 +1,22 @@
 
 import 'dart:typed_data';
+import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WalletLibraryCardPage extends StatefulWidget {
   final double topOffset;
@@ -23,6 +30,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
   MemoryImage? _barcodeImage;
   String? _barcodeNumber;
   DateTime? _accessTime = DateTime.now();
+  GestureRecognizer? _libraryLaunchRecognizer;
 
   @override
   void initState() {
@@ -38,13 +46,14 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
         });
       });
     });
-
+    _libraryLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchLibrary;
     super.initState();
   }
 
   @override
   void deactivate() {
     NotificationService().unsubscribe(this);
+    _libraryLaunchRecognizer?.dispose();
     super.deactivate();
   }
 
@@ -60,6 +69,25 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
             _barcodeNumber = barcodeNumber;
           });
         });
+      }
+    }
+  }
+
+  void _onLaunchLibrary() {
+    Analytics().logSelect(target: 'University Library');
+    _launchUrl(Config().universityLibraryUrl);
+  }
+
+  static void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        }
       }
     }
   }
@@ -95,13 +123,37 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
 
       Container(height: 16,),
 
-      Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
-        Text(Localization().getStringEx('widget.library_card.text.card_instructions', 'This card is needed for University Library services such as picking up an equipment loan or checking out a book or keys to a study room.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic"))
+      Padding(padding: EdgeInsets.symmetric(horizontal: 48), child: _libraryCardInfoWidget
       ),
 
       Container(height: 16,),
 
     ]);
+  }
+
+  Widget get _libraryCardInfoWidget {
+    final String libraryMacro = '{{library_name}}';
+    final String externalLinkMacro = '{{external_link_icon}}';
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic');
+    TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic.link');
+
+    String infoText = Localization().getStringEx('widget.library_card.text.card_instructions', 'This card is needed for $libraryMacro $externalLinkMacro services such as picking up an equipment loan or checking out a book or keys to a study room.');
+    String libraryText = Localization().getStringEx('widget.library_card.text.card_instructions.library_name', 'University Library');
+
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(infoText, macros: [libraryMacro, externalLinkMacro], builder: (String entry){
+      if (entry == libraryMacro) {
+        return TextSpan(text: libraryText, style : linkTextStyle, recognizer: _libraryLaunchRecognizer,);
+      }
+      else if (entry == externalLinkMacro) {
+        return WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images.getImage('external-link', size: 14) ?? Container());
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+    return RichText(textAlign: TextAlign.center, text:
+      TextSpan(style: regularTextStyle, children: spanList)
+    );
   }
 
   String get _displayRole => (Auth2().iCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your Illini ID") : (Auth2().iCard?.role ?? "");

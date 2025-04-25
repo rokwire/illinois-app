@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.0.18] - 2025-04-25
+### Added
+- Added library link to library card [#5024](https://github.com/rokwire/illinois-app/issues/5024).
+- Added lost or stollen i-card link [#5023](https://github.com/rokwire/illinois-app/issues/5023).
+### Changed
+- Updated public visibility display strings in Prfile Edit page [#5027](https://github.com/rokwire/illinois-app/issues/5027).
+- Updated sign in description, fixed insane rich text build [#5056](https://github.com/rokwire/illinois-app/issues/5056).
+### Removed
+- Removed physical i-card number frim wallet page [#5023](https://github.com/rokwire/illinois-app/issues/5023).
+### Fixed
+- Fixed group detail tabs order [#5052](https://github.com/rokwire/illinois-app/issues/5052).
 
 ## [7.0.17] - 2025-04-24
 ### Added

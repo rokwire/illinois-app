@@ -217,7 +217,7 @@ Color? groupMemberStatusToColor(GroupMemberStatus? value) {
 }
 
 extension GroupSettingsExt on GroupSettings{
-  static List<DetailTab?>? getDefaultDetailTabs() => GroupContentItemExt.defaultContentCodes.map(
+  static List<DetailTab?> getDefaultDetailTabs() => GroupContentItemExt.defaultContentCodes.map(
           (code) => GroupContentItemExt.getDetailTabByCode(code)).toList();
   
   static GroupSettings initialDefaultSettings({Group? group}){
