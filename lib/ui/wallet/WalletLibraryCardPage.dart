@@ -53,6 +53,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
   @override
   void deactivate() {
     NotificationService().unsubscribe(this);
+    _libraryLaunchRecognizer?.dispose();
     super.deactivate();
   }
 
