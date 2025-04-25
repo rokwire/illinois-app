@@ -4086,6 +4086,8 @@
 
     "widget.id_card.label.update_i_card": "Actualiza tu Illini ID",
     "widget.id_card.text.card_instructions": "This ID must be presented to university officials upon request.",
+    "widget.id_card.text.lost_instructions.format": "{{external_link_icon}} {{lost_link}}",
+    "widget.id_card.text.lost_instructions.link": "Lost or stolen i-card?",
     "widget.id_card.label.building_access": "Acceso al edificio",
     "widget.id_card.label.building_access.granted": "OTORGADO",
     "widget.id_card.label.building_access.denied": "NEGADO",

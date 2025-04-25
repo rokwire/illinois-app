@@ -4063,6 +4063,8 @@
 
 	"widget.id_card.label.update_i_card": "更新您的 Illini ID",
 	"widget.id_card.text.card_instructions": "This ID must be presented to university officials upon request.",
+	"widget.id_card.text.lost_instructions.format": "{{external_link_icon}} {{lost_link}}",
+	"widget.id_card.text.lost_instructions.link": "Lost or stolen i-card?",
 	"widget.id_card.label.building_access": "建築通道",
 	"widget.id_card.label.building_access.granted": "的確",
 	"widget.id_card.label.building_access.denied": "拒絕",
