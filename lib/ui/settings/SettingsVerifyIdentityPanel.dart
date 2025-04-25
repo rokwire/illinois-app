@@ -26,6 +26,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
   @override
@@ -69,20 +70,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           ),
           Container(height: 8,),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
-              child:RichText(
-                text: TextSpan(
-                  style:  Styles().textStyles.getTextStyle("widget.info.regular.thin"),
-                  children: <TextSpan>[
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription1", "Are you a ")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription2", "university student"),
-                        style:  Styles().textStyles.getTextStyle("widget.info.regular.fat")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", " or ")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "employee"),
-                        style:  Styles().textStyles.getTextStyle("widget.info.regular.fat")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))),
-                  ],
-                ),
-              )
+            child: _contentIdDescription
           ),
           Container(height: 12,),
           Container(padding: EdgeInsets.symmetric(horizontal: 16),
@@ -115,6 +103,37 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
       // Loading indicator widgets
       Visibility(visible: (_loading == true), child: CircularProgressIndicator())
     ]);
+  }
+
+  Widget get _contentIdDescription {
+    final String appTitleMacro = '{{app_title}}';
+    final String employeeMacro = '{{employee}}';
+    final String universityStudentMacro = '{{university_student}}';
+
+    String appTitleText = Localization().getStringEx('app.title', 'Illinois');
+    String employeeText = Localization().getStringEx('panel.settings.home.connect.not_logged_in.netid.description.employee', 'employee');
+    String universityStudentText = Localization().getStringEx('panel.settings.home.connect.not_logged_in.netid.description.university_student', 'university student');
+
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.thin');
+    TextStyle? boldTextStyle = Styles().textStyles.getTextStyle('widget.detail.regular.fat');
+
+    String descriptionText = Localization().getStringEx('panel.settings.home.connect.not_logged_in.netid.description', 'Are you a $universityStudentMacro or $employeeMacro? Sign in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
+      replaceAll(appTitleMacro, appTitleText);
+
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionText, macros: [employeeMacro, universityStudentMacro], builder: (String entry){
+      if (entry == employeeMacro) {
+        return TextSpan(text: employeeText, style: boldTextStyle);
+      }
+      if (entry == universityStudentMacro) {
+        return TextSpan(text: universityStudentText, style: boldTextStyle);
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+    return RichText(text:
+      TextSpan(style: regularTextStyle, children: spanList)
+    );
   }
 
   void _onTapConnectNetId() {

@@ -131,18 +131,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     for (String code in codes) {
       if (code == 'netid') {
           contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-            RichText(text:
-              TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
-                  style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
-                  style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
-                      "? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')))
-              ],),
-            )
+            _netIdDescription
           ),);
           contentList.add(RibbonButton(
             border: _allBorder,
@@ -197,6 +186,37 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         }
       });
     }
+  }
+
+  Widget get _netIdDescription {
+    final String appTitleMacro = '{{app_title}}';
+    final String employeeMacro = '{{employee}}';
+    final String universityStudentMacro = '{{university_student}}';
+
+    String appTitleText = Localization().getStringEx('app.title', 'Illinois');
+    String employeeText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription.employee', 'employee');
+    String universityStudentText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription.university_student', 'university student');
+
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.thin');
+    TextStyle? boldTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.fat');
+
+    String descriptionText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription', 'Are you a $universityStudentMacro or $employeeMacro? Log in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
+      replaceAll(appTitleMacro, appTitleText);
+
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionText, macros: [employeeMacro, universityStudentMacro], builder: (String entry){
+      if (entry == employeeMacro) {
+        return TextSpan(text: employeeText, style: boldTextStyle);
+      }
+      if (entry == universityStudentMacro) {
+        return TextSpan(text: universityStudentText, style: boldTextStyle);
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+    return RichText(text:
+      TextSpan(style: regularTextStyle, children: spanList)
+    );
   }
 
   void _onPhoneOrEmailLoginClicked() {
