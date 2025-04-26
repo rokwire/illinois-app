@@ -98,6 +98,12 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
       ),);
     }*/
 
+    if (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        _buildWebsiteLinkButton()
+      ));
+    }
+
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
     );
