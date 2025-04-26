@@ -200,7 +200,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.thin');
     TextStyle? boldTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.fat');
 
-    String descriptionText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription', 'Are you a $universityStudentMacro or $employeeMacro? Log in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
+    String descriptionText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription', 'Are you a $universityStudentMacro or $employeeMacro? Sign in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
       replaceAll(appTitleMacro, appTitleText);
 
     List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionText, macros: [employeeMacro, universityStudentMacro], builder: (String entry){
