@@ -1978,7 +1978,7 @@
 
 	"panel.settings.verify_identity.label.title":"验证你的身份",
 	"panel.settings.verify_identity.label.description":"連接到{{app_title}}",
-	"panel.settings.verify_identity.label.connect_id.desription":"Are you a {{university_student}} or {{employee}}? Log in with your NetID to see {{app_title}} information specific to you, like your Illini ID and course schedule.",
+	"panel.settings.verify_identity.label.connect_id.desription":"Are you a {{university_student}} or {{employee}}? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini ID and course schedule.",
 	"panel.settings.verify_identity.label.connect_id.desription.university_student":"university student",
 	"panel.settings.verify_identity.label.connect_id.desription.employee":"employee",
 	"panel.settings.verify_identity.button.connect_net_id.title":"连接您的NetID",
