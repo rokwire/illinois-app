@@ -87,7 +87,7 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
       );
     }
 
-    if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
+    /*if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
       contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
       ExpandableText(_group?.researchConsentDetails ?? '',
         textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
@@ -96,7 +96,7 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
         footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
       ),
       ),);
-    }
+    }*/
 
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
