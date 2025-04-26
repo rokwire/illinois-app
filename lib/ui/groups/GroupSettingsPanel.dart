@@ -168,7 +168,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           _buildSectionTitle("Research", "settings"),
         ),
         //_buildResearchOptionLayout(),
-        _buildResearchConsentDetailsField(),
+        //_buildResearchConsentDetailsField(),
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
         _buildContentSectionsLayout(),
@@ -333,7 +333,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Localization().getStringEx("panel.groups_settings.description.project.title", "SHORT PROJECT DESCRIPTION") :
       Localization().getStringEx("panel.groups_settings.description.group.title", "GROUP DESCRIPTION");
     String? fieldTitle = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.groups_settings.description.project.field", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_settings.description.project.field", "What’s the purpose of your group? Who should join? What will participation involve?") :
       Localization().getStringEx("panel.groups_settings.description.group.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldHint = (_group?.researchProject == true) ?
       Localization().getStringEx("panel.groups_settings.description.project.field.hint", "") :
@@ -773,7 +773,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
   }
 
-  Widget _buildResearchConsentDetailsField() {
+  /*Widget _buildResearchConsentDetailsField() {
     String? title = "PROJECT DETAILS";
     String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
@@ -801,7 +801,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;

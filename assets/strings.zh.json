@@ -3032,7 +3032,7 @@
 	"panel.groups_settings.description.group.title": "群组描述",
 	"panel.groups_settings.description.project.title": "简短的计划描述",
 	"panel.groups_settings.description.group.field": "您的群组目的为和？谁可以参与？您的活动中会进行什么活动？",
-	"panel.groups_settings.description.project.field": "您的计划目的为和？谁可以参与？您的活动中会进行什么活动？",
+	"panel.groups_settings.description.project.field": "What’s the purpose of your group? Who should join? What will participation involve?",
 	"panel.groups_settings.description.group.field.hint": "",
 	"panel.groups_settings.description.project.field.hint": "",
 	"panel.groups_settings.link.title": "网页连结",
