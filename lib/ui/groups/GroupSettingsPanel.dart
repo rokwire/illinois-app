@@ -168,7 +168,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           _buildSectionTitle("Research", "settings"),
         ),
         //_buildResearchOptionLayout(),
-        _buildResearchConsentDetailsField(),
+        //_buildResearchConsentDetailsField(),
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
         _buildContentSectionsLayout(),
@@ -773,7 +773,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
   }
 
-  Widget _buildResearchConsentDetailsField() {
+  /*Widget _buildResearchConsentDetailsField() {
     String? title = "PROJECT DETAILS";
     String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
@@ -801,7 +801,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;
