@@ -3051,7 +3051,7 @@
     "panel.groups_settings.description.group.title": "GROUP DESCRIPTION",
     "panel.groups_settings.description.project.title": "SHORT PROJECT DESCRIPTION",
     "panel.groups_settings.description.group.field": "What’s the purpose of your group? Who should join? What will you do at your events?",
-    "panel.groups_settings.description.project.field": "What’s the purpose of your project? Who should join? What will you do at your events?",
+    "panel.groups_settings.description.project.field": "What’s the purpose of your group? Who should join? What will participation involve?",
     "panel.groups_settings.description.group.field.hint": "",
     "panel.groups_settings.description.project.field.hint": "",
     "panel.groups_settings.link.title": "WEBSITE LINK",

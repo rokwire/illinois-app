@@ -3053,7 +3053,7 @@
     "panel.groups_settings.description.group.title": "DESCRIPCIÓN DEL GRUPO",
     "panel.groups_settings.description.project.title": "DESCRIPCIÓN BREVE DEL PROYECTO",
 	"panel.groups_settings.description.group.field": "Cuál es el propósito de tu grupo? ¿Quién debe participar? ¿Qué harán en tus eventos?",
-	"panel.groups_settings.description.project.field": "¿Cuál es el propósito de tu proyecto? ¿Quién debe participar? ¿Qué harán en tus eventos?",
+	"panel.groups_settings.description.project.field": "What’s the purpose of your group? Who should join? What will participation involve?",
 	"panel.groups_settings.description.group.field.hint": "",
 	"panel.groups_settings.description.project.field.hint": "",
 	"panel.groups_settings.link.title": "ENLACE DEL SITIO WEB",
