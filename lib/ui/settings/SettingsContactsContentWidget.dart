@@ -23,7 +23,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   final String _contactEmail = "rokwire@illinois.edu";
   late GestureRecognizer _contactEmailGestureRecognizer;
 
-  final String _contactWebsite = "app.illinois.edu";
+  final String _contactWebsite = "m.illinois.edu";
   late GestureRecognizer _contactWebsiteGestureRecognizer;
 
   @override
@@ -113,7 +113,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
                   style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
                   recognizer: _contactEmailGestureRecognizer),
               TextSpan(text: " • "),
-              TextSpan(text: "app.illinois.edu",
+              TextSpan(text: _contactWebsite,
                 style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
                 recognizer: _contactWebsiteGestureRecognizer),
           ]))
