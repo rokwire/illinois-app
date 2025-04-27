@@ -1919,6 +1919,7 @@
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
 	"panel.settings.profile.content.privacy.label": "我的应用隐私设置",
 	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
+	"panel.settings.profile.content.share.label": "My Digital Business Card",
 	"panel.settings.profile.header.profile.label": "个人资料",
 
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
@@ -2299,7 +2300,9 @@
 	"panel.profile.stored_data.source.gateway.contact_info.title": "Contact Info",
 	"panel.profile.stored_data.source.gateway.icard.title": "iCard",
 
-	"panel.profile.info_and_directory.message.signed_out": "To view your profile, {{link.login}} and {{link.privacy}} to 4 or 5.",
+	"panel.profile.info_and_directory.message.signed_out": "To view {{feature}}, {{link.login}} and {{link.privacy}} to 4 or 5.",
+	"panel.profile.info_and_directory.message.signed_out.feature.info": "your profile",
+	"panel.profile.info_and_directory.message.signed_out.feature.share": "your Digital Business Card",
 	"panel.profile.info_and_directory.message.signed_out.link.login": "sign in",
 	"panel.profile.info_and_directory.message.signed_out.link.privacy": "set your privacy level",
  	"panel.profile.info_and_directory.tab.accounts.connections.title": "My Connections",

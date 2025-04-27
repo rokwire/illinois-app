@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { login, profile, who_are_you, }
+enum ProfileContent { login, profile, share, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
   static const String notifySignIn = "edu.illinois.rokwire.profile.command.sign_in";
@@ -40,14 +40,19 @@ class ProfileHomePanel extends StatefulWidget {
   static const String routeName = 'settings_profile_content_panel';
 
   final ProfileContent? content;
-  final Map<String, dynamic>? contentParams;
+  final Map<String, dynamic>? _contentParams;
 
-  ProfileHomePanel._({this.content, this.contentParams});
+  ProfileHomePanel._({this.content, Map<String, dynamic>? contentParams}) :
+    _contentParams = contentParams;
+
+  Map<String, dynamic>? contentParams(ProfileContent? contentType) =>
+    (content == contentType) ? _contentParams : null;
+
 
   @override
   _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, {ProfileContent? content, Map<String, dynamic>? contentParams}) {
+  static void present(BuildContext context, { ProfileContent? content, Map<String, dynamic>? contentParams }) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -339,7 +344,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileInfoWrapperPage(key: _profileInfoKey, params: widget.contentParams,);
+      case ProfileContent.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, key: _profileInfoKey, contentParams: widget.contentParams(ProfileContent.profile));
+      case ProfileContent.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: widget.contentParams(ProfileContent.share));
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
@@ -349,6 +355,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   String? _getContentItemName(ProfileContent? contentItem) {
     switch (contentItem) {
       case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
+      case ProfileContent.share: return Localization().getStringEx('panel.settings.profile.content.share.label', 'My Digital Business Card');
       case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
       case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
       default: return null;
@@ -360,6 +367,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
       case ProfileContent.profile: return true;
       case ProfileContent.who_are_you: return true;
       case ProfileContent.login: return true;
+      case ProfileContent.share: return true;
       case null: return false;
     }
   }

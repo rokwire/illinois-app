@@ -33,7 +33,7 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoPreviewPageState();
 }
 
-class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
+class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
 
@@ -143,5 +143,8 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
     widget.contentType.permitedVisibility;
+
+  TextStyle? get nameTextStyle =>
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 }
 

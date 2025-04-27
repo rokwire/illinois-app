@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:path_provider/path_provider.dart';
@@ -51,7 +52,13 @@ class ProfileInfoShareSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(children: [
-      ProfileInfoShareWidget(profile: profile, photoImageData: photoImageData, pronunciationAudioData: pronunciationAudioData),
+      ProfileInfoShareWidget(
+        profile: profile,
+        photoImageData: photoImageData,
+        pronunciationAudioData: pronunciationAudioData,
+        topOffset: 24 + 2 * 16 /* close button size */,
+        contentPaddingX: 16,
+      ),
       Align(alignment: Alignment.topRight, child: _closeButton(context)),
     ],);
 
@@ -70,13 +77,81 @@ class ProfileInfoShareSheet extends StatelessWidget {
   }
 }
 
-class ProfileInfoShareWidget extends StatefulWidget {
+class ProfileInfoSharePage extends StatefulWidget {
 
   final Auth2UserProfile? profile;
   final Uint8List? photoImageData;
   final Uint8List? pronunciationAudioData;
 
-  ProfileInfoShareWidget({this.profile, this.photoImageData, this.pronunciationAudioData});
+  ProfileInfoSharePage({this.profile, this.photoImageData, this.pronunciationAudioData});
+
+  @override
+  State<StatefulWidget> createState() => _ProfileInfoSharePageState();
+}
+
+class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
+  Auth2UserProfile? _profile;
+  Uint8List? _photoImageData;
+  Uint8List? _pronunciationAudioData;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    _loadInitialContent();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) => _loading ?
+    _loadingContent : _pageContent;
+
+  Widget get _pageContent => ProfileInfoShareWidget(
+    profile: _profile,
+    photoImageData: _photoImageData,
+    pronunciationAudioData: _pronunciationAudioData
+  );
+
+  Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+      )
+    )
+  );
+
+  Future<void> _loadInitialContent() async {
+    if (widget.profile != null) {
+      _profile = widget.profile;
+      _photoImageData = widget.photoImageData;
+      _pronunciationAudioData = widget.pronunciationAudioData;
+    }
+    else {
+      setState(() {
+        _loading = true;
+      });
+      ProfileInfoLoadResult loadResult = await ProfileInfoLoad.loadInitial();
+      setStateIfMounted(() {
+        _profile = loadResult.profile;
+        _photoImageData = loadResult.photoImageData;
+        _pronunciationAudioData = loadResult.pronunciationAudioData;
+        _loading = false;
+      });
+    }
+  }
+}
+
+class ProfileInfoShareWidget extends StatefulWidget {
+
+  final Auth2UserProfile? profile;
+  final Uint8List? photoImageData;
+  final Uint8List? pronunciationAudioData;
+  final double topOffset;
+  final double contentPaddingX;
+
+  ProfileInfoShareWidget({this.profile, this.photoImageData, this.pronunciationAudioData,
+    this.topOffset = 16,
+    this.contentPaddingX = 0,
+  });
 
   @override
   State<StatefulWidget> createState() => _ProfileInfoShareWidgetState();
@@ -96,9 +171,9 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
     _panelContent;
 
   Widget get _panelContent => SingleChildScrollView(child:
-    Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
+    Padding(padding: EdgeInsets.only(top: widget.topOffset, bottom: 16), child:
       Column(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: widget.contentPaddingX), child:
           RepaintBoundary(key: _repaintBoundaryKey, child:
             DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
           ),
@@ -145,17 +220,17 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
   
   Widget _buildCommand({Widget? icon, String? text, bool progress = false, void Function()? onTap}) =>
     InkWell(onTap: onTap, child:
-      Row(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: widget.contentPaddingX, vertical: 16), child:
+        Row(children: [
           SizedBox(width: _commandIconSize, height: _commandIconSize, child: progress ?
             CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary, ) :
             (icon ?? SizedBox(width: _commandIconSize, height: _commandIconSize,)),
           ),
-        ),
-        Padding(padding: EdgeInsets.only(right: 16), child:
-          Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),),
-        ),
-      ],)
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),),
+          ),
+        ],),
+      ),
     );
 
   void _onTapSaveToPhotos() async {
