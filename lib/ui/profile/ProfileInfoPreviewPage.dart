@@ -134,7 +134,7 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-    ProfileInfoSharePanel.present(context,
+    ProfileInfoShareSheet.present(context,
       profile: _profile,
       photoImageData: widget.photoImageData,
       pronunciationAudioData: widget.pronunciationAudioData,

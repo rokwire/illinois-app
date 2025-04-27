@@ -19,13 +19,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
 //import 'package:share_plus/share_plus.dart';
 
-class ProfileInfoSharePanel extends StatefulWidget {
-
+class ProfileInfoShareSheet extends StatelessWidget {
   final Auth2UserProfile? profile;
   final Uint8List? photoImageData;
   final Uint8List? pronunciationAudioData;
 
-  ProfileInfoSharePanel._({this.profile, this.photoImageData, this.pronunciationAudioData});
+  ProfileInfoShareSheet._({this.profile, this.photoImageData, this.pronunciationAudioData});
 
   static void present(BuildContext context, {
     Auth2UserProfile? profile,
@@ -42,19 +41,48 @@ class ProfileInfoSharePanel extends StatefulWidget {
       backgroundColor: Styles().colors.white,
       constraints: BoxConstraints(maxHeight: height),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-      builder: (context) => ProfileInfoSharePanel._(
+      builder: (context) => ProfileInfoShareSheet._(
         profile: profile,
         photoImageData: photoImageData,
         pronunciationAudioData: pronunciationAudioData,
       ),
     );
   }
-  
+
   @override
-  State<StatefulWidget> createState() => _ProfileInfoSharePanelState();
+  Widget build(BuildContext context) => Stack(children: [
+      ProfileInfoShareWidget(profile: profile, photoImageData: photoImageData, pronunciationAudioData: pronunciationAudioData),
+      Align(alignment: Alignment.topRight, child: _closeButton(context)),
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
 }
 
-class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
+class ProfileInfoShareWidget extends StatefulWidget {
+
+  final Auth2UserProfile? profile;
+  final Uint8List? photoImageData;
+  final Uint8List? pronunciationAudioData;
+
+  ProfileInfoShareWidget({this.profile, this.photoImageData, this.pronunciationAudioData});
+
+  @override
+  State<StatefulWidget> createState() => _ProfileInfoShareWidgetState();
+}
+
+class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
 
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _savingToPhotos = false;
@@ -64,10 +92,8 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
   bool _preparingClipboardText = false;
 
   @override
-  Widget build(BuildContext context) => Stack(children: [
-    _panelContent,
-    Align(alignment: Alignment.topRight, child: _closeButton),
-  ],);
+  Widget build(BuildContext context) =>
+    _panelContent;
 
   Widget get _panelContent => SingleChildScrollView(child:
     Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
@@ -114,14 +140,6 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     ),
   );
 
-  Widget get _closeButton =>
-    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-      InkWell(onTap : _onTapClose, child:
-        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-          Styles().images.getImage('close-circle', excludeFromSemantics: true),
-        ),
-      ),
-    );
 
   final double _commandIconSize = 14;
   
@@ -308,10 +326,5 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       debugPrint(e.toString());
       return false;
     }
-  }
-
-  void _onTapClose() {
-    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
-    Navigator.of(context).pop();
   }
 }
