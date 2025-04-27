@@ -84,7 +84,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   final ScrollController _scrollController = ScrollController();
 
-  final Map<ProfileContent?, Map<String, dynamic>?> _contentParams = <ProfileContent, Map<String, dynamic>>{};
+  final Map<ProfileContent?, Map<String, dynamic>?> _contentParams = <ProfileContent?, Map<String, dynamic>?>{};
 
   @override
   void initState() {
