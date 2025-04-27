@@ -610,7 +610,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College, School, or Unit'),
     enabled: false, available: _showPrivacyControls,
   );
 
