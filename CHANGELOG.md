@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Additional research projects updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
 - Updated university contact URL [#5069](https://github.com/rokwire/illinois-app/issues/5069).
+- Removed inaccurate text from My Profile if directory is set to private [#5070](https://github.com/rokwire/illinois-app/issues/5070).
 ### Fixed
 - Fixed sign in wording [#5056](https://github.com/rokwire/illinois-app/issues/5056).
 
