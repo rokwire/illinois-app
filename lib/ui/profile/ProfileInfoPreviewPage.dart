@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
@@ -12,6 +13,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -33,7 +35,7 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoPreviewPageState();
 }
 
-class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
+class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
 
@@ -134,14 +136,27 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-    ProfileInfoSharePanel.present(context,
+    /*ProfileInfoShareSheet.present(context,
       profile: _profile,
       photoImageData: widget.photoImageData,
       pronunciationAudioData: widget.pronunciationAudioData,
-    );
+    );*/
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+      ProfileContent.share,
+      <String, dynamic>{
+        ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
+          profile: _profile,
+          photoImageData: widget.photoImageData,
+          pronunciationAudioData: widget.pronunciationAudioData,
+        )
+      }
+    ]);
   }
 
   Set<Auth2FieldVisibility> get _permittedVisibility =>
     widget.contentType.permitedVisibility;
+
+  TextStyle? get nameTextStyle =>
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 }
 
