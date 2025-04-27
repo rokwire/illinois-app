@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -12,7 +13,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoWrapperPage extends StatefulWidget {
-  static const String notifySignIn = "edu.illinois.rokwire.profile.sign_in";
 
   final Map<String, dynamic>? params;
 
@@ -117,7 +117,7 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
 
   void _onTapSignIn() {
     Analytics().logSelect(target: 'sign in');
-    NotificationService().notify(ProfileInfoWrapperPage.notifySignIn);
+    NotificationService().notify(ProfileHomePanel.notifySignIn);
   }
 
   void _onTapProfile() {

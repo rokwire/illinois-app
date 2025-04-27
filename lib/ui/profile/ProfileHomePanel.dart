@@ -35,7 +35,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 enum ProfileContent { login, profile, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
-  static final String routeName = 'settings_profile_content_panel';
+  static const String notifySignIn = "edu.illinois.rokwire.profile.command.sign_in";
+  static const String notifyProfileInfo = "edu.illinois.rokwire.profile.command.info";
+  static const String routeName = 'settings_profile_content_panel';
 
   final ProfileContent? content;
   final Map<String, dynamic>? contentParams;
@@ -75,6 +77,7 @@ class ProfileHomePanel extends StatefulWidget {
 }
 
 class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsListener {
+
   ProfileContent? _selectedContent;
   static ProfileContent? _lastSelectedContent;
   bool _contentValuesVisible = false;
@@ -91,8 +94,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
-      ProfileInfoWrapperPage.notifySignIn,
-      ProfileLoginPage.notifyProfileInfo,
+      ProfileHomePanel.notifySignIn,
+      ProfileHomePanel.notifyProfileInfo,
     ]);
 
     if (_isContentItemEnabled(widget.content)) {
@@ -122,12 +125,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     else if (name == FlexUI.notifyChanged) {
       _updateContentItemIfNeeded();
     }
-    else if (name == ProfileInfoWrapperPage.notifySignIn) {
+    else if (name == ProfileHomePanel.notifySignIn) {
       setStateIfMounted(() {
         _selectedContent = _lastSelectedContent = ProfileContent.login;
       });
     }
-    else if (name == ProfileLoginPage.notifyProfileInfo) {
+    else if (name == ProfileHomePanel.notifyProfileInfo) {
       setStateIfMounted(() {
         _selectedContent = _lastSelectedContent = ProfileContent.profile;
       });

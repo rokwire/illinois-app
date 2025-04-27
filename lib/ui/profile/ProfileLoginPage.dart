@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileLoginPage extends StatefulWidget {
-  static const String notifyProfileInfo = "edu.illinois.rokwire.profile.info";
 
   final EdgeInsetsGeometry margin;
 
@@ -420,7 +419,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   void _onViewProfileClicked() {
     Analytics().logSelect(target: 'View Profile');
-    NotificationService().notify(ProfileLoginPage.notifyProfileInfo);
+    NotificationService().notify(ProfileHomePanel.notifyProfileInfo);
   }
 
   // Linked
