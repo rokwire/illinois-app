@@ -84,7 +84,9 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
         params: widget.contentParams(ProfileInfoWrapperContent.info),
       );
 
-      case ProfileInfoWrapperContent.share: return ProfileInfoSharePage();
+      case ProfileInfoWrapperContent.share: return ProfileInfoSharePage(
+        params: widget.contentParams(ProfileInfoWrapperContent.share)
+      );
     }
   }
 

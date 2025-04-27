@@ -79,11 +79,23 @@ class ProfileInfoShareSheet extends StatelessWidget {
 
 class ProfileInfoSharePage extends StatefulWidget {
 
-  final Auth2UserProfile? profile;
-  final Uint8List? photoImageData;
-  final Uint8List? pronunciationAudioData;
+  static const String profileResultKey = 'profile_result';
 
-  ProfileInfoSharePage({this.profile, this.photoImageData, this.pronunciationAudioData});
+  final Auth2UserProfile? _profile;
+  final Uint8List? _photoImageData;
+  final Uint8List? _pronunciationAudioData;
+  final Map<String, dynamic>? params;
+
+  ProfileInfoSharePage({Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
+    _profile = profile,
+    _photoImageData = photoImageData,
+    _pronunciationAudioData = pronunciationAudioData;
+
+  Auth2UserProfile? get profile => _profile ?? _profileResultParam?.profile;
+  Uint8List? get photoImageData => _photoImageData ?? _profileResultParam?.photoImageData;
+  Uint8List? get pronunciationAudioData => _pronunciationAudioData ?? _profileResultParam?.pronunciationAudioData;
+
+  ProfileInfoLoadResult? get _profileResultParam => JsonUtils.cast(params?[profileResultKey]);
 
   @override
   State<StatefulWidget> createState() => _ProfileInfoSharePageState();
