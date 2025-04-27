@@ -134,7 +134,7 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
 
   void _onTapSignIn() {
     Analytics().logSelect(target: 'sign in');
-    NotificationService().notify(ProfileHomePanel.notifySignIn);
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContent.login);
   }
 
   void _onTapProfile() {
