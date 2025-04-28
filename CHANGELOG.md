@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created Digital Business Card in Profile panel, replace the existing share sheet [#5026](https://github.com/rokwire/illinois-app/issues/5026).
+### Changed
+- Additional research projects updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
+- Updated university contact URL [#5069](https://github.com/rokwire/illinois-app/issues/5069).
+- Removed inaccurate text from My Profile if directory is set to private [#5070](https://github.com/rokwire/illinois-app/issues/5070).
+- Renamed My Profile College Field [#5071](https://github.com/rokwire/illinois-app/issues/5071).
+### Fixed
+- Fixed sign in wording [#5056](https://github.com/rokwire/illinois-app/issues/5056).
+- Fixed member status dropdown [#5072](https://github.com/rokwire/illinois-app/issues/5072).
+- Overlapping buttons section when modifying To-Do Item [#5054](https://github.com/rokwire/illinois-app/issues/5054).
+
 ## [7.0.18] - 2025-04-25
 ### Added
 - Added library link to library card [#5024](https://github.com/rokwire/illinois-app/issues/5024).

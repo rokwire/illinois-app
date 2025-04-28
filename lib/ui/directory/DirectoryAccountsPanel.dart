@@ -1,12 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -106,8 +103,11 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   }
 
   void _onShareProfile(DirectoryAccounts contentType) {
-    ProfileInfoSharePanel.present(context,
+    /*ProfileInfoShareSheet.present(context,
       profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
+    );*/
+    ProfileHomePanel.present(context,
+      content: ProfileContent.share,
     );
   }
 
