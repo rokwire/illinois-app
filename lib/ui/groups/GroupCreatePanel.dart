@@ -18,7 +18,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:universal_io/io.dart';
+import 'dart:math';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -73,6 +75,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Group? _group;
 
   GroupMemberStatus _selectedMembersStatus = GroupMemberStatus.admin;
+  double? _membersStatusDropdownItemsWidth;
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
 
@@ -1127,56 +1130,117 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   // AdminSection
   Widget _buildAdminSettingsSection() {
-    return Visibility(
-        visible: true,
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(child:
-                      GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false))
-                  ]),
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-                          child: TextField(
-                            controller: _groupNetIdsController,
-                            maxLines: 1,
-                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                          )),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6),
-                            child: GroupDropDownButton(
-                                initialSelectedValue: _selectedMembersStatus,
-                                constructTitle:
-                                    (dynamic item) => item is GroupMemberStatus ? groupMemberStatusToString(item) : "",
-                                onValueChanged: _onAdminsStatusChanged,
-                                items: _adminsStatusItems))
-                        )
-                    ])
-                  ])
-            ));
+    return Visibility(visible: true, child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false)
+            )
+          ]),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
+            Expanded(child:
+              Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white), child:
+                TextField(
+                  controller: _groupNetIdsController,
+                  maxLines: 1,
+                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6), child:
+              _adminStatusDropdown
+            )
+          ])
+        ])
+      )
+    );
   }
 
-  void _onAdminsStatusChanged(dynamic status) {
-    if (status is GroupMemberStatus)
-      setStateIfMounted(() {
-        _selectedMembersStatus = status;
-      });
+
+  Widget get _adminStatusDropdown =>
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<GroupMemberStatus>(
+        dropdownStyleData: DropdownStyleData(
+          width: _membersStatusDropdownItemsWidth ??= _evalMembersStatusDropdownItemsWidth(),
+          direction: DropdownDirection.left,
+          decoration: _dropdownDecoration,
+        ),
+        customButton: _adminStatusDropdownButton(),
+        isExpanded: false,
+        items: _adminStatusDropdownItems(),
+        onChanged: _onAdminStatusDropdownSelected,
+      ),
+    );
+
+  void _onAdminStatusDropdownSelected(GroupMemberStatus? status) {
+    Analytics().logSelect(target: 'Select Admin Status: $status');
+    if ((status != null) && mounted)
+    setState(() {
+      _selectedMembersStatus = status;
+    });
   }
+
+  Widget _adminStatusDropdownButton() =>
+    Container(decoration: _dropdownDecoration, child:
+      Padding(padding: EdgeInsets.only(left: 12, right: 6, top: 12, bottom: 12), child:
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(groupMemberStatusToString(_selectedMembersStatus) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.value') ,),
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            SizedBox(width: 10, height: 10, child:
+              Center(child:
+                Styles().images.getImage('chevron-down', size: 10),
+              )
+            )
+          )
+        ],)
+      )
+    );
+
+  List<DropdownMenuItem<GroupMemberStatus>> _adminStatusDropdownItems() =>
+    List.from(_adminsStatusItems.map((status) => _adminStatusDropdownItem(status, selected: _selectedMembersStatus == status)));
+
+  DropdownMenuItem<GroupMemberStatus> _adminStatusDropdownItem(GroupMemberStatus status, { bool selected = false,}) =>
+      DropdownMenuItem<GroupMemberStatus>(
+        value: status,
+        child: Row(mainAxisSize: MainAxisSize.max, children: [
+          Expanded(child:
+            Text(groupMemberStatusToString(status) ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: Styles().textStyles.getTextStyle(selected ?  'widget.group.dropdown_button.item.selected' : 'widget.group.dropdown_button.item.not_selected'),
+              semanticsLabel: "",
+            ),
+          ),
+          Padding(padding: EdgeInsets.only(left: 12), child:
+            SizedBox(width: 16, height: 16, child:
+              Center(child: Styles().images.getImage(selected ? 'radio-button-on' : 'radio-button-off', size: 16))
+            )
+          )
+        ],),
+      );
+
+  double _evalMembersStatusDropdownItemsWidth() {
+    double maxTextWidth = 0;
+    for (GroupMemberStatus status in _adminsStatusItems) {
+      final Size textSizeFull = (TextPainter(
+        text: TextSpan(text: groupMemberStatusToString(status) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.item.not_selected')),
+        textScaler: MediaQuery.of(context).textScaler,
+        textDirection: TextDirection.ltr,
+      )..layout()).size;
+      if (maxTextWidth < textSizeFull.width) {
+        maxTextWidth = textSizeFull.width;
+      }
+    }
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + (16 + 12) + 32;
+    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+  }
+
+  BoxDecoration get _dropdownDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+  );
 
   List<GroupMemberStatus> get _adminsStatusItems => [GroupMemberStatus.admin, GroupMemberStatus.member];
 

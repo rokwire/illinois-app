@@ -51,7 +51,7 @@ class ProfileInfoEditPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoEditPageState();
 }
 
-class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with NotificationsListener, WidgetsBindingObserver {
+class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with NotificationsListener, WidgetsBindingObserver {
 
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;
@@ -399,6 +399,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _fieldTextControllers[_ProfileField.lastName]?.text,
     ]);
 
+    TextStyle? get nameTextStyle =>
+      Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
+
   // Edit: Pronunciation
 
   Widget get _pronunciationSection => _isFieldAvailable(_ProfileField.pronunciationUrl) ? _fieldSection(
@@ -607,7 +610,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
+    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College, School, or Unit'),
     enabled: false, available: _showPrivacyControls,
   );
 
