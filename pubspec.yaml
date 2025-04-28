@@ -82,6 +82,7 @@ dependencies:
   ai_barcode_scanner: ^6.0.1
   pointer_interceptor: ^0.10.1+2
   file_picker: ^10.1.0
+  barcode_widget: ^2.0.4
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:

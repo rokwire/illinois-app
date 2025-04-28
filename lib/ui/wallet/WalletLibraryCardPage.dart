@@ -1,7 +1,8 @@
 
-import 'dart:typed_data';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
+import 'package:barcode_widget/barcode_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -161,12 +162,26 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
   double get _barcodeWidth => MediaQuery.of(context).size.width / 1.25;
   double get _barcodeHeight => _barcodeWidth / 4;
 
-  Widget get _barcodeImageWidget =>
-    Container(width: _barcodeWidth, height: _barcodeHeight, decoration: BoxDecoration(
-      shape: BoxShape.rectangle,
-      color: Colors.white,
-      image: (_barcodeImage != null) ? DecorationImage(fit: BoxFit.fill, image:_barcodeImage! ,) : null
-    ),);
+  Widget get _barcodeImageWidget {
+    if (kIsWeb) {
+      if (_barcodeNumber == null) {
+        return Container();
+      }
+      return BarcodeWidget(
+        height: _barcodeHeight,
+        width: _barcodeWidth,
+        barcode: Barcode.codabar(),
+        data: _barcodeNumber!,
+        errorBuilder: (context, error) => Center(child: Text(error)),
+      );
+    } else {
+      return Container(width: _barcodeWidth, height: _barcodeHeight, decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.white,
+          image: (_barcodeImage != null) ? DecorationImage(fit: BoxFit.fill, image:_barcodeImage! ,) : null
+      ),);
+    }
+  }
 
   Future<MemoryImage?> _loadBarcodeImage(String? libraryCode) async {
     Uint8List? barcodeBytes = (libraryCode != null) ? await NativeCommunicator().getBarcodeImageData({
