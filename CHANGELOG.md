@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed sign in wording [#5056](https://github.com/rokwire/illinois-app/issues/5056).
 - Fixed member status dropdown [#5072](https://github.com/rokwire/illinois-app/issues/5072).
 - Overlapping buttons section when modifying To-Do Item [#5054](https://github.com/rokwire/illinois-app/issues/5054).
+- GroupMemberDetail Pronouncement icon position [#4974](https://github.com/rokwire/illinois-app/issues/4974).
 
 ## [7.0.18] - 2025-04-25
 ### Added
