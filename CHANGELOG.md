@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed member status dropdown [#5072](https://github.com/rokwire/illinois-app/issues/5072).
 - Web: Wallet widgets' size [#5080](https://github.com/rokwire/illinois-app/issues/5080).
 - Web: Create poll button shadow [#5055](https://github.com/rokwire/illinois-app/issues/5055).
+- Web: Handle deep link urls in campus recreation [#5060](https://github.com/rokwire/illinois-app/issues/5060).
 
 ## [7.0.18] - 2025-04-25
 ### Added
