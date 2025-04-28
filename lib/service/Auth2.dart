@@ -104,10 +104,11 @@ class Auth2 extends rokwire.Auth2 {
     if (name == FlexUI.notifyChanged) {
       _checkEnabled();
     }
-    else if (name == Content.notifyUserProfilePictureChanged ||
-        name == Auth2.notifyAccountChanged ||
-        name == Auth2.notifyProfileChanged) {
+    else if (name == Content.notifyUserProfilePictureChanged || name == Auth2.notifyProfileChanged) {
       _refreshProfilePicture();
+    }
+    else if (name == Auth2.notifyAccountChanged) {
+      _refreshICard();
     }
   }
 
