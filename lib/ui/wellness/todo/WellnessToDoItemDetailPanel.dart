@@ -136,14 +136,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                 Stack(children: [
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [_buildWorkDaysContainer(), _buildLocationContainer(), _buildDescriptionContainer()]),
+                      children: [_buildWorkDaysContainer(), _buildLocationContainer(), _buildDescriptionContainer(), Visibility(visible: _optionalFieldsVisible, child: _buildSaveButton())]),
                   _buildReminderTypeDropDown()
                 ]),
               ]),
               _buildCategoryDropDown()
             ])
           ])),
-      _buildSaveButton()
+      Visibility(visible: !_optionalFieldsVisible, child: _buildSaveButton())
     ]);
   }
 
