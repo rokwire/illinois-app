@@ -791,7 +791,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       canDirections = canDetail = false;
     }
 
-    double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double visibleWidth = kIsWeb ? math.min(AppWebUtils.screenWidth, screenWidth) : screenWidth;
+    double buttonWidth = (visibleWidth - (40 + 12)) / 2;
 
     double barHeight = _mapExploreBarSize?.height ?? 0;
     double wrapHeight = _mapSize?.height ?? 0;
