@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.0.19] - 2025-04-28
 ### Added
 - Created Digital Business Card in Profile panel, replace the existing share sheet [#5026](https://github.com/rokwire/illinois-app/issues/5026).
 ### Changed
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web: Handle deep link urls in campus recreation [#5060](https://github.com/rokwire/illinois-app/issues/5060).
 - Web: Fixed size of map buttons [#5050](https://github.com/rokwire/illinois-app/issues/5050).
 - Web: Fixed Library card [#5049](https://github.com/rokwire/illinois-app/issues/5049).
+- GroupMemberDetail Pronouncement icon position [#4974](https://github.com/rokwire/illinois-app/issues/4974).
 
 ## [7.0.18] - 2025-04-25
 ### Added
