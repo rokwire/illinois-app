@@ -2,6 +2,7 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Transportation.dart';
@@ -30,7 +31,7 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
   MemoryImage? _photoImage;
   late AnimationController _animationController;
 
-  static double _defaultPhotoSize(BuildContext context) => MediaQuery.of(context).size.width * 0.56;
+  static double _defaultPhotoSize(BuildContext context) => (kIsWeb ? 505 : MediaQuery.of(context).size.width) * 0.56;
   double get _photoSize => _defaultPhotoSize(context);
   double get _photoTopOffset => widget.topOffset + 16;
   double get _childTopOffset => _photoTopOffset + _photoSize + _illiniIconSize / 2 + 16;
