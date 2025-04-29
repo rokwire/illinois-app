@@ -26,6 +26,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -409,14 +410,16 @@ class _AssistantSignInInfoPopup extends StatefulWidget {
 
 class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
 
+  static const String _signInUrl = 'profile://sign_in';
   static const String _privacyUrl = 'settings://privacy';
+  static const String _signInUrlMacro = '{{profile_sign_in_url}}';
   static const String _privacyUrlMacro = '{{settings_privacy_url}}';
 
   @override
   Widget build(BuildContext context) {
     String message = Localization().getStringEx('panel.assistant.logged_out.label',
-                "To access the Illinois Assistant, <a href='$_privacyUrlMacro'><b>sign in</b></a> with your NetID and set your privacy level to 4 or 5 under Settings.")
-        .replaceAll(_privacyUrlMacro, _privacyUrl);
+                "To access the Illinois Assistant, <a href='$_signInUrlMacro'><b>sign in</b></a> with your NetID and <a href='$_privacyUrlMacro'><b>set your privacy level to 4 or 5</b></a> under Settings.")
+        .replaceAll(_signInUrlMacro, _signInUrl).replaceAll(_privacyUrlMacro, _privacyUrl);
     return AlertDialog(
         contentPadding: EdgeInsets.zero,
         content: Container(
@@ -433,7 +436,7 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
                             child:
                                 HtmlWidget(message,
                                     onTapUrl: (url) => _onTapUrl(url),
-                                    textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                                    textStyle: Styles().textStyles.getTextStyle("panel.assistant.popup.detail.small"),
                                     customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null))
                       ]),
                     ),
@@ -458,6 +461,11 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
       Analytics().logSelect(target: 'Settings: My App Privacy', source: widget.runtimeType.toString());
       Navigator.of(context).pop();
       SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      return true;
+    } else if (url == _signInUrl) {
+      Analytics().logSelect(target: 'Profile: Sign In / Sign Out', source: widget.runtimeType.toString());
+      Navigator.of(context).pop();
+      ProfileHomePanel.present(context, content: ProfileContent.login);
       return true;
     } else {
       return false;
