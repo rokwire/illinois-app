@@ -170,7 +170,13 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
 
 extension Auth2AccountEx on Auth2Account {
 
-  Auth2UserProfile? previewProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) {
+  Auth2UserProfile? previewProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) =>
+    profile?.buildPublic(privacy, permitted: permitted);
+}
+
+extension Auth2PublicUserProfile on Auth2UserProfile {
+
+  Auth2UserProfile buildPublic(Auth2UserPrivacy? privacy, {Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) {
     Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(privacy?.fieldsVisibility?.profile,
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
@@ -178,6 +184,6 @@ extension Auth2AccountEx on Auth2Account {
       email: Auth2FieldVisibility.public,
     );
 
-    return Auth2UserProfile.fromFieldsVisibility(profile, profileVisibility, permitted: permitted);
+    return Auth2UserProfile.fromFieldsVisibility(this, profileVisibility, permitted: permitted);
   }
 }

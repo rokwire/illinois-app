@@ -41,15 +41,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
 
   @override
   void initState() {
-    Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
-      firstName: Auth2FieldVisibility.public,
-      middleName: Auth2FieldVisibility.public,
-      lastName: Auth2FieldVisibility.public,
-      email: Auth2FieldVisibility.public,
-    );
-
-    _profile = Auth2UserProfile.fromFieldsVisibility(widget.profile, profileVisibility, permitted: _permittedVisibility);
-
+    _profile = widget.profile?.buildPublic(widget.privacy, permitted: _permittedVisibility);
     super.initState();
   }
 
