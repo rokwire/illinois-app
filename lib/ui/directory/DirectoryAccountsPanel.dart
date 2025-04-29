@@ -5,6 +5,7 @@ import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -15,23 +16,19 @@ class DirectoryAccountsPanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _DirectoryAccountsPanelState();
 
-  static const List<String> alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-  //TODO: make not static to filter alphabet based on counts map returned with accounts list (when filters are applied)
+  static const List<String> defaultAlphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 }
 
 class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
 
   final GlobalKey<DirectoryAccountsPageState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
-  final PageController _pageController = PageController(viewportFraction: 1, initialPage: 0, keepPage: true);
-  final _selectedIndexNotifier = ValueNotifier<int>(0);
-  // final _positionNotifier = ValueNotifier<Offset>(const Offset(0, 0));
-  int _lastSelectedLetterIndex = 0;
+  int _letterIndex = 0;
+  bool _listRefreshEnabled = true;
 
   @override
   void dispose() {
     _scrollController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
@@ -60,32 +57,39 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Container(
             height: 48.0,
-              child: ValueListenableBuilder<int>(
-                  valueListenable: _selectedIndexNotifier,
-                  builder: (context, int selected, Widget? child) {
-                    return ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: DirectoryAccountsPanel.alphabet.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        bool isSelected = _lastSelectedLetterIndex == index;
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          // key: isSelected ? letterKey : null,
-                          child: Text(DirectoryAccountsPanel.alphabet[index].toUpperCase(), style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.small.fat' : 'widget.button.title.small'), textAlign: TextAlign.center,),
-                          onTap: () => _onTapIndexLetter(index),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) => SizedBox(width: 6),
-                    );
-                  })
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(12.0),
+                itemCount: _alphabet.length,
+                itemBuilder: (BuildContext context, int index) {
+                  bool isSelected = _letterIndex == index;
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: Text(_alphabet[index].toUpperCase(), style: Styles().textStyles.getTextStyle(isSelected ? 'widget.button.title.medium.fat' : 'widget.button.title.medium'), textAlign: TextAlign.center,),
+                    onTap: () => _onTapIndexLetter(index),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) => SizedBox(width: 6),
+              )
           ),
         ),
         Expanded(
-          child: RefreshIndicator(onRefresh: _onRefresh, child:
-            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+          child: RefreshIndicator(
+            onRefresh: _onRefresh,
+            notificationPredicate: _listRefreshEnabled ? (_) => true : (_) => false,
+            child: SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-                DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, letterIndex: _lastSelectedLetterIndex, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+                DirectoryAccountsPage(
+                  widget.contentType,
+                  key: _pageKey,
+                  scrollController: _scrollController,
+                  letterIndex: _letterIndex,
+                  onEditProfile: _onEditProfile,
+                  onShareProfile: _onShareProfile,
+                  onUpdateLetterIndex: _onTapIndexLetter,
+                  onUpdateRefreshEnabled: _onUpdateRefreshEnabled,
+                  onUpdateAlphabet: _onUpdateAlphabet,
+                ),
               )
             ),
           ),
@@ -111,14 +115,24 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
     );
   }
 
+  void _onUpdateRefreshEnabled(bool enabled) {
+    setStateIfMounted(() {
+      _listRefreshEnabled = enabled;
+    });
+  }
+
+  void _onUpdateAlphabet() {
+    setStateIfMounted(() {});
+  }
+
   void _onTapIndexLetter(int index) {
-    // _selectedIndexNotifier.value = x;
-    // scrollToIndex(x, positionNotifier.value);
     setState(() {
-      _lastSelectedLetterIndex = index;
+      _letterIndex = index;
     });
   }
 
   Future<void> _onRefresh() async =>
     _pageKey.currentState?.refresh();
+
+  List<String> get _alphabet => _pageKey.currentState?.alphabet ?? DirectoryAccountsPanel.defaultAlphabet;
 }

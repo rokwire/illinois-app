@@ -21,8 +21,11 @@ class DirectoryAccountsPage extends StatefulWidget {
   final int letterIndex;
   final void Function(DirectoryAccounts contentType)? onEditProfile;
   final void Function(DirectoryAccounts contentType)? onShareProfile;
+  final void Function(int)? onUpdateLetterIndex;
+  final void Function(bool)? onUpdateRefreshEnabled;
+  final void Function()? onUpdateAlphabet;
 
-  DirectoryAccountsPage(this.contentType, { super.key, required this.letterIndex, this.scrollController, this.onEditProfile, this.onShareProfile});
+  DirectoryAccountsPage(this.contentType, { super.key, required this.letterIndex, this.scrollController, this.onEditProfile, this.onShareProfile, this.onUpdateLetterIndex, this.onUpdateRefreshEnabled, this.onUpdateAlphabet});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
@@ -86,6 +89,9 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
     filterAttributes: _filterAttributes,
     letterIndex: widget.letterIndex,
     onAccountTotalUpdated: _onAccountTotalUpdated,
+    onUpdateLetterIndex: widget.onUpdateLetterIndex,
+    onUpdateRefreshEnabled: widget.onUpdateRefreshEnabled,
+    onUpdateAlphabet: widget.onUpdateAlphabet,
   );
 
   static const String _linkEditMacro = "{{link.edit.info}}";
@@ -203,4 +209,6 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
   }
 
   Future<void> refresh() async => _accountsListKey.currentState?.refresh();
+
+  List<String>? get alphabet => _accountsListKey.currentState?.alphabet;
 }
