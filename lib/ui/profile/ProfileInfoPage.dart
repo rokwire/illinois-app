@@ -750,6 +750,10 @@ class ProfileInfoLoadResult {
   final Uint8List? pronunciationAudioData;
 
   ProfileInfoLoadResult({this.profile, this.privacy, this.photoImageData, this.pronunciationAudioData});
+
+  Auth2UserProfile? publicProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) =>
+    profile?.buildPublic(privacy, permitted: permitted);
+
 }
 
 ///////////////////////////////////////////

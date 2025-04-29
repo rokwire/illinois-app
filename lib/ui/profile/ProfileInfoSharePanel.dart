@@ -145,7 +145,7 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
       });
       ProfileInfoLoadResult loadResult = await ProfileInfoLoad.loadInitial();
       setStateIfMounted(() {
-        _profile = loadResult.profile;
+        _profile = loadResult.publicProfile();
         _photoImageData = loadResult.photoImageData;
         _pronunciationAudioData = loadResult.pronunciationAudioData;
         _loading = false;
