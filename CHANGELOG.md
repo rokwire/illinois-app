@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Make sure to apply privacy settings before sharing a profile card [#5026](https://github.com/rokwire/illinois-app/issues/5026).
+- Make sure not to duplicate group tabs [#5052](https://github.com/rokwire/illinois-app/issues/5052).
 
 ## [7.0.19] - 2025-04-28
 ### Added
