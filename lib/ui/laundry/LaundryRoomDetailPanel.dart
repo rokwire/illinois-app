@@ -48,7 +48,7 @@ class LaundryRoomDetailPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => room.analyticsAttributes;
 }
 
-class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> implements NotificationsListener {
+class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> with NotificationsListener {
   LaundryRoomDetails? _laundryRoomDetails;
   bool _isLoading = false;
 

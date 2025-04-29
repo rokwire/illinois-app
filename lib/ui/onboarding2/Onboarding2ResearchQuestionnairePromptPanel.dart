@@ -1,18 +1,40 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
+class Onboarding2ResearchQuestionnairePromptPanel extends StatefulWidget with Onboarding2Panel {
 
-  final Map<String, dynamic>? onboardingContext;
-  Onboarding2ResearchQuestionnairePromptPanel({this.onboardingContext});
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  final void Function(BuildContext context, Onboarding2Panel panel, bool? participateInResearch)? onContinue;
+  Onboarding2ResearchQuestionnairePromptPanel({ super.key, this.onboardingCode = '', this.onboardingContext, this.onContinue });
+
+  _Onboarding2ResearchQuestionnairePromptPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
+
+  @override
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => Questionnaires().participateInResearch != true;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2ResearchQuestionnairePromptPanelState();
+}
+
+class _Onboarding2ResearchQuestionnairePromptPanelState extends State<Onboarding2ResearchQuestionnairePromptPanel> {
+
+  bool _onboardingProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -122,42 +144,36 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
   void _onYes(BuildContext context) {
     Analytics().logSelect(target: "Yes");
-    Questionnaires().participateInResearch = true;
-    Storage().participateInResearchPrompted = true;
-    Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
-    Function? onConfirmEx = (onboardingContext != null) ? onboardingContext!["onConfirmActionEx"] : null;
-    if (onConfirmEx != null) {
-      onConfirmEx(context);
-    }
-    else if (onConfirm != null) {
-      onConfirm();
-    }
+    _onboardingNext(true);
   }
 
   void _onNo(BuildContext context) {
     Analytics().logSelect(target: "No");
-    Questionnaires().participateInResearch = false;
-    Storage().participateInResearchPrompted = true;
-    Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
-    Function? onRejectEx = (onboardingContext != null) ? onboardingContext!["onRejectActionEx"] : null;
-    if (onRejectEx != null) {
-      onRejectEx(context);
-    }
-    else if (onReject != null) {
-      onReject();
-    }
+    _onboardingNext(false);
   }
 
   void _onNotRightNow(BuildContext context) {
     Analytics().logSelect(target: "Not right now");
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  // void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext([bool? participateInResearch = null]) async {
+    Questionnaires().participateInResearch = participateInResearch;
     Storage().participateInResearchPrompted = true;
-    Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
-    Function? onRejectEx = (onboardingContext != null) ? onboardingContext!["onRejectActionEx"] : null;
-    if (onRejectEx != null) {
-      onRejectEx(context);
-    }
-    else if (onReject != null) {
-      onReject();
+    if (widget.onContinue != null) {
+      widget.onContinue?.call(context, widget, participateInResearch);
+    } else {
+      Onboarding2().next(context, widget);
     }
   }
 }

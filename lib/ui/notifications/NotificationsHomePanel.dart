@@ -86,7 +86,6 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeMapMtdStops,
       FirebaseMessaging.payloadTypeMapMyLocations,
       FirebaseMessaging.payloadTypeMapMentalHealth,
-      FirebaseMessaging.payloadTypeMapStateFarmWayfinding,
       FirebaseMessaging.payloadTypeAcademics,
       FirebaseMessaging.payloadTypeAcademicsAppointments,
       FirebaseMessaging.payloadTypeAcademicsGiesCanvasCourses,
@@ -104,7 +103,6 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeWellnessDailyTips,
       FirebaseMessaging.payloadTypeWellnessHealthScreener,
       FirebaseMessaging.payloadTypeWellnessMentalHealth,
-      FirebaseMessaging.payloadTypeWellnessPodcast,
       FirebaseMessaging.payloadTypeWellnessResources,
       FirebaseMessaging.payloadTypeWellnessRings,
       FirebaseMessaging.payloadTypeWellnessTodoList,
@@ -135,7 +133,7 @@ class NotificationsHomePanel extends StatefulWidget {
   _NotificationsHomePanelState createState() => _NotificationsHomePanelState();
 }
 
-class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
+class _NotificationsHomePanelState extends State<NotificationsHomePanel> with NotificationsListener {
   static final int _messagesPageSize = 8;
   static final double _defaultPaddingValue = 16;
 
@@ -941,7 +939,7 @@ class InboxMessageCard extends StatefulWidget {
   }
 }
 
-class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
+class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsListener {
   bool _deleting = false;
 
   @override

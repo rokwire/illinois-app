@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -61,9 +58,6 @@ class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
     else if (code == 'illini_id_card') {
       return HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
-    else if (code == 'library_card') {
-      return HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-    }
     else {
       return null;
     }
@@ -82,7 +76,7 @@ class HomeIlliniCashWalletWidget extends StatefulWidget {
   State<HomeIlliniCashWalletWidget> createState() => _HomeIlliniCashWalletWidgetState();
 }
 
-class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget> implements NotificationsListener {
+class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -170,11 +164,9 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       Expanded(child:
                         contentWidget
                       ),
-                      Visibility(visible: WalletAddIlliniCashPanel.canPresent, child:
-                        Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
-                        ),
-                      )
+                      Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
+                        IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
+                      ),
                     ]),
                   ),
                 ),
@@ -209,7 +201,7 @@ class HomeMealPlanWalletWidget extends StatefulWidget {
   State<HomeMealPlanWalletWidget> createState() => _HomeMealPlanWalletWidgetState();
 }
 
-class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> implements NotificationsListener {
+class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -350,7 +342,7 @@ class HomeBusPassWalletWidget extends StatefulWidget {
   State<HomeBusPassWalletWidget> createState() => _HomeBusPassWalletWidgetState();
 }
 
-class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> implements NotificationsListener {
+class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -443,7 +435,7 @@ class HomeIlliniIdWalletWidget extends StatefulWidget {
   State<HomeIlliniIdWalletWidget> createState() => _HomeIlliniIdWalletWidgetState();
 }
 
-class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> implements NotificationsListener {
+class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -535,146 +527,5 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
     WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
-  }
-}
-
-// HomeLibraryCardWalletWidget
-
-class HomeLibraryCardWalletWidget extends StatefulWidget {
-  final HomeFavorite? favorite;
-  final StreamController<String>? updateController;
-
-  HomeLibraryCardWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
-
-  @override
-  State<HomeLibraryCardWalletWidget> createState() => _HomeLibraryCardWalletWidgetState();
-}
-
-class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidget> implements NotificationsListener {
-  String?        _libraryCode;
-  MemoryImage?   _libraryBarcode;
-
-  @override
-  void initState() {
-    NotificationService().subscribe(this, [
-      Auth2.notifyLoginChanged,
-      Auth2.notifyCardChanged,
-    ]);
-    _loadLibraryBarcode();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if ((name == Auth2.notifyLoginChanged) || (name == Auth2.notifyCardChanged)) {
-      _updateLibraryBarcode();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String? message;
-    if (!Auth2().isOidcLoggedIn) {
-      message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.library_card', 'Library Card'));
-    }
-    else if (StringUtils.isEmpty(Auth2().iCard?.libraryNumber)) {
-      message = Localization().getStringEx('panel.browse.label.no_card.library_card', 'You need a valid Illini Identity card to access Library Card.');
-    }
-
-    return GestureDetector(onTap: _onTap, child:
-      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Expanded(child:
-                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.library_card.title', 'Library Card'), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
-                      ),
-                    ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
-                  ]),
-                ),
-                Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
-                  Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-                    Row(children: <Widget>[
-                      Expanded(child:
-                        (message != null) ?
-                          VerticalTitleValueSection(
-                            title: message,
-                            titleTextStyle: Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
-                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          ) :
-                          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
-                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary, width: 3))), child:
-                              Padding(padding: EdgeInsets.only(left: 10), child:
-                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                  Container(height: 50, decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode! ,) : null,    
-                                  )),
-                                  Padding(padding: EdgeInsets.only(top: 8), child:
-                                    Row(children: [Expanded(child: Text(Auth2().iCard?.libraryNumber ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,))]),
-                                  )
-                                ],),
-                              ),
-                            ),
-                          ),
-                      ),
-                    ]),
-                  ),
-                ),
-              ]),
-            ),
-          ]),
-        ),
-      ),
-    );
-  }
-
-  void _onTap() {
-    Analytics().logSelect(target: 'Library Card', source: widget.runtimeType.toString());
-  }
-
-  void _loadLibraryBarcode() {
-    String? libraryCode = Auth2().iCard?.libraryNumber;
-    if (0 < (libraryCode?.length ?? 0)) {
-      NativeCommunicator().getBarcodeImageData({
-        'content': libraryCode,
-        'format': 'codabar',
-        'width': 161 * 3,
-        'height': 50
-      }).then((Uint8List? imageData) {
-        if (mounted) {
-          setState(() {
-            _libraryCode = libraryCode;
-            _libraryBarcode = (imageData != null) ? MemoryImage(imageData) : null;
-          });
-        }
-      });
-    }
-    else {
-      _libraryCode = null;
-      _libraryBarcode = null;
-    }
-  }
-
-  void _updateLibraryBarcode() {
-    String? libraryCode = Auth2().iCard?.libraryNumber;
-    if (((_libraryCode == null) && (libraryCode != null)) ||
-        ((_libraryCode != null) && (_libraryCode != libraryCode)))
-    {
-      _loadLibraryBarcode();
-    }
   }
 }

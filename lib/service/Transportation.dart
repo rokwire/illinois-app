@@ -18,7 +18,6 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:http/http.dart';
-import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -36,21 +35,6 @@ class Transportation /* with Service */ {
   }
 
   Transportation._internal();
-
-  Future<List<ParkingEvent>?> loadParkingEvents() async {
-    final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
-    final response = await Network().get(url, auth: Auth2());
-    return (response?.statusCode == 200) ? ParkingEvent.listFromJson(JsonUtils.decodeList(response?.body)) : null;
-  }
-
-  Future<List<ParkingLot>?> loadParkingEventInventory(String? eventId) async {
-    if (StringUtils.isNotEmpty(eventId)) {
-      final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
-      final response = await Network().get(url, auth: Auth2());
-      return (response?.statusCode == 200) ? ParkingLot.listFromJson(JsonUtils.decodeList(response?.body)) : null;
-    }
-    return null;
-  }
 
   Future<Color?> loadBusColor({String? userId, String? deviceId}) async {
     String? transportationUrl =Config().transportationUrl;

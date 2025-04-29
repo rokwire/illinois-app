@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -46,7 +45,7 @@ class HomeVoterRegistrationWidget extends StatefulWidget {
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();
 }
 
-class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidget> implements NotificationsListener {
+class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidget> with NotificationsListener {
   bool _hiddenByUser = false;
   VoterRule? _voterRule;
   bool _nrvPlaceVisible = false;
@@ -326,7 +325,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
         Auth2().prefs?.voter?.voterByMail = false;
         break;
       case 'rv_url':
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _voterRule!.rvUrl)));
+        AppLaunchUrl.launch(context: context, url: _voterRule!.rvUrl);
         break;
       case 'v_yes':
         Auth2().prefs?.voter?.voted = true;
@@ -339,7 +338,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
         break;
       default:
         if (StringUtils.isNotEmpty(ruleOption.value)) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: ruleOption.value))).then((_) {
+          AppLaunchUrl.launch(context: context, url: ruleOption.value).then((_){
             _showNrvPlaces(false);
           });
         }
@@ -349,7 +348,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
 
   void _onTapVbmButton(String? vbmButtonTitle) {
     Analytics().logSelect(target: "Vote By Mail: ${StringUtils.ensureNotEmpty(vbmButtonTitle)}", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _voterRule?.vbmUrl)));
+    AppLaunchUrl.launch(context: context, url: _voterRule!.vbmUrl);
   }
 
   void _showRegionAlertIfNeeded() {

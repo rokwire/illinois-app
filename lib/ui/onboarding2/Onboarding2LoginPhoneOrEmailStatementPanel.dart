@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with OnboardingPanel {
+class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with Onboarding2Panel {
 
-  final Map<String, dynamic>? onboardingContext;
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2LoginPhoneOrEmailStatementPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  Onboarding2LoginPhoneOrEmailStatementPanel({this.onboardingContext});
+  _Onboarding2LoginPhoneOrEmailStatementPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
-  _Onboarding2LoginPhoneOrEmailStatementPanelState createState() => _Onboarding2LoginPhoneOrEmailStatementPanelState();
+  @override
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2LoginPhoneOrEmailStatementPanelState();
 }
 
-class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2LoginPhoneOrEmailStatementPanel>  implements Onboarding2ProgressableState {
-  bool _progress = false;
+class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2LoginPhoneOrEmailStatementPanel> {
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -85,6 +92,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 borderColor: Styles().colors.fillColorSecondary,
                 backgroundColor: Styles().colors.white,
+                progress: _onboardingProgress,
                 onTap: _onContinueTapped,
               ),
               Onboarding2UnderlinedButton(
@@ -96,39 +104,33 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
           )
         ]),
         OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
-        _progress ? Container(alignment: Alignment.center, child: CircularProgressIndicator(), ) : Container(),
       ],),
     );
   }
 
   void _onContinueTapped() {
     Analytics().logSelect(target: 'Continue');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: widget.onboardingContext)));
+    _onboardingNext(true);
   }
 
   void _onSkipTapped() {
     Analytics().logSelect(target: 'Not right now');
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
-    if (onContinueEx != null) {
-      onContinueEx(this);
-    }
-    else if (onContinue != null) {
-      onContinue();
-    }
+    _onboardingNext();
   }
 
-  // Onboarding2ProgressableState
+  // Onboarding
 
-  @override
-  bool get onboarding2Progress => _progress;
-  
-  @override
-  set onboarding2Progress(bool progress) {
-    if (mounted) {
-      setState(() {
-        _progress = progress;
-      });
-    }
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  //void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext([bool login = false]) {
+    widget.onboardingContext?['login'] = login;
+    Onboarding2().next(context, widget);
   }
 }
+

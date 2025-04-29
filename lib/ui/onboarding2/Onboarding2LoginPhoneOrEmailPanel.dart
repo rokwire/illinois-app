@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class Onboarding2LoginPhoneOrEmailPanel extends StatefulWidget with OnboardingPanel {
+class Onboarding2LoginPhoneOrEmailPanel extends StatefulWidget with Onboarding2Panel {
 
-  final Map<String, dynamic>? onboardingContext;
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2LoginPhoneOrEmailPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  Onboarding2LoginPhoneOrEmailPanel({this.onboardingContext});
+  _Onboarding2LoginPhoneOrEmailPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  _Onboarding2LoginPhoneOrEmailPanelState createState() => _Onboarding2LoginPhoneOrEmailPanelState();
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => onboardingContext?['login'] == true;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2LoginPhoneOrEmailPanelState();
 }
 
 class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhoneOrEmailPanel> {
@@ -50,6 +57,8 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   _LoginMode _loginMode = _LoginMode.both;
   bool _link = false;
   String? _identifier;
+
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -263,7 +272,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       setState(() { _isLoading = false; });
 
       if (result == Auth2PhoneRequestCodeResult.succeeded) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
+        // Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
+        widget.onboardingContext?['phoneNumber'] = phoneNumber;
+        _onboardingNext();
       } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "An account is already using this phone number."),
             details: Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists.details",
@@ -293,7 +304,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
           }
           else {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
+            // Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
+            widget.onboardingContext?['email'] = email;
+            widget.onboardingContext?['state'] = Auth2EmailAccountState.nonExistent;
+            _onboardingNext();
           }
         }
       });
@@ -302,8 +316,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
         if (mounted) {
           setState(() { _isLoading = false; });
           if (result != null) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email,
-                state: result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
+            // Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
+            widget.onboardingContext?['email'] = email;
+            widget.onboardingContext?['state'] = result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent;
+            _onboardingNext();
           }
           else {
             setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
@@ -351,6 +367,18 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     }
     return null;
   }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  //void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() => Onboarding2().next(context, widget);
 }
 
 enum _LoginMode {phone, email, both}

@@ -1,6 +1,7 @@
 
 
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -40,7 +41,7 @@ class HomeHandleWidget extends StatefulWidget {
   _HomeHandleWidgetState createState() => _HomeHandleWidgetState();
 }
 
-class _HomeHandleWidgetState extends State<HomeHandleWidget> implements NotificationsListener {
+class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsListener {
 
   final GlobalKey _contentKey = GlobalKey();
   CrossAxisAlignment? _dropAnchorAlignment;
@@ -73,18 +74,32 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
   }
 
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
-    return Column(key: _contentKey, children: <Widget>[
+    // ValueKey key = ValueKey(widget.position);
+    return Column(/*key: _contentKey,*/ children: <Widget>[
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : ((widget.position == 0) ? Styles().colors.surfaceAccent : Colors.transparent),),
       Semantics(
+        key: _contentKey,
         container: true,
         inMutuallyExclusiveGroup: true,
+        increasedValue:  "${(widget.position ?? 0) + 1}",
+        decreasedValue: widget.position! > 0 ? "${(widget.position??0) +1}" : 0.toString()  ,
+        value:"Position ${(widget.position??0) + 1}"   ,
+        hint: "Position",
         onIncrease: (){
           widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: 1);
-          AppSemantics.announceMessage(context, " moved one position above");
+          // AppSemantics.requestSemanticsUpdates(context);
+          if(Platform.isAndroid)
+            AppSemantics.triggerAccessibilityFocus(_contentKey);
+          if(widget.position != null && widget.position! > 1)
+              AppSemantics.announceMessage(context, " moved one position above");
           // AppSemantics.requestSemanticsUpdates(context);
         },
         onDecrease: (){
           widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: -1);
+          // if(widget.position != null && widget.position! < widget)
+          // AppSemantics.requestSemanticsUpdates(context);
+          if(Platform.isAndroid)
+            AppSemantics.triggerAccessibilityFocus(_contentKey);
           AppSemantics.announceMessage(context, " moved one position below");
           // AppSemantics.requestSemanticsUpdates(context);
         },
@@ -104,7 +119,10 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         child: widget.childBuilder?.call(context) ?? Container(color: Styles().colors.background, child:
           Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-            Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
+            Semantics(label: 'Drag Handle', button: true, /* TBD: Localization */
+              hint: AppSemantics.getIosHintLongPress("start drag"),
+              onLongPressHint: "start drag",
+              onLongPress: () => Future.delayed(Duration(seconds: 1), ()=>AppSemantics.announceMessage(context, "Started dragging")), child:
               Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
                 Styles().images.getImage('drag-white', excludeFromSemantics: true),
               ),
@@ -518,7 +536,7 @@ class HomeDragFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withValues(alpha: 0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
@@ -528,7 +546,7 @@ class HomeDragFeedback extends StatelessWidget {
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                Shadow(color: Styles().colors.fillColorPrimary.withValues(alpha: 0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
           ),
@@ -716,7 +734,7 @@ class HomeProgressWidget extends StatelessWidget {
 ////////////////////////////
 // HomeCompoundWidgetState
 
-abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> implements NotificationsListener {
+abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> with NotificationsListener {
 
   final Axis direction;
   HomeCompoundWidgetState({this.direction = Axis.vertical});

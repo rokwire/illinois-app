@@ -22,12 +22,11 @@ import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   final SkillsSelfEvaluationContent? content;
@@ -233,14 +232,8 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
     switch (link.type) {
       case "web":
-        if (link.internal && UrlUtils.launchInternal(link.url)) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: link.url)));
-        } else if (link.url != null) {
-          Uri? parsedUri = Uri.tryParse(link.url!);
-          if (parsedUri != null) {
-            launchUrl(parsedUri, mode: LaunchMode.externalApplication);
-          }
-        }
+        bool tryInternal = link.internal && UrlUtils.canLaunchInternal(link.url);
+        AppLaunchUrl.launch(context: context, url: link.url, tryInternal: tryInternal);
         break;
       case "app_panel":
         if (link.panel != null) {

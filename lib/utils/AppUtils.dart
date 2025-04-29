@@ -17,10 +17,10 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -30,8 +30,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as launcher_plugin;
 
 class AppAlert {
   
@@ -87,26 +88,26 @@ class AppAlert {
     );
   }
 
-  static Future<void> showLinkedTextMessage(BuildContext context, { required String message, required String linkMacro, required String linkText, void Function()? linkAction }) {
+  static Future<void> showLinkedTextMessage(BuildContext context, { required String message, required String linkMacro, required String linkText, void Function()? linkAction }) async {
     List<InlineSpan> spanList = <InlineSpan>[];
+    GestureRecognizer linkGestureRecognizer = TapGestureRecognizer()..onTap = linkAction;
     List<String> messages = message.split(linkMacro);
     if (0 < messages.length) {
       spanList.add(TextSpan(text: messages.first));
     }
     for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: linkText, style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: TapGestureRecognizer()..onTap = linkAction, )
-      );
+      spanList.add(TextSpan(text: linkText, recognizer: linkGestureRecognizer, style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),));
       spanList.add(TextSpan(text: messages[index]));
     }
 
-    return showWidgetMessage(context,
+    await showWidgetMessage(context,
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.message.regular"), children: spanList)
       ),
       buttonTextStyle: Styles().textStyles.getTextStyle("widget.message.regular"),
       analyticsMessage: message.replaceAll(linkMacro, linkText)
     );
+    linkGestureRecognizer.dispose();
   }
 
   static Future<void> showWidgetMessage(BuildContext context, Widget messageWidget, { TextStyle? buttonTextStyle, String? analyticsMessage }) =>
@@ -179,12 +180,6 @@ class AppSemantics {
       child: child );
     }
 
-    static void announceMessage(BuildContext? context, String message){
-        if(context != null){
-          context.findRenderObject()!.sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
-        }
-    }
-
     static void requestSemanticsUpdates(BuildContext? context){
       if(context != null){
         context.findRenderObject()?.markNeedsSemanticsUpdate();
@@ -192,6 +187,38 @@ class AppSemantics {
       }
     }
 
+    static bool isAccessibilityEnabled(BuildContext context) =>
+        MediaQuery.of(context).accessibleNavigation;
+
+    static void announceMessage(BuildContext? context, String message) =>
+        context?.findRenderObject()?.
+          sendSemanticsEvent(
+            AnnounceSemanticsEvent(message,TextDirection.ltr));
+
+    static void triggerAccessibilityTap(GlobalKey? groupKey) =>
+        groupKey?.currentContext?.findRenderObject()?.
+          sendSemanticsEvent(
+            TapSemanticEvent());
+
+    static void triggerAccessibilityFocus(GlobalKey? groupKey) =>
+      groupKey?.currentContext?.findRenderObject()?.
+        sendSemanticsEvent(
+          FocusSemanticEvent());
+
+    static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
+        groupKey?.currentContext?.findRenderObject()?.debugSemantics;
+
+    static String getIosHintLongPress(String? hint) => Platform.isIOS ? "Double tap and hold to  $hint" : "";
+
+    static String getIosHintDrag(String? hint) => Platform.isIOS ? "Double tap hold move to  $hint" : "";
+// final SemanticsNode? semanticsNode = renderObject.debugSemantics;
+// final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
+// Send a SemanticsActionEvent with the tap action
+// AppToast.showMessage("owner =   ${owner}");
+// owner?.performAction(
+//   semanticsNode?.id ?? -1,
+//   SemanticsAction.didGainAccessibilityFocus,
+// );
 
     //These navigation buttons are designed to improve the Accessibility support for horizontal scroll elements
     // static Widget createPageViewNavigationButtons({Function? onTapPrevious, Function? onTapNext}){
@@ -365,7 +392,7 @@ class AppPrivacyPolicy {
       if (Platform.isIOS) {
         Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
         if (privacyPolicyUri != null) {
-          return launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+          return launcher_plugin.launchUrl(privacyPolicyUri, mode: launcher_plugin.LaunchMode.externalApplication);
         }
         else {
           return false;
@@ -486,7 +513,27 @@ class AppTextUtils {
   }
 }
 
-class PlatformUtils {
-  static bool get isWeb => kIsWeb == true;
-  static bool get isMobile => kIsWeb == false;
+class AppLaunchUrl {
+  static Future<void> launch({required BuildContext context, String? url, Uri? uri, bool tryInternal = true, String? title,
+      String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
+    if (uri == null) {
+      uri = UriExt.tryParse(url);
+    }
+    uri = uri?.fix() ?? uri;
+
+    if (uri != null) {
+      if (tryInternal && uri.isWebScheme && await TrackingServices.isAllowed()) {
+        Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(
+            uri: uri,
+            title: title,
+            analyticsName: analyticsName,
+            analyticsSource: analyticsSource,
+            analyticsFeature: analyticsFeature,
+            showTabBar: showTabBar
+        )));
+      } else {
+        launcher_plugin.launchUrl(uri, mode: Platform.isAndroid ? launcher_plugin.LaunchMode.externalApplication : launcher_plugin.LaunchMode.platformDefault);
+      }
+    }
+  }
 }

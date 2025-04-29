@@ -42,7 +42,7 @@ class HomePublicSurveysWidget extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> implements NotificationsListener {
+class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> with NotificationsListener {
 
   List<Survey>? _contentList;
   bool? _lastPageLoaded;

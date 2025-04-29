@@ -20,6 +20,26 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
+  final String _contactEmail = "rokwire@illinois.edu";
+  late GestureRecognizer _contactEmailGestureRecognizer;
+
+  final String _contactWebsite = "m.illinois.edu";
+  late GestureRecognizer _contactWebsiteGestureRecognizer;
+
+  @override
+  void initState() {
+    _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("mailto:$_contactEmail");
+    _contactWebsiteGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("https://$_contactWebsite");
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _contactEmailGestureRecognizer.dispose();
+    _contactWebsiteGestureRecognizer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -63,7 +83,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.");
     descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, "https://rokwire.illinois.edu/people-page"/*Config().smartHealthyInitiativeUrl ?? ''*/); // TBD add as config value if needed
-    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, "https://illinois.edu"/*Config().universityHomepageUrl ?? ''*/); //TBD add as config value if needed
+    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, Config().universityHomepageUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
 
     return  Semantics(container: true, child:
@@ -89,13 +109,13 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         RichText(textAlign: TextAlign.left, text:
           TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
-              TextSpan(text: "rokwire@illinois.edu",
+              TextSpan(text: _contactEmail,
                   style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                  recognizer: TapGestureRecognizer()..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
+                  recognizer: _contactEmailGestureRecognizer),
               TextSpan(text: " • "),
-              TextSpan(text: "app.illinois.edu",
+              TextSpan(text: _contactWebsite,
                 style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                recognizer: TapGestureRecognizer()..onTap = () => _processUrl("app.illinois.edu")),
+                recognizer: _contactWebsiteGestureRecognizer),
           ]))
       ],)
     );
@@ -134,6 +154,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   }
 
   void _processUrl(String? url) {
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {

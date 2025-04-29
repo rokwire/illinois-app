@@ -63,10 +63,10 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
+class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsListener {
   final Color _dimmedBackgroundColor = Color(0x99000000);
 
-  int _groupsLoadingProgress = 0;
+  bool _loadingProgress = false;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
 
   String? _newGroupId;
@@ -129,15 +129,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _reloadGroupsContentCompleters = <Completer<void>>{};
 
         _allGroups = null;
-        _increaseGroupsLoadingProgress();
+        setState(() {
+          _loadingProgress = true;
+        });;
         List<List<Group>?> result = await Future.wait([
           _loadUserGroups(),
           _loadAllGroups(),
         ]);
         _userGroups = (0 < result.length) ? result[0] : Groups().userGroups;
         _allGroups = (1 < result.length) ? result[1] : null;
-        _decreaseGroupsLoadingProgress();
-        _checkGroupsContentLoaded();
+        setStateIfMounted(() {
+          _loadingProgress = false;
+          _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all);
+        });
 
         if (_reloadGroupsContentCompleters != null) {
           Set<Completer<void>> loginCompleters = _reloadGroupsContentCompleters!;
@@ -149,36 +153,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
       else {
         Completer<void> completer = Completer<bool?>();
-        _reloadGroupsContentCompleters!.add(completer);
+        _reloadGroupsContentCompleters?.add(completer);
         return completer.future;
       }
     }
   }
 
-  Future<void> _reloadAllGroupsContent() async {
-    if (!Connectivity().isOffline) {
-      _increaseGroupsLoadingProgress();
-      _allGroups = await _loadAllGroups();
-      _decreaseGroupsLoadingProgress();
-      _checkGroupsContentLoaded();
-    }
-  }
-
   Future<List<Group>?> _loadUserGroups() async =>
-    Auth2().isLoggedIn ? Groups().loadGroups(contentType: rokwire.GroupsContentType.my) : null;
+    Auth2().isLoggedIn ? Groups().loadGroups(contentType: rokwire.GroupsContentType.my, attributes: _contentAttributesSelection,) : null;
 
   Future<List<Group>?> _loadAllGroups() async =>
-    Groups().loadGroups(
-      contentType: rokwire.GroupsContentType.all,
-      attributes: _contentAttributesSelection,
-    );
-
-  void _checkGroupsContentLoaded() {
-    if (!_isGroupsLoading) {
-      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all);
-      _updateState();
-    }
-  }
+    Groups().loadGroups(contentType: rokwire.GroupsContentType.all, attributes: _contentAttributesSelection,);
 
   void _applyUserGroups() {
     _userGroups = Groups().userGroups;
@@ -201,28 +186,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  void _increaseGroupsLoadingProgress() {
-    _groupsLoadingProgress++;
-    _updateState();
-  }
-
-  void _decreaseGroupsLoadingProgress() {
-    _groupsLoadingProgress--;
-    _updateState();
-  }
-
   void _updateState() {
     if (mounted) {
       setState(() {});
     }
-  }
-
-  bool get _isGroupsLoading {
-    return (_groupsLoadingProgress > 0);
-  }
-
-  bool get _isLoading {
-    return _isGroupsLoading;
   }
 
   ///////////////////////////////////
@@ -234,7 +201,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _buildGroupsContentSelection(),
         Expanded(child:
           Stack(alignment: Alignment.topCenter, children: [
-            _isLoading
+            _loadingProgress
               ? Center(child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary),)
               : Column(children: [
                   if ((_selectedContentType != rokwire.GroupsContentType.my) || Auth2().isLoggedIn)
@@ -310,14 +277,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildFiltersBar() {
-    return (_selectedContentType == rokwire.GroupsContentType.my) ? SizedBox() : _buildFilterButtons();
-  }
-
-  Widget _buildFilterButtons() {
     String filtersTitle = Localization().getStringEx("panel.groups_home.filter.filter.label", "Filters");
     
     return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-      Visibility(visible: Groups().contentAttributes?.isNotEmpty ?? false, child:
+      Visibility(visible: Groups().groupsContentAttributes?.isNotEmpty ?? false, child:
         Padding(padding: EdgeInsets.only(right: 6), child:
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
@@ -349,11 +312,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildContentAttributesDescription() {
     if (_selectedContentType == rokwire.GroupsContentType.all) {
       List<InlineSpan> attributesList = <InlineSpan>[];
-      ContentAttributes? contentAttributes = Groups().contentAttributes;
-      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      List<ContentAttribute>? attributes = Groups().groupsContentAttributes?.attributes;
       TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.fat");
       TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
-      if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      if (_contentAttributesSelection.isNotEmpty && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
@@ -381,30 +343,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildGroupsCountBar() {
-    if ((_selectedContentType != rokwire.GroupsContentType.all) || _isGroupsLoading) {
-      return SizedBox();
-    } else {
-      late int groupsCount;
-      switch (_selectedContentType) {
-        case rokwire.GroupsContentType.all:
-          groupsCount = _allGroups?.length ?? 0;
-          break;
-        case rokwire.GroupsContentType.my:
-          groupsCount = _userGroups?.length ?? 0;
-          break;
-        default:
-          groupsCount = 0;
-          break;
-      }
-      String groupsLabel = (groupsCount == 1)
-          ? Localization().getStringEx("panel.groups_home.groups.count.single.label", "group")
-          : Localization().getStringEx("panel.groups_home.groups.count.plural.label", "groups");
-      String countLabel = '$groupsCount $groupsLabel';
-      return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14),
-          child: Text(countLabel,
-              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")));
+    int groupsCount = 0;
+    switch (_selectedContentType) {
+      case rokwire.GroupsContentType.all: groupsCount = _allGroups?.length ?? 0; break;
+      case rokwire.GroupsContentType.my: groupsCount = _userGroups?.length ?? 0; break;
+      default: break;
     }
+    String groupsLabel = (groupsCount == 1)
+        ? Localization().getStringEx("panel.groups_home.groups.count.single.label", "group")
+        : Localization().getStringEx("panel.groups_home.groups.count.plural.label", "groups");
+    String countLabel = '$groupsCount $groupsLabel';
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14), child:
+      Text(countLabel, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
+    );
   }
 
   Widget _buildCommandsBar() {
@@ -455,24 +406,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
-    if (Groups().contentAttributes != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
-        description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
-        scope: Groups.contentAttributesScope,
-        contentAttributes: Groups().contentAttributes,
-        selection: _contentAttributesSelection,
-        sortType: ContentAttributesSortType.alphabetical,
-        filtersMode: true,
-      ))).then((selection) {
-        if ((selection != null) && mounted) {
-          setState(() {
-            _contentAttributesSelection = selection;
-          });
-          _reloadAllGroupsContent();
-        }
-      });
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
+      description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
+      scope: Groups.groupsContentAttributesScope,
+      contentAttributes: Groups().groupsContentAttributes,
+      selection: _contentAttributesSelection,
+      sortType: ContentAttributesSortType.alphabetical,
+      filtersMode: true,
+    ))).then((selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _contentAttributesSelection = selection;
+        });
+        _reloadGroupsContent();
+      }
+    });
   }
 
   Widget _buildGroupsContent() {
@@ -766,12 +715,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _newGroupId = param;
         _newGroupKey = GlobalKey();
         _reloadGroupsContent().then((_) {
-          if (_newGroupId == param) {
+          if ((_newGroupId == param) && mounted) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               BuildContext? newGroupContext = _newGroupKey?.currentContext;
               _newGroupId = null;
               _newGroupKey = null;
-              if (newGroupContext != null) {
+              if ((newGroupContext != null) && newGroupContext.mounted) {
                 Scrollable.ensureVisible(newGroupContext, duration: Duration(milliseconds: 300));
               }
             });

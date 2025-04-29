@@ -673,7 +673,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
   _GroupCardState createState() => _GroupCardState();
 }
 
-class _GroupCardState extends State<GroupCard> implements NotificationsListener {
+class _GroupCardState extends State<GroupCard> with NotificationsListener {
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
@@ -702,31 +702,33 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildHeading(),
-            Container(height: 6),
-            Row(children:[
-              Expanded(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                  _buildCategories(),
-                  _buildTitle(),
-                  _buildProperties(),
-                ]),
-              ),
-              _buildImage()
+    return Semantics(container: true, child:
+      GestureDetector(onTap: () => _onTapCard(context), child:
+        Padding(padding: widget.margin, child:
+          Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              _buildHeading(),
+              Container(height: 6),
+              Row(children:[
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                    _buildCategories(),
+                    _buildTitle(),
+                    _buildProperties(),
+                  ]),
+                ),
+                _buildImage()
+              ]),
+              Container(height: 4),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                  _buildUpdateTime(),
+                ),
+                _buildMembersCount()
+              ])
+              // : Container()
             ]),
-            Container(height: 4),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(child:
-                _buildUpdateTime(),
-              ),
-              _buildMembersCount()
-            ])
-            // : Container()
-          ]),
+          )
         )
       )
     );
@@ -748,7 +750,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.label);
+    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -825,7 +827,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
+    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -840,11 +842,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   Widget _buildProperties() {
     List<Widget> propertiesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = Groups().contentAttributes(researchProject: widget.group?.researchProject)?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
+        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute, researchProject: widget.group?.researchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
@@ -1035,21 +1036,22 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
 //////////////////////////////////////
 // GroupPostCard
+
 enum GroupPostCardDisplayMode { list, page }
+
 class GroupPostCard extends StatefulWidget {
   final Post? post;
-  final List<Reaction>? postReactions;
   final Group group;
   final bool? isAdmin;
   final bool? isClickable;
-  final bool? pinned;
   final GroupPostCardDisplayMode displayMode;
+  final AnalyticsFeature? analyticsFeature;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.postReactions, this.pinned, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.displayMode = GroupPostCardDisplayMode.list, this.analyticsFeature}) :
     super(key: key);
 
   @override
@@ -1058,13 +1060,6 @@ class GroupPostCard extends StatefulWidget {
 
 class _GroupPostCardState extends State<GroupPostCard> {
   // static const double _smallImageSize = 64;
-  late List<Reaction> _reactions;
-
-  @override
-  void initState() {
-    _reactions = widget.postReactions ?? [];
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1096,6 +1091,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Visibility(visible: widget.post?.creatorId != null,
                                 child: Padding(padding: EdgeInsets.only(left: 12, top: 12),
                                   child: GroupMemberProfileInfoWidget(
+                                    key: ValueKey(widget.post?.creatorId),
                                     name: widget.post?.creatorName,
                                     userId: widget.post?.creatorId,
                                     isAdmin: widget.isAdmin,
@@ -1164,7 +1160,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(reactions: _reactions, group: widget.group)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post, analyticsFeature: widget.analyticsFeature,)
                               )
                             ),
                             Visibility(
@@ -1235,7 +1231,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReactions: _reactions,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupReactionTest()));
   }
 
@@ -1244,11 +1240,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
     UrlUtils.launchExternal(url);
   }
 
-  bool get _reactionsEnabled => false;
-
   String get _htmlStyle => widget.displayMode == GroupPostCardDisplayMode.list ?
     "text-overflow:ellipsis;max-lines:3" :
     "white-space: normal";
+
+  bool get _reactionsEnabled => true;
 }
 
 //////////////////////////////////////
@@ -1264,8 +1260,9 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
+  final AnalyticsFeature? analyticsFeature;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1273,7 +1270,6 @@ class GroupReplyCard extends StatefulWidget {
 
 class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
   // static const double _smallImageSize = 64;
-  List<Reaction> _reactions = []; //TBD load
 
   @override
   void initState() {
@@ -1311,15 +1307,16 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Expanded(child: Expanded(child:
+                Expanded(child:
                 Visibility(visible: widget.reply?.creatorId != null,
                     child: GroupMemberProfileInfoWidget(
+                      key: ValueKey(widget.reply?.creatorId),
                       name: widget.reply?.creatorName,
                       userId: widget.reply?.creatorId,
                       isAdmin: widget.creator?.isAdmin == true,
                       additionalInfo: widget.reply?.displayDateTime,
                       // updateController: widget.updateController,
-                    ))),),
+                    )),),
                 // Visibility(
                 //   visible: Config().showGroupPostReactions &&
                 //       (widget.group?.currentUserHasPermissionToSendReactions == true),
@@ -1400,17 +1397,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
-                    Visibility(
-                      visible: Config().showGroupPostReactions,
-                      child: Expanded(
+                        Expanded(
                           child: Visibility(visible: _reactionsEnabled,
-                              child: GroupReactionsLayout(reactions: _reactions)
+                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment, analyticsFeature: widget.analyticsFeature,)
                           )
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                           //       semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                           //       style: Styles().textStyles.getTextStyle('widget.description.small'))),)
-                      )),
+                      ),
                 ],),)
             ])))));
   }
@@ -1432,7 +1427,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     }
   }
 
-  bool get _reactionsEnabled => false;
+  bool get _reactionsEnabled => Config().showGroupPostReactions;
 }
 
 //////////////////////////////////////
@@ -1595,13 +1590,23 @@ class _GroupReactionState extends State<GroupReaction> {
 typedef void OnBodyChangedListener(String text);
 
 class PostInputField extends StatefulWidget{
+  static const int defaultMaxLines = 15;
+  static const int defaultMinLines = 7;
+
   final EdgeInsets? padding;
   final String? title;
   final String? hint;
   final String? text;
   final OnBodyChangedListener? onBodyChanged;
+  final int? maxLines;
+  final int? minLines;
+  final bool autofocus;
+  final InputDecoration? inputDecoration;
+  final BoxDecoration? boxDecoration;
+  final TextStyle? style;
 
-  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title}) : super(key: key);
+  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title,
+    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines, this.autofocus = false, this.inputDecoration, this.boxDecoration, this.style}) : super(key: key);
 
   static get fieldDecoration => BoxDecoration(
       color: Styles().colors.white,
@@ -1658,24 +1663,22 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            Visibility(visible: StringUtils.isNotEmpty(widget.title), child:
+              Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+            ),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Container(
-                    decoration: PostInputField.fieldDecoration,
+                    decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
                     child: TextField(
                       controller: _bodyController,
                       onChanged: _notifyChanged,
-                      maxLines: 15,
-                      minLines: 7,
+                      maxLines: widget.maxLines,
+                      minLines: widget.minLines,
+                      autofocus: widget.autofocus,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration:
-                      InputDecoration(
-                          hintText: _hint,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(8)
-                      ),
-                        style: Styles().textStyles.getTextStyle('')))),
+                      decoration: widget.inputDecoration ?? _defaultInputDecoration,
+                      style: widget.style ?? Styles().textStyles.getTextStyle('')))),
               Padding(
                   padding: EdgeInsets.zero,
                   child: Row(
@@ -1842,6 +1845,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
+
+  InputDecoration get _defaultInputDecoration => InputDecoration(
+      hintText: _hint,
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.all(8)
+  );
 }
 
 class GroupMembersSelectionWidget extends StatefulWidget{
@@ -2223,7 +2232,7 @@ class GroupPollCard extends StatefulWidget{
   }
 }
 
-class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener {
+class _GroupPollCardState extends State<GroupPollCard> with NotificationsListener {
   GroupStats? _groupStats;
 
   List<GlobalKey>? _progressKeys;
@@ -2298,6 +2307,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
             Row(children: [
               Visibility(visible: widget.poll?.creatorUserUuid != null,
                   child: GroupMemberProfileInfoWidget(
+                    key: ValueKey(widget.poll?.pollId),
                     name: widget.poll?.creatorUserName,
                     userId: widget.poll?.creatorUserUuid,
                     isAdmin: widget.isAdmin,
@@ -2804,7 +2814,7 @@ class GroupMemberProfileImage extends StatefulWidget {
   State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
 }
 
-class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> implements NotificationsListener {
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with NotificationsListener {
   Uint8List? _imageBytes;
   bool _loading = false;
 
@@ -2879,6 +2889,62 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
       }
     }
   }
+}
+
+class GroupProfilePronouncementWidget extends StatefulWidget {
+  final String? accountId;
+
+  const GroupProfilePronouncementWidget({super.key, this.accountId});
+
+  @override
+  State<StatefulWidget> createState() => GroupProfilePronouncementState();
+}
+
+class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidget> {
+  final _contentPadding = EdgeInsets.symmetric(horizontal: 13, vertical: 8);
+
+  Uint8List? _pronunciationAudioData;
+  bool? _hasPronouncement;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    setStateIfMounted(() => _loading = true);
+    Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
+          if(hasPronunciation == true){
+            Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+              setStateIfMounted(() {
+                _loading = false;
+                _hasPronouncement = hasPronunciation;
+                _pronunciationAudioData = audio?.audioData;
+              });
+            });
+          } else {
+            setStateIfMounted(() {
+              _loading = false;
+              _hasPronouncement = hasPronunciation;
+            });
+          }
+    });
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) => _loading ?
+    _loadingContent : _content;
+
+  Widget get _content =>
+    Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true,
+        child: DirectoryPronunciationButton(
+            url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
+            data: _pronunciationAudioData,
+            padding: _contentPadding
+        ));
+
+  Widget get _loadingContent =>
+    Padding(padding: _contentPadding,
+      child: SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+      ));
 }
 
 class GroupsSelectionPopup extends StatefulWidget {
@@ -3165,7 +3231,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
-                              EnabledToggleButton(
+                              //Since the setting "view email address" does work, we do not need the option to view a member's NetID.
+                              /* EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
@@ -3175,7 +3242,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
@@ -3612,32 +3679,50 @@ class ReactionKeyboard {
 
 class GroupReactionsLayout extends StatefulWidget {
   final Group? group;
-  final List<Reaction> reactions;
-  final Future<bool> Function(Reaction)? onSendReaction;
-  final Future<bool> Function(Reaction)? onDeleteReaction;
+  final String? entityId;
+  final SocialEntityType reactionSource;
+  final AnalyticsFeature? analyticsFeature;
   final bool? enabled;
 
-  const GroupReactionsLayout({super.key, required this.reactions, this.group, this.onSendReaction, this.onDeleteReaction, this.enabled = true,});
+  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _GroupReactionsState();
 }
 
-class _GroupReactionsState extends State<GroupReactionsLayout> {
+class _GroupReactionsState extends State<GroupReactionsLayout> with NotificationsListener{
+  List<Reaction>? _reactions;
+  bool _loading = false;
+
   @override
-  Widget build(BuildContext context)
-    => _buildReactionsLayoutWidget;
+  void initState() {
+    NotificationService().subscribe(this, [
+      Social.notifyReactionsUpdated,
+    ]);
+    _loadReactions();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      // Stack(alignment: Alignment.centerLeft,
+      //     children: [
+        _buildReactionsLayoutWidget;
+        // _loadingLayout
+      // ]);
+
 
   Widget get _buildReactionsLayoutWidget {
-    Map<String, List<Reaction>> sameEmojiReactions = ReactionExt.extractSameEmojiReactions(widget.reactions) ?? {};
+    Map<String, List<Reaction>> sameEmojiReactions = ReactionExt.extractSameEmojiReactions(_reactions) ?? {};
     return Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
+          _loadingLayout,
           ...sameEmojiReactions.keys.map((String emoji) =>
               _buildReactionWidget(
-                  occurrences: sameEmojiReactions[emoji]?.length,
+                  occurrences: sameEmojiReactions[emoji],
                   reaction: sameEmojiReactions[emoji]?.
-                  firstWhere(
+                    firstWhere(
                           (Reaction reaction) => reaction.isCurrentUserReacted,
                       orElse: () => (CollectionUtils.isNotEmpty(sameEmojiReactions[emoji]) ? sameEmojiReactions[emoji]?.first : null)
                           ?? Reaction()))
@@ -3659,10 +3744,18 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     );
   }
 
-  Widget _buildReactionWidget({Reaction? reaction, int? occurrences}){
+  Widget get _loadingLayout => Visibility(visible: _loading, child:
+      Container(padding: EdgeInsets.only(right: 8),
+        child: SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+        )),
+  );
+
+  Widget _buildReactionWidget({Reaction? reaction, List<Reaction>? occurrences}){
     return Padding( padding: EdgeInsets.all(4),
         child: InkWell(
-            onTap: () => _deleteReaction(reaction), //TBD call BB to remove reaction
+            onTap: () => _onTapReaction(reaction),
+            onLongPress: () =>_onLongPressReactions(occurrences),
             child: Container(
                 padding: EdgeInsets.symmetric(vertical: 1, horizontal: 6),
                 decoration: BoxDecoration(
@@ -3671,9 +3764,9 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
                     border: Border.all(color: Styles().colors.surfaceAccent,)),
                 child: Row(mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(reaction?.data ?? "", style: TextStyle(fontSize: 18)),
-                      Visibility(visible: (occurrences ?? 0 ) > 1,
-                          child: Text(occurrences?.toString() ?? "", style: TextStyle(fontSize: 16),)
+                      Text(reaction?.emoji ?? "", style: TextStyle(fontSize: 18)),
+                      Visibility(visible: (occurrences?.length ?? 0 ) > 1,
+                          child: Text(occurrences?.length.toString() ?? "", style: TextStyle(fontSize: 16),)
                       )
                     ])
             )
@@ -3681,34 +3774,116 @@ class _GroupReactionsState extends State<GroupReactionsLayout> {
     );
   }
 
-  void _reactWithEmoji(emoji.Emoji emoji){
-    _sendReaction(
-        Reaction(
-          data: emoji.emoji,
-          type: ReactionType.emoji,
-          dateCreatedUtc: DateTime.now().toUtc(),
-          engager: Creator(accountId: widget.group?.currentMember?.userId, name: widget.group?.currentMember?.name),
-        )
+  void _onTapReaction(Reaction? reaction){
+    _sendReaction(reaction?.isCurrentUserReacted == true ?
+        reaction :
+        Reaction.emoji(emojiSource: reaction?.emoji, emojiName: reaction?.emojiName));
+  }
+
+  void _reactWithEmoji(emoji.Emoji emoji){//Emoji coming from the Emoji picker
+    List<Reaction>? userReactions = ReactionExt.extractUsersReactions(_reactions, emoji: emoji.emoji);
+    _sendReaction(CollectionUtils.isNotEmpty(userReactions) ? userReactions!.first :
+          Reaction.emoji(emojiSource: emoji.emoji, emojiName: emoji.name));
+  }
+
+  void _sendReaction(Reaction? reaction){
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Analytics().logReaction(reaction,
+      target: 'group.${widget.reactionSource.name}',
+      feature: widget.analyticsFeature,
+      attributes: widget.group?.analyticsAttributes,
     );
+    Social().react(entityId: widget.entityId!, source: widget.reactionSource, reaction: reaction).then((succeeded) {
+      //If success then we will receive notification Social.notifyReactionsUpdated and will load reactions
+      if (!succeeded) {
+        setStateIfMounted(() {
+          _loading = false;
+        });
+        AppAlert.showDialogResult(
+            context, Localization().getStringEx('widget.group.card.reaction.failed.msg', 'Failed to react. Please, try again.'));
+      }
+    });
   }
 
-  void _sendReaction(Reaction? reaction){ //TBD hook to BB
-    if(widget.enabled == true && reaction != null) {
-      setStateIfMounted(() =>
-          widget.reactions.add(reaction)
-      );
-      widget.onSendReaction?.call(reaction);
+  void _onLongPressReactions(List<Reaction>? reactions) {
+    if (CollectionUtils.isEmpty(reactions)) {
+      return;
+    }
+    Analytics().logSelect(target: 'Reactions List');
+
+    List<Widget> reactionWidgets = [];
+    for (Reaction reaction in reactions!) {
+      reactionWidgets.add(Padding(
+        padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Currently we have only likes
+            reaction.type == ReactionType.emoji ? Text(reaction.emoji ?? "") :
+            Styles().images.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
+            Container(width: 16),
+            Text(StringUtils.ensureNotEmpty(reaction.engagerName), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+          ],
+        ),
+      ));
+    }
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Styles().colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 24),
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              children: [
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors.disabledTextColor)),
+                Container(height: 16),
+                Expanded(
+                  child: ListView(
+                    children: reactionWidgets,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Social.notifyReactionsUpdated){
+      Map<String, dynamic>? params = JsonUtils.mapValue(param);
+      String? identifier = JsonUtils.stringValue(params?["identifier"]);
+      if(identifier == widget.entityId){
+        _loadReactions();
+      }
     }
   }
 
-  void _deleteReaction(Reaction? reaction){ //TBD remove
-    if(widget.enabled == true && reaction != null) {
-      setStateIfMounted(() =>
-          widget.reactions.remove(reaction)
-      );
-      widget.onDeleteReaction?.call(reaction);
+  //Loading
+  void _loadReactions(){
+    if (!_hasEntityId) {
+      return;
     }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) =>
+        _reactions = result
+    ).whenComplete(()=>
+      setStateIfMounted(() =>
+        _loading = false
+      ));
   }
+
+  bool get _hasEntityId => (widget.entityId != null);
 }
 
 class GroupConfirmationDialog extends StatelessWidget {

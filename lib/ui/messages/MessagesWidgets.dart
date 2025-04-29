@@ -24,7 +24,7 @@ class RecentConversationsPage extends StatefulWidget {
   State<StatefulWidget> createState() => RecentConversationsPageState();
 }
 
-class RecentConversationsPageState extends State<RecentConversationsPage> with AutomaticKeepAliveClientMixin implements NotificationsListener {
+class RecentConversationsPageState extends State<RecentConversationsPage> with NotificationsListener, AutomaticKeepAliveClientMixin {
 
   List<Conversation>? _conversations;
   late Map<String, Conversation> _conversationsMap;

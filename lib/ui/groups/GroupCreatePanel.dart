@@ -16,7 +16,9 @@
 
 
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -71,6 +73,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Group? _group;
 
   GroupMemberStatus _selectedMembersStatus = GroupMemberStatus.admin;
+  double? _membersStatusDropdownItemsWidth;
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
 
@@ -101,6 +104,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _initGroup(){
     _group = (widget.group != null) ? Group.fromOther(widget.group) : Group();
     _group?.onlyAdminsCanCreatePolls ??= true;
+    if (_group?.researchProject == true)
+      _group?.canJoinAutomatically ??= true;
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
     _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group);
@@ -240,7 +245,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         //_buildTitle("Research", "images/icon-gear.png"),
         //_buildResearchOptionLayout(),
         //_buildResearchOpenLayout(),
-        _buildResearchConsentDetailsField(),
+        //_buildResearchConsentDetailsField(),
         // #2626: Hide consent checkbox and edit control.
         // _buildResearchConfirmationLayout(),
         _buildLinkField(),
@@ -372,7 +377,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Localization().getStringEx("panel.groups_create.description.project.title", "SHORT DESCRIPTION") :
       Localization().getStringEx("panel.groups_create.description.group.title", "DESCRIPTION");
     String? description = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will participation involve?") :
       Localization().getStringEx("panel.groups_create.description.group.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldTitle = (_group?.researchProject == true) ?
       Localization().getStringEx("panel.groups_create.description.project.field", "SHORT DESCRIPTION FIELD") :
@@ -404,7 +409,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       controller: _groupDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
+                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                     )),
             )],)
           ),
@@ -482,7 +487,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     if (_linkController.text.isNotEmpty) {
       Uri? uri = Uri.tryParse(_linkController.text);
       if (uri != null) {
-        Uri? fixedUri = UrlUtils.fixUri(uri);
+        Uri? fixedUri = uri.fix();
         if (fixedUri != null) {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;
@@ -494,7 +499,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //
   //Research Description
-  Widget _buildResearchConsentDetailsField() {
+  /*Widget _buildResearchConsentDetailsField() {
     String? title = "PROJECT DETAILS";
     String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
@@ -521,7 +526,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ],),
       ),
     );
-  }
+  }*/
   //
   // Research Confirmation
   // #2626: Hide consent checkbox and edit control.
@@ -593,7 +598,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
@@ -602,7 +607,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
+              requiredMark: (!_isResearchProject) && (_contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
@@ -626,9 +631,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   List<Widget> _constructAttributesContent() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
         List<String>? displayAttributes = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
@@ -657,8 +661,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
-      scope: Groups.contentAttributesScope,
-      contentAttributes: Groups().contentAttributes,
+      scope: _contentAttributesScope,
+      contentAttributes: _contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
@@ -1072,7 +1076,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.authManGroupName = null;
         _group!.attendanceGroup = false;
         //Unlocked Advanced setting
-        // _group?.canJoinAutomatically = false;
+        // _group?.canJoinAutomatically = true;
         // _group?.onlyAdminsCanCreatePolls = true;
       }
       else {
@@ -1124,56 +1128,117 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   // AdminSection
   Widget _buildAdminSettingsSection() {
-    return Visibility(
-        visible: true,
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(child:
-                      GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false))
-                  ]),
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-                          child: TextField(
-                            controller: _groupNetIdsController,
-                            maxLines: 1,
-                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                          )),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6),
-                            child: GroupDropDownButton(
-                                initialSelectedValue: _selectedMembersStatus,
-                                constructTitle:
-                                    (dynamic item) => item is GroupMemberStatus ? groupMemberStatusToString(item) : "",
-                                onValueChanged: _onAdminsStatusChanged,
-                                items: _adminsStatusItems))
-                        )
-                    ])
-                  ])
-            ));
+    return Visibility(visible: true, child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false)
+            )
+          ]),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
+            Expanded(child:
+              Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white), child:
+                TextField(
+                  controller: _groupNetIdsController,
+                  maxLines: 1,
+                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6), child:
+              _adminStatusDropdown
+            )
+          ])
+        ])
+      )
+    );
   }
 
-  void _onAdminsStatusChanged(dynamic status) {
-    if (status is GroupMemberStatus)
-      setStateIfMounted(() {
-        _selectedMembersStatus = status;
-      });
+
+  Widget get _adminStatusDropdown =>
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<GroupMemberStatus>(
+        dropdownStyleData: DropdownStyleData(
+          width: _membersStatusDropdownItemsWidth ??= _evalMembersStatusDropdownItemsWidth(),
+          direction: DropdownDirection.left,
+          decoration: _dropdownDecoration,
+        ),
+        customButton: _adminStatusDropdownButton(),
+        isExpanded: false,
+        items: _adminStatusDropdownItems(),
+        onChanged: _onAdminStatusDropdownSelected,
+      ),
+    );
+
+  void _onAdminStatusDropdownSelected(GroupMemberStatus? status) {
+    Analytics().logSelect(target: 'Select Admin Status: $status');
+    if ((status != null) && mounted)
+    setState(() {
+      _selectedMembersStatus = status;
+    });
   }
+
+  Widget _adminStatusDropdownButton() =>
+    Container(decoration: _dropdownDecoration, child:
+      Padding(padding: EdgeInsets.only(left: 12, right: 6, top: 12, bottom: 12), child:
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(groupMemberStatusToString(_selectedMembersStatus) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.value') ,),
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            SizedBox(width: 10, height: 10, child:
+              Center(child:
+                Styles().images.getImage('chevron-down', size: 10),
+              )
+            )
+          )
+        ],)
+      )
+    );
+
+  List<DropdownMenuItem<GroupMemberStatus>> _adminStatusDropdownItems() =>
+    List.from(_adminsStatusItems.map((status) => _adminStatusDropdownItem(status, selected: _selectedMembersStatus == status)));
+
+  DropdownMenuItem<GroupMemberStatus> _adminStatusDropdownItem(GroupMemberStatus status, { bool selected = false,}) =>
+      DropdownMenuItem<GroupMemberStatus>(
+        value: status,
+        child: Row(mainAxisSize: MainAxisSize.max, children: [
+          Expanded(child:
+            Text(groupMemberStatusToString(status) ?? '',
+              overflow: TextOverflow.ellipsis,
+              style: Styles().textStyles.getTextStyle(selected ?  'widget.group.dropdown_button.item.selected' : 'widget.group.dropdown_button.item.not_selected'),
+              semanticsLabel: "",
+            ),
+          ),
+          Padding(padding: EdgeInsets.only(left: 12), child:
+            SizedBox(width: 16, height: 16, child:
+              Center(child: Styles().images.getImage(selected ? 'radio-button-on' : 'radio-button-off', size: 16))
+            )
+          )
+        ],),
+      );
+
+  double _evalMembersStatusDropdownItemsWidth() {
+    double maxTextWidth = 0;
+    for (GroupMemberStatus status in _adminsStatusItems) {
+      final Size textSizeFull = (TextPainter(
+        text: TextSpan(text: groupMemberStatusToString(status) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.item.not_selected')),
+        textScaler: MediaQuery.of(context).textScaler,
+        textDirection: TextDirection.ltr,
+      )..layout()).size;
+      if (maxTextWidth < textSizeFull.width) {
+        maxTextWidth = textSizeFull.width;
+      }
+    }
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + (16 + 12) + 32;
+    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+  }
+
+  BoxDecoration get _dropdownDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+  );
 
   List<GroupMemberStatus> get _adminsStatusItems => [GroupMemberStatus.admin, GroupMemberStatus.member];
 
@@ -1246,11 +1311,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (Groups().contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
+        (_contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount >= 0));
   }
 
   bool get _loading => false;
+
+  String get _contentAttributesScope => Groups.contentAttributesScope(researchProject: _isResearchProject);
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 }

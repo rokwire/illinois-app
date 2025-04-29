@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -28,19 +27,33 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
+class Onboarding2LoginEmailPanel extends StatefulWidget with Onboarding2Panel {
 
-  final String? email;
-  final Auth2EmailAccountState? state;
-  final Map<String, dynamic>? onboardingContext;
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2LoginEmailPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  Onboarding2LoginEmailPanel({this.email, this.state, this.onboardingContext});
+  _Onboarding2LoginEmailPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  _Onboarding2LoginEmailPanelState createState() => _Onboarding2LoginEmailPanelState();
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => (onboardingContext?['login'] == true) && (email?.isNotEmpty == true);
+
+  String? get email => JsonUtils.stringValue(onboardingContext?['email']);
+  bool get link => JsonUtils.boolValue(onboardingContext?['link']) == true;
+  Auth2EmailAccountState? get state {
+    dynamic stateParam = onboardingContext?['state'];
+    return (stateParam is Auth2EmailAccountState) ? stateParam : null;
+  }
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2LoginEmailPanelState();
 }
 
-class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> implements Onboarding2ProgressableState {
+class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> {
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
@@ -61,13 +74,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   bool _isLoading = false;
   bool _showingPassword = false;
   bool _link = false;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
     super.initState();
-    _emailController.text = widget.email!;
+    _emailController.text = widget.email ?? '';
     _state = widget.state;
-    _link = widget.onboardingContext?["link"] ?? false;
+    _link = widget.link;
     if (_state == Auth2EmailAccountState.unverified) {
       _validationErrorText = Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.");
       _validationErrorColor = _messageColor;
@@ -291,8 +305,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             )
           ]),
         ),
-        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
-        Visibility(visible: _isLoading, child:
+        OnboardingBackButton(padding: backButtonInsets, onTap: _onTapBack),
+        Visibility(visible: _isLoading || _onboardingProgress, child:
           Center(child:
             CircularProgressIndicator(),
           ),
@@ -510,7 +524,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
       }
       else {
-        _onContinue();
+        _onboardingNext();
       }
     }
   }
@@ -531,7 +545,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
               });
             }
             else {
-              _onContinue();
+              _onboardingNext();
             }
           }
         });
@@ -539,7 +553,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       }
     }
 
-    _onContinue();
+    _onboardingNext();
   }
 
   void setErrorMsg(String? msg, { Color? color}) {
@@ -564,32 +578,22 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     });
   }
 
-  void _onContinue() {
-    // Hook this panels to Onboarding2
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
-    if (onContinueEx != null) {
-      onContinueEx(this);
-    }
-    else if (onContinue != null) {
-      onContinue();
-    }
-    else {
-      Onboarding().next(context, widget);
-    }
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
   }
 
-  // Onboarding2ProgressableState
+  // Onboarding
 
-  @override
-  bool get onboarding2Progress => _isLoading;
-  
-  @override
-  set onboarding2Progress(bool progress) {
-    if (mounted) {
-      setState(() {
-        _isLoading = progress;
-      });
-    }
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  //void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() {
+    Onboarding2().next(context, widget);
   }
 }

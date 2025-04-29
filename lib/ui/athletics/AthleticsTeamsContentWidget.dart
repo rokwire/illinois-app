@@ -35,7 +35,7 @@ class AthleticsTeamsContentWidget extends StatefulWidget {
   State<AthleticsTeamsContentWidget> createState() => _AthleticsTeamsContentWidgetState();
 }
 
-class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidget> implements NotificationsListener {
+class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidget> with NotificationsListener {
   List<SportDefinition>? _teams;
 
   @override

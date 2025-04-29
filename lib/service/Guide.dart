@@ -23,7 +23,7 @@ import 'package:timezone/timezone.dart';
 
 enum GuideContentSource { Net, Debug }
 
-class Guide with Service implements NotificationsListener {
+class Guide with Service, NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuide = "edu.illinois.rokwire.guide";
@@ -173,7 +173,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<String?> _loadContentStringFromNet() async {
-    // //TMP:
+    // TMP:
     // return AppBundle.loadString('assets/guide.json');
     try {
       Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2());
@@ -319,7 +319,7 @@ class Guide with Service implements NotificationsListener {
     return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
   }
 
-  List<Map<String, dynamic>>? getContentList({String? guide, String? category, GuideSection? section}) {
+  List<Map<String, dynamic>>? getContentList({String? guide, String? category, GuideSection? section, String? contentType}) {
     if (_contentList != null) {
       List<Map<String, dynamic>> guideList = <Map<String, dynamic>>[];
       for (dynamic contentEntry in _contentList!) {
@@ -327,7 +327,8 @@ class Guide with Service implements NotificationsListener {
         if ((guideEntry != null) &&
             ((guide == null) || (Guide().entryGuide(guideEntry) == guide)) &&
             ((category == null) || (Guide().entryCategory(guideEntry)) == category) &&
-            ((section == null) || (GuideSection.fromGuideEntry(guideEntry) == section)))
+            ((section == null) || (GuideSection.fromGuideEntry(guideEntry) == section)) &&
+            ((contentType == null) || (Guide().entryContentType(guideEntry) == contentType)))
         {
           guideList.add(guideEntry);
         }

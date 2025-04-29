@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -24,7 +23,7 @@ import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -35,15 +34,27 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
-class Onboarding2VideoTutorialPanel extends StatefulWidget {
+class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel {
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2VideoTutorialPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
+
+  _Onboarding2VideoTutorialPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
+
   @override
-  State<Onboarding2VideoTutorialPanel> createState() => _Onboarding2VideoTutorialPanelState();
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2VideoTutorialPanelState();
 }
 
-class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> implements NotificationsListener {
+class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> with NotificationsListener {
   Video? _video;
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
@@ -52,6 +63,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   String? _currentCaptionText;
   bool _ccEnabled = false;
   bool _ccVisible = false;
+  bool _onboardingProgress = false;
 
   @override
   void initState() {
@@ -69,6 +81,87 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     _disposeVideoPlayer();
     super.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(backgroundColor: Styles().colors.blackTransparent06, body:
+      SafeArea(child:
+          Stack(children: [
+            Positioned.fill(child:
+            SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
+                Container(color: Styles().colors.blackTransparent06,)
+              )
+            ),
+            Center(child:
+              _buildVideoContent(),
+            ),
+            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
+            Positioned.fill(child:
+              Align(alignment: (_isPortrait ? Alignment.bottomCenter : Alignment.bottomLeft), child:
+                LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _skipButtonLabel(), onTap: _onTapContinue, textColor: Styles().colors.white)
+              ),
+            ),
+            Positioned.fill(child:
+              Align(alignment: Alignment.bottomRight, child:
+                _buildCcButton()
+              ),
+            ),
+          ])
+      )
+    );
+  }
+
+  Widget _buildVideoContent() {
+    if (_controller != null) {
+      return FutureBuilder(
+          future: _initializeVideoPlayerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              double playerAspectRatio = _controller!.value.aspectRatio;
+              Orientation deviceOrientataion = MediaQuery.of(context).orientation;
+              double deviceWidth = MediaQuery.of(context).size.width;
+              double deviceHeight = MediaQuery.of(context).size.height;
+              double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
+              double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
+              return GestureDetector(
+                  onTap: _onTapPlayPause,
+                  child: Center(child: SizedBox(
+                      width: playerWidth,
+                      height: playerHeight,
+                      child: Stack(alignment: Alignment.center, children: [
+                        Stack(children: [
+                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
+                          ClosedCaption(
+                              text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
+                        ]),
+                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
+                      ]))));
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          });
+    } else {
+      return Center(
+          child: Text(Localization().getStringEx('panel.onboarding2.video.missing.msg', 'Missing video'),
+              style: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
+    }
+  }
+
+  Widget _buildCcButton() =>
+    Visibility(visible: _ccVisible, child:
+      InkWell(onTap: _onTapCc, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              border: Border.all(color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
+              borderRadius: BorderRadius.all(Radius.circular(6))
+            ),
+            child: Text('CC', style: _ccEnabled? Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled"))
+          )
+        )
+      )
+    );
 
   void _initVideoPlayer() {
     if (_video != null) {
@@ -161,91 +254,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Styles().colors.blackTransparent06,
-        body: SafeArea(
-            child: Stack(alignment: Alignment.center, children: [
-          _buildVideoContent(),
-          Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Row(children: [
-              Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack)
-            ]),
-            Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Row(children: [
-              Expanded(child: Stack(children: [
-                Align(alignment: (_isPortrait ? Alignment.center : Alignment.centerLeft), child: LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _buttonLabel, onTap: _onTapSkip, textColor: Styles().colors.white)),
-                Align(alignment: Alignment.centerRight, child: _buildCcButton())
-              ]))
-            ]))
-          ])
-        ])));
-  }
-
-  Widget _buildVideoContent() {
-    if (_controller != null) {
-      return FutureBuilder(
-          future: _initializeVideoPlayerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              double playerAspectRatio = _controller!.value.aspectRatio;
-              Orientation deviceOrientataion = MediaQuery.of(context).orientation;
-              double deviceWidth = MediaQuery.of(context).size.width;
-              double deviceHeight = MediaQuery.of(context).size.height;
-              double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
-              double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
-              return GestureDetector(
-                  onTap: _onTapPlayPause,
-                  child: Center(child: SizedBox(
-                      width: playerWidth,
-                      height: playerHeight,
-                      child: Stack(alignment: Alignment.center, children: [
-                        Stack(children: [
-                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
-                          ClosedCaption(
-                              text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
-                        ]),
-                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
-                      ]))));
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          });
-    } else {
-      return Center(
-          child: Text(Localization().getStringEx('panel.onboarding2.video.missing.msg', 'Missing video'),
-              style: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
-    }
-  }
-
-  Widget _buildCcButton() {
-    return Visibility(
-        visible: _ccVisible,
-        child: GestureDetector(
-                onTap: _onTapCc,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Container(
-                        width: 40,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
-                            borderRadius: BorderRadius.all(Radius.circular(6))),
-                        child: Center(
-                            child: Text('CC',
-                                style: _ccEnabled? Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled")))))));
-  }
-
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
-  }
-
-  void _onTapSkip() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
-  }
-
   void _onTapPlayPause() {
     if (!_isPlayerInitialized) {
       return;
@@ -307,13 +315,35 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     return (_controller?.value.isInitialized ?? false);
   }
 
-  String get _buttonLabel {
+  String _skipButtonLabel({String? language}) {
     return _isVideoEnded
-        ? Localization().getStringEx('panel.onboarding2.video.button.continue.title', 'Continue')
-        : Localization().getStringEx('panel.onboarding2.video.button.skip.title', 'Skip');
+        ? Localization().getStringEx('panel.onboarding2.video.button.continue.title', 'Continue', language: language)
+        : Localization().getStringEx('panel.onboarding2.video.button.skip.title', 'Skip', language: language);
   }
 
   bool get _isPortrait => (MediaQuery.of(context).orientation == Orientation.portrait);
+
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    _onboardingBack();
+  }
+
+  void _onTapContinue() {
+    Analytics().logSelect(target: _skipButtonLabel(language: 'en'));
+    _onboardingNext();
+  }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() => Onboarding2().next(context, widget);
 
   // NotificationsListener
 

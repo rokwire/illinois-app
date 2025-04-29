@@ -3,13 +3,13 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 ## Requirements
 
-### [Flutter](https://flutter.dev/docs/get-started/install) v3.24.0
+### [Flutter](https://flutter.dev/docs/get-started/install) v3.29.2
 
-### [Android Studio](https://developer.android.com/studio) 2021.3.1+
+### [Android Studio](https://developer.android.com/studio) 2022.3.1+
 
-### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 15.2
+### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 16.0
 
-### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.15.0+
+### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.16.0+
 
 
 ## Build

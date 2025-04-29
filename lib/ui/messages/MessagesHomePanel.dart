@@ -79,7 +79,7 @@ class MessagesHomePanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Messages;
 }
 
-class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProviderStateMixin implements NotificationsListener {
+class _MessagesHomePanelState extends State<MessagesHomePanel> with NotificationsListener, TickerProviderStateMixin {
   final List<_FilterEntry> _mutedValues = MessagesHomePanel.enableMute ? [
     _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.show", "Show Muted"), value: null),
     _FilterEntry(name: Localization().getStringEx("panel.messages.label.muted.hide", "Hide Muted"), value: false),
@@ -1036,7 +1036,7 @@ class ConversationCard extends StatefulWidget {
   }
 }
 
-class _ConversationCardState extends State<ConversationCard> implements NotificationsListener {
+class _ConversationCardState extends State<ConversationCard> with NotificationsListener {
 
   @override
   void initState() {

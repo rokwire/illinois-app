@@ -6,6 +6,227 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.0.20] - 2025-04-29
+### Fixed
+- Make sure to apply privacy settings before sharing a profile card [#5026](https://github.com/rokwire/illinois-app/issues/5026).
+- Make sure not to duplicate group tabs [#5052](https://github.com/rokwire/illinois-app/issues/5052).
+### Changed
+- Added photo border colors to University Library Card [#4916](https://github.com/rokwire/illinois-app/issues/4916).
+- The links in the signed out message for Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
+
+## [7.0.19] - 2025-04-28
+### Added
+- Created Digital Business Card in Profile panel, replace the existing share sheet [#5026](https://github.com/rokwire/illinois-app/issues/5026).
+### Changed
+- Additional research projects updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
+- Updated university contact URL [#5069](https://github.com/rokwire/illinois-app/issues/5069).
+- Removed inaccurate text from My Profile if directory is set to private [#5070](https://github.com/rokwire/illinois-app/issues/5070).
+- Renamed My Profile College Field [#5071](https://github.com/rokwire/illinois-app/issues/5071).
+### Fixed
+- Fixed sign in wording [#5056](https://github.com/rokwire/illinois-app/issues/5056).
+- Fixed member status dropdown [#5072](https://github.com/rokwire/illinois-app/issues/5072).
+- Overlapping buttons section when modifying To-Do Item [#5054](https://github.com/rokwire/illinois-app/issues/5054).
+- GroupMemberDetail Pronouncement icon position [#4974](https://github.com/rokwire/illinois-app/issues/4974).
+
+## [7.0.18] - 2025-04-25
+### Added
+- Added library link to library card [#5024](https://github.com/rokwire/illinois-app/issues/5024).
+- Added lost or stollen i-card link [#5023](https://github.com/rokwire/illinois-app/issues/5023).
+### Changed
+- Updated public visibility display strings in Prоfile Edit page [#5027](https://github.com/rokwire/illinois-app/issues/5027).
+- Updated sign in description, fixed insane rich text build [#5056](https://github.com/rokwire/illinois-app/issues/5056).
+### Removed
+- Removed physical i-card number frim wallet page [#5023](https://github.com/rokwire/illinois-app/issues/5023).
+### Fixed
+- Fixed group detail tabs order [#5052](https://github.com/rokwire/illinois-app/issues/5052).
+
+## [7.0.17] - 2025-04-24
+### Added
+- Directory of User and My Profile Data Improvements [#4865](https://github.com/rokwire/illinois-app/issues/4865).
+### Changed
+- GroupAllEventsPanel extended to work with upcoming and past events [#5022](https://github.com/rokwire/illinois-app/issues/5022).
+- Minor Research at Illinois updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
+
+## [7.0.16] - 2025-04-23
+### Changed
+- Research at Illinois miscellaneous updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
+- Sort past events descending by time [#5019](https://github.com/rokwire/illinois-app/issues/5019).
+- Added Past Events tab in groups detail panel [#5022](https://github.com/rokwire/illinois-app/issues/5022).
+### Fixed
+- Fixed survey response header bar outlook [#5018](https://github.com/rokwire/illinois-app/issues/5018).
+
+## [7.0.15] - 2025-04-22
+### Changed
+- Always display My Primary Care descriptions at the bottom, nevertheless the actual care providers content [#5000](https://github.com/rokwire/illinois-app/issues/5000).
+- Rename "Ask the Open AI Assistant" to "Ask the Illinois Assistant" [#5034](https://github.com/rokwire/illinois-app/issues/5034).
+- Bring back "Clear All" messages in Assistant [#5036](https://github.com/rokwire/illinois-app/issues/5036).
+### Added
+- New Terms of Use Assistant pop-up on first interaction [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+
+## [7.0.14] - 2025-04-17
+### Changed
+- Updated Setup Attendance panel [#4777](https://github.com/rokwire/illinois-app/issues/4777).
+- Reworked Event admin settings menu and panels [#5013](https://github.com/rokwire/illinois-app/issues/5013).
+
+## [7.0.13] - 2025-04-16
+### Changed
+- Improved accessibility for EventsHomePanel [#4417](https://github.com/rokwire/illinois-app/issues/4417).
+- Update the popup screen for signed out users in the Assistant [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+- Update the initial Assistant message [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+- Set Open AI as default assistant provider [#5009](https://github.com/rokwire/illinois-app/issues/5009).
+
+## [7.0.12] - 2025-04-15
+### Changed
+- Text Updates: "My Success Team" [#5000](https://github.com/rokwire/illinois-app/issues/5000).
+- Changed the wording from "Public Event" to "All App Users" [#5001](https://github.com/rokwire/illinois-app/issues/5001).
+- Changed the send scheduled post button title [#5002](https://github.com/rokwire/illinois-app/issues/5002).
+
+## [7.0.11] - 2025-04-14
+### Changed
+- Added download survey results descriptions [#4950](https://github.com/rokwire/illinois-app/issues/4950).
+- Do not show "Take Attendance" link for events that have no attedance options set [#4994](https://github.com/rokwire/illinois-app/issues/4994).
+
+## [7.0.10] - 2025-04-11
+### Fixed
+- Fixed event detail panel update after successful self-checkin [#4956](https://github.com/rokwire/illinois-app/issues/4956).
+- Updated Config.eventAttendanceUrl attendace processing [#4950](https://github.com/rokwire/illinois-app/issues/4950).
+
+## [7.0.9] - 2025-04-09
+### Changed
+- Event filters cleaned up and restructured [#4904](https://github.com/rokwire/illinois-app/issues/4904).
+
+## [7.0.8] - 2025-04-08
+### Fixed
+- Clear embedded web url if such was not found [#4953](https://github.com/rokwire/illinois-app/issues/4953).
+- All group admins can update the group settings (including managed groups) [#4879](https://github.com/rokwire/illinois-app/issues/4879).
+
+## [7.0.7] - 2025-04-07
+### Added
+- Add Group post formatting options when editing a post [#4958](https://github.com/rokwire/illinois-app/issues/4958).
+### Removed
+- Hide Perplexity and Use All Assistants [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Hide group setting: view University ID (NetID) [#4917](https://github.com/rokwire/illinois-app/issues/4917).
+### Changed
+- Accessibility improvements for drag and drop [#1971](https://github.com/rokwire/illinois-app/issues/1971).
+
+## [7.0.6] - 2025-04-03
+### Changed
+- Cleaned up Wallet panel ecosystem, created sample library card page in Wallet [#4916](https://github.com/rokwire/illinois-app/issues/4916).
+
+## [7.0.5] - 2025-03-31
+### Changed
+- Updated succeeded popup message text in Event Self Check-In [#4888](https://github.com/rokwire/illinois-app/issues/4888).
+- Updated share command icon in Event Self Check-In PDF [#4888](https://github.com/rokwire/illinois-app/issues/4888).
+- Renamed "Recently Viewed" to "Visited Recently" [#4923](https://github.com/rokwire/illinois-app/issues/4923).
+- Cleanup Athletics News build, handled bad news images [#4922](https://github.com/rokwire/illinois-app/issues/4922).
+
+## [7.0.4] - 2025-03-28
+### Changed
+- Rename "open ai" to "Open AI" [#4937](https://github.com/rokwire/illinois-app/issues/4937).
+- Improve Accessibility for  AccessibleViewPagerNavigationButtons [#2093](https://github.com/rokwire/illinois-app/issues/2093).
+
+## [7.0.3] - 2025-03-27
+### Changed
+- Implemented extended error handling and reporting in event self checking in. [#4888](https://github.com/rokwire/illinois-app/issues/4888).
+### Fixed
+- Fixed QR Code processing in event self checking in [#4888](https://github.com/rokwire/illinois-app/issues/4888).
+
+## [7.0.2] - 2025-03-26
+### Changed
+- Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
+- Acknowledged deep links redirect URL for event self check-in [#4888](https://github.com/rokwire/illinois-app/issues/4888).
+
+## [7.0.1] - 2025-03-25
+### Added
+- Exposed ability for switching to test Illini cash url from Debug panel [#698](https://github.com/rokwire/illinois-app/issues/698).
+- Add name pronunciation to list of group members [#4084](https://github.com/rokwire/illinois-app/issues/4084).
+- Created Browse Guide panel in Debug [#4910](https://github.com/rokwire/illinois-app/issues/4910).
+- Added self-registration feature to events [#4888](https://github.com/rokwire/illinois-app/issues/4888).
+### Removed
+- Deleted Event2AttendanceDetailPanel (unused).
+### Changed
+- Android: Upgrade Android Gradle Plugin to version 8.2.1.
+- Extended NotificationService APIs [#576](https://github.com/rokwire/app-flutter-plugin/issues/576).
+### Fixed
+- Fixed assess to Onboarding2Panel states [#4826](https://github.com/rokwire/illinois-app/issues/4826).
+
+## [7.0.0] - 2025-03-17
+### Added
+- Use the common method for launching urls [#4898](https://github.com/rokwire/illinois-app/issues/4898).
+### Changed
+- Upgrade to Flutter 3.29.2, upgraded plugins [#4899](https://github.com/rokwire/illinois-app/issues/4899).
+
+## [6.2.2] - 2025-03-14
+### Changed
+- Added Filter feature to My Groups [#4835](https://github.com/rokwire/illinois-app/issues/4835).
+- Updated Wellness title, hide Wallet from Sections & Favorites [#4894](https://github.com/rokwire/illinois-app/issues/4894).
+### Added
+- Common method for launching urls based on tracking services status [#4892](https://github.com/rokwire/illinois-app/issues/4892).
+
+## [6.2.1] - 2025-03-12
+### Changed
+- Refactored onboarding service [#4826](https://github.com/rokwire/illinois-app/issues/4826).
+- Use dropdown buttons for profile privacy edit [#4859](https://github.com/rokwire/illinois-app/issues/4859).
+
+## [6.2.0] - 2025-02-25
+### Fixed
+- Make sure to dispose TapGestureRecognizer objects.
+### Removed
+- Deleted obsolete unused features [#4823](https://github.com/rokwire/illinois-app/issues/4823).
+
+## [6.1.72] - 2025-04-11
+### Changed
+- Updated again title text of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
+- Make sure recent items do not contain duplicated items, use more reliable identification of recent items [#4984](https://github.com/rokwire/illinois-app/issues/4984).
+### Fixed
+- Fixed background color of Event2SetupNotificationsPanel [#4973](https://github.com/rokwire/illinois-app/issues/4973).
+
+## [6.1.71] - 2025-04-10
+### Changed
+- Updated title and description texts of event's survey setup [#4785](https://github.com/rokwire/illinois-app/issues/4785).
+- Show assistant providers based on group memberships [#4918](https://github.com/rokwire/illinois-app/issues/4918).
+- Show Google as default assistant provider [#4924](https://github.com/rokwire/illinois-app/issues/4924).
+- Handle rich text in assistant's answers [#4926](https://github.com/rokwire/illinois-app/issues/4926).
+- Show "Use All Assistants" only if they are more than one [#4933](https://github.com/rokwire/illinois-app/issues/4933).
+- Assistant: Do not request location permission if location services are disabled [#4935](https://github.com/rokwire/illinois-app/issues/4935).
+- Illinois Assistant FAQs content [#4947](https://github.com/rokwire/illinois-app/issues/4947).
+### Added
+- Perplexity Assistant Provider [#4906](https://github.com/rokwire/illinois-app/issues/4906).
+- Open AI Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
+- "Copy to Clipboard" button for the Assistant [#4931](https://github.com/rokwire/illinois-app/issues/4931).
+- Add possibility for enabling / disabling assistants and assistant features from the config [#4960](https://github.com/rokwire/illinois-app/issues/4960).
+- Log reactions to Analytics/Splunk [#4977](https://github.com/rokwire/illinois-app/issues/4977).
+### Removed
+- Illinois Assistant provider [#4911](https://github.com/rokwire/illinois-app/issues/4911).
+### Fixed
+- Assistant sources [#4928](https://github.com/rokwire/illinois-app/issues/4928).
+
+## [6.1.70] - 2025-04-08
+### Fixed
+- Do not edit privacy of users that are not OIDC logged in [#4964](https://github.com/rokwire/illinois-app/issues/4964).
+- Do not show directory content to users that are not OIDC logged in [#4965](https://github.com/rokwire/illinois-app/issues/4965).
+
+## [6.1.69] - 2025-03-12
+### Fixed
+- Show replies count for messages [#4844](https://github.com/rokwire/illinois-app/issues/4844).
+- Fixed Analytics logs for Event2 onboarding screen [#4501](https://github.com/rokwire/illinois-app/issues/4501).
+- Acknowledged FlexUI rules for SafeWalks availability in quick actions menu [#4875](https://github.com/rokwire/illinois-app/issues/4875).
+- Fix mismatched profile info in Post and Poll cards [#4870](https://github.com/rokwire/illinois-app/issues/4870).
+### Removed
+- Azure Assistant provider [#4876](https://github.com/rokwire/illinois-app/issues/4876).
+### Added
+- Added pinning option when editing your own group admin post [#4807](https://github.com/rokwire/illinois-app/issues/4807).
+- Added "View My Profile" button to Sign In/Out page in Profile panel [#4872](https://github.com/rokwire/illinois-app/issues/4872).
+
+## [6.1.68] - 2025-03-07
+- Update Profile Info UX for other login types than OIDC [#4847](https://github.com/rokwire/illinois-app/issues/4847).
+
+## [6.1.67] - 2025-03-06
+### Changed
+- Control SafeWalks availability from app config settings [#4857](https://github.com/rokwire/illinois-app/issues/4857).
+### Added
+- GroupPost emoji reactions [#4613](https://github.com/rokwire/illinois-app/issues/4613).
+
 ## [6.1.66] - 2025-03-05
 ### Changed
 - Updated status text for no favorite locations [#4828](https://github.com/rokwire/illinois-app/issues/4828).
@@ -154,7 +375,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix DiningCard shadow [#4602](https://github.com/rokwire/illinois-app/issues/4602).
 
 ## [6.1.47] - 2025-01-24
-### Deleted
+### Removed
 - Deleted "I'm Struggling..." from Wellness content [#4673](https://github.com/rokwire/illinois-app/issues/4673).
 ### Changed
 - Show progress indicator when uploading profile picture.
@@ -1471,7 +1692,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.0.37] - 2023-07-31
 ### Added
 - Event follow up survey preview and entry point [#3439](https://github.com/rokwire/illinois-app/issues/3439).
-### Deleted
+### Removed
 - Removed Events2 attributes image background [#3442](https://github.com/rokwire/illinois-app/issues/3442).
 - Removed the references to the old events in Home and Browse panels [#3450](https://github.com/rokwire/illinois-app/issues/3450).
 ### Changed
@@ -1562,7 +1783,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
 - Display events count in Events2 home panel [#3384](https://github.com/rokwire/illinois-app/issues/3384).
-### Deleted
+### Removed
 - Remove take attendance via the app switch [#3374](https://github.com/rokwire/illinois-app/issues/3374).
 - Remove sort order switch from Events2 UI [#3382](https://github.com/rokwire/illinois-app/issues/3382).
 
@@ -1828,7 +2049,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupDetail: moved group sync/update message to GroupMembersPanel [#3135](https://github.com/rokwire/illinois-app/issues/3135).
 - Some links are open in external browser [#3088](https://github.com/rokwire/illinois-app/issues/3088).
 - Reworked Mental Health Resources [#3142](https://github.com/rokwire/illinois-app/issues/3142).
-### Deleted
+### Removed
 - Removed Explore.toJson definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 ### Fixed
 - Fix Dining feedback dialog [#3087](https://github.com/rokwire/illinois-app/issues/3087).
@@ -1865,7 +2086,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Auto fill Guide Highlights favorites [#3032](https://github.com/rokwire/illinois-app/issues/3032).
 
 ## [4.3.39] - 2023-04-10
-### Deleted
+### Removed
 - "My College of Medicine Courses" in Academics panel and all related stuff [#3105](https://github.com/rokwire/illinois-app/issues/3105).
 ### Added
 - Added reschedule appointment preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
@@ -1875,7 +2096,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not display empty compund widgets in Home/Customize [#3078](https://github.com/rokwire/illinois-app/issues/3078).
 
 ## [4.3.38] - 2023-04-07
-### Deleted
+### Removed
 - Removed ExploreJsonHandler definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 ### Added
 - Allow deep linking to app tabs via notification [#3094](https://github.com/rokwire/illinois-app/issues/3094).
@@ -1897,7 +2118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created schedule appointment time slot selector preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
 ## [4.3.34] - 2023-04-03
-### Deleted
+### Removed
 - Removed native maps support [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 
 ## [4.3.33] - 2023-03-31
@@ -2134,7 +2355,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
 - Show not logged in message in Illini Cash and MTD Buss Wallet cards [#2867](https://github.com/rokwire/illinois-app/issues/2877).
-### Deleted
+### Removed
 - Removed explanation message "View current studies that match ..." from questionnaire acknowledgement panel [#2873](https://github.com/rokwire/illinois-app/issues/2873).
 ### Changed
 - Always use orange favorite icon, removed all references to the blue favorite icon [#2165](https://github.com/rokwire/illinois-app/issues/2165).
@@ -2696,7 +2917,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to delete polls in PollsHomePanel [#2153](https://github.com/rokwire/illinois-app/issues/2153).
 - Daily Illini feed with images [#2208](https://github.com/rokwire/illinois-app/issues/2208).
 - Handle more than one video tutorials - defined in app assets [#2230](https://github.com/rokwire/illinois-app/issues/2230).
-### Deleted
+### Removed
 - Removed Athletics/Teams entry in Browse panel [#2102](https://github.com/rokwire/illinois-app/issues/2102).
 ### Fixed
 - Fixed GroupDetailPanel when initialized with groupIdentifier [#2223](https://github.com/rokwire/illinois-app/issues/2223).
@@ -3856,7 +4077,7 @@ Version number increased when submitting to app store.
 - Added Bluetooth services authorization panel in onboarding flow [#1141](https://github.com/rokwire/illinois-app/issues/1141).
 
 ## [3.0.68] - 2021-12-15
-### Deleted
+### Removed
 - Removed unused iOS background modes from Info.plist [#1137](https://github.com/rokwire/illinois-app/issues/1137).
 
 ## [3.0.67] - 2021-12-14
@@ -4135,7 +4356,7 @@ Version number increased when submitting to app store.
 - Updated GIES progress behavior to remember what is passes and what not [#826](https://github.com/rokwire/illinois-app/issues/826).
 
 ## [3.0.26] - 2021-10-18
-### Deleted
+### Removed
 - Possibility for creating notification message [#817](https://github.com/rokwire/illinois-app/issues/817).
 ### Changed
 - Updated again layout of ID Card panel [#819](https://github.com/rokwire/illinois-app/issues/819).
@@ -4209,7 +4430,7 @@ Version number increased when submitting to app store.
 - Save Calendar prompt [#751](https://github.com/rokwire/illinois-app/issues/751).
 
 ## [3.0.12] - 2021-09-23
-### Deleted
+### Removed
 - Removed UPACE activity button from Wellness content [#768](https://github.com/rokwire/illinois-app/issues/768).
 
 ## [3.0.11] - 2021-09-21
@@ -4321,7 +4542,7 @@ Version number increased when submitting to app store.
 ### Changed
 - Allow MTD BussPass for residents [#936](https://github.com/rokwire/illinois-app/issues/936).
 - "Safer Illinois" button replaced by "Building Status" button in Browse panel [#952](https://github.com/rokwire/illinois-app/issues/952).
-### Deleted
+### Removed
 - Removed UPACE activity button from Wellness content [#947](https://github.com/rokwire/illinois-app/issues/947).
 
 ## [2.7.8] - 2021-11-11
@@ -4830,7 +5051,7 @@ Version number increased when submitting to app store.
 - YouTube videos plays when screen locked [#235](https://github.com/rokwire/illinois-app/issues/235).
 - Android: Prevent crash when FCM is received and the app is in killed state [#236](https://github.com/rokwire/illinois-app/issues/236).
 
-### Deleted
+### Removed
 - Removed linkage to flutter_image_compress plugin that is unused.
 
 ## [2.4.4] - 2021-02-09

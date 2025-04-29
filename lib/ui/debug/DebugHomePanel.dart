@@ -23,6 +23,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
@@ -45,7 +46,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
-import 'package:illinois/ui/debug/DebugGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugGuideEditPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -63,7 +64,7 @@ class DebugHomePanel extends StatefulWidget {
   _DebugHomePanelState createState() => _DebugHomePanelState();
 }
 
-class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
+class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListener {
 
   DateTime? _offsetDate;
   rokwire.ConfigEnvironment? _selectedEnv;
@@ -182,6 +183,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
                 ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
                 ToggleRibbonButton(label: 'Messages/Conversations Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
+                ToggleRibbonButton(label: 'Use Test Wallet Service', toggled: (Storage().debugUseIlliniCashTestUrl == true) && _canUseTestWalletService, onTap: _canUseTestWalletService ? _onUseTestWalletService : null,
+                  textStyle: Styles().textStyles.getTextStyle(_canUseTestWalletService ? 'widget.button.title.medium.fat' : 'widget.button.title.medium.fat.variant3'),
+                  rightIconKeys: _canUseTestWalletService ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+                ),
 
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:
@@ -378,12 +383,24 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
-                      label: "Campus Guide",
+                      label: "Edit Guide",
                       backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
-                      onTap: _onTapGuide
+                      onTap: _onTapGuideEdit
+                    )
+                  )
+                ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Browse Guide",
+                      backgroundColor: Styles().colors.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
+                      onTap: _onTapGuideBrowse
                     )
                   )
                 ),
@@ -775,6 +792,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
+  bool get _canUseTestWalletService => StringUtils.isNotEmpty(Config().illiniCashTestUrl);
+
+  void _onUseTestWalletService() {
+    setState(() {
+      Storage().debugUseIlliniCashTestUrl = (Storage().debugUseIlliniCashTestUrl != true);
+    });
+  }
+
   void _onUseDeviceLocalTimeZoneToggled() {
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
@@ -841,8 +866,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   
-  void _onTapGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
+  void _onTapGuideEdit() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuideEditPanel()));
+  }
+
+  void _onTapGuideBrowse() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuideBrowsePanel()));
   }
 
   void _onTapStudentCourses() {

@@ -58,7 +58,8 @@ class AthleticsContentPanel extends StatefulWidget {
   }
 }
 
-class _AthleticsContentPanelState extends State<AthleticsContentPanel> with AutomaticKeepAliveClientMixin<AthleticsContentPanel> implements NotificationsListener {
+class _AthleticsContentPanelState extends State<AthleticsContentPanel>
+  with NotificationsListener, AutomaticKeepAliveClientMixin<AthleticsContentPanel> {
 
   static AthleticsContent? _lastSelectedContent;
   late AthleticsContent _selectedContent;

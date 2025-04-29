@@ -57,7 +57,7 @@ class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
-class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener {
+class _GroupMembersPanelState extends State<GroupMembersPanel> with NotificationsListener {
   static final int _defaultMembersLimit = 10;
 
   Group? _group;
@@ -650,11 +650,28 @@ class GroupMemberCard extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: Styles().textStyles.getTextStyle('widget.group.members.title')
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text(StringUtils.ensureNotEmpty(_memberDisplayName),
+                                  style: Styles().textStyles.getTextStyle('widget.group.members.title')
+                              ),
+                              GroupProfilePronouncementWidget(accountId: member?.userId,)
+                            ],
                           )
-                        )
+                        ),
                       ],
+                    ),
+                    Visibility(
+                      visible: StringUtils.isNotEmpty(_memberDetailsString),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(StringUtils.ensureNotEmpty(_memberDetailsString),
+                                style: Styles().textStyles.getTextStyle('widget.group.members.title')
+                            ),
+                          )
+                      ],),
                     ),
                     Container(height: 4,),
                     Row(
@@ -702,12 +719,22 @@ class GroupMemberCard extends StatelessWidget {
     }
   }
 
-  String? get _memberDisplayName {
+  String? get _memberDisplayName => member?.name;
+
+  String? get _memberDetailsString{
     if (_isAdmin) {
-      return member?.displayName;
-    } else {
-      return member?.name;
+      String details = '';
+      if (StringUtils.isNotEmpty(member?.email)) {
+        if (StringUtils.isNotEmpty(details)) {
+          details += ' ';
+        }
+        details += member?.email! ?? "";
+      }
+
+      return details;
     }
+
+    return "";
   }
 
   bool get _isAdmin {

@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -51,9 +52,12 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 
+  // Getters: McKinley
   Map<String, dynamic> get safer => JsonUtils.mapValue(content['safer']) ?? {};
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
-  Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
+  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
+  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
+  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
 
   Map<String, dynamic> get safety => JsonUtils.mapValue(content['safety']) ?? {};
   Map<String, dynamic> get safeRides => JsonUtils.mapValue(safety['safeRides']) ?? {};
@@ -66,9 +70,6 @@ class Config extends rokwire.Config {
   String? get safeWalkEndTime        => JsonUtils.stringValue(safeWalk['end_time']);
   String? get safeWalkOrderInterval  => JsonUtils.stringValue(safeWalk['order_interval']);
   String? get safeWalkAboutUrl       => JsonUtils.stringValue(safeWalk['about_url']);
-
-  Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
-  Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
 
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
@@ -89,6 +90,11 @@ class Config extends rokwire.Config {
   String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
   String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
 
+  // Getters: Upgrade Urls
+  Map<String, dynamic>? get upgradeUrlInfo => JsonUtils.mapValue(upgradeInfo['url']);
+  String? get upgradeIOSUrl         => JsonUtils.stringValue(MapUtils.get(upgradeUrlInfo, 'ios'));
+  String? get upgradeAndroidUrl     => JsonUtils.stringValue(MapUtils.get(upgradeUrlInfo, 'android'));
+
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
   String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);
@@ -98,7 +104,10 @@ class Config extends rokwire.Config {
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
   String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
   String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
+  String? get iCardLostReportUrl     => JsonUtils.stringValue(otherUniversityServices['icard_lost_report_url']);
+  String? get illiniCashUrl          => (Storage().debugUseIlliniCashTestUrl == true) ? (illiniCashTestUrl ?? illiniCashBaseUrl) : illiniCashBaseUrl;
   String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);
+  String? get illiniCashTestUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_test_url']);
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
   String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
@@ -122,10 +131,11 @@ class Config extends rokwire.Config {
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get studentCodeUrl         => JsonUtils.stringValue(otherUniversityServices['student_code_url']);
+  String? get universityLibraryUrl   => JsonUtils.stringValue(otherUniversityServices['university_library_url']);
   String? get universityHomepageUrl  => JsonUtils.stringValue(otherUniversityServices['university_homepage_url']);
   String? get dailyIlliniHomepageUrl => JsonUtils.stringValue(otherUniversityServices['daily_illini_homepage_url']);
   String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
-  String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
+  String? get eventAttendanceUrl     => PlatformUtils.stringValue(otherUniversityServices['event_attendance_url']);
   String? get eventsPublishingInfoUrl => JsonUtils.stringValue(otherUniversityServices['events_publishing_info_url']); // ?? 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=addingevents';
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
@@ -197,12 +207,6 @@ class Config extends rokwire.Config {
   String? get wellnessMentalHealthCcUrl => JsonUtils.stringValue(wellness['mental_health_cc_url']);
   String? get wellnessMentalHealthThumbUrl => JsonUtils.stringValue(wellness['mental_health_thumb_url']);
   String? get wellnessMentalHealthVideoUrl => JsonUtils.stringValue(wellness['mental_health_video_url']);
-
-  // Getters: McKinley
-
-  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
-  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
-  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
 
   // Getters: settings
   int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;

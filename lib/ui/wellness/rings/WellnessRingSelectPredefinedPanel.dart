@@ -18,7 +18,7 @@ class WellnessRingSelectPredefinedPanel extends StatefulWidget{
   State<StatefulWidget> createState() => _WellnessRingSelectPredefinedPanelState();
 }
 
-class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> implements NotificationsListener{
+class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> with NotificationsListener{
   static const List<Map<String,dynamic>> PREDEFINED_RING_BUTTONS = [
     {"ring":{'name': "Hobby", 'value': 1, 'color_hex': '#f5821e', 'ring_id': "id_predefined_0", 'unit':'session'},
       "name":"Hobby Ring",
@@ -166,7 +166,7 @@ class _WellnessRingButton extends StatefulWidget{
   final void Function(BuildContext context) onTapWidget;
   final void Function(BuildContext context)? onTapRightWidget;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   const _WellnessRingButton({Key? key, required this.label, this.description, required this.onTapWidget, this.onTapRightWidget, required this.toggled}) : super(key: key);
 
   @override

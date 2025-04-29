@@ -321,7 +321,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     Uri? uri = controller.text.isNotEmpty ? Uri.tryParse(controller.text.trim()) : null;
     if (uri != null) {
-      Uri? fixedUri = UrlUtils.fixUri(uri);
+      Uri? fixedUri = uri.fix();
       if (fixedUri != null) {
         controller.text = fixedUri.toString();
         uri = fixedUri;
@@ -491,11 +491,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
-        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
-    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
-    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(eventAttendanceUrl), child:
+        "Visit {{event_attendance_url}} to upload or download a list.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, displayAttendanceUrl ?? '');
+    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(displayAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Styles().images.getImage('info') ?? Container(),

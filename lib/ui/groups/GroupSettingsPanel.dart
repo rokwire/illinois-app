@@ -168,7 +168,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           _buildSectionTitle("Research", "settings"),
         ),
         //_buildResearchOptionLayout(),
-        _buildResearchConsentDetailsField(),
+        //_buildResearchConsentDetailsField(),
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
         _buildContentSectionsLayout(),
@@ -333,7 +333,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Localization().getStringEx("panel.groups_settings.description.project.title", "SHORT PROJECT DESCRIPTION") :
       Localization().getStringEx("panel.groups_settings.description.group.title", "GROUP DESCRIPTION");
     String? fieldTitle = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.groups_settings.description.project.field", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_settings.description.project.field", "What’s the purpose of your group? Who should join? What will participation involve?") :
       Localization().getStringEx("panel.groups_settings.description.group.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldHint = (_group?.researchProject == true) ?
       Localization().getStringEx("panel.groups_settings.description.project.field.hint", "") :
@@ -443,7 +443,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_linkController.text.isNotEmpty) {
       Uri? uri = Uri.tryParse(_linkController.text);
       if (uri != null) {
-        Uri? fixedUri = UrlUtils.fixUri(uri);
+        Uri? fixedUri = uri.fix();
         if (fixedUri != null) {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;
@@ -476,7 +476,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
@@ -508,11 +508,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   List<Widget> _constructAttributesContent() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (Groups().isContentAttributeEnabled(attribute)) {
+        if (Groups().isContentAttributeEnabled(attribute, researchProject: _isResearchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(
@@ -543,8 +542,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
-      scope: Groups.contentAttributesScope,
-      contentAttributes: Groups().contentAttributes,
+      scope: _contentAttributesScope,
+      contentAttributes: _contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
@@ -774,7 +773,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
   }
 
-  Widget _buildResearchConsentDetailsField() {
+  /*Widget _buildResearchConsentDetailsField() {
     String? title = "PROJECT DETAILS";
     String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
@@ -802,7 +801,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;
@@ -1311,9 +1310,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (!(_group?.currentUserIsAdmin ?? false)) {
       return false;
     }
-    if (_isAuthManGroup) {
+    /*if (_isAuthManGroup) { // #4879 give group admins full group admin permission. BB disables only delete of authman group for not ManagedGroupAdmins user
       return _isUserManagedGroupAdmin;
-    } else {
+    } */else {
       return true;
     }
   }
@@ -1341,6 +1340,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   bool get _isPublicGroup {
     return _group?.privacy == GroupPrivacy.public;
   }
+
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
+  String get _contentAttributesScope => Groups.contentAttributesScope(researchProject: _isResearchProject);
 }
 
 extension _GroupValidation on Group {

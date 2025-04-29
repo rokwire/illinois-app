@@ -28,7 +28,7 @@ class SettingsLanguageContentWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _SettingsLanguageContentWidgetState();
 }
 
-class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentWidget> implements NotificationsListener {
+class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentWidget> with NotificationsListener {
 
   bool _localeChanged = false;
 

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Dinings.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -266,10 +265,9 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
 
   void _onEatSmartTapped(BuildContext context){
     Analytics().logSelect(target: "View full list of ingredients");
-    if (Config().eatSmartUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(
-          builder: (context)=>WebPanel(url: Config().eatSmartUrl )
-      ));
+    String? url = Config().eatSmartUrl;
+    if (url != null) {
+      AppLaunchUrl.launch(context: context, url: url);
     }
   }
 }

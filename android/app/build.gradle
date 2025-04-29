@@ -60,7 +60,7 @@ repositories{
 }
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     namespace 'edu.illinois.rokwire'
 

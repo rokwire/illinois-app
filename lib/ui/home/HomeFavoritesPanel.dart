@@ -24,7 +24,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeMessageWidget.dart';
-import 'package:illinois/ui/home/HomeWelcomeVideoWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -49,7 +48,7 @@ class HomeFavoritesPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
 }
 
-class _HomeFavoritesPanelState extends State<HomeFavoritesPanel> with AutomaticKeepAliveClientMixin<HomeFavoritesPanel> implements NotificationsListener {
+class _HomeFavoritesPanelState extends State<HomeFavoritesPanel> with NotificationsListener, AutomaticKeepAliveClientMixin<HomeFavoritesPanel> {
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _contentWrapperKey = GlobalKey();
   GlobalKey _favoritesKey = GlobalKey();
@@ -121,7 +120,7 @@ class HomeFavoritesContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Favorites;
 }
 
-class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget> implements NotificationsListener {
+class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget> with NotificationsListener {
 
   List<String>? _systemCodes;
   List<String>? _favoriteCodes;
@@ -197,9 +196,6 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
     else if (code == 'connect') {
       return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
-    }
-    else if (code == 'welcome_video') {
-      return HomeWelcomeVideoWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
     }
     else if (code == 'welcome_message') {
       return HomeWelcomeMessageWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);

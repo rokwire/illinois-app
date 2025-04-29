@@ -16,13 +16,18 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -30,9 +35,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { uiuc_conversation, google_conversation, azure_conversation, grok_conversation, all_assistants, faqs }
+enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, openai_conversation, all_assistants, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContent? content;
@@ -49,10 +55,9 @@ class AssistantHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showTextMessage(
-          context,
-          Localization().getStringEx('panel.assistant.logged_out.label',
-              'To access the Illinois Assistant, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
+      showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
+    } else if (!Assistant().hasUserAcceptedTerms()) {
+      showDialog(context: context, builder: (context) => _AssistantTermsPopup());
     } else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -73,7 +78,7 @@ class AssistantHomePanel extends StatefulWidget {
   }
 }
 
-class _AssistantHomePanelState extends State<AssistantHomePanel> implements NotificationsListener {
+class _AssistantHomePanelState extends State<AssistantHomePanel> with NotificationsListener {
   late List<AssistantContent> _contentTypes;
   AssistantContent? _selectedContent;
   static AssistantContent? _lastSelectedContent;
@@ -90,6 +95,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
+      Assistant.notifyProvidersChanged,
+      Assistant.notifySettingsChanged,
     ]);
 
     _contentTypes = _buildAssistantContentTypes();
@@ -102,8 +109,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
       _selectedContent = _initialSelectedContent;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Force to calculate correct content height
+      // 1. Force to calculate correct content height
       setStateIfMounted((){});
+      // 2. Check if the Assistant is available
+      _checkAvailable();
     });
   }
 
@@ -118,9 +127,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _updateContentTypes();
-    } else if (name == FlexUI.notifyChanged) {
+    if (name == Auth2.notifyLoginChanged ||
+        name == FlexUI.notifyChanged ||
+        name == Assistant.notifyProvidersChanged ||
+        name == Assistant.notifySettingsChanged) {
+      _checkAvailable();
       _updateContentTypes();
     }
   }
@@ -131,6 +142,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   }
 
   Widget _buildSheet(BuildContext context) {
+    bool clearAllVisible = (_selectedContent != null) && (_selectedContent != AssistantContent.all_assistants) && (_selectedContent != AssistantContent.faqs);
     return Column(children: [
       Container(
           color: Styles().colors.white,
@@ -141,7 +153,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            Visibility(visible: (_selectedContent == AssistantContent.uiuc_conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
+            Visibility(visible: clearAllVisible, child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -180,7 +192,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   }
 
   Widget _buildContent() {
-    return Stack(children: [(_contentWidget ?? Container()), Container(height: _contentHeight), _buildContentValuesContainer()]);
+    return Stack(children: [(_contentWidget ?? _buildMissingContentWidget()), Container(height: _contentHeight), _buildContentValuesContainer()]);
   }
 
   Widget _buildContentValuesContainer() {
@@ -193,6 +205,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     return Positioned.fill(
         child:
             BlockSemantics(child: GestureDetector(onTap: _onTapDismissLayer, child: Container(color: Styles().colors.blackTransparent06))));
+  }
+
+  Widget _buildMissingContentWidget() {
+    return Positioned.fill(child: Center(child: Text(Localization().getStringEx('panel.assistant.content.missing.assistant.msg', 'There is no assistant available.'), style: Styles().textStyles.getTextStyle('widget.message.medium.thin'))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -270,38 +286,73 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   List<AssistantContent> _buildAssistantContentTypes() {
     List<AssistantContent> contentTypes = <AssistantContent>[];
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    if (contentCodes != null) {
-      for (String code in contentCodes) {
-        AssistantContent? value = _assistantContentFromString(code);
+    List<AssistantProvider>? availableProviders = Assistant().providers;
+    if (availableProviders != null) {
+      for (AssistantProvider provider in availableProviders) {
+        AssistantContent? value = _assistantContentFromProvider(provider);
         if (value != null) {
           contentTypes.add(value);
         }
+      }
+      int contentTypesLength = contentTypes.length;
+      if ((contentTypesLength > 1) && FlexUI().isAllAssistantsAvailable) {
+        contentTypes.add(AssistantContent.all_assistants);
+      }
+      if ((contentTypesLength > 0) && FlexUI().isAssistantFaqsAvailable) {
+        contentTypes.add(AssistantContent.faqs);
       }
     }
     return contentTypes;
   }
 
-  AssistantContent? _assistantContentFromString(String? value) {
-    switch (value) {
-      case 'uiuc_assistant':
-        return AssistantContent.uiuc_conversation;
-      case 'google_assistant':
-        return AssistantContent.google_conversation;
-      case 'azure_assistant':
-        return AssistantContent.azure_conversation;
-      case 'grok_assistant':
-        return AssistantContent.grok_conversation;
-      case 'all_assistants':
-        return AssistantContent.all_assistants;
-      case 'uiuc_faqs':
-        return AssistantContent.faqs;
+  // Global On/Off / Available
+
+  void _checkAvailable() {
+    if (!_isAvailable) {
+      String unavailableMessage = Assistant().localizedUnavailableText ??
+          Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
+          'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
+      AppAlert.showDialogResult(context, unavailableMessage);
+    }
+  }
+
+  bool get _isAvailable => Assistant().isAvailable;
+
+  // Utilities
+
+  String? _getContentItemName(AssistantContent? contentItem) {
+    switch (contentItem) {
+      case AssistantContent.google_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
+      case AssistantContent.grok_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
+      case AssistantContent.perplexity_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
+      case AssistantContent.openai_conversation:
+        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
+      case AssistantContent.all_assistants:
+        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
+      case AssistantContent.faqs:
+        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
       default:
         return null;
     }
   }
 
-  // Utilities
+  AssistantContent? _assistantContentFromProvider(AssistantProvider? provider) {
+    switch (provider) {
+      case AssistantProvider.google:
+        return AssistantContent.google_conversation;
+      case AssistantProvider.grok:
+        return AssistantContent.grok_conversation;
+      case AssistantProvider.perplexity:
+        return AssistantContent.perplexity_conversation;
+      case AssistantProvider.openai:
+        return AssistantContent.openai_conversation;
+      default:
+        return null;
+    }
+  }
 
   double? get _contentHeight {
     RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
@@ -315,13 +366,13 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   Widget? get _contentWidget {
     switch (_selectedContent) {
-      case AssistantContent.uiuc_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider,);
       case AssistantContent.google_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContent.azure_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.grok_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContent.perplexity_conversation:
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContent.openai_conversation:
         return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContent.all_assistants:
         return AssistantProvidersConversationContentWidget();
@@ -332,39 +383,170 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     }
   }
 
-  String? _getContentItemName(AssistantContent? contentItem) {
-    switch (contentItem) {
-      case AssistantContent.uiuc_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.label', 'Ask the Illinois Assistant');
+  AssistantProvider? get _selectedProvider {
+    switch (_selectedContent) {
       case AssistantContent.google_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
-      case AssistantContent.azure_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.azure.label', 'Ask the Azure Assistant');
+        return AssistantProvider.google;
       case AssistantContent.grok_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
-      case AssistantContent.all_assistants:
-        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
-      case AssistantContent.faqs:
-        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
+        return AssistantProvider.grok;
+      case AssistantContent.perplexity_conversation:
+        return AssistantProvider.perplexity;
+      case AssistantContent.openai_conversation:
+        return AssistantProvider.openai;
       default:
         return null;
     }
   }
 
-  AssistantProvider get _selectedProvider {
-    switch (_selectedContent) {
-      case AssistantContent.uiuc_conversation:
-        return AssistantProvider.uiuc;
-      case AssistantContent.google_conversation:
-        return AssistantProvider.google;
-      case AssistantContent.azure_conversation:
-        return AssistantProvider.azure;
-      case AssistantContent.grok_conversation:
-        return AssistantProvider.grok;
-      default:
-        return AssistantProvider.uiuc;
-    }
+  AssistantContent? get _initialSelectedContent => CollectionUtils.isNotEmpty(_contentTypes) ? _contentTypes.first : null;
+}
+
+class _AssistantSignInInfoPopup extends StatefulWidget {
+  _AssistantSignInInfoPopup();
+
+  @override
+  State<_AssistantSignInInfoPopup> createState() => _AssistantSignInInfoPopupState();
+}
+
+class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
+
+  static const String _signInUrl = 'profile://sign_in';
+  static const String _privacyUrl = 'settings://privacy';
+  static const String _signInUrlMacro = '{{profile_sign_in_url}}';
+  static const String _privacyUrlMacro = '{{settings_privacy_url}}';
+
+  @override
+  Widget build(BuildContext context) {
+    String message = Localization().getStringEx('panel.assistant.logged_out.label',
+                "To access the Illinois Assistant, <a href='$_signInUrlMacro'><b>sign in</b></a> with your NetID and <a href='$_privacyUrlMacro'><b>set your privacy level to 4 or 5</b></a> under Settings.")
+        .replaceAll(_signInUrlMacro, _signInUrl).replaceAll(_privacyUrlMacro, _privacyUrl);
+    return AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, children: [
+              Padding(
+                  padding: EdgeInsets.only(top: 30, bottom: 22),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 28),
+                      child: Column(children: [
+                        Padding(
+                            padding: EdgeInsets.only(top: 14),
+                            child:
+                                HtmlWidget(message,
+                                    onTapUrl: (url) => _onTapUrl(url),
+                                    textStyle: Styles().textStyles.getTextStyle("panel.assistant.popup.detail.small"),
+                                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null))
+                      ]),
+                    ),
+                  ])),
+              Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Semantics(
+                          button: true,
+                          label: "close",
+                          child: InkWell(
+                              onTap: () {
+                                Analytics().logSelect(target: 'Close Assistant Sign-In info popup');
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(padding: EdgeInsets.all(12), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))),
+            ])));
   }
 
-  AssistantContent? get _initialSelectedContent => AssistantContent.uiuc_conversation;
+  bool _onTapUrl(String url) {
+    if (url == _privacyUrl) {
+      Analytics().logSelect(target: 'Settings: My App Privacy', source: widget.runtimeType.toString());
+      Navigator.of(context).pop();
+      SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      return true;
+    } else if (url == _signInUrl) {
+      Analytics().logSelect(target: 'Profile: Sign In / Sign Out', source: widget.runtimeType.toString());
+      Navigator.of(context).pop();
+      ProfileHomePanel.present(context, content: ProfileContent.login);
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+class _AssistantTermsPopup extends StatefulWidget {
+  _AssistantTermsPopup();
+
+  @override
+  State<_AssistantTermsPopup> createState() => _AssistantTermsPopupState();
+}
+
+class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
+
+  bool _accepting = false;
+
+  @override
+  Widget build(BuildContext context) {
+    String text = Assistant().localizedTermsText ??
+        Localization().getStringEx('panel.assistant.terms.default.msg',
+            'The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the Illinois Assistant is a supplemental tool and not a substitute for official university sources.');
+    return AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, children: [
+              Padding(
+                  padding: EdgeInsets.only(top: 36, bottom: 22),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 28),
+                      child: Column(children: [
+                        Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
+                        Padding(
+                            padding: EdgeInsets.only(top: 14),
+                            child:
+                            MarkdownBody(
+                                data: text,
+                                styleSheet: MarkdownStyleSheet(
+                                    p: Styles().textStyles.getTextStyle('widget.detail.small'),
+                                    a: TextStyle(decoration: TextDecoration.underline)))),
+                        Padding(padding: EdgeInsets.only(top: 14), child: RoundedButton(
+                            label: Localization().getStringEx('panel.assistant.terms.accept.button', 'I Accept'),
+                            onTap: _onTapAccept, fontSize: 16,
+                            progress: _accepting,
+                            conentAlignment: MainAxisAlignment.center,
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            contentWeight: 0.5))]))
+                  ])),
+              Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Semantics(
+                          button: true,
+                          label: "close",
+                          child: InkWell(
+                              onTap: () {
+                                Analytics().logSelect(target: 'Close Assistant Terms Popup');
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(padding: EdgeInsets.all(12), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))),
+            ])));
+  }
+
+  void _onTapAccept() {
+    Analytics().logSelect(target: 'Accept Assistant Terms');
+    setStateIfMounted(() {
+      _accepting = true;
+    });
+    Assistant().acceptTerms().then((accepted) {
+      setStateIfMounted(() {
+        _accepting = false;
+      });
+      if (accepted) {
+        Navigator.of(context).pop();
+        AssistantHomePanel.present(context);
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.assistant.terms.accepted.fail.msg', 'Something went wrong. Please, try again later.'));
+      }
+    });
+  }
 }

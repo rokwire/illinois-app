@@ -8,7 +8,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -20,11 +20,7 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -62,7 +58,7 @@ class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _GuideListPanelState extends State<GuideListPanel> implements NotificationsListener {
+class _GuideListPanelState extends State<GuideListPanel> with NotificationsListener {
 
   List<Map<String, dynamic>>? _guideItems = <Map<String, dynamic>>[];
   LinkedHashSet<String>? _features = LinkedHashSet<String>();
@@ -308,23 +304,23 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     else if (feature == 'laundry') {
       return features.contains('laundry') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.laundry.title", "Laundry"), iconKey: "guide-laundry", onTap: _navigateLaundry,) : null;
     }
-    else if (feature == 'library-card') {
-      return features.contains('library_card') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), iconKey: "guide-library-card", onTap: _navigateLibraryCard) : null;
-    }
     else if (feature == 'meal-plan') {
       return features.contains('meal_plan') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.meal_plan.title", "Meal Plan"), iconKey: "guide-meal-plan", onTap: _navigateMealPlan,) : null;
     }
     else if (feature == 'my-illini') {
       return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "My Illini"), iconKey: "guide-student-portal", onTap: _navigateMyIllini) : null;
     }
-    else if (feature == 'parking') {
-      return features.contains('parking') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.parking.title", "Parking"), iconKey: "guide-parking", onTap: _navigateParking) : null;
-    }
     else if (feature == 'quick-polls') {
       return features.contains('quick_polls') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.quick_polls.title", "Quick Polls"), iconKey: "guide-polls", onTap: _navigateQuickPolls) : null;
     }
     else if (feature == 'saved') {
       return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), iconKey: "guide-saved", onTap: _navigateSaved) : null;
+    }
+    else if (feature == 'library-card') {
+      return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), iconKey: "guide-library-card", onTap: _navigateLibraryCard) : null;
+    }
+    else if (feature == 'parking') {
+      return null; // We do not support parking any more
     }
     else {
       return null;
@@ -338,7 +334,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateBusPass() {
     Analytics().logSelect(target: "Bus Pass");
-    WalletMTDBusPassPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.busPass);
   }
 
   void _navigateDining() {
@@ -358,12 +354,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
-    WalletIlliniCashPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.illiniCash);
   }
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
+    WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
   }
 
   void _navigateLaundry() {
@@ -371,14 +367,9 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
-  void _navigateLibraryCard() {
-    Analytics().logSelect(target: "Library Card");
-    //showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
-  }
-
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
-    WalletMealPlanPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.mealPlan);
   }
 
   void _navigateMyIllini() {
@@ -394,11 +385,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
   }
 
-  void _navigateParking() {
-    Analytics().logSelect(target: "Parking");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
-  }
-
   void _navigateQuickPolls() {
     Analytics().logSelect(target: "Quick Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
@@ -407,6 +393,11 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   void _navigateSaved() {
     Analytics().logSelect(target: "Saved");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  }
+
+  void _navigateLibraryCard() {
+    Analytics().logSelect(target: "Library Card");
+    WalletHomePanel.present(context, contentType: WalletContentType.libraryCard);
   }
 }
 

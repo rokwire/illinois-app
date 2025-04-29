@@ -42,29 +42,32 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
-  final List<Reaction>? postReactions; //TBD load from bb
   final Comment? focusedReply;
   final Group group;
   final bool hidePostOptions;
+  final AnalyticsFeature? _analyticsFeature;
 
-  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.postReactions, this.hidePostOptions = false});
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false, AnalyticsFeature? analyticsFeature}) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? _defaultAnalyticsFeature;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
+
+  AnalyticsFeature? get _defaultAnalyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
-class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with NotificationsListener {
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
   Post? _post; //Main post {Data Presentation}
   List<Comment>? _replies; //Main post comments
-  PostDataModel? _mainPostUpdateData;//Main Post Edit
+  PostUpdateData? _mainPostUpdateData;//Main Post Edit
   List<Member>? _allMembersAllowedToPost;
   //Reply - Edit/Create/Show
   Comment? _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
@@ -259,7 +262,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 group: widget.group,
                                 isClickable: false,
                                 displayMode: GroupPostCardDisplayMode.page,
-                                postReactions: widget.postReactions,
                                 isAdmin: _post?.creator?.findAsMember(groupMembers: _allMembersAllowedToPost)?.isAdmin)
                           ),
                       Visibility(
@@ -270,19 +272,42 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               children: [
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                                    child: TextField(
-                                        onChanged: (txt) => _mainPostUpdateData?.body = txt,
-                                        controller: bodyController,
-                                        maxLines: null,
-                                        autofocus: true,
-                                        decoration: InputDecoration(
-                                            hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
-                                                    width: 0.0))),
-                                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                                       )),
+                                    child: PostInputField(
+                                      onBodyChanged: (txt) => _mainPostUpdateData?.body = txt,
+                                      text:  _mainPostUpdateData?.body ?? '',
+                                      minLines: 1,
+                                      maxLines: null,
+                                      autofocus: true,
+                                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
+                                      boxDecoration: BoxDecoration(color: Styles().colors.background),
+                                      inputDecoration: InputDecoration(
+                                          hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Styles().colors.mediumGray,
+                                                  width: 0.0))),
+                                    )
+                                ),
+                                Visibility(visible: _isPost && _canPinPost,
+                                    child: Container(
+                                      padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
+                                      child: EnabledToggleButton(
+                                          label: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
+                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                                          toggled: _mainPostUpdateData?.pinned == true,
+                                          textStyle: Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"),
+                                          enabled: true,
+                                          onTap: () {
+                                            if(mounted){
+                                              setState(() {
+                                                _mainPostUpdateData?.pinned  = !(_mainPostUpdateData?.pinned ?? false);
+                                              });
+                                            }
+                                          }
+                                      ),
+                                    )
+                                ),
                                 Row(children: [
                                   Flexible(
                                       flex: 1,
@@ -477,6 +502,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
+                analyticsFeature: widget.analyticsFeature,
                 onIconTap: optionsFunctionTap
             ))));
     }
@@ -701,12 +727,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (CollectionUtils.isNotEmpty(selectedAccountIds) && selectedAccountIds!.contains(Auth2().accountId)) {
       selectedAccountIds.remove(Auth2().accountId);
     }
-    _mainPostUpdateData = PostDataModel(
-        body: _post?.body,
-        imageUrl: _post?.imageUrl,
+    _mainPostUpdateData = PostUpdateData.fromPost(_post,
         members: GroupMembersSelectionWidget.constructUpdatedMembersList(
-            selectedAccountIds: selectedAccountIds, upToDateMembers: _allMembersAllowedToPost),
-        dateScheduled: _post?.dateActivatedLocal);
+          selectedAccountIds: selectedAccountIds,
+          upToDateMembers: _allMembersAllowedToPost),
+    );
     setStateIfMounted(() {});
   }
 
@@ -731,8 +756,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
     _post!.setMemberAccountIds(groupId: _groupId, accountIds: memberAccountIds);
     Social().updatePost(post: _post!).then((succeeded) {
-      _mainPostUpdateData = null;
-      _setLoading(false);
+      if(_mainPostUpdateData?.pinned != _post?.pinned){
+        Social().pinPost(postId: _post?.id ?? "", pinned: _mainPostUpdateData?.pinned == true).whenComplete((){
+          _mainPostUpdateData = null;
+          _setLoading(false);
+        });
+      } else {
+        _mainPostUpdateData = null;
+        _setLoading(false);
+      }
     });
   }
 
@@ -933,6 +965,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   bool get _isReportAbuseVisible => widget.group.currentUserIsMemberOrAdmin;
 
+  bool get _isPost => _post?.type ==  PostType.post;
+
+  bool get _canPinPost => _isAdmin;
+
+  bool get _isAdmin => widget.group.currentUserIsAdmin;
+
   bool get _isEditMainPost => _mainPostUpdateData != null;
 
   String get _groupId => widget.group.id!;
@@ -944,5 +982,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       _refreshPostData();
     }
   }
+}
+
+class PostUpdateData extends PostDataModel {
+  bool? pinned;
+
+  PostUpdateData({String? body, String? subject, String? imageUrl, List<Member>? members, DateTime? dateScheduled, this.pinned}) : 
+        super(body: body, subject: subject, imageUrl: imageUrl, members: members, dateScheduled: dateScheduled);
+  
+  factory PostUpdateData.fromPost(Post? post, {List<Member>? members}) =>
+      PostUpdateData(
+          body: post?.body,
+          imageUrl: post?.imageUrl,
+          dateScheduled: post?.dateActivatedLocal,
+          pinned: post?.pinned,
+          members: members
+      );
 }
 

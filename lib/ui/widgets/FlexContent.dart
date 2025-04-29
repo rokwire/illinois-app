@@ -18,8 +18,8 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/ui/widgets/flex_content.dart' as rokwire;
 
@@ -38,8 +38,7 @@ class FlexContent extends rokwire.FlexContent {
   }
 
   @protected
-  void launchInternal(BuildContext context, String url, { String? title }) =>
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: title)));
+  void launchInternal(BuildContext context, String url, { String? title }) => AppLaunchUrl.launch(context: context, url: url, title: title);
 
   @override
   String get closeButtonLabel => Localization().getStringEx("widget.flex_content.button.close.label", "Close");

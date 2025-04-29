@@ -78,7 +78,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum DetailTab {Events, Posts, Scheduled, Messages, Polls }
+enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Polls }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -110,10 +110,10 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
-class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProviderStateMixin implements NotificationsListener {
-  static final int          _postsPageSize = 8;
-  static final int          _animationDurationInMilliSeconds = 200;
-  static final List<DetailTab> _permanentTabs = [DetailTab.Scheduled];
+class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
+  static const int          _postsPageSize = 8;
+  static const int          _animationDurationInMilliSeconds = 200;
+  static const List<DetailTab> _adminTabs = [DetailTab.ScheduledPosts, DetailTab.PastEvents];
 
   Group?                _group;
   GroupStats?        _groupStats;
@@ -246,7 +246,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     return _isResearchProject != true;
   }
 
-  bool get _canShowScheduled => _isAdmin;
+  ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 
   @override
   void initState() {
@@ -260,7 +260,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       Groups.notifyGroupStatsUpdated,
     ]);
     _initUpdateController();
-    _initTabs();
+    _tabs = _buildDetailTabs();
     _postId = widget.groupPostId;
     _studentCodeLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchStudentCode;
 
@@ -291,7 +291,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       content = _buildErrorContent();
     }
 
-    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? Localization().getStringEx("panel.group_detail.header.project.title", 'Research Project Details') : null;
 
     return Scaffold(
       appBar: HeaderBar(title: barTitle,),
@@ -391,7 +391,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         // if (_isResearchProject && _isMember) {
         //   _currentTab = DetailTab.About; //TBD
         // }
-        _initTabs();
+        _tabs = _buildDetailTabs();
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
 
@@ -409,23 +409,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
+          _tabs = _buildDetailTabs();
           _refreshGroupAdmins();
-          _initTabs();
         });
         _updateController.add(GroupDetailPanel.notifyRefresh);
         if(refreshEvents)
           _updateController.add(_GroupEventsContent.notifyEventsRefresh);
       }
     });
-  }
-
-  void _trimForbiddenTabs(){
-    if(CollectionUtils.isNotEmpty(_tabs)){ //Remove Tabs which are forbidden
-      _tabs?.removeWhere((DetailTab? tab) => tab == null ||
-          (tab == DetailTab.Scheduled &&
-              ( _canShowScheduled == false || _tabs?.contains(DetailTab.Posts) != true)
-          ));
-    }
   }
 
   ///
@@ -438,7 +429,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         _postId = null; // Clear _postId in order not to redirect on the next group load.
         _decreaseProgress();
         if (post != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post, analyticsFeature: widget.analyticsFeature)));
         }
       });
     }
@@ -566,11 +557,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
   });
 
-  void _initTabs() {
-    _tabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
-    _tabs?.addAll(_permanentTabs);
-    _tabs = _tabs?.toSet().toList();// exclude duplicated
-    _trimForbiddenTabs();
+  List<DetailTab?> _buildDetailTabs() {
+    List<DetailTab?> resultTabs = <DetailTab?>[];
+    List<DetailTab?> sourceTabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
+
+    for (DetailTab? tab in sourceTabs) {
+      if ((tab != null) && (resultTabs.contains(tab) == false) && (_adminTabs.contains(tab) == false)) {
+        resultTabs.add(tab);
+      }
+    }
+
+    if (_isAdmin) {
+      for (DetailTab tab in _adminTabs) {
+        if ((tab == DetailTab.ScheduledPosts) && resultTabs.contains(DetailTab.Posts)) {
+          resultTabs.add(DetailTab.ScheduledPosts);
+        }
+        else if ((tab == DetailTab.PastEvents) && resultTabs.contains(DetailTab.Events)) {
+          resultTabs.add(DetailTab.PastEvents);
+        }
+      }
+    }
+    return resultTabs;
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -742,8 +749,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         case DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
           break;
+        case DetailTab.PastEvents:
+          title = Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
+          break;
         case DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+          break;
+        case DetailTab.ScheduledPosts:
+          title = Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
           break;
         case DetailTab.Messages:
           title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
@@ -754,9 +767,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
         // case DetailTab.About:
         //   title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
         //   break;
-        case DetailTab.Scheduled:
-          title = Localization().getStringEx("", 'Scheduled'); //localize
-          break;
         default: title = "Unknown";
       }
 
@@ -838,15 +848,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   Widget _buildPageFromTab(DetailTab? data){
     switch(data){
       case DetailTab.Events:
-        return _GroupEventsContent(group: _group, updateController: _updateController);
+        return _GroupEventsContent(group: _group, timeFilter: Event2TimeFilter.upcoming, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
+      case DetailTab.PastEvents:
+        return _GroupEventsContent(group: _group, timeFilter: Event2TimeFilter.past, updateController: _updateController, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Posts:
-        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins);
+        return _GroupPostsContent(group: _group, updateController: _updateController, groupAdmins: _groupAdmins, analyticsFeature: widget.analyticsFeature,);
+      case DetailTab.ScheduledPosts:
+        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins);
+        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
-        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins);
-      case DetailTab.Scheduled:
-        return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins);
+        return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
       default: Container();
     }
@@ -869,11 +881,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = _contentAttributes?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (Groups().isContentAttributeEnabled(attribute)) {
+        if (Groups().isContentAttributeEnabled(attribute, researchProject: _isResearchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             attributesList.add(Row(children: [
@@ -1009,8 +1020,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
                   ),
                 ]),
               ),
+
               Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
-                RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
+                RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) && (_group?.canJoinAutomatically == true) ? "Continue" : "Request to participate",
                     textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Styles().colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
@@ -1546,12 +1558,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with TickerProvider
     }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
     if ((group != null)) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           _group = group;
+          _tabs = _buildDetailTabs();
         });
       }
-      _initTabs();
       _refreshGroupAdmins();
       _refreshGroupStats();
       _updateController.add(GroupDetailPanel.notifyRefresh);
@@ -1638,9 +1650,11 @@ class _GroupEventsContent extends StatefulWidget{
   static const String notifyEventsRefresh  = "edu.illinois.rokwire.group_detail.events.refresh";
 
   final Group? group;
+  final Event2TimeFilter? timeFilter;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupEventsContent({this.updateController, this.group});
+  const _GroupEventsContent({this.updateController, this.group, this.timeFilter, this.analyticsFeature });
 
   String get _emptyText => Localization().getStringEx("", "No group events");
 
@@ -1650,7 +1664,7 @@ class _GroupEventsContent extends StatefulWidget{
   State<StatefulWidget> createState() => _GroupEventsState();
 }
 
-class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAliveClientMixin<_GroupEventsContent> implements NotificationsListener {
+class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsListener, AutomaticKeepAliveClientMixin<_GroupEventsContent> {
 
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
@@ -1709,7 +1723,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
             contentWeight: 0.5,
             onTap: () {
               Navigator.push(context, CupertinoPageRoute(
-                  builder: (context) => GroupAllEventsPanel(group: widget.group)));
+                  builder: (context) => GroupAllEventsPanel(group: widget.group, timeFilter: widget.timeFilter,)));
             })
         )
       );
@@ -1749,7 +1763,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with AutomaticKeepAli
     if (showProgress)
       setStateIfMounted(() => _updatingEvents = true);
 
-    Events2().loadGroupEvents(groupId: widget.groupId, limit: 3)
+    Events2().loadGroupEvents(groupId: widget.groupId, timeFilter: widget.timeFilter, limit: 3)
         .then((Events2ListResult? eventsResult) {
           setStateIfMounted(() {
             // _allEventsCount = eventsResult?.totalCount ?? 0;
@@ -1799,8 +1813,9 @@ class _GroupPostsContent extends StatefulWidget{
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupPostsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupPostsState();
@@ -1808,8 +1823,7 @@ class _GroupPostsContent extends StatefulWidget{
   String get _emptyText => Localization().getStringEx("", "No group posts");
 }
 
-class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAliveClientMixin<_GroupPostsContent>
-    implements NotificationsListener {
+class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupPostsContent> {
   List<Post>         _posts = <Post>[];
   GlobalKey          _lastPostKey = GlobalKey();
   bool?              _refreshingPosts;
@@ -1900,8 +1914,8 @@ class _GroupPostsState extends State<_GroupPostsContent> with AutomaticKeepAlive
         key: (i == 0) ? lastPostKey : null,
         post: post,
         group: _group!,
-        pinned: post.pinned,
-        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin
+        analyticsFeature: widget.analyticsFeature,
+        isAdmin: post.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin,
       ));
       }
     }
@@ -2077,8 +2091,9 @@ class _GroupPollsContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupPollsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   _GroupPollsState createState() => _GroupPollsState();
@@ -2086,8 +2101,7 @@ class _GroupPollsContent extends StatefulWidget {
   String get _emptyText => Localization().getStringEx("", "No group polls");
 }
 
-class _GroupPollsState extends State<_GroupPollsContent> with AutomaticKeepAliveClientMixin<_GroupPollsContent>
-    implements NotificationsListener {
+class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupPollsContent> {
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
   bool               _pollsLoading = false;
@@ -2234,8 +2248,9 @@ class _GroupMessagesContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
 
@@ -2243,8 +2258,7 @@ class _GroupMessagesContent extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupMessagesState();
 }
 
-class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKeepAliveClientMixin<_GroupMessagesContent>
-    implements NotificationsListener{
+class _GroupMessagesState extends State<_GroupMessagesContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupMessagesContent> {
   List<Post>         _messages = <Post>[];
   GlobalKey          _lastMessageKey = GlobalKey();
   bool?              _refreshingMessages;
@@ -2289,6 +2303,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
             post: message,
             group: _group!,
             isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            analyticsFeature: widget.analyticsFeature,
             // creator: _getMessageCreatorAsMember(message),
             // updateController: widget.updateController,
         ));
@@ -2353,7 +2368,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingMessages != true)) {
       int limit = _messages.length + (delta ?? 0);
       _refreshingMessages = true;
-      Social().loadPosts(groupId: _group?.id, type: PostType.direct_message, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? messages) {
+      Social().loadPosts(groupId: _group?.id, type: PostType.direct_message, showCommentsCount: true, offset: 0, limit: limit, order: SocialSortOrder.desc).then((List<Post>? messages) {
         _refreshingMessages = false;
         if (mounted && (messages != null)) {
           setState(() {
@@ -2387,7 +2402,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with AutomaticKee
   }
 
   Future<void> _loadMessagesPage() async {
-    List<Post>? messagesPage = await Social().loadPosts(groupId: _group?.id, type: PostType.direct_message, offset: _messages.length, limit: _GroupDetailPanelState._postsPageSize, order: SocialSortOrder.desc);
+    List<Post>? messagesPage = await Social().loadPosts(groupId: _group?.id, type: PostType.direct_message, showCommentsCount: true, offset: _messages.length, limit: _GroupDetailPanelState._postsPageSize, order: SocialSortOrder.desc);
     if (messagesPage != null) {
       _messages.addAll(messagesPage);
       if (messagesPage.length < _GroupDetailPanelState._postsPageSize) {
@@ -2462,8 +2477,9 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final AnalyticsFeature? analyticsFeature;
 
-  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins});
+  const _GroupScheduledPostsContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupScheduledPostsState();
@@ -2471,8 +2487,7 @@ class _GroupScheduledPostsContent extends StatefulWidget {
   String get _emptyText => Localization().getStringEx("", "No scheduled posts");
 }
 
-class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with AutomaticKeepAliveClientMixin<_GroupScheduledPostsContent>
-    implements NotificationsListener {
+class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with NotificationsListener, AutomaticKeepAliveClientMixin<_GroupScheduledPostsContent> {
   List<Post> _scheduledPosts = <Post>[];
   GlobalKey _lastScheduledPostKey = GlobalKey();
   bool? _refreshingScheduledPosts;
@@ -2519,6 +2534,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
           key: (i == 0) ? _lastScheduledPostKey : null,
           post: post,
           group: _group!,
+          analyticsFeature: widget.analyticsFeature,
           isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == post.creatorId).isNotEmpty,
           // updateController: widget.updateController,
           // creator: _getPostCreatorAsMember(post),

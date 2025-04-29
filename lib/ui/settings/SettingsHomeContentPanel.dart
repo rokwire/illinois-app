@@ -102,7 +102,7 @@ class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> implements NotificationsListener {
+class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> with NotificationsListener {
   static SettingsContent? _lastSelectedContent;
   late SettingsContent _selectedContent;
   bool _contentValuesVisible = false;
@@ -348,7 +348,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.recent_items:
         return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History');
       case SettingsContent.appointments:
-        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Success Team & Appointments');
+        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
       case SettingsContent.assessments:

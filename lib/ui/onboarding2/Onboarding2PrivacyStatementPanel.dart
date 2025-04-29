@@ -15,34 +15,38 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
-class Onboarding2PrivacyStatementPanel extends StatefulWidget{
+class Onboarding2PrivacyStatementPanel extends StatefulWidget with Onboarding2Panel {
 
-  Onboarding2PrivacyStatementPanel();
-  _Onboarding2PrivacyStatementPanelState createState() => _Onboarding2PrivacyStatementPanelState();
+  final String onboardingCode;
+  final Onboarding2Context? onboardingContext;
+  Onboarding2PrivacyStatementPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
+
+  _Onboarding2PrivacyStatementPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
+
+  @override
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2PrivacyStatementPanelState();
 }
+
 
 class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacyStatementPanel> {
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  bool _onboardingProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,122 +59,113 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
     String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.');
 
     return Scaffold(
-        backgroundColor: Styles().colors.background,
-        body: SafeArea(child: SwipeDetector(
-            onSwipeLeft: () => _goNext(context),
-            onSwipeRight: () => _goBack(context),
-            child: Column(children: [
-              Expanded(child:
-                SingleChildScrollView(child:
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: [
-                        Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 19, right: 20, bottom: 8),
-                            onTap:() {
-                              Analytics().logSelect(target: "Back");
-                              _goBack(context);
-                            }),
-                      ],),
-                      Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
-                      Semantics(
-                        label: titleText + titleText2,
-                        hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
-                        header: true,
-                        excludeSemantics: true,
-                        child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 40, right: 40, top: 12, bottom: 12),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  children: <TextSpan>[
-                                    TextSpan(text:titleText , style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.fat")),
-                                    TextSpan(text:titleText2, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.regular")),
-                                  ]
-                                )
-                              ),
-                            )),
-                      ),
-                      Semantics(
-                          label: descriptionText,
-                          excludeSemantics: true,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            child: Align(
-                                alignment: Alignment.topCenter,
-                                child: Text(
-                              descriptionText,
-                              textAlign: TextAlign.center,
-                              style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.description.regular")
-                            )),
-                          )),
-                    ]),
-              ),),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(height: 16,),
-                    Semantics(
-                      container: true,
-                        label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
-//                        excludeSemantics: true,
-                        button: true,
-                        child: GestureDetector(
-                          onTap: _openPrivacyPolicy,
-                          child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                    style: Styles().textStyles.getTextStyle("widget.info.small"),
-                                    children: <TextSpan>[
-                                      TextSpan(text:descriptionText1, semanticsLabel: "",),
-                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
-                                          children: [
-                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Styles().images.getImage("external-link", excludeFromSemantics: true,)))
-                                          ]),
-                                      TextSpan(text:descriptionText3, semanticsLabel: ""),
-                                    ]
-                                )
-                            ),),
-                        ))),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 24, top: 16),
-                      child: RoundedButton(
-                        label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin'),
-                        hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Styles().colors.white,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
-                        onTap: () => _goNext(context),
-                      ),),
-                  ],
-                ),
-              ),
+      backgroundColor: Styles().colors.background,
+      body: SafeArea(child:
+        SwipeDetector(
+          onSwipeLeft: _onboardingNext,
+          onSwipeRight: _onboardingBack,
+          child: Column(children: [
+            Expanded(child:
+              SingleChildScrollView(child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+                  Align(alignment: Alignment.centerLeft, child:
+                    Onboarding2BackButton( padding: const EdgeInsets.all(16), onTap: _onTapBack,),
+                  ),
 
-            ],)
-          )));
+                  Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
+
+                  Semantics(
+                    label: titleText + titleText2,
+                    hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
+                    header: true,
+                    excludeSemantics: true,
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 42, vertical: 12), child:
+                      RichText(textAlign: TextAlign.center, text:
+                        TextSpan(children: <TextSpan>[
+                          TextSpan(text:titleText , style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.fat")),
+                          TextSpan(text:titleText2, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.regular")),
+                        ])
+                      ),
+                    ),
+                  ),
+
+                  Semantics(label: descriptionText, excludeSemantics: true, child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
+                      Text(descriptionText, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.description.regular"))
+                    )
+                  ),
+                ]),
+              ),
+            ),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                Container(height: 16,),
+                Semantics(
+                  container: true,
+                  label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
+                  button: true,
+                  child: InkWell(onTap: _onTapPrivacyPolicy, child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
+                      RichText(textAlign: TextAlign.center, text:
+                        TextSpan(style: Styles().textStyles.getTextStyle("widget.info.small"), children: <TextSpan>[
+                          TextSpan(text:descriptionText1, semanticsLabel: "",),
+                          TextSpan(text:descriptionText2, semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.button.title.small.underline"), children: [
+                            WidgetSpan(child:
+                              Container(padding: EdgeInsets.only(bottom: 4), child:
+                                Styles().images.getImage("external-link", excludeFromSemantics: true,)
+                              )
+                            )
+                          ]),
+                          TextSpan(text:descriptionText3, semanticsLabel: ""),
+                        ])
+                      ),
+                    )
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                  RoundedButton(
+                    label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin'),
+                    hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    backgroundColor: Styles().colors.white,
+                    borderColor: Styles().colors.fillColorSecondaryVariant,
+                    progress: _onboardingProgress,
+                    onTap: () => _onTapContinue(context),
+                  ),
+                ),
+              ],),
+            ),
+          ],)
+        )
+      )
+    );
   }
 
-  void _openPrivacyPolicy(){
+  void _onTapPrivacyPolicy() {
     Analytics().logSelect(target: "Privacy Statement");
     AppPrivacyPolicy.launch(context);
   }
 
-  void _goNext(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ExploreCampusPanel()));
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    _onboardingBack();
   }
 
-  void _goBack(BuildContext context) {
-    Navigator.of(context).pop();
+  void _onTapContinue(BuildContext context) {
+    Analytics().logSelect(target: "Begin");
+    _onboardingNext();
   }
+
+  // Onboarding
+
+  bool get onboardingProgress => _onboardingProgress;
+  set onboardingProgress(bool value) {
+    setStateIfMounted(() {
+      _onboardingProgress = value;
+    });
+  }
+
+  void _onboardingBack() => Navigator.of(context).pop();
+  void _onboardingNext() => Onboarding2().next(context, widget);
 }

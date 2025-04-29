@@ -105,7 +105,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.3), //Colors.transparent,
+        backgroundColor: Colors.black.withValues(alpha: 0.3), //Colors.transparent,
         body: SafeArea(
           child:
 //          Padding(

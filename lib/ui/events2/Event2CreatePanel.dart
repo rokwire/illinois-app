@@ -375,12 +375,12 @@ class Event2CreatePanel extends StatefulWidget {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     hideKeyboard(context);
     if (controller.text.isNotEmpty) {
-      Uri? uri = UrlUtils.parseUri(controller.text);
+      Uri? uri = UriExt.parse(controller.text);
       if (uri != null) {
         if (updateProgress != null) {
           updateProgress(true);
         }
-         UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+        uri.fixAsync().then((Uri? fixedUri) {
           if (updateProgress != null) {
             updateProgress(false);
           }
@@ -593,9 +593,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _speaker = widget.event?.speaker;
     _contacts = widget.event?.contacts;
 
-    _dateTimeSectionExpanded = widget.isUpdate;
-    _typeAndLocationSectionExpanded = widget.isUpdate;
-    _costSectionExpanded = widget.isUpdate;
+    _dateTimeSectionExpanded = widget.isUpdate || (widget.event?.startTimeUtc != null);
+    _typeAndLocationSectionExpanded = widget.isUpdate || (widget.event?.eventType != null);
+    _costSectionExpanded = widget.isUpdate || (widget.event?.free != null) || (widget.event?.cost != null);
 
     _errorMap = _buildErrorMap();
 
@@ -1178,9 +1178,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                               icon: Styles().images.getImage('chevron-down'),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                              hint: Text(
-                                _repeatTypeToDisplayString(_recurrenceRepeatType) ?? '-----',
-                              ),
+                              hint: Text(_repeatTypeToDisplayString(_recurrenceRepeatType) ?? '-----',),
                               items: _buildRepeatTypeDropDownItems(),
                               onChanged: _onRepeatTypeChanged)))))
         ]));
@@ -2201,10 +2199,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((dynamic result) {
+      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
           setStateIfMounted(() {
             _loadingEventGroups = false;
-            _eventGroups = JsonUtils.listTypedValue<Group>(result);
+            _eventGroups = groups;
             _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
           });
       });

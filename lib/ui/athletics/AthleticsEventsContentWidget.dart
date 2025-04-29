@@ -46,7 +46,7 @@ class AthleticsEventsContentWidget extends StatefulWidget {
   State<AthleticsEventsContentWidget> createState() => _AthleticsEventsContentWidgetState();
 }
 
-class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWidget> implements NotificationsListener {
+class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWidget> with NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;

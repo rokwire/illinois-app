@@ -19,7 +19,7 @@ class SettingsRecentItemsContentWidget extends StatefulWidget{
 
 }
 
-class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsContentWidget> implements NotificationsListener {
+class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsContentWidget> with NotificationsListener {
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsCo
               onTap: _onRecentItemsEnabeldToggled
           ),
           Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
-            Text(Localization().getStringEx("panel.settings.home.recent_items.enable.toggle.info", "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites."),
+            Text(Localization().getStringEx("panel.settings.home.recent_items.enable.toggle.info", "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites."),
               style: Styles().textStyles.getTextStyle('widget.item.regular.thin'),
             ),
           ),

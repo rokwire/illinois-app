@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileLoginPage extends StatefulWidget {
+
   final EdgeInsetsGeometry margin;
 
   ProfileLoginPage({super.key, this.margin = const EdgeInsets.all(16) });
@@ -36,7 +37,7 @@ class ProfileLoginPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileLoginPageState();
 }
 
-class _ProfileLoginPageState extends State<ProfileLoginPage> implements NotificationsListener {
+class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsListener {
 
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
@@ -129,18 +130,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     for (String code in codes) {
       if (code == 'netid') {
           contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-            RichText(text:
-              TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
-                  style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
-                  style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
-                      "? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')))
-              ],),
-            )
+            _netIdDescription
           ),);
           contentList.add(RibbonButton(
             border: _allBorder,
@@ -195,6 +185,37 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         }
       });
     }
+  }
+
+  Widget get _netIdDescription {
+    final String appTitleMacro = '{{app_title}}';
+    final String employeeMacro = '{{employee}}';
+    final String universityStudentMacro = '{{university_student}}';
+
+    String appTitleText = Localization().getStringEx('app.title', 'Illinois');
+    String employeeText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription.employee', 'employee');
+    String universityStudentText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription.university_student', 'university student');
+
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.thin');
+    TextStyle? boldTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.fat');
+
+    String descriptionText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription', 'Are you a $universityStudentMacro or $employeeMacro? Sign in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
+      replaceAll(appTitleMacro, appTitleText);
+
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionText, macros: [employeeMacro, universityStudentMacro], builder: (String entry){
+      if (entry == employeeMacro) {
+        return TextSpan(text: employeeText, style: boldTextStyle);
+      }
+      if (entry == universityStudentMacro) {
+        return TextSpan(text: universityStudentText, style: boldTextStyle);
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+    return RichText(text:
+      TextSpan(style: regularTextStyle, children: spanList)
+    );
   }
 
   void _onPhoneOrEmailLoginClicked() {
@@ -266,14 +287,20 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
-          RoundedButton(
-            label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            contentWeight: 0.45,
-            conentAlignment: MainAxisAlignment.start,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectNetIdClicked
-          )
+          Row(children: [ Expanded(child:
+            Wrap(alignment: WrapAlignment.start, spacing: 8, runSpacing: 8, children: [
+              CompactRoundedButton(
+                label: Localization().getStringEx("panel.settings.home.net_id.button.profile", "View My Profile"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                onTap: _onViewProfileClicked
+              ),
+              CompactRoundedButton(
+                label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                onTap: _onDisconnectNetIdClicked
+              ),
+            ],),
+          ),],),
         ));
       }
     }
@@ -375,6 +402,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   }
 
   void _onDisconnectNetIdClicked() {
+    Analytics().logSelect(target: 'Sign Out');
     if (Auth2().isOidcLoggedIn) {
       Analytics().logSelect(target: "Disconnect netId");
     } else if (Auth2().isPhoneLoggedIn) {
@@ -387,6 +415,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         Auth2().logout();
       }
     });
+  }
+
+  void _onViewProfileClicked() {
+    Analytics().logSelect(target: 'View Profile');
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContent.profile);
   }
 
   // Linked

@@ -1,10 +1,14 @@
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
@@ -17,6 +21,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -46,7 +51,7 @@ class ProfileInfoEditPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoEditPageState();
 }
 
-class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoEditPage> with WidgetsBindingObserver {
+class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with NotificationsListener, WidgetsBindingObserver {
 
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;
@@ -67,15 +72,53 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   AudioPlayer? _audioPlayer;
 
   double _screenInsetsBottom = 0;
+  double? _visibilityDropdownItemsWidth;
   Timer? _onScreenInsetsBottomChangedTimer;
 
+  final Map<Auth2LoginType, Set<_ProfileField>> fieldLoginTypeAvailabilities = <Auth2LoginType, Set<_ProfileField>>{
+    Auth2LoginType.oidc: _oidcLoginTypeFieldAvailabilities,
+    Auth2LoginType.oidcIllinois: _oidcLoginTypeFieldAvailabilities,
+    Auth2LoginType.email: _emailLoginTypeFieldAvailabilities,
+    Auth2LoginType.phone: _phoneLoginTypeFieldAvailabilities,
+    Auth2LoginType.phoneTwilio: _phoneLoginTypeFieldAvailabilities,
+    Auth2LoginType.username: _defaultLoginTypeFieldAvailabilities,
+  };
+  static Set<_ProfileField> _oidcLoginTypeFieldAvailabilities = _ProfileField.values.toSet();
+  static Set<_ProfileField> _defaultLoginTypeFieldAvailabilities = <_ProfileField>{_ProfileField.firstName, _ProfileField.middleName, _ProfileField.lastName, _ProfileField.photoUrl};
+  static Set<_ProfileField> _emailLoginTypeFieldAvailabilities = _defaultLoginTypeFieldAvailabilities.union(<_ProfileField>{ _ProfileField.email});
+  static Set<_ProfileField> _phoneLoginTypeFieldAvailabilities = _defaultLoginTypeFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
+  Set<_ProfileField>? get fieldLoginTypeAvailability => fieldLoginTypeAvailabilities[widget.authType?.loginType];
+
+  final Map<String, Set<_ProfileField>> fieldUniverityRoleUnavailabilities = <String, Set<_ProfileField>>{
+    Auth2UserProfile.universityRoleFacultyStaff : _facultyStuffUniversityRoleFieldUnavailabilities,
+  };
+  static Set<_ProfileField> _facultyStuffUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.major, _ProfileField.major2 };
+  static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city, _ProfileField.zip, _ProfileField.state, _ProfileField.country };
+  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
+
+  static const double _buttonIconSize = 16;
+  static const double _dropdownItemInnerIconPaddingX = 6;
+  static const double _dropdownButtonInnerIconPaddingX = 12;
+  static const double _dropdownButtonChevronIconSize = 10;
+  static const EdgeInsetsGeometry _dropdownMenuItemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry _dropdownButtonPadding = const EdgeInsets.only(left: 16, right: 8, top: 15, bottom: 15);
+
+  bool _isFieldAvailable(_ProfileField field) => (_isFieldLoginTypeAvailable(field) && _isFieldUniversityRoleAvailable(field));
+  bool _isFieldLoginTypeAvailable(_ProfileField field) => (fieldLoginTypeAvailability?.contains(field) == true);
+  bool _isFieldUniversityRoleAvailable(_ProfileField field) => (_universityRoleFieldUnavailability.contains(field) != true);
+
   bool get _showProfileCommands => (widget.onboarding == false);
+  bool get _showPrivacyControls => (widget.onboarding == false) && FlexUI().isPrivacyAvailable;
   bool get _showNameControls => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _canEditName => (widget.authType?.loginType?.shouldHaveName != true) || !_hasProfileName;
   bool get _hasProfileName => (widget.profile?.isNameNotEmpty == true);
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+    ]);
+
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
@@ -91,13 +134,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _fieldFocusNodes[field] = FocusNode();
     }
 
-    _profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
+    _profileVisibility = _showPrivacyControls ? Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
       firstName: Auth2FieldVisibility.public,
       middleName: Auth2FieldVisibility.public,
       lastName: Auth2FieldVisibility.public,
-      email: (widget.authType?.loginType?.shouldHaveEmail == true) ? Auth2FieldVisibility.public : null,
-      phone: (widget.authType?.loginType?.shouldHavePhone == true) ? Auth2FieldVisibility.public : null,
-    );
+      email: ((widget.authType?.loginType?.canEditPrivacy == true) && (widget.authType?.loginType?.shouldHaveEmail == true)) ? Auth2FieldVisibility.public : null,
+      phone: ((widget.authType?.loginType?.canEditPrivacy == true) && (widget.authType?.loginType?.shouldHavePhone == true)) ? Auth2FieldVisibility.public : null,
+    ) : Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile);
 
     _fieldVisibilities.addAll(_profileVisibility.fieldsVisibility);
 
@@ -106,6 +149,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
 
     for (_ProfileField field in _ProfileField.values) {
@@ -119,6 +163,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
   @override
+  void onNotification(String name, param) {
+    if (name == FlexUI.notifyChanged) {
+      setStateIfMounted((){});
+    }
+  }
+
+  @override
   void didChangeMetrics() {
     double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
     if (screenInsetsBottom != _screenInsetsBottom) {
@@ -127,6 +178,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _onScreenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 100), (){
         _onScreenInsetsBottomChangedTimer = null;
         setStateIfMounted(() {});
+      });
+    }
+
+    double visibilityDropdownItemsWidth = _evaluateVisibilityDropdownItemsWidth();
+    if (_visibilityDropdownItemsWidth != visibilityDropdownItemsWidth) {
+      setStateIfMounted(() {
+        _visibilityDropdownItemsWidth = visibilityDropdownItemsWidth;
       });
     }
   }
@@ -152,6 +210,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           _collegeSection,
           _departmentSection,
           _majorSection,
+          _department2Section,
+          _major2Section,
+          _addressSection,
+          _address2Section,
+          _poBoxSection,
+          _citySection,
+          _stateSection,
+          _zipSection,
+          _countrySection,
           _emailSection,
           _email2Section,
           _phoneSection,
@@ -175,8 +242,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
-    Widget get _photoWidget => Stack(children: [
-      Padding(padding: EdgeInsets.only(left: 8, right: 8, bottom: 20), child:
+    Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
           photoUrl: _photoImageUrl,
@@ -186,16 +253,19 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         ),
       ),
       Positioned.fill(child:
-        Align(alignment: Alignment.bottomLeft, child:
-          _editPhotoButton
+        Align(alignment: _showPrivacyControls ? Alignment.bottomLeft : Alignment.bottomRight, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+            _editPhotoButton
+          )
         )
       ),
-      Positioned.fill(child:
-        Align(alignment: Alignment.bottomRight, child:
-          _togglePhotoVisibilityButton
+      if (_showPrivacyControls)
+        Positioned.fill(child:
+          Align(alignment: Alignment.bottomRight, child:
+            _editPhotoVisibilityButton
+          )
         )
-      )
-    ],);
+    ],) : Container();
 
     Widget get _editPhotoButton =>
       _photoIconButton(_editIcon,
@@ -287,10 +357,20 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       Analytics().logAlert(text: _clearPhotoPrompt(language: 'en'), selection: 'OK');
     }
 
-    Widget get _togglePhotoVisibilityButton =>
-      _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
-        onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+    Widget get _editPhotoVisibilityButton =>
+      _photoVisibilityDropdown; // _photoVisibilityToggleButton
+
+    Widget get _photoVisibilityDropdown =>
+      _visibilityDropdown(_ProfileField.photoUrl,
+        buttonPadding: EdgeInsets.only(left: 8, right: 6, top: 10, bottom: 10),
+        buttonInnerIconPadding: 8
       );
+
+    // ignore: unused_element
+    Widget get _photoVisibilityToggleButton =>
+    _photoIconButton(_visibilityIcon(_ProfileField.photoUrl),
+      onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
+    );
 
     Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
       InkWell(onTap: onTap, child:
@@ -310,8 +390,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         )
       );
 
-    static const double _buttonIconSize = 16;
-
     Widget get _staticNameWidget =>
       Text(_staicNameText ?? '', style: nameTextStyle, textAlign: TextAlign.center,);
 
@@ -321,12 +399,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _fieldTextControllers[_ProfileField.lastName]?.text,
     ]);
 
+    TextStyle? get nameTextStyle =>
+      Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
+
   // Edit: Pronunciation
 
-  Widget get _pronunciationSection => _fieldSection(
+  Widget get _pronunciationSection => _isFieldAvailable(_ProfileField.pronunciationUrl) ? _fieldSection(
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
-  );
+  ) : Container();
 
   Widget get _pronunciationCreateControl => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Styles().images.getImage('plus-circle', size: 24) ?? Container(),
@@ -337,8 +418,9 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         ),
       ),
     ),
-    Padding(padding: EdgeInsets.only(left: 6), child:
-      _visibilityButton(_ProfileField.pronunciationUrl),
+    if (_showPrivacyControls)
+      Padding(padding: EdgeInsets.only(left: 6), child:
+        _visibilityButton(_ProfileField.pronunciationUrl),
     ),
   ],);
 
@@ -350,7 +432,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       _pronunciationPlayButton,
       _pronunciationEditButton,
       _pronunciationDeleteButton,
-      _visibilityButton(_ProfileField.pronunciationUrl),
+      if (_showPrivacyControls)
+        _visibilityButton(_ProfileField.pronunciationUrl),
     ],)
   ],);
 
@@ -502,41 +585,95 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
   Widget get _firstNameSection => _textFieldSection(_ProfileField.firstName,
     headingTitle: Localization().getStringEx('panel.profile.info.title.first_name.text', 'First Name'),
-    enabled: _canEditName, locked: true,
+    enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _middleNameSection => _textFieldSection(_ProfileField.middleName,
     headingTitle: Localization().getStringEx('panel.profile.info.title.middle_name.text', 'Middle Name'),
-    enabled: _canEditName, locked: true,
+    enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _lastNameSection => _textFieldSection(_ProfileField.lastName,
     headingTitle: Localization().getStringEx('panel.profile.info.title.last_name.text', 'Last Name'),
-    enabled: _canEditName, locked: true,
+    enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
     headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
+    available: _showPrivacyControls,
   );
 
   Widget get _titleSection => _textFieldSection(_ProfileField.title,
     headingTitle: Localization().getStringEx('panel.profile.info.title.title.text', 'Title'),
-    headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)')
+    headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)'),
+    available: _showPrivacyControls,
   );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College'),
-    enabled: false,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College, School, or Unit'),
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _departmentSection => _textFieldSection(_ProfileField.department,
     headingTitle: Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
-    enabled: false,
+    enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
     headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
-    enabled: false,
+    enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _department2Section => _textFieldSection(_ProfileField.department2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.department2.text', 'Second Department'),
+    enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _major2Section => _textFieldSection(_ProfileField.major2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.major2.text', 'Second Major'),
+    enabled: false, available: _showPrivacyControls,
+  );
+
+  Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _addressSection => _textFieldSection(_ProfileField.address,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
+    textInputType: TextInputType.streetAddress,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _address2Section => _textFieldSection(_ProfileField.address2,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
+    textInputType: TextInputType.streetAddress,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _citySection => _textFieldSection(_ProfileField.city,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.city.text', 'City'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _stateSection => _textFieldSection(_ProfileField.state,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.state.text', 'State Abbreviation'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _zipSection => _textFieldSection(_ProfileField.zip,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.zip.text', 'Zip Code'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
+  );
+
+  Widget get _countrySection => _textFieldSection(_ProfileField.country,
+    headingTitle: Localization().getStringEx('panel.profile.info.title.country.text', 'Country Abbreviation'),
+    textInputType: TextInputType.text,
+    available: _showPrivacyControls,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
@@ -544,11 +681,13 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.emailAddress,
     enabled: (widget.authType?.loginType?.shouldHaveEmail != true) || StringUtils.isEmpty(widget.profile?.email),
     locked: (widget.authType?.loginType?.shouldHaveEmail == true),
+    available: _showPrivacyControls,
   );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
     headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
     textInputType: TextInputType.emailAddress,
+    available: _showPrivacyControls,
   );
 
   Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
@@ -556,21 +695,23 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     textInputType: TextInputType.phone,
     enabled: (widget.authType?.loginType?.shouldHavePhone != true) || StringUtils.isEmpty(widget.profile?.phone),
     locked: (widget.authType?.loginType?.shouldHavePhone == true),
+    available: _showPrivacyControls,
   );
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
     headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
     textInputType: TextInputType.url,
+    available: _showPrivacyControls,
   );
 
   Widget _textFieldSection(_ProfileField field, {
     String? headingTitle, String? headingHint,
     TextInputType textInputType = TextInputType.text,
-    bool autocorrect = true,
-    bool enabled = true,
-    bool locked = false,
-  }) => ((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) ?
+    bool autocorrect = true, bool enabled = true,
+    bool available = true, bool locked = false,
+    int maxLines = 1,
+  }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) && _isFieldAvailable(field)) ?
     _fieldSection(
       headingTitle: headingTitle,
       headingHint: headingHint,
@@ -578,23 +719,26 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           textInputType: textInputType,
           autocorrect: autocorrect,
           enabled: enabled,
+          available: available,
           locked: locked,
+          maxLines: maxLines,
       )
     ) : Container();
 
   Widget _textFieldControl(_ProfileField field, {
     TextInputType textInputType = TextInputType.text,
-    bool autocorrect = true,
-    bool enabled = true,
-    bool locked = false,
+    bool autocorrect = true, bool enabled = true,
+    bool locked = false, bool available = true,
+    int maxLines = 1,
     }) =>
       Row(children: [
         Expanded(child:
-          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled)
+          _textFieldWidget(field, textInputType: textInputType, autocorrect: autocorrect, enabled: enabled, locked: locked && !enabled && !available, maxLines: maxLines)
         ),
-        Padding(padding: EdgeInsets.only(left: 6), child:
-          _visibilityButton(field, locked: locked),
-        ),
+        if (_showPrivacyControls)
+          Padding(padding: EdgeInsets.only(left: 6), child:
+            _visibilityButton(field, locked: locked),
+          ),
       ],);
 
   Widget _fieldSection({
@@ -616,7 +760,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
         TextSpan(style: Styles().textStyles.getTextStyle('widget.title.tiny.fat.spaced'), children: [
           TextSpan(text: title?.toUpperCase()),
           if (hint?.isNotEmpty == true)
-
             TextSpan(text: ' ' + (hint?.toUpperCase() ?? ''), style: Styles().textStyles.getTextStyle('widget.title.tiny'))
         ]),
       ),
@@ -626,6 +769,8 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     TextInputType textInputType = TextInputType.text,
     bool autocorrect = true,
     bool enabled = true,
+    bool locked = false,
+    int maxLines = 1,
   }) =>
     Container(decoration: _controlDecoration, child:
       Row(children: [
@@ -636,15 +781,19 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
               focusNode: _fieldFocusNodes[field],
               decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.zero),
               style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
-              maxLines: 1,
+              maxLines: maxLines,
               keyboardType: textInputType,
               autocorrect: autocorrect,
-              readOnly: (enabled != true),
+              readOnly: ((enabled != true) || (locked == true)),
               onChanged: (String text) => _onTextChanged(field, text),
             )
           )
         ),
-        if (enabled)
+        if (locked)
+          Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
+            Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize)
+          ),
+        if (enabled && !locked)
           InkWell(onTap: () => _onTextEdit(field), child:
             Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
               Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
@@ -653,13 +802,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
       ])
     );
 
-  Widget _visibilityButton(_ProfileField field, { bool locked = false}) =>
+  Widget _visibilityButton(_ProfileField field, { bool locked = false }) =>
+    _visibilityDropdown(field, locked: locked); // _visibilityToggleButton(field, locked: locked);
+
+  // ignore: unused_element
+  Widget _visibilityToggleButton(_ProfileField field, { bool locked = false }) =>
     _iconButton(
       icon: _visibilityIcon(field, locked: locked),
       onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
     );
 
-  Widget _iconButton({ Widget? icon, bool progress = false, void Function()? onTap}) =>
+  Widget _iconButton({ Widget? icon, void Function()? onTap, bool progress = false}) =>
     InkWell(onTap: onTap, child:
       Container(decoration: _controlDecoration, child:
         Padding(padding: EdgeInsets.all(15), child:
@@ -673,23 +826,187 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   Widget? _visibilityIcon(_ProfileField field, { bool locked = false} ) {
     if (locked) {
       return _lockIcon;
-    } else if (_permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true)) {
+    } else if (isProfileFieldVisibilityPermitted(field)) {
       return _publicIcon;
     } else {
       return _privateIcon;
     }
   }
 
-  Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
-  Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize);
-  Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
-  Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  //Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+  Widget? _visibilityDropdownIcon(_ProfileField field, { bool locked = false} ) {
+    if (locked) {
+      return _lockIcon;
+    } else if (isProfileFieldVisibilityPermitted(field)) {
+      return _publicDropdownIcon;
+    } else {
+      return _privateDropdownIcon;
+    }
+  }
 
-  Decoration get _controlDecoration => BoxDecoration(
+  bool isProfileFieldVisibilityPermitted(_ProfileField field) =>
+    _permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true);
+
+  Auth2FieldVisibility profileFieldVisibility(_ProfileField field) {
+    Auth2FieldVisibility? profileFieldVisibility = _fieldVisibilities[field];
+    return ((_fieldTextNotEmpty[field] == true) && (profileFieldVisibility != null) && _permittedVisibility.contains(profileFieldVisibility)) ? profileFieldVisibility : Auth2FieldVisibility.private;
+  }
+
+  static Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _trashIcon => Styles().images.getImage('trash', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _publicIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+  static Widget? get _privateIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+  static Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
+  static Widget? get _publicDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
+  static Widget? get _privateDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _lockDropdownIcon => Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _dropdownButtonChevronIconSize);
+  static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _buttonIconSize);
+  static Widget? get _redioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _buttonIconSize);
+
+  //static  Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
+
+  Widget _visibilityDropdown(_ProfileField field, {
+      bool locked = false,
+      EdgeInsetsGeometry buttonPadding = _dropdownButtonPadding,
+      double buttonInnerIconPadding = _dropdownButtonInnerIconPaddingX,
+    }) =>
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<Auth2FieldVisibility>(
+        dropdownStyleData: DropdownStyleData(
+          width: _visibilityDropdownItemsWidth ??= _evaluateVisibilityDropdownItemsWidth(),
+          direction: DropdownDirection.left,
+          decoration: _controlDecoration,
+        ),
+        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field,
+          padding: buttonPadding,
+          innerIconPadding: buttonInnerIconPadding,
+        ),
+        isExpanded: false,
+        items: _visibilityDropdownItems(field),
+        onChanged: ((_fieldTextNotEmpty[field] == true) && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(field, visibility) : null,
+      ),
+    );
+
+  Widget _visibilityDropdownButton(_ProfileField field, {
+      bool locked = false,
+      EdgeInsetsGeometry padding = _dropdownButtonPadding,
+      double innerIconPadding = _dropdownButtonInnerIconPaddingX,
+    }) =>
+    Container(decoration: _controlDecoration, child:
+      Padding(padding: padding, child:
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+            Center(child: _visibilityDropdownIcon(field, locked: locked),)
+          ),
+          Padding(padding: EdgeInsets.only(left: innerIconPadding), child:
+            SizedBox(width: _dropdownButtonChevronIconSize, height: _dropdownButtonChevronIconSize, child:
+              Center(child:
+                locked ? null : _chevronDropdownIcon,
+              )
+            )
+          )
+        ],)
+      )
+    );
+
+  Widget get _visibilityDropdownLockedButton =>
+      Container(decoration: _controlDecoration, child:
+        Padding(padding: EdgeInsets.only(left: 23, right: 23, top: 15, bottom: 15), child:
+          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+            Center(child: _lockIcon,)
+          ),
+        )
+      );
+
+  List<DropdownMenuItem<Auth2FieldVisibility>> _visibilityDropdownItems(_ProfileField field) {
+    List<DropdownMenuItem<Auth2FieldVisibility>> items = <DropdownMenuItem<Auth2FieldVisibility>>[];
+    Auth2FieldVisibility selectedFieldVisibility = profileFieldVisibility(field);
+    for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values.reversed) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+        items.add(_visibilityDropdownItem(fieldVisibility, selected: selectedFieldVisibility == fieldVisibility));
+      }
+    }
+    return items;
+  }
+
+  DropdownMenuItem<Auth2FieldVisibility> _visibilityDropdownItem(Auth2FieldVisibility visibility, { bool selected = false}) =>
+    DropdownMenuItem<Auth2FieldVisibility>(
+      value: visibility,
+      child: Semantics(label: visibility.semanticLabel, container: true, button: true, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisSize: MainAxisSize.max, children: [
+            Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: visibility.displayDropdownItemIcon)
+              )
+            ),
+            Expanded(child:
+              Text(visibility.displayTitle,
+                overflow: TextOverflow.ellipsis,
+                style: selected ? _selectedDropdownItemTextStyle : _regularDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+              )
+            )
+          ],),
+          if (visibility.displayDescription.isNotEmpty)
+            Padding(padding: EdgeInsets.symmetric(horizontal: _dropdownItemInnerIconPaddingX + _buttonIconSize), child:
+              Text(visibility.displayDescription,
+                overflow: TextOverflow.ellipsis,
+                style: _descriptionDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            )
+        ],)
+      ),
+    );
+
+  double _evaluateVisibilityDropdownItemsWidth() {
+    double maxTextWidth = 0;
+    for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+        final Size textSizeFull = (TextPainter(
+          text: TextSpan(text: fieldVisibility.displayTitle, style: _selectedDropdownItemTextStyle,),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+        if (maxTextWidth < textSizeFull.width) {
+          maxTextWidth = textSizeFull.width;
+        }
+        final Size descriptionSizeFull = (TextPainter(
+          text: TextSpan(text: fieldVisibility.displayDescription, style: _selectedDropdownItemTextStyle,),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+        if (maxTextWidth < descriptionSizeFull.width) {
+          maxTextWidth = descriptionSizeFull.width;
+        }
+      }
+    }
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + 2 * (_buttonIconSize + _dropdownItemInnerIconPaddingX) + _dropdownMenuItemPadding.horizontal;
+    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+  }
+
+
+  TextStyle? get _selectedDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.extra_fat");
+  TextStyle? get _regularDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.semi_fat");
+  TextStyle? get _descriptionDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.small.semi_fat");
+
+  void _onDropdownFieldVisibility(_ProfileField field, Auth2FieldVisibility? visibility) {
+    Analytics().logSelect(target: 'Select $field Visibility $visibility');
+    setState(() {
+      _fieldVisibilities[field] = visibility;
+    });
+  }
+
+
+  BoxDecoration get _controlDecoration => BoxDecoration(
     color: Styles().colors.white,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -755,15 +1072,15 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
-      Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
+      Auth2UserPrivacy? privacy = _showPrivacyControls ? Auth2UserPrivacy.fromOther(widget.privacy,
         fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
         )
-      );
+      ) : null;
 
       bool? shouldSave = await _shouldSaveModified(
         profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
-        privacyModified: (privacy != widget.privacy)
+        privacyModified: (privacy != null) && (privacy != widget.privacy)
       );
       if (shouldSave == true) {
         _ProfileSaveResult result = await _saveEdit(profile, privacy);
@@ -840,12 +1157,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     if (_saving == false) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
             profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
+        ) : null
       );
 
-      _ProfileSaveResult result = await _saveEdit(profile, privacy);
+      _ProfileSaveResult result = await _saveEdit(profile, _showPrivacyControls ? privacy : null);
 
       if (result.succeeded) {
         widget.onFinishEdit?.call(
@@ -859,16 +1176,16 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     }
   }
 
-  Future<_ProfileSaveResult> _saveEdit(Auth2UserProfile profile, Auth2UserPrivacy privacy) async {
+  Future<_ProfileSaveResult> _saveEdit(Auth2UserProfile? profile, Auth2UserPrivacy? privacy) async {
 
     List<Future> futures = [];
 
-    int? profileIndex = (widget.profile != profile) ? futures.length : null;
+    int? profileIndex = ((profile != null) && (profile != _Auth2UserProfileUtils.buildCopy(widget.profile))) ? futures.length : null;
     if (profileIndex != null) {
       futures.add(Auth2().saveUserProfile(profile));
     }
 
-    int? privacyIndex = (widget.privacy != privacy) ? futures.length : null;
+    int? privacyIndex = ((privacy != null) && (widget.privacy != privacy)) ? futures.length : null;
     if (privacyIndex != null) {
       futures.add(Auth2().saveUserPrivacy(privacy));
     }
@@ -903,17 +1220,17 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     if (mounted && (_saving == false)) {
       Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
       Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy,
-        fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
+        fieldsVisibility: _showPrivacyControls ? Auth2AccountFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility,
           profile: _Auth2UserProfileFieldsVisibilityUtils.buildModified(_profileVisibility, _fieldVisibilities),
-        )
+        ) : null
       );
 
       bool? shouldSave = await _shouldSaveModified(
         profileModified: (profile != _Auth2UserProfileUtils.buildCopy(widget.profile)),
-        privacyModified: (privacy != widget.privacy)
+        privacyModified: _showPrivacyControls && (privacy != widget.privacy)
       );
       if (shouldSave == true) {
-        await _saveEdit(profile, privacy);
+        await _saveEdit(profile, _showPrivacyControls ? privacy : null);
       }
       return (shouldSave != null);
     }
@@ -947,7 +1264,8 @@ enum _ProfileField {
   firstName, middleName, lastName, pronouns,
   photoUrl, pronunciationUrl,
   email, email2, phone, website,
-  college, department, major, title,
+  universityRole, college, department, major, department2, major2, title,
+  address, address2, poBox, city, zip, state, country
 }
 
 extension _ProfileFieldExt on _ProfileField {
@@ -958,6 +1276,7 @@ extension _ProfileFieldExt on _ProfileField {
 // Auth2LoginTypeProfileUtils
 
 extension Auth2LoginTypeProfileUtils on Auth2LoginType {
+  bool get canEditPrivacy => (this == Auth2LoginType.oidcIllinois);
   bool get shouldHaveName => (this == Auth2LoginType.oidcIllinois);
   bool get shouldHaveEmail => (this == Auth2LoginType.oidcIllinois) || (this == Auth2LoginType.email);
   bool get shouldHavePhone => (this == Auth2LoginType.phone) || (this == Auth2LoginType.phoneTwilio);
@@ -967,17 +1286,11 @@ extension Auth2LoginTypeProfileUtils on Auth2LoginType {
 
 extension _Auth2UserProfileUtils on Auth2UserProfile {
 
-  bool get isNameNotEmpty =>
-    StringUtils.isNotEmpty(firstName) ||
-    StringUtils.isNotEmpty(middleName) ||
-    StringUtils.isNotEmpty(lastName);
-
   String? fieldValue(_ProfileField field) {
     switch(field) {
       case _ProfileField.firstName: return firstName;
       case _ProfileField.middleName: return middleName;
       case _ProfileField.lastName: return lastName;
-
       case _ProfileField.pronouns: return pronouns;
 
       case _ProfileField.photoUrl: return photoUrl;
@@ -988,9 +1301,20 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
       case _ProfileField.phone: return phone;
       case _ProfileField.website: return website;
 
+      case _ProfileField.address: return address;
+      case _ProfileField.address2: return address2;
+      case _ProfileField.poBox: return poBox;
+      case _ProfileField.city: return city;
+      case _ProfileField.zip: return zip;
+      case _ProfileField.state: return state;
+      case _ProfileField.country: return country;
+
+      case _ProfileField.universityRole: return universityRole;
       case _ProfileField.college: return college;
       case _ProfileField.department: return department;
       case _ProfileField.major: return major;
+      case _ProfileField.department2: return department2;
+      case _ProfileField.major2: return major2;
       case _ProfileField.title: return title;
     }
   }
@@ -1011,12 +1335,23 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         phone: StringUtils.ensureNotEmpty(fields[_ProfileField.phone]?.text),
         website: StringUtils.ensureNotEmpty(fields[_ProfileField.website]?.text),
 
+        address: StringUtils.ensureNotEmpty(fields[_ProfileField.address]?.text),
+        address2: StringUtils.ensureNotEmpty(fields[_ProfileField.address2]?.text),
+        poBox: StringUtils.ensureNotEmpty(fields[_ProfileField.poBox]?.text),
+        city: StringUtils.ensureNotEmpty(fields[_ProfileField.city]?.text),
+        zip: StringUtils.ensureNotEmpty(fields[_ProfileField.zip]?.text),
+        state: StringUtils.ensureNotEmpty(fields[_ProfileField.state]?.text),
+        country: StringUtils.ensureNotEmpty(fields[_ProfileField.country]?.text),
+
         data: {
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
+          Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.universityRole]?.text),
           Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.college]?.text),
           Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department]?.text),
           Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major]?.text),
+          Auth2UserProfile.department2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.department2]?.text),
+          Auth2UserProfile.major2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.major2]?.text),
           Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.title]?.text),
-          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(fields[_ProfileField.email2]?.text),
         }
       ),
       scope: <Auth2UserProfileScope> {
@@ -1024,6 +1359,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         Auth2UserProfileScope.pronouns,
         Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
         Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        Auth2UserProfileScope.address, Auth2UserProfileScope.address2, Auth2UserProfileScope.poBox, Auth2UserProfileScope.city, Auth2UserProfileScope.zip, Auth2UserProfileScope.state, Auth2UserProfileScope.country,
         /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
       }
     );
@@ -1044,12 +1380,23 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         phone: StringUtils.ensureNotEmpty(other?.phone),
         website: StringUtils.ensureNotEmpty(other?.website),
 
+        address: StringUtils.ensureNotEmpty(other?.address),
+        address2: StringUtils.ensureNotEmpty(other?.address2),
+        poBox: StringUtils.ensureNotEmpty(other?.poBox),
+        city: StringUtils.ensureNotEmpty(other?.city),
+        zip: StringUtils.ensureNotEmpty(other?.zip),
+        state: StringUtils.ensureNotEmpty(other?.state),
+        country: StringUtils.ensureNotEmpty(other?.country),
+
         data: {
+          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
+          Auth2UserProfile.universityRoleDataKey: StringUtils.ensureNotEmpty(other?.universityRole),
           Auth2UserProfile.collegeDataKey: StringUtils.ensureNotEmpty(other?.college),
           Auth2UserProfile.departmentDataKey: StringUtils.ensureNotEmpty(other?.department),
           Auth2UserProfile.majorDataKey: StringUtils.ensureNotEmpty(other?.major),
+          Auth2UserProfile.department2DataKey: StringUtils.ensureNotEmpty(other?.department2),
+          Auth2UserProfile.major2DataKey: StringUtils.ensureNotEmpty(other?.major2),
           Auth2UserProfile.titleDataKey: StringUtils.ensureNotEmpty(other?.title),
-          Auth2UserProfile.email2DataKey: StringUtils.ensureNotEmpty(other?.email2),
         }
       ),
       scope: <Auth2UserProfileScope> {
@@ -1057,6 +1404,7 @@ extension _Auth2UserProfileUtils on Auth2UserProfile {
         Auth2UserProfileScope.pronouns,
         Auth2UserProfileScope.photoUrl, Auth2UserProfileScope.pronunciationUrl,
         Auth2UserProfileScope.email, /* Auth2UserProfileScope.email2, */ Auth2UserProfileScope.phone, Auth2UserProfileScope.website,
+        Auth2UserProfileScope.address, Auth2UserProfileScope.address2, Auth2UserProfileScope.poBox, Auth2UserProfileScope.city, Auth2UserProfileScope.zip, Auth2UserProfileScope.state, Auth2UserProfileScope.country,
         /* Auth2UserProfileScope.college, Auth2UserProfileScope.department, Auth2UserProfileScope.major, Auth2UserProfileScope.title, */
       }
     );
@@ -1082,9 +1430,20 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
     _ProfileField.phone: phone,
     _ProfileField.website: website,
 
+    _ProfileField.address: address,
+    _ProfileField.address2: address2,
+    _ProfileField.poBox: poBox,
+    _ProfileField.city: city,
+    _ProfileField.zip: zip,
+    _ProfileField.state: state,
+    _ProfileField.country: country,
+
+    _ProfileField.universityRole: universityRole,
     _ProfileField.college: college,
     _ProfileField.department: department,
     _ProfileField.major: major,
+    _ProfileField.department2: department2,
+    _ProfileField.major2: major2,
     _ProfileField.title: title,
   };
 
@@ -1103,7 +1462,20 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
       phone : fields?[_ProfileField.phone],
       website : fields?[_ProfileField.website],
 
+      address: fields?[_ProfileField.address],
+      address2: fields?[_ProfileField.address2],
+      poBox: fields?[_ProfileField.poBox],
+      city: fields?[_ProfileField.city],
+      zip: fields?[_ProfileField.zip],
+      state: fields?[_ProfileField.state],
+      country: fields?[_ProfileField.country],
+
       data: MapUtils.ensureEmpty({
+        if (fields?[_ProfileField.email2] != null)
+          Auth2UserProfile.email2DataKey: fields?[_ProfileField.email2],
+
+        if (fields?[_ProfileField.universityRole] != null)
+          Auth2UserProfile.universityRoleDataKey: fields?[_ProfileField.universityRole],
 
         if (fields?[_ProfileField.college] != null)
           Auth2UserProfile.collegeDataKey: fields?[_ProfileField.college],
@@ -1114,12 +1486,48 @@ extension _Auth2UserProfileFieldsVisibilityUtils on Auth2UserProfileFieldsVisibi
         if (fields?[_ProfileField.major] != null)
           Auth2UserProfile.majorDataKey: fields?[_ProfileField.major],
 
+        if (fields?[_ProfileField.department2] != null)
+          Auth2UserProfile.department2DataKey: fields?[_ProfileField.department2],
+
+        if (fields?[_ProfileField.major2] != null)
+          Auth2UserProfile.major2DataKey: fields?[_ProfileField.major2],
+
         if (fields?[_ProfileField.title] != null)
           Auth2UserProfile.titleDataKey: fields?[_ProfileField.title],
 
-        if (fields?[_ProfileField.email2] != null)
-          Auth2UserProfile.email2DataKey: fields?[_ProfileField.email2],
       }),
     );
 }
 
+///////////////////////////////////////////
+// _Auth2FieldVisibilityUI
+
+extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
+
+  String get displayTitle {
+    switch(this) {
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.title', 'Enable sharing');
+      case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.title', 'Only My Connections');
+      case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.title', 'Only me');
+    }
+  }
+
+  String get displayDescription {
+    switch(this) {
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'User directory, business card');
+      case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
+      case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
+    }
+  }
+
+  String get semanticLabel =>
+    "$displayTitle $displayDescription";
+
+  Widget? get displayDropdownItemIcon {
+    switch(this) {
+      case Auth2FieldVisibility.public: return ProfileInfoEditPageState._publicDropdownIcon;
+      case Auth2FieldVisibility.connections: return ProfileInfoEditPageState._lockDropdownIcon;
+      case Auth2FieldVisibility.private: return ProfileInfoEditPageState._lockDropdownIcon;
+    }
+  }
+}
