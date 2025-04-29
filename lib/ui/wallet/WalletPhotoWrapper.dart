@@ -122,7 +122,6 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    // colors: [ Styles().colors.fillColorSecondary, _displayBorderColor],
                     colors: [ _displayAccentColor, _displayBorderColor],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
