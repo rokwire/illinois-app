@@ -783,6 +783,8 @@
     "panel.canvas.item.regular":  {"font_family": "regular", "size": 16.0, "color": "textSurfaceAccent"},
     "panel.canvas.item.regular.fat":  {"font_family": "bold", "size": 16.0, "color": "textSurfaceAccent"},
 
+    "panel.assistant.popup.detail.small": {"extends": "widget.detail.small", "height": 1.5},
+
     "common.panel.title": {"font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "common.title.secondary": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "common.body": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
