@@ -164,7 +164,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
 
   Widget get _barcodeImageWidget {
     if (kIsWeb) {
-      if (_barcodeNumber == null) {
+      if (StringUtils.isEmpty(_barcodeNumber)) {
         return Container();
       }
       return BarcodeWidget(
