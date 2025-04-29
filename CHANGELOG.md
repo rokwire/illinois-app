@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure not to duplicate group tabs [#5052](https://github.com/rokwire/illinois-app/issues/5052).
 ### Changed
 - Added photo border colors to University Library Card [#4916](https://github.com/rokwire/illinois-app/issues/4916).
+- The links in the signed out message for Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
 
 ## [7.0.19] - 2025-04-28
 ### Added
