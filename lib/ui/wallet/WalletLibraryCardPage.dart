@@ -29,7 +29,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
 
   MemoryImage? _barcodeImage;
   String? _barcodeNumber;
-  DateTime? _accessTime = DateTime.now();
+  DateTime _accessTime = DateTime.now();
   GestureRecognizer? _libraryLaunchRecognizer;
 
   @override
@@ -94,7 +94,13 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
 
   @override
   Widget build(BuildContext context) {
-    return WalletPhotoWrapper(topOffset: widget.topOffset, headingColor: Styles().colors.lightGray, child: _buildCardContent());
+    return WalletPhotoWrapper(
+      topOffset: widget.topOffset,
+      headingColor: Styles().colors.lightGray,
+      accentColor: _photoBorderDay ? Styles().colors.libraryCardAccentBlue : Styles().colors.libraryCardAccentOrange,
+      borderColor: _photoBorderDay ? Styles().colors.libraryCardBorderBlue : Styles().colors.libraryCardBorderOrange,
+      child: _buildCardContent()
+    );
   }
 
   Widget _buildCardContent() {
@@ -160,6 +166,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
   String? get _displayAccessTime => AppDateTime().formatDateTime(_accessTime, format: 'MMM dd, yyyy HH:mm a');
   double get _barcodeWidth => MediaQuery.of(context).size.width / 1.25;
   double get _barcodeHeight => _barcodeWidth / 4;
+  bool get _photoBorderDay => ((_accessTime.difference(DateTime(1970)).inDays % 2) == 0); // Used to alternate the photo border color scheme daily
 
   Widget get _barcodeImageWidget =>
     Container(width: _barcodeWidth, height: _barcodeHeight, decoration: BoxDecoration(

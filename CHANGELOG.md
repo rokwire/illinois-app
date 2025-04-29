@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Make sure to apply privacy settings before sharing a profile card [#5026](https://github.com/rokwire/illinois-app/issues/5026).
+- Make sure not to duplicate group tabs [#5052](https://github.com/rokwire/illinois-app/issues/5052).
+
+## [7.0.19] - 2025-04-28
 ### Added
 - Created Digital Business Card in Profile panel, replace the existing share sheet [#5026](https://github.com/rokwire/illinois-app/issues/5026).
 - Adding an Alphabet Slider to the User Directory [#4880](https://github.com/rokwire/illinois-app/issues/4880).
@@ -13,17 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated university contact URL [#5069](https://github.com/rokwire/illinois-app/issues/5069).
 - Removed inaccurate text from My Profile if directory is set to private [#5070](https://github.com/rokwire/illinois-app/issues/5070).
 - Renamed My Profile College Field [#5071](https://github.com/rokwire/illinois-app/issues/5071).
+- Added photo border colors to University Library Card [#4916](https://github.com/rokwire/illinois-app/issues/4916).
 ### Fixed
 - Fixed sign in wording [#5056](https://github.com/rokwire/illinois-app/issues/5056).
 - Fixed member status dropdown [#5072](https://github.com/rokwire/illinois-app/issues/5072).
 - Overlapping buttons section when modifying To-Do Item [#5054](https://github.com/rokwire/illinois-app/issues/5054).
+- GroupMemberDetail Pronouncement icon position [#4974](https://github.com/rokwire/illinois-app/issues/4974).
 
 ## [7.0.18] - 2025-04-25
 ### Added
 - Added library link to library card [#5024](https://github.com/rokwire/illinois-app/issues/5024).
 - Added lost or stollen i-card link [#5023](https://github.com/rokwire/illinois-app/issues/5023).
 ### Changed
-- Updated public visibility display strings in Prfile Edit page [#5027](https://github.com/rokwire/illinois-app/issues/5027).
+- Updated public visibility display strings in Prоfile Edit page [#5027](https://github.com/rokwire/illinois-app/issues/5027).
 - Updated sign in description, fixed insane rich text build [#5056](https://github.com/rokwire/illinois-app/issues/5056).
 ### Removed
 - Removed physical i-card number frim wallet page [#5023](https://github.com/rokwire/illinois-app/issues/5023).

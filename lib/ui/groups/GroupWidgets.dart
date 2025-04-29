@@ -2933,7 +2933,7 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
     _loadingContent : _content;
 
   Widget get _content =>
-    Visibility(visible: _hasPronouncement == true,
+    Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true,
         child: DirectoryPronunciationButton(
             url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
             data: _pronunciationAudioData,
