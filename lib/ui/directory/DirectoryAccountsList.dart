@@ -26,9 +26,13 @@ class DirectoryAccountsList extends StatefulWidget {
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
   final void Function(int?)? onAccountTotalUpdated;
+  final void Function(int)? onCurrentLetterChanged;
 
-  DirectoryAccountsList(this.contentType, { super.key, required this.letterIndex, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
-    this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.onAccountTotalUpdated, this.selectedAccountIds});
+  DirectoryAccountsList(this.contentType, { super.key,
+    required this.letterIndex, this.displayMode = DirectoryDisplayMode.browse,
+    this.scrollController, this.searchText, this.filterAttributes,
+    this.onAccountSelectionChanged, this.onAccountTotalUpdated,
+    this.selectedAccountIds, this.onCurrentLetterChanged});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsListState();
@@ -40,7 +44,9 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Map<String, List<Auth2PublicAccount>>? _accounts;
   Map<String, int> _nameGapIndices = Map.fromIterable(alphabet, value: (_) => 0);
   Map<String, int>? _letterCounts;
+
   late int _letterIndex;
+  late int _currentLetterIndex;
 
   bool _loading = false;
   bool _loadingProgress = false;
@@ -53,6 +59,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
 
+  List<Auth2PublicAccount> _displayAccounts = [];
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -64,11 +72,10 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
     widget.scrollController?.addListener(_scrollListener);
 
-    _letterIndex = widget.letterIndex;
+    _currentLetterIndex = _letterIndex = widget.letterIndex;
     _load();
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -85,7 +92,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     if (_letterIndex != widget.letterIndex) {
       //TODO: load or jump to letter with accounts already loaded
       //TODO: _letterIndex should be updated by scrolling
-      _letterIndex = widget.letterIndex;
+      _currentLetterIndex = _letterIndex = widget.letterIndex;
       _load();
     }
   }
@@ -162,7 +169,20 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       contentList.add(_extendingIndicator);
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListView.builder(
+        controller: widget.scrollController,
+        itemCount: contentList.length,
+        itemBuilder: (context, index) {
+          return contentList[index];
+        }
+      ),
+    );
+  }
+
+  Future<void> _onRefresh() async {
+    _load();
   }
 
   void _onToggleAccountExpanded(Auth2PublicAccount account) {
@@ -228,18 +248,52 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   void _scrollListener() {
     ScrollController? scrollController = widget.scrollController;
+    int? currentIndex;
     if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && !_loading && !_extending) {
-      int? extendFromLetterIndex = _getLetterIndexToExtend();
-      if (extendFromLetterIndex != null) {
-        _extend(letterIndex: extendFromLetterIndex);
+      currentIndex = _getLetterIndexToExtend();
+      if (currentIndex != null) {
+        _extend(letterIndex: currentIndex);
       }
     } else if ((scrollController != null) && (scrollController.offset <= scrollController.position.minScrollExtent) && !_loading && !_reverseExtending) {
-      int? extendFromLetterIndex = _getLetterIndexToExtend(reverse: true);
-      if (extendFromLetterIndex != null) {
-        _extend(letterIndex: extendFromLetterIndex, reverse: true);
+      currentIndex = _getLetterIndexToExtend(reverse: true);
+      if (currentIndex != null) {
+        _extend(letterIndex: currentIndex, reverse: true);
+      }
+    }
+    if (currentIndex == null) {
+      int index = getCurrentLetterIndex(scrollController?.offset);
+      if (index >= 0) {
+        currentIndex = index;
+      }
+    }
+    if (currentIndex != null) {
+      if (_currentLetterIndex != currentIndex) {
+        _currentLetterIndex = currentIndex;
+        widget.onCurrentLetterChanged?.call(currentIndex);
       }
     }
     //TODO: handle scrolling to new letter index updating UI in DirectoryAccountsPanel, calculating _displayAccounts
+  }
+
+  int getCurrentLetterIndex(double? vPosition) {
+    if (vPosition == null) {
+      return -1;
+    }
+    int itemIndex = getCurrentIndex(vPosition);
+    List<Auth2PublicAccount> accounts = _displayAccounts;
+    if (itemIndex < 0 || itemIndex >= accounts.length) {
+      return -1;
+    }
+    String? letter = accounts[itemIndex].profile?.lastName?.substring(0, 1).toLowerCase();
+    if (letter == null) {
+      return -1;
+    }
+    return alphabet.indexOf(letter);
+  }
+
+  int getCurrentIndex(double vPosition) {
+    double kAlphabetHeight = 44;
+    return (vPosition ~/ kAlphabetHeight);
   }
 
   Future<void> _load({ int limit = _pageLength, bool silent = false, bool refresh = false }) async {
@@ -264,6 +318,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         _letterCounts = result?.indexCounts;
         if (result?.accounts != null) {
           _accounts = {};
+          _displayAccounts = [];
           _nameGapIndices = {};
           Map<String, int> accountsInserted = {};
           for (Auth2PublicAccount account in result?.accounts?.reversed ?? []) {
@@ -281,6 +336,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
           for (MapEntry<String, int> inserted in accountsInserted.entries) {
             _nameGapIndices[inserted.key] = (_nameGapIndices[inserted.key] ?? 0) + inserted.value;
           }
+          _displayAccounts = _generateDisplayAccounts;
         }
         else if (!silent) {
           _accounts = null;
@@ -290,7 +346,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   }
 
   Future<void> refresh() async {
-    _letterIndex = 0;
+    _currentLetterIndex = _letterIndex = 0;
     _load(silent: true, refresh: true);
   }
 
@@ -332,13 +388,14 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
               }
             }
           }
+          _displayAccounts = _generateDisplayAccounts;
           _extending = false;
         });
       }
     }
   }
 
-  List<Auth2PublicAccount> get _displayAccounts {
+  List<Auth2PublicAccount> get _generateDisplayAccounts {
     List<Auth2PublicAccount> previousLetterAccounts = [];
     for (int i = _letterIndex - 1; i >- 0; i--) {
       String letter = alphabet[i];
@@ -356,7 +413,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     List<Auth2PublicAccount> currentAndNextLetterAccounts = [];
     for (int i = _letterIndex; i < alphabet.length; i++) {
       String letter = alphabet[i];
-      int gapIndex = _nameGapIndices[currentLetter] ?? 0;
+      int gapIndex = _nameGapIndices[letter] ?? 0;
       int loadedAccounts = _accounts?[letter]?.length ?? 0;
       int letterAccounts = _letterCounts?[letter] ?? 0;
       if (loadedAccounts >= letterAccounts) {

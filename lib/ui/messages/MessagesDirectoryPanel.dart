@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesWidgets.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -32,7 +31,7 @@ class MessagesDirectoryPanel extends StatefulWidget {
 
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with NotificationsListener, TickerProviderStateMixin {
   GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
-  GlobalKey<DirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
+  GlobalKey<DirectoryAccountsListState> _allUsersPageKey = GlobalKey();
   final ScrollController _recentScrollController = ScrollController();
   final ScrollController _allUsersScrollController = ScrollController();
 
@@ -140,7 +139,8 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with No
           physics: const NeverScrollableScrollPhysics(),
           children: [
             _buildContinueButtonOverlay(_recentContent, scrollController: _recentScrollController),
-            _buildContinueButtonOverlay(_allUsersContent, scrollController: _allUsersScrollController),
+            _buildContinueButtonOverlay(_allUsersContent,
+                scrollController: _allUsersScrollController, scrollList: false),
           ],
         ),
       ),
@@ -160,17 +160,22 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with No
     return tabs;
   }
 
-
-  Widget _buildContinueButtonOverlay(Widget content, { ScrollController? scrollController }) {
+  Widget _buildContinueButtonOverlay(Widget content,
+      {ScrollController? scrollController, bool scrollList = true}) {
+    content = Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: _hasSelectedAccounts ? 64 : 24,),
+      child: content,
+    );
+    if (scrollList) {
+      content = SingleChildScrollView(controller: scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: content,
+      );
+    }
     return RefreshIndicator(onRefresh: _onRefresh, child:
       Stack(
           children: [
-            SingleChildScrollView(controller: scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-              Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: _hasSelectedAccounts ? 64 : 24,),
-                child: content,
-              )
-            ),
+            content,
             if (_hasSelectedAccounts)
               Column(
                 children: [
