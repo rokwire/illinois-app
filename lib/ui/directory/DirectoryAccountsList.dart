@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
@@ -41,10 +43,14 @@ class DirectoryAccountsList extends StatefulWidget {
 }
 
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
+  static const double kCollapsedCardHeight = 44;
+  static const double kExpandedCardHeight = 169;
+  static const double kSectionHeadingHeight = 38;
+
   Map<String, List<Auth2PublicAccount>>? _accounts;
   Map<String, int> _nameGapIndices = {};
   Map<String, int>? _letterCounts;
-  Map<String, GlobalKey> _sectionHeadingKeys = {};
+  // Map<String, GlobalKey> _sectionHeadingKeys = {};
 
   late int _letterIndex;
   List<String> _alphabet = DirectoryAccountsPanel.defaultAlphabet;
@@ -56,7 +62,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   bool _refreshEnabled = true;
   static const int _pageLength = 32;
 
-  String? _expandedAccountId;
+  Auth2PublicAccount? _expandedAccount;
 
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
@@ -157,7 +163,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         contentList.add(DirectoryAccountListCard(account,
           displayMode: widget.displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
-          expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
+          expanded: (_expandedAccount != null) && (account.id == _expandedAccount?.id),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
           selected: widget.selectedAccountIds?.contains(account.id) == true,
           onToggleSelected: (value) => _onToggleAccountSelected(account, value),
@@ -193,7 +199,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   void _onToggleAccountExpanded(Auth2PublicAccount account) {
     Analytics().logSelect(target: 'Expand', source: account.id);
     setState(() {
-      _expandedAccountId = (_expandedAccountId != account.id) ? account.id : null;
+      _expandedAccount = (_expandedAccount?.id != account.id) ? account : null;
     });
   }
 
@@ -206,8 +212,9 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     String lowerDirEntry = dirEntry.toLowerCase();
     int userCount = _letterCounts?[lowerDirEntry] ?? 0;
     String userText = userCount == 1 ? 'User' : 'Users';
-    _sectionHeadingKeys[lowerDirEntry] ??= GlobalKey();
-    Widget heading = Padding(key: _sectionHeadingKeys[lowerDirEntry], padding: EdgeInsets.zero, child:
+    // _sectionHeadingKeys[lowerDirEntry] ??= GlobalKey();
+    // key: _sectionHeadingKeys[lowerDirEntry],
+    Widget heading = Padding(padding: EdgeInsets.zero, child:
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -267,7 +274,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   void _scrollListener() {
     ScrollController? scrollController = widget.scrollController;
-    int index = getCurrentLetterIndex(scrollController?.offset);
+    int index = _getCurrentLetterIndex(scrollController?.offset);
     if (index >= 0 && _letterIndex != index) {
       _letterIndex = index;
       widget.onCurrentLetterChanged?.call(index);
@@ -280,11 +287,11 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  int getCurrentLetterIndex(double? vPosition) {
+  int _getCurrentLetterIndex(double? vPosition) {
     if (vPosition == null) {
       return -1;
     }
-    int itemIndex = getCurrentIndex(vPosition);
+    int itemIndex = vPosition ~/ kCollapsedCardHeight;
     List<Auth2PublicAccount> accounts = _displayAccounts;
     if (itemIndex < 0 || itemIndex >= accounts.length) {
       return -1;
@@ -296,9 +303,35 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     return _alphabet.indexOf(letter);
   }
 
-  int getCurrentIndex(double vPosition) {
-    double kAlphabetHeight = 44;
-    return (vPosition ~/ kAlphabetHeight);
+  double get _sectionHeadingScrollOffset {
+    String? firstDisplayAccountSection = _firstDisplayAccount?.profile?.lastName?.substring(0, 1).toLowerCase();
+    int firstSectionIndex = firstDisplayAccountSection != null ? _alphabet.indexOf(firstDisplayAccountSection) : _letterIndex;
+    double headingsHeight = (_letterIndex - firstSectionIndex) * kSectionHeadingHeight;
+
+    double accountsHeight = 0;
+    for (int i = firstSectionIndex; i < _letterIndex; i++) {
+      String letter = _alphabet[i];
+      int loadedAccounts = _accounts?[letter]?.length ?? 0;
+      if (i == firstSectionIndex) {
+        int gapIndex = _nameGapIndices[letter] ?? 0;
+        if (loadedAccounts > 0) {
+          accountsHeight += (loadedAccounts - gapIndex) * kCollapsedCardHeight;
+        }
+      } else {
+        accountsHeight += loadedAccounts * kCollapsedCardHeight;
+      }
+    }
+
+    double expandedCardCorrection = 0;
+    if (_expandedAccount != null) {
+      String? expandedAccountLastName = _expandedAccount?.profile?.lastName?.toLowerCase();
+      if (expandedAccountLastName != null && firstDisplayAccountSection != null &&
+          expandedAccountLastName.compareTo(firstDisplayAccountSection) > 0 && expandedAccountLastName.compareTo(_alphabet[_letterIndex]) < 0) {
+        expandedCardCorrection = kExpandedCardHeight - kCollapsedCardHeight;
+      }
+    }
+
+    return accountsHeight + headingsHeight + expandedCardCorrection;
   }
 
   Future<void> _load({ int limit = _pageLength, bool silent = false, bool init = true }) async {
@@ -436,24 +469,21 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   void _jumpToLetter() {
     String letter = _alphabet[_letterIndex];
     int gapIndex = _nameGapIndices[letter] ?? 0;
-    //TODO: _sectionHeadingKeys[letter]?.currentContext returns null when jumping from middle of other letter's section
     if (gapIndex == 0) {
       _load(silent: true, init: false).then((_) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          BuildContext? context = _sectionHeadingKeys[letter]?.currentContext;
-          if (context != null) {
-            Scrollable.ensureVisible(context, duration: const Duration(milliseconds: 500));
-          }
-        });
+        if (widget.scrollController != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.scrollController?.animateTo(max(_sectionHeadingScrollOffset, 1), duration: const Duration(milliseconds: 500), curve: Curves.linear);
+          });
+        }
       });
     } else {
       // already have accounts for start of letter - rebuild UI to show separate list of accounts
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        BuildContext? context = _sectionHeadingKeys[letter]?.currentContext;
-        if (context != null) {
-          Scrollable.ensureVisible(context, duration: const Duration(milliseconds: 500));
-        }
-      });
+      if (widget.scrollController != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.scrollController?.animateTo(max(_sectionHeadingScrollOffset, 1), duration: const Duration(milliseconds: 500), curve: Curves.linear);
+        });
+      }
       setStateIfMounted(() {
         _displayAccounts = _generateDisplayAccounts;
       });
