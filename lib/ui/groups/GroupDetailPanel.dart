@@ -111,8 +111,9 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
-  static final int          _postsPageSize = 8;
-  static final int          _animationDurationInMilliSeconds = 200;
+  static const int          _postsPageSize = 8;
+  static const int          _animationDurationInMilliSeconds = 200;
+  static const List<DetailTab> _adminTabs = [DetailTab.ScheduledPosts, DetailTab.PastEvents];
 
   Group?                _group;
   GroupStats?        _groupStats;
@@ -561,17 +562,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     List<DetailTab?> sourceTabs = _group?.settings?.contentDetailTabs ?? GroupSettingsExt.getDefaultDetailTabs();
 
     for (DetailTab? tab in sourceTabs) {
-      if ((tab != null) && (resultTabs.contains(tab) == false)) {
+      if ((tab != null) && (resultTabs.contains(tab) == false) && (_adminTabs.contains(tab) == false)) {
         resultTabs.add(tab);
       }
     }
 
     if (_isAdmin) {
-      if (resultTabs.contains(DetailTab.Posts)) {
-        resultTabs.add(DetailTab.ScheduledPosts);
-      }
-      if (resultTabs.contains(DetailTab.Events)) {
-        resultTabs.add(DetailTab.PastEvents);
+      for (DetailTab tab in _adminTabs) {
+        if ((tab == DetailTab.ScheduledPosts) && resultTabs.contains(DetailTab.Posts)) {
+          resultTabs.add(DetailTab.ScheduledPosts);
+        }
+        else if ((tab == DetailTab.PastEvents) && resultTabs.contains(DetailTab.Events)) {
+          resultTabs.add(DetailTab.PastEvents);
+        }
       }
     }
     return resultTabs;
