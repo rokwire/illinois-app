@@ -55,6 +55,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   bool _extending = false;
   bool _reverseExtending = false;
   bool _allLoaded = false;
+  bool _refreshEnabled = true;
   static const int _pageLength = 32;
 
   String? _expandedAccountId;
@@ -175,7 +176,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
     return RefreshIndicator(
       onRefresh: _onRefresh,
-      notificationPredicate: enabled ? (_) => true : (_) => false,
+      notificationPredicate: _refreshEnabled ? (_) => true : (_) => false,
       child: ListView.builder(
         controller: widget.scrollController,
         padding: const EdgeInsets.only(bottom: 24),
@@ -222,21 +223,12 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     if (lowerDirEntry == _alphabet[0]) {
       return VisibilityDetector(
         key: UniqueKey(),
-        onVisibilityChanged: (VisibilityInfo info) {
-          List<Auth2PublicAccount>? firstSectionAccounts = _accounts?[lowerDirEntry];
-          if (CollectionUtils.isNotEmpty(firstSectionAccounts)) {
-            String? firstLastName = firstSectionAccounts!.first.profile?.lastName;
-            if (firstLastName != null && _firstDisplayLastName != null && (_firstDisplayLastName == firstLastName)) {
-              widget.onUpdateRefreshEnabled?.call(info.visibleFraction >= 1);
-            }
-          }
-        },
+        onVisibilityChanged: (info) => _onFirstHeadingVisibilityChanged(info, lowerDirEntry),
         child: heading,
       );
     }
     return heading;
   }
-
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
@@ -410,7 +402,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
               if (indexLetter != null) {
                 int gapIndex = _nameGapIndices[indexLetter] ?? 0;
                 _accounts![indexLetter] ??= [];
-                //TODO: check for duplicate
                 _accounts![indexLetter]!.insert(gapIndex, account);
 
                 int added = accountsInserted[indexLetter] ?? 0;
@@ -466,9 +457,19 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       }
     } else {
       // already have accounts for start of letter - rebuild UI to show separate list of accounts
-      setStateIfMounted(() {
-        // _sectionHeadingKeys.clear();
-      });
+      setStateIfMounted(() {});
+    }
+  }
+
+  void _onFirstHeadingVisibilityChanged(VisibilityInfo info, String letter) {
+    List<Auth2PublicAccount>? firstSectionAccounts = _accounts?[letter];
+    if (CollectionUtils.isNotEmpty(firstSectionAccounts)) {
+      String? firstLastName = firstSectionAccounts!.first.profile?.lastName;
+      if (firstLastName != null && _firstDisplayLastName != null && (_firstDisplayLastName == firstLastName)) {
+        setState(() {
+          _refreshEnabled = (info.visibleFraction >= 1);
+        });
+      }
     }
   }
 
@@ -488,10 +489,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         break;  // have not loaded all accounts for this letter, do not go to the one before this in alphabet
       }
     }
-    if (previousLetterAccounts.isNotEmpty) {
-      _firstDisplayLastName = previousLetterAccounts.last.profile?.lastName;
-      _lastDisplayLastName = previousLetterAccounts.first.profile?.lastName;
-    }
 
     List<Auth2PublicAccount> currentAndNextLetterAccounts = [];
     for (int i = _letterIndex; i < _alphabet.length; i++) {
@@ -506,16 +503,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
           currentAndNextLetterAccounts.addAll(_accounts?[letter]?.sublist(0, gapIndex) ?? []);
         }
         break;  // have not loaded all accounts for this letter, do not go to the one after this in alphabet
-      }
-    }
-    if (currentAndNextLetterAccounts.isNotEmpty) {
-      String? firstLastName = currentAndNextLetterAccounts.first.profile?.lastName;
-      if (_firstDisplayLastName == null || (firstLastName != null && firstLastName.compareTo(_firstDisplayLastName!) < 0)) {
-        _firstDisplayLastName = firstLastName;
-      }
-      String? lastLastName = currentAndNextLetterAccounts.last.profile?.lastName;
-      if (_lastDisplayLastName == null || (lastLastName != null && lastLastName.compareTo(_lastDisplayLastName!) > 0)) {
-        _lastDisplayLastName = lastLastName;
       }
     }
 
@@ -605,6 +592,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   String get currentLetter => _alphabet[_letterIndex];
   String get previousLetter => _alphabet[_letterIndex - 1];
   List<String> get alphabet => _alphabet;
+  String? get _firstDisplayLastName => _displayAccounts.isNotEmpty ? _displayAccounts.first.profile?.lastName : null;
+  String? get _lastDisplayLastName => _displayAccounts.isNotEmpty ? _displayAccounts.last.profile?.lastName : null;
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {

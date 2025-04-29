@@ -28,10 +28,9 @@ class DirectoryAccountsPanel extends StatefulWidget {
 
 class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with NotificationsListener {
 
-  final GlobalKey<_DirectoryAccountsPanelState> _pageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
+  final _selectedIndexNotifier = ValueNotifier<int>(0);
   int _letterIndex = 0;
-  bool _listRefreshEnabled = true;
 
   final _letterKey = GlobalKey();
 
@@ -106,7 +105,6 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
                       scrollDirection: Axis.horizontal,
                       itemCount: _alphabet.length,
                       itemBuilder: (BuildContext context, int index) {
-                        // bool isSelected = _lastSelectedLetterIndex == index;
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           key: index == selected ? _letterKey : null,
@@ -139,7 +137,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
     scrollController: _scrollController,
     searchText: _searchText,
     filterAttributes: _filterAttributes,
-    letterIndex: _lastSelectedLetterIndex,
+    letterIndex: _letterIndex,
     onAccountTotalUpdated: _onAccountTotalUpdated,
     onCurrentLetterChanged: _onCurrentIndexChanged,
     onUpdateAlphabet: _onUpdateAlphabet,
@@ -190,6 +188,16 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
       case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.edit.info.description', '$_linkEditMacro or $_linkShareMacro your connections information.');
       case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.edit.info.description', '$_linkEditMacro or $_linkShareMacro your directory information.');
     }
+  }
+
+  void _onTapEditInfo() {
+    Analytics().logSelect(target: 'Edit Info');
+    _onEditProfile.call(widget.contentType);
+  }
+
+  void _onTapShareInfo() {
+    Analytics().logSelect(target: 'Share Info');
+    _onShareProfile.call(widget.contentType);
   }
 
   Widget get _searchBarWidget =>
@@ -291,10 +299,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
     });
   }
 
-  Future<void> _onRefresh() async =>
-    _pageKey.currentState?.refresh();
-
-  List<String> get _alphabet => _pageKey.currentState?.alphabet ?? DirectoryAccountsPanel.defaultAlphabet;
+  List<String> get _alphabet => _accountsListKey.currentState?.alphabet ?? DirectoryAccountsPanel.defaultAlphabet;
 
   @override
   void onNotification(String name, dynamic param) {
