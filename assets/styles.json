@@ -72,6 +72,11 @@
     "saferLocationWaitTimeColorGreen"      :"#00ff00",
     "saferLocationWaitTimeColorGrey"       :"#808080",
 
+    "libraryCardBorderOrange"              :"#e84a27",
+    "libraryCardAccentOrange"              :"#f29835",
+    "libraryCardBorderBlue"                :"#13294b",
+    "libraryCardAccentBlue"                :"#2272dd",
+
     "essentialSkillsCoachPurple"            :"#602f8c",
     "essentialSkillsCoachPurpleAccent"      :"#ae89cf",
     "essentialSkillsCoachBlue"            :"#479ccf",
