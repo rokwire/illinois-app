@@ -120,6 +120,7 @@ class Config extends rokwire.Config {
   String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
   String? get padaapiUrl             => getOtherServicesUrl(key: 'padaapi_url');
   String? get canvasUrl              => getOtherServicesUrl(key: 'canvas_url');
+  String? get canvasUrlPlain         => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);

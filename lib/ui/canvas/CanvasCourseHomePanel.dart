@@ -181,11 +181,9 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     Analytics().logSelect(target: 'Canvas Course -> Launch Canvas');
     if (kIsWeb) {
       // Open the web dashboard
-      String? canvasUrl = Config().canvasUrl;
-      Uri? uri = StringUtils.isNotEmpty(canvasUrl) ? Uri.tryParse(canvasUrl!) : null;
-      if ((uri != null) && await url_launcher.canLaunchUrl(uri)) {
-        await url_launcher.launchUrl(uri);
-      }
+      String? canvasUrl = Config().canvasUrlPlain;
+      Uri? canvasUri = UriExt.tryParse(canvasUrl);
+      UriExt.launchExternal(canvasUri);
     } else {
       String? courseDeepLinkFormat = Config().canvasCourseDeepLinkFormat;
       String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_course!.id]) : null;

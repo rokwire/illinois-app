@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Web: Launch Canvas [#5059](https://github.com/rokwire/illinois-app/issues/5059).
+
 ## [7.0.19] - 2025-04-28
 ### Added
 - Created Digital Business Card in Profile panel, replace the existing share sheet [#5026](https://github.com/rokwire/illinois-app/issues/5026).
