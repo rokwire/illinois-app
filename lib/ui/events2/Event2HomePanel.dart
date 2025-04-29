@@ -51,6 +51,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
+  final bool upcomingOnly;
 
   final Event2SortType? sortType;
 
@@ -59,7 +60,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
-    this.types, this.attributes, this.sortType,
+    this.types, this.attributes, this.sortType, this.upcomingOnly = false,
     this.eventSelector, this.analyticsFeature,
   }) : super(key: key);
 
@@ -80,7 +81,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   static void present(BuildContext context, {
     Event2TimeFilter? timeFilter, TZDateTime? customStartTime, TZDateTime? customEndTime,
     LinkedHashSet<Event2TypeFilter>? types, Map<String, dynamic>? attributes, Event2SortType? sortType,
-    Event2Selector2? eventSelector, AnalyticsFeature? analyticsFeature,
+    Event2Selector2? eventSelector, AnalyticsFeature? analyticsFeature, bool upcomingOnly = false,
   }) {
     if ((timeFilter != null) || (attributes != null) || (types != null)) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
@@ -89,6 +90,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
         attributes: attributes ?? <String, dynamic>{},
         sortType: sortType ?? Event2SortType.dateTime,
         eventSelector: eventSelector, analyticsFeature: analyticsFeature,
+        upcomingOnly: upcomingOnly,
       )));
     }
     // else if (Storage().events2Attributes != null) {
@@ -119,7 +121,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       //     }
       //   });
       // });
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, analyticsFeature: analyticsFeature,)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, analyticsFeature: analyticsFeature, upcomingOnly: upcomingOnly,)));
     }
   }
 
@@ -286,15 +288,16 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   // ContentAttributes + EventTime & EventType filter
 
-  static ContentAttributes? buildContentAttributesV2({LocationServicesStatus? status, TZDateTime? customStartTime, TZDateTime? customEndTime }) {
+  static ContentAttributes? buildContentAttributesV2({LocationServicesStatus? status, TZDateTime? customStartTime, TZDateTime? customEndTime, bool upcomingOnly = false }) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(buildContentAttributesV1(status: status));
-    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime));
+    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime, upcomingOnly: upcomingOnly));
     return contentAttributes;
   }
 
-  static ContentAttribute eventTimeContentAttribute({ TZDateTime? customStartTime, TZDateTime? customEndTime }) {
+  static ContentAttribute eventTimeContentAttribute({ TZDateTime? customStartTime, TZDateTime? customEndTime, bool upcomingOnly = false }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
     for (Event2TimeFilter value in Event2TimeFilter.values) {
+      if (value == Event2TimeFilter.past && upcomingOnly) continue;
       values.add((value != Event2TimeFilter.customRange) ? ContentAttributeValue(
         label: event2TimeFilterToDisplayString(value),
         info: event2TimeFilterDisplayInfo(value),
@@ -321,10 +324,11 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   // Filters UI
 
-  static Future<Event2FilterParam?> presentFiltersV2(BuildContext context, Event2FilterParam filterParam, { LocationServicesStatus? status }) async {
+  static Future<Event2FilterParam?> presentFiltersV2(BuildContext context, Event2FilterParam filterParam, { LocationServicesStatus? status, bool upcomingOnly = false }) async {
 
     ContentAttributes? contentAttributes = buildContentAttributesV2(
       status: status,
+      upcomingOnly: upcomingOnly,
       customStartTime: filterParam.customStartTime,
       customEndTime: filterParam.customEndTime,
     );
@@ -838,7 +842,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
       customEndTime: _customEndTime,
       types: _types,
       attributes: _attributes
-    )).then((Event2FilterParam? filterResult) {
+    ), upcomingOnly: widget.upcomingOnly,).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
           setState(() {
             _timeFilter = filterResult.timeFilter ?? Event2TimeFilter.upcoming;
