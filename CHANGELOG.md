@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Make sure to apply privacy settings before sharing a profile card [#5026](https://github.com/rokwire/illinois-app/issues/5026).
 - Make sure not to duplicate group tabs [#5052](https://github.com/rokwire/illinois-app/issues/5052).
+### Changed
+- Added photo border colors to University Library Card [#4916](https://github.com/rokwire/illinois-app/issues/4916).
 
 ## [7.0.19] - 2025-04-28
 ### Added
@@ -17,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated university contact URL [#5069](https://github.com/rokwire/illinois-app/issues/5069).
 - Removed inaccurate text from My Profile if directory is set to private [#5070](https://github.com/rokwire/illinois-app/issues/5070).
 - Renamed My Profile College Field [#5071](https://github.com/rokwire/illinois-app/issues/5071).
-- Added photo border colors to University Library Card [#4916](https://github.com/rokwire/illinois-app/issues/4916).
 ### Fixed
 - Fixed sign in wording [#5056](https://github.com/rokwire/illinois-app/issues/5056).
 - Fixed member status dropdown [#5072](https://github.com/rokwire/illinois-app/issues/5072).
