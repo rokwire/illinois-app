@@ -47,14 +47,12 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Map<String, GlobalKey> _sectionHeadingKeys = {};
 
   late int _letterIndex;
-  late int _currentLetterIndex;
   List<String> _alphabet = DirectoryAccountsPanel.defaultAlphabet;
 
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
   bool _reverseExtending = false;
-  bool _allLoaded = false;
   bool _refreshEnabled = true;
   static const int _pageLength = 32;
 
@@ -76,7 +74,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
     widget.scrollController?.addListener(_scrollListener);
 
-    _currentLetterIndex = _letterIndex = widget.letterIndex;
+    _letterIndex = widget.letterIndex;
     _load();
     super.initState();
   }
@@ -94,7 +92,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
     // handles letter index taps
     if (_letterIndex != widget.letterIndex) {
-      _currentLetterIndex = _letterIndex = widget.letterIndex;
+      _letterIndex = widget.letterIndex;
       _jumpToLetter();
     }
   }
@@ -170,7 +168,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       }
     }
 
-    if (!_allLoaded) {
+    if (_extending) {
       contentList.add(_extendingIndicator);
     }
 
@@ -209,9 +207,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     int userCount = _letterCounts?[lowerDirEntry] ?? 0;
     String userText = userCount == 1 ? 'User' : 'Users';
     _sectionHeadingKeys[lowerDirEntry] ??= GlobalKey();
-    Widget heading = Padding(padding: EdgeInsets.zero, child:
+    Widget heading = Padding(key: _sectionHeadingKeys[lowerDirEntry], padding: EdgeInsets.zero, child:
       Row(
-        key: _sectionHeadingKeys[lowerDirEntry],
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),),
@@ -270,29 +267,16 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   void _scrollListener() {
     ScrollController? scrollController = widget.scrollController;
-    int? currentIndex;
-    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && !_loading && !_extending) {
-      currentIndex = _getLetterIndexToExtend();
-      if (currentIndex != null) {
-        _extend(letterIndex: currentIndex);
-      }
-    } else if ((scrollController != null) && (scrollController.offset <= scrollController.position.minScrollExtent) && !_loading && !_reverseExtending) {
-      currentIndex = _getLetterIndexToExtend(reverse: true);
-      if (currentIndex != null) {
-        _extend(letterIndex: currentIndex, reverse: true);
-      }
+    int index = getCurrentLetterIndex(scrollController?.offset);
+    if (index >= 0 && _letterIndex != index) {
+      _letterIndex = index;
+      widget.onCurrentLetterChanged?.call(index);
     }
-    if (currentIndex == null) {
-      int index = getCurrentLetterIndex(scrollController?.offset);
-      if (index >= 0) {
-        currentIndex = index;
-      }
-    }
-    if (currentIndex != null) {
-      if (_currentLetterIndex != currentIndex) {
-        _currentLetterIndex = currentIndex;
-        widget.onCurrentLetterChanged?.call(currentIndex);
-      }
+
+    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && !_loading && !_extending && _canExtend) {
+      _extend();
+    } else if ((scrollController != null) && (scrollController.offset <= scrollController.position.minScrollExtent) && !_loading && !_reverseExtending && _canReverseExtend) {
+      _extend(reverse: true);
     }
   }
 
@@ -371,20 +355,21 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   }
 
   Future<void> refresh() async {
-    _currentLetterIndex = _letterIndex = 0;
+    _letterIndex = 0;
     _load(silent: true);
   }
 
-  Future<void> _extend({int? letterIndex, bool reverse = false}) async {
+  Future<void> _extend({bool reverse = false}) async {
     if (!_loading && ((!reverse && !_extending) || (reverse && !_reverseExtending))) {
       setStateIfMounted(() {
-        _extending = true;
+        _extending = !reverse;
+        _reverseExtending = reverse;
       });
 
       Auth2PublicAccountsResult? result = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
         attributes: widget.filterAttributes,
-        offset: _getOffset(letterIndex: letterIndex, reverse: reverse),
+        offset: _getOffset(reverse: reverse),
         limit: _pageLength,
         reverse: reverse,
       );
@@ -397,20 +382,41 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
           if (result?.accounts != null) {
             _accounts ??= {};
             Map<String, int> accountsInserted = {};
+            bool searchForDuplicates = true;
             for (Auth2PublicAccount account in (reverse ? result?.accounts : result?.accounts?.reversed) ?? []) {
               String? indexLetter = account.profile?.lastName?.substring(0, 1).toLowerCase();
               if (indexLetter != null) {
                 int gapIndex = _nameGapIndices[indexLetter] ?? 0;
                 _accounts![indexLetter] ??= [];
+
+                // check for duplicates
+                bool duplicate = false;
+                if (searchForDuplicates) {
+                  if (reverse) {
+                    for (int i = gapIndex - 1; i >= 0; i--) {
+                      if (_accounts![indexLetter]![i].id == account.id) {
+                        duplicate = true;
+                      }
+                    }
+                  } else {
+                    for (int i = gapIndex; i < (_accounts?[indexLetter]?.length ?? 0); i++) {
+                      if (_accounts![indexLetter]![i].id == account.id) {
+                        duplicate = true;
+                      }
+                    }
+                  }
+                }
+                if (duplicate) {
+                  continue;
+                } else {
+                  searchForDuplicates = false;
+                }
+
                 _accounts![indexLetter]!.insert(gapIndex, account);
 
                 int added = accountsInserted[indexLetter] ?? 0;
                 accountsInserted[indexLetter] = ++added;
               }
-            }
-
-            if (result?.accounts?.isNotEmpty != true) {
-              _allLoaded = true;
             }
 
             for (MapEntry<String, int> inserted in accountsInserted.entries) {
@@ -421,6 +427,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
           }
           _displayAccounts = _generateDisplayAccounts;
           _extending = false;
+          _reverseExtending = false;
         });
       }
     }
@@ -428,49 +435,35 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   void _jumpToLetter() {
     String letter = _alphabet[_letterIndex];
-    int loadedAccounts = _accounts?[letter]?.length ?? 0;
     int gapIndex = _nameGapIndices[letter] ?? 0;
-    if (loadedAccounts == 0 || gapIndex == 0) {
-      // have not loaded accounts at the beginning of this letter section
-      bool ensureVisible = false;
-      if (_letterIndex > 0) {
-        int previousLetterLoaded = _accounts?[previousLetter]?.length ?? 0;
-        int previousLetterTotal = _letterCounts?[previousLetter] ?? 0;
-        if (previousLetterLoaded >= previousLetterTotal) {
-          ensureVisible = true;
-        }
-      }
+    //TODO: _sectionHeadingKeys[letter]?.currentContext returns null when jumping from middle of other letter's section
+    if (gapIndex == 0) {
       _load(silent: true, init: false).then((_) {
-        if (ensureVisible) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            BuildContext? context = _sectionHeadingKeys[letter]?.currentContext;
-            if (context != null) {
-              Scrollable.ensureVisible(context, duration: const Duration(milliseconds: 500));
-            }
-          });
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          BuildContext? context = _sectionHeadingKeys[letter]?.currentContext;
+          if (context != null) {
+            Scrollable.ensureVisible(context, duration: const Duration(milliseconds: 500));
+          }
+        });
       });
-    } else if (_hasLoadedAccountsAtSectionStart(letter: letter)) {
-      BuildContext? context = _sectionHeadingKeys[letter]?.currentContext;
-      if (context != null) {
-        Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500));
-      }
     } else {
       // already have accounts for start of letter - rebuild UI to show separate list of accounts
-      setStateIfMounted(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        BuildContext? context = _sectionHeadingKeys[letter]?.currentContext;
+        if (context != null) {
+          Scrollable.ensureVisible(context, duration: const Duration(milliseconds: 500));
+        }
+      });
+      setStateIfMounted(() {
+        _displayAccounts = _generateDisplayAccounts;
+      });
     }
   }
 
   void _onFirstHeadingVisibilityChanged(VisibilityInfo info, String letter) {
-    List<Auth2PublicAccount>? firstSectionAccounts = _accounts?[letter];
-    if (CollectionUtils.isNotEmpty(firstSectionAccounts)) {
-      String? firstLastName = firstSectionAccounts!.first.profile?.lastName;
-      if (firstLastName != null && _firstDisplayLastName != null && (_firstDisplayLastName == firstLastName)) {
-        setState(() {
-          _refreshEnabled = (info.visibleFraction >= 1);
-        });
-      }
-    }
+    setState(() {
+      _refreshEnabled = (info.visibleFraction >= 1);
+    });
   }
 
   List<Auth2PublicAccount> get _generateDisplayAccounts {
@@ -479,8 +472,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       String letter = _alphabet[i];
       int gapIndex = _nameGapIndices[letter] ?? 0;
       int loadedAccounts = _accounts?[letter]?.length ?? 0;
-      int letterAccounts = _letterCounts?[letter] ?? 0;
-      if (loadedAccounts >= letterAccounts) {
+      if (_hasLoadedAllAccountsForLetter(letter: letter)) {
         previousLetterAccounts.addAll(_accounts?[letter]?.reversed ?? []);
       } else {
         if (gapIndex < loadedAccounts) {
@@ -494,9 +486,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     for (int i = _letterIndex; i < _alphabet.length; i++) {
       String letter = _alphabet[i];
       int gapIndex = _nameGapIndices[letter] ?? 0;
-      int loadedAccounts = _accounts?[letter]?.length ?? 0;
-      int letterAccounts = _letterCounts?[letter] ?? 0;
-      if (loadedAccounts >= letterAccounts) {
+      if (_hasLoadedAllAccountsForLetter(letter: letter) || (gapIndex == 0 && i == _letterIndex)) {
         currentAndNextLetterAccounts.addAll(_accounts?[letter] ?? []);
       } else {
         if (gapIndex > 0) {
@@ -512,14 +502,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     ];
   }
 
-  // int get _accountsCount {
-  //   int total = 0;
-  //   for (List<Auth2PublicAccount> letterAccounts in _accounts?.values ?? []) {
-  //     total += letterAccounts.length;
-  //   }
-  //   return total;
-  // }
-
   bool _hasLoadedAllAccountsForLetter({String? letter}) {
     letter ??= currentLetter;
     int? loadedAccounts = _accounts?[letter]?.length;
@@ -527,57 +509,20 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     return letterAccounts == null || (loadedAccounts != null && loadedAccounts >= letterAccounts);
   }
 
-  bool _hasLoadedAccountsAtSectionStart({String? letter}) {
-    letter ??= currentLetter;
-    return (_firstDisplayLastName != null && letter.compareTo(_firstDisplayLastName!) >= 0) && (_lastDisplayLastName != null && letter.compareTo(_lastDisplayLastName!) <= 0);
-  }
-
-  String? _getOffset({int? letterIndex, bool reverse = false, bool init = false}) {
+  String? _getOffset({bool reverse = false, bool init = false}) {
     if (!init) {
-      letterIndex ??= _letterIndex;
-      String letter = _alphabet[letterIndex];
-      if (reverse) {
-        if (_accounts?[letter]?.isEmpty == false) {
-          int gapIndex = _nameGapIndices[letter] ?? 0;
-          if (gapIndex < (_accounts?[letter]?.length ?? 0)) {
-            Auth2PublicAccount? account = _accounts?[letter]?[gapIndex+1];
-            return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
-          }
-        }
-        return letter;
-      }
-      if (_accounts?[letter]?.isEmpty == false) {
-        int gapIndex = _nameGapIndices[letter] ?? 0;
-        if (gapIndex > 0) {
-          Auth2PublicAccount? account = _accounts?[letter]?[gapIndex - 1];
-          return '${account?.profile?.lastName},${account?.profile?.firstName},${account?.id}';
-        }
-        return letter;
+      String firstDisplayLastName = _firstDisplayAccount?.profile?.lastName ?? '';
+      String lastDisplayLastName = _lastDisplayAccount?.profile?.lastName ?? '';
+      if (currentLetter.compareTo(firstDisplayLastName.toLowerCase()) > 0 && currentLetter.compareTo(lastDisplayLastName.toLowerCase()) < 0) {
+        return reverse ? '${_firstDisplayAccount?.profile?.lastName},${_firstDisplayAccount?.profile?.firstName},${_firstDisplayAccount?.id}' :
+          '${_lastDisplayAccount?.profile?.lastName},${_lastDisplayAccount?.profile?.firstName},${_lastDisplayAccount?.id}';
+      } else if (!reverse && lastDisplayLastName.toLowerCase().startsWith(currentLetter)) {
+        return '${_lastDisplayAccount?.profile?.lastName},${_lastDisplayAccount?.profile?.firstName},${_lastDisplayAccount?.id}';
+      } else if (reverse && firstDisplayLastName.toLowerCase().startsWith(currentLetter)) {
+        return '${_firstDisplayAccount?.profile?.lastName},${_firstDisplayAccount?.profile?.firstName},${_firstDisplayAccount?.id}';
       }
     }
     return currentLetter;
-  }
-
-  int? _getLetterIndexToExtend({bool reverse = false}) {
-    if (reverse) {
-      for (int i = _letterIndex; i >= 0; i--) {
-        String letter = _alphabet[i];
-        int gapIndex = _nameGapIndices[letter] ?? 0;
-        if (!_hasLoadedAllAccountsForLetter(letter: letter) && (gapIndex == 0 || i > 0)) {
-          return i;
-        }
-      }
-    } else {
-      for (int i = _letterIndex; i < _alphabet.length; i++) {
-        String letter = _alphabet[i];
-        int gapIndex = _nameGapIndices[letter] ?? 0;
-        int loadedAccounts = _accounts?[letter]?.length ?? 0;
-        if (!_hasLoadedAllAccountsForLetter(letter: letter) && (gapIndex == loadedAccounts || i < _alphabet.length - 1)) {
-          return i;
-        }
-      }
-    }
-    return null;
   }
 
   void _updateAlphabet() {
@@ -589,11 +534,15 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
+  bool get _canExtend => currentLetter != _alphabet.last || (_nameGapIndices[currentLetter] == _accounts?[currentLetter]?.length && !_hasLoadedAllAccountsForLetter(letter: currentLetter));
+  bool get _canReverseExtend => currentLetter != _alphabet.first || _nameGapIndices[currentLetter] == 0;
+
   String get currentLetter => _alphabet[_letterIndex];
   String get previousLetter => _alphabet[_letterIndex - 1];
   List<String> get alphabet => _alphabet;
-  String? get _firstDisplayLastName => _displayAccounts.isNotEmpty ? _displayAccounts.first.profile?.lastName : null;
-  String? get _lastDisplayLastName => _displayAccounts.isNotEmpty ? _displayAccounts.last.profile?.lastName : null;
+
+  Auth2PublicAccount? get _firstDisplayAccount => _displayAccounts.isNotEmpty ? _displayAccounts.first : null;
+  Auth2PublicAccount? get _lastDisplayAccount => _displayAccounts.isNotEmpty ? _displayAccounts.last : null;
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
