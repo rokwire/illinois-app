@@ -13,10 +13,12 @@ class WalletPhotoWrapper extends StatefulWidget {
 
   final double topOffset;
   final Color? headingColor;
+  final Color? accentColor;
+  final Color? borderColor;
   final Color backgroundColor;
   final Widget? child;
 
-  WalletPhotoWrapper({super.key, this.topOffset = 0, this.headingColor, this.backgroundColor = Colors.white, this.child });
+  WalletPhotoWrapper({super.key, this.topOffset = 0, this.headingColor, this.accentColor, this.borderColor, this.backgroundColor = Colors.white, this.child });
 
   static double photoSize(BuildContext context) => _WalletPhotoWrapperState._defaultPhotoSize(context);
 
@@ -38,8 +40,9 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
   double get _headingH2 => _photoSize / 3;
   double get _illiniIconSize => 64;
 
-  Color get _displayBorderColor => widget.headingColor ?? _headingColor ?? Styles().colors.fillColorSecondary;
+  Color get _displayBorderColor => widget.borderColor ?? widget.headingColor ?? _headingColor ?? Styles().colors.fillColorSecondary;
   Color get _displayHeadingColor => widget.headingColor ?? _headingColor ?? widget.backgroundColor; // ?? Styles().colors.fillColorPrimary;
+  Color get _displayAccentColor => widget.accentColor ?? Styles().colors.fillColorSecondary;
 
   @override
   void initState() {
@@ -119,7 +122,7 @@ class _WalletPhotoWrapperState extends State<WalletPhotoWrapper> with Notificati
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [ Styles().colors.fillColorSecondary, _displayBorderColor],
+                    colors: [ _displayAccentColor, _displayBorderColor],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     stops: [0.0, 1.0],
