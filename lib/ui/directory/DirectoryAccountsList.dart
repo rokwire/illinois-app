@@ -52,6 +52,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   bool _loadingProgress = false;
   bool _extending = false;
   bool _reverseExtending = false;
+  bool _allLoaded = false;
   static const int _pageLength = 32;
 
   String? _expandedAccountId;
@@ -165,7 +166,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       }
     }
 
-    if (_extending) {
+    if (!_allLoaded) {
       contentList.add(_extendingIndicator);
     }
 
@@ -173,6 +174,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       onRefresh: _onRefresh,
       child: ListView.builder(
         controller: widget.scrollController,
+        padding: const EdgeInsets.only(bottom: 24),
         itemCount: contentList.length,
         itemBuilder: (context, index) {
           return contentList[index];
@@ -380,6 +382,10 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
                 int added = accountsInserted[indexLetter] ?? 0;
                 accountsInserted[indexLetter] = ++added;
               }
+            }
+
+            if (result?.accounts?.isNotEmpty != true) {
+              _allLoaded = true;
             }
 
             for (MapEntry<String, int> inserted in accountsInserted.entries) {

@@ -130,7 +130,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
           ),
         ),
         Expanded(
-          child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
+          child: Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
             _accountsListWidget,
           ),
         ),
