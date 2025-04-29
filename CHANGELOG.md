@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.0.20] - 2025-04-29
 ### Fixed
 - Make sure to apply privacy settings before sharing a profile card [#5026](https://github.com/rokwire/illinois-app/issues/5026).
 - Make sure not to duplicate group tabs [#5052](https://github.com/rokwire/illinois-app/issues/5052).
