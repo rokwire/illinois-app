@@ -246,9 +246,9 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
-    RichText(textAlign: TextAlign.left, text:
-    TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
-    )
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
     );
   }
 
@@ -260,7 +260,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
   Future<void> refresh() async => _accountsListKey.currentState?.refresh();
 
   void _onCurrentIndexChanged(int index) {
-    _selectedIndexNotifier.value = index;
+    _selectedIndexNotifier.value = _letterIndex = index;
     BuildContext? context = _letterKey.currentContext;
     if (context != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -293,7 +293,6 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
 
   void _onTapIndexLetter(int index) {
     _selectedIndexNotifier.value = index;
-    // scrollToIndex(x, positionNotifier.value);
     setState(() {
       _letterIndex = index;
     });

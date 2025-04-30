@@ -60,6 +60,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   bool _extending = false;
   bool _reverseExtending = false;
   bool _refreshEnabled = true;
+  bool _jumping = false;
   static const int _pageLength = 32;
 
   Auth2PublicAccount? _expandedAccount;
@@ -273,17 +274,24 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   }
 
   void _scrollListener() {
+    if (!_jumping) {
+      _checkForLetterIndexChange();
+
+      ScrollController? scrollController = widget.scrollController;
+      if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && !_loading && !_extending && _canExtend) {
+        _extend();
+      } else if ((scrollController != null) && (scrollController.offset <= scrollController.position.minScrollExtent) && !_loading && !_reverseExtending && _canReverseExtend) {
+        _extend(reverse: true);
+      }
+    }
+  }
+
+  void _checkForLetterIndexChange() {
     ScrollController? scrollController = widget.scrollController;
     int index = _getCurrentLetterIndex(scrollController?.offset);
     if (index >= 0 && _letterIndex != index) {
       _letterIndex = index;
       widget.onCurrentLetterChanged?.call(index);
-    }
-
-    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && !_loading && !_extending && _canExtend) {
-      _extend();
-    } else if ((scrollController != null) && (scrollController.offset <= scrollController.position.minScrollExtent) && !_loading && !_reverseExtending && _canReverseExtend) {
-      _extend(reverse: true);
     }
   }
 
@@ -291,7 +299,14 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     if (vPosition == null) {
       return -1;
     }
-    int itemIndex = vPosition ~/ kCollapsedCardHeight;
+
+    //TODO: determine position bounds for each displayed section, return which interval the current position falls into (handle headings and expanded card)
+    // get height of headings above the current position
+    String? firstDisplayAccountSection = _firstDisplayAccount?.profile?.lastName?.substring(0, 1).toLowerCase();
+    int firstSectionIndex = firstDisplayAccountSection != null ? _alphabet.indexOf(firstDisplayAccountSection) : _letterIndex;
+    double headingsHeight = (_letterIndex - firstSectionIndex + 1) * kSectionHeadingHeight;
+
+    int itemIndex = max(0, vPosition - headingsHeight) ~/ kCollapsedCardHeight;
     List<Auth2PublicAccount> accounts = _displayAccounts;
     if (itemIndex < 0 || itemIndex >= accounts.length) {
       return -1;
@@ -312,13 +327,11 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     for (int i = firstSectionIndex; i < _letterIndex; i++) {
       String letter = _alphabet[i];
       int loadedAccounts = _accounts?[letter]?.length ?? 0;
-      if (i == firstSectionIndex) {
-        int gapIndex = _nameGapIndices[letter] ?? 0;
-        if (loadedAccounts > 0) {
-          accountsHeight += (loadedAccounts - gapIndex) * kCollapsedCardHeight;
-        }
-      } else {
+      int gapIndex = _nameGapIndices[letter] ?? 0;
+      if (gapIndex == loadedAccounts) {
         accountsHeight += loadedAccounts * kCollapsedCardHeight;
+      } else {
+        accountsHeight += (loadedAccounts - gapIndex) * kCollapsedCardHeight;
       }
     }
 
@@ -409,6 +422,10 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
       widget.onAccountTotalUpdated?.call(result?.totalCount);
       if (mounted && (_extending || _reverseExtending) && !_loading) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _checkForLetterIndexChange();
+        });
+
         setState(() {
           _letterCounts = result?.indexCounts;
           _updateAlphabet();
@@ -471,21 +488,24 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     int gapIndex = _nameGapIndices[letter] ?? 0;
     if (gapIndex == 0) {
       _load(silent: true, init: false).then((_) {
-        if (widget.scrollController != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            widget.scrollController?.animateTo(max(_sectionHeadingScrollOffset, 1), duration: const Duration(milliseconds: 500), curve: Curves.linear);
-          });
-        }
+        _scheduleJump();
       });
     } else {
       // already have accounts for start of letter - rebuild UI to show separate list of accounts
-      if (widget.scrollController != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          widget.scrollController?.animateTo(max(_sectionHeadingScrollOffset, 1), duration: const Duration(milliseconds: 500), curve: Curves.linear);
-        });
-      }
+      _scheduleJump();
       setStateIfMounted(() {
         _displayAccounts = _generateDisplayAccounts;
+      });
+    }
+  }
+
+  void _scheduleJump() {
+    if (widget.scrollController != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _jumping = true;
+        widget.scrollController?.animateTo(max(_sectionHeadingScrollOffset, 1), duration: const Duration(milliseconds: 1000), curve: Curves.linear).then((_) {
+          _jumping = false;
+        });
       });
     }
   }
@@ -498,7 +518,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   List<Auth2PublicAccount> get _generateDisplayAccounts {
     List<Auth2PublicAccount> previousLetterAccounts = [];
-    for (int i = _letterIndex - 1; i >- 0; i--) {
+    for (int i = _letterIndex - 1; i >= 0; i--) {
       String letter = _alphabet[i];
       int gapIndex = _nameGapIndices[letter] ?? 0;
       int loadedAccounts = _accounts?[letter]?.length ?? 0;
