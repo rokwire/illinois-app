@@ -286,67 +286,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  void _checkForLetterIndexChange() {
-    ScrollController? scrollController = widget.scrollController;
-    int index = _getCurrentLetterIndex(scrollController?.offset);
-    if (index >= 0 && _letterIndex != index) {
-      _letterIndex = index;
-      widget.onCurrentLetterChanged?.call(index);
-    }
-  }
-
-  int _getCurrentLetterIndex(double? vPosition) {
-    if (vPosition == null) {
-      return -1;
-    }
-
-    //TODO: determine position bounds for each displayed section, return which interval the current position falls into (handle headings and expanded card)
-    // get height of headings above the current position
-    String? firstDisplayAccountSection = _firstDisplayAccount?.profile?.lastName?.substring(0, 1).toLowerCase();
-    int firstSectionIndex = firstDisplayAccountSection != null ? _alphabet.indexOf(firstDisplayAccountSection) : _letterIndex;
-    double headingsHeight = (_letterIndex - firstSectionIndex + 1) * kSectionHeadingHeight;
-
-    int itemIndex = max(0, vPosition - headingsHeight) ~/ kCollapsedCardHeight;
-    List<Auth2PublicAccount> accounts = _displayAccounts;
-    if (itemIndex < 0 || itemIndex >= accounts.length) {
-      return -1;
-    }
-    String? letter = accounts[itemIndex].profile?.lastName?.substring(0, 1).toLowerCase();
-    if (letter == null) {
-      return -1;
-    }
-    return _alphabet.indexOf(letter);
-  }
-
-  double get _sectionHeadingScrollOffset {
-    String? firstDisplayAccountSection = _firstDisplayAccount?.profile?.lastName?.substring(0, 1).toLowerCase();
-    int firstSectionIndex = firstDisplayAccountSection != null ? _alphabet.indexOf(firstDisplayAccountSection) : _letterIndex;
-    double headingsHeight = (_letterIndex - firstSectionIndex) * kSectionHeadingHeight;
-
-    double accountsHeight = 0;
-    for (int i = firstSectionIndex; i < _letterIndex; i++) {
-      String letter = _alphabet[i];
-      int loadedAccounts = _accounts?[letter]?.length ?? 0;
-      int gapIndex = _nameGapIndices[letter] ?? 0;
-      if (gapIndex == loadedAccounts) {
-        accountsHeight += loadedAccounts * kCollapsedCardHeight;
-      } else {
-        accountsHeight += (loadedAccounts - gapIndex) * kCollapsedCardHeight;
-      }
-    }
-
-    double expandedCardCorrection = 0;
-    if (_expandedAccount != null) {
-      String? expandedAccountLastName = _expandedAccount?.profile?.lastName?.toLowerCase();
-      if (expandedAccountLastName != null && firstDisplayAccountSection != null &&
-          expandedAccountLastName.compareTo(firstDisplayAccountSection) > 0 && expandedAccountLastName.compareTo(_alphabet[_letterIndex]) < 0) {
-        expandedCardCorrection = kExpandedCardHeight - kCollapsedCardHeight;
-      }
-    }
-
-    return accountsHeight + headingsHeight + expandedCardCorrection;
-  }
-
   Future<void> _load({ int limit = _pageLength, bool silent = false, bool init = true }) async {
     if (!_loading) {
       setStateIfMounted(() {
@@ -510,10 +449,83 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
+  void _checkForLetterIndexChange() {
+    ScrollController? scrollController = widget.scrollController;
+    int index = _getCurrentLetterIndex(scrollController?.offset);
+    if (index >= 0 && _letterIndex != index) {
+      _letterIndex = index;
+      widget.onCurrentLetterChanged?.call(index);
+    }
+  }
+
+  int _getCurrentLetterIndex(double? vPosition) {
+    if (vPosition != null) {
+      String? expandedAccountSection;
+      if (_expandedAccount != null) {
+        expandedAccountSection = _expandedAccount?.profile?.lastName?.toLowerCase().substring(0, 1);
+      }
+
+      double offset = 0;
+      for (int i = _firstSectionIndex; i <= _lastSectionIndex; i++) {
+        offset += kSectionHeadingHeight;
+        String letter = _alphabet[i];
+        if (expandedAccountSection == letter) {
+          offset += kExpandedCardHeight - kCollapsedCardHeight;
+        }
+
+        int loadedAccounts = _accounts?[letter]?.length ?? 0;
+        int totalAccounts = _letterCounts?[letter] ?? 0;
+        int gapIndex = _nameGapIndices[letter] ?? 0;
+        if (gapIndex == loadedAccounts || loadedAccounts >= totalAccounts) {
+          offset += loadedAccounts * kCollapsedCardHeight;
+        } else {
+          offset += (loadedAccounts - gapIndex) * kCollapsedCardHeight;
+        }
+
+        if (vPosition <= offset) {
+          return i;
+        }
+      }
+    }
+    return -1;
+  }
+
   void _onFirstHeadingVisibilityChanged(VisibilityInfo info, String letter) {
     setState(() {
       _refreshEnabled = (info.visibleFraction >= 1);
     });
+  }
+
+  bool _hasLoadedAllAccountsForLetter({String? letter}) {
+    letter ??= _currentLetter;
+    int loadedAccounts = _accounts?[letter]?.length ?? 0;
+    int letterAccounts = _letterCounts?[letter] ?? 0;
+    return loadedAccounts >= letterAccounts;
+  }
+
+  String? _getOffset({bool reverse = false, bool init = false}) {
+    if (!init) {
+      String firstDisplayLastName = _firstDisplayAccount?.profile?.lastName ?? '';
+      String lastDisplayLastName = _lastDisplayAccount?.profile?.lastName ?? '';
+      if (_currentLetter.compareTo(firstDisplayLastName.toLowerCase()) > 0 && _currentLetter.compareTo(lastDisplayLastName.toLowerCase()) < 0) {
+        return reverse ? '$firstDisplayLastName,${_firstDisplayAccount?.profile?.firstName},${_firstDisplayAccount?.id}' :
+          '$lastDisplayLastName,${_lastDisplayAccount?.profile?.firstName},${_lastDisplayAccount?.id}';
+      } else if (!reverse && lastDisplayLastName.toLowerCase().startsWith(_currentLetter)) {
+        return '$lastDisplayLastName,${_lastDisplayAccount?.profile?.firstName},${_lastDisplayAccount?.id}';
+      } else if (reverse && firstDisplayLastName.toLowerCase().startsWith(_currentLetter)) {
+        return '$firstDisplayLastName,${_firstDisplayAccount?.profile?.firstName},${_firstDisplayAccount?.id}';
+      }
+    }
+    return _currentLetter;
+  }
+
+  void _updateAlphabet() {
+    Set<String> newAlphabet = _letterCounts?.keys.where((letter) => (_letterCounts?[letter] ?? 0) > 0).toSet() ?? {};
+    Set<String> currentAlphabet = _alphabet.toSet();
+    if (newAlphabet.difference(currentAlphabet).isNotEmpty || currentAlphabet.difference(newAlphabet).isNotEmpty) {
+      _alphabet = newAlphabet.toList()..sort((a, b) => a.compareTo(b));
+      widget.onUpdateAlphabet?.call();
+    }
   }
 
   List<Auth2PublicAccount> get _generateDisplayAccounts {
@@ -552,47 +564,47 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     ];
   }
 
-  bool _hasLoadedAllAccountsForLetter({String? letter}) {
-    letter ??= currentLetter;
-    int? loadedAccounts = _accounts?[letter]?.length;
-    int? letterAccounts = _letterCounts?[letter];
-    return letterAccounts == null || (loadedAccounts != null && loadedAccounts >= letterAccounts);
-  }
+  double get _sectionHeadingScrollOffset {
+    double headingsHeight = (_letterIndex - _firstSectionIndex) * kSectionHeadingHeight;
 
-  String? _getOffset({bool reverse = false, bool init = false}) {
-    if (!init) {
-      String firstDisplayLastName = _firstDisplayAccount?.profile?.lastName ?? '';
-      String lastDisplayLastName = _lastDisplayAccount?.profile?.lastName ?? '';
-      if (currentLetter.compareTo(firstDisplayLastName.toLowerCase()) > 0 && currentLetter.compareTo(lastDisplayLastName.toLowerCase()) < 0) {
-        return reverse ? '${_firstDisplayAccount?.profile?.lastName},${_firstDisplayAccount?.profile?.firstName},${_firstDisplayAccount?.id}' :
-          '${_lastDisplayAccount?.profile?.lastName},${_lastDisplayAccount?.profile?.firstName},${_lastDisplayAccount?.id}';
-      } else if (!reverse && lastDisplayLastName.toLowerCase().startsWith(currentLetter)) {
-        return '${_lastDisplayAccount?.profile?.lastName},${_lastDisplayAccount?.profile?.firstName},${_lastDisplayAccount?.id}';
-      } else if (reverse && firstDisplayLastName.toLowerCase().startsWith(currentLetter)) {
-        return '${_firstDisplayAccount?.profile?.lastName},${_firstDisplayAccount?.profile?.firstName},${_firstDisplayAccount?.id}';
+    double accountsHeight = 0;
+    for (int i = _firstSectionIndex; i < _letterIndex; i++) {
+      String letter = _alphabet[i];
+      int loadedAccounts = _accounts?[letter]?.length ?? 0;
+      int totalAccounts = _letterCounts?[letter] ?? 0;
+      int gapIndex = _nameGapIndices[letter] ?? 0;
+      if (gapIndex == loadedAccounts || loadedAccounts >= totalAccounts) {
+        accountsHeight += loadedAccounts * kCollapsedCardHeight;
+      } else {
+        accountsHeight += (loadedAccounts - gapIndex) * kCollapsedCardHeight;
       }
     }
-    return currentLetter;
-  }
 
-  void _updateAlphabet() {
-    Set<String> newAlphabet = _letterCounts?.keys.where((letter) => (_letterCounts?[letter] ?? 0) > 0).toSet() ?? {};
-    Set<String> currentAlphabet = _alphabet.toSet();
-    if (newAlphabet.difference(currentAlphabet).isNotEmpty || currentAlphabet.difference(newAlphabet).isNotEmpty) {
-      _alphabet = newAlphabet.toList()..sort((a, b) => a.compareTo(b));
-      widget.onUpdateAlphabet?.call();
+    double expandedCardCorrection = 0;
+    if (_expandedAccount != null) {
+      String? expandedAccountLastName = _expandedAccount?.profile?.lastName?.toLowerCase();
+      if (expandedAccountLastName != null && _firstDisplayAccountSection != null &&
+          expandedAccountLastName.compareTo(_firstDisplayAccountSection!) > 0 && expandedAccountLastName.compareTo(_alphabet[_letterIndex]) < 0) {
+        expandedCardCorrection = kExpandedCardHeight - kCollapsedCardHeight;
+      }
     }
+
+    return accountsHeight + headingsHeight + expandedCardCorrection;
   }
 
-  bool get _canExtend => currentLetter != _alphabet.last || (_nameGapIndices[currentLetter] == _accounts?[currentLetter]?.length && !_hasLoadedAllAccountsForLetter(letter: currentLetter));
-  bool get _canReverseExtend => currentLetter != _alphabet.first || _nameGapIndices[currentLetter] == 0;
+  bool get _canExtend => _currentLetter != _alphabet.last || (_nameGapIndices[_currentLetter] == _accounts?[_currentLetter]?.length && !_hasLoadedAllAccountsForLetter(letter: _currentLetter));
+  bool get _canReverseExtend => _currentLetter != _alphabet.first || _nameGapIndices[_currentLetter] == 0;
 
-  String get currentLetter => _alphabet[_letterIndex];
-  String get previousLetter => _alphabet[_letterIndex - 1];
+  String get _currentLetter => _alphabet[_letterIndex];
   List<String> get alphabet => _alphabet;
 
   Auth2PublicAccount? get _firstDisplayAccount => _displayAccounts.isNotEmpty ? _displayAccounts.first : null;
+  String? get _firstDisplayAccountSection => _firstDisplayAccount?.profile?.lastName?.substring(0, 1).toLowerCase();
+  int get _firstSectionIndex => _firstDisplayAccountSection != null ? _alphabet.indexOf(_firstDisplayAccountSection!) : _letterIndex;
+
   Auth2PublicAccount? get _lastDisplayAccount => _displayAccounts.isNotEmpty ? _displayAccounts.last : null;
+  String? get _lastDisplayAccountSection => _lastDisplayAccount?.profile?.lastName?.substring(0, 1).toLowerCase();
+  int get _lastSectionIndex => _lastDisplayAccountSection != null ? _alphabet.indexOf(_lastDisplayAccountSection!) : _letterIndex;
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
