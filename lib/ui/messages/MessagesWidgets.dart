@@ -543,7 +543,7 @@ class ConversationCard extends StatelessWidget {
 
     if (!StringUtils.isNotEmpty(messageText)) {
       if (conversation.lastMessage?.fileAttachments?.isNotEmpty == true) {
-        messageText = "Attachment";
+        messageText = Localization().getStringEx('', "Attachment");
       } else {
         return Container();
       }
