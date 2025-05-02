@@ -491,7 +491,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   }
 
   void _onFirstHeadingVisibilityChanged(VisibilityInfo info, String letter) {
-    setState(() {
+    setStateIfMounted(() {
       _refreshEnabled = (info.visibleFraction >= 1);
     });
   }
