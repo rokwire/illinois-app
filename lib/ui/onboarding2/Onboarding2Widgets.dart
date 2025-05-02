@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;

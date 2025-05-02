@@ -1,6 +1,6 @@
 
-import 'package:neom/model/Questionnaire.dart';
-import 'package:neom/service/Auth2.dart';
+import 'package:illinois/model/Questionnaire.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

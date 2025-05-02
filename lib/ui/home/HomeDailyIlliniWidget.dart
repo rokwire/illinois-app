@@ -17,13 +17,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:neom/mainImpl.dart';
-import 'package:neom/model/DailyIllini.dart';
-import 'package:neom/service/DailyIllini.dart';
-import 'package:neom/ui/home/HomePanel.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/widgets/LinkButton.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/mainImpl.dart';
+import 'package:illinois/model/DailyIllini.dart';
+import 'package:illinois/service/DailyIllini.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

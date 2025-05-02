@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neom/model/RecentItem.dart';
+import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 extension RecentItemExt on RecentItem {

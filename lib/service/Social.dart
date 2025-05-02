@@ -1,5 +1,5 @@
-import 'package:neom/model/Social.dart';
-import 'package:neom/service/Auth2.dart';
+import 'package:illinois/model/Social.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

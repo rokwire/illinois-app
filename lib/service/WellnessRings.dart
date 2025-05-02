@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/wellness/WellnessRing.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';

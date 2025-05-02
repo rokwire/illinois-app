@@ -1,8 +1,8 @@
 import 'package:http/http.dart';
-import 'package:neom/model/StudentCourse.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

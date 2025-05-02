@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Explore.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/widgets/QrCodePanel.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:neom/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';

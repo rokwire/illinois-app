@@ -16,12 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:neom/service/MobileAccess.dart';
-import 'package:neom/ui/debug/mobile_access/DebugMobileAccessKeysEndpointSetupPanel.dart';
-import 'package:neom/ui/debug/mobile_access/DebugMobileAccessLockServicesCodesPanel.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/MobileAccess.dart';
+import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessKeysEndpointSetupPanel.dart';
+import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessLockServicesCodesPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';

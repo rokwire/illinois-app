@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import 'package:neom/service/AppDateTime.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

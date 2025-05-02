@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:neom/model/Dining.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 extension DiningExt on Dining {

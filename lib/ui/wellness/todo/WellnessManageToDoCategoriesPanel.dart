@@ -15,13 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/model/wellness/WellnessToDo.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Wellness.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

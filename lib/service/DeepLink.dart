@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:neom/service/NativeCommunicator.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/deep_link.dart' as rokwire;
 import 'package:rokwire_plugin/service/service.dart';
 

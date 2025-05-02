@@ -15,9 +15,9 @@
  */
 
 import 'package:http/http.dart';
-import 'package:neom/model/Identity.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/model/Identity.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';

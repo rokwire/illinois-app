@@ -16,14 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/service/CheckList.dart';
-import 'package:neom/ui/gies/CheckListContentWidget.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/ui/gies/CheckListContentWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 
 class CheckListPanel extends StatelessWidget with AnalyticsInfo {
   final String contentKey;

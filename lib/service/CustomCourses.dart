@@ -16,14 +16,14 @@
 
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:neom/model/CustomCourses.dart';
-import 'package:neom/service/Auth2.dart';
+import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

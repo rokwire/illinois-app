@@ -2,9 +2,9 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';

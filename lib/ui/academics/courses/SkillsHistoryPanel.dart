@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ui/academics/SkillsSelfEvaluation.dart';
-import 'package:neom/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
-import 'package:neom/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
-import 'package:neom/ui/academics/courses/SkillsScoreChart.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
+import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
+import 'package:illinois/ui/academics/courses/SkillsScoreChart.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';

@@ -14,8 +14,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:neom/service/Assistant.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Assistant.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

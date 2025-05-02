@@ -2,11 +2,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/directory/DirectoryAccountsList.dart';
-import 'package:neom/ui/directory/DirectoryWidgets.dart';
-import 'package:neom/ui/profile/ProfileHomePanel.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';

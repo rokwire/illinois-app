@@ -1,15 +1,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/service/Guide.dart';
-import 'package:neom/ui/guide/GuideDetailPanel.dart';
-import 'package:neom/ui/guide/GuideListPanel.dart';
-import 'package:neom/ui/safety/SafetySafeWalkRequestPage.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/safety/SafetySafeWalkRequestPage.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

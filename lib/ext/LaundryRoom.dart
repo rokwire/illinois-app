@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:neom/model/Laundry.dart';
+import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 extension LaundryRoomExt on LaundryRoom {

@@ -16,18 +16,18 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Appointment.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/model/Appointment.dart';
-import 'package:neom/service/Appointments.dart';
-import 'package:neom/ui/appointments/AppointmentSchedulePanel.dart';
-import 'package:neom/ui/appointments/AppointmentScheduleTimePanel.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentScheduleTimePanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-//import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+//import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePersonPanel extends StatefulWidget with AnalyticsInfo {
 

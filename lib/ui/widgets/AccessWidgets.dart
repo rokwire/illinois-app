@@ -14,9 +14,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/ui/profile/ProfileHomePanel.dart';
-import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

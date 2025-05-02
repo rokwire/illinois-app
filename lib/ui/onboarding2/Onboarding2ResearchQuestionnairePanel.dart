@@ -2,13 +2,13 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/Questionnaire.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Onboarding2.dart';
-import 'package:neom/service/Questionnaire.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/Questionnaire.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';

@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:neom/ui/polls/PollProgressPainter.dart';
+import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/DeviceCalendar.dart';
-import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/widgets/DeviceCalendarPrompt.dart';
+import 'package:illinois/model/DeviceCalendar.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/widgets/DeviceCalendarPrompt.dart';
 import 'package:rokwire_plugin/model/device_calendar.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/service/localization.dart';

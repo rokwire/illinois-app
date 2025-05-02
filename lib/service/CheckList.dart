@@ -1,9 +1,9 @@
 import 'package:http/http.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/service/Gateway.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';

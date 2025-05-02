@@ -20,9 +20,9 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:neom/service/Wellness.dart';
-import 'package:neom/ui/widgets/InfoPopup.dart';
-import 'package:neom/model/wellness/SuccessTeam.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:illinois/model/wellness/SuccessTeam.dart';
 
 class WellnessSuccessTeamContentWidget extends StatefulWidget {
   WellnessSuccessTeamContentWidget();

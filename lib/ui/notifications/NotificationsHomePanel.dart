@@ -17,15 +17,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/AppDateTime.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/FirebaseMessaging.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:neom/ui/widgets/UnderlinedButton.dart';
-import 'package:neom/utils/AppUtils.dart';
-import 'package:neom/ext/InboxMessage.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/UnderlinedButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';

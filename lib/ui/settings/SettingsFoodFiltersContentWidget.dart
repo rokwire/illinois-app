@@ -16,10 +16,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:neom/service/Dinings.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 

@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:neom/model/DailyIllini.dart';
-import 'package:neom/utils/Utils.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/model/DailyIllini.dart';
+import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';

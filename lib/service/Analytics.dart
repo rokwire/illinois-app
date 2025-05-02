@@ -18,12 +18,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/mainImpl.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/model/wellness/WellnessToDo.dart' as wellness;
-import 'package:neom/model/wellness/WellnessRing.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/service/IlliniCash.dart';
+import 'package:illinois/mainImpl.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -42,11 +42,11 @@ import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:neom/ext/Group.dart';
-import 'package:neom/ext/Favorite.dart';
-import 'package:neom/service/Auth2.dart';
+import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/service/Auth2.dart';
 
-import 'package:neom/ui/RootPanel.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:uuid/uuid.dart';

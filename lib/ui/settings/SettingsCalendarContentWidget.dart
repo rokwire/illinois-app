@@ -16,14 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class SettingsCalendarContentWidget extends StatefulWidget {
   @override

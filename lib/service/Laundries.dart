@@ -16,11 +16,11 @@
 
 import 'dart:async';
 import 'package:http/http.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
-import 'package:neom/model/Laundry.dart';
+import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Laundries /*with Service*/ {

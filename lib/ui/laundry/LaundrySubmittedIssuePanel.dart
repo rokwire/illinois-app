@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/ui/laundry/LaundryRequestIssuePanel.dart';
+import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 

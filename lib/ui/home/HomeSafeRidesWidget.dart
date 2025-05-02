@@ -3,12 +3,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/service/Guide.dart';
-import 'package:neom/ui/guide/GuideEntryCard.dart';
-import 'package:neom/ui/home/HomePanel.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/guide/GuideEntryCard.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class HomeSafeRidesRequestWidget extends StatelessWidget {

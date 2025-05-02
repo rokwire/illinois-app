@@ -15,19 +15,19 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/ui/polls/PollWidgets.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/ui/polls/PollWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:neom/ext/Group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:neom/service/Polls.dart' as neom;
+import 'package:illinois/service/Polls.dart' as neom;
 
 class GroupPollListPanel extends StatefulWidget with AnalyticsInfo {
   final Group group;

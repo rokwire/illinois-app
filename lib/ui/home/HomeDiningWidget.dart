@@ -17,10 +17,10 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/dining/DiningHomePanel.dart';
-import 'package:neom/ui/home/HomePanel.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/dining/DiningHomePanel.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class HomeDiningWidget extends StatefulWidget {

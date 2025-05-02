@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/Rewards.dart';
-import 'package:neom/service/Rewards.dart';
+import 'package:illinois/model/Rewards.dart';
+import 'package:illinois/service/Rewards.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class DebugRewardsPanel extends StatefulWidget{

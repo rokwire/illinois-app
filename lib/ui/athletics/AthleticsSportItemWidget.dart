@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/sport/SportDetails.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

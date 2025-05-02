@@ -15,8 +15,8 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';

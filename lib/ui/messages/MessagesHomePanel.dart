@@ -16,15 +16,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/AppDateTime.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/ui/messages/MessagesDirectoryPanel.dart';
-import 'package:neom/ui/directory/DirectoryWidgets.dart';
-import 'package:neom/ui/messages/MessagesWidgets.dart';
-import 'package:neom/ui/widgets/Filters.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/messages/MessagesWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

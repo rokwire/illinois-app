@@ -16,20 +16,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:neom/model/RecentItem.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/FlexUI.dart';
+import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
-import 'package:neom/service/RecentItems.dart';
-import 'package:neom/model/News.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Sports.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/model/News.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:share_plus/share_plus.dart';

@@ -18,11 +18,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neom/model/Identity.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/service/Identity.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/model/Identity.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Identity.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';

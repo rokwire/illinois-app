@@ -17,24 +17,24 @@
 import 'dart:math';
 
 import "package:flutter/material.dart";
-import "package:neom/ext/PrivacyData.dart";
-import "package:neom/model/PrivacyData.dart";
-import "package:neom/service/Analytics.dart";
-import 'package:neom/utils/AppUtils.dart';
+import "package:illinois/ext/PrivacyData.dart";
+import "package:illinois/model/PrivacyData.dart";
+import "package:illinois/service/Analytics.dart";
+import 'package:illinois/utils/AppUtils.dart';
 import "package:rokwire_plugin/service/app_notification.dart";
 import 'package:rokwire_plugin/service/auth2.dart';
-import "package:neom/service/Config.dart";
-import "package:neom/service/FlexUI.dart";
+import "package:illinois/service/Config.dart";
+import "package:illinois/service/FlexUI.dart";
 import 'package:rokwire_plugin/service/content.dart';
 import "package:rokwire_plugin/service/localization.dart";
 import "package:rokwire_plugin/service/notification_service.dart";
 import "package:rokwire_plugin/service/onboarding.dart";
-import "package:neom/service/Storage.dart";
-import "package:neom/ui/onboarding/OnboardingBackButton.dart";
-import "package:neom/ui/widgets/HeaderBar.dart";
-import 'package:neom/ui/widgets/PrivacySlider.dart';
+import "package:illinois/service/Storage.dart";
+import "package:illinois/ui/onboarding/OnboardingBackButton.dart";
+import "package:illinois/ui/widgets/HeaderBar.dart";
+import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import "package:rokwire_plugin/ui/widgets/rounded_button.dart";
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import "package:rokwire_plugin/utils/utils.dart";
 import "package:rokwire_plugin/service/styles.dart";
 

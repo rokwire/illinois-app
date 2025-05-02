@@ -18,8 +18,8 @@ import 'dart:collection';
 
 import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
-import 'package:neom/service/AppDateTime.dart';
-import 'package:neom/utils/Utils.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 

@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/service/Content.dart' as con;
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as con;
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

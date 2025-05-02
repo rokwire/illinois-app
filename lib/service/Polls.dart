@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart' as rokwire;
-import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 

@@ -17,10 +17,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:neom/model/Dining.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/dining/LocationsWithDiningSpecialPanel.dart';
+import 'package:illinois/ui/dining/LocationsWithDiningSpecialPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';

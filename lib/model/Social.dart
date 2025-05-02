@@ -1,4 +1,4 @@
-import 'package:neom/service/AppDateTime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //TODO: make updates according to Social BB development as needed (just text messages for now)

@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:neom/model/News.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
+import 'package:illinois/model/News.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

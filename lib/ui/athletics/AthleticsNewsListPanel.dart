@@ -17,16 +17,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:neom/model/sport/SportDetails.dart';
-import 'package:neom/service/Sports.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/model/News.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/athletics/AthleticsNewsCard.dart';
-import 'package:neom/ui/widgets/Filters.dart';
+import 'package:illinois/model/News.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

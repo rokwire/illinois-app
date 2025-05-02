@@ -1,21 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/model/Canvas.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Canvas.dart';
-import 'package:neom/ui/canvas/CanvasCoursesListPanel.dart';
-import 'package:neom/ui/canvas/GiesCanvasCoursesListPanel.dart';
-import 'package:neom/ui/home/HomePanel.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/widgets/LinkButton.dart';
-import 'package:neom/ui/widgets/SemanticsWidgets.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/canvas/CanvasCourseHomePanel.dart';
-import 'package:neom/ui/canvas/CanvasWidgets.dart';
+import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 
 class HomeCanvasCoursesWidget extends StatefulWidget {

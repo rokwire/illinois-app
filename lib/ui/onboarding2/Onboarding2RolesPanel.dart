@@ -16,16 +16,16 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
-import 'package:neom/ui/widgets/SlantedWidget.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SlantedWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:neom/service/Onboarding2.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/widgets/RoleGridButton.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

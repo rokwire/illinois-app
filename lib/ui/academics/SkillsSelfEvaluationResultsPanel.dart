@@ -15,12 +15,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
-import 'package:neom/ui/academics/SkillsSelfEvaluation.dart';
-import 'package:neom/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';

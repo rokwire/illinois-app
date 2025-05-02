@@ -1,6 +1,6 @@
 import 'package:device_calendar/device_calendar.dart';
-import 'package:neom/ui/events2/Event2CreatePanel.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 
 import 'package:flutter/material.dart';

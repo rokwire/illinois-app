@@ -15,16 +15,16 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/ui/debug/DebugHomePanel.dart';
-import 'package:neom/ui/profile/ProfileInfoWrapperPage.dart';
-import 'package:neom/ui/profile/ProfileLoginPage.dart';
-import 'package:neom/ui/profile/ProfileRolesPage.dart';
-import 'package:neom/ui/widgets/PopScopeFix.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/debug/DebugHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileInfoWrapperPage.dart';
+import 'package:illinois/ui/profile/ProfileLoginPage.dart';
+import 'package:illinois/ui/profile/ProfileRolesPage.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

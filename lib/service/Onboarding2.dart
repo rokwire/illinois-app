@@ -1,19 +1,19 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/onboarding2/Onboarding2RolesPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2GetStartedPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
-import 'package:neom/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
-import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
-import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2RolesPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLevelPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyLocationServicesPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ProfileInfoPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginCodePanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:neom/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
 
 class Onboarding2 with Service implements NotificationsListener {
 

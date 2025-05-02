@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/wellness/WellnessRing.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/WellnessRings.dart';
-import 'package:neom/ui/wellness/rings/WellnessRingCreatePane.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 

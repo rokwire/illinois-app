@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/home/HomeEmptyFavoritesWidget.dart';
-import 'package:neom/ui/home/HomePanel.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/home/HomeEmptyFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

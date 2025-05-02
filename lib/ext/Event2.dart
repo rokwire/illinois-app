@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:neom/ext/Game.dart';
-import 'package:neom/model/sport/Game.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/Content.dart';
-import 'package:neom/ui/events2/Even2SetupSuperEvent.dart';
+import 'package:illinois/ext/Game.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Content.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';

@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/sport/SportDetails.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 
-import 'package:neom/service/Sports.dart';
-import 'package:neom/model/sport/Game.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/athletics/AthleticsGameDetailHeading.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

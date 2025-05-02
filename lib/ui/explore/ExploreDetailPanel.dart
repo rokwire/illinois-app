@@ -16,24 +16,24 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:neom/model/Analytics.dart';
-import 'package:neom/model/Laundry.dart';
-import 'package:neom/model/MTD.dart';
-import 'package:neom/model/StudentCourse.dart';
-import 'package:neom/model/sport/Game.dart';
-import 'package:neom/model/Appointment.dart';
-import 'package:neom/ui/academics/StudentCourses.dart';
-import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:neom/ui/explore/ExploreBuildingDetailPanel.dart';
-import 'package:neom/ui/laundry/LaundryRoomDetailPanel.dart';
-import 'package:neom/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:neom/ui/appointments/AppointmentDetailPanel.dart';
-import 'package:neom/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:neom/model/Dining.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ext/Explore.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 
 class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {

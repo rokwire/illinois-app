@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Onboarding2.dart';
-import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
-import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Survey.dart';
+import 'package:illinois/ext/Survey.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';

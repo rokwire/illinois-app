@@ -24,8 +24,8 @@ SOFTWARE.*/
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/service/content.dart';

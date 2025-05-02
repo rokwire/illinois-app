@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:neom/model/sport/Game.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';

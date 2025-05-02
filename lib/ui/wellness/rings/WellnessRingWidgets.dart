@@ -1,10 +1,10 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/wellness/WellnessRing.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/WellnessRings.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

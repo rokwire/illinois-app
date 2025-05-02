@@ -17,20 +17,20 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/service/AppDateTime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
-import 'package:neom/model/Voter.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/Voter.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/WebPanel.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';

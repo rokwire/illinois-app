@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:neom/model/Occupation.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/model/Occupation.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/auth2.dart';

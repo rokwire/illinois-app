@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:neom/model/Occupation.dart';
-import 'package:neom/service/Occupations.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/utils/Utils.dart';
+import 'package:illinois/model/Occupation.dart';
+import 'package:illinois/service/Occupations.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';

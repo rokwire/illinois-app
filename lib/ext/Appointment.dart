@@ -1,7 +1,7 @@
 
 import 'dart:math';
 
-import 'package:neom/model/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';

@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:neom/utils/Utils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

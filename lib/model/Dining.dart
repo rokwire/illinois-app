@@ -21,8 +21,8 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Dinings.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Dinings.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

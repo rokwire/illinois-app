@@ -16,15 +16,15 @@
 
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Storage.dart';
 
-import 'package:neom/model/RecentItem.dart';
+import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_io/io.dart';
 

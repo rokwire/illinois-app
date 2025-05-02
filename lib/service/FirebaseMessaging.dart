@@ -19,20 +19,20 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:neom/service/FlexUI.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:neom/model/sport/SportDetails.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/firebase_messaging.dart' as rokwire;
 
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:neom/service/Sports.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 

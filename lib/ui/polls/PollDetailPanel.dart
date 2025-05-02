@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/ui/polls/PollWidgets.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/ui/polls/PollWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/groups.dart';

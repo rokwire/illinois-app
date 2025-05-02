@@ -17,12 +17,12 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/DeepLink.dart';
-import 'package:neom/service/Wellness.dart';
-import 'package:neom/ui/wellness/WellnessHomePanel.dart';
-import 'package:neom/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

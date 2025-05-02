@@ -16,9 +16,9 @@
 
 
 import 'package:flutter/foundation.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart' as rokwire;
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

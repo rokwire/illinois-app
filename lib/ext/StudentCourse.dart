@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/StudentCourse.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

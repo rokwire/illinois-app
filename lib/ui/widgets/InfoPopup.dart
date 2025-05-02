@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class InfoPopup extends StatelessWidget {

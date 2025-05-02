@@ -17,9 +17,9 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/WebPanel.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/ui/widgets/flex_content.dart' as rokwire;
 

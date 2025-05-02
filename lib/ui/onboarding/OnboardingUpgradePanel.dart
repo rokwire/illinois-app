@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

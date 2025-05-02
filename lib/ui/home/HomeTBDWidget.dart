@@ -3,7 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeTBDWidget extends StatelessWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:neom/model/CustomCourses.dart';
-import 'package:neom/ui/academics/courses/PDFPanel.dart';
-import 'package:neom/ui/academics/courses/UnitInfoPanel.dart';
-import 'package:neom/ui/academics/courses/VideoPanel.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/ui/academics/courses/PDFPanel.dart';
+import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
+import 'package:illinois/ui/academics/courses/VideoPanel.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/surveys/SurveyPanel.dart';
+import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsCoachWidgets {

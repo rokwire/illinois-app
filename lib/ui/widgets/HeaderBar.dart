@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Auth2.dart';
-import 'package:neom/service/RadioPlayer.dart';
-import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
-import 'package:neom/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/RadioPlayer.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

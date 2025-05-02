@@ -17,19 +17,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/sport/Game.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/service/LiveStats.dart';
-import 'package:neom/ui/home/HomePanel.dart';
-import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/LiveStats.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:neom/service/Sports.dart';
-import 'package:neom/ui/athletics/AthleticsGameDayWidget.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 
 class HomeAthleticsGameDayWidget extends StatefulWidget {
   final String? favoriteId;

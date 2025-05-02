@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Event2.dart';
-import 'package:neom/ui/events2/Even2SetupSuperEvent.dart';
-import 'package:neom/ui/events2/Event2SetupNotificationsPanel.dart';
-import 'package:neom/ui/events2/Event2Widgets.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
+import 'package:illinois/ui/events2/Event2SetupNotificationsPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';

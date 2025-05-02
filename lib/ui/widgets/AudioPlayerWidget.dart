@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:neom/utils/AppUtils.dart';
-import 'package:neom/utils/AudioUtils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/AudioUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

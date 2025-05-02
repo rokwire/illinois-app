@@ -16,15 +16,15 @@
 
 import 'dart:ui';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
-import 'package:neom/model/livestats/LiveGame.dart';
+import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class LiveStats with Service implements NotificationsListener {

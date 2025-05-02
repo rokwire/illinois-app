@@ -15,17 +15,17 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/ui/athletics/AthleticsEventsContentWidget.dart';
-import 'package:neom/ui/athletics/AthleticsGameDayContentWidget.dart';
-import 'package:neom/ui/athletics/AthleticsNewsContentWidget.dart';
-import 'package:neom/ui/athletics/AthleticsTeamsContentWidget.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

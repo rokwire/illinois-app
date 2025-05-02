@@ -14,11 +14,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/Config.dart';
-import 'package:neom/ui/surveys/SurveyPanel.dart';
-import 'package:neom/ui/academics/EssentialSkillsResults.dart';
-import 'package:neom/ui/widgets/AccessWidgets.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/surveys/SurveyPanel.dart';
+import 'package:illinois/ui/academics/EssentialSkillsResults.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 
 class EssentialSkillsCoachGetStarted extends StatefulWidget {

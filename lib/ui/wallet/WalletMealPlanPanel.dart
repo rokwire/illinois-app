@@ -16,21 +16,21 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/service/FlexUI.dart';
-import 'package:neom/ui/wallet/WalletHomePanel.dart';
-import 'package:neom/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:neom/model/IlliniCash.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
+import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:neom/service/IlliniCash.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

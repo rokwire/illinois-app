@@ -19,22 +19,22 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:neom/model/IlliniCash.dart';
+import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:neom/service/Storage.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
 
-import 'package:neom/service/Auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';

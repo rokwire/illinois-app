@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:neom/service/Config.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/Onboarding2.dart';
-import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/widgets/PrivacySlider.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';

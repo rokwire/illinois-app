@@ -16,15 +16,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/wellness/WellnessRing.dart';
-import 'package:neom/service/Wellness.dart';
-import 'package:neom/service/WellnessRings.dart';
-import 'package:neom/ui/wellness/rings/WellnessRingCreatePane.dart';
-import 'package:neom/ui/wellness/rings/WellnessRingWidgets.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
-import 'package:neom/ui/widgets/SmallRoundedButton.dart';
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

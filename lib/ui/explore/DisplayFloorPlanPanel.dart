@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:neom/service/Gateway.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 

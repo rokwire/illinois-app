@@ -17,19 +17,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:neom/service/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/groups/GroupWidgets.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/utils/AppUtils.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ext/Event2.dart';
+import 'package:illinois/ext/Event2.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget with AnalyticsInfo {
   final List<GroupMembershipStep>? steps;

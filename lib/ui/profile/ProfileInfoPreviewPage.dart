@@ -2,12 +2,12 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:neom/ext/Auth2.dart';
-import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/profile/ProfileInfoPage.dart';
-import 'package:neom/ui/directory/DirectoryWidgets.dart';
-import 'package:neom/ui/profile/ProfileInfoSharePanel.dart';
-import 'package:neom/ui/widgets/LinkButton.dart';
+import 'package:illinois/ext/Auth2.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
