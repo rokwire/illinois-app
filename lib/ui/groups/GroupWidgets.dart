@@ -3373,18 +3373,29 @@ class ReactionKeyboard {
   static void showEmojiBottomSheet({required BuildContext context, required EmojiSelector onSelect}) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (context) {
-        return SizedBox(
-          height: 310,
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
           child: emoji.EmojiPicker(
             config: emoji.Config(
                 categoryViewConfig: emoji.CategoryViewConfig(
                   indicatorColor: Styles().colors.fillColorSecondary,
-                  iconColorSelected: Styles().colors.fillColorSecondary
+                  iconColorSelected: Styles().colors.fillColorSecondary,
+                  backgroundColor: Styles().colors.background,
+                ),
+                emojiViewConfig: emoji.EmojiViewConfig(
+                  backgroundColor: Styles().colors.background,
+                ),
+                searchViewConfig: emoji.SearchViewConfig(
+                  buttonIconColor: Styles().colors.iconLight,
+                  backgroundColor: Styles().colors.background,
                 ),
                 bottomActionBarConfig: emoji.BottomActionBarConfig(
-                  backgroundColor: Styles().colors.fillColorPrimary,
+                  backgroundColor: Styles().colors.background,
                   buttonColor: Styles().colors.fillColorPrimary,
+                  showBackspaceButton: false,
                 )),
             onEmojiSelected: ((category, emoji) {
               // pop the bottom sheet
