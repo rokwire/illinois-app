@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
@@ -28,6 +27,8 @@ import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import '../directory/DirectoryAccountsPanel.dart';
 
 enum ProfileInfo { connectionsInfo, directoryInfo }
 
@@ -81,7 +82,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      DirectoryAccountsPage.notifyEditInfo,
+      DirectoryAccountsPanel.notifyEditInfo,
       FlexUI.notifyChanged,
     ]);
     _editing = (widget.editParam == true);
@@ -97,7 +98,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   @override
   void onNotification(String name, param) {
-    if (name == DirectoryAccountsPage.notifyEditInfo) {
+    if (name == DirectoryAccountsPanel.notifyEditInfo) {
       setStateIfMounted((){
         _editing = true;
         widget.onStateChanged?.call();

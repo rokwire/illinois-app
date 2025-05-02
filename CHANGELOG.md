@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.0.19] - 2025-04-28
 ### Added
 - Created Digital Business Card in Profile panel, replace the existing share sheet [#5026](https://github.com/rokwire/illinois-app/issues/5026).
+- Adding an Alphabet Slider to the User Directory [#4880](https://github.com/rokwire/illinois-app/issues/4880).
 ### Changed
 - Additional research projects updates [#5014](https://github.com/rokwire/illinois-app/issues/5014).
 - Updated university contact URL [#5069](https://github.com/rokwire/illinois-app/issues/5069).
