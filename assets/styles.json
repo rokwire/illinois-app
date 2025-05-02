@@ -1206,7 +1206,7 @@
 
     "toggle-on": {"src": "images/switch-on.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
     "toggle-off": {"src": "images/switch-off.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
-    "toggle-disabled": {"src": "images/off.png", "type": "flutter.asset", "todo": "cut-off, color issue, fuzzy"},
+    "toggle-disabled": {"src": "images/switch-disabled.png", "type": "flutter.asset", "todo": "cut-off, color issue, fuzzy"},
     "radio-button-on": {"src": "0xf192", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24},
     "radio-button-off": {"src": "0xf111", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24},
 
