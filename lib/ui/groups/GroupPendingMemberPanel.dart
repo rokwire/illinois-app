@@ -55,6 +55,13 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   bool _updating = false;
 
   @override
+  void initState() {
+    _denied = widget.member?.isRejected == true;
+    _approved = widget.member?.isMemberOrAdmin == true;
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _reasonController.dispose();
     super.dispose();
@@ -263,6 +270,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       _updating = true;
     });
 
+    widget.member?.status = _approved ? GroupMemberStatus.member : GroupMemberStatus.rejected;
     Groups().acceptMembership(widget.group, widget.member, _approved, _reasonController.text).then((bool result) {
       if (mounted) {
         setState(() {

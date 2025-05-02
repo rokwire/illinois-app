@@ -384,7 +384,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ]))),
         Visibility(visible: showUpdated,
           child: Semantics(container: true,
-            child: Padding(padding: EdgeInsets.only(top: 5), child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            child: Padding(padding: EdgeInsets.only(top: 5), child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
               Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
         ]))))

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -245,10 +247,31 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
           ),
         ),
         Container(height: 22,),
+        if (_member?.isPendingMember == true || _member?.isRejected == true)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: _buildReviewButton,
+          ),
         _buildRemoveFromGroup(),
       ],
     );
   }
+
+  Widget get _buildReviewButton => RoundedButton(
+    label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
+    hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
+    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+    borderColor: Styles().colors.fillColorSecondary,
+    backgroundColor: Styles().colors.fillColorSecondary,
+    rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.surface),
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+    onTap: () async {
+      Analytics().logSelect(target:"Review request");
+      await Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          GroupPendingMemberPanel(member: _member, group: _group)));
+      setStateIfMounted(() {});
+    },
+  );
 
   Widget _buildRemoveFromGroup() {
     return
