@@ -1111,6 +1111,8 @@
     "chevron-up-dark-blue": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10, "todo": "size issue?"},
     "caret-left": {"src": "images/caret-left.png", "type": "flutter.asset", "size": 10},
     "caret-right": {"src": "images/caret-right.png", "type": "flutter.asset", "size": 10},
+    "caret-left-gray": {"src": "images/caret-left.png", "type": "flutter.asset", "size": 10, "color":  "iconDisabled"},
+    "caret-right-gray": {"src": "images/caret-right.png", "type": "flutter.asset", "size": 10, "color":  "iconDisabled"},
     "edit-white": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "iconLight", "size": 20, "todo": "remove if not neefed"},
     "edit-secondary": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondaryVariant", "size": 20, "todo": "remove if not neefed"},
     "drag-white":  {"src": "0xf7a4", "type": "fa.icon", "weight": "solid", "color": "iconLight", "size": 20},

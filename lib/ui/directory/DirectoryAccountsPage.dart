@@ -65,7 +65,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
 
   @override
   Widget build(BuildContext context) {
-    return Auth2().isOidcLoggedIn ? _pageContent : _loggedOutContent;
+    return Auth2().isLoggedIn ? _pageContent : _loggedOutContent;
   }
 
   Widget get _pageContent =>
