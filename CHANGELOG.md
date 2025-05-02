@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased - NEOM U
 ### Fixed
 - Visual Cleanup [#83](https://github.com/rokmetro/neom-app/issues/83)
+- Notifications not received [#92](https://github.com/rokmetro/neom-app/issues/92)
+- Group UI Fixes [#89](https://github.com/rokmetro/neom-app/issues/89)
 
 ## [0.5.15] = 2025-03-20
 ### Changed

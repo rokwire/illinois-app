@@ -210,7 +210,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                       child: TextField(
                         controller: _reasonController,
                         decoration: InputDecoration(border: InputBorder.none),
-                        style: Styles().textStyles.getTextStyle("widget.title.regular"),
+                        style: Styles().textStyles.getTextStyle("widget.title.dark.regular"),
                         onChanged: (text){setState(() {});},
                         minLines: 4,
                         maxLines: 999,
@@ -243,8 +243,10 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 progress: _updating,
                 onTap: () {
-                  Analytics().logSelect(target: 'Apply');
-                  _processMembership();
+                  if(_approved || (_denied && _reasonController.text.isNotEmpty)){
+                    Analytics().logSelect(target: 'Apply');
+                    _processMembership();
+                  }
                 },
               ),
             )
