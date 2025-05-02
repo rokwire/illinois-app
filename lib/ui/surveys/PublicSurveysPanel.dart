@@ -33,7 +33,7 @@ class PublicSurveysPanel extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProviderStateMixin implements NotificationsListener  {
+class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProviderStateMixin, NotificationsListener  {
 
   late PublicSurveysContentType _selectedContentType;
 

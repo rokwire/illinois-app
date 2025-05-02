@@ -56,7 +56,7 @@ class HomeWellnessMentalHealthWidget extends StatefulWidget {
 
 }
 
-class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealthWidget> implements NotificationsListener {
+class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealthWidget> with NotificationsListener {
 
   List<Map<String, dynamic>>? _resourceItems;
   

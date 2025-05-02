@@ -31,20 +31,19 @@ class Onboarding2LoginPhoneOrEmailPanel extends StatefulWidget with Onboarding2P
 
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2LoginPhoneOrEmailPanel({ this.onboardingCode = '', this.onboardingContext });
+  Onboarding2LoginPhoneOrEmailPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2LoginPhoneOrEmailPanelState>) : null;
+  _Onboarding2LoginPhoneOrEmailPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
   @override
   Future<bool> isOnboardingEnabled() async => onboardingContext?['login'] == true;
 
   @override
-  _Onboarding2LoginPhoneOrEmailPanelState createState() => _Onboarding2LoginPhoneOrEmailPanelState();
+  State<StatefulWidget> createState() => _Onboarding2LoginPhoneOrEmailPanelState();
 }
 
 class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhoneOrEmailPanel> {

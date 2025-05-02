@@ -22,7 +22,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   final String _contactEmail = "rokwire@illinois.edu";
   late GestureRecognizer _contactEmailGestureRecognizer;
 
-  final String _contactWebsite = "app.illinois.edu";
+  final String _contactWebsite = "m.illinois.edu";
   late GestureRecognizer _contactWebsiteGestureRecognizer;
 
   @override
@@ -86,7 +86,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.");
     descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, "https://rokwire.illinois.edu/people-page"/*Config().smartHealthyInitiativeUrl ?? ''*/); // TBD add as config value if needed
-    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, "https://illinois.edu"/*Config().universityHomepageUrl ?? ''*/); //TBD add as config value if needed
+    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, Config().universityHomepageUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
 
     return  Semantics(container: true, child:
@@ -116,7 +116,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
                   style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
                   recognizer: _contactEmailGestureRecognizer),
               TextSpan(text: " • "),
-              TextSpan(text: "app.illinois.edu",
+              TextSpan(text: _contactWebsite,
                 style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
                 recognizer: _contactWebsiteGestureRecognizer),
           ]))

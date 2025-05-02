@@ -9,6 +9,7 @@ import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -26,7 +27,7 @@ class DirectoryAccountsPage extends StatefulWidget {
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
 }
 
-class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
+class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with NotificationsListener {
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
@@ -37,6 +38,9 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+    ]);
     _editInfoRecognizer = TapGestureRecognizer()..onTap = _onTapEditInfo;
     _shareInfoRecognizer = TapGestureRecognizer()..onTap = _onTapShareInfo;
     _signInRecognizer = TapGestureRecognizer()..onTap = _onTapSignIn;
@@ -45,16 +49,23 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _editInfoRecognizer?.dispose();
     _shareInfoRecognizer?.dispose();
     _signInRecognizer?.dispose();
     super.dispose();
   }
 
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Auth2().isLoggedIn ? _pageContent : _loggedOutContent;
+    return Auth2().isOidcLoggedIn ? _pageContent : _loggedOutContent;
   }
 
   Widget get _pageContent =>

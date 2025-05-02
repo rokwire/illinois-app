@@ -268,7 +268,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsListener {
+class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListener {
 
   @override
   void initState() {

@@ -3,13 +3,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_beep/flutter_beep.dart';
+//import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2ShareSelfCheckInPdfPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -19,6 +20,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
@@ -30,11 +32,11 @@ class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance')),
+    appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Take Attendance')),
     body: RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Event2AttendanceTakerWidget(event, updateController: _updateController,),
+          Event2AttendanceTakerWidget(event, updateController: _updateController, showSelfCheckInPdf: true),
         ),
       ),
     ),
@@ -51,11 +53,13 @@ class Event2AttendanceTakerWidget extends StatefulWidget {
 
   final Event2? event;
   final StreamController<String>? updateController;
+  final bool showSelfCheckInPdf;
 
-  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController }) : super(key: key);
+  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController, this.showSelfCheckInPdf = false }) : super(key: key);
 
   bool get scanEnabled => event?.attendanceDetails?.scanningEnabled ?? false;
   bool get manualCheckEnabled => event?.attendanceDetails?.manualCheckEnabled ?? false;
+  bool get selfCheckInEnabled => event?.attendanceDetails?.selfCheckEnabled ?? false;
 
   @override
   State<StatefulWidget> createState() => _Event2AttendanceTakerWidgetState();
@@ -138,7 +142,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       _buildEventDetailsSection(),
       _buildAttendeesListDropDownSection(),
       _buildManualNetIdInputSection(),
-      _buildScanIlliniIdSection()
+      _buildScanAndSelfCheckinPdfSection(),
     ]);
   }
 
@@ -385,11 +389,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
-        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
-    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
-    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(eventAttendanceUrl), child:
+        "Visit {{event_attendance_url}} to upload or download a list.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, displayAttendanceUrl ?? '');
+    return Visibility(visible: PlatformUtils.isMobile && StringUtils.isNotEmpty(displayAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Styles().images.getImage('info') ?? Container(),
@@ -407,7 +412,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   bool _onTapHtmlLink(String? url) {
     Analytics().logSelect(target: '($url)');
-    UrlUtils.launchExternal(url);
+    UrlUtils.launchExternal(url, mode: LaunchMode.externalApplication);
     return true;
   }
 
@@ -540,16 +545,55 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     }
   }
 
-  Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
-    RoundedButton(
+  Widget _buildScanAndSelfCheckinPdfSection() {
+      return (_isAdmin && widget.showSelfCheckInPdf) ? Row(children: [
+        Expanded(flex: 50, child: _buildSelfCheckinPdfSection()),
+        Container(width: 6,),
+        Expanded(flex: 50, child: _buildScanIlliniIdSection()),
+      ],) : _buildScanIlliniIdSection(contentWeight: 0.5);
+  }
+
+  Widget _buildSelfCheckinPdfSection({ double contentWeight = 1.0 }) => Event2CreatePanel.buildSectionWidget(
+      body: RoundedButton(
+        label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
+        hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle(widget.selfCheckInEnabled ? 'widget.button.title.regular' : 'widget.button.title.regular.variant3'),
+        borderColor: widget.selfCheckInEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 8),
+        backgroundColor: Styles().colors.white,
+        onTap: _onTapSelfCheckInPdfButton,
+        contentWeight: contentWeight,
+      ),
+      padding: EdgeInsets.zero,
+    );
+
+  void _onTapSelfCheckInPdfButton() {
+    Analytics().logSelect(target: "Self Check-In PDF");
+    Event2CreatePanel.hideKeyboard(context);
+
+    if (widget.selfCheckInEnabled != true) {
+      Event2Popup.showMessage(context,
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.self_checkin.disabled", "Self Check-In is not enabled for this event."));
+    }
+    else {
+      Event2ShareSelfCheckInPdfPanel.present(context, event: widget.event ?? Event2());
+    }
+  }
+
+  Widget _buildScanIlliniIdSection({ double contentWeight = 1.0 }) => Event2CreatePanel.buildSectionWidget(
+    body: RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan ID'),
       textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.light.title.large.fat' : 'widget.button.title.large.fat.variant3'),
       borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 8),
       backgroundColor: Styles().colors.background,
       onTap: _onTapScanButton,
-      contentWeight: 0.5,
+      contentWeight: contentWeight,
       progress: _scanning,
-    ),);
+    ),
+    padding: EdgeInsets.zero,
+  );
 
   void _onTapScanButton() {
     Analytics().logSelect(target: 'Scan Id');
@@ -763,12 +807,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Future<void> _beep(bool success) async {
-    if (Platform.isAndroid) {
+    /* if (Platform.isAndroid) {
       await FlutterBeep.playSysSound(success ? AndroidSoundIDs.TONE_PROP_BEEP : AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
     }
     else if (Platform.isIOS) {
       await FlutterBeep.playSysSound(success ? iOSSoundIDs.AudioToneKey2 : iOSSoundIDs.SIMToolkitTone3);
-    }
+    } */
   }
 
   Future<bool?> _promptUnregisteredAttendee() => Event2Popup.showPrompt(context,

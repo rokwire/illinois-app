@@ -30,7 +30,7 @@ class MessagesDirectoryPanel extends StatefulWidget {
   _MessagesDirectoryPanelState createState() => _MessagesDirectoryPanelState();
 }
 
-class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with TickerProviderStateMixin implements NotificationsListener {
+class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with NotificationsListener, TickerProviderStateMixin {
   GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
   GlobalKey<DirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
   final ScrollController _recentScrollController = ScrollController();

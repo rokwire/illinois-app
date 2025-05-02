@@ -14,7 +14,7 @@ class SettingsMapsContentWidget extends StatefulWidget{
 
 }
 
-class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> implements NotificationsListener{
+class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> with NotificationsListener{
 
   @override
   void initState() {

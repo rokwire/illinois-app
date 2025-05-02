@@ -41,7 +41,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:universal_io/io.dart';
 
-class Sports with Service implements NotificationsListener {
+class Sports with Service, NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";

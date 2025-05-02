@@ -14,28 +14,26 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2ProfileInfoPanel({ this.onboardingCode = 'profile_info', this.onboardingContext });
+  Onboarding2ProfileInfoPanel({ super.key, this.onboardingCode = 'profile_info', this.onboardingContext });
 
-  GlobalKey<_Onboarding2ProfileInfoPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ProfileInfoPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2ProfileInfoPanelState>) : null;
+  _Onboarding2ProfileInfoPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
-  @override
-  Future<bool> isOnboardingEnabled() async => StringUtils.isEmpty(Auth2().fullName);
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
 }
 
-class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> implements NotificationsListener, Onboarding2ProgressableState {
+class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPanel> with NotificationsListener, Onboarding2ProgressableState {
 
   final GlobalKey<ProfileInfoPageState> _profileInfoKey = GlobalKey<ProfileInfoPageState>();
   bool _onboardingProgress = false;

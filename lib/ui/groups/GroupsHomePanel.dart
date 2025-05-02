@@ -64,7 +64,9 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderStateMixin implements NotificationsListener {
+class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderStateMixin, NotificationsListener {
+  final Color _dimmedBackgroundColor = Color(0x99000000);
+
   bool _loadingProgress = false;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
 
@@ -262,7 +264,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     String filtersTitle = Localization().getStringEx("panel.groups_home.filter.filter.label", "Filters");
     
     return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-      Visibility(visible: Groups().contentAttributes?.isNotEmpty ?? false, child:
+      Visibility(visible: Groups().groupsContentAttributes?.isNotEmpty ?? false, child:
         Padding(padding: EdgeInsets.only(right: 6), child:
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
@@ -294,11 +296,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   Widget _buildContentAttributesDescription() {
     if (_selectedContentType == rokwire.GroupsContentType.all) {
       List<InlineSpan> attributesList = <InlineSpan>[];
-      ContentAttributes? contentAttributes = Groups().contentAttributes;
-      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      List<ContentAttribute>? attributes = Groups().groupsContentAttributes?.attributes;
       TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.fat");
       TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
-      if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      if (_contentAttributesSelection.isNotEmpty && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
@@ -389,24 +390,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
 
   void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
-    if (Groups().contentAttributes != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
-        description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
-        scope: Groups.contentAttributesScope,
-        contentAttributes: Groups().contentAttributes,
-        selection: _contentAttributesSelection,
-        sortType: ContentAttributesSortType.alphabetical,
-        filtersMode: true,
-      ))).then((selection) {
-        if ((selection != null) && mounted) {
-          setState(() {
-            _contentAttributesSelection = selection;
-          });
-          _reloadGroupsContent();
-        }
-      });
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
+      description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
+      scope: Groups.groupsContentAttributesScope,
+      contentAttributes: Groups().groupsContentAttributes,
+      selection: _contentAttributesSelection,
+      sortType: ContentAttributesSortType.alphabetical,
+      filtersMode: true,
+    ))).then((selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _contentAttributesSelection = selection;
+        });
+        _reloadGroupsContent();
+      }
+    });
   }
 
   Widget _buildMyGroupsContent(){

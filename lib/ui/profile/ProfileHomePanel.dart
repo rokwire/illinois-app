@@ -16,24 +16,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoWrapperPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { login, profile, who_are_you, }
+enum ProfileContent { login, profile, share, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
-  static final String routeName = 'settings_profile_content_panel';
+  static const String notifySelectContent = "edu.illinois.rokwire.profile.command.select";
+  static const String routeName = 'settings_profile_content_panel';
 
   final ProfileContent? content;
   final Map<String, dynamic>? contentParams;
@@ -43,7 +41,7 @@ class ProfileHomePanel extends StatefulWidget {
   @override
   _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, {ProfileContent? content, Map<String, dynamic>? contentParams}) {
+  static void present(BuildContext context, { ProfileContent? content, Map<String, dynamic>? contentParams }) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -73,7 +71,8 @@ class ProfileHomePanel extends StatefulWidget {
   }
 }
 
-class _ProfileHomePanelState extends State<ProfileHomePanel> implements NotificationsListener {
+class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsListener {
+
   ProfileContent? _selectedContent;
   static ProfileContent? _lastSelectedContent;
   bool _contentValuesVisible = false;
@@ -84,24 +83,24 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   final ScrollController _scrollController = ScrollController();
 
+  final Map<ProfileContent?, Map<String, dynamic>?> _contentParams = <ProfileContent?, Map<String, dynamic>?>{};
+
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Auth2.notifyLoginChanged,
-      FlexUI.notifyChanged,
-      ProfileInfoWrapperPage.notifySignIn,
-      ProfileLoginPage.notifyProfileInfo,
+      ProfileHomePanel.notifySelectContent,
     ]);
 
-    if (_isContentItemEnabled(widget.content)) {
+    if (widget.content != null) {
       _selectedContent = _lastSelectedContent = widget.content;
+      _contentParams[widget.content] = widget.contentParams;
     }
-    else if (_isContentItemEnabled(_lastSelectedContent)) {
+    else if (_lastSelectedContent != null) {
       _selectedContent = _lastSelectedContent;
     }
     else  {
-      _selectedContent = _initialSelectedContent;
+      _selectedContent = _lastSelectedContent = ProfileContent.values.first;
     }
   }
 
@@ -115,21 +114,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _updateContentItemIfNeeded();
-    }
-    else if (name == FlexUI.notifyChanged) {
-      _updateContentItemIfNeeded();
-    }
-    else if (name == ProfileInfoWrapperPage.notifySignIn) {
-      setStateIfMounted(() {
-        _selectedContent = _lastSelectedContent = ProfileContent.login;
-      });
-    }
-    else if (name == ProfileLoginPage.notifyProfileInfo) {
-      setStateIfMounted(() {
-        _selectedContent = _lastSelectedContent = ProfileContent.profile;
-      });
+    if (name == ProfileHomePanel.notifySelectContent) {
+      _handleSelectNotification(param);
     }
   }
   
@@ -151,13 +137,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildSheet() {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return PopScopeFix(onClose: _closeSheet, child:
-      Column(children: [
-        _buildHeaderBar(),
-        Container(color: Styles().colors.backgroundAccent, height: 1,),
-        Expanded(child:
-          _buildPage(),
-        )
-      ],),
+      Padding(padding: MediaQuery.of(context).viewInsets, child:
+        Column(children: [
+          _buildHeaderBar(),
+          Container(color: Styles().colors.backgroundAccent, height: 1,),
+          Expanded(child:
+            _buildPage(),
+          )
+        ],),
+      ),
     );
   }
 
@@ -253,7 +241,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (ProfileContent contentItem in ProfileContent.values) {
-      if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
+      if (_selectedContent != contentItem) {
         contentList.add(_buildContentItem(contentItem));
       }
     }
@@ -280,6 +268,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     if (mounted) {
       setState(() {
         if (modifiedResult != false) {
+          _contentParams.remove(_selectedContent);
           _selectedContent = _lastSelectedContent = contentItem;
         }
         _contentValuesVisible = !_contentValuesVisible;
@@ -320,6 +309,30 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Future<bool?> saveModifiedProfile() async => _profileInfoKey.currentState?.saveModified();
 
+  void _handleSelectNotification(param) {
+    ProfileContent? content;
+    Map<String, dynamic>? contentParam;
+    if (param is ProfileContent) {
+      content = param;
+    }
+    else if (param is List) {
+      if ((0 < param.length) && (param[0] is ProfileContent)) {
+        content = param[0];
+      }
+      if ((1 < param.length) && (param[1] is Map<String, dynamic>)) {
+        contentParam = param[1];
+      }
+    }
+
+    if ((content != null) && mounted) {
+      setState(() {
+        _contentParams.remove(_selectedContent);
+        _selectedContent = _lastSelectedContent = content;
+        _contentParams[content] = contentParam;
+      });
+    }
+  }
+
   // Utilities
 
   double? get _contentHeight  {
@@ -334,7 +347,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileInfoWrapperPage(key: _profileInfoKey, params: widget.contentParams,);
+      case ProfileContent.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, key: _profileInfoKey, contentParams: _contentParams[ProfileContent.profile]);
+      case ProfileContent.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: _contentParams[ProfileContent.share]);
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();
       default: return Container();
@@ -344,38 +358,10 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   String? _getContentItemName(ProfileContent? contentItem) {
     switch (contentItem) {
       case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
+      case ProfileContent.share: return Localization().getStringEx('panel.settings.profile.content.share.label', 'My Digital Business Card');
       case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
       case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
       default: return null;
-    }
-  }
-
-  bool _isContentItemEnabled(ProfileContent? contentItem) {
-    switch (contentItem) {
-      case ProfileContent.profile: return true;
-      case ProfileContent.who_are_you: return true;
-      case ProfileContent.login: return true;
-      case null: return false;
-    }
-  }
-
-  ProfileContent? get _initialSelectedContent {
-    for (ProfileContent contentItem in ProfileContent.values) {
-      if (_isContentItemEnabled(contentItem)) {
-        return contentItem;
-      }
-    }
-    return null;
-  }
-
-  void _updateContentItemIfNeeded() {
-    if (mounted && ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent))) {
-      ProfileContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
-      if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
-        setState(() {
-          _selectedContent = selectedContent;
-        });
-      }
     }
   }
 }

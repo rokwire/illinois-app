@@ -183,7 +183,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     Flexible(
                       flex: 1,
                       child: RoundedButton(
-                        label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
+                        label: (_postData.dateScheduled == null)
+                          ? Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send')
+                          : Localization().getStringEx('panel.group.detail.post.create.button.schedule.title', 'Schedule Post'),
                         textStyle: Styles().textStyles.getTextStyle("widget.input_field.light.text.regular"),
                         borderColor: Styles().colors.fillColorSecondary,
                         backgroundColor: Styles().colors.black,
@@ -251,7 +253,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return Visibility( visible: _canSchedule,
       child: GroupScheduleTimeWidget(
         scheduleTime: _postData.dateScheduled,
-        onDateChanged: (DateTime? dateTimeUtc) => _postData.dateScheduled = dateTimeUtc,
+        onDateChanged: (DateTime? dateTimeUtc) => setStateIfMounted(() => _postData.dateScheduled = dateTimeUtc),
         showOnlyDropdown: true,
         enableTimeZone: true,
       )
@@ -330,7 +332,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? body = _postData.body;
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
-    DateTime? scheduleDate = _postData.dateScheduled;
+    DateTime? scheduleDate =  _postData.dateScheduled;
     // if (_isPost && StringUtils.isEmpty(subject)) {
     //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
     //   return;

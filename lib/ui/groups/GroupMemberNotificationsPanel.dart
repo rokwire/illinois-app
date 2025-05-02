@@ -43,7 +43,7 @@ class GroupMemberNotificationsPanel extends StatefulWidget {
   _GroupMemberNotificationsPanelState createState() => _GroupMemberNotificationsPanelState();
 }
 
-class _GroupMemberNotificationsPanelState extends State<GroupMemberNotificationsPanel> implements NotificationsListener {
+class _GroupMemberNotificationsPanelState extends State<GroupMemberNotificationsPanel> with NotificationsListener {
   Member? _member;
   bool _notificationsAuthorized = false;
   int _loadingProgress = 0;

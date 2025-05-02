@@ -70,7 +70,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   factory QrCodePanel.fromEvent(Event2? event, {Key? key, AnalyticsFeature? analyticsFeature }) => QrCodePanel(
     key: key,
-    deepLinkUrl: Events2.eventDetailUrl(event),
+    deepLinkUrl: (event?.id != null) ? Events2.eventDetailUrl(event?.id ?? '') : null,
     saveFileName: 'event - ${event?.name}',
     saveWatermarkText: event?.name,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textDark),
@@ -383,11 +383,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
       AppFile.downloadFile(context: context, fileBytes: fileBytes, fileName: fileName);
     } else {
       final String dir = (await getApplicationDocumentsDirectory()).path;
-      final String fullPath = '$dir/$fileName';
+      final String fullPath = '$dir/${widget.saveFileName}.vcf';
       XFile capturedFile = XFile.fromData(fileBytes, mimeType: mimeType, path: fullPath);
       if (mounted) {
-        Share.shareXFiles(
-          [capturedFile],
+        Share.shareXFiles([XFile(fullPath, mimeType: 'text/vcard',)],
           text: widget.saveWatermarkText,
         );
       }

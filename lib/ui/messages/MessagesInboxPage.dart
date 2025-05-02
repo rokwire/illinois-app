@@ -26,7 +26,7 @@ class MessagesInboxPage extends StatefulWidget {
   _MessagesInboxPageState createState() => _MessagesInboxPageState();
 }
 
-class _MessagesInboxPageState extends State<MessagesInboxPage> implements NotificationsListener {
+class _MessagesInboxPageState extends State<MessagesInboxPage> with NotificationsListener {
 
   final List<_FilterEntry> _mutedValues = [
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
@@ -914,7 +914,7 @@ class InboxMessageCard extends StatefulWidget {
   }
 }
 
-class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
+class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsListener {
 
   @override
   void initState() {

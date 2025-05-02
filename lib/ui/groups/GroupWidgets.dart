@@ -24,14 +24,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Poll.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -39,7 +42,9 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/Polls.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -672,7 +677,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
   _GroupCardState createState() => _GroupCardState();
 }
 
-class _GroupCardState extends State<GroupCard> implements NotificationsListener {
+class _GroupCardState extends State<GroupCard> with NotificationsListener {
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
@@ -701,31 +706,33 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildHeading(),
-            Container(height: 6),
-            Row(children:[
-              Expanded(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                  _buildCategories(),
-                  _buildTitle(),
-                  _buildProperties(),
-                ]),
-              ),
-              _buildImage()
+    return Semantics(container: true, child:
+      GestureDetector(onTap: () => _onTapCard(context), child:
+        Padding(padding: widget.margin, child:
+          Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              _buildHeading(),
+              Container(height: 6),
+              Row(children:[
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                    _buildCategories(),
+                    _buildTitle(),
+                    _buildProperties(),
+                  ]),
+                ),
+                _buildImage()
+              ]),
+              Container(height: 4),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                  _buildUpdateTime(),
+                ),
+                _buildMembersCount()
+              ])
+              // : Container()
             ]),
-            Container(height: 4),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(child:
-                _buildUpdateTime(),
-              ),
-              _buildMembersCount()
-            ])
-            // : Container()
-          ]),
+          )
         )
       )
     );
@@ -747,7 +754,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.label);
+    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -830,7 +837,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
+    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         RichText(
@@ -848,11 +855,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   Widget _buildProperties() {
     List<Widget> propertiesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+    List<ContentAttribute>? attributes = Groups().contentAttributes(researchProject: widget.group?.researchProject)?.attributes;
+    if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
+        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute, researchProject: widget.group?.researchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
@@ -1044,7 +1050,9 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
 //////////////////////////////////////
 // GroupPostCard
+
 enum GroupPostCardDisplayMode { list, page }
+
 class GroupPostCard extends StatefulWidget {
   final Post? post;
   final Group group;
@@ -1053,12 +1061,13 @@ class GroupPostCard extends StatefulWidget {
   final bool isReply;
   final bool? isClickable;
   final GroupPostCardDisplayMode displayMode;
+  final AnalyticsFeature? analyticsFeature;
   // final Member? creator;
   // final StreamController? updateController;
 
   static const EdgeInsets contentHorizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.showImage = true, this.isReply = false, this.displayMode = GroupPostCardDisplayMode.list}) :
+  GroupPostCard({Key? key, required this.post, required this.group, this.isAdmin, this.isClickable = true, this.showImage = true, this.isReply = false, this.displayMode = GroupPostCardDisplayMode.list, this.analyticsFeature}) :
     super(key: key);
 
   @override
@@ -1168,7 +1177,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           children: [
                             Expanded(
                               child: Visibility(visible: _reactionsEnabled,
-                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post,)
+                                child: GroupReactionsLayout(key: ObjectKey(widget.post), group: widget.group, entityId: widget.post?.id, reactionSource: SocialEntityType.post, analyticsFeature: widget.analyticsFeature,)
                               )
                             ),
                             Visibility(
@@ -1266,7 +1275,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
     "text-overflow:ellipsis;max-lines:3" :
     "white-space: normal";
 
-  bool get _reactionsEnabled => true;
+  bool get _reactionsEnabled => Config().showGroupPostReactions &&
+      (widget.post?.isMessage == true ||
+        (widget.post?.isPost == true &&
+            widget.group.settings?.memberPostPreferences?.sendPostReactions == true));
 }
 
 //////////////////////////////////////
@@ -1282,8 +1294,9 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
+  final AnalyticsFeature? analyticsFeature;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator});
+  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1421,7 +1434,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                         Expanded(
                           child: Visibility(visible: _reactionsEnabled,
-                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment,)
+                              child: GroupReactionsLayout(group: widget.group, entityId: widget.reply?.id, reactionSource: SocialEntityType.comment, analyticsFeature: widget.analyticsFeature,)
                           )
                           // Container(
                           //   child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
@@ -1449,7 +1462,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     }
   }
 
-  bool get _reactionsEnabled => Config().showGroupPostReactions;
+  bool get _reactionsEnabled => Config().showGroupPostReactions &&
+      (widget.post?.isMessage == true ||
+        (widget.post?.isPost == true &&
+            widget.group?.settings?.memberPostPreferences?.sendPostReactions == true)
+      );
 }
 
 //////////////////////////////////////
@@ -1612,13 +1629,23 @@ class _GroupReactionState extends State<GroupReaction> {
 typedef void OnBodyChangedListener(String text);
 
 class PostInputField extends StatefulWidget{
+  static const int defaultMaxLines = 15;
+  static const int defaultMinLines = 7;
+
   final EdgeInsets? padding;
   final String? title;
   final String? hint;
   final String? text;
   final OnBodyChangedListener? onBodyChanged;
+  final int? maxLines;
+  final int? minLines;
+  final bool autofocus;
+  final InputDecoration? inputDecoration;
+  final BoxDecoration? boxDecoration;
+  final TextStyle? style;
 
-  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title}) : super(key: key);
+  const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title,
+    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines, this.autofocus = false, this.inputDecoration, this.boxDecoration, this.style}) : super(key: key);
 
   static get fieldDecoration => BoxDecoration(
       color: Styles().colors.surface,
@@ -1705,30 +1732,22 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                                       'Link'),
                                   style: Styles().textStyles.getTextStyle('widget.group.input_field.link')?.apply(color: Styles().colors.textAccent)))))
                     ])),
-            Visibility(
-              visible: widget.title?.isNotEmpty == true,
+            Visibility(visible: StringUtils.isNotEmpty(widget.title),
               child: Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat"))
             ),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: Container(
-                    // decoration: PostInputField.fieldDecoration,
+                    decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
                     child: TextField(
-                      controller: _bodyController,
-                      onChanged: _notifyChanged,
-                      maxLines: 15,
-                      minLines: 7,
-                      textCapitalization: TextCapitalization.sentences,
-                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                      decoration: InputDecoration(
-                          hintText: _hint,
-                          hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
-                          fillColor: Styles().colors.surface,
-                          filled: true,
-                          border: OutlineInputBorder(borderRadius: const BorderRadius.all(Radius.circular(10.0))),
-                          contentPadding: EdgeInsets.all(8)
-                      ),
-                    ))),
+                        controller: _bodyController,
+                        onChanged: _notifyChanged,
+                        maxLines: widget.maxLines,
+                        minLines: widget.minLines,
+                        autofocus: widget.autofocus,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: widget.inputDecoration ?? _defaultInputDecoration,
+                        style: widget.style ?? Styles().textStyles.getTextStyle('widget.input_field.text.regular')))),
           ],
         )
     );
@@ -1865,6 +1884,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
+
+  InputDecoration get _defaultInputDecoration => InputDecoration(
+      hintText: _hint,
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.all(8)
+  );
 }
 
 class GroupMembersSelectionWidget extends StatefulWidget{
@@ -2205,6 +2230,498 @@ class _ImageChooserState extends State<ImageChooserWidget>{
   }
 }
 
+//Polls
+
+class GroupPollCard extends StatefulWidget{
+  final Poll? poll;
+  final Group? group;
+  final bool? isAdmin;
+
+  GroupPollCard({required this.poll, this.group, this.isAdmin});
+
+  @override
+  State<StatefulWidget> createState() => _GroupPollCardState();
+
+  bool get _canStart {
+    return (poll?.status == PollStatus.created) && (
+      (poll?.isMine ?? false) ||
+      (group?.currentUserIsAdmin ?? false)
+    );
+  }
+
+  bool get _canEnd {
+    return (poll?.status == PollStatus.opened) && (
+      (poll?.isMine ?? false) ||
+      (group?.currentUserIsAdmin ?? false)
+    );
+  }
+
+  bool get _canDelete {
+    return (
+      (poll?.isMine ?? false) ||
+      (group?.currentUserIsAdmin ?? false)
+    );
+  }
+}
+
+class _GroupPollCardState extends State<GroupPollCard> with NotificationsListener {
+  GroupStats? _groupStats;
+
+  List<GlobalKey>? _progressKeys;
+  double? _progressWidth;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupStatsUpdated,
+    ]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _evalProgressWidths();
+    });
+    _loadGroupStats();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Groups.notifyGroupStatsUpdated) && (widget.group?.id == param)) {
+      _updateGroupStats();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Poll poll = widget.poll!;
+    String pollVotesStatus = _pollVotesStatus;
+
+    List<Widget> footerWidgets = [];
+
+    String? pollStatus;
+
+    // String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
+    // String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
+    // String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
+    String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Pin: %s'), [
+      sprintf('%04i', [poll.pinCode ?? 0])
+    ]);
+
+    if(poll.status == PollStatus.created) {
+      pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
+    } if (poll.status == PollStatus.opened) {
+      pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
+      if (poll.canVote) {
+        footerWidgets.add(_createVoteButton());
+      }
+    }
+    else if (poll.status == PollStatus.closed) {
+      pollStatus =  Localization().getStringEx("panel.polls_home.card.state.text.closed","Polls closed");
+    }
+
+    Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
+      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().textStyles.getTextStyle('widget.card.detail.regular'),) :
+      Column(children: _buildCheckboxOptions(),);
+
+    return Column(children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          color: Styles().colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+        ),
+        child: Padding(padding: EdgeInsets.all(12), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(children: [
+              Visibility(visible: widget.poll?.creatorUserUuid != null,
+                  child: GroupMemberProfileInfoWidget(
+                    key: ValueKey(widget.poll?.pollId),
+                    name: widget.poll?.creatorUserName,
+                    userId: widget.poll?.creatorUserUuid,
+                    isAdmin: widget.isAdmin,
+                    additionalInfo: _pollDateText
+                    // updateController: widget.updateController,
+                  ))
+            ],),
+            Row(children: <Widget>[
+              Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),),
+              Container(width: 8,),
+              Text(pollStatus ?? "", style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+              Expanded(child: Container()),
+              Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
+              Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
+                Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                  GestureDetector(onTap: _onPollOptionsTap, child:
+                    Padding(padding: EdgeInsets.all(10), child:
+                    Styles().images.getImage('more'),
+                    ),
+                  ),
+                ),
+              )
+            ]),
+            Padding(padding: EdgeInsets.only(right: 16), child:
+              Column(children: [
+                Container(height: 12,),
+                Text(poll.title!, style: Styles().textStyles.getTextStyle('widget.group.card.poll.title')),
+                Container(height:12),
+                cardBody,
+                Container(height:25),
+                Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
+                  Padding(padding: EdgeInsets.only(bottom: 12), child:
+                    Row(children: <Widget>[
+                      // Expanded(child:
+                        // Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+                      // ),
+                      // Expanded(child:
+                      //   Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
+                    ],),
+                  ),
+                ),
+            
+                Column(children: footerWidgets,),
+              ],),
+            ),
+          ],),
+        ),
+      ),],
+    );
+  }
+
+
+  String? get _pollDateText =>
+      "Quick Poll,Updated ${widget.poll?.displayUpdateTime}";
+
+  List<Widget> _buildCheckboxOptions() {
+    bool isClosed = widget.poll!.status == PollStatus.closed;
+
+    List<Widget> result = [];
+    _progressKeys = [];
+    int maxValueIndex=-1;
+    if(isClosed  && ((widget.poll!.results?.totalVotes ?? 0) > 0)){
+      maxValueIndex = 0;
+      for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
+        int? optionVotes =  widget.poll!.results![optionIndex];
+        if(optionVotes!=null &&  optionVotes > widget.poll!.results![maxValueIndex]!)
+          maxValueIndex = optionIndex;
+      }
+    }
+
+    int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
+    for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
+      bool useCustomColor = isClosed && maxValueIndex == optionIndex;
+      String option = widget.poll!.options![optionIndex];
+      bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
+      String checkboxImage = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
+
+      String votesString;
+      int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
+      double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+      if ((votesCount == null) || (votesCount == 0)) {
+        votesString = '';
+      }
+      else if (votesCount == 1) {
+        votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
+      }
+      else {
+        String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
+        votesString = '$votesCount $votes';
+      }
+
+      GlobalKey progressKey = GlobalKey();
+      _progressKeys!.add(progressKey);
+
+      String semanticsText = option + "," +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
+
+      result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
+      GestureDetector(
+          child:
+          Semantics(label: semanticsText, excludeSemantics: true, child:
+          Row(children: <Widget>[
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImage)),
+            Expanded(
+                flex: 5,
+                key: progressKey, child:
+            Stack(alignment: Alignment.centerLeft, children: <Widget>[
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
+              Padding(padding: EdgeInsets.only(left: 5), child:
+              Row(children: <Widget>[
+                Expanded( child:
+                Padding( padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)),
+                //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
+               /* Visibility( visible: didVote,
+                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray'))
+                ),*/
+              ],),)
+              ),
+            ],)
+            ),
+            Expanded(
+              flex: 5,
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle('widget.group.card.poll.votes'),),),
+            )
+          ],)
+          ))));
+    }
+    return result;
+  }
+
+  Widget _createVoteButton(){
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote"), _onVoteTapped);
+  }
+
+  Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
+    return Container( padding: EdgeInsets.symmetric(horizontal: 54,),
+        child: Semantics(label: title, button: true, excludeSemantics: true,
+          child: InkWell(
+              onTap: onTap,
+              child: Stack(children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Styles().colors.white,
+                    border: Border.all(
+                        color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
+                        width: 2.0),
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
+                  child: Center(
+                    child: Text(title, style: Styles().textStyles.getTextStyle("widget.description.small"),),
+                  ),
+                ),
+                Visibility(visible: loading,
+                  child: Container(padding: EdgeInsets.symmetric(vertical: 5),
+                    child: Align(alignment: Alignment.center,
+                      child: SizedBox(height: 24, width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )
+                      ),
+                    ),
+                  ),
+                )
+              ])
+          ),
+        ));
+  }
+
+  void _onVoteTapped(){
+    Polls().presentPollVote(widget.poll);
+  }
+
+  void _evalProgressWidths() {
+    if (_progressKeys != null) {
+      double progressWidth = -1.0;
+      for (GlobalKey progressKey in _progressKeys!) {
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
+        if ((progressRender is RenderBox) && progressRender.hasSize && (0 < progressRender.size.width)) {
+          if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
+            progressWidth = progressRender.size.width;
+          }
+        }
+      }
+      if (0 < progressWidth) {
+        setState(() {
+          _progressWidth = progressWidth;
+        });
+      }
+    }
+  }
+
+  void _loadGroupStats() {
+    Groups().loadGroupStats(widget.group?.id).then((stats) {
+      if (mounted) {
+        setState(() {
+          _groupStats = stats;
+        });
+      }
+    });
+  }
+
+  void _updateGroupStats() {
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.group?.id);
+    if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
+      setState(() {
+        _groupStats = cachedGroupStats;
+      });
+    }
+  }
+
+  String get _pollVotesStatus {
+    bool hasGroup = (widget.group != null);
+    int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
+
+    String statusString;
+    if (1 < votes) {
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votes']);
+    } else if (0 < votes) {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
+    } else {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
+    }
+
+    if (hasGroup && (votes > 0)) {
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of'), _groupMembersCount]);
+    }
+
+    return statusString;
+  }
+
+  int get _uniqueVotersCount {
+    return widget.poll?.uniqueVotersCount ?? 0;
+  }
+
+  int get _groupMembersCount {
+    return _groupStats?.activeMembersCount ?? 0;
+  }
+
+  void _onPollOptionsTap() {
+    Analytics().logSelect(target: "Options");
+
+    showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context) {
+          return _GroupPollOptions(pollCard: widget,);
+        }
+    );
+  }
+}
+
+class _GroupPollOptions extends StatefulWidget with AnalyticsInfo {
+  final GroupPollCard pollCard;
+  
+  _GroupPollOptions({Key? key, required this.pollCard}) : super(key: key);
+  
+  @override
+  State<_GroupPollOptions> createState() => _GroupPollOptionsState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Groups;
+}
+
+class _GroupPollOptionsState extends State<_GroupPollOptions> {
+
+  bool _isStarting = false;
+  bool _isEnding = false;
+  bool _isDeleting = false;
+
+  static bool _hasPollOptions(GroupPollCard pollCard) =>
+    pollCard._canStart ||
+    pollCard._canEnd ||
+    pollCard._canDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> options = <Widget>[];
+
+    if (widget.pollCard._canStart) {
+      options.add(RibbonButton(
+        label: Localization().getStringEx("panel.polls_home.card.button.title.start_poll", "Start Poll"),
+        leftIconKey: "settings",
+        progress: _isStarting,
+        onTap: _onStartPollTapped
+      ),);
+    }
+    if (widget.pollCard._canEnd) {
+      options.add(RibbonButton(
+        label: Localization().getStringEx("panel.polls_home.card.button.title.end_poll", "End Poll"),
+        leftIconKey: "settings",
+        progress: _isEnding,
+        onTap: _onEndPollTapped
+      ),);
+    }
+
+    if (widget.pollCard._canDelete) {
+      options.add(RibbonButton(
+        label: Localization().getStringEx("panel.polls_home.card.button.title.delete_poll", "Delete Poll"),
+        leftIconKey: "trash",
+        progress: _isDeleting,
+        onTap: _onDeletePollTapped
+      ),);
+    }
+
+    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+      Column(mainAxisSize: MainAxisSize.min, children: options,
+      ),
+    );
+
+  }
+
+  void _onStartPollTapped() {
+    if (_isStarting != true) {
+      setState(() {
+        _isStarting = true;
+      });
+      Polls().open(widget.pollCard.poll?.pollId).then((_) {
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+      }).catchError((e) {
+        if (mounted) {
+          AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+        }
+      }).whenComplete(() {
+        if (mounted) {
+          setState(() {
+            _isStarting = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _onEndPollTapped() {
+    if (_isEnding != true) {
+      setState(() {
+        _isEnding = true;
+      });
+      Polls().close(widget.pollCard.poll?.pollId).then((_) {
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+      }).catchError((e) {
+        if (mounted) {
+          AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+        }
+      }).whenComplete(() {
+        if (mounted) {
+          setState(() {
+            _isEnding = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _onDeletePollTapped() {
+    if (_isDeleting != true) {
+      setState(() {
+        _isDeleting = true;
+      });
+      Polls().delete(widget.pollCard.poll?.pollId).then((_) {
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+      }).catchError((e) {
+        if (mounted) {
+          AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+        }
+      }).whenComplete(() {
+        if (mounted) {
+          setState(() {
+            _isDeleting = false;
+          });
+        }
+      });
+    }
+  }
+}
+
 /////////////////////////////////////
 // GroupMemberProfileWidget
 class GroupMemberProfileInfoWidget extends StatefulWidget {
@@ -2329,7 +2846,7 @@ class GroupMemberProfileImage extends StatefulWidget {
   State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
 }
 
-class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> implements NotificationsListener {
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with NotificationsListener {
   Uint8List? _imageBytes;
   bool _loading = false;
 
@@ -2404,6 +2921,62 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
       }
     }
   }
+}
+
+class GroupProfilePronouncementWidget extends StatefulWidget {
+  final String? accountId;
+
+  const GroupProfilePronouncementWidget({super.key, this.accountId});
+
+  @override
+  State<StatefulWidget> createState() => GroupProfilePronouncementState();
+}
+
+class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidget> {
+  final _contentPadding = EdgeInsets.symmetric(horizontal: 13, vertical: 8);
+
+  Uint8List? _pronunciationAudioData;
+  bool? _hasPronouncement;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    setStateIfMounted(() => _loading = true);
+    Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
+          if(hasPronunciation == true){
+            Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+              setStateIfMounted(() {
+                _loading = false;
+                _hasPronouncement = hasPronunciation;
+                _pronunciationAudioData = audio?.audioData;
+              });
+            });
+          } else {
+            setStateIfMounted(() {
+              _loading = false;
+              _hasPronouncement = hasPronunciation;
+            });
+          }
+    });
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) => _loading ?
+    _loadingContent : _content;
+
+  Widget get _content =>
+    Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true,
+        child: DirectoryPronunciationButton(
+            url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
+            data: _pronunciationAudioData,
+            padding: _contentPadding
+        ));
+
+  Widget get _loadingContent =>
+    Padding(padding: _contentPadding,
+      child: SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+      ));
 }
 
 class GroupsSelectionPopup extends StatefulWidget {
@@ -2691,7 +3264,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
-                              EnabledToggleButton(
+                              //Since the setting "view email address" does work, we do not need the option to view a member's NetID.
+                              /* EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
@@ -2701,7 +3275,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
-                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
@@ -3402,15 +3976,16 @@ class GroupReactionsLayout extends StatefulWidget {
   final Group? group;
   final String? entityId;
   final SocialEntityType reactionSource;
+  final AnalyticsFeature? analyticsFeature;
   final bool? enabled;
 
-  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource,});
+  const GroupReactionsLayout({super.key, this.group, this.enabled = true, this.entityId, required this.reactionSource, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _GroupReactionsState();
 }
 
-class _GroupReactionsState extends State<GroupReactionsLayout> implements NotificationsListener{
+class _GroupReactionsState extends State<GroupReactionsLayout> with NotificationsListener{
   List<Reaction>? _reactions;
   bool _loading = false;
 
@@ -3510,6 +4085,11 @@ class _GroupReactionsState extends State<GroupReactionsLayout> implements Notifi
     setStateIfMounted(() {
       _loading = true;
     });
+    Analytics().logReaction(reaction,
+      target: 'group.${widget.reactionSource.name}',
+      feature: widget.analyticsFeature,
+      attributes: widget.group?.analyticsAttributes,
+    );
     Social().react(entityId: widget.entityId!, source: widget.reactionSource, reaction: reaction).then((succeeded) {
       //If success then we will receive notification Social.notifyReactionsUpdated and will load reactions
       if (!succeeded) {

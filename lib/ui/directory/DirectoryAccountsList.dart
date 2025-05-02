@@ -33,7 +33,7 @@ class DirectoryAccountsList extends StatefulWidget {
   State<StatefulWidget> createState() => DirectoryAccountsListState();
 }
 
-class DirectoryAccountsListState extends State<DirectoryAccountsList> with AutomaticKeepAliveClientMixin<DirectoryAccountsList> implements NotificationsListener  {
+class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
 
   List<Auth2PublicAccount>? _accounts;
   bool _loading = false;

@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
-import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -36,55 +31,17 @@ import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-class WalletAddIlliniCashPanel extends StatelessWidget {
-
-  WalletAddIlliniCashPanel({super.key});
-
-  static bool get canPresent => Connectivity().isNotOffline /*&& Auth2().isOidcLoggedIn*/;
-
-  static void present(BuildContext context) {
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx("panel.settings.add_illini_cash.message.offline.text", "Add Illini Cash is are not available while offline."));
-    }
-    else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WalletAddIlliniCashPanel()));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body:
-      Column(children: <Widget>[
-        Expanded(child:
-          CustomScrollView(slivers: <Widget>[
-            SliverHeaderBar(
-              leadingIconKey: 'caret-left',
-              title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
-              textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light"),
-            ),
-            SliverList(delegate: SliverChildListDelegate([
-              WalletAddIlliniCashContentWidget(),
-            ]),),
-          ],),
-       ),
-      ],),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
-  }
-}
-
-class WalletAddIlliniCashContentWidget extends StatefulWidget {
+class WalletAddIlliniCashPage extends StatefulWidget {
 
   final double topOffset;
   final bool hasCancel;
-  WalletAddIlliniCashContentWidget({super.key, this.topOffset = 10, this.hasCancel = true});
+  WalletAddIlliniCashPage({super.key, this.topOffset = 10, this.hasCancel = true});
 
   @override
-  State<StatefulWidget> createState() => _WalletAddIlliniCashContentWidgetState();
+  State<StatefulWidget> createState() => _WalletAddIlliniCashPageState();
 }
 
-class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashContentWidget> {
+class _WalletAddIlliniCashPageState extends State<WalletAddIlliniCashPage> {
 
   bool _agreePrivacy = false;
   bool __isLoading = false;
@@ -667,11 +624,10 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
     Navigator.of(context).pop();
   }
 
-  void _onTermsAndConditionsTapped(){
-    if(StringUtils.isNotEmpty(Config().illiniCashTosUrl)) {
-      Navigator.push(context, CupertinoPageRoute(
-          builder: (context) => WebPanel(url: Config().illiniCashTosUrl)
-      ));
+  void _onTermsAndConditionsTapped() {
+    String? url = Config().illiniCashTosUrl;
+    if (StringUtils.isNotEmpty(url)) {
+      AppLaunchUrl.launch(context: context, url: url);
     }
   }
 }

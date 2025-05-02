@@ -16,8 +16,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GuideCategoriesPanel extends StatefulWidget with AnalyticsInfo {
   final String? guide;
+  final String? contentType;
 
-  GuideCategoriesPanel({Key? key, this.guide}) : super(key: key);
+  GuideCategoriesPanel({Key? key, this.guide, this.contentType}) : super(key: key);
 
   @override
   _GuideCategoriesPanelState createState() => _GuideCategoriesPanelState();
@@ -26,7 +27,7 @@ class GuideCategoriesPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.fromName(guide);
 }
 
-class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements NotificationsListener {
+class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> with NotificationsListener {
 
   List<String>? _categories;
   Map<String, List<GuideSection>>? _categorySections;
@@ -60,7 +61,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
 
   void _buildCategories() {
     
-    List<dynamic>? contentList = Guide().getContentList(guide: widget.guide);
+    List<dynamic>? contentList = Guide().getContentList(guide: widget.guide, contentType: widget.contentType);
     if (contentList != null) {
 
       LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();

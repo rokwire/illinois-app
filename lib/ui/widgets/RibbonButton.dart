@@ -114,9 +114,14 @@ class RibbonButton extends rokwire.RibbonButton {
 
 class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
 
-  static const Map<bool, String> _rightIconKeys = {
+  static const Map<bool, String> defaultRightIconKeys = {
     true: 'toggle-on',
     false: 'toggle-off',
+  };
+
+  static const Map<bool, String> disabledRightIconKeys = {
+    true: 'toggle-disabled',
+    false: 'toggle-disabled',
   };
 
   final Map<bool, String> _semanticsValues = {
@@ -167,7 +172,7 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     Map<bool, String>? leftIconKeys,
 
     Map<bool, Widget>? rightIcons,
-    Map<bool, String>? rightIconKeys = _rightIconKeys,
+    Map<bool, String>? rightIconKeys = defaultRightIconKeys,
 
     Map<bool, String>? semanticsValues,
 

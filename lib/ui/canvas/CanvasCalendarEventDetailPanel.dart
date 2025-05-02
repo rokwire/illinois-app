@@ -38,7 +38,7 @@ class CanvasCalendarEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   _CanvasCalendarEventDetailPanelState createState() => _CanvasCalendarEventDetailPanelState();
 }
 
-class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDetailPanel> implements NotificationsListener {
+class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDetailPanel> with NotificationsListener {
   CanvasCalendarEvent? _event;
   bool _loading = false;
 

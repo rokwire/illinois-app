@@ -48,7 +48,7 @@ class HomeCustomizeFavoritesPanel extends StatefulWidget {
   }
 }
 
-class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPanel> implements NotificationsListener, HomeDragAndDropHost {
+class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPanel> with NotificationsListener, HomeDragAndDropHost {
 
   static const String _favoritesHeaderId = 'edit.favorites';
   static const String _unfavoritesHeaderId = 'edit.unfavorites';

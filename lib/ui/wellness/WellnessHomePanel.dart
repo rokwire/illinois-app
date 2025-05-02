@@ -84,8 +84,7 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _WellnessHomePanelState extends State<WellnessHomePanel>
-  with AutomaticKeepAliveClientMixin<WellnessHomePanel>
-  implements NotificationsListener
+  with NotificationsListener, AutomaticKeepAliveClientMixin<WellnessHomePanel>
 {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
@@ -314,7 +313,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.mentalHealth:
         return _loadContentString('panel.wellness.section.mental_health.label', 'Mental Health Resources', language: language);
       case WellnessContent.successTeam:
-        return _loadContentString('panel.wellness.section.success_team.label', 'My Success Team', language: language);
+        return _loadContentString('panel.wellness.section.success_team.label', 'My Primary Care Provider', language: language);
       case WellnessContent.recreation:
         return _loadContentString('panel.wellness.section.recreation.label', 'Campus Recreation', language: language); //TBD localize
     }

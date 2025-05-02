@@ -34,7 +34,7 @@ class SettingsICardContentWidget extends StatefulWidget {
   _SettingsICardContentWidgetState createState() => _SettingsICardContentWidgetState();
 }
 
-class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> implements NotificationsListener {
+class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> with NotificationsListener {
   bool _vibrationEnabled = false;
   bool _soundEnabled = false;
 

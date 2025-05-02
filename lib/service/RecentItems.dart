@@ -28,7 +28,7 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_io/io.dart';
 
-class RecentItems with Service implements NotificationsListener {
+class RecentItems with Service, NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.recentitems.changed";
   static const String notifySettingChanged  = "edu.illinois.rokwire.recentitems.setting.changed";
@@ -82,16 +82,16 @@ class RecentItems with Service implements NotificationsListener {
   // Implementation
 
   void addRecentItem(RecentItem? item) {
-    if (_recentItemsEnabled) {
-      if ((item != null) && !_recentItems.contains(item)) {
-        _recentItems.addFirst(item);
+    if ((_recentItemsEnabled) && (item != null)) {
+      _recentItems.removeWhere((recentItem) => recentItem.contentId == item.contentId);
 
-        while (_recentItems.length > Config().recentItemsCount) {
-          _recentItems.removeLast();
-        }
-        _saveRecentItems(_recentItems);
-        NotificationService().notify(notifyChanged, null);
+      _recentItems.addFirst(item);
+
+      while (_recentItems.length > Config().recentItemsCount) {
+        _recentItems.removeLast();
       }
+      _saveRecentItems(_recentItems);
+      NotificationService().notify(notifyChanged, null);
     }
   }
 

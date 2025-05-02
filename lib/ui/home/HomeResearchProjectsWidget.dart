@@ -51,7 +51,7 @@ class HomeResearchProjectsWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeGroupsWidgetState();
 }
 
-class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implements NotificationsListener {
+class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with NotificationsListener {
 
   List<Group>? _researchProjects;
   bool _loadingResearchProjects = false;

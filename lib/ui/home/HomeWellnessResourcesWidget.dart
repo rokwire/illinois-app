@@ -58,7 +58,7 @@ class HomeWellnessResourcesWidget extends StatefulWidget {
 
 }
 
-class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidget> implements NotificationsListener {
+class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidget> with NotificationsListener {
 
   List<dynamic>? _favoriteCommands;
   Map<String, dynamic>? _strings;

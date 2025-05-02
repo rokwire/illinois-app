@@ -43,7 +43,7 @@ class ResearchProjectsHomePanel extends StatefulWidget with AnalyticsInfo {
 enum _FilterType { category, tags }
 enum _TagFilter { all, my }
 
-class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> implements NotificationsListener {
+class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> with NotificationsListener {
   
   static String _allCategories = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
   static Color _dimmedBackgroundColor = Color(0x99000000);

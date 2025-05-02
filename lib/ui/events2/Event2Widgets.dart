@@ -54,7 +54,7 @@ class Event2FilterCommandButton extends StatelessWidget {
     this.leftIconKey,
     this.leftIconPadding = const EdgeInsets.only(right: 6),
     this.leftIconColor,
-    
+
     this.rightIconKey,
     this.rightIconPadding = const EdgeInsets.only(left: 3),
     this.rightIconColor,
@@ -69,7 +69,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey, color: leftIconColor) : null;
+    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey, color: leftIconColor, excludeFromSemantics: true) : null;
     if (leftIconWidget != null) {
       contentList.add(
         Padding(padding: leftIconPadding, child: leftIconWidget,)
@@ -82,7 +82,7 @@ class Event2FilterCommandButton extends StatelessWidget {
       );
     }
 
-    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey, color: rightIconColor) : null;
+    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey, color: rightIconColor, excludeFromSemantics: true) : null;
     if (rightIconWidget != null) {
       contentList.add(
         Padding(padding: rightIconPadding, child: rightIconWidget,)
@@ -163,7 +163,7 @@ class Event2Card extends StatefulWidget {
   static BorderRadiusGeometry get linkContentBorderRadius => _Event2CardState._linkContentBorderRadius;
 }
 
-class _Event2CardState extends State<Event2Card>  implements NotificationsListener {
+class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
@@ -1026,4 +1026,71 @@ class Event2Popup {
       actionsPadding: EdgeInsets.zero,
     ));
   }
+
+  static Future<void> showWindow(BuildContext context, {
+    required Widget content,
+    String? analyticsMessage
+  }) =>
+    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      surfaceTintColor: Styles().colors.surface,
+      contentPadding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        Align(alignment: Alignment.topRight, child:
+          _closeWindowButton(context, analyticsMessage: analyticsMessage),
+        ),
+        Padding(padding: EdgeInsets.only(left: 24, right: 36, bottom: 32,), child:
+        content,
+        )
+      ],),
+    ));
+
+  static Widget _closeWindowButton(BuildContext context, { String? analyticsMessage }) =>
+    InkWell(onTap: () => _onCloseWindow(context, analyticsMessage: analyticsMessage), child:
+      Padding(padding: EdgeInsets.only(left: 6, right: 12, top: 12, bottom: 6), child:
+        Styles().images.getImage('close-circle', size: 18),
+      )
+    );
+
+  static void _onCloseWindow(BuildContext context, { String? analyticsMessage }) {
+    Analytics().logAlert(text: analyticsMessage, selection: "Close");
+    Navigator.pop(context);
+  }
+
+}
+
+//
+// Event2SettingsButton
+//
+
+class Event2SettingsButton extends StatelessWidget{
+  final String? title;
+  final String? subTitle;
+  final bool progress;
+  final Function? onTap;
+
+  const Event2SettingsButton({this.title, this.subTitle, this.onTap, this.progress = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildWidget();
+  }
+
+  // Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  //   heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+  //       title: title?? "",
+  //       subTitle: subTitle,
+  //       onTap: () => onTap?.call()
+  //   ),
+  // );
+
+Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
+  heading: RibbonButton(
+        label: title?? "",
+        description: subTitle,
+        progress: progress,
+        onTap: () => onTap?.call(),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        progressSize: 18,
+      ));
 }

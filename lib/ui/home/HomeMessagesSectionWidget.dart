@@ -38,7 +38,7 @@ class HomeMessagesSectionWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeMessagesSectionWidgetState();
 }
 
-class _HomeMessagesSectionWidgetState extends State<HomeMessagesSectionWidget> implements NotificationsListener {
+class _HomeMessagesSectionWidgetState extends State<HomeMessagesSectionWidget> with NotificationsListener {
   List<Conversation> _conversations = [];
   Map<String, GlobalKey> _conversationCardKeys = <String, GlobalKey>{};
   DateTime? _pausedDateTime;
@@ -130,12 +130,12 @@ class _HomeMessagesSectionWidgetState extends State<HomeMessagesSectionWidget> i
           pageCard = Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
             Semantics(/* excludeSemantics: !(_pageController?.page == _conversations?.indexOf(conversation)),*/ child:
               Container(
-                  constraints: BoxConstraints(maxWidth: _cardWidth),
-                  child: ConversationCard(
-                    key: conversationKey,
-                    conversation: conversation,
-                    isHorizontal: true,
-                  )
+                constraints: BoxConstraints(maxWidth: _cardWidth),
+                child: ConversationCard(
+                  key: conversationKey,
+                  conversation: conversation,
+                  isHorizontal: true,
+                ),
               ),
             )
           );

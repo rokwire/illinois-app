@@ -37,7 +37,7 @@ class Event2SetupNotificationsPanel extends StatefulWidget {
   _Event2SetupNotificationsPanelState createState() => _Event2SetupNotificationsPanelState();
 }
 
-class _Event2SetupNotificationsPanelState extends State<Event2SetupNotificationsPanel> implements NotificationsListener {
+class _Event2SetupNotificationsPanelState extends State<Event2SetupNotificationsPanel> with NotificationsListener {
   static final EdgeInsets _defaultBottomPadding = EdgeInsets.only(bottom: 8);
   static final int _notificationsCount = 2;
 
@@ -118,7 +118,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                     onTap: _onTapClearAll)),
                             ]))
                   ])
-            )));
+        )),
+        backgroundColor: Styles().colors.white,
+    );
   }
 
   Widget _buildNotificationsContent({required EdgeInsets defaultBottomPadding, required EdgeInsets bottom10Padding}) {
@@ -392,10 +394,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     Event2NotificationSetting? notification = _notificationSettings[index];
     setStateIfMounted(() {
       if (notification == null) {
-        notification = Event2NotificationSetting(sendToFavorited: true);
-        _notificationSettings[index] = notification;
+        _notificationSettings[index] = Event2NotificationSetting(sendToFavorited: true);
       } else {
-        notification!.sendToFavorited = !notification!.sendToFavorited;
+        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToFavorited: !notification.sendToFavorited);
       }
     });
   }
@@ -411,10 +412,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     Event2NotificationSetting? notification = _notificationSettings[index];
     setStateIfMounted(() {
       if (notification == null) {
-        notification = Event2NotificationSetting(sendToRegistered: true);
-        _notificationSettings[index] = notification;
+        _notificationSettings[index] = Event2NotificationSetting(sendToRegistered: true);
       } else {
-        notification!.sendToRegistered = !notification!.sendToRegistered;
+        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToRegistered: !notification.sendToRegistered);
       }
     });
   }
@@ -430,10 +430,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     Event2NotificationSetting? notification = _notificationSettings[index];
     setStateIfMounted(() {
       if (notification == null) {
-        notification = Event2NotificationSetting(sendToPublishedInGroups: true);
-        _notificationSettings[index] = notification;
+        _notificationSettings[index] = Event2NotificationSetting(sendToPublishedInGroups: true);
       } else {
-        notification!.sendToPublishedInGroups = !notification!.sendToPublishedInGroups;
+        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToPublishedInGroups: !notification.sendToPublishedInGroups);
       }
     });
   }
@@ -455,10 +454,12 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
         DateTime sendDate = _sendDates[i];
         DateTime sendDateTime = DateTime(sendDate.year, sendDate.month, sendDate.day, _sendTimes[i].hour, _sendTimes[i].minute);
         TZDateTime? eventTzDateTime = (tzLocation != null) ? DateTimeUtils.changeTimeZoneToDate(sendDateTime, tzLocation) : null;
-        notification.sendDateTimeUtc = eventTzDateTime?.toUtc();
-        notification.subject = _notificationSubject;
-        notification.body = _bodyControllers[i].text;
-        notification.sendTimezone = tzLocation?.name;
+        _notificationSettings[i] = Event2NotificationSetting.fromOther(notification,
+          sendDateTimeUtc: eventTzDateTime?.toUtc(),
+          subject: _notificationSubject,
+          body: _bodyControllers[i].text,
+          sendTimezone: tzLocation?.name,
+        );
       }
     }
     if (_eventId == null) {

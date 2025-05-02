@@ -42,7 +42,7 @@ class SettingsPrivacyCenterContentWidget extends StatefulWidget{
 
 }
 
-class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> implements NotificationsListener {
+class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> with NotificationsListener {
   PrivacyData? _privacyData;
   bool _loadingPrivacyData = false;
 

@@ -596,9 +596,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _speaker = widget.event?.speaker;
     _contacts = widget.event?.contacts;
 
-    _dateTimeSectionExpanded = widget.isUpdate;
-    _typeAndLocationSectionExpanded = widget.isUpdate;
-    _costSectionExpanded = widget.isUpdate;
+    _dateTimeSectionExpanded = widget.isUpdate || (widget.event?.startTimeUtc != null);
+    _typeAndLocationSectionExpanded = widget.isUpdate || (widget.event?.eventType != null);
+    _costSectionExpanded = widget.isUpdate || (widget.event?.free != null) || (widget.event?.cost != null);
 
     _errorMap = _buildErrorMap();
 

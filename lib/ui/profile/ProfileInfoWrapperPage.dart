@@ -2,7 +2,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
+import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -11,18 +13,24 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum ProfileInfoWrapperContent { info, share }
+
 class ProfileInfoWrapperPage extends StatefulWidget {
-  static const String notifySignIn = "edu.illinois.rokwire.profile.sign_in";
 
-  final Map<String, dynamic>? params;
+  final ProfileInfoWrapperContent content;
+  final Map<String, dynamic>? _contentParams;
 
-  ProfileInfoWrapperPage({super.key, this.params});
+  ProfileInfoWrapperPage(this.content, {super.key, Map<String, dynamic>? contentParams}) :
+    _contentParams = contentParams;
+
+  Map<String, dynamic>? contentParams(ProfileInfoWrapperContent? contentType) =>
+    (content == contentType) ? _contentParams : null;
 
   @override
   ProfileInfoWrapperPageState createState() => ProfileInfoWrapperPageState();
 }
 
-class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implements NotificationsListener {
+class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with NotificationsListener {
 
   GestureRecognizer? _signInRecognizer;
   GestureRecognizer? _privacyRecognizer;
@@ -57,37 +65,41 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implemen
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (!Auth2().isLoggedIn) {
-      return _loggedOutContent;
-    }
-    else {
-      return _pageContent;
-    }
-  }
+  Widget build(BuildContext context) =>
+    (Auth2().isLoggedIn) ? _loggedInContent : _loggedOutContent;
 
-  Widget get _pageContent =>
-    Column(children: [ _myInfoTabPage ],);
-
-  // My Info
-
-  Widget get _myInfoTabPage =>
+  Widget get _loggedInContent => Column(children: [
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(children: [
-        ProfileInfoPage(
-          key: _profileInfoKey,
-          contentType: ProfileInfo.directoryInfo,
-          params: widget.params,
-        )
+        _pageWidget,
       ],),
-    );
+    )
+  ],);
+
+  Widget get _pageWidget {
+    switch(widget.content) {
+      case ProfileInfoWrapperContent.info: return ProfileInfoPage(
+        key: _profileInfoKey,
+        contentType: ProfileInfo.directoryInfo,
+        params: widget.contentParams(ProfileInfoWrapperContent.info),
+      );
+
+      case ProfileInfoWrapperContent.share: return ProfileInfoSharePage(
+        params: widget.contentParams(ProfileInfoWrapperContent.share)
+      );
+    }
+  }
 
   // Signed out
 
   Widget get _loggedOutContent {
+    final String featureMacro = "{{feature}}";
     final String linkLoginMacro = "{{link.login}}";
     final String linkPrivacyMacro = "{{link.privacy}}";
-    String messageTemplate = Localization().getStringEx('panel.profile.info_and_directory.message.signed_out', 'To view "My Info & User Directory", $linkLoginMacro with your NetID and set your privacy level to 4 or 5.');
+
+    String messageTemplate = Localization().getStringEx('panel.profile.info_and_directory.message.signed_out', 'To view $featureMacro, $linkLoginMacro with your NetID and set your privacy level to 4 or 5.').
+      replaceAll(featureMacro, featureName);
+
     List<InlineSpan> spanList = StringUtils.split<InlineSpan>(messageTemplate, macros: [linkLoginMacro, linkPrivacyMacro], builder: (String entry) {
       if (entry == linkLoginMacro) {
         return TextSpan(
@@ -115,9 +127,16 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> implemen
     );
   }
 
+  String get featureName {
+    switch(widget.content) {
+      case ProfileInfoWrapperContent.info: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.feature.info', 'your profile');
+      case ProfileInfoWrapperContent.share: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.feature.share', 'your Digital Business Card');
+    }
+  }
+
   void _onTapSignIn() {
     Analytics().logSelect(target: 'sign in');
-    NotificationService().notify(ProfileInfoWrapperPage.notifySignIn);
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContent.login);
   }
 
   void _onTapProfile() {

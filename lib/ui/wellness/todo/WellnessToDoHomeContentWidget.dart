@@ -43,7 +43,7 @@ class WellnessToDoHomeContentWidget extends StatefulWidget with AnalyticsInfo {
   State<WellnessToDoHomeContentWidget> createState() => _WellnessToDoHomeContentWidgetState();
 }
 
-class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> implements NotificationsListener {
+class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> with NotificationsListener {
   static final String _unAssignedLabel =
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;

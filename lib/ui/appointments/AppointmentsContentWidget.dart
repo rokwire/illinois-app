@@ -49,7 +49,7 @@ class AppointmentsContentWidget extends StatefulWidget with AnalyticsInfo {
 
 }
 
-class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> implements NotificationsListener {
+class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> with NotificationsListener {
   static const Map<String, String> providerNameOverride = {'McKinley': 'MyMcKinley'};
   static Map<String,  Widget? Function()> providerLayoutOverride = {
     'McKinley': () =>

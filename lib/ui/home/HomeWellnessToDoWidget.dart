@@ -35,7 +35,7 @@ class HomeWellnessToDoWidget extends StatefulWidget {
   State<HomeWellnessToDoWidget> createState() => _HomeWellnessToDoWidgetState();
 }
 
-class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> implements NotificationsListener {
+class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with NotificationsListener {
 
   List<WellnessToDoItem>? _toDoItems;
   bool _loading = false;

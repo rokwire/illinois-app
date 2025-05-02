@@ -178,8 +178,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _ExploreMapPanelState extends State<ExploreMapPanel>
-  with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel>
-  implements NotificationsListener {
+  with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel> {
 
   static const double _filterLayoutSortKey = 1.0;
   static const String _privacyUrl = 'privacy://level';
@@ -2489,7 +2488,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
       Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
       Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
-      String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
+      String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
           (_markerIconCache[markerKey] = await _groupMarkerIcon(
             context: context,

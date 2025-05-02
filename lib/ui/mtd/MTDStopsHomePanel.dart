@@ -38,7 +38,7 @@ class MTDStopsHomePanel extends StatefulWidget {
   State<MTDStopsHomePanel> createState() => _MTDStopsHomePanelState();
 }
 
-class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements NotificationsListener {
+class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with NotificationsListener {
   
   static Color _dimmedBackgroundColor = Color(0x99000000);
 

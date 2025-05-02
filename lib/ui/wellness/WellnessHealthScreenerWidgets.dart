@@ -54,7 +54,7 @@ class WellnessHealthScreenerHomeWidget extends StatefulWidget {
   State<WellnessHealthScreenerHomeWidget> createState() => _WellnessHealthScreenerHomeWidgetState();
 }
 
-class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> implements NotificationsListener {
+class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> with NotificationsListener {
   final String _healthScreenerSurveyType = "health_screener";
 
   String resourceName = 'wellness.health_screener';

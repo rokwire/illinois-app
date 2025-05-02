@@ -37,7 +37,7 @@ class PollDetailPanel extends StatefulWidget {
   _PollDetailPanelState createState() => _PollDetailPanelState();
 }
 
-class _PollDetailPanelState extends State<PollDetailPanel> implements NotificationsListener {
+class _PollDetailPanelState extends State<PollDetailPanel> with NotificationsListener {
   Poll? _poll;
   Group? _group;
   int _loadingProgress = 0;

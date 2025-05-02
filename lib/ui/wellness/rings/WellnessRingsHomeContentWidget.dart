@@ -37,7 +37,7 @@ class WellnessRingsHomeContentWidget extends StatefulWidget {
   State<WellnessRingsHomeContentWidget> createState() => _WellnessRingsHomeContentWidgetState();
 }
 
-class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> implements NotificationsListener{
+class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> with NotificationsListener{
 
   late _WellnessRingsTab _selectedTab;
   List<WellnessRingDefinition>? _ringsData;

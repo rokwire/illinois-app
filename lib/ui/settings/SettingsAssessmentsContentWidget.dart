@@ -32,7 +32,7 @@ class SettingsAssessmentsContentWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _SettingsAssessmentsContentWidgetState();
 }
 
-class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsContentWidget> implements NotificationsListener {
+class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsContentWidget> with NotificationsListener {
 
   @override
   void initState() {

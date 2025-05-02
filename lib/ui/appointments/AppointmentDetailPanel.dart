@@ -57,7 +57,7 @@ class AppointmentDetailPanel extends StatefulWidget with AnalyticsInfo {
   _AppointmentDetailPanelState createState() => _AppointmentDetailPanelState();
 }
 
-class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> implements NotificationsListener {
+class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> with NotificationsListener {
   final double _outerSpacingH = 16;
   final double _innerSpacingH = 4;
   final double _innerSpacingV = 4;

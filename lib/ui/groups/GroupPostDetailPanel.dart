@@ -45,20 +45,24 @@ class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Comment? focusedReply;
   final Group group;
   final bool hidePostOptions;
+  final AnalyticsFeature? _analyticsFeature;
 
-  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false, AnalyticsFeature? analyticsFeature}) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? _defaultAnalyticsFeature;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
+
+  AnalyticsFeature? get _defaultAnalyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
-class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with NotificationsListener {
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
   Post? _post; //Main post {Data Presentation}
@@ -268,21 +272,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               children: [
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                                    child: TextField(
-                                        onChanged: (txt) => _mainPostUpdateData?.body = txt,
-                                        controller: bodyController,
-                                        maxLines: null,
-                                        autofocus: true,
-                                        decoration: InputDecoration(
-                                            hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
-                                            fillColor: Styles().colors.surface,
-                                            filled: true,
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
-                                                    width: 0.0))),
-                                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                                       )),
+                                    child: PostInputField(
+                                      onBodyChanged: (txt) => _mainPostUpdateData?.body = txt,
+                                      text:  _mainPostUpdateData?.body ?? '',
+                                      minLines: 1,
+                                      maxLines: null,
+                                      autofocus: true,
+                                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
+                                      boxDecoration: BoxDecoration(color: Styles().colors.background),
+                                      inputDecoration: InputDecoration(
+                                          hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
+                                          fillColor: Styles().colors.surface,
+                                          filled: true,
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Styles().colors.mediumGray,
+                                                  width: 0.0))),
+                                    )
+                                ),
                                 Visibility(visible: _isPost && _canPinPost,
                                     child: Container(
                                       padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
@@ -497,6 +504,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
+                analyticsFeature: widget.analyticsFeature,
                 onIconTap: optionsFunctionTap
             ))));
     }

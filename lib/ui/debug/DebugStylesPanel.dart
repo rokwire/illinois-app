@@ -26,7 +26,7 @@ class DebugStylesPanel extends StatefulWidget {
   _DebugStylesPanelState createState() => _DebugStylesPanelState();
 }
 
-class _DebugStylesPanelState extends State<DebugStylesPanel> implements NotificationsListener {
+class _DebugStylesPanelState extends State<DebugStylesPanel> with NotificationsListener {
 
   TextEditingController? _debugContentController;
   TextEditingController? _contentContentController;

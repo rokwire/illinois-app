@@ -15,7 +15,7 @@
 
 			"browse.list": ["polls", "surveys"],
 
-			"assistant": ["uiuc_assistant", "google_assistant", "grok_assistant", "all_assistants", "uiuc_faqs"],
+			"assistant": ["openai_assistant", "google_assistant", "grok_assistant", "perplexity_assistant"],
 
 			"settings": ["favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
@@ -39,9 +39,10 @@
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"new_student", "messages", "student", "assistant", "assistant_personalization", "privacy"],
 
-            "attributes": ["groups", "events"],
-            "attributes.groups": ["rso"],
-			
+			"attributes": ["groups", "research_projects", "events"],
+			"attributes.groups": ["rso"],
+			"attributes.research_projects": ["rso"],
+
 			"launch":["emergency"]
 			
 		},
@@ -136,9 +137,6 @@
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
-				"assistant.google_assistant"              : { "environment":  "dev"},
-				"assistant.grok_assistant"                : { "environment":  "dev"},
-				"assistant.all_assistants"                : { "environment":  "dev"}
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
@@ -169,7 +167,13 @@
 				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
 				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
-				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}"
+				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}",
+				"google_assistant"                        : "${config.settings.assistant.enable.google}",
+				"grok_assistant"                          : "${config.settings.assistant.enable.grok}",
+				"openai_assistant"                        : "${config.settings.assistant.enable.openai}",
+				"perplexity_assistant"                    : "${config.settings.assistant.enable.perplexity}",
+				"all_assistants"                          : "${config.settings.assistant.enable.all}",
+				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}"
 			}
 		}
 	},

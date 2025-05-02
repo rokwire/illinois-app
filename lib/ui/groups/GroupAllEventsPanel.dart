@@ -20,8 +20,9 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class GroupAllEventsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
+  final Event2TimeFilter? timeFilter;
 
-  const GroupAllEventsPanel({Key? key, this.group}) : super(key: key);
+  const GroupAllEventsPanel({Key? key, this.group, this.timeFilter}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupAllEventsState();
@@ -33,7 +34,7 @@ class GroupAllEventsPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
-class _GroupAllEventsState extends State<GroupAllEventsPanel> implements NotificationsListener {
+class _GroupAllEventsState extends State<GroupAllEventsPanel> with NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
@@ -76,8 +77,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: HeaderBar(
-            title: Localization().getStringEx("panel.groups_all_events.label.heading", "Upcoming Events") +
-                ((_totalEventsCount != null) ? " ($_totalEventsCount)" : "")),
+            title: _headerBarTitle + ((_totalEventsCount != null) ? " ($_totalEventsCount)" : "")),
         body: SingleChildScrollView(
             controller: _scrollController,
             child: Column(children: <Widget>[
@@ -87,6 +87,10 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
+
+  String get _headerBarTitle => (widget.timeFilter != Event2TimeFilter.past) ?
+    Localization().getStringEx("panel.groups_all_events.upcoming.label.heading", "Upcoming Events") :
+    Localization().getStringEx("panel.groups_all_events.past.label.heading", "Past Events");
 
   Widget _buildEvents() {
     List<Widget> content = <Widget>[];
@@ -129,7 +133,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
         _extendingEvents = false;
       });
 
-      Events2().loadGroupEvents(groupId: widget.group?.id, limit: _eventsPageLength).then((Events2ListResult? eventsResult) {
+      Events2().loadGroupEvents(groupId: widget.group?.id, timeFilter: widget.timeFilter, limit: _eventsPageLength).then((Events2ListResult? eventsResult) {
         List<Event2>? events = eventsResult?.events;
 
         setStateIfMounted(() {

@@ -7,13 +7,13 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 
-class DebugGuidePanel extends StatefulWidget {
-  DebugGuidePanel();
+class DebugGuideEditPanel extends StatefulWidget {
+  DebugGuideEditPanel();
 
-  _DebugGuidePanelState createState() => _DebugGuidePanelState();
+  _DebugGuideEditPanelState createState() => _DebugGuideEditPanelState();
 }
 
-class _DebugGuidePanelState extends State<DebugGuidePanel> {
+class _DebugGuideEditPanelState extends State<DebugGuideEditPanel> {
 
   String? _contentString;
   GuideContentSource? _contentSource;
@@ -44,7 +44,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: "Campus Guide", ),
+      appBar: HeaderBar(title: "Edit Guide", ),
       body: SafeArea(child:
         Column(children: <Widget>[
           Expanded(child: 

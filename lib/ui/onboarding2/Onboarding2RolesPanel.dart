@@ -34,7 +34,7 @@ import 'Onboarding2Widgets.dart';
 class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2RolesPanel({ this.onboardingCode = 'roles', this.onboardingContext });
+  Onboarding2RolesPanel({ super.key, this.onboardingCode = 'roles', this.onboardingContext });
 
   GlobalKey<_Onboarding2RoleSelectionPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2RoleSelectionPanelState>) ?
     (super.key as GlobalKey<_Onboarding2RoleSelectionPanelState>) : null;
