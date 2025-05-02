@@ -2682,7 +2682,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                       changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
                   );},
                   textStyle: isGroupInfoAllowed
-                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.regular.enabled")
                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
               Row(children: [
                 Expanded(
@@ -2700,7 +2700,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberNetId = !(settings?.memberInfoPreferences?.viewMemberNetId ?? false);}}
                                   );},
                                   textStyle: isGroupInfoAllowed
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
@@ -2724,7 +2724,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
                                   );},
                                   textStyle: isGroupInfoAllowed
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               //Hide Phone for now
                               // EnabledToggleButton(
@@ -2760,7 +2760,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                       changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
                   );},
                   textStyle: isGroupPostAllowed
-                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.regular.enabled")
                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
               Row(children: [
                 Expanded(
@@ -2778,7 +2778,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
                                   );},
                                   textStyle: (isGroupPostAllowed == true && isGroupInfoAllowed == true)
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
@@ -2789,7 +2789,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
@@ -2800,7 +2800,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
@@ -2811,7 +2811,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
@@ -2822,7 +2822,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      ? Styles().textStyles.getTextStyle("widget.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                             ]))))
                   ])

@@ -1020,10 +1020,8 @@
     "exclamation": {"src": "0x21", "type": "fa.icon", "weight": "solid", "color": "alert", "size": 18},
 
     "file": {"src": "0xf15b", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
-    "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
-    "up-from-bracket": {"src": "0xe590", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "up-from-bracket": {"src": "0xe09a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "envelope": {"src": "0xf0e0", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
-    "message-lines": {"src": "0xf4a6", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "copy-fa": {"src": "0xf0c5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
@@ -1325,7 +1323,7 @@
     "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"},
 
     "group-managed-badge": {"src": "0xf336", "type": "fa.icon", "size": 18},
-    "add_emoji": {"src": "0xf5b9", "type": "fa.icon"},
+    "add_emoji": {"src": "0xf118", "type": "fa.icon"},
     "pin": {"src": "images/pin.png", "type": "flutter.asset"}
   }
 }

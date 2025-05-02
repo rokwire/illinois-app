@@ -81,7 +81,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           Container(color: Styles().colors.surfaceAccent, height: 1,),
         ),
         _buildCommand(
-          icon: Styles().images.getImage('down-to-bracket', size: _commandIconSize),
+          icon: Styles().images.getImage('download', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.save.text', 'Save to Photos'),
           progress: _savingToPhotos,
           onTap: _onTapSaveToPhotos,
@@ -93,7 +93,7 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           onTap: _onTapShareViaEmail,
         ),
         _buildCommand(
-          icon: Styles().images.getImage('message-lines', size: _commandIconSize),
+          icon: Styles().images.getImage('message', size: _commandIconSize),
           text: Localization().getStringEx('panel.profile.info.share.command.button.share.message.text', 'Share via Text Message'),
           progress: _preparingTextMessage,
           onTap: _onTapShareViaTextMessage,
