@@ -542,7 +542,11 @@ class ConversationCard extends StatelessWidget {
         : sender?.name;
 
     if (!StringUtils.isNotEmpty(messageText)) {
-      return Container();
+      if (conversation.lastMessage?.fileAttachments?.isNotEmpty == true) {
+        messageText = "Attachment";
+      } else {
+        return Container();
+      }
     }
 
     return Semantics(

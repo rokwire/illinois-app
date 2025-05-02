@@ -322,17 +322,18 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                       ]),
                       SizedBox(height: 8),
                       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Expanded(child:
-                          SelectionArea(
-                            child: LinkTextEx(
-                              key: UniqueKey(),
-                              message.message ?? '',
-                              textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                              linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-                              onLinkTap: _onTapLink,
+                        if (message.message?.isNotEmpty == true)
+                          Expanded(child:
+                            SelectionArea(
+                              child: LinkTextEx(
+                                key: UniqueKey(),
+                                message.message ?? '',
+                                textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                                linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+                                onLinkTap: _onTapLink,
+                              ),
                             ),
                           ),
-                        ),
                         // If dateUpdatedUtc is not null, show a small “(edited)” label
                         if (message.dateUpdatedUtc != null)
                           Padding(padding: EdgeInsets.only(left: 4), child:
