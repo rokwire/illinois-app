@@ -880,7 +880,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildSendImage(bool enabled) {
-    if (StringUtils.isNotEmpty(_inputController.text)) {
+    final hasText = StringUtils.isNotEmpty(_inputController.text);
+    final hasFiles = _attachedFiles.isNotEmpty;
+    if (hasText || hasFiles) {
       // Show send button if there's text
       return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
           child: IconButton(
@@ -1316,13 +1318,14 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Future<void> _submitMessage(String messageText) async {
     messageText = messageText.trim();
-    if (StringUtils.isNotEmpty(messageText)) {
+    final hasFiles = _attachedFiles.isNotEmpty;
+    if (StringUtils.isNotEmpty(messageText) || hasFiles) {
       return (_editingMessage != null) ? _updateEditingMessage(messageText) : _createNewMessage(messageText);
     }
   }
 
   Future<void> _createNewMessage(String messageText) async {
-    if (!_submitting && StringUtils.isNotEmpty(messageText) && _conversationId != null && _currentUserId != null) {
+    if (!_submitting && _conversationId != null && _currentUserId != null) {
       _submitting = true;
       FocusScope.of(context).requestFocus(FocusNode());
 
