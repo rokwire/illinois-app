@@ -246,15 +246,15 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 
     // Origo and mobile keys SDK
-    debugImplementation name: '../../libs/hid-origo/android/origo-sdk-debug', version: '1.10.0', ext: 'aar'
-    releaseImplementation name: '../../libs/hid-origo/android/origo-sdk-release', version: '1.10.0', ext: 'aar'
+//    debugImplementation name: '../../libs/hid-origo/android/origo-sdk-debug', version: '1.10.0', ext: 'aar'
+//    releaseImplementation name: '../../libs/hid-origo/android/origo-sdk-release', version: '1.10.0', ext: 'aar'
 
     // Origo transitive dependencies
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.68'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.mixpanel.android:mixpanel-android:5.8.5'
-    implementation 'androidx.preference:preference-ktx:1.2.1'
+//    implementation 'org.bouncycastle:bcprov-jdk15on:1.68'
+//    implementation 'org.slf4j:slf4j-api:1.7.30'
+//    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+//    implementation 'com.mixpanel.android:mixpanel-android:5.8.5'
+//    implementation 'androidx.preference:preference-ktx:1.2.1'
     // end Origo
 }
 

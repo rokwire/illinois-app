@@ -21,7 +21,7 @@
 #import "AppDelegate.h"
 #import "GeneratedPluginRegistrant.h"
 #import "AppKeys.h"
-#import "MobileAccessPlugin.h"
+//#import "MobileAccessPlugin.h"
 #import "FlutterCompletion.h"
 
 #import "NSArray+InaTypedValue.h"
@@ -94,7 +94,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	[GeneratedPluginRegistrant registerWithRegistry:self];
     
 	// Setup MobileAccessPlugin
-	[MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
+//	[MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
 	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
@@ -250,10 +250,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 
 	// Initialize Орiго SDK
-	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
-	if (0 < origoAppId.length) {
-		MobileAccessPlugin.sharedInstance.origoAppId = origoAppId;
-	}
+//	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
+//	if (0 < origoAppId.length) {
+//		MobileAccessPlugin.sharedInstance.origoAppId = origoAppId;
+//	}
 
 	result(@(YES));
 }

@@ -250,6 +250,9 @@ class Config extends rokwire.Config {
   bool get enableLogging => false;
 
   @override
+  String? get packageName => 'neom';
+
+  @override
   String? get appId => kIsWeb ? 'com.rokmetro.university.${super.appId}' : super.appId;
 
   @override
