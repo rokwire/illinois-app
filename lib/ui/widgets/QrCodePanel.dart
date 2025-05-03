@@ -280,12 +280,12 @@ class _QrCodePanelState extends State<QrCodePanel> {
     Styles().colors.white : Styles().colors.background;
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    return await NativeCommunicator().getBarcodeImageData({
-      'content': _promotionUrl ?? widget.digitalCardQrCode,
-      'format': 'qrCode',
-      'width': _imageSize,
-      'height': _imageSize,
-    });
+    String? content = _promotionUrl ?? widget.digitalCardQrCode;
+    return (content != null) ? await NativeCommunicator().getBarcodeImageData(content,
+      format: 'qrCode',
+      width: _imageSize,
+      height: _imageSize,
+    ) : null;
   }
 
   Future<void> _saveQrCode() async {

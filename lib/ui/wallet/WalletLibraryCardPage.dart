@@ -176,12 +176,11 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
     ),);
 
   Future<MemoryImage?> _loadBarcodeImage(String? libraryCode) async {
-    Uint8List? barcodeBytes = (libraryCode != null) ? await NativeCommunicator().getBarcodeImageData({
-      'content': libraryCode,
-      'format': 'codabar',
-      'width': _barcodeWidth.toInt() * 3,
-      'height': _barcodeHeight.toInt(),
-    }) : null;
+    Uint8List? barcodeBytes = (libraryCode != null) ? await NativeCommunicator().getBarcodeImageData(libraryCode,
+      format: 'codabar',
+      width: _barcodeWidth.toInt() * 3,
+      height: _barcodeHeight.toInt(),
+    ) : null;
     try { return ((barcodeBytes != null) && barcodeBytes.isNotEmpty) ? MemoryImage(barcodeBytes) : null; }
     catch(e) { debugPrint(e.toString()); return null; }
   }

@@ -308,7 +308,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             }
         }
 
-        if (barcodeFormat != null) {
+        if (Utils.Str.isNotEmpty(content) && (barcodeFormat != null) && (0 < width) && (0 < height)) {
             MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
             Bitmap bitmap = null;
             try {

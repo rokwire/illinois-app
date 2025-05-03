@@ -282,7 +282,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	int width = [parameters inaIntForKey:@"width"];
 	int height = [parameters inaIntForKey:@"height"];
 
-	ZXBarcodeFormat format = 0;
+	ZXBarcodeFormat format = -1;
 	if ([formatName isEqualToString:@"aztec"]) {
 		format = kBarcodeFormatAztec;
 	} else if ([formatName isEqualToString:@"codabar"]) {
@@ -323,7 +323,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	UIImage *image = nil;
 	ZXEncodeHints *hints = [ZXEncodeHints hints];
 	hints.margin = @(0);
-	ZXBitMatrix* matrix = [[ZXMultiFormatWriter writer] encode:content format:format width:width height:height hints:hints error:&error];
+	ZXBitMatrix* matrix = ((content != nil) && (0 < content.length) && (0 <= format) && (0 < width) && (0 < height)) ?
+		[[ZXMultiFormatWriter writer] encode:content format:format width:width height:height hints:hints error:&error] : nil;
 	if (matrix != nil) {
 		CGImageRef imageRef = CGImageRetain([[ZXImage imageWithMatrix:matrix] cgimage]);
 		image = [UIImage imageWithCGImage:imageRef];
