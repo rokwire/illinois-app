@@ -176,7 +176,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
     ),);
 
   Future<MemoryImage?> _loadBarcodeImage(String? libraryCode) async {
-    Uint8List? barcodeBytes = (libraryCode != null) ? await NativeCommunicator().getBarcodeImageData(libraryCode,
+    Uint8List? barcodeBytes = ((libraryCode != null) && libraryCode.isNotEmpty) ? await NativeCommunicator().getBarcodeImageData(libraryCode,
       format: 'codabar',
       width: _barcodeWidth.toInt() * 3,
       height: _barcodeHeight.toInt(),
