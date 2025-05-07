@@ -907,7 +907,8 @@ class _PollCardState extends State<PollCard> {
       maxValueIndex = 0;
       for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
         int? optionVotes = _poll.results![optionIndex];
-        if ((optionVotes != null) && (optionVotes > _poll.results![maxValueIndex]!)) {
+        int? maxOptionVotes = _poll.results![maxValueIndex];
+        if ((optionVotes != null) && (maxOptionVotes != null) && (optionVotes > maxOptionVotes)) {
           maxValueIndex = optionIndex;
         }
       }
