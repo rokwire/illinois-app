@@ -759,10 +759,10 @@ enum _PollType { myPolls, recentPolls, groupPolls }
 enum _PollFilterTabPosition { left, center, right }
 
 class PollCard extends StatefulWidget {
-  final Poll? poll;
+  final Poll poll;
   final Group? group;
 
-  const PollCard({Key? key, this.poll, this.group}) : super(key: key);
+  const PollCard({Key? key, required this.poll, this.group}) : super(key: key);
   _PollCardState createState() => _PollCardState();
 }
 
@@ -792,42 +792,41 @@ class _PollCardState extends State<PollCard> {
 
   @override
   Widget build(BuildContext context) {
-    Poll poll = widget.poll!;
     String pollVotesStatus = _pollVotesStatus;
 
     List<Widget> footerWidgets = [];
 
     String? pollStatus;
-    if(poll.status == PollStatus.created) {
+    if(_poll.status == PollStatus.created) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
-      if (poll.isMine) {
+      if (_poll.isMine) {
         footerWidgets.add(_createStartPollButton());
         footerWidgets.add(Container(height:8));  
       }
-    } if (poll.status == PollStatus.opened) {
+    } if (_poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
-      if (poll.canVote) {
+      if (_poll.canVote) {
         footerWidgets.add(_createVoteButton());
         footerWidgets.add(Container(height:8));  
       }
-      if (poll.isMine) {
+      if (_poll.isMine) {
         footerWidgets.add(_createEndPollButton());
         footerWidgets.add(Container(height:8));  
       }
     }
-    else if (poll.status == PollStatus.closed) {
+    else if (_poll.status == PollStatus.closed) {
       pollStatus =  Localization().getStringEx("panel.polls_home.card.state.text.closed","Polls closed");
     }
 
     String? groupName = widget.group?.title;
 
-    bool canDeletePoll = poll.isMine || (widget.group?.currentUserIsAdmin ?? false);
+    bool canDeletePoll = _poll.isMine || (widget.group?.currentUserIsAdmin ?? false);
 
     String pin = sprintf(Localization().getStringEx('panel.polls_home.card.text.pin', 'Pin: %s'), [
-      sprintf('%04i', [poll.pinCode ?? 0])
+      sprintf('%04i', [_poll.pinCode ?? 0])
     ]);
 
-    Widget optionsWidget = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
+    Widget optionsWidget = ((_poll.status == PollStatus.opened) && (_poll.settings?.hideResultsUntilClosed ?? false)) ?
       Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().textStyles.getTextStyle("widget.card.detail.small")) :
       Column(children: _buildCheckboxOptions(),);
 
@@ -869,7 +868,7 @@ class _PollCardState extends State<PollCard> {
           Expanded(child: Container(),)
         ],),
         Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-          Text(poll.title ?? '', style:Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"),
+          Text(StringUtils.ensureNotEmpty(_poll.title), style:Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"),
           ),
         ),
         Container(height:12),
@@ -879,7 +878,7 @@ class _PollCardState extends State<PollCard> {
       ]),
     );
 
-    Widget contnetWidget = poll.isMine ? 
+    Widget contentWidget = _poll.isMine ?
       Stack(children: <Widget>[
         bodyWidget,
         Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -890,37 +889,39 @@ class _PollCardState extends State<PollCard> {
     return Semantics(container: true, child:
       Column(children: <Widget>[
         Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
-          contnetWidget
+          contentWidget
         ),
       ],),
     );
   }
 
   List<Widget> _buildCheckboxOptions() {
-    bool isClosed = widget.poll!.status == PollStatus.closed;
+    bool isClosed = (_poll.status == PollStatus.closed);
 
     List<Widget> result = [];
     _progressKeys = [];
-    int maxValueIndex=-1;
-    if(isClosed  && ((widget.poll!.results?.totalVotes ?? 0) > 0)){
+    int totalVotesCount = (_poll.results?.totalVotes ?? 0);
+    int optionsCount = (_poll.options?.length ?? 0);
+    int maxValueIndex = -1;
+    if (isClosed && (totalVotesCount > 0)) {
       maxValueIndex = 0;
-      for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
-        int? optionVotes =  widget.poll!.results![optionIndex];
-        if(optionVotes!=null &&  optionVotes > widget.poll!.results![maxValueIndex]!)
+      for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
+        int? optionVotes = _poll.results![optionIndex];
+        if ((optionVotes != null) && (optionVotes > _poll.results![maxValueIndex]!)) {
           maxValueIndex = optionIndex;
+        }
       }
     }
 
-    int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
-    for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
+    for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
-      String option = widget.poll!.options![optionIndex];
-      bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
+      String option = _poll.options![optionIndex];
+      bool didVote = ((_poll.userVote != null) && (0 < (_poll.userVote![optionIndex] ?? 0)));
       String checkboxIconKey = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
       String? votesString;
-      int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
-      double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+      int? votesCount = (_poll.results != null) ? _poll.results![optionIndex] : null;
+      double votesPercent = ((0 < totalVotesCount) && (votesCount != null)) ? (votesCount.toDouble() / totalVotesCount.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount == 0)) {
         votesString = '';
       }
@@ -1031,7 +1032,7 @@ class _PollCardState extends State<PollCard> {
   }
 
   Future<bool?> promptDeletePoll() async {
-    String message =  Localization().getStringEx('panel.polls_home.card.button.prompt.delete_poll', 'Delete \"{PollTitle}\" poll?').replaceAll('{PollTitle}', widget.poll?.title ?? '');
+    String message =  Localization().getStringEx('panel.polls_home.card.button.prompt.delete_poll', 'Delete \"{PollTitle}\" poll?').replaceAll('{PollTitle}', StringUtils.ensureNotEmpty(_poll.title));
     
     return await showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
@@ -1066,7 +1067,7 @@ class _PollCardState extends State<PollCard> {
   void _onStartPollTapped(){
     if (_showStartPollProgress != true) {
       _setStartButtonProgress(true);
-      Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
+      Polls().open(_poll.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
         _setStartButtonProgress(false);
         AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });
@@ -1076,7 +1077,7 @@ class _PollCardState extends State<PollCard> {
   void _onEndPollTapped() {
     if (_showEndPollProgress != true) {
       _setEndButtonProgress(true);
-      Polls().close(widget.poll!.pollId).then((result) {
+      Polls().close(_poll.pollId).then((result) {
           AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
           _setEndButtonProgress(false);
       }).catchError((e){
@@ -1091,7 +1092,7 @@ class _PollCardState extends State<PollCard> {
       promptDeletePoll().then((bool? result){
         if (result == true) {
           _setDeleteButtonProgress(true);
-          Polls().delete(widget.poll!.pollId).then((result) {
+          Polls().delete(_poll.pollId).then((result) {
               AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.delete_poll.success', 'Poll deleted successfully'));
               _setDeleteButtonProgress(false);
           }).catchError((e){
@@ -1143,9 +1144,11 @@ class _PollCardState extends State<PollCard> {
     });
   }
 
+  Poll get _poll => widget.poll;
+
   String get _pollVotesStatus {
     bool hasGroup = (widget.group != null);
-    int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
+    int votes = hasGroup ? _uniqueVotersCount : (_poll.results?.totalVotes ?? 0);
 
     String statusString;
     if (1 < votes) {
@@ -1163,11 +1166,7 @@ class _PollCardState extends State<PollCard> {
     return statusString;
   }
 
-  int get _uniqueVotersCount {
-    return widget.poll?.uniqueVotersCount ?? 0;
-  }
+  int get _uniqueVotersCount => _poll.uniqueVotersCount ?? 0;
 
-  int get _groupMembersCount {
-    return _groupStats?.activeMembersCount ?? 0;
-  }
+  int get _groupMembersCount => _groupStats?.activeMembersCount ?? 0;
 }
