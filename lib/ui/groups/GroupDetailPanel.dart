@@ -103,14 +103,16 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes =>
-    group?.analyticsAttributes;
+    _theGroup?.analyticsAttributes;
 
   String? get groupId => group?.id ?? groupIdentifier;
+  Group? get _theGroup => _GroupDetailPanelState.instance?._group ?? group ?? ((groupIdentifier != null) ? Group(id: groupIdentifier) : null);
 
   AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
+  static const String       _stateAccess  = "edu.illinois.rokwire.group_detail.state.access";
   static const int          _postsPageSize = 8;
   static const int          _animationDurationInMilliSeconds = 200;
   static const List<DetailTab> _adminTabs = [DetailTab.ScheduledPosts, DetailTab.PastEvents];
@@ -248,9 +250,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 
+  static _GroupDetailPanelState? get instance {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(_stateAccess);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _GroupDetailPanelState) && subscriber.mounted) {
+          return subscriber;
+        }
+      }
+    }
+    return null;
+  }
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      _stateAccess,
       AppLivecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       FlexUI.notifyChanged,
