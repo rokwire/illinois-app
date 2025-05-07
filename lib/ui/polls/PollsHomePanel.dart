@@ -1082,9 +1082,11 @@ class _PollCardState extends State<PollCard> {
           AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
           _setEndButtonProgress(false);
         }
-      }).catchError((e){
-        _setEndButtonProgress(false);
-        AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+      }).catchError((e) {
+        if (mounted) {
+          AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+          _setEndButtonProgress(false);
+        }
       });
     }
   }
