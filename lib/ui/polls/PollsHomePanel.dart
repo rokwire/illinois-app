@@ -1078,8 +1078,10 @@ class _PollCardState extends State<PollCard> {
     if (_showEndPollProgress != true) {
       _setEndButtonProgress(true);
       Polls().close(_poll.pollId).then((result) {
+        if (mounted) {
           AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
           _setEndButtonProgress(false);
+        }
       }).catchError((e){
         _setEndButtonProgress(false);
         AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
@@ -1093,8 +1095,10 @@ class _PollCardState extends State<PollCard> {
         if (result == true) {
           _setDeleteButtonProgress(true);
           Polls().delete(_poll.pollId).then((result) {
+            if (mounted) {
               AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.delete_poll.success', 'Poll deleted successfully'));
               _setDeleteButtonProgress(false);
+            }
           }).catchError((e){
             _setDeleteButtonProgress(false);
             AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
