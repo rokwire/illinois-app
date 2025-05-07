@@ -456,6 +456,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   );
 
   void _onTapManualNetIdAdd() {
+    Analytics().logSelect(target: 'Manual Add Attendee');
     String netId = _manualNetIdController.text.trim();
     String? eventId = widget.event?.id;
     if (widget.manualCheckEnabled != true) {

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Strict check for all input parameters for barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
 - Handle all exceptions raised during barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
 - Supply group details in analytics logs [#5101](https://github.com/rokwire/illinois-app/issues/5101).
+- Send analytics logs for manual attendance taking [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 
 ## [7.0.20] - 2025-04-29
 ### Fixed
