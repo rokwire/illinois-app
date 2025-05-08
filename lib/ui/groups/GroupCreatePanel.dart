@@ -17,9 +17,7 @@
 
 import 'dart:collection';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -67,7 +65,6 @@ class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupAdminAccountsController = TextEditingController();
   final _groupMemberAccountsController = TextEditingController();
-  final _groupNetIdsController = TextEditingController();
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
@@ -76,9 +73,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _authManGroupNameController = TextEditingController();
 
   Group? _group;
-
-  GroupMemberStatus _selectedMembersStatus = GroupMemberStatus.admin;
-  double? _membersStatusDropdownItemsWidth;
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
 
@@ -99,7 +93,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void dispose() {
     _groupAdminAccountsController.dispose();
     _groupMemberAccountsController.dispose();
-    _groupNetIdsController.dispose();
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _linkController.dispose();
@@ -1103,14 +1096,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
 
       //Add members/admins
-      List<String>? adminNetIds;
-      GroupMemberStatus? adminsStatus;
-      if(StringUtils.isNotEmpty(_groupNetIdsController.text)) {
-        adminsStatus = _selectedMembersStatus;
-        adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
-      }
+      List<Member> members = <Member>[];
+      _groupAdminAccounts.values.forEach((Auth2PublicAccount account) {
+        members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.admin));
+      });
+      _groupMemberAccounts.values.forEach((Auth2PublicAccount account) {
+        members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.member));
+      });
 
-      Groups().createGroup(_group, adminNetIds: adminNetIds, adminsStatus: adminsStatus).then((GroupError? error) {
+      Groups().createGroup(_group, members: members).then((GroupError? error) {
         if (mounted) {
           setState(() {
             _creating = false;
@@ -1182,27 +1176,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             )
           ]),
 
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false)
-            )
-          ]),
-          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
-            Expanded(child:
-              Container(decoration: _fieldDecoration, child:
-                TextField(
-                  controller: _groupNetIdsController,
-                  maxLines: 1,
-                  decoration: _fieldSmallInputDecoration,
-                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                )
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6), child:
-              _adminStatusDropdown
-            )
-          ]),
-
         ])
       )
     );
@@ -1266,91 +1239,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
     return text;
   }
-
-  Widget get _adminStatusDropdown =>
-    DropdownButtonHideUnderline(child:
-      DropdownButton2<GroupMemberStatus>(
-        dropdownStyleData: DropdownStyleData(
-          width: _membersStatusDropdownItemsWidth ??= _evalMembersStatusDropdownItemsWidth(),
-          direction: DropdownDirection.left,
-          decoration: _dropdownDecoration,
-        ),
-        customButton: _adminStatusDropdownButton(),
-        isExpanded: false,
-        items: _adminStatusDropdownItems(),
-        onChanged: _onAdminStatusDropdownSelected,
-      ),
-    );
-
-  void _onAdminStatusDropdownSelected(GroupMemberStatus? status) {
-    Analytics().logSelect(target: 'Select Admin Status: $status');
-    if ((status != null) && mounted)
-    setState(() {
-      _selectedMembersStatus = status;
-    });
-  }
-
-  Widget _adminStatusDropdownButton() =>
-    Container(decoration: _dropdownDecoration, child:
-      Padding(padding: EdgeInsets.only(left: 12, right: 6, top: 12, bottom: 12), child:
-        Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(groupMemberStatusToString(_selectedMembersStatus) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.value') ,),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            SizedBox(width: 10, height: 10, child:
-              Center(child:
-                Styles().images.getImage('chevron-down', size: 10),
-              )
-            )
-          )
-        ],)
-      )
-    );
-
-  List<DropdownMenuItem<GroupMemberStatus>> _adminStatusDropdownItems() =>
-    List.from(_adminsStatusItems.map((status) => _adminStatusDropdownItem(status, selected: _selectedMembersStatus == status)));
-
-  DropdownMenuItem<GroupMemberStatus> _adminStatusDropdownItem(GroupMemberStatus status, { bool selected = false,}) =>
-      DropdownMenuItem<GroupMemberStatus>(
-        value: status,
-        child: Row(mainAxisSize: MainAxisSize.max, children: [
-          Expanded(child:
-            Text(groupMemberStatusToString(status) ?? '',
-              overflow: TextOverflow.ellipsis,
-              style: Styles().textStyles.getTextStyle(selected ?  'widget.group.dropdown_button.item.selected' : 'widget.group.dropdown_button.item.not_selected'),
-              semanticsLabel: "",
-            ),
-          ),
-          Padding(padding: EdgeInsets.only(left: 12), child:
-            SizedBox(width: 16, height: 16, child:
-              Center(child: Styles().images.getImage(selected ? 'radio-button-on' : 'radio-button-off', size: 16))
-            )
-          )
-        ],),
-      );
-
-  double _evalMembersStatusDropdownItemsWidth() {
-    double maxTextWidth = 0;
-    for (GroupMemberStatus status in _adminsStatusItems) {
-      final Size textSizeFull = (TextPainter(
-        text: TextSpan(text: groupMemberStatusToString(status) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.item.not_selected')),
-        textScaler: MediaQuery.of(context).textScaler,
-        textDirection: TextDirection.ltr,
-      )..layout()).size;
-      if (maxTextWidth < textSizeFull.width) {
-        maxTextWidth = textSizeFull.width;
-      }
-    }
-    double dropdownItemWidth = (maxTextWidth * 5 / 3) + (16 + 12) + 32;
-    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
-  }
-
-  BoxDecoration get _dropdownDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(4)),
-  );
-
-  List<GroupMemberStatus> get _adminsStatusItems => [GroupMemberStatus.admin, GroupMemberStatus.member];
 
   //
   // Common
