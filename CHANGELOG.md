@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.1.1] - 2025-05-08
 ### Fixed
 - Supply group details in analytics logs [#5101](https://github.com/rokwire/illinois-app/issues/5101).
 - Send analytics logs for manual attendance taking [#5100](https://github.com/rokwire/illinois-app/issues/5100).
