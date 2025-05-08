@@ -2337,6 +2337,9 @@
     "panel.directory.accounts.groups.hint.empty": "Select groups",
     "panel.directory.accounts.groups.hint.semantics": "Double type to show groups.",
 
+    "panel.directory.accounts.select.header.title": "User Directory",
+    "panel.directory.accounts.select.apply.prompt": "Apply your changes?",
+
     "panel.profile.info.connections.preview.description.text": "Preview of how your profile displays for your Connections.",
     "panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the User Directory.",
     "panel.profile.info.connections.edit.description.text": "Choose how your profile displays for your Connections.",
