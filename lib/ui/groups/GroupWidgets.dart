@@ -1245,7 +1245,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
     "text-overflow:ellipsis;max-lines:3" :
     "white-space: normal";
 
-  bool get _reactionsEnabled => true;
+  bool get _reactionsEnabled => Config().showGroupPostReactions &&
+      (widget.post?.isMessage == true ||
+        (widget.post?.isPost == true &&
+            widget.group.settings?.memberPostPreferences?.sendPostReactions == true));
 }
 
 //////////////////////////////////////
@@ -1428,7 +1431,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     }
   }
 
-  bool get _reactionsEnabled => Config().showGroupPostReactions;
+  bool get _reactionsEnabled => Config().showGroupPostReactions &&
+      (widget.post?.isMessage == true ||
+        (widget.post?.isPost == true &&
+            widget.group?.settings?.memberPostPreferences?.sendPostReactions == true)
+      );
 }
 
 //////////////////////////////////////
@@ -2646,7 +2653,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 
   void _onEndPollTapped() {
     if (_isEnding != true) {
-      setState(() {
+      setStateIfMounted(() {
         _isEnding = true;
       });
       Polls().close(widget.pollCard.poll?.pollId).then((_) {
@@ -2658,11 +2665,9 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
           AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
         }
       }).whenComplete(() {
-        if (mounted) {
-          setState(() {
-            _isEnding = false;
-          });
-        }
+        setStateIfMounted(() {
+          _isEnding = false;
+        });
       });
     }
   }

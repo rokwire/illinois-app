@@ -283,7 +283,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
     Styles().colors.white : Styles().colors.background;
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    String qrContent = StringUtils.ensureNotEmpty(_promotionUrl ?? widget.digitalCardQrCode);
+    String? qrContent = _promotionUrl ?? widget.digitalCardQrCode;
+    if (qrContent == null) {
+      return null;
+    }
     Uint8List? imageBytes;
     if (kIsWeb) {
       ByteData? qrPainterImage = await QrPainter(data: qrContent, version: QrVersions.auto).toImageData(_imageSize);

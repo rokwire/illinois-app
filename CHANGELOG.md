@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.1.1] - 2025-05-08
+### Fixed
+- Supply group details in analytics logs [#5101](https://github.com/rokwire/illinois-app/issues/5101).
+- Send analytics logs for manual attendance taking [#5100](https://github.com/rokwire/illinois-app/issues/5100).
+- Polls issues [#5097](https://github.com/rokwire/illinois-app/issues/5097).
+
+## [7.1.0] - 2025-05-05
+### Fixed
+- ReactionsLayout visibility depends on group settings [#5085](https://github.com/rokwire/illinois-app/issues/5085).
+- Strict check for all input parameters for barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
+- Handle all exceptions raised during barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
+
 ## [7.0.20] - 2025-04-29
 ### Fixed
 - Make sure to apply privacy settings before sharing a profile card [#5026](https://github.com/rokwire/illinois-app/issues/5026).

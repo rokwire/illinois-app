@@ -1632,7 +1632,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.9.0"
+    version: "1.10.0"
   roundcheckbox:
     dependency: "direct main"
     description:
