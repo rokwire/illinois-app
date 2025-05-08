@@ -13,7 +13,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class DirectoryAccountsSelectPanel extends StatefulWidget {
-  final LinkedHashSet<Auth2PublicAccount>? selectedAccounts;
+  final LinkedHashMap<String, Auth2PublicAccount>? selectedAccounts;
   final String? headerBarTitle;
   final String? headingDescription;
 
@@ -29,32 +29,21 @@ class _DirectoryAccountsSelectPanelState extends State<DirectoryAccountsSelectPa
 
   GlobalKey<DirectoryAccountsListState> _usersListKey = GlobalKey<DirectoryAccountsListState>();
   final ScrollController _usersListScrollController = ScrollController();
-  final LinkedHashMap<String, Auth2PublicAccount> _selectedAccouts = LinkedHashMap<String, Auth2PublicAccount>();
-  final Set<String> _initialAccountsSelection = <String>{};
+  late LinkedHashMap<String, Auth2PublicAccount> _selectedAccouts;
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
 
   @override
   void initState() {
-
-    if (widget.selectedAccounts?.isNotEmpty == true) {
-      widget.selectedAccounts?.forEach((Auth2PublicAccount account) {
-        String? accountId = account.id;
-        if (accountId != null) {
-          _selectedAccouts[accountId] = account;
-          _initialAccountsSelection.add(accountId);
-        }
-      });
-    }
-
+    _selectedAccouts = (widget.selectedAccounts?.isNotEmpty == true) ?
+      LinkedHashMap<String, Auth2PublicAccount>.from(widget.selectedAccounts!) : LinkedHashMap<String, Auth2PublicAccount>();
     super.initState();
   }
 
   @override
   void dispose() {
     _usersListScrollController.dispose();
-
     super.dispose();
   }
 
@@ -103,7 +92,7 @@ class _DirectoryAccountsSelectPanelState extends State<DirectoryAccountsSelectPa
       searchText: _searchText,
       filterAttributes: _filterAttributes,
       onAccountSelectionChanged: _onAccountSelectionChanged,
-      selectedAccountIds: Set<String>.from(_selectedAccouts.keys),
+      selectedAccountIds: _selectedAccouts.keys.toSet(),
     );
 
   void _onAccountSelectionChanged(Auth2PublicAccount account, bool value) {
@@ -147,8 +136,8 @@ class _DirectoryAccountsSelectPanelState extends State<DirectoryAccountsSelectPa
   }
 
 
-  bool get _isModified =>
-    (DeepCollectionEquality().equals(_selectedAccouts.keys.toSet(), _initialAccountsSelection) != true);
+  bool get _isModified => (widget.selectedAccounts?.isNotEmpty == true) ?
+    (DeepCollectionEquality().equals(_selectedAccouts.keys.toSet(), widget.selectedAccounts!.keys.toSet()) != true) : _selectedAccouts.isNotEmpty;
 
   // Header bar
 
@@ -229,7 +218,7 @@ class _DirectoryAccountsSelectPanelState extends State<DirectoryAccountsSelectPa
   String _headerBackPromptCancelText({String? language}) => Localization().getStringEx("dialog.cancel.title", "Cancel", language: language);
 
   void _popAndApply() =>
-    Navigator.of(context).pop(LinkedHashSet<Auth2PublicAccount>.from(_selectedAccouts.values));
+    Navigator.of(context).pop(_selectedAccouts);
 
   void _popAndSkip() =>
     Navigator.of(context).pop(null);

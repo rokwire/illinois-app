@@ -22,7 +22,6 @@ import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -86,8 +85,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _creating = false;
   bool _researchRequiresConsentConfirmation = false;
 
-  LinkedHashSet<Auth2PublicAccount> _groupAdminAccounts = LinkedHashSet<Auth2PublicAccount>();
-  LinkedHashSet<Auth2PublicAccount> _groupMemberAccounts = LinkedHashSet<Auth2PublicAccount>();
+  LinkedHashMap<String, Auth2PublicAccount> _groupAdminAccounts = LinkedHashMap<String, Auth2PublicAccount>();
+  LinkedHashMap<String, Auth2PublicAccount> _groupMemberAccounts = LinkedHashMap<String, Auth2PublicAccount>();
 
   @override
   void initState() {
@@ -1219,13 +1218,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onBrowseAdminAccounts() {
     Analytics().logSelect(target: 'Browse Admin Accounts');
 
-    Navigator.push<LinkedHashSet<Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
+    Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
       headerBarTitle: _isResearchProject ? 'Project Admins' : 'Group Admins',
       selectedAccounts: _groupAdminAccounts,
-    ))).then((LinkedHashSet<Auth2PublicAccount>? selection) {
+    ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts = selection);
+          _groupAdminAccounts = selection;
+          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts);
+
+          _groupMemberAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
+          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts);
         });
       }
     });
@@ -1234,21 +1237,25 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onBrowseMemberAccounts() {
     Analytics().logSelect(target: 'Browse Member Accounts');
 
-    Navigator.push<LinkedHashSet<Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
+    Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
       headerBarTitle: _isResearchProject ? 'Project Members' : 'Group Members',
       selectedAccounts: _groupMemberAccounts,
-    ))).then((LinkedHashSet<Auth2PublicAccount>? selection) {
+    ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts = selection);
+          _groupMemberAccounts = selection;
+          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts);
+
+          _groupAdminAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
+          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts);
         });
       }
     });
   }
 
-  String _buildAdminAccounts(LinkedHashSet<Auth2PublicAccount> accounts) {
+  String _buildAdminAccounts(LinkedHashMap<String, Auth2PublicAccount> accounts) {
     String text = '';
-    for (Auth2PublicAccount account in accounts) {
+    for (Auth2PublicAccount account in accounts.values) {
       String? accountName = account.profile?.fullName ?? account.profile?.email ?? account.id;
       if ((accountName != null) && accountName.isNotEmpty) {
         if (text.isNotEmpty) {
