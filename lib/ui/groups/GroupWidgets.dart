@@ -2652,7 +2652,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 
   void _onEndPollTapped() {
     if (_isEnding != true) {
-      setState(() {
+      setStateIfMounted(() {
         _isEnding = true;
       });
       Polls().close(widget.pollCard.poll?.pollId).then((_) {
@@ -2664,11 +2664,9 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
           AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
         }
       }).whenComplete(() {
-        if (mounted) {
-          setState(() {
-            _isEnding = false;
-          });
-        }
+        setStateIfMounted(() {
+          _isEnding = false;
+        });
       });
     }
   }

@@ -76,7 +76,11 @@ class _PollDetailPanelState extends State<PollDetailPanel> with NotificationsLis
   }
 
   Widget _buildPollContent() {
-    return PollCard(poll: _poll, group: _group);
+    if (_poll != null) {
+      return PollCard(poll: _poll!, group: _group);
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildErrorContent() {

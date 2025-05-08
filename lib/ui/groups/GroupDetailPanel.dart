@@ -2208,12 +2208,11 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   void _onPollUpdated(String? pollId) {
-    if(pollId!= null && _groupPolls!=null
-        && _groupPolls?.firstWhere((element) => pollId == element.pollId) != null) { //This is Group poll
+    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhere((element) => (pollId == element.pollId)) != null)) { //This is Group poll
 
       Poll? poll = Polls().getPoll(pollId: pollId);
       if (poll != null) {
-        setState(() {
+        setStateIfMounted(() {
           _updatePollInList(poll);
         });
       }

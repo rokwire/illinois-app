@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Supply group details in analytics logs [#5101](https://github.com/rokwire/illinois-app/issues/5101).
 - Send analytics logs for manual attendance taking [#5100](https://github.com/rokwire/illinois-app/issues/5100).
+- Polls issues [#5097](https://github.com/rokwire/illinois-app/issues/5097).
 
 ## [7.1.0] - 2025-05-05
 ### Fixed
