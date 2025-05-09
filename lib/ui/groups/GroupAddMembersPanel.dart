@@ -1,5 +1,8 @@
 import 'dart:collection';
+import 'dart:math';
 
+import 'package:collection/collection.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -20,32 +23,33 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupAddMembersPanel extends StatefulWidget {
   final Group? group;
-  final GroupMemberStatus? status;
+  final GroupMemberStatus? memberStatus;
 
-  const GroupAddMembersPanel({super.key, this.group, this.status});
+  const GroupAddMembersPanel({super.key, this.group, this.memberStatus});
 
   @override
   State<StatefulWidget> createState() => _GroupAddMembersState();
 }
 
 class _GroupAddMembersState extends State<GroupAddMembersPanel> {
-  final _groupAdminAccountsController = TextEditingController();
-  final _groupMemberAccountsController = TextEditingController();
+  final _groupMembersController = TextEditingController();
 
-  LinkedHashMap<String, Auth2PublicAccount> _groupAdminAccounts = LinkedHashMap<String, Auth2PublicAccount>();
-  LinkedHashMap<String, Auth2PublicAccount> _groupMemberAccounts = LinkedHashMap<String, Auth2PublicAccount>();
+  Map<GroupMemberStatus, LinkedHashMap<String, Auth2PublicAccount>> _groupMembers = <GroupMemberStatus, LinkedHashMap<String, Auth2PublicAccount>>{};
+  static const List<GroupMemberStatus> _groupMembersDropdownStatuses = [ GroupMemberStatus.admin, GroupMemberStatus.member ];
+  late GroupMemberStatus _groupMembersStatus;
+  double? _membersDropdownStatusItemsWidth;
 
   bool _uploading = false;
 
   @override
   void initState() {
+    _groupMembersStatus = widget.memberStatus ?? GroupMemberStatus.admin;
     super.initState();
   }
 
   @override
   void dispose() {
-    _groupAdminAccountsController.dispose();
-    _groupMemberAccountsController.dispose();
+    _groupMembersController.dispose();
     super.dispose();
   }
 
@@ -65,135 +69,232 @@ class _GroupAddMembersState extends State<GroupAddMembersPanel> {
 
   Widget get _scaffoldContent => Padding(padding: EdgeInsets.all(16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _buildAdminSettingsSection(),
+      _buildMembersSection(),
     ])
   );
 
   //
-  // AdminSection
-  Widget _buildAdminSettingsSection() {
+  // MembersSection
+  Widget _buildMembersSection() {
     return Visibility(visible: true, child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-          if (widget.status != GroupMemberStatus.member)
-            ..._adminSettingsSection,
-
-          if (widget.status != GroupMemberStatus.admin)
-            ..._membersSettingsSection,
-        ])
-      )
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(child:
+            GroupSectionTitle(title: _selectedMembersSectionLabel?.toUpperCase())
+          )
+        ]),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
+          Expanded(child:
+            Container(decoration: _fieldDisabledDecoration, child:
+              TextField(
+                controller: _groupMembersController,
+                maxLines: null,
+                readOnly: true,
+                onTap: _onBrowseMemberAccounts,
+                decoration: _fieldSmallInputDecoration,
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+              )
+            ),
+          ),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 2), child:
+            _membersBrowseButton,
+          ),
+          _membersDropdownStatus
+        ]),
+      ])
     );
   }
 
-  List<Widget> get _adminSettingsSection => <Widget>[
-    Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Expanded(child:
-        GroupSectionTitle(title: 'ADMINS')
-      )
-    ]),
-    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
-      Expanded(child:
-        Container(decoration: _fieldDisabledDecoration, child:
-          TextField(
-            controller: _groupAdminAccountsController,
-            maxLines: null,
-            readOnly: true,
-            decoration: _fieldSmallInputDecoration,
-            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-          )
-        ),
-      ),
-      Padding(padding: EdgeInsets.only(left: 2), child:
-        _adminBrowseButton(onTap: _onBrowseAdminAccounts),
-      ),
-    ]),
-  ];
-
-  List<Widget> get _membersSettingsSection => <Widget>[
-    Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Expanded(child:
-        GroupSectionTitle(title: 'MEMBERS')
-      )
-    ]),
-    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
-      Expanded(child:
-        Container(decoration: _fieldDisabledDecoration, child:
-          TextField(
-            controller: _groupMemberAccountsController,
-            maxLines: null,
-            readOnly: true,
-            decoration: _fieldSmallInputDecoration,
-            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-          )
-        ),
-      ),
-      Padding(padding: EdgeInsets.only(left: 2), child:
-        _adminBrowseButton(onTap: _onBrowseMemberAccounts),
-      )
-    ]),
-  ];
-
-  Widget _adminBrowseButton({void Function()? onTap}) =>
-    InkWell(onTap: onTap, child:
+  Widget get _membersBrowseButton =>
+    InkWell(onTap: _onBrowseMemberAccounts, child:
       Container(decoration: _buttonDecoration, padding: EdgeInsets.all(15), child:
         Styles().images.getImage('ellipsis')
       )
     );
 
-  void _onBrowseAdminAccounts() {
-    Analytics().logSelect(target: 'Browse Admin Accounts');
-
-    Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
-      headerBarTitle: (widget.group?.isResearchProject == true) ? 'Project Admins' : 'Group Admins',
-      selectedAccounts: _groupAdminAccounts,
-    ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
-      if ((selection != null) && mounted) {
-        setState(() {
-          _groupAdminAccounts = selection;
-          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts);
-
-          _groupMemberAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
-          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts);
-        });
-      }
-    });
-  }
-
   void _onBrowseMemberAccounts() {
-    Analytics().logSelect(target: 'Browse Member Accounts');
+    Analytics().logSelect(target: 'Browse Accounts');
+    String? members = _selectedMembersSectionLabel;
+    String? title = (members != null) ? (_isResearchProject ? 'Project $members' : 'Group $members') : null;
 
     Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
-      headerBarTitle: (widget.group?.isResearchProject == true) ? 'Project Members' : 'Group Members',
-      selectedAccounts: _groupMemberAccounts,
+      headerBarTitle: title,
+      selectedAccounts: _selectedMembers,
     ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _groupMemberAccounts = selection;
-          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts);
-
-          _groupAdminAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
-          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts);
+          _selectedMembers = selection;
+          _groupMembersController.text = _selectedMembersDescription;
         });
       }
     });
   }
 
-  String _buildAdminAccounts(LinkedHashMap<String, Auth2PublicAccount> accounts) {
-    String text = '';
-    for (Auth2PublicAccount account in accounts.values) {
-      String? accountName = account.profile?.fullName ?? account.profile?.email ?? account.id;
-      if ((accountName != null) && accountName.isNotEmpty) {
-        if (text.isNotEmpty) {
-          text += ', ';
+  Widget get _membersDropdownStatus =>
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<GroupMemberStatus>(
+        dropdownStyleData: DropdownStyleData(
+          width: _membersDropdownStatusItemsWidth ??= _evaluateMembersDropdownItemsWidth(),
+          direction: DropdownDirection.left,
+          decoration: _buttonDecoration,
+        ),
+        customButton: _membersDropdownButton,
+        isExpanded: false,
+        items: membersDropdownItems,
+        onChanged: _onMembersDropdownStatus,
+      ),
+    );
+
+  void _onMembersDropdownStatus(GroupMemberStatus? memberStatus) {
+    Analytics().logSelect(target: 'Select $memberStatus');
+    if (memberStatus != null) {
+      setState(() {
+        _groupMembersStatus = memberStatus;
+        _groupMembersController.text = _selectedMembersDescription;
+      });
+    }
+  }
+
+  Widget get _membersDropdownButton =>
+      Container(decoration: _buttonDecoration, child:
+        Padding(padding: _membersDropdownButtonPadding, child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            SizedBox(width: _membersDropdownIconSize, height: _membersDropdownIconSize, child:
+              Center(child: _selectedMemberDropdownIcon,)
+            ),
+            Padding(padding: EdgeInsets.only(left: _membersDropdownButtonInnerIconPaddingX), child:
+              SizedBox(width: _membersDropdownButtonChevronIconSize, height: _membersDropdownButtonChevronIconSize, child:
+                Center(child:
+                  _chevronDropdownIcon,
+                )
+              )
+            )
+          ],)
+        )
+      );
+
+  LinkedHashMap<String, Auth2PublicAccount>? get _selectedMembers =>
+    _groupMembers[_groupMembersStatus];
+
+  set _selectedMembers(LinkedHashMap<String, Auth2PublicAccount>? value) {
+    if (value != null) {
+      _groupMembers.forEach((GroupMemberStatus memberStatus, LinkedHashMap<String, Auth2PublicAccount> accounts){
+        if (memberStatus != _groupMembersStatus) {
+          accounts.removeWhere((String accountId, Auth2PublicAccount account) => value.containsKey(accountId));
         }
-        text += accountName;
+      });
+      _groupMembers[_groupMembersStatus] = value;
+    }
+    else {
+      _groupMembers.remove(_groupMembersStatus);
+    }
+  }
+
+  String get _selectedMembersDescription {
+    String text = '';
+    LinkedHashMap<String, Auth2PublicAccount>? accounts = _selectedMembers;
+    if (accounts != null) {
+      for (Auth2PublicAccount account in accounts.values) {
+        String? accountName = account.profile?.fullName ?? account.profile?.email ?? account.id;
+        if ((accountName != null) && accountName.isNotEmpty) {
+          if (text.isNotEmpty) {
+            text += ', ';
+          }
+          text += accountName;
+        }
       }
     }
     return text;
   }
 
-  bool get _isModified => _groupMemberAccounts.isNotEmpty || _groupAdminAccounts.isNotEmpty;
+  String _memberStatusName(GroupMemberStatus memberStatus) =>
+    _isResearchProject ? memberStatus.researchDisplayGroupTitle : memberStatus.groupDisplayGroupTitle;
+
+  String? get _selectedMembersSectionLabel =>
+    _isResearchProject ? _groupMembersStatus.researchDisplayGroupTitle : _groupMembersStatus.groupDisplayGroupTitle;
+
+  Widget? get _selectedMemberDropdownIcon =>
+    _membersDropdownIcon(_groupMembersStatus);
+
+  List<DropdownMenuItem<GroupMemberStatus>> get membersDropdownItems {
+    List<DropdownMenuItem<GroupMemberStatus>> items = <DropdownMenuItem<GroupMemberStatus>>[];
+    for (GroupMemberStatus memberStatus in _groupMembersDropdownStatuses) {
+      items.add(_membersDropdownItem(memberStatus, selected: memberStatus == _groupMembersStatus));
+    }
+    return items;
+  }
+
+  DropdownMenuItem<GroupMemberStatus> _membersDropdownItem(GroupMemberStatus memberStatus, { bool selected = false}) =>
+    DropdownMenuItem<GroupMemberStatus>(value: memberStatus, child:
+      Semantics(label: memberStatus.groupSemanticLabel, container: true, button: true, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisSize: MainAxisSize.max, children: [
+            Padding(padding: EdgeInsets.only(right: _membersDropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _membersDropdownIconSize, height: _membersDropdownIconSize, child:
+                Center(child: _membersDropdownIcon(memberStatus))
+              )
+            ),
+            Expanded(child:
+              Text(_memberStatusName(memberStatus),
+                overflow: TextOverflow.ellipsis,
+                style: selected ? _selectedMembersDropdownItemTextStyle : _regularMembersDropdownItemTextStyle,
+                semanticsLabel: "",
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: _membersDropdownItemInnerIconPaddingX), child:
+              SizedBox(width: _membersDropdownIconSize, height: _membersDropdownIconSize, child:
+                Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+              )
+            )
+          ],),
+        ],)
+      ),
+    );
+
+  double _evaluateMembersDropdownItemsWidth() {
+    double maxTextWidth = 0;
+    for (GroupMemberStatus memberStatus in _groupMembersDropdownStatuses) {
+      final Size textSizeFull = (TextPainter(
+        text: TextSpan(text: _memberStatusName(memberStatus), style: _selectedMembersDropdownItemTextStyle,),
+        textScaler: MediaQuery.of(context).textScaler,
+        textDirection: TextDirection.ltr,
+      )..layout()).size;
+      if (maxTextWidth < textSizeFull.width) {
+        maxTextWidth = textSizeFull.width;
+      }
+    }
+    double dropdownItemWidth = (maxTextWidth * 5 / 3) + 2 * (_membersDropdownIconSize + _membersDropdownItemInnerIconPaddingX) + _membersDropdownMenuItemPadding.horizontal;
+    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+  }
+
+  static Widget? _membersDropdownIcon(GroupMemberStatus? memberStatus) {
+    switch (memberStatus) {
+      case GroupMemberStatus.admin: return _adminDropdownIcon;
+      case GroupMemberStatus.member: return _memberDropdownIcon;
+      default: return null;
+    }
+  }
+
+  static const double _membersDropdownIconSize = 16;
+  static const double _membersDropdownItemInnerIconPaddingX = 12;
+  static const double _membersDropdownButtonChevronIconSize = 10;
+  static const double _membersDropdownButtonInnerIconPaddingX = 12;
+
+  static const EdgeInsetsGeometry _membersDropdownMenuItemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry _membersDropdownButtonPadding = const EdgeInsets.only(left: 12, right: 4, top: 16, bottom: 16);
+
+  TextStyle? get _selectedMembersDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.extra_fat");
+  TextStyle? get _regularMembersDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.semi_fat");
+
+  static Widget? get _adminDropdownIcon => Styles().images.getImage('user-tie', color: Styles().colors.fillColorSecondary, size: _membersDropdownIconSize);
+  static Widget? get _memberDropdownIcon => Styles().images.getImage('users', color: Styles().colors.fillColorSecondary, size: _membersDropdownIconSize);
+  static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _membersDropdownButtonChevronIconSize);
+  static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _membersDropdownIconSize);
+  static Widget? get _redioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _membersDropdownIconSize);
+
+  bool get _isModified => _groupMembers.values.firstWhereOrNull((accounts) => accounts.isNotEmpty) != null;
+  bool get _isResearchProject => widget.group?.researchProject == true;
 
   // Header bar
 
@@ -224,11 +325,10 @@ class _GroupAddMembersState extends State<GroupAddMembersPanel> {
     setStateIfMounted(() => _uploading = true);
 
     List<Member> members = <Member>[];
-    _groupAdminAccounts.values.forEach((Auth2PublicAccount account) {
-      members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.admin));
-    });
-    _groupMemberAccounts.values.forEach((Auth2PublicAccount account) {
-      members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.member));
+    _groupMembers.forEach((GroupMemberStatus memberStatus, LinkedHashMap<String, Auth2PublicAccount> accounts){
+      accounts.values.forEach((Auth2PublicAccount account) {
+        members.add(Member.fromPublicAccount(account, status: memberStatus));
+      });
     });
 
     if (CollectionUtils.isNotEmpty(members)) {
