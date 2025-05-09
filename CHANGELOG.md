@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
 - Removed old connections/directory split [#5122](https://github.com/rokwire/illinois-app/issues/5122).
+### Fixed
+- Emoji picker search layout above keyboard [#5110](https://github.com/rokwire/illinois-app/issues/5110).
 
 ## [7.1.1] - 2025-05-08
 ### Fixed

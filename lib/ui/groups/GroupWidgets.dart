@@ -3658,10 +3658,11 @@ class ReactionKeyboard {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return SizedBox(
-          height: 310,
-          child: emoji.EmojiPicker(
+        return
+          Padding(padding: MediaQuery.of(context).viewInsets, //Above keyboard
+            child: emoji.EmojiPicker(
             config: emoji.Config(
+                // searchViewConfig: emoji.SearchViewConfig(),
                 categoryViewConfig: emoji.CategoryViewConfig(
                   indicatorColor: Styles().colors.fillColorSecondary,
                   iconColorSelected: Styles().colors.fillColorSecondary
