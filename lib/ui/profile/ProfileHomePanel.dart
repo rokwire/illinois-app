@@ -347,7 +347,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, key: _profileInfoKey, contentParams: _contentParams[ProfileContent.profile]);
+      case ProfileContent.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, contentParams: _contentParams[ProfileContent.profile], key: _profileInfoKey);
       case ProfileContent.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: _contentParams[ProfileContent.share]);
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();

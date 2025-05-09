@@ -85,7 +85,7 @@ class _DirectoryAccountsSelectPanelState extends State<DirectoryAccountsSelectPa
   );
 
   Widget get _usersListWidget =>
-    DirectoryAccountsList(DirectoryAccounts.directory,
+    DirectoryAccountsList(
       key: _usersListKey,
       displayMode: DirectoryDisplayMode.select,
       scrollController: _usersListScrollController,

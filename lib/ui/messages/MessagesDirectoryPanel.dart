@@ -204,7 +204,7 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with No
     );
 
   Widget get _allUsersContent =>
-    DirectoryAccountsList(DirectoryAccounts.directory,
+    DirectoryAccountsList(
       key: _allUsersPageKey,
       displayMode: DirectoryDisplayMode.select,
       scrollController: _allUsersScrollController,
