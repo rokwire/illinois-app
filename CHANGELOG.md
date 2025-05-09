@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - NEOM U
 ### Fixed
+- Error saving business card QR code[#90](https://github.com/rokmetro/neom-app/issues/90)
 - Fixed package name bug for mobile platforms
 
 ## [0.5.16] = 2025-05-02

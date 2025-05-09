@@ -181,7 +181,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 }
 
 class _QrCodePanelState extends State<QrCodePanel> {
-  static final double _imageSize = 1024;
+  static final int _imageSize = 1024;
   Uint8List? _qrCodeBytes;
 
   @override
@@ -287,7 +287,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
     String qrContent = StringUtils.ensureNotEmpty(_promotionUrl ?? widget.digitalCardQrCode);
     Uint8List? imageBytes;
     if (kIsWeb) {
-      ByteData? qrPainterImage = await QrPainter(data: qrContent, version: QrVersions.auto).toImageData(_imageSize);
+      ByteData? qrPainterImage = await QrPainter(data: qrContent, version: QrVersions.auto).toImageData(_imageSize.toDouble());
       imageBytes = qrPainterImage?.buffer.asUint8List();
     } else {
       imageBytes = await NativeCommunicator().getBarcodeImageData({
@@ -307,19 +307,13 @@ class _QrCodePanelState extends State<QrCodePanel> {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
       Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, widget.saveWatermarkText,
-        width: _imageSize,
-        height: _imageSize,
+        width: _imageSize.toDouble(),
+        height: _imageSize.toDouble(),
         textStyle: widget.saveWatermarkStyle,
       );
       bool result = (updatedImageBytes != null);
       if (result) {
-        result = true;
-        try {
-          await AppFile.downloadFile(context: context, fileBytes: updatedImageBytes, fileName: widget.saveFileName);
-        } catch (e) {
-          result = false;
-          debugPrint(e.toString());
-        }
+        result = await ImageUtils.saveToFs(updatedImageBytes, widget.saveFileName) ?? false;
       }
 
       const String destinationMacro = '{{Destination}}';
