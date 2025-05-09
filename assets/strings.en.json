@@ -376,7 +376,7 @@
     "panel.assistant.content.faqs.label": "Illinois Assistant FAQs",
     "panel.assistant.sources_links.label": "Sources and Links",
     "panel.assistant.related.label": "Related:",
-    "panel.assistant.label.welcome_message.title": "**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback will help improve the Assistant over time.",
+    "panel.assistant.label.welcome_message.title": "**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback ([:thumb_up:] [:thumb_down:]) will help improve the Assistant over time.",
     "panel.assistant.label.example.eg.title": "e.g., ",
     "panel.assistant.label.example.question.title": "How many students attend UIUC?",
     "panel.assistant.unknown.answer.value": "I wasn’t able to find an answer from an official university source.",
