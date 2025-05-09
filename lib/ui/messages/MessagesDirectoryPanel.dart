@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/messages/MessagesWidgets.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -31,8 +30,9 @@ class MessagesDirectoryPanel extends StatefulWidget {
 }
 
 class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with NotificationsListener, TickerProviderStateMixin {
-  GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey();
-  GlobalKey<DirectoryAccountsPageState> _allUsersPageKey = GlobalKey();
+  GlobalKey<RecentConversationsPageState> _recentPageKey = GlobalKey<RecentConversationsPageState>();
+  GlobalKey<DirectoryAccountsListState> _allUsersPageKey = GlobalKey<DirectoryAccountsListState>();
+
   final ScrollController _recentScrollController = ScrollController();
   final ScrollController _allUsersScrollController = ScrollController();
 
@@ -229,15 +229,15 @@ class _MessagesDirectoryPanelState extends State<MessagesDirectoryPanel> with No
     setStateIfMounted((){
       _searchText = text;
       _recentConversations = null;
-      _recentPageKey = GlobalKey();
-      _allUsersPageKey = GlobalKey();
+      _recentPageKey = GlobalKey<RecentConversationsPageState>();
+      _allUsersPageKey = GlobalKey<DirectoryAccountsListState>();
     });
   }
 
   void _onFilterAttributes(Map<String, dynamic> filterAttributes) {
     setStateIfMounted((){
       _filterAttributes = filterAttributes;
-      _allUsersPageKey = GlobalKey();
+      _allUsersPageKey = GlobalKey<DirectoryAccountsListState>();
     });
   }
 

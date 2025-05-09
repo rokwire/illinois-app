@@ -15,20 +15,21 @@
  */
 
 
+import 'dart:collection';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsSelectPanel.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -62,7 +63,8 @@ class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
-  final _groupNetIdsController = TextEditingController();
+  final _groupAdminAccountsController = TextEditingController();
+  final _groupMemberAccountsController = TextEditingController();
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
@@ -72,13 +74,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Group? _group;
 
-  GroupMemberStatus _selectedMembersStatus = GroupMemberStatus.admin;
-  double? _membersStatusDropdownItemsWidth;
-
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
 
   bool _creating = false;
   bool _researchRequiresConsentConfirmation = false;
+
+  LinkedHashMap<String, Auth2PublicAccount> _groupAdminAccounts = LinkedHashMap<String, Auth2PublicAccount>();
+  LinkedHashMap<String, Auth2PublicAccount> _groupMemberAccounts = LinkedHashMap<String, Auth2PublicAccount>();
 
   @override
   void initState() {
@@ -89,7 +91,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void dispose() {
-    _groupNetIdsController.dispose();
+    _groupAdminAccountsController.dispose();
+    _groupMemberAccountsController.dispose();
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _linkController.dispose();
@@ -349,7 +352,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
          GroupSectionTitle(title: title, requiredMark: true),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: _fieldDecoration,
             child: Semantics(
                 label: fieldTitle,
                 hint: fieldHint,
@@ -360,7 +363,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   controller: _groupTitleController,
                   onChanged: (text) => setState((){_group?.title = text;}) ,
                   maxLines: 1,
-                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                  decoration: _fieldSmallInputDecoration,
                   style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 )),
           ),
@@ -394,7 +397,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           GroupSectionTitle(title: title, description: description),
           Container(height: 5,),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: _fieldDecoration,
             child:
             Row(children: [
               Expanded(child:
@@ -408,7 +411,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
                       controller: _groupDescriptionController,
                       maxLines: 5,
-                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                      decoration: _fieldInputDecoration,
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                     )),
             )],)
@@ -448,17 +451,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
                   child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                            color: Styles().colors.fillColorPrimary,
-                            width: 1)),
+                    decoration: _fieldDecoration,
                     child: TextField(
                       controller: _linkController,
-                      decoration: InputDecoration(
-                          hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                      decoration: _fieldInputDecorationEx(
+                        hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8)
+                      ),
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                       onChanged: (link){ _group!.webURL = link; setStateIfMounted(() {});},
                       maxLines: 1,
@@ -508,14 +507,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           GroupSectionTitle(title: title),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
+          Container(decoration: _fieldDecoration, child:
             Row(children: [
               Expanded(child:
                 Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
                   TextField(
                       controller: _researchConsentDetailsController,
                       maxLines: 15,
-                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                      decoration: _fieldInputDecoration(),
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                       onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                   )
@@ -545,14 +544,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             GroupSectionTitle(title: title),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
+            Container(decoration: _fieldDecoration, child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
                     TextField(
                         controller: _researchConsentStatementController,
                         maxLines: 5,
-                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                        decoration: _fieldInputDecoration(),
                         style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                         onChanged: (text) => setState(() { _group?.researchConsentStatement = text; }),
                     )
@@ -920,7 +919,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       onChanged: _onAuthManGroupNameChanged,
                       controller: _authManGroupNameController,
                       maxLines: 5,
-                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                      decoration: _fieldInputDecoration,
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                     ))
               ]))
@@ -1097,14 +1096,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
 
       //Add members/admins
-      List<String>? adminNetIds;
-      GroupMemberStatus? adminsStatus;
-      if(StringUtils.isNotEmpty(_groupNetIdsController.text)) {
-        adminsStatus = _selectedMembersStatus;
-        adminNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_groupNetIdsController.text.split(ListUtils.commonDelimiterRegExp)));
-      }
+      List<Member> members = <Member>[];
+      _groupAdminAccounts.values.forEach((Auth2PublicAccount account) {
+        members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.admin));
+      });
+      _groupMemberAccounts.values.forEach((Auth2PublicAccount account) {
+        members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.member));
+      });
 
-      Groups().createGroup(_group, adminNetIds: adminNetIds, adminsStatus: adminsStatus).then((GroupError? error) {
+      Groups().createGroup(_group, members: members).then((GroupError? error) {
         if (mounted) {
           setState(() {
             _creating = false;
@@ -1131,116 +1131,114 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Visibility(visible: true, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
-              GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false)
+              GroupSectionTitle(title: 'ADMINS')
             )
           ]),
           Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
             Expanded(child:
-              Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white), child:
+              Container(decoration: _fieldDisabledDecoration, child:
                 TextField(
-                  controller: _groupNetIdsController,
-                  maxLines: 1,
-                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
+                  controller: _groupAdminAccountsController,
+                  maxLines: null,
+                  readOnly: true,
+                  decoration: _fieldSmallInputDecoration,
                   style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 )
               ),
             ),
-            Padding(padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6), child:
-              _adminStatusDropdown
+            Padding(padding: EdgeInsets.only(left: 2), child:
+              _adminBrowseButton(onTap: _onBrowseAdminAccounts),
+            ),
+          ]),
+
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              GroupSectionTitle(title: 'MEMBERS')
             )
-          ])
+          ]),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
+            Expanded(child:
+              Container(decoration: _fieldDisabledDecoration, child:
+                TextField(
+                  controller: _groupMemberAccountsController,
+                  maxLines: null,
+                  readOnly: true,
+                  decoration: _fieldSmallInputDecoration,
+                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(left: 2), child:
+              _adminBrowseButton(onTap: _onBrowseMemberAccounts),
+            )
+          ]),
+
         ])
       )
     );
   }
 
-
-  Widget get _adminStatusDropdown =>
-    DropdownButtonHideUnderline(child:
-      DropdownButton2<GroupMemberStatus>(
-        dropdownStyleData: DropdownStyleData(
-          width: _membersStatusDropdownItemsWidth ??= _evalMembersStatusDropdownItemsWidth(),
-          direction: DropdownDirection.left,
-          decoration: _dropdownDecoration,
-        ),
-        customButton: _adminStatusDropdownButton(),
-        isExpanded: false,
-        items: _adminStatusDropdownItems(),
-        onChanged: _onAdminStatusDropdownSelected,
-      ),
-    );
-
-  void _onAdminStatusDropdownSelected(GroupMemberStatus? status) {
-    Analytics().logSelect(target: 'Select Admin Status: $status');
-    if ((status != null) && mounted)
-    setState(() {
-      _selectedMembersStatus = status;
-    });
-  }
-
-  Widget _adminStatusDropdownButton() =>
-    Container(decoration: _dropdownDecoration, child:
-      Padding(padding: EdgeInsets.only(left: 12, right: 6, top: 12, bottom: 12), child:
-        Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(groupMemberStatusToString(_selectedMembersStatus) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.value') ,),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            SizedBox(width: 10, height: 10, child:
-              Center(child:
-                Styles().images.getImage('chevron-down', size: 10),
-              )
-            )
-          )
-        ],)
+  Widget _adminBrowseButton({void Function()? onTap}) =>
+    InkWell(onTap: onTap, child:
+      Container(decoration: _buttonDecoration, padding: EdgeInsets.all(15), child:
+        Styles().images.getImage('ellipsis')
       )
     );
 
-  List<DropdownMenuItem<GroupMemberStatus>> _adminStatusDropdownItems() =>
-    List.from(_adminsStatusItems.map((status) => _adminStatusDropdownItem(status, selected: _selectedMembersStatus == status)));
+  void _onBrowseAdminAccounts() {
+    Analytics().logSelect(target: 'Browse Admin Accounts');
 
-  DropdownMenuItem<GroupMemberStatus> _adminStatusDropdownItem(GroupMemberStatus status, { bool selected = false,}) =>
-      DropdownMenuItem<GroupMemberStatus>(
-        value: status,
-        child: Row(mainAxisSize: MainAxisSize.max, children: [
-          Expanded(child:
-            Text(groupMemberStatusToString(status) ?? '',
-              overflow: TextOverflow.ellipsis,
-              style: Styles().textStyles.getTextStyle(selected ?  'widget.group.dropdown_button.item.selected' : 'widget.group.dropdown_button.item.not_selected'),
-              semanticsLabel: "",
-            ),
-          ),
-          Padding(padding: EdgeInsets.only(left: 12), child:
-            SizedBox(width: 16, height: 16, child:
-              Center(child: Styles().images.getImage(selected ? 'radio-button-on' : 'radio-button-off', size: 16))
-            )
-          )
-        ],),
-      );
+    Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
+      headerBarTitle: _isResearchProject ? 'Project Admins' : 'Group Admins',
+      selectedAccounts: _groupAdminAccounts,
+    ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _groupAdminAccounts = selection;
+          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts);
 
-  double _evalMembersStatusDropdownItemsWidth() {
-    double maxTextWidth = 0;
-    for (GroupMemberStatus status in _adminsStatusItems) {
-      final Size textSizeFull = (TextPainter(
-        text: TextSpan(text: groupMemberStatusToString(status) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.item.not_selected')),
-        textScaler: MediaQuery.of(context).textScaler,
-        textDirection: TextDirection.ltr,
-      )..layout()).size;
-      if (maxTextWidth < textSizeFull.width) {
-        maxTextWidth = textSizeFull.width;
+          _groupMemberAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
+          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts);
+        });
       }
-    }
-    double dropdownItemWidth = (maxTextWidth * 5 / 3) + (16 + 12) + 32;
-    return min(dropdownItemWidth, MediaQuery.of(context).size.width * 2 / 3);
+    });
   }
 
-  BoxDecoration get _dropdownDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(4)),
-  );
+  void _onBrowseMemberAccounts() {
+    Analytics().logSelect(target: 'Browse Member Accounts');
 
-  List<GroupMemberStatus> get _adminsStatusItems => [GroupMemberStatus.admin, GroupMemberStatus.member];
+    Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
+      headerBarTitle: _isResearchProject ? 'Project Members' : 'Group Members',
+      selectedAccounts: _groupMemberAccounts,
+    ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _groupMemberAccounts = selection;
+          _groupMemberAccountsController.text = _buildAdminAccounts(_groupMemberAccounts);
+
+          _groupAdminAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
+          _groupAdminAccountsController.text = _buildAdminAccounts(_groupAdminAccounts);
+        });
+      }
+    });
+  }
+
+  String _buildAdminAccounts(LinkedHashMap<String, Auth2PublicAccount> accounts) {
+    String text = '';
+    for (Auth2PublicAccount account in accounts.values) {
+      String? accountName = account.profile?.fullName ?? account.profile?.email ?? account.id;
+      if ((accountName != null) && accountName.isNotEmpty) {
+        if (text.isNotEmpty) {
+          text += ', ';
+        }
+        text += accountName;
+      }
+    }
+    return text;
+  }
 
   //
   // Common
@@ -1321,4 +1319,25 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   String get _contentAttributesScope => Groups.contentAttributesScope(researchProject: _isResearchProject);
   ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
+
+  BoxDecoration get _buttonDecoration =>
+    BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(4), color: Styles().colors.white);
+
+  BoxDecoration get _fieldDecoration =>
+    _fieldDecorationEx(backColor: Styles().colors.white);
+
+  BoxDecoration get _fieldDisabledDecoration =>
+    _fieldDecorationEx(backColor: Styles().colors.background);
+
+  BoxDecoration _fieldDecorationEx({Color? backColor}) =>
+    BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: backColor);
+
+  InputDecoration get _fieldInputDecoration =>
+    _fieldInputDecorationEx();
+
+  InputDecoration get _fieldSmallInputDecoration =>
+    _fieldInputDecorationEx(contentPadding: EdgeInsets.symmetric(horizontal: 8));
+
+  InputDecoration _fieldInputDecorationEx({ String? hintText, EdgeInsetsGeometry contentPadding = const EdgeInsets.symmetric(horizontal: 8, vertical: 12) }) =>
+    InputDecoration(border: InputBorder.none, hintText: hintText, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0));
 }
