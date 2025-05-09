@@ -4255,11 +4255,23 @@
     "model.groups.member.status.rejected": "Rechazado",
     "model.groups.member.status.unknown": "Desconocido",
 
+    "model.groups.member.status.group.pending": "Pending",
+    "model.groups.member.status.group.member": "Members",
+    "model.groups.member.status.group.admin": "Admins",
+    "model.groups.member.status.group.rejected": "Denied",
+    "model.groups.member.status.group.unknown": "Unknown",
+
     "model.research_project.member.status.pending": "Pendiente",
     "model.research_project.member.status.member": "Participante",
     "model.research_project.member.status.admin": "Admin",
     "model.research_project.member.status.rejected": "Rechazado",
     "model.research_project.member.status.unknown": "Desconocido",
+
+    "model.research_project.member.status.group.pending": "Pending",
+    "model.research_project.member.status.group.member": "Participants",
+    "model.research_project.member.status.group.admin": "Admins",
+    "model.research_project.member.status.group.rejected": "Denied",
+    "model.research_project.member.status.group.unknown": "Unknown",
 
     "model.event2.sort_type.date_time": "Fecha y Hora",
     "model.event2.sort_type.alphabetical": "Alfabético",

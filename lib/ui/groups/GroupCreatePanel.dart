@@ -65,8 +65,7 @@ class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
-  final _groupAdminAccountsController = TextEditingController();
-  final _groupMemberAccountsController = TextEditingController();
+  final _groupMembersController = TextEditingController();
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
@@ -81,8 +80,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _creating = false;
   bool _researchRequiresConsentConfirmation = false;
 
-  LinkedHashMap<String, Auth2PublicAccount> _groupAdminAccounts = LinkedHashMap<String, Auth2PublicAccount>();
-  LinkedHashMap<String, Auth2PublicAccount> _groupMemberAccounts = LinkedHashMap<String, Auth2PublicAccount>();
+  Map<GroupMemberStatus, LinkedHashMap<String, Auth2PublicAccount>> _groupMembers = <GroupMemberStatus, LinkedHashMap<String, Auth2PublicAccount>>{};
   GroupMemberStatus _groupMembersStatus = GroupMemberStatus.admin;
   static const List<GroupMemberStatus> _groupMembersDropdownStatuses = [ GroupMemberStatus.admin, GroupMemberStatus.member ];
   double? _membersDropdownStatusItemsWidth;
@@ -96,8 +94,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void dispose() {
-    _groupAdminAccountsController.dispose();
-    _groupMemberAccountsController.dispose();
+    _groupMembersController.dispose();
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _linkController.dispose();
@@ -190,7 +187,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     List<Widget> contentLayout = <Widget>[
       _buildImageSection(),
-      _buildMembersSettingsSection(),
+      _buildMembersSection(),
       _buildNameField(),
       _buildDescriptionField(),
     ];
@@ -1099,11 +1096,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
       //Add members/admins
       List<Member> members = <Member>[];
-      _groupAdminAccounts.values.forEach((Auth2PublicAccount account) {
-        members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.admin));
-      });
-      _groupMemberAccounts.values.forEach((Auth2PublicAccount account) {
-        members.add(Member.fromPublicAccount(account, status: GroupMemberStatus.member));
+      _groupMembers.forEach((GroupMemberStatus memberStatus, LinkedHashMap<String, Auth2PublicAccount> accounts){
+        accounts.values.forEach((Auth2PublicAccount account) {
+          members.add(Member.fromPublicAccount(account, status: memberStatus));
+        });
       });
 
       Groups().createGroup(_group, members: members).then((GroupError? error) {
@@ -1128,118 +1124,63 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   //
-  // AdminSection
-  Widget _buildMembersSettingsSection() {
+  // MembersSection
+  Widget _buildMembersSection() {
     return Visibility(visible: true, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
 
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
-              GroupSectionTitle(title: 'ADMINS')
+              GroupSectionTitle(title: _selectedMembersSectionLabel?.toUpperCase())
             )
           ]),
           Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
             Expanded(child:
               Container(decoration: _fieldDisabledDecoration, child:
                 TextField(
-                  controller: _groupAdminAccountsController,
+                  controller: _groupMembersController,
                   maxLines: null,
                   readOnly: true,
+                  onTap: _onBrowseMemberAccounts,
                   decoration: _fieldSmallInputDecoration,
                   style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 )
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 2), child:
-              _membersBrowseButton(onTap: _onBrowseAdminAccounts),
+              _membersBrowseButton,
             ),
             _membersDropdownStatus
-          ]),
-
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              GroupSectionTitle(title: 'MEMBERS')
-            )
-          ]),
-          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
-            Expanded(child:
-              Container(decoration: _fieldDisabledDecoration, child:
-                TextField(
-                  controller: _groupMemberAccountsController,
-                  maxLines: null,
-                  readOnly: true,
-                  decoration: _fieldSmallInputDecoration,
-                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                )
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(left: 2), child:
-              _membersBrowseButton(onTap: _onBrowseMemberAccounts),
-            )
           ]),
         ])
       )
     );
   }
 
-  Widget _membersBrowseButton({void Function()? onTap}) =>
-    InkWell(onTap: onTap, child:
+  Widget get _membersBrowseButton =>
+    InkWell(onTap: _onBrowseMemberAccounts, child:
       Container(decoration: _buttonDecoration, padding: EdgeInsets.all(15), child:
         Styles().images.getImage('ellipsis')
       )
     );
 
-  void _onBrowseAdminAccounts() {
-    Analytics().logSelect(target: 'Browse Admin Accounts');
-
-    Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
-      headerBarTitle: _isResearchProject ? 'Project Admins' : 'Group Admins',
-      selectedAccounts: _groupAdminAccounts,
-    ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
-      if ((selection != null) && mounted) {
-        setState(() {
-          _groupAdminAccounts = selection;
-          _groupAdminAccountsController.text = _buildMembersText(_groupAdminAccounts);
-
-          _groupMemberAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
-          _groupMemberAccountsController.text = _buildMembersText(_groupMemberAccounts);
-        });
-      }
-    });
-  }
-
   void _onBrowseMemberAccounts() {
-    Analytics().logSelect(target: 'Browse Member Accounts');
+    Analytics().logSelect(target: 'Browse Accounts');
+    String? members = _selectedMembersSectionLabel;
+    String? title = (members != null) ? (_isResearchProject ? 'Project $members' : 'Group $members') : null;
 
     Navigator.push<LinkedHashMap<String, Auth2PublicAccount>>(context, CupertinoPageRoute(builder: (context) => DirectoryAccountsSelectPanel(
-      headerBarTitle: _isResearchProject ? 'Project Members' : 'Group Members',
-      selectedAccounts: _groupMemberAccounts,
+      headerBarTitle: title,
+      selectedAccounts: _selectedMembers,
     ))).then((LinkedHashMap<String, Auth2PublicAccount>? selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _groupMemberAccounts = selection;
-          _groupMemberAccountsController.text = _buildMembersText(_groupMemberAccounts);
-
-          _groupAdminAccounts.removeWhere((String accountId, Auth2PublicAccount account) => selection.containsKey(accountId));
-          _groupAdminAccountsController.text = _buildMembersText(_groupAdminAccounts);
+          _selectedMembers = selection;
+          _groupMembersController.text = _selectedMembersDescription;
         });
       }
     });
-  }
-
-  String _buildMembersText(LinkedHashMap<String, Auth2PublicAccount> accounts) {
-    String text = '';
-    for (Auth2PublicAccount account in accounts.values) {
-      String? accountName = account.profile?.fullName ?? account.profile?.email ?? account.id;
-      if ((accountName != null) && accountName.isNotEmpty) {
-        if (text.isNotEmpty) {
-          text += ', ';
-        }
-        text += accountName;
-      }
-    }
-    return text;
   }
 
   Widget get _membersDropdownStatus =>
@@ -1262,6 +1203,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     if (memberStatus != null) {
       setState(() {
         _groupMembersStatus = memberStatus;
+        _groupMembersController.text = _selectedMembersDescription;
       });
     }
   }
@@ -1284,6 +1226,46 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         )
       );
 
+  LinkedHashMap<String, Auth2PublicAccount>? get _selectedMembers =>
+    _groupMembers[_groupMembersStatus];
+
+  set _selectedMembers(LinkedHashMap<String, Auth2PublicAccount>? value) {
+    if (value != null) {
+      _groupMembers.forEach((GroupMemberStatus memberStatus, LinkedHashMap<String, Auth2PublicAccount> accounts){
+        if (memberStatus != _groupMembersStatus) {
+          accounts.removeWhere((String accountId, Auth2PublicAccount account) => value.containsKey(accountId));
+        }
+      });
+      _groupMembers[_groupMembersStatus] = value;
+    }
+    else {
+      _groupMembers.remove(_groupMembersStatus);
+    }
+  }
+
+  String get _selectedMembersDescription {
+    String text = '';
+    LinkedHashMap<String, Auth2PublicAccount>? accounts = _selectedMembers;
+    if (accounts != null) {
+      for (Auth2PublicAccount account in accounts.values) {
+        String? accountName = account.profile?.fullName ?? account.profile?.email ?? account.id;
+        if ((accountName != null) && accountName.isNotEmpty) {
+          if (text.isNotEmpty) {
+            text += ', ';
+          }
+          text += accountName;
+        }
+      }
+    }
+    return text;
+  }
+
+  String _memberStatusName(GroupMemberStatus memberStatus) =>
+      _isResearchProject ? memberStatus.researchDisplayGroupTitle : memberStatus.groupDisplayGroupTitle;
+
+  String? get _selectedMembersSectionLabel =>
+    _isResearchProject ? _groupMembersStatus.researchDisplayGroupTitle : _groupMembersStatus.groupDisplayGroupTitle;
+
   Widget? get _selectedMemberDropdownIcon =>
     _membersDropdownIcon(_groupMembersStatus);
 
@@ -1296,9 +1278,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   DropdownMenuItem<GroupMemberStatus> _membersDropdownItem(GroupMemberStatus memberStatus, { bool selected = false}) =>
-    DropdownMenuItem<GroupMemberStatus>(
-      value: memberStatus,
-      child: Semantics(label: groupMemberStatusToDisplayString(memberStatus), container: true, button: true, child:
+    DropdownMenuItem<GroupMemberStatus>(value: memberStatus, child:
+      Semantics(label: memberStatus.groupSemanticLabel, container: true, button: true, child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisSize: MainAxisSize.max, children: [
             Padding(padding: EdgeInsets.only(right: _membersDropdownItemInnerIconPaddingX), child:
@@ -1307,7 +1288,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               )
             ),
             Expanded(child:
-              Text(groupMemberStatusToDisplayString(memberStatus) ?? '',
+              Text(_memberStatusName(memberStatus) ?? '',
                 overflow: TextOverflow.ellipsis,
                 style: selected ? _selectedMembersDropdownItemTextStyle : _regularMembersDropdownItemTextStyle,
                 semanticsLabel: "",
@@ -1327,7 +1308,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     double maxTextWidth = 0;
     for (GroupMemberStatus memberStatus in _groupMembersDropdownStatuses) {
       final Size textSizeFull = (TextPainter(
-        text: TextSpan(text: groupMemberStatusToDisplayString(memberStatus) ?? '', style: _selectedMembersDropdownItemTextStyle,),
+        text: TextSpan(text: _memberStatusName(memberStatus) ?? '', style: _selectedMembersDropdownItemTextStyle,),
         textScaler: MediaQuery.of(context).textScaler,
         textDirection: TextDirection.ltr,
       )..layout()).size;
@@ -1358,7 +1339,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   TextStyle? get _selectedMembersDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.extra_fat");
   TextStyle? get _regularMembersDropdownItemTextStyle => Styles().textStyles.getTextStyle("widget.item.regular.semi_fat");
 
-  static Widget? get _adminDropdownIcon => Styles().images.getImage('users-gear', color: Styles().colors.fillColorSecondary, size: _membersDropdownIconSize);
+  static Widget? get _adminDropdownIcon => Styles().images.getImage('user-tie', color: Styles().colors.fillColorSecondary, size: _membersDropdownIconSize);
   static Widget? get _memberDropdownIcon => Styles().images.getImage('users', color: Styles().colors.fillColorSecondary, size: _membersDropdownIconSize);
   static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _membersDropdownButtonChevronIconSize);
   static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _membersDropdownIconSize);

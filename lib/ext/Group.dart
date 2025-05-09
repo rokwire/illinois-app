@@ -174,47 +174,65 @@ extension GroupExt on Group {
   }
 }
 
-String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
-  if (value != null) {
-    if (value == GroupMemberStatus.pending) {
-      return Localization().getStringEx('model.groups.member.status.pending', 'Pending');
-    } else if (value == GroupMemberStatus.member) {
-      return Localization().getStringEx('model.groups.member.status.member', 'Member');
-    } else if (value == GroupMemberStatus.admin) {
-      return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
-    } else if (value == GroupMemberStatus.rejected) {
-      return Localization().getStringEx('model.groups.member.status.rejected', 'Denied');
+extension GroupMemberStatusExt on GroupMemberStatus {
+  String get groupDisplayTitle {
+    switch (this) {
+      case GroupMemberStatus.pending: return Localization().getStringEx('model.groups.member.status.pending', 'Pending');
+      case GroupMemberStatus.member: return Localization().getStringEx('model.groups.member.status.member', 'Member');
+      case GroupMemberStatus.admin: return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
+      case GroupMemberStatus.rejected: return Localization().getStringEx('model.groups.member.status.rejected', 'Denied');
     }
   }
-  return null;
-}
 
-String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
-  if (value != null) {
-    if (value == GroupMemberStatus.pending) {
-      return Localization().getStringEx('model.research_project.member.status.pending', 'Pending');
-    } else if (value == GroupMemberStatus.member) {
-      return Localization().getStringEx('model.research_project.member.status.member', 'Participant');
-    } else if (value == GroupMemberStatus.admin) {
-      return Localization().getStringEx('model.research_project.member.status.admin', 'Admin');
-    } else if (value == GroupMemberStatus.rejected) {
-      return Localization().getStringEx('model.research_project.member.status.rejected', 'Denied');
+  String get groupDisplayGroupTitle {
+    switch (this) {
+      case GroupMemberStatus.pending: return Localization().getStringEx('model.groups.member.status.group.pending', 'Pending');
+      case GroupMemberStatus.member: return Localization().getStringEx('model.groups.member.status.group.member', 'Members');
+      case GroupMemberStatus.admin: return Localization().getStringEx('model.groups.member.status.group.admin', 'Admins');
+      case GroupMemberStatus.rejected: return Localization().getStringEx('model.groups.member.status.group.rejected', 'Denied');
     }
   }
-  return null;
-}
 
-Color? groupMemberStatusToColor(GroupMemberStatus? value) {
-  if (value != null) {
-    switch(value){
+  String get groupSemanticLabel => "$groupDisplayTitle";
+
+  Color get groupDisplayColor {
+    switch(this){
       case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
       case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
       case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
       case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
     }
   }
-  return null;
+
+  String get researchDisplayTitle {
+    switch (this) {
+      case GroupMemberStatus.pending: return Localization().getStringEx('model.research_project.member.status.pending', 'Pending');
+      case GroupMemberStatus.member: return Localization().getStringEx('model.research_project.member.status.member', 'Participant');
+      case GroupMemberStatus.admin: return Localization().getStringEx('model.research_project.member.status.admin', 'Admin');
+      case GroupMemberStatus.rejected: return Localization().getStringEx('model.research_project.member.status.rejected', 'Denied');
+    }
+  }
+
+  String get researchDisplayGroupTitle {
+    switch (this) {
+      case GroupMemberStatus.pending: return Localization().getStringEx('model.research_project.member.status.group.pending', 'Pending');
+      case GroupMemberStatus.member: return Localization().getStringEx('model.research_project.member.status.group.member', 'Participants');
+      case GroupMemberStatus.admin: return Localization().getStringEx('model.research_project.member.status.group.admin', 'Admins');
+      case GroupMemberStatus.rejected: return Localization().getStringEx('model.research_project.member.status.group.rejected', 'Denied');
+    }
+  }
+
+  String get researchSemanticLabel => "$researchDisplayTitle";
 }
+
+String? groupMemberStatusToDisplayString(GroupMemberStatus? value) =>
+  (value != null) ? value.groupDisplayTitle : null;
+
+String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) =>
+  (value != null) ? value.researchDisplayTitle : null;
+
+Color? groupMemberStatusToColor(GroupMemberStatus? value) =>
+  (value != null) ? value.groupDisplayColor : null;
 
 extension GroupSettingsExt on GroupSettings{
   static List<DetailTab?> getDefaultDetailTabs() => GroupContentItemExt.defaultContentCodes.map(
