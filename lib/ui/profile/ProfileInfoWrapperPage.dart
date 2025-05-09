@@ -80,7 +80,6 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
     switch(widget.content) {
       case ProfileInfoWrapperContent.info: return ProfileInfoPage(
         key: _profileInfoKey,
-        contentType: ProfileInfo.directoryInfo,
         params: widget.contentParams(ProfileInfoWrapperContent.info),
       );
 
