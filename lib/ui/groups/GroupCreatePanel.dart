@@ -81,8 +81,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _researchRequiresConsentConfirmation = false;
 
   Map<GroupMemberStatus, LinkedHashMap<String, Auth2PublicAccount>> _groupMembers = <GroupMemberStatus, LinkedHashMap<String, Auth2PublicAccount>>{};
-  GroupMemberStatus _groupMembersStatus = GroupMemberStatus.admin;
   static const List<GroupMemberStatus> _groupMembersDropdownStatuses = [ GroupMemberStatus.admin, GroupMemberStatus.member ];
+  GroupMemberStatus _groupMembersStatus = GroupMemberStatus.admin;
   double? _membersDropdownStatusItemsWidth;
 
   @override
@@ -1288,7 +1288,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               )
             ),
             Expanded(child:
-              Text(_memberStatusName(memberStatus) ?? '',
+              Text(_memberStatusName(memberStatus),
                 overflow: TextOverflow.ellipsis,
                 style: selected ? _selectedMembersDropdownItemTextStyle : _regularMembersDropdownItemTextStyle,
                 semanticsLabel: "",
@@ -1308,7 +1308,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     double maxTextWidth = 0;
     for (GroupMemberStatus memberStatus in _groupMembersDropdownStatuses) {
       final Size textSizeFull = (TextPainter(
-        text: TextSpan(text: _memberStatusName(memberStatus) ?? '', style: _selectedMembersDropdownItemTextStyle,),
+        text: TextSpan(text: _memberStatusName(memberStatus), style: _selectedMembersDropdownItemTextStyle,),
         textScaler: MediaQuery.of(context).textScaler,
         textDirection: TextDirection.ltr,
       )..layout()).size;
