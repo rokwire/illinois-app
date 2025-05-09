@@ -16,12 +16,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class DirectoryAccountsPage extends StatefulWidget {
   static const String notifyEditInfo  = "edu.illinois.rokwire.directory.accounts.edit";
 
-  final DirectoryAccounts contentType;
   final ScrollController? scrollController;
-  final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final void Function(DirectoryAccounts contentType)? onShareProfile;
+  final void Function()? onEditProfile;
+  final void Function()? onShareProfile;
 
-  DirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.onEditProfile, this.onShareProfile});
+  DirectoryAccountsPage({ super.key, this.scrollController, this.onEditProfile, this.onShareProfile });
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
@@ -76,7 +75,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
       _accountsListWidget,
     ]);
 
-  Widget get _accountsListWidget => DirectoryAccountsList(widget.contentType,
+  Widget get _accountsListWidget => DirectoryAccountsList(
     key: _accountsListKey,
     displayMode: DirectoryDisplayMode.browse,
     scrollController: widget.scrollController,
@@ -88,7 +87,8 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
   static const String _linkShareMacro = "{{link.share.info}}";
 
   Widget get _editOrShareDescription {
-    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(_editOrShareDescriptionTemplate,
+    String templateString = Localization().getStringEx('panel.directory.accounts.directory.edit.info.description', '$_linkEditMacro or $_linkShareMacro your directory information.');
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(templateString,
       macros: [_linkEditMacro, _linkShareMacro],
       builder: (String entry) {
         if (entry == _linkEditMacro) {
@@ -118,21 +118,14 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
     );
   }
 
-  String get _editOrShareDescriptionTemplate {
-    switch(widget.contentType) {
-      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.edit.info.description', '$_linkEditMacro or $_linkShareMacro your connections information.');
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.edit.info.description', '$_linkEditMacro or $_linkShareMacro your directory information.');
-    }
-  }
-
   void _onTapEditInfo() {
     Analytics().logSelect(target: 'Edit Info');
-    widget.onEditProfile?.call(widget.contentType);
+    widget.onEditProfile?.call();
   }
 
   void _onTapShareInfo() {
     Analytics().logSelect(target: 'Share Info');
-    widget.onShareProfile?.call(widget.contentType);
+    widget.onShareProfile?.call();
   }
 
   Widget get _searchBarWidget =>

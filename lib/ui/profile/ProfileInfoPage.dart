@@ -29,17 +29,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum ProfileInfo { connectionsInfo, directoryInfo }
-
 class ProfileInfoPage extends StatefulWidget {
   static const String editParamKey = 'edu.illinois.rokwire.profile.directory.info.edit';
 
-  final ProfileInfo contentType;
   final Map<String, dynamic>? params;
   final bool onboarding;
   final void Function()? onStateChanged;
 
-  ProfileInfoPage({super.key, required this.contentType, this.params, this.onboarding = false, this.onStateChanged});
+  ProfileInfoPage({super.key, this.params, this.onboarding = false, this.onStateChanged});
 
   @override
   State<StatefulWidget> createState() => ProfileInfoPageState();
@@ -138,7 +135,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
       Column(children: [
         ProfileInfoPreviewPage(
           key: _profileInfoPreviewKey,
-          contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
           onboarding: widget.onboarding,
@@ -156,7 +152,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   Widget get _editContent =>
     ProfileInfoEditPage(
       key: _profileInfoEditKey,
-      contentType: widget.contentType,
       authType: Auth2().account?.authType,
       profile: _profile,
       privacy: _privacy,
@@ -288,21 +283,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  String get _desriptionText => _editing ? _editDesriptionText : (directoryVisibility ? _previewDesriptionText : '');
-
-  String get _previewDesriptionText {
-    switch (widget.contentType) {
-      case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
-      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
-    }
-  }
-
-  String get _editDesriptionText {
-    switch (widget.contentType) {
-      case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.edit.description.text', 'Choose how your profile displays for your Connections.');
-      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.');
-    }
-  }
+  String get _desriptionText => _editing ? Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.') : (directoryVisibility ? Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.') : '');
 
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:
@@ -312,20 +293,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
     )
   );
 
-  Widget get _previewCommandBar {
-    switch (widget.contentType) {
-      case ProfileInfo.connectionsInfo: return _myConnectionsInfoPreviewCommandBar;
-      case ProfileInfo.directoryInfo: return _myDirectoryInfoPreviewCommandBar;
-    }
-  }
-
-  Widget get _myConnectionsInfoPreviewCommandBar => Row(children: [
-    Expanded(child: _editInfoButton,),
-    Container(width: 8),
-    Expanded(child: _swapInfoButton,),
-  ]);
-
-  Widget get _myDirectoryInfoPreviewCommandBar => Row(children: [
+  Widget get _previewCommandBar => Row(children: [
     Expanded(flex: 1, child: Container(),),
     Expanded(flex: 2, child: _editInfoButton,),
     Expanded(flex: 1, child: Container(),),
@@ -340,17 +308,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   String get _editInfoButtonTitle =>
     Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info');
-
-  Widget get _swapInfoButton => RoundedButton(
-    label: Localization().getStringEx('panel.profile.info.command.button.swap.text', 'Swap Info'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    onTap: _onSwapInfo,
-  );
-
-  void _onSwapInfo() {
-    Analytics().logSelect(target: 'Swap Info');
-  }
 
   Widget get _accountCommands =>
     Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -754,30 +711,4 @@ class ProfileInfoLoadResult {
   Auth2UserProfile? publicProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) =>
     profile?.buildPublic(privacy, permitted: permitted);
 
-}
-
-///////////////////////////////////////////
-// ProfileInfoVisibility
-
-extension ProfileInfoVisibility on ProfileInfo {
-
-  static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
-  static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
-
-  Auth2FieldVisibility get positiveVisibility {
-    switch(this) {
-      case ProfileInfo.directoryInfo: return _directoryPositiveVisibility;
-      case ProfileInfo.connectionsInfo: return _connectionsPositiveVisibility;
-    }
-  }
-
-  static const Set<Auth2FieldVisibility> _directoryPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility };
-  static const Set<Auth2FieldVisibility> _connectionsPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility, _connectionsPositiveVisibility };
-
-  Set<Auth2FieldVisibility> get permitedVisibility {
-    switch(this) {
-      case ProfileInfo.directoryInfo: return _directoryPermittedVisibility;
-      case ProfileInfo.connectionsInfo: return _connectionsPermittedVisibility;
-    }
-  }
 }
