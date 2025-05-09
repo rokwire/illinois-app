@@ -373,7 +373,7 @@
 	"panel.assistant.content.faqs.label": "伊利諾伊州助理常見問題解答",
 	"panel.assistant.sources_links.label": "來源和連結",
 	"panel.assistant.related.label": "有關的：",
-	"panel.assistant.label.welcome_message.title": "**透過以下提問，與全新伊利諾伊助理一起探索大學資源！ **\n檢查答案的準確性。您的回饋將有助於改進 助理。",
+	"panel.assistant.label.welcome_message.title": "**透過以下提問與全新伊利諾伊助理一起探索大學資源！ **\n檢查答案的準確性。您的回饋 ([:thumb_up:][:thumb_down:]) 將有助於逐步改進 Google 助理。",
 	"panel.assistant.label.example.eg.title": "例如： ",
 	"panel.assistant.label.example.question.title": "伊利诺伊大学有多少学生？",
 	"panel.assistant.unknown.answer.value": "我無法從官方大學來源找到答案。",
