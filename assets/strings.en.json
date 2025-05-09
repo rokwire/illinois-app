@@ -2326,7 +2326,7 @@
     "panel.directory.accounts.message.signed_out": "To view User Directory, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
     "panel.directory.accounts.message.signed_out.link.login": "sign in",
     "panel.directory.accounts.connections.empty.text": "You do not have any Connections. Your connections will appear after you swap info with another {{app_university_long_name}} student or employee.",
-    "panel.directory.accounts.directory.empty.text": "The User Directory is empty.",
+    "panel.directory.accounts.directory.empty.text": "No results found.",
     "panel.directory.accounts.connections.failed.text": "Failed to load Connections content.",
     "panel.directory.accounts.directory.failed.text": "Failed to load User Directory content.",
     "panel.directory.accounts.search.field.label": "SEARCH FIELD",
