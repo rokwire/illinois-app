@@ -1,6 +1,5 @@
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +13,7 @@ import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -39,13 +38,12 @@ enum DirectoryDisplayMode { browse, select }
 class DirectoryAccountListCard extends StatefulWidget {
   final Auth2PublicAccount account;
   final DirectoryDisplayMode displayMode;
-  final String? photoImageToken;
   final bool expanded;
   final void Function()? onToggleExpanded;
   final bool selected;
   final void Function(bool)? onToggleSelected;
 
-  DirectoryAccountListCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.photoImageToken, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
+  DirectoryAccountListCard(this.account, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.expanded = false, this.onToggleExpanded, this.selected = false, this.onToggleSelected });
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountListCardState();
@@ -114,7 +112,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
   Widget get _expandedHeadingTextAndPronunciationContent =>
     Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
       _expandedHeadingTextContent,
-      DirectoryPronunciationButton(url: widget.account.profile?.pronunciationUrl,),
+      DirectoryPronunciationButton(fileName: widget.account.profile?.pronunciationUrl ?? '',),
     ],);
 
   Widget get _expandedHeadingTextContent =>
@@ -139,9 +137,9 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
           Padding(padding: EdgeInsets.only(top: 0), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
               DirectoryProfilePhoto(
-                photoUrl: _photoUrl,
+                type: UserProfileImageType.medium,
+                accountId: StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ? widget.account.id : null,
                 imageSize: _photoImageSize,
-                photoUrlHeaders: _photoAuthHeaders,
                 borderSize: 12,
               ),
               _expandedCommandsBar,
@@ -223,12 +221,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
       )
     );
 
-  String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
-    Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.account.id, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
-
   double get _photoImageSize => MediaQuery.of(context).size.width / 6;
-
-  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
   Widget get _collapsedContent =>
     InkWell(onTap: widget.onToggleExpanded, child:
@@ -287,13 +280,10 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
   Auth2UserProfile? get _profile => _account?.profile;
   List<Auth2PublicAccountIdentifier>? get _identifiers => _account?.identifiers;
 
-  String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(accountId: _account?.id, type: _photoImageType) : null;
+  bool get _hasPhotoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl);
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
   UserProfileImageType get _photoImageType => widget.printMode ? UserProfileImageType.defaultType : UserProfileImageType.medium;
-
-  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
   @override
   void initState() {
@@ -349,7 +339,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
     Column(mainAxisSize: MainAxisSize.min, children: [
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          (_photoImageUrl != null) ? _profileImageHeading : _profileTextHeading,
+          _hasPhotoImageUrl ? _profileImageHeading : _profileTextHeading,
           Padding(padding: EdgeInsets.only(top: 12), child:
             Align(alignment: Alignment.centerLeft, child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -367,8 +357,8 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
   Widget get _profileImageHeading =>
     Column(mainAxisSize: MainAxisSize.min, children: [
       DirectoryProfilePhoto(
-        photoUrl: _photoImageUrl,
-        photoUrlHeaders: _photoAuthHeaders,
+        accountId: _account?.id,
+        type: _photoImageType,
         imageSize: _photoImageSize,
       ),
 
@@ -533,13 +523,13 @@ void _launchUrl(String? url) {
 
 class DirectoryProfilePhoto extends StatefulWidget {
 
-  final String? photoUrl;
-  final Map<String, String>? photoUrlHeaders;
+  final String? accountId;
+  final UserProfileImageType type;
   final Uint8List? photoData;
   final double imageSize;
   final double borderSize;
 
-  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.borderSize = 0, required this.imageSize });
+  DirectoryProfilePhoto({ super.key, this.accountId, required this.type, this.photoData, this.borderSize = 0, required this.imageSize });
 
   @override
   State<DirectoryProfilePhoto> createState() => _DirectoryProfilePhotoState();
@@ -556,16 +546,14 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
   }
 
   void _loadNetworkPhoto() {
-    String? photoUrl = widget.photoUrl;
-    if ((_photoBytes == null) && StringUtils.isNotEmpty(photoUrl)) {
-      Network().get(photoUrl, headers: widget.photoUrlHeaders).then((response) {
-        int? responseCode = response?.statusCode;
-        if ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) {
+    if (_photoBytes == null && widget.accountId != null) {
+      Content().loadUserPhoto(accountId: widget.accountId, type: widget.type).then((result) {
+        if (result.succeeded) {
           setStateIfMounted(() {
-            _photoBytes = response?.bodyBytes;
+            _photoBytes = result.imageData;
           });
         } else {
-          debugPrint('${responseCode}: Failed to load photo with url: ${widget.photoUrl}');
+          debugPrint('Failed to load photo for account id: ${widget.accountId}');
         }
       });
     }
@@ -608,36 +596,15 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
   }
 }
 
-// DirectoryProfilePhotoUtils
-
-class DirectoryProfilePhotoUtils {
-
-  static const String tokenKey = 'edu.illinois.rokwire.token';
-
-  static String get newToken => DateTime.now().millisecondsSinceEpoch.toString();
-
-  static Map<String, String>? tokenUrlParam(String? token) => (token != null) ? <String, String>{
-    tokenKey : token
-  } : null;
-
-  static Map<String, String>? get authHeaders {
-    String tokenType = Auth2().token?.tokenType ?? 'Bearer';
-    String? accessToken = Auth2().token?.accessToken;
-    return (accessToken != null) ? <String, String>{
-      HttpHeaders.authorizationHeader : "$tokenType $accessToken",
-    } : null;
-  }
-}
-
 // DirectoryPronunciationButton
 
 class DirectoryPronunciationButton extends StatefulWidget {
-  final String? url;
+  final String? fileName;
   final Uint8List? data;
   final EdgeInsetsGeometry padding;
 
   DirectoryPronunciationButton({
-    super.key, this.url, this.data,
+    super.key, this.fileName, this.data,
     this.padding = const EdgeInsets.symmetric(horizontal: 13, vertical: 18)
   });
 
@@ -698,9 +665,11 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
         });
 
         Uint8List? audioData = widget.data;
+        String? contentType;
         if (audioData == null) {
-          AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
+          AudioResult? result = await Content().loadUserNamePronunciation(fileName: widget.fileName);
           audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
+          contentType = FileUtils.mimeTypeExt(result?.audioFileExtension);
         }
 
         if (mounted) {
@@ -721,7 +690,10 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
             });
 
             Duration? duration;
-            try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
+            try {
+              duration = await _audioPlayer?.setAudioSource(
+                  Uint8ListAudioSource(audioData, contentType: contentType));
+            }
             catch(e) {}
 
             if (mounted) {

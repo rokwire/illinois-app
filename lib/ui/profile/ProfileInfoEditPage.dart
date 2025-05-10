@@ -38,14 +38,13 @@ class ProfileInfoEditPage extends StatefulWidget {
 
   final Uint8List? pronunciationAudioData;
   final Uint8List? photoImageData;
-  final String? photoImageToken;
 
-  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
+  final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData})? onFinishEdit;
 
   ProfileInfoEditPage({super.key,
     required this.contentType, this.onboarding = false,
     this.authType, this.profile, this.privacy, this.identifiers,
-    this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
+    this.pronunciationAudioData, this.photoImageData,
     this.onFinishEdit
   });
 
@@ -58,7 +57,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   late Auth2UserProfileFieldsVisibility _profileVisibility;
   late Uint8List? _pronunciationAudioData;
   late Uint8List? _photoImageData;
-  late String? _photoImageToken;
 
   final Map<_ProfileField, Auth2FieldVisibility?> _fieldVisibilities = {};
   final Map<_ProfileField, TextEditingController> _fieldTextControllers = {};
@@ -109,7 +107,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     _pronunciationAudioData = widget.pronunciationAudioData;
     _photoImageData = widget.photoImageData;
-    _photoImageToken = widget.photoImageToken;
     _identifiers = List.generate(widget.identifiers?.length ?? 0, (index) => Auth2PublicAccountIdentifier.fromUserIdentifier(widget.identifiers![index]));
 
     for (_ProfileField field in _ProfileField.values) {
@@ -218,19 +215,14 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
     // Edit: Photo
 
-    String? get _photoImageUrl => StringUtils.isNotEmpty(_photoText) ?
-      Content().getUserPhotoUrl(type: UserProfileImageType.medium, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)) : null;
-
     double get _photoImageSize => MediaQuery.of(context).size.width / 3;
-
-    Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
     Widget get _photoWidget => Stack(children: [
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 20), child:
         DirectoryProfilePhoto(
           key: _photoKey,
-          photoUrl: _photoImageUrl,
-          photoUrlHeaders: _photoAuthHeaders,
+          accountId: StringUtils.isNotEmpty(_photoText) ? Auth2().accountId : null,
+          type: UserProfileImageType.medium,
           photoData: _photoImageData,
           imageSize: _photoImageSize,
         ),
@@ -286,7 +278,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
             setState(() {
               _photoKey = UniqueKey();
               _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
-              _photoImageToken = DirectoryProfilePhotoUtils.newToken;
               _photoImageData = imageUploadResult.imageData;
             });
           }
@@ -325,7 +316,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
             setState(() {
               _photoKey = UniqueKey();
               _photoText = '';
-              _photoImageToken = DirectoryProfilePhotoUtils.newToken;
               _photoImageData = null;
             });
           }
@@ -440,7 +430,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
   void _onEditPronunciation() {
-    Analytics().logSelect(target: 'Edit Pronuncaion');
+    Analytics().logSelect(target: 'Edit Pronunciation');
     _createPronunciation();
   }
 
@@ -448,7 +438,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
     ProfileSoundRecorderDialog.show(context).then((AudioResult? result) {
       if (result?.resultType == AudioResultType.succeeded) {
         setState(() {
-          _pronunciationText = Content().getUserNamePronunciationUrl(accountId: Auth2().accountId);
+          _pronunciationText = Content().getUserNamePronunciationFileName(accountId: Auth2().accountId);
           _pronunciationAudioData = result?.audioData;
         });
       }
@@ -456,30 +446,47 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
   }
 
   void _onDeletePronunciation() {
-    Analytics().logSelect(target: 'Delete Pronuncaion');
+    Analytics().logSelect(target: 'Delete Pronunciation');
 
     AppAlert.showConfirmationDialog(context, message: Localization().getStringEx("panel.profile_info.pronunciation.delete.confirmation.msg", "Are you sure you want to remove this pronunciation audio?")).then((bool? result) {
       if (mounted && (result == true)) {
         setState(() {
           _clearingUserPronunciation = true;
         });
-        Content().deleteUserNamePronunciation().then((AudioResult? result){
-          if (mounted) {
-            if (result?.resultType == AudioResultType.succeeded) {
-              setState(() {
-                _clearingUserPronunciation = false;
-                _pronunciationText = null;
-                _pronunciationAudioData = null;
-              });
+        List<String> splitPronunciationText = _pronunciationText?.split('.') ?? [];
+        if (splitPronunciationText.length >= 2) {
+          Content().deleteUserNamePronunciation(extension: '.${splitPronunciationText.last}').then((AudioResult? result){
+            if (mounted) {
+              if (result?.resultType == AudioResultType.succeeded) {
+                setState(() {
+                  _clearingUserPronunciation = false;
+                  _pronunciationText = null;
+                  _pronunciationAudioData = null;
+                  if (widget.privacy != null) {
+                    Auth2UserProfile profile = _Auth2UserProfileUtils.buildModified(widget.profile, _fieldTextControllers);
+                    Auth2UserPrivacy privacy = Auth2UserPrivacy.fromOther(widget.privacy);
+                    _saveEdit(profile, privacy).then((result) {
+                      if (result.succeeded) {
+                        widget.onFinishEdit?.call(
+                          profile: (result.profile == true) ? profile : null,
+                          privacy: (result.privacy == true) ? privacy : null,
+                          pronunciationAudioData: _pronunciationAudioData,
+                          photoImageData: _photoImageData,
+                        );
+                      }
+                    });
+                  }
+                });
+              }
+              else {
+                setState(() {
+                  _clearingUserPronunciation = false;
+                });
+                AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile_info.pronunciation.delete.failed.msg', 'Failed to delete pronunciation audio. Please try again later.'));
+              }
             }
-            else {
-              setState(() {
-                _clearingUserPronunciation = false;
-              });
-              AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile_info.pronunciation.delete.failed.msg', 'Failed to delete pronunciation audio. Please try again later.'));
-            }
-          }
-        });
+          });
+        }
       }
     });
   }
@@ -493,7 +500,7 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
 
         Uint8List? audioData = _pronunciationAudioData;
         if (audioData == null) {
-          AudioResult? result = await Content().loadUserNamePronunciation();
+          AudioResult? result = StringUtils.isNotEmpty(_pronunciationText) ? await Content().loadUserNamePronunciation(fileName: _pronunciationText) : null;
           audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
         }
 
@@ -1022,14 +1029,12 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
             privacy: (result.privacy == true) ? privacy : null,
             pronunciationAudioData: _pronunciationAudioData,
             photoImageData: _photoImageData,
-            photoImageToken: _photoImageToken,
           );
         }
       }
       else if (shouldSave == false) {
         widget.onFinishEdit?.call(
           photoImageData: _photoImageData,
-          photoImageToken: _photoImageToken,
           pronunciationAudioData: _pronunciationAudioData,
         );
       }
@@ -1109,7 +1114,6 @@ class ProfileInfoEditPageState extends ProfileDirectoryMyInfoBasePageState<Profi
           privacy: (result.privacy == true) ? privacy : null,
           pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
-          photoImageToken: _photoImageToken,
         );
       }
     }

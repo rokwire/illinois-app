@@ -413,12 +413,12 @@ class GroupsConfirmationDialog extends StatelessWidget{
 // GroupAddImageWidget
 
 class GroupAddImageWidget extends StatefulWidget {
-  static String _groupImageStoragePath = 'group/tout';
   static int _groupImageWidth = 1080;
 
   final String? url;
+  final String? storagePath;
 
-  const GroupAddImageWidget({super.key, this.url});
+  const GroupAddImageWidget({super.key, this.url, this.storagePath});
 
   @override
   _GroupAddImageWidgetState createState() => _GroupAddImageWidgetState();
@@ -439,8 +439,8 @@ class GroupAddImageWidget extends StatefulWidget {
   //   return imageResult;
   // }
 
-  static Future<ImagesResult?> show({required BuildContext context, String? url}) async =>
-      showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget(url: url)));
+  static Future<ImagesResult?> show({required BuildContext context, String? url, String? storagePath}) async =>
+      showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget(url: url, storagePath: storagePath,)));
 
 }
 
@@ -570,8 +570,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
         _showProgress = true;
       });
 
-      Future<ImagesResult> result =
-      Content().useUrl(storageDir: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth, url: url);
+      Future<ImagesResult> result = Content().useUrl(storageDir: widget.storagePath ?? Content.groupImagesContentCategory, width: GroupAddImageWidget._groupImageWidth, url: url);
       result.then((logicResult) {
         setState(() {
           _showProgress = false;
@@ -608,7 +607,11 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     // Future<ImagesResult?> result =
     // Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
     // result.then((logicResult) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth, preloadImageUrl: widget.url,))).then((logicResult){
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(
+        storagePath: widget.storagePath ?? Content.groupImagesContentCategory,
+        width: GroupAddImageWidget._groupImageWidth,
+        preloadImageUrl: widget.url,
+      ))).then((logicResult){
       setState(() {
         _showProgress = false;
       });
@@ -1091,7 +1094,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   padding: EdgeInsets.only(bottom: 12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Container(
-                      padding: EdgeInsets.only(bottom: 14),
+                      padding: EdgeInsets.only(bottom: 12),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(child:
@@ -1109,7 +1112,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           _buildScheduledDateWidget,
                     ])),
                     Padding(padding: GroupPostCard.contentHorizontalPadding + EdgeInsets.only(bottom: 6),
-                      child: Visibility(visible: widget.post?.isPost == true,
+                      child: Visibility(visible: widget.post?.isPost == true && StringUtils.isNotEmpty(widget.post?.subject),
                         child: Container(
                           padding: EdgeInsets.only(bottom: 0),
                             child: Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -2193,7 +2196,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl).then((result) => result);
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl, storagePath: Content.groupPostImagesContentCategory).then((result) => result);
 
     if(result?.succeeded == true) {
       widget.onImageChanged?.call(result?.imageUrl);
@@ -2222,7 +2225,6 @@ class GroupMemberProfileInfoWidget extends StatefulWidget {
 }
 
 class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
-  String photoImageToken = DirectoryProfilePhotoUtils.newToken;
   // Uint8List? _memberImageBytes;
   // bool _loadingImage = false;
 
@@ -2270,14 +2272,12 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
 
   Widget get _buildProfileImage =>
       DirectoryProfilePhoto(
-        photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
+        type: UserProfileImageType.medium,
+        accountId: widget.userId,
         imageSize: _photoImageSize,
-        photoUrlHeaders: _photoAuthHeaders,
       );
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 4;
-
-  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
 // Widget? get _buildProfileImage {
 //   bool hasProfilePhoto = widget.member?.userId != null &&
@@ -2377,10 +2377,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   void _onImageTap() {
     Analytics().logSelect(target: "Group Member Image");
     if (_imageBytes != null) {
-      String? imageUrl = Content().getUserPhotoUrl(accountId: widget.userId, type: UserProfileImageType.defaultType);
-      if (StringUtils.isNotEmpty(imageUrl)) {
-        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
-      }
+      Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(image: Image.memory(_imageBytes!).image, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
     }
   }
 

@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+### Changed
+- Update media file transfers to use AWS S3 directly [#104](https://github.com/rokmetro/neom-app/issues/104)
 ### Fixed
+- Slow image/video/file display and upload for conversations and groups [#91](https://github.com/rokmetro/neom-app/issues/91)
 - Error saving business card QR code[#90](https://github.com/rokmetro/neom-app/issues/90)
 - Fixed package name bug for mobile platforms
 
