@@ -214,6 +214,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return Container();
     }
     bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
+    bool isPositiveFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.positive);
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
     String answer = message.isAnswerUnknown
         ? Localization()
@@ -254,7 +255,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                       Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                            message.example
+                                            InkWell(onLongPress: () => _onLongPressMessage(message), splashColor: Colors.transparent, child:
+                                              message.example
                                                 ? Text(
                                                 Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
                                                     message.content,
@@ -271,22 +273,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
                                                   WidgetSpan(
-                                                          child: MarkdownBody(
-                                                              data: answer,
-                                                              builders: {
-                                                                'thumb_up': _AssistantMarkdownIconBuilder(icon: Icons.thumb_up_outlined, size: 18, color: Styles().colors.fillColorPrimary),
-                                                                'thumb_down': _AssistantMarkdownIconBuilder(icon: Icons.thumb_down_outlined, size: 18, color: Styles().colors.fillColorPrimary),
-                                                              },
-                                                              inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
-                                                              styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
-                                                              onTapLink: (text, href, title) {
-                                                                AppLaunchUrl.launch(url: href, context: context);
-                                                              }))
-                                                    ])),
+                                                      child: MarkdownBody(
+                                                          data: answer,
+                                                          builders: {
+                                                            'thumb_up': _AssistantMarkdownIconBuilder(icon: Icons.thumb_up_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                            'thumb_down': _AssistantMarkdownIconBuilder(icon: Icons.thumb_down_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                          },
+                                                          inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
+                                                          styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                          onTapLink: (text, href, title) {
+                                                            AppLaunchUrl.launch(url: href, context: context);
+                                                          }))
+                                                ]))
+                                            ),
                                             Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
-                                            Visibility(
-                                                visible: (message.feedbackResponseType == FeedbackResponseType.positive),
-                                                child: _buildFeedbackResponseDisclaimer())
+                                            Visibility(visible: isPositiveFeedbackFormVisible, child: _buildFeedbackResponseDisclaimer())
                                           ])),
                                           Visibility(visible: isNegativeFeedbackFormVisible, child:
                                             Align(alignment: Alignment.centerRight, child:
@@ -300,45 +301,20 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      _buildCopyButton(message),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
 
-  Widget _buildCopyButton(Message message) {
-    return Visibility(
-        visible: _isCopyButtonVisible(message),
-        child: Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: RoundedButton(
-              label: Localization().getStringEx('panel.assistant.copy_to_clipboard.button', 'Copy To Clipboard'),
-              fontSize: 12,
-              conentAlignment: MainAxisAlignment.end,
-              padding: EdgeInsets.symmetric(vertical: 3.5),
-              contentWeight: 0.35,
-              onTap: () => _onTapCopy(message),
-            )));
-  }
-
-  void _onTapCopy(Message message) {
+  void _onLongPressMessage(Message message) {
     Analytics().logSelect(target: 'Copy To Clipboard');
-    String? question = message.content;
-    String? answer;
-    int? questionIndex = _getMessageIndex(message);
-    if (questionIndex != null) {
-      int answerIndex = questionIndex + 1;
-      if (_messages.length > answerIndex) {
-        answer = _messages[answerIndex].content;
-      }
+    if (!_canCopyMessage(message)) {
+      return;
     }
-    String textContent = 'Q: ${StringUtils.ensureNotEmpty(question)}\nA: ${StringUtils.ensureNotEmpty(answer)}';
+    String textContent = message.content;
     Clipboard.setData(ClipboardData(text: textContent));
   }
 
-  bool _isCopyButtonVisible(Message message) {
-    if (!message.user) {
-      return false;
-    }
+  bool _canCopyMessage(Message message) {
     int? messageIndex = _getMessageIndex(message);
     if (messageIndex == null) {
       return false;
