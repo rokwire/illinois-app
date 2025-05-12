@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Copy to Clipboard UI in Assistant [#5021](https://github.com/rokwire/illinois-app/issues/5021).
 - Updated empty content message in primary care providers [#5114](https://github.com/rokwire/illinois-app/issues/5114).
+- Replace "User Directory" to "Directory of Users" display text everywhere in the UI [#5115](https://github.com/rokwire/illinois-app/issues/5115).
 ### Added
 - Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 

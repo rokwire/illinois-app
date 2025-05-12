@@ -917,7 +917,7 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
       if (directoryAttributes != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
           title: Localization().getStringEx('panel.directory.accounts.filters.header.title', 'Directory Filters'),
-          description: Localization().getStringEx('panel.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
+          description: Localization().getStringEx('panel.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the Directory of Users.'),
           scope: Auh2Directory.attributesScope,
           contentAttributes: directoryAttributes,
           selection: widget.filterAttributes,
