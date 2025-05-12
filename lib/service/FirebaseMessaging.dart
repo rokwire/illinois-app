@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Analytics.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -367,11 +368,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
 
   @override
   void processDataMessage(Map<String, dynamic>? data) {
+
     String? messageId = JsonUtils.stringValue(data?['message_id']);
     if (messageId != null) {
       Inbox().readMessage(messageId);
     }
-    _processDataMessage(data);
+
+    String? type = _getMessageType(data);
+    Analytics().logFCM(command: type, data: data);
+    _processDataMessage(data, type: type);
   }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
