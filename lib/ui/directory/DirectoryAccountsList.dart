@@ -196,7 +196,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   String get _failedText {
     switch (widget.contentType) {
       case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load Directory of Users content.');
     }
   }
 

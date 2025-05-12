@@ -40,7 +40,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   String get _appTitle {
     switch(widget.contentType) {
       case DirectoryAccounts.connections: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.connections.title', 'My Connections');
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'User Directory');
+      case DirectoryAccounts.directory: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'Directory of Users');
     }
   }
 
