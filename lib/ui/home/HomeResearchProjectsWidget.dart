@@ -43,7 +43,7 @@ class HomeResearchProjectsWidget extends StatefulWidget {
   static String titleForContentType(ResearchProjectsContentType contentType) {
     switch(contentType) {
       case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects');
-      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Participation');
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects');
     }
   }
 

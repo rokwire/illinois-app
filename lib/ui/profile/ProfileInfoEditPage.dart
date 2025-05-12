@@ -10,7 +10,6 @@ import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -28,7 +27,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoEditPage extends StatefulWidget {
-  final ProfileInfo contentType;
   final bool onboarding;
 
   final Auth2Type? authType;
@@ -43,7 +41,7 @@ class ProfileInfoEditPage extends StatefulWidget {
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
   ProfileInfoEditPage({super.key,
-    required this.contentType, this.onboarding = false,
+    this.onboarding = false,
     this.authType, this.profile, this.privacy, this.identifiers,
     this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
     this.onFinishEdit
@@ -101,8 +99,8 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     Auth2UserProfile.universityRoleFacultyStaff : _facultyStuffUniversityRoleFieldUnavailabilities,
   };
   static Set<_ProfileField> _facultyStuffUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.major, _ProfileField.major2 };
-  static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city, _ProfileField.zip, _ProfileField.state, _ProfileField.country };
-  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
+  // static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city, _ProfileField.zip, _ProfileField.state, _ProfileField.country };
+  // Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
 
   static const double _buttonIconSize = 16;
   static const double _dropdownItemInnerIconPaddingX = 6;
@@ -843,7 +841,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   Widget? _visibilityDropdownIcon(Auth2FieldVisibility? visibility, bool textNotEmpty, { bool locked = false} ) {
     if (locked) {
       return _lockIcon;
-    } else if (_permittedVisibility.contains(visibility) && textNotEmpty) {
+    } else if (visibility == Auth2FieldVisibility.public && textNotEmpty) {
       return _publicDropdownIcon;
     } else {
       return _privateDropdownIcon;
@@ -934,7 +932,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     List<DropdownMenuItem<Auth2FieldVisibility>> items = <DropdownMenuItem<Auth2FieldVisibility>>[];
     Auth2FieldVisibility selectedFieldVisibility = visibility ?? Auth2FieldVisibility.private;
     for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values.reversed) {
-      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || (fieldVisibility == Auth2FieldVisibility.public)) {
         items.add(_visibilityDropdownItem(fieldVisibility, selected: selectedFieldVisibility == fieldVisibility));
       }
     }
@@ -980,7 +978,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   double _evaluateVisibilityDropdownItemsWidth() {
     double maxTextWidth = 0;
     for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values) {
-      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || (fieldVisibility == Auth2FieldVisibility.public)) {
         final Size textSizeFull = (TextPainter(
           text: TextSpan(text: fieldVisibility.displayTitle, style: _selectedDropdownItemTextStyle,),
           textScaler: MediaQuery.of(context).textScaler,
@@ -1069,10 +1067,10 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     setState(() {
       Auth2FieldVisibility? visibility = _getFieldVisibility(profileField: profileField, identifier: identifier);
       if (profileField != null) {
-        _fieldVisibilities[profileField] = (_permittedVisibility.contains(visibility)) ? Auth2FieldVisibility.private : _positiveVisibility;
+        _fieldVisibilities[profileField] = (visibility == Auth2FieldVisibility.public) ? Auth2FieldVisibility.private : Auth2FieldVisibility.public;
       } else if (identifier?.id != null) {
         _identifierVisibility ??= {};
-        _identifierVisibility?[identifier!.id!] = (_permittedVisibility.contains(visibility)) ? Auth2FieldVisibility.private : _positiveVisibility;
+        _identifierVisibility?[identifier!.id!] = (visibility == Auth2FieldVisibility.public) ? Auth2FieldVisibility.private : Auth2FieldVisibility.public;
       }
     });
   }
@@ -1278,12 +1276,6 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
       return true;
     }
   }
-
-  Auth2FieldVisibility get _positiveVisibility =>
-    widget.contentType.positiveVisibility;
-
-  Set<Auth2FieldVisibility> get _permittedVisibility =>
-    widget.contentType.permitedVisibility;
 }
 
 ///////////////////////////////////////////
@@ -1550,7 +1542,7 @@ extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
 
   String get displayDescription {
     switch(this) {
-      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'User directory, business card');
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Directory of Users, business card');
       case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
       case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
     }

@@ -37,7 +37,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
     Column(children:<Widget>[
       Row(children: [
         Expanded(child:
-        Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
+        Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research Participation'), style:
         Styles().textStyles.getTextStyle("widget.title.large.fat")
         ),
         ),
@@ -88,7 +88,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
   }
 
   Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.';
+    String promptEn = 'Please confirm that you wish to no longer participate in Research Projects. All information filled out in your questionnaire will be deleted.';
     return await AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),

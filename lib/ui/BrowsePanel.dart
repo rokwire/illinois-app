@@ -489,7 +489,7 @@ class _BrowseSection extends StatelessWidget {
 
   void _onTapUserDirectory(BuildContext context) {
     Analytics().logSelect(target: "User Directory");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(DirectoryAccounts.directory); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(); } ));
   }
 
   void _onTapMessages(BuildContext context) {

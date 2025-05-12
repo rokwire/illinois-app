@@ -2677,7 +2677,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 
   void _onEndPollTapped() {
     if (_isEnding != true) {
-      setState(() {
+      setStateIfMounted(() {
         _isEnding = true;
       });
       Polls().close(widget.pollCard.poll?.pollId).then((_) {
@@ -2689,11 +2689,9 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
           AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
         }
       }).whenComplete(() {
-        if (mounted) {
-          setState(() {
-            _isEnding = false;
-          });
-        }
+        setStateIfMounted(() {
+          _isEnding = false;
+        });
       });
     }
   }
@@ -3948,10 +3946,11 @@ class ReactionKeyboard {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return SizedBox(
-          height: 310,
-          child: emoji.EmojiPicker(
+        return
+          Padding(padding: MediaQuery.of(context).viewInsets, //Above keyboard
+            child: emoji.EmojiPicker(
             config: emoji.Config(
+                // searchViewConfig: emoji.SearchViewConfig(),
                 categoryViewConfig: emoji.CategoryViewConfig(
                   indicatorColor: Styles().colors.fillColorSecondary,
                   iconColorSelected: Styles().colors.fillColorSecondary

@@ -284,18 +284,20 @@ class _QrCodePanelState extends State<QrCodePanel> {
       (widget.modalSheet ? Styles().colors.surface : Styles().colors.background);
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    String qrContent = StringUtils.ensureNotEmpty(_promotionUrl ?? widget.digitalCardQrCode);
+    String? content = _promotionUrl ?? widget.digitalCardQrCode;
     Uint8List? imageBytes;
-    if (kIsWeb) {
-      ByteData? qrPainterImage = await QrPainter(data: qrContent, version: QrVersions.auto).toImageData(_imageSize);
-      imageBytes = qrPainterImage?.buffer.asUint8List();
-    } else {
-      imageBytes = await NativeCommunicator().getBarcodeImageData({
-        'content': qrContent,
-        'format': 'qrCode',
-        'width': _imageSize,
-        'height': _imageSize,
-      });
+    if (content != null) {
+      if (kIsWeb) {
+        ByteData? qrPainterImage = await QrPainter(data: content, version: QrVersions.auto).toImageData(_imageSize);
+        imageBytes = qrPainterImage?.buffer.asUint8List();
+      } else {
+        imageBytes = await NativeCommunicator().getBarcodeImageData(
+          content,
+          format: 'qrCode',
+          width: _imageSize.toInt(),
+          height: _imageSize.toInt(),
+        );
+      }
     }
     return imageBytes;
   }

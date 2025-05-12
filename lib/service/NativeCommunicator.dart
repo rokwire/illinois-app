@@ -113,10 +113,15 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<Uint8List?> getBarcodeImageData(Map<String, dynamic> params) async {
+  Future<Uint8List?> getBarcodeImageData(String content, { required String format, required int width, required int height }) async {
     Uint8List? result;
     try {
-      String? base64String = await _platformChannel.invokeMethod('barcode', params);
+      String? base64String = await _platformChannel.invokeMethod('barcode', <String, dynamic>{
+        'content': content,
+        'format': format,
+        'width': width,
+        'height': height,
+      });
       result = (base64String != null) ? base64Decode(base64String) : null;
     }
     catch (e) {

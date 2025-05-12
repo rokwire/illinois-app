@@ -19,7 +19,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoPreviewPage extends StatefulWidget {
-  final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
   final List<Auth2Identifier>? identifiers;
@@ -28,7 +27,7 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   final Uint8List? photoImageData;
   final String? photoImageToken;
 
-  ProfileInfoPreviewPage({super.key, required this.contentType,
+  ProfileInfoPreviewPage({super.key,
     this.profile, this.privacy, this.identifiers, this.onboarding = false,
     this.photoImageData, this.photoImageToken, this.pronunciationAudioData
   });
@@ -44,7 +43,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
 
   @override
   void initState() {
-    _profile = widget.profile?.buildPublic(widget.privacy, permitted: _permittedVisibility);
+    _profile = widget.profile?.buildPublic(widget.privacy, permitted: { Auth2FieldVisibility.public });
     _identifiers = List.generate(widget.identifiers?.length ?? 0, (index) => Auth2PublicAccountIdentifier.fromUserIdentifier(widget.identifiers![index]));
     super.initState();
   }
@@ -148,9 +147,6 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
       }
     ]);
   }
-
-  Set<Auth2FieldVisibility> get _permittedVisibility =>
-    widget.contentType.permitedVisibility;
 
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);

@@ -287,7 +287,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
         provider: provider,
         message: Message(
             content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-                '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback will help improve the Assistant over time.'),
+                '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback ([:thumb_up:] [:thumb_down:]) will help improve the Assistant over time.'),
             user: false));
   }
 

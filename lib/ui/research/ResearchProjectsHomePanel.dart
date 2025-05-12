@@ -105,7 +105,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research at Illinois'), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research Participation'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -220,7 +220,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
   static String _getContentTypeName(ResearchProjectsContentType? contentType, {String? languageCode} )  {
     switch (contentType) {
       case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects');
-      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Participation');
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects');
       default: return '';
     }
   }
