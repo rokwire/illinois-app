@@ -2918,6 +2918,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
   }
 }
 
+/*
 class GroupProfilePronouncementWidget extends StatefulWidget {
   final String? accountId;
 
@@ -2937,21 +2938,13 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
   @override
   void initState() {
     setStateIfMounted(() => _loading = true);
-    Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
-          if(hasPronunciation == true){
-            Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
-              setStateIfMounted(() {
-                _loading = false;
-                _hasPronouncement = hasPronunciation;
-                _pronunciationAudioData = audio?.audioData;
-              });
-            });
-          } else {
-            setStateIfMounted(() {
-              _loading = false;
-              _hasPronouncement = hasPronunciation;
-            });
-          }
+    //TODO: need to get audio file name to load audio
+    Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+      setStateIfMounted(() {
+        _loading = false;
+        _hasPronouncement = audio?.succeeded == true;
+        _pronunciationAudioData = audio?.audioData;
+      });
     });
     super.initState();
   }
@@ -2973,6 +2966,7 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
         CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
       ));
 }
+*/
 
 class GroupsSelectionPopup extends StatefulWidget {
   final List<Group>? groups;

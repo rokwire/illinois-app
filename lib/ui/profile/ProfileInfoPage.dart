@@ -472,10 +472,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
         _privacy = privacy;
       }
 
-      if ((_photoImageToken != photoImageToken) && (photoImageToken != null)) {
-        _photoImageToken = photoImageToken;
-      }
-
       if (!DeepCollectionEquality().equals(_photoImageData, photoImageData)) {
         _photoImageData = photoImageData;
       }
@@ -512,11 +508,11 @@ class ProfileInfoLoad {
 
     AudioResult? pronunciationResult = StringUtils.isNotEmpty(profile?.pronunciationUrl) ? await Content().loadUserNamePronunciation(fileName: profile?.pronunciationUrl) : null;
 
-    if (mounted) {
-      _ProfileInfoSyncResult? syncResult = await _syncUserProfileAndPrivacy(Auth2().account, profile, privacy,
-        hasContentUserPhoto: photoResult?.succeeded == true,
-        hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
-      );
+    ProfileInfoLoadResult? syncResult = await _syncUserProfileAndPrivacy(
+      Auth2().account, profile, privacy,
+      hasContentUserPhoto: photoResult?.succeeded == true,
+      hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
+    );
 
     if (syncResult?.profile != null) {
       profile = syncResult?.profile;

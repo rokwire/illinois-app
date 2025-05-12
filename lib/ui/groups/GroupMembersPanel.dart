@@ -665,7 +665,7 @@ class GroupMemberCard extends StatelessWidget {
                               Text(StringUtils.ensureNotEmpty(_memberDisplayName),
                                   style: Styles().textStyles.getTextStyle('widget.group.members.title')
                               ),
-                              GroupProfilePronouncementWidget(accountId: member?.userId,)
+                              // GroupProfilePronouncementWidget(accountId: member?.userId,)  //TODO: need to get audio file name
                             ],
                           )
                         ),

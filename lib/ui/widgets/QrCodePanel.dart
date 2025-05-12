@@ -288,7 +288,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
     Uint8List? imageBytes;
     if (content != null) {
       if (kIsWeb) {
-        ByteData? qrPainterImage = await QrPainter(data: content, version: QrVersions.auto).toImageData(_imageSize);
+        ByteData? qrPainterImage = await QrPainter(data: content, version: QrVersions.auto).toImageData(_imageSize.toDouble());
         imageBytes = qrPainterImage?.buffer.asUint8List();
       } else {
         imageBytes = await NativeCommunicator().getBarcodeImageData(
