@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Copy to Clipboard UI in Assistant [#5021](https://github.com/rokwire/illinois-app/issues/5021).
+
+## [7.1.2] - 2025-05-09
+### Changed
+- Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
+- Removed old connections/directory split [#5122](https://github.com/rokwire/illinois-app/issues/5122).
+- Add thumbs up/down to the opening message in Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
+### Fixed
+- Emoji picker search layout above keyboard [#5110](https://github.com/rokwire/illinois-app/issues/5110).
 
 ## [7.1.1] - 2025-05-08
 ### Fixed
