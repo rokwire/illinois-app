@@ -298,7 +298,7 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   static const String   LogWellnessToDoReminderType        = "reminder";
   static const String   LogWellnessToDoWorkdays            = "workdays";
 
-  // Video Attributes
+  // Video Event
   static const String   LogVideoEventName                  = "video";
   static const String   LogAttributeVideoId                = "video_id";
   static const String   LogAttributeVideoTitle             = "video_title";
@@ -313,6 +313,19 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   // "event" : { "name":"research_questionnaire", "page":"...", "answers":["question": yes/no, ] } }
   static const String   LogResearchQuestionnaireEventName  = "research_questionnaire";
   static const String   LogResearchQuestionnaireAnswersName= "answers";
+
+  // DeepLink Event
+  // "event" : { "name":"deep_link", "page":"...", "url":"...", "command": "", params: { ... } } }
+  static const String   LogDeepLinkEventName               = "deep_link";
+  static const String   LogDeepLinkUrlName                 = "url";
+  static const String   LogDeepLinkCommandName             = "command";
+  static const String   LogDeepLinkParamsName              = "params";
+
+  // Firebase Cloud Message Event
+  // "event" : { "name":"fcm", "page":"...", "command": "", params: { ... } } }
+  static const String   LogFCMEventName                    = "fcm";
+  static const String   LogFCMCommandName                  = "command";
+  static const String   LogFCMDataName                     = "data";
 
   // Attributes
   static const String   LogAttributeUrl                    = "url";
@@ -1187,5 +1200,29 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
 
     // Log the event
     logEvent(event);
+  }
+
+  void logDeepLink(Uri uri) {
+    logEvent({
+      LogEventName                        : LogDeepLinkEventName,
+      LogDeepLinkUrlName                  : uri.toString(),
+      LogDeepLinkCommandName              : uri.command,
+      LogDeepLinkParamsName               : uri.queryParameters,
+    });
+  }
+
+  void logFCM({String? command, Map<String, dynamic>? data }) {
+    logEvent({
+      LogEventName                        : LogFCMEventName,
+      LogFCMCommandName                   : command,
+      LogFCMDataName                      : data,
+    });
+  }
+}
+
+extension _UriAnalytics on Uri {
+  String get command {
+    String value = path;
+    return  value.startsWith('/') ? value.substring(1) : value;
   }
 }

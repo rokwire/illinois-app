@@ -2655,7 +2655,7 @@
     "panel.wellness.appointments.home.display.settings.on.label": "Mostrar mis citas",
     "panel.wellness.appointments.home.display.settings.off.label": "No mostrar mis citas",
 
-    "panel.wellness.successteam.empty.content.description": "<p>There are no primary care providers (PCP) to display. As an Illinois student, you are automatically assigned a PCP at McKinley when you enroll. Call <a href='tel:{{mckinley_phone}}'>{{mckinley_phone}}</a> for more information.</p>",
+    "panel.wellness.successteam.empty.content.description": "<p>There are no primary care providers (PCP) to display. After enrollment, Illinois students are automatically assigned a PCP at McKinley. Call <a href='tel:{{mckinley_phone}}'>{{mckinley_phone}}</a> for more information.</p>",
     "panel.wellness.successteam.dial.nurse.description": "<p><a href='tel:{{mckinley_phone}}'>Call Dial-A-Nurse at {{mckinley_phone}}</a> 24/hrs/7 days to coordinate healthcare needs and answer questions about illnesses, injuries, or other health concerns.</p>",
     "panel.wellness.successteam.upcoming.appointments.link": "View your upcoming McKinley appointments.",
     "panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
