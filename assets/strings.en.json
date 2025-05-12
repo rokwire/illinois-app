@@ -372,6 +372,8 @@
     "panel.assistant.content.conversation.openai.label": "Ask the Illinois Assistant",
     "panel.assistant.content.conversation.all.label": "Use All Assistants",
     "panel.assistant.content.missing.assistant.msg": "There is no assistant available.",
+    "panel.assistant.content.menu.context.copy.label": "Copy",
+    "panel.assistant.content.menu.context.copied.msg": "Copied to clipboard.",
     "panel.assistant.content.faqs.label": "Illinois Assistant FAQs",
     "panel.assistant.sources_links.label": "Sources and Links",
     "panel.assistant.related.label": "Related:",

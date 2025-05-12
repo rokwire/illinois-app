@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -40,6 +41,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:universal_html/html.dart' as html;
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
@@ -83,6 +85,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _negativeFeedbackController = TextEditingController();
   FocusNode _negativeFeedbackFocusNode = FocusNode();
 
+  OverlayEntry? _contextMenu;
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +98,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       LocationServices.notifyStatusChanged,
       LocationServices.notifyLocationChanged,
     ]);
+    html.document.onContextMenu.listen((event) => event.preventDefault());
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
     _streamSubscription = widget.shouldClearAllMessages.listen((event) {
@@ -256,8 +261,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                       Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                            InkWell(onLongPress: () => _onLongPressMessage(message), splashColor: Colors.transparent, child:
-                                              message.example
+                                            Listener(
+                                                onPointerDown: (PointerDownEvent event) {
+                                                  if (event.kind == PointerDeviceKind.mouse && event.buttons == kSecondaryMouseButton) {
+                                                    _showContextMenu(context: context, position: event.position, message: message);
+                                                  } else {
+                                                    _removeContextMenu();
+                                                  }
+                                                },
+                                                behavior: HitTestBehavior.translucent,
+                                                child: message.example
                                                 ? Text(
                                                 Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
                                                     message.content,
@@ -306,6 +319,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     ]);
   }
 
+  // ignore: unused_element
   void _onLongPressMessage(Message message) {
     Analytics().logSelect(target: 'Copy To Clipboard');
     if (!_canCopyMessage(message)) {
@@ -325,6 +339,41 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     } else {
       return true;
     }
+  }
+
+  void _showContextMenu({required BuildContext context, required Offset position, required Message message}) {
+    if (!_canCopyMessage(message)) {
+      return;
+    }
+    double screenWidth = MediaQuery.of(context).size.width;
+    double xPos = (screenWidth > AppWebUtils.screenWidth) ? (position.dx - ((screenWidth - AppWebUtils.screenWidth) / 2)) : position.dx;
+    _removeContextMenu();
+
+    _contextMenu = OverlayEntry(
+        builder: (_) => Stack(children: [
+              Positioned.fill(child: GestureDetector(onTap: _removeContextMenu, behavior: HitTestBehavior.translucent, child: SizedBox.expand())),
+              Positioned(
+                  left: xPos,
+                  top: position.dy,
+                  child: Material(
+                      elevation: 4,
+                      child: InkWell(
+                          onTap: () async {
+                            await Clipboard.setData(ClipboardData(text: message.content));
+                            _removeContextMenu();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(Localization().getStringEx('panel.assistant.content.menu.context.copied.msg', 'Copied to clipboard.'))),
+                            );
+                          },
+                          child: Container(color: Colors.white, padding: const EdgeInsets.all(8), child: Text(Localization().getStringEx('panel.assistant.content.menu.context.copy.label', 'Copy'))))))
+            ]));
+
+    Overlay.of(context).insert(_contextMenu!);
+  }
+
+  void _removeContextMenu() {
+    _contextMenu?.remove();
+    _contextMenu = null;
   }
 
   int? _getMessageIndex(Message message) {

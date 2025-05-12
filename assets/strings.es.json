@@ -369,6 +369,8 @@
     "panel.assistant.content.conversation.openai.label": "Pregunta al asistente de Illinois",
     "panel.assistant.content.conversation.all.label": "Usar todos los asistentes",
     "panel.assistant.content.missing.assistant.msg": "No hay ningún asistente disponible.",
+    "panel.assistant.content.menu.context.copy.label": "Copiar",
+    "panel.assistant.content.menu.context.copied.msg": "Copiado al portapapeles.",
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.sources_links.label": "Fuentes y enlaces",
     "panel.assistant.related.label": "Relacionado:",
