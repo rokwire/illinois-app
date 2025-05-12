@@ -742,12 +742,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   }
 
   bool? _getNotifySetting(String name) {
-    if (_notifySettingsAvailable) {
-      return _getStoredSetting(name);
-    }
-    else {
-      return false;
-    }
+    // if (_notifySettingsAvailable) {
+    //   return _getStoredSetting(name);
+    // }
+    // else {
+    //   return false;
+    // }
+    return _getStoredSetting(name);
   }
 
   void _setNotifySetting(String name, bool? value) {
@@ -910,19 +911,11 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
         return Inbox().userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
       }
     }
-    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return  Auth2().prefs?.getBoolSetting(_notifySettingNames[name] ?? name, defaultValue: defaultValue);
-    }
     return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
   void _storeSetting(String name, bool? value) {
-    //// Logged user choice stored in the UserPrefs
-    if (Auth2().isLoggedIn) {
-      Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
-    } else {
       Storage().setNotifySetting(_notifySettingNames[name] ?? name, value);
-    }
   }
 
   static Map<String, dynamic>? get storedSettings {

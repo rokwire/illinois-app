@@ -40,9 +40,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   String? _expandedAccountId;
 
-  String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
-  String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
-
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -69,17 +66,10 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   @override
   void onNotification(String name, dynamic param) {
     if (name == illinois.Auth2.notifyProfilePictureChanged) {
-      if (mounted) {
-        setState((){
-          _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
-        });
-      }
+      setStateIfMounted((){});
     }
     else if ((name == Auth2.notifyProfileChanged) || (name == Auth2.notifyPrivacyChanged) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
-        setState(() {
-          _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
-        });
         refresh();
       }
     }
@@ -122,7 +112,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         contentList.add(_sectionSplitter);
         contentList.add(DirectoryAccountListCard(account,
           displayMode: widget.displayMode,
-          photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
           onToggleExpanded: () => _onToggleAccountExpanded(account),
           selected: widget.selectedAccountIds?.contains(account.id) == true,

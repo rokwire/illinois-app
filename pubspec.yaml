@@ -11,7 +11,7 @@ description: NEOM U client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.5.15+38
+version: 0.5.17+40
 
 publish_to: none
 
@@ -130,7 +130,8 @@ dev_dependencies:
 dependency_overrides:
 #  font_awesome_flutter:
 #    path: plugin/plugins/font_awesome_flutter
-  chewie: ^1.8.1 # Resolving transitive dependency issues (web). This is in conflict with package_info_plus and flutter_widget_from_html.
+#  chewie: ^1.8.1 # Resolving transitive dependency issues (web). This is in conflict with package_info_plus and flutter_widget_from_html.
+  geolocator_android: 4.6.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

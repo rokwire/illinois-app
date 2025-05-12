@@ -12,7 +12,6 @@ import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
-import 'package:illinois/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -57,7 +56,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   List<Auth2Identifier>? _identifiers;
   Uint8List? _photoImageData;
   Uint8List? _pronunciationAudioData;
-  String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
 
   bool _loading = false;
   bool _editing = false;
@@ -153,7 +151,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
           onboarding: widget.onboarding,
           pronunciationAudioData: _pronunciationAudioData,
           photoImageData: _photoImageData,
-          photoImageToken: _photoImageToken,
         ),
         if (_showProfileCommands)
           Padding(padding: EdgeInsets.only(top: 24), child:
@@ -172,7 +169,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
       onboarding: widget.onboarding,
       pronunciationAudioData: _pronunciationAudioData,
       photoImageData: _photoImageData,
-      photoImageToken: _photoImageToken,
       onFinishEdit: _onFinishEditInfo,
   );
 
@@ -508,18 +504,19 @@ class ProfileInfoLoad {
       Auth2().loadUserProfile(),
       Auth2().loadUserPrivacy(),
       Content().loadUserPhoto(type: UserProfileImageType.medium),
-      Content().loadUserNamePronunciation(),
     ]);
 
     Auth2UserProfile? profile = JsonUtils.cast<Auth2UserProfile>(ListUtils.entry(results, 0));
     Auth2UserPrivacy? privacy = JsonUtils.cast<Auth2UserPrivacy>(ListUtils.entry(results, 1));
     ImagesResult? photoResult = JsonUtils.cast<ImagesResult>(ListUtils.entry(results, 2));
-    AudioResult? pronunciationResult = JsonUtils.cast<AudioResult>(ListUtils.entry(results, 3));
 
-    ProfileInfoLoadResult? syncResult = await _syncUserProfileAndPrivacy(Auth2().account, profile, privacy,
-      hasContentUserPhoto: photoResult?.succeeded == true,
-      hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
-    );
+    AudioResult? pronunciationResult = StringUtils.isNotEmpty(profile?.pronunciationUrl) ? await Content().loadUserNamePronunciation(fileName: profile?.pronunciationUrl) : null;
+
+    if (mounted) {
+      _ProfileInfoSyncResult? syncResult = await _syncUserProfileAndPrivacy(Auth2().account, profile, privacy,
+        hasContentUserPhoto: photoResult?.succeeded == true,
+        hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
+      );
 
     if (syncResult?.profile != null) {
       profile = syncResult?.profile;
@@ -571,7 +568,7 @@ class ProfileInfoLoad {
     if (hasContentUserNamePronunciation != null) {
       bool profileHasPronunciationUrl = StringUtils.isNotEmpty(profilePronunciationUrl);
       if (profileHasPronunciationUrl != hasContentUserNamePronunciation) {
-        profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationUrl(accountId: Auth2().accountId) : "";
+        profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationFileName(accountId: Auth2().accountId) : "";
         updateProfileScope.add(Auth2UserProfileScope.pronunciationUrl);
       }
     }
@@ -629,7 +626,7 @@ class ProfileInfoLoad {
         ),
         scope: updateProfileScope);
 
-      debugPrint("ProfileInfo: Detected Requred Updates:\n${JsonUtils.encode(updatedProfile.toJson(), prettify: true)}");
+      debugPrint("ProfileInfo: Detected Required Updates:\n${JsonUtils.encode(updatedProfile.toJson(), prettify: true)}");
     }
 
     bool isProfileNameNotEmpty = StringUtils.isNotEmpty(profileFirstName) || StringUtils.isNotEmpty(profileMiddleName) || StringUtils.isNotEmpty(profileLastName);

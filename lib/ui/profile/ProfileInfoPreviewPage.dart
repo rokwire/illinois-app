@@ -16,7 +16,6 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoPreviewPage extends StatefulWidget {
   final Auth2UserProfile? profile;
@@ -65,20 +64,15 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
       ),
       Center(child:
         DirectoryProfilePhoto(
-          photoUrl: _photoImageUrl,
-          photoUrlHeaders: _photoAuthHeaders,
+          accountId: Auth2().accountId,
+          type: UserProfileImageType.medium,
           photoData: widget.photoImageData,
           imageSize: _photoImageSize,
         ),
       )
     ]);
 
-  String? get _photoImageUrl => StringUtils.isNotEmpty(_profile?.photoUrl) ?
-    Content().getUserPhotoUrl(type: UserProfileImageType.medium, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
-
   double get _photoImageSize => MediaQuery.of(context).size.width / 3;
-
-  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
   Widget get _publicCardContent =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -103,7 +97,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
         if (_profile?.pronunciationUrl?.isNotEmpty == true)
           WidgetSpan(alignment: PlaceholderAlignment.middle, child:
             DirectoryPronunciationButton(
-              url: _profile?.pronunciationUrl,
+              fileName: _profile?.pronunciationUrl,
               data: widget.pronunciationAudioData,
               padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
             ),

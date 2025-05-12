@@ -719,7 +719,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onTapAddImage() {
     Analytics().logSelect(target: "Add Image");
     Event2CreatePanel.hideKeyboard(context);
-    GroupAddImageWidget.show(context: context, url: _imageUrl).then((ImagesResult? updateResult) {
+    GroupAddImageWidget.show(context: context, url: _imageUrl, storagePath: Content.eventImagesContentCategory).then((ImagesResult? updateResult) {
       if (updateResult?.succeeded == true && (_imageUrl != updateResult?.imageUrl)) {
         setStateIfMounted(() {
           _imageUrl = updateResult?.imageUrl;

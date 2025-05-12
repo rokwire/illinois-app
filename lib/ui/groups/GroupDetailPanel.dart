@@ -1589,7 +1589,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
     if (_group != null) {
-      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!), analyticsFeature: widget.analyticsFeature);
+      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!), timeFilter: Event2TimeFilter.upcoming, analyticsFeature: widget.analyticsFeature, showPast: false);
     }
   }
 

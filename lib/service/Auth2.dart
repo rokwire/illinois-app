@@ -156,16 +156,16 @@ class Auth2 extends rokwire.Auth2 {
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
+    await super.applyLogin(account, token, scope: scope, params: params);
+
     Future.wait([
       _initICardOnLogin(account, token),
       _initProfilePictureOnLogin(account, token),
-    ]);
-
-    await super.applyLogin(account, token, scope: scope, params: params);
-    
-    NotificationService().notify(notifyCardChanged);
-    NotificationService().notify(notifyProfilePictureChanged);
-    NotificationService().notify(notifyProfileNamePronunciationChanged);
+    ]).then((_) {
+      NotificationService().notify(notifyCardChanged);
+      NotificationService().notify(notifyProfilePictureChanged);
+      NotificationService().notify(notifyProfileNamePronunciationChanged);
+    });
   }
 
   @override
@@ -365,25 +365,15 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   Future<Uint8List?> _loadProfilePictureFromNet({String? accountId, Auth2Token? token}) async {
-    String? accessToken = token?.accessToken;
-    String? url = Content().getUserPhotoUrl(type: UserProfileImageType.small);
-    if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
-      String? tokenType = token?.tokenType ?? 'Bearer';
-      Response? response = await Network().get(url, headers: {
-        HttpHeaders.authorizationHeader : "$tokenType $accessToken"
-      });
-      return (response?.statusCode == 200) ? response?.bodyBytes : null;
-    }
-    else {
-      return null;
-    }
+    ImagesResult result = await Content().loadUserPhoto(accountId: accountId, type: UserProfileImageType.small);
+    return result.imageData;
   }
 
   Future<void> _refreshProfilePicture() async {
     Uint8List? profilePicture = _profilePicture;
     if (StringUtils.isNotEmpty(Auth2().account?.id) && StringUtils.isNotEmpty(Auth2().account?.profile?.photoUrl)) {
       ImagesResult? result = await Content().loadUserPhoto(type: UserProfileImageType.small);
-      if ((result != null) && (result.resultType == ImagesResultType.succeeded)) {
+      if (result.resultType == ImagesResultType.succeeded) {
         profilePicture = result.imageData;
       }
     }

@@ -195,8 +195,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
             Padding(
               padding: EdgeInsets.all(15.0),
               child: Text(
-                "Image Source",
-                style: Styles().textStyles.getTextStyle("widget.title.small"),
+                Localization().getStringEx("", "Image Source"),
+                style: Styles().textStyles.getTextStyle("widget.title.dark.small"),
               ),
             ),
             Padding(
@@ -351,19 +351,24 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         setState(() {
           _saving = true;
         });
-        Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
-            .then((value) {
-              if (mounted) {
-                setState(() {
-                  _saving = false;
-                });
-                Navigator.pop(this.context, value);
-              }
-        });
+        if (widget.isUserPic) {
+          Content().uploadUserPhoto(imageBytes: _imageBytes, mediaType: _contentType).then(_onImageUploaded);
+        } else {
+          Content().uploadImage(imageBytes: _imageBytes, mediaType: _contentType, storagePath: widget.storagePath!, width: widget.width).then(_onImageUploaded);
+        }
       }
     } else {
       _hideLoader();
-      ImagesResult result = (_imageBytes != null) ?  ImagesResult.succeed(imageData: _imageBytes) : ImagesResult.error(ImagesErrorType.contentNotSupplied, "'No file bytes.'");
+      ImagesResult result = (_imageBytes != null) ?  ImagesResult.succeed(imageData: _imageBytes) : ImagesResult.error(ImagesErrorType.contentNotSupplied, "No file bytes.");
+      Navigator.pop(this.context, result);
+    }
+  }
+
+  void _onImageUploaded(ImagesResult result) {
+    if (mounted) {
+      setState(() {
+        _saving = false;
+      });
       Navigator.pop(this.context, result);
     }
   }
