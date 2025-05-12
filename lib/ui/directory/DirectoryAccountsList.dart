@@ -95,7 +95,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       return _loadingContent;
     }
     else if (_accounts == null) {
-      return _messageContent(Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load User Directory content.'));
+      return _messageContent(Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load Directory of Users content.'));
     }
     else if (_accounts?.isEmpty == true) {
       return _messageContent(Localization().getStringEx('panel.directory.accounts.directory.empty.text', 'No results found.'));
