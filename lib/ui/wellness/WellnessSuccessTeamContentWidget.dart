@@ -216,7 +216,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
   }
 
   String get _emptyContentHtml => Localization().getStringEx("panel.wellness.successteam.empty.content.description",
-    "<p>There are no primary care providers (PCP) to display. As an Illinois student, you are automatically assigned a PCP at McKinley when you enroll. Call <a href='tel:$_mcKinleyPhoneMacro'>$_mcKinleyPhoneMacro</a> for more information.</p>")
+    "<p>There are no primary care providers (PCP) to display. After enrollment, Illinois students are automatically assigned a PCP at McKinley. Call <a href='tel:$_mcKinleyPhoneMacro'>$_mcKinleyPhoneMacro</a> for more information.</p>")
     .replaceAll(_mcKinleyPhoneMacro, Config().saferMcKinleyPhone ?? '');
 
   String get _dialNurseHtml => Localization().getStringEx("panel.wellness.successteam.dial.nurse.description",
