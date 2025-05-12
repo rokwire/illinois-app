@@ -323,7 +323,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
       GestureDetector(
         onTap: _onTapApproveAll,
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding: EdgeInsets.only(right: 8, top: 8, bottom: 8),
             child: Text(Localization().getStringEx("panel.manage_members.button.approve_all.title", 'Approve All'),
                 style: Styles().textStyles.getTextStyle('panel.group.button.leave.title')
             ))));
@@ -372,17 +372,22 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
     return Visibility(visible: showSynced || showUpdated,
       child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-        Visibility(visible: showSynced,
-          child: Semantics(container: true, child:
+        Visibility(visible: showSynced, child:
+          Semantics(container: true, child:
             Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Synced:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+              Expanded(child:
+                Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis)
+              )
         ]))),
-        Visibility(visible: showUpdated,
-          child: Semantics(container: true,
-            child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
+        Visibility(visible: showUpdated, child:
+          Semantics(container: true, child:
+          Padding(padding: EdgeInsets.only(top: 5), child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+              Expanded(child:
+                Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis,)
+              )
         ]))))
     ]))));
   }
