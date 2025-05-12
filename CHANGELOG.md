@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Emoji picker search layout above keyboard [#5110](https://github.com/rokwire/illinois-app/issues/5110).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
+### Added
+- Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 
 ## [7.0.20] - 2025-04-29
 ### Fixed
