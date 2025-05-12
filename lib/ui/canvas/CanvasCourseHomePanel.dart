@@ -40,7 +40,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class CanvasCourseHomePanel extends StatefulWidget with AnalyticsInfo {
   final int? courseId;
