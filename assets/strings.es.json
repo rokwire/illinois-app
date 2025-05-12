@@ -2826,8 +2826,8 @@
     "panel.group_detail.button.create_poll.title": "Crear una Encuesta",
     "panel.group_detail.button.policy.hint": "Toca para leer la declaración de política",
     "panel.group_detail.attendance.member.attended.msg.format": "El estudiante con UIN \"%s\" ya asistió \"%s\"",
-    "panel.group_detail.date.updated.managed.membership.label": "Última sincronización:",
-    "panel.group_detail.date.updated.membership.label": "Última actualización:",
+    "panel.group_detail.date.updated.managed.membership.label": "Synced:",
+    "panel.group_detail.date.updated.membership.label": "Updated:",
 
     "panel.group_member_notifications.header.title": "Notificaciones del Grupo",
     "panel.group_member_notifications.save.button": "Guardar",

@@ -2822,8 +2822,8 @@
     "panel.group_detail.button.create_poll.title": "Create Poll",
     "panel.group_detail.button.policy.hint": "Tap to read policy statement",
     "panel.group_detail.attendance.member.attended.msg.format": "Student with UIN \"%s\" already attended on \"%s\"",
-    "panel.group_detail.date.updated.managed.membership.label": "Last sync:",
-    "panel.group_detail.date.updated.membership.label": "Last updated:",
+    "panel.group_detail.date.updated.managed.membership.label": "Synced:",
+    "panel.group_detail.date.updated.membership.label": "Updated:",
 
     "panel.group_member_notifications.header.title": "Group Notifications",
     "panel.group_member_notifications.save.button": "Save",
