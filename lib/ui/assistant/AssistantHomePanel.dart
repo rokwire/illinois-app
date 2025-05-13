@@ -493,7 +493,7 @@ class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
   Widget build(BuildContext context) {
     String text = Assistant().localizedTermsText ??
         Localization().getStringEx('panel.assistant.terms.default.msg',
-            'The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the Illinois Assistant is a supplemental tool and not a substitute for official university sources.');
+            'The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the NEOM U Assistant is a supplemental tool and not a substitute for official university sources.');
     return AlertDialog(
         contentPadding: EdgeInsets.zero,
         content: Container(
@@ -512,7 +512,7 @@ class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
                             MarkdownBody(
                                 data: text,
                                 styleSheet: MarkdownStyleSheet(
-                                    p: Styles().textStyles.getTextStyle('widget.detail.small'),
+                                    p: Styles().textStyles.getTextStyle('widget.detail.dark.small'),
                                     a: TextStyle(decoration: TextDecoration.underline)))),
                         Padding(padding: EdgeInsets.only(top: 14), child: RoundedButton(
                             label: Localization().getStringEx('panel.assistant.terms.accept.button', 'I Accept'),

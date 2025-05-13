@@ -351,7 +351,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
   static Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    // borderRadius: _listContentBorderRadius,
+    borderRadius: _listContentBorderRadius,
     // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     // boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
