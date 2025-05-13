@@ -198,6 +198,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Illinois
 ## Unreleased
+- Make sure to use everywhere "denied" instead of "rejected" as group member status [#482](https://github.com/rokwire/illinois-app/issues/482).
 
 ## [7.1.3] - 2025-05-12
 ### Changed
