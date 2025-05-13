@@ -530,7 +530,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
       case GroupMemberStatus.pending:
         return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.pending.empty.project.message', 'There are no pending participants.') : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no rejected participants.') : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no denied participants.') : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no denied members.');
       default: // All
         return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.all.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
@@ -545,7 +545,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
       case GroupMemberStatus.pending:
         return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.pending.project.label', 'Pending') : Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Rejected') : Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Denied') : Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Denied');
       default:
         return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.all.project.label', 'All') : Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
     }
