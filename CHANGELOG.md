@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Create recurring event without end DateTime [#4990](https://github.com/rokwire/illinois-app/issues/4990).
 - Make sure to use everywhere "denied" instead of "rejected" as group member status [#482](https://github.com/rokwire/illinois-app/issues/482).
+### Changed
+- Updated dropdown menus: sort alphabetically, show current selection indicator where applicable [#5117](https://github.com/rokwire/illinois-app/issues/5117).
 
 ## [7.1.3] - 2025-05-12
 ### Changed

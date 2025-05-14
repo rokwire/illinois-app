@@ -28,13 +28,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 enum _InterestTab { Categories, Tags }
 
-class SettingsInterestsContentWidget extends StatefulWidget {
+class SettingsInterestsPage extends StatefulWidget {
 
   @override
   _SettingsManageInterestsState createState() => _SettingsManageInterestsState();
 }
 
-class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget> with NotificationsListener {
+class _SettingsManageInterestsState extends State<SettingsInterestsPage> with NotificationsListener {
   //Tabs
   List<_InterestTab> _tabs = [];
   _InterestTab? _selectedTab;

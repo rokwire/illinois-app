@@ -10,17 +10,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import '../../utils/AppUtils.dart';
 
-class SettingsResearchContentWidget extends StatefulWidget{
+class SettingsResearchPage extends StatefulWidget{
   final String? parentRouteName;
 
-  const SettingsResearchContentWidget({super.key, this.parentRouteName});
+  const SettingsResearchPage({super.key, this.parentRouteName});
 
   @override
   State<StatefulWidget> createState() => _SettingsContactsContentWidgetState();
 
 }
 
-class _SettingsContactsContentWidgetState extends State<SettingsResearchContentWidget> {
+class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
 
   @override
   Widget build(BuildContext context) =>
