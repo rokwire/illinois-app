@@ -246,7 +246,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
       Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.mentalHealth,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.mentalHealth,)));
     }
     else if (url == privacyUrl) {
       Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
@@ -256,7 +256,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.mentalHealth,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.mentalHealth,)));
   }
 
   void _onCommand(Map<String, dynamic> resourceItem) {

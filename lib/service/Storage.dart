@@ -486,4 +486,10 @@ class Storage extends rokwire.Storage {
   static const String walletContentTypeKey = 'edu.illinois.rokwire.wallet.content_type';
   String? get walletContentType => getStringWithName(walletContentTypeKey);
   set walletContentType(String? value) => setStringWithName(walletContentTypeKey, value);
+
+  // Wellness
+
+  static const String wellnessContentTypeKey = 'edu.illinois.rokwire.wellness.content_type';
+  String? get wellnessContentType => getStringWithName(wellnessContentTypeKey);
+  set wellnessContentType(String? value) => setStringWithName(wellnessContentTypeKey, value);
 }

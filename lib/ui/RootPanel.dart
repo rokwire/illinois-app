@@ -398,25 +398,25 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseTabNotification(RootTab.Wellness);
     }
     else if (name == FirebaseMessaging.notifyWellnessAppointmentsNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.appointments);
+      _onFirebaseWellnessNotification(WellnessContentType.appointments);
     }
     else if (name == FirebaseMessaging.notifyWellnessDailyTipsNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.dailyTips);
+      _onFirebaseWellnessNotification(WellnessContentType.dailyTips);
     }
     else if (name == FirebaseMessaging.notifyWellnessHealthScreenerNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.healthScreener);
+      _onFirebaseWellnessNotification(WellnessContentType.healthScreener);
     }
     else if (name == FirebaseMessaging.notifyWellnessMentalHealthNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.mentalHealth);
+      _onFirebaseWellnessNotification(WellnessContentType.mentalHealth);
     }
     else if (name == FirebaseMessaging.notifyWellnessResourcesNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.resources);
+      _onFirebaseWellnessNotification(WellnessContentType.resources);
     }
     else if (name == FirebaseMessaging.notifyWellnessRingsNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.rings);
+      _onFirebaseWellnessNotification(WellnessContentType.rings);
     }
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
-      _onFirebaseWellnessNotification(WellnessContent.todo);
+      _onFirebaseWellnessNotification(WellnessContentType.todo);
     }
 
     else if (name == FirebaseMessaging.notifyWalletNotification) {
@@ -1139,7 +1139,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       if (StringUtils.isNotEmpty(appointmentId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
       } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.appointments)));
       }
     }
   }
@@ -1183,7 +1183,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _onFirebaseWellnessNotification(WellnessContent content) {
+  void _onFirebaseWellnessNotification(WellnessContentType content) {
     if (WellnessHomePanel.hasState) {
       NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
     } else {
@@ -1259,7 +1259,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   Future<void> _onWellnessCategorySelect(Map<String, dynamic>? content) async {
     String? categoryCode = (content != null) ? JsonUtils.stringValue(content['id']) : null;
-    WellnessContent? category = WellnessContentImpl.fromString(categoryCode);
+    WellnessContentType? category = WellnessContentTypeImpl.fromJsonString(categoryCode);
     if (category != null) {
       _onFirebaseWellnessNotification(category);
     }
