@@ -263,15 +263,20 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   void _onTapDropdownItem(ProfileContentType contentItem) async {
     Analytics().logSelect(target: contentItem.displayStringEn, source: widget.runtimeType.toString());
-    bool? modifiedResult = (_selectedContentType == ProfileContentType.profile) ? await saveModifiedProfile() : null;
-    if (mounted) {
-      setState(() {
-        if (modifiedResult != false) {
-          _contentParams.remove(_selectedContentType);
-          Storage()._profileContentType = _selectedContentType = contentItem;
-        }
-        _contentValuesVisible = !_contentValuesVisible;
-      });
+    if (_selectedContentType != contentItem) {
+      bool? modifiedResult = (_selectedContentType == ProfileContentType.profile) ? await saveModifiedProfile() : null;
+      if (mounted) {
+        setState(() {
+          if (modifiedResult != false) {
+            _contentParams.remove(_selectedContentType);
+            Storage()._profileContentType = _selectedContentType = contentItem;
+          }
+          _contentValuesVisible = false;
+        });
+      }
+    }
+    else {
+      setState(() { _contentValuesVisible = false; });
     }
   }
 

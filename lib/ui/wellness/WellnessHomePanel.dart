@@ -210,8 +210,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   void _onTapDropdownItem(WellnessContentType contentItem) {
     Analytics().logSelect(target: contentItem.displayStringEn);
-    _changeSettingsContentValuesVisibility();
     NotificationService().notify(WellnessHomePanel.notifySelectContent, contentItem);
+    _changeSettingsContentValuesVisibility();
   }
 
   void _onSelectedContentTypeChanged(WellnessContentType contentItem) {
