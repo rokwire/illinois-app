@@ -165,14 +165,16 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (ResearchProjectsContentType contentType in _contentTypes) {
-      contentList.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
-        rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayTitle,
-        onTap: () => _onTapContentTypeDropdownItem(contentType)
-      ));
+      if (contentType != _selectedContentType) {
+        contentList.add(RibbonButton(
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+          label: contentType.displayTitle,
+          onTap: () => _onTapContentTypeDropdownItem(contentType)
+        ));
+      }
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:

@@ -160,14 +160,16 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (MTDStopsScope scope in _scopes) {
-      contentList.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        textStyle: Styles().textStyles.getTextStyle((_selectedScope == scope) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
-        rightIconKey: (_selectedScope == scope) ? 'check-accent' : null,
-        label: scope.displayTitle,
-        onTap: () => _onTapContentTypeDropdownItem(scope)
-      ));
+      if (scope != _selectedScope) {
+        contentList.add(RibbonButton(
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          textStyle: Styles().textStyles.getTextStyle((_selectedScope == scope) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: (_selectedScope == scope) ? 'check-accent' : null,
+          label: scope.displayTitle,
+          onTap: () => _onTapContentTypeDropdownItem(scope)
+        ));
+      }
     }
 
     return Semantics(container: true, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -196,6 +198,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
         _selectedScope = contentType;
         _contentTypesDropdownExpanded = false;
         _stops = _contentList;
+      });
+    }
+    else {
+      setState(() {
+        _contentTypesDropdownExpanded = false;
       });
     }
   }
