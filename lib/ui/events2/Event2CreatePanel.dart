@@ -658,7 +658,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         _buildImageDescriptionSection(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildAdminSettingsSection(),
+            // _buildAdminSettingsSection(),
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildRecurrenceDropdownSection(),
@@ -746,21 +746,21 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   //
   // AdminSection
 
-  Widget _buildAdminSettingsSection() => Stack(alignment: Alignment.center ,children: [
-    Event2CreatePanel.buildSectionWidget(
-      heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('', "Event Admins NetIDs (comma separated)"), required: true),
-      body: Event2CreatePanel.buildTextEditWidget(_adminNetIdsController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
-    ),
-    Align(alignment: Alignment.centerLeft, child:
-        Visibility(visible: _loadingAdmins, child:
-          Padding(padding: const EdgeInsets.only(left: 16), child:
-            SizedBox(width: 14, height: 14, child:
-              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
-            ),
-          )
-        )
-    )
-  ]);
+  // Widget _buildAdminSettingsSection() => Stack(alignment: Alignment.center ,children: [
+  //   Event2CreatePanel.buildSectionWidget(
+  //     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('', "Event Admins NetIDs (comma separated)"), required: true),
+  //     body: Event2CreatePanel.buildTextEditWidget(_adminNetIdsController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
+  //   ),
+  //   Align(alignment: Alignment.centerLeft, child:
+  //       Visibility(visible: _loadingAdmins, child:
+  //         Padding(padding: const EdgeInsets.only(left: 16), child:
+  //           SizedBox(width: 14, height: 14, child:
+  //             CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+  //           ),
+  //         )
+  //       )
+  //   )
+  // ]);
 
   // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(

@@ -132,7 +132,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildHeadingDescription() =>
     Padding(padding: _sectionPadding, child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description1', 'Attendance taking in the Illinois app is limited to event attendees with NetIDs.'), style: _descriptionTextStyle,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.header.description1', 'Attendance taking in the NEOM U app is limited to event attendees with NetIDs.'), style: _descriptionTextStyle,),
         Padding(padding: EdgeInsets.only(top: _sectionPaddingHeight)),
         Text(Localization().getStringEx('panel.event2.setup.attendance.header.description2', 'If you are taking registration in the Illinois app or uploading a registration list to the Illinois app, scanning Illini IDs and using manual attendance will alert attendance takers if the individual has NOT registered for that event. The attendance taker can choose to mark the individual as attended or not.'), style: _descriptionTextStyle,),
       ],),
@@ -165,10 +165,10 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   }
 
   TextStyle? get _descriptionTextStyle =>
-    Styles().textStyles.getTextStyle('widget.item.small.thin'); // widget.info.small
+    Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'); // widget.info.small
 
   TextStyle? get _descriptionLinkTextStyle =>
-    Styles().textStyles.getTextStyle('widget.item.small.thin.underline'); // widget.info.small
+    Styles().textStyles.getTextStyle('widget.item.light.small.thin.underline'); // widget.info.small
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: 'Take Attendance', attributes: _event?.analyticsAttributes);
@@ -297,10 +297,12 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     hint: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.title", "Enable self check-in by scanning a printed event QR code"),
+      textStyle: Styles().textStyles.getTextStyle('widget.item.light.regular.fat'),
       toggled: _selfCheckEnabled,
       onTap: _onTapSelfCheck,
       padding: EdgeInsets.zero,
       progress: _selfCheckProgress,
+      backgroundColor: Styles().colors.background,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -340,6 +342,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       onTap: _selfCheckEnabled ? _onTapSelfCheckLimitedToRegisteredOnly : null,
       padding: EdgeInsets.only(left: 24),
       progress: _selfCheckLimitedToRegisteredOnlyProgress,
+      backgroundColor: Styles().colors.background,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -373,9 +376,9 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildSelfCheckPdfButton() => RoundedButton(
     label: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.title', 'Self Check-In PDF'),
     hint: Localization().getStringEx('panel.event2.setup.attendance.self_check.generate_pdf.hint', ''),
-    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.regular') : Styles().textStyles.getTextStyle('widget.button.title.regular.variant3'),
+    textStyle: _canSelfCheckPdf ? Styles().textStyles.getTextStyle('widget.button.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.title.regular.variant3'),
     borderColor: _canSelfCheckPdf ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.background,
     onTap: _canSelfCheckPdf ? _onTapSelfCheckPdf : null,
     contentWeight: 0.6,
   );
