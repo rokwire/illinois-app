@@ -216,10 +216,10 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return DiningHomePanel(); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.events)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
     }
     else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.news)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
     }
     else if (lowerCaseKey == LaundryRoom.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
@@ -30,48 +32,49 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AthleticsContent { events, game_day, my_events, my_news, news, teams }
+enum AthleticsContentType { events, game_day, my_events, my_news, news, teams }
 
 class AthleticsHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.athletics.content.select";
   static const String contentItemKey = "content-item";
 
-  final AthleticsContent? content;
+  final AthleticsContentType? contentType;
 
-  final Map<String, dynamic> params = <String, dynamic>{};
-
-  AthleticsHomePanel({this.content});
+  AthleticsHomePanel({this.contentType});
 
   @override
   _AthleticsHomePanelState createState() => _AthleticsHomePanelState();
 
-  static bool get hasState {
+  static bool get hasState => (state != null);
+
+  static _AthleticsHomePanelState? get state {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(AthleticsHomePanel.notifySelectContent);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
         if ((subscriber is _AthleticsHomePanelState) && subscriber.mounted) {
-          return true;
+          return subscriber;
         }
       }
     }
-    return false;
+    return null;
   }
 }
 
 class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   with NotificationsListener, AutomaticKeepAliveClientMixin<AthleticsHomePanel> {
 
-  static AthleticsContent? _lastSelectedContent;
-  late AthleticsContent _selectedContent;
-  List<AthleticsContent>? _contentValues;
+  late AthleticsContentType _selectedContentType;
+  List<AthleticsContentType>? _contentTypes;
   bool _contentValuesVisible = false;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [FlexUI.notifyChanged, AthleticsHomePanel.notifySelectContent]);
-    _buildContentValues();
-    _selectedContent = _ensureContent(_initialContentItem) ?? (_lastSelectedContent ?? AthleticsContent.events);
+    _contentTypes = _buildContentTypes();
+    _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
+        _ensureContentType(Storage()._athleticsContentType, contentTypes: _contentTypes) ??
+        _defaultContentType(contentTypes: _contentTypes);
   }
 
   @override
@@ -85,10 +88,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      _buildContentValues();
+      _updateContentValues();
     } else if (name == AthleticsHomePanel.notifySelectContent) {
-      AthleticsContent? contentItem = (param is AthleticsContent) ? param : null;
-      if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {
+      AthleticsContentType? contentItem = (param is AthleticsContentType) ? param : null;
+      if (mounted && (contentItem != null) && (contentItem != _selectedContentType)) {
         _onContentItemChanged(contentItem);
       }
     }
@@ -118,7 +121,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
-                      label: _getContentLabel(_selectedContent),
+                      label: _selectedContentType.displayTitle,
                       onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
               child: Stack(children: [
@@ -151,53 +154,28 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-
-    if (CollectionUtils.isNotEmpty(_contentValues)) {
-      for (AthleticsContent content in _contentValues!) {
-        if (_selectedContent != content) {
-          sectionList.add(_buildContentItem(content));
-        }
-      }
+    for (AthleticsContentType contentType in _contentTypes!) {
+      sectionList.add(RibbonButton(
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+        rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+        label: contentType.displayTitle,
+        onTap: () => _onTapContentItem(contentType)
+      ));
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
   }
 
-  Widget _buildContentItem(AthleticsContent contentItem) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentLabel(contentItem),
-        onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _buildContentValues() {
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['browse.athletics']);
-    List<AthleticsContent>? contentValues;
-    if (contentCodes != null) {
-      contentValues = [];
-      for (String code in contentCodes) {
-        AthleticsContent? value = _getContentValueFromCode(code);
-        if (value != null) {
-          contentValues.add(value);
-        }
-      }
-    }
-
-    setStateIfMounted(() {
-      _contentValues = contentValues;
-    });
-  }
-
-  void _onTapContentItem(AthleticsContent contentItem) {
-    Analytics().logSelect(target: _getContentLabel(contentItem));
+  void _onTapContentItem(AthleticsContentType contentItem) {
+    Analytics().logSelect(target: contentItem.displayTitleEn);
     _changeSettingsContentValuesVisibility();
     NotificationService().notify(AthleticsHomePanel.notifySelectContent, contentItem);
   }
 
-  void _onContentItemChanged(AthleticsContent contentItem) {
+  void _onContentItemChanged(AthleticsContentType contentItem) {
     setStateIfMounted(() {
-      _selectedContent = _lastSelectedContent = contentItem;
+      Storage()._athleticsContentType = _selectedContentType = contentItem;
     });
   }
 
@@ -207,23 +185,35 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     });
   }
 
-  AthleticsContent? _getContentValueFromCode(String? code) {
-    switch (code) {
-      case 'my_athletics':
-        return AthleticsContent.my_events;
-      case 'my_game_day':
-        return AthleticsContent.game_day;
-      case 'my_news':
-        return AthleticsContent.my_news;
-      case 'sport_events':
-        return AthleticsContent.events;
-      case 'sport_news':
-        return AthleticsContent.news;
-      case 'sport_teams':
-        return AthleticsContent.teams;
-      default:
-        return null;
+  void _updateContentValues() {
+    List<AthleticsContentType> contentValues = _buildContentTypes();
+    if (!DeepCollectionEquality().equals(_contentTypes, contentValues)) {
+      setStateIfMounted(() {
+        _contentTypes = contentValues;
+      });
     }
+  }
+
+  static List<AthleticsContentType> _buildContentTypes() {
+    List<AthleticsContentType>? contentTypes = <AthleticsContentType>[];
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['browse.athletics']);
+    if (contentCodes != null) {
+      for (String code in contentCodes) {
+        AthleticsContentType? value = AthleticsContentTypeImpl.fromJsonString(code);
+        if (value != null) {
+          contentTypes.add(value);
+        }
+      }
+    }
+    contentTypes.sortAlphabetical();
+    return contentTypes;
+  }
+
+  static AthleticsContentType? _ensureContentType(AthleticsContentType? contentType, { List<AthleticsContentType>? contentTypes }) =>
+    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
+
+  static AthleticsContentType _defaultContentType({List<AthleticsContentType>? contentTypes}) {
+    return AthleticsContentType.events;
   }
 
   PreferredSizeWidget get _headerBar {
@@ -231,52 +221,68 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     return RootHeaderBar(leading: RootHeaderBarLeading.Back, title: title);
   }
 
-  AthleticsContent? _ensureContent(AthleticsContent? contentItem, {List<AthleticsContent>? contentItems}) {
-    contentItems ??= _contentValues;
-    return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
-  }
-
-  AthleticsContent? get _initialContentItem => widget.params[AthleticsHomePanel.contentItemKey] ?? widget.content;
-
-  Widget get _contentWidget {
-    switch (_selectedContent) {
-      case AthleticsContent.events:
-        return AthleticsEventsContentWidget();
-      case AthleticsContent.my_events:
-        return AthleticsEventsContentWidget(showFavorites: true);
-      case AthleticsContent.news:
-        return AthleticsNewsContentWidget();
-      case AthleticsContent.my_news:
-        return AthleticsNewsContentWidget(showFavorites: true);
-      case AthleticsContent.game_day:
-        return AthleticsGameDayContentWidget();
-      case AthleticsContent.teams:
-        return AthleticsTeamsContentWidget();
-      default:
-        return Container();
+  Widget? get _contentWidget {
+    switch (_selectedContentType) {
+      case AthleticsContentType.events: return AthleticsEventsContentWidget();
+      case AthleticsContentType.my_events: return AthleticsEventsContentWidget(showFavorites: true);
+      case AthleticsContentType.news: return AthleticsNewsContentWidget();
+      case AthleticsContentType.my_news: return AthleticsNewsContentWidget(showFavorites: true);
+      case AthleticsContentType.game_day: return AthleticsGameDayContentWidget();
+      case AthleticsContentType.teams: return AthleticsTeamsContentWidget();
+      default: return null;
     }
   }
 
-  // Utilities
+}
 
-  static String _getContentLabel(AthleticsContent section, { String? language }) {
-    switch (section) {
-      case AthleticsContent.events:
-        return _loadContentString('panel.athletics.content.section.events.label', 'Big 10 Events', language: language);
-      case AthleticsContent.game_day:
-        return _loadContentString('panel.athletics.content.section.game_day.label', "It's Game Day!", language: language);
-      case AthleticsContent.my_events:
-        return _loadContentString('panel.athletics.content.section.my_events.label', 'My Big 10 Events', language: language);
-      case AthleticsContent.my_news:
-        return _loadContentString('panel.athletics.content.section.my_news.label', 'My News', language: language);
-      case AthleticsContent.news:
-        return _loadContentString('panel.athletics.content.section.news.label', 'Big 10 News', language: language);
-      case AthleticsContent.teams:
-        return _loadContentString('panel.athletics.content.section.teams.label', 'Big 10 Teams', language: language);
+// AthleticsContentType
+
+extension AthleticsContentTypeImpl on AthleticsContentType {
+
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
+
+  String displayTitleLng([String? language]) {
+    switch (this) {
+      case AthleticsContentType.events: return Localization().getStringEx('panel.athletics.content.section.events.label', 'Big 10 Events', language: language);
+      case AthleticsContentType.game_day: return Localization().getStringEx('panel.athletics.content.section.game_day.label', "It's Game Day!", language: language);
+      case AthleticsContentType.my_events: return Localization().getStringEx('panel.athletics.content.section.my_events.label', 'My Big 10 Events', language: language);
+      case AthleticsContentType.my_news: return Localization().getStringEx('panel.athletics.content.section.my_news.label', 'My News', language: language);
+      case AthleticsContentType.news: return Localization().getStringEx('panel.athletics.content.section.news.label', 'Big 10 News', language: language);
+      case AthleticsContentType.teams: return Localization().getStringEx('panel.athletics.content.section.teams.label', 'Big 10 Teams', language: language);
     }
   }
 
-  static String _loadContentString(String key, String defaults, {String? language}) {
-    return Localization().getString(key, defaults: defaults, language: language) ?? defaults;
+  String get jsonString {
+    switch (this) {
+      case AthleticsContentType.events: return 'sport_events';
+      case AthleticsContentType.my_events: return 'my_athletics';
+      case AthleticsContentType.news: return 'sport_news';
+      case AthleticsContentType.my_news: return 'my_news';
+      case AthleticsContentType.game_day: return 'my_game_day';
+      case AthleticsContentType.teams: return 'sport_teams';
+    }
   }
+
+  static AthleticsContentType? fromJsonString(String? value) {
+    switch (value) {
+      case 'sport_events': return AthleticsContentType.events;
+      case 'my_athletics': return AthleticsContentType.my_events;
+      case 'sport_news': return AthleticsContentType.news;
+      case 'my_news': return AthleticsContentType.my_news;
+      case 'my_game_day': return AthleticsContentType.game_day;
+      case 'sport_teams': return AthleticsContentType.teams;
+      default: return null;
+    }
+  }
+
+}
+
+extension _AthleticsContentTypeList on List<AthleticsContentType> {
+  void sortAlphabetical() => sort((AthleticsContentType t1, AthleticsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+}
+
+extension _StorageWellnessExt on Storage {
+  AthleticsContentType? get _athleticsContentType => AthleticsContentTypeImpl.fromJsonString(athleticsContentType);
+  set _athleticsContentType(AthleticsContentType? value) => athleticsContentType = value?.jsonString;
 }

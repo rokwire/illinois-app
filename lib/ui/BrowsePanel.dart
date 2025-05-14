@@ -713,17 +713,17 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
   }
 
   static void _onTapSportNews(BuildContext context) {
     Analytics().logSelect(target: "News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
   }
 
   static void _onTapSportTeams(BuildContext context) {
     Analytics().logSelect(target: "Teams");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.teams)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.teams)));
   }
 
   static void _onTapCampusHighlights(BuildContext context) {
@@ -835,7 +835,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "It's Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.game_day)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
   }
 
   static void _onTapMyDinings(BuildContext context) {
@@ -845,12 +845,12 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMyAthletics(BuildContext context) {
     Analytics().logSelect(target: "My Big 10 Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.my_events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_events)));
   }
 
   static void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.my_news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
   }
 
   static void _onTapMyLaundry(BuildContext context) {

@@ -329,7 +329,7 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
 
   void _navigateAthletics() {
     Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
   }
 
   void _navigateBusPass() {

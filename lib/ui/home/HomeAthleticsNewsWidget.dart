@@ -203,7 +203,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(content: AthleticsContent.news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
   }
 
   void _refreshNews({bool showProgress = false}) {
