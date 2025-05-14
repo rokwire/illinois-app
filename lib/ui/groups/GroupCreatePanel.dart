@@ -1244,7 +1244,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   BoxDecoration get _dropdownDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4)),
   );

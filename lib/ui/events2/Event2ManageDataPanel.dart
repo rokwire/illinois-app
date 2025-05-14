@@ -30,7 +30,7 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.manage.data.header.title', 'Manage Event Data')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -40,36 +40,41 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Visibility(visible: widget._canUploadCsv,
                 child: Event2SettingsButton(
-                  title: 'DOWNLOAD REGISTRANTS .csv',
+                  title: 'DOWNLOAD REGISTRANTS.csv',
                   onTap: _onDownloadRegistrants)
               ),
+              SizedBox(height: 16.0,),
               Visibility(visible: widget._canUploadCsv,
                 child: Event2SettingsButton(
-                    title: 'UPLOAD REGISTRANTS .csv',
+                    title: 'UPLOAD REGISTRANTS.csv',
                     onTap: _onUploadRegistrants),
               ),
+              SizedBox(height: 16.0,),
               Visibility(visible: widget._canUploadCsv,
                 child: Event2SettingsButton(
-                      title: 'DOWNLOAD ATTENDANCE .csv',
+                      title: 'DOWNLOAD ATTENDANCE.csv',
                       onTap: _onDownloadAttendance),
               ),
+              SizedBox(height: 16.0,),
               Visibility(visible: widget._canUploadCsv,
                 child: Event2SettingsButton(
-                    title: 'UPLOAD ATTENDANCE .csv',
+                    title: 'UPLOAD ATTENDANCE.csv',
                     onTap: _onUploadAttendance),
               ),
+              SizedBox(height: 16.0,),
               Visibility(visible: widget._canUploadCsv,
                 child: Event2SettingsButton(
                     title: 'DOWNLOAD SURVEY RESULTS',
                     onTap: _onDownloadSurveyResults),
               ),
+              SizedBox(height: 16.0,),
               _buildDownloadResultsDescription(),
           ]),
         )
     );
 
   Widget _buildDownloadResultsDescription() {
-    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.light.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String? displayAttendanceUrl = (eventAttendanceUrl != null) ? (UrlUtils.stripUrlScheme(eventAttendanceUrl) ?? eventAttendanceUrl) : null;

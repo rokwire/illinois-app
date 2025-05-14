@@ -53,7 +53,7 @@ class _WalletBusPassPageState extends State<WalletBusPassPage> with Notification
     _loadingActiveBusDetails ? widget.backgroundColor : (_activeBusColor ?? Styles().colors.fillColorSecondary);
 
   Color get _displayBusColor =>
-    _loadingActiveBusDetails ? Styles().colors.white : (_activeBusColor ?? Styles().colors.fillColorSecondary);
+    _loadingActiveBusDetails ? Styles().colors.surface : (_activeBusColor ?? Styles().colors.fillColorSecondary);
 
   String? get _busNumber =>
     StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');

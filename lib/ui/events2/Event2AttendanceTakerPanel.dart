@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:universal_io/io.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
   final Event2? event;

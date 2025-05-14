@@ -2333,7 +2333,7 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
     return Column(children: <Widget>[
       Container(
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           borderRadius: BorderRadius.all(Radius.circular(8)),
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
@@ -2449,7 +2449,7 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
                 flex: 5,
                 key: progressKey, child:
             Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
               Padding(padding: EdgeInsets.only(left: 5), child:
               Row(children: <Widget>[
@@ -2487,7 +2487,7 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     border: Border.all(
                         color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
                         width: 2.0),

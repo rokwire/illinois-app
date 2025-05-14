@@ -70,7 +70,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   Map<String, Uint8List?>? _imagesData;
   Map<String, pw.Font?>? _fontsData;
 
-  static const String _universityLogoKey = 'images/block-i-orange-blue-large.png';
+  static const String _universityLogoKey = 'images/university-dark.png';
   static const String _appStoreKey = 'images/app-store.png';
   static const String _googlePlayKey = 'images/google-play.png';
 
@@ -238,7 +238,7 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   Widget get _messageContent => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 38), child:
       Column(children: [
         Expanded(child: Center(child:
-          Text(_contentMessage ?? '', style: Styles().textStyles.getTextStyle('widget.message.regular'), textAlign: TextAlign.center,),
+          Text(_contentMessage ?? '', style: Styles().textStyles.getTextStyle('widget.message.light.regular'), textAlign: TextAlign.center,),
         )),
         Expanded(child: Container()),
       ],)

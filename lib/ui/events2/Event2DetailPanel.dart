@@ -857,7 +857,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
             _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
           if (_event?.hasSurvey == true)
             _buildSettingButton(title:"Event follow-up survey responses", onTap: _onSettingSurveyResponses),
-          if (Event2ManageDataPanel.canManage)
+          // if (Event2ManageDataPanel.canManage)
             _buildSettingButton(title: "Manage registration, attendance, and survey data", onTap: _onSettingManageData),
           _buildSettingButton(title: "Advanced settings", onTap: _onSettingAdvancedSettings),
           if (Auth2().isCalendarAdmin)

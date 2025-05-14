@@ -428,7 +428,7 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
     return AlertDialog(
         contentPadding: EdgeInsets.zero,
         content: Container(
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, children: [
               Padding(
                   padding: EdgeInsets.only(top: 30, bottom: 22),
@@ -497,7 +497,7 @@ class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
     return AlertDialog(
         contentPadding: EdgeInsets.zero,
         content: Container(
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, children: [
               Padding(
                   padding: EdgeInsets.only(top: 36, bottom: 22),

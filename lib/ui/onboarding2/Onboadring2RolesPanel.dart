@@ -115,7 +115,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                   textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   enabled: _allowNext,
-                  backgroundColor: (Styles().colors.white),
+                  backgroundColor: (Styles().colors.surface),
                   borderColor: (_allowNext ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03),
                   progress: _onboardingProgress,
                   onTap: _onTapContinue,

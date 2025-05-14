@@ -87,7 +87,7 @@ class _DebugGuideBrowsePanelState extends State<DebugGuideBrowsePanel> {
           Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
             DropdownButtonHideUnderline(child:
               DropdownButton<String>(
-                dropdownColor: Styles().colors.white,
+                dropdownColor: Styles().colors.surface,
                 icon: Styles().images.getImage('chevron-down'),
                 isExpanded: true,
                 style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
@@ -122,7 +122,7 @@ class _DebugGuideBrowsePanelState extends State<DebugGuideBrowsePanel> {
     label: "Browse",
     textColor: Styles().colors.fillColorPrimary,
     borderColor: Styles().colors.fillColorSecondary,
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
     fontFamily: Styles().fontFamilies.bold,
     fontSize: 16,
     borderWidth: 2,
