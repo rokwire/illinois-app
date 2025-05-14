@@ -3400,5 +3400,5 @@ class _RecurringDatesPair {
   final DateTime startDateTimeUtc;
   final DateTime? endDateTimeUtc;
 
-  _RecurringDatesPair({required this.startDateTimeUtc, required this.endDateTimeUtc});
+  _RecurringDatesPair({required this.startDateTimeUtc, this.endDateTimeUtc});
 }

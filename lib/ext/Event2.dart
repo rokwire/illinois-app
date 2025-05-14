@@ -417,7 +417,7 @@ extension Event2Ext on Event2 {
     );
   }
 
-  Event2 toRecurringEvent({required DateTime startDateTimeUtc, required DateTime? endDateTimeUtc}) => Event2(
+  Event2 toRecurringEvent({required DateTime startDateTimeUtc, DateTime? endDateTimeUtc}) => Event2(
     name: this.name,
     description: this.description,
     instructions: this.instructions,
