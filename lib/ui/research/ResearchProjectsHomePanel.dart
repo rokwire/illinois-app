@@ -143,7 +143,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
-        label: _selectedContentType?.displayString ?? '',
+        label: _selectedContentType?.displayTitle ?? '',
         onTap: _onTapContentTypeDropdownButton
       )
     );
@@ -170,7 +170,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayString,
+        label: contentType.displayTitle,
         onTap: () => _onTapContentTypeDropdownItem(contentType)
       ));
     }
@@ -196,7 +196,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
   }
 
   void _onTapContentTypeDropdownItem(ResearchProjectsContentType contentType) {
-    Analytics().logSelect(target: contentType.displayStringEn);
+    Analytics().logSelect(target: contentType.displayTitleEn);
     if (_selectedContentType != contentType) {
       setState(() {
         _selectedContentType = contentType;
@@ -590,10 +590,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
 // ResearchProjectsContentType
 
 extension ResearchProjectsContentTypeImpl on ResearchProjectsContentType {
-  String get displayString => displayLanguageString();
-  String get displayStringEn => displayLanguageString(language: 'en');
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
 
-  String displayLanguageString({ String? language }) {
+  String displayTitleLng([ String? language ]) {
     switch (this) {
       case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects', language: language);
       case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects', language: language);
@@ -624,7 +624,7 @@ extension ResearchProjectsContentTypeImpl on ResearchProjectsContentType {
 }
 
 extension _ResearchProjectsContentTypeList on List<ResearchProjectsContentType> {
-  void sortAlphabetical() => sort((ResearchProjectsContentType t1, ResearchProjectsContentType t2) => t1.displayString.compareTo(t2.displayString));
+  void sortAlphabetical() => sort((ResearchProjectsContentType t1, ResearchProjectsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 
   static List<ResearchProjectsContentType> fromContentTypes(Iterable<ResearchProjectsContentType> contentTypes) {
     List<ResearchProjectsContentType> contentTypesList = List<ResearchProjectsContentType>.from(contentTypes);

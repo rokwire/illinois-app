@@ -237,7 +237,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayString,
+        label: contentType.displayTitle,
         onTap: () => _onTapContentTypeDropdownItem(contentType)
       ));
     }
@@ -251,7 +251,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
-      label: _selectedContentType?.displayString ?? '',
+      label: _selectedContentType?.displayTitle ?? '',
       onTap: _changeContentTypesVisibility
     ));
   }
@@ -598,7 +598,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   }
 
   void _onTapContentTypeDropdownItem(rokwire.GroupsContentType contentType) {
-    Analytics().logSelect(target: contentType.displayStringEn);
+    Analytics().logSelect(target: contentType.displayTitleEn);
     if (_selectedContentType != contentType) {
       if (contentType == rokwire.GroupsContentType.all) {
         _onSelectAllGroups();
@@ -746,10 +746,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
 // GroupsContentType
 
 extension GroupsContentTypeImpl on GroupsContentType {
-  String get displayString => displayLanguageString();
-  String get displayStringEn => displayLanguageString(language: 'en');
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
 
-  String displayLanguageString({ String? language }) {
+  String displayTitleLng([String? language]) {
     switch (this) {
       case GroupsContentType.all: return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups', language: language);
       case GroupsContentType.my: return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups', language: language);
@@ -780,7 +780,7 @@ extension GroupsContentTypeImpl on GroupsContentType {
 }
 
 extension _GroupsContentTypeList on List<GroupsContentType> {
-  void sortAlphabetical() => sort((GroupsContentType t1, GroupsContentType t2) => t1.displayString.compareTo(t2.displayString));
+  void sortAlphabetical() => sort((GroupsContentType t1, GroupsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 
   static List<GroupsContentType> fromContentTypes(Iterable<GroupsContentType> contentTypes) {
     List<GroupsContentType> contentTypesList = List<GroupsContentType>.from(contentTypes);

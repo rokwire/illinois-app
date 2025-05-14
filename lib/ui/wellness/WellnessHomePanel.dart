@@ -146,7 +146,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  label: _selectedContentType?.displayString ?? '',
+                  label: _selectedContentType?.displayTitle ?? '',
                   onTap: _changeSettingsContentValuesVisibility
               ),
             ),
@@ -196,7 +196,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayString,
+        label: contentType.displayTitle,
         onTap: () => _onTapDropdownItem(contentType)
         )
       );
@@ -209,7 +209,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   }
 
   void _onTapDropdownItem(WellnessContentType contentItem) {
-    Analytics().logSelect(target: contentItem.displayStringEn);
+    Analytics().logSelect(target: contentItem.displayTitleEn);
     NotificationService().notify(WellnessHomePanel.notifySelectContent, contentItem);
     _changeSettingsContentValuesVisibility();
   }
@@ -306,10 +306,10 @@ class WellnessFavorite extends Favorite {
 // WellnessContentImpl
 extension WellnessContentTypeImpl on WellnessContentType {
 
-  String get displayString => displayLanguageString();
-  String get displayStringEn => displayLanguageString(language: 'en');
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
 
-  String displayLanguageString({ String? language }) {
+  String displayTitleLng([String? language]) {
     switch (this) {
       case WellnessContentType.dailyTips: return Localization().getStringEx('panel.wellness.section.daily_tips.label', 'Today\'s Wellness Tip', language: language);
       case WellnessContentType.rings: return Localization().getStringEx('panel.wellness.section.rings.label', 'Daily Wellness Rings', language: language);
@@ -354,7 +354,7 @@ extension WellnessContentTypeImpl on WellnessContentType {
 
   AnalyticsFeature? get analyticsFeature {
     switch (this) {
-      case WellnessContentType.dailyTips:     return AnalyticsFeature.WellnessDailyTips;
+      case WellnessContentType.dailyTips:      return AnalyticsFeature.WellnessDailyTips;
       case WellnessContentType.rings:          return AnalyticsFeature.WellnessRings;
       case WellnessContentType.todo:           return AnalyticsFeature.WellnessToDo;
       case WellnessContentType.appointments:   return AnalyticsFeature.WellnessAppointments;
@@ -368,7 +368,7 @@ extension WellnessContentTypeImpl on WellnessContentType {
 }
 
 extension _WellnessContentTypeList on List<WellnessContentType> {
-  void sortAlphabetical() => sort((WellnessContentType t1, WellnessContentType t2) => t1.displayString.compareTo(t2.displayString));
+  void sortAlphabetical() => sort((WellnessContentType t1, WellnessContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 }
 
 extension _StorageWellnessExt on Storage {

@@ -60,7 +60,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     List<WalletContentType> contentTypes = buildContentTypes();
     if ((contentType != null) && !contentTypes.contains(contentType)) {
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.not_available.content_type.label', '{{content_type}} is not available.').
-        replaceAll('{{content_type}}', contentType.displayString));
+        replaceAll('{{content_type}}', contentType.displayTitle));
     }
     else if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
@@ -216,7 +216,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                    label: _selectedContentType?.displayString  ?? '',
+                    label: _selectedContentType?.displayTitle  ?? '',
                     onTap: _onTapContentSwitch
                   )
                 ),
@@ -270,7 +270,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayString,
+        label: contentType.displayTitle,
         onTap: () => _onTapDropdownItem(contentType)
       ));
     }
@@ -296,12 +296,12 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   }
 
   void _onTapDropdownItem(WalletContentType contentType) {
-    Analytics().logSelect(target: contentType.displayStringEn, source: widget.runtimeType.toString());
+    Analytics().logSelect(target: contentType.displayTitleEn, source: widget.runtimeType.toString());
 
     if (contentType != _selectedContentType) {
       if (!Auth2().isOidcLoggedIn && WalletHomePanel.requireOidcContentTypes.contains(contentType)) {
         AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.content_type.label', 'To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.').
-          replaceAll('{{content_type}}', contentType.displayString));
+          replaceAll('{{content_type}}', contentType.displayTitle));
       }
       else {
         setState(() {
@@ -341,10 +341,10 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
 
 extension WalletContentTypeImpl on WalletContentType {
 
-  String get displayString => displayLanguageString();
-  String get displayStringEn => displayLanguageString(language: 'en');
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
 
-  String displayLanguageString({ String? language }) {
+  String displayTitleLng([String? language]) {
     switch (this) {
       case WalletContentType.illiniId: return Localization().getStringEx('panel.wallet.content_type.illini_id.label', 'Illini ID', language: language);
       case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass', language: language);
@@ -391,7 +391,7 @@ extension WalletContentTypeImpl on WalletContentType {
 }
 
 extension _WalletContentTypeList on List<WalletContentType> {
-  void sortAlphabetical() => sort((WalletContentType t1, WalletContentType t2) => t1.displayString.compareTo(t2.displayString));
+  void sortAlphabetical() => sort((WalletContentType t1, WalletContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 }
 
 extension _StorageWalletExt on Storage {

@@ -196,7 +196,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                    label: _selectedContentType?.displayString ?? '',
+                    label: _selectedContentType?.displayTitle ?? '',
                     onTap: _onTapContentSwitch
                   )
                 )
@@ -250,7 +250,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-          label: contentType.displayString,
+          label: contentType.displayTitle,
           onTap: () => _onTapDropdownItem(contentType))
       );
     }
@@ -262,7 +262,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   }
 
   void _onTapDropdownItem(ProfileContentType contentItem) async {
-    Analytics().logSelect(target: contentItem.displayStringEn, source: widget.runtimeType.toString());
+    Analytics().logSelect(target: contentItem.displayTitleEn, source: widget.runtimeType.toString());
     if (_selectedContentType != contentItem) {
       bool? modifiedResult = (_selectedContentType == ProfileContentType.profile) ? await saveModifiedProfile() : null;
       if (mounted) {
@@ -363,10 +363,10 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 // ProfileContentType
 
 extension ProfileContentTypeImpl on ProfileContentType {
-  String get displayString => displayLanguageString();
-  String get displayStringEn => displayLanguageString(language: 'en');
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
 
-  String displayLanguageString({ String? language }) {
+  String displayTitleLng([String? language]) {
     switch (this) {
       case ProfileContentType.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile', language: language);
       case ProfileContentType.share: return Localization().getStringEx('panel.settings.profile.content.share.label', 'My Digital Business Card', language: language);
@@ -396,7 +396,7 @@ extension ProfileContentTypeImpl on ProfileContentType {
 }
 
 extension _ProfileContentTypeList on List<ProfileContentType> {
-  void sortAlphabetical() => sort((ProfileContentType t1, ProfileContentType t2) => t1.displayString.compareTo(t2.displayString));
+  void sortAlphabetical() => sort((ProfileContentType t1, ProfileContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 
   static List<ProfileContentType> fromContentTypes(Iterable<ProfileContentType> contentTypes) {
     List<ProfileContentType> contentTypesList = List<ProfileContentType>.from(contentTypes);

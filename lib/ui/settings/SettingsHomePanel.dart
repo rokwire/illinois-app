@@ -196,7 +196,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                      label: _selectedContentType?.displayString ?? '',
+                      label: _selectedContentType?.displayTitle ?? '',
                       onTap: _onTapContentDropdown
                     )
                   )
@@ -255,7 +255,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayString,
+        label: contentType.displayTitle,
         onTap: () => _onTapDropdownItem(contentType)
       ));
     }
@@ -268,7 +268,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   }
 
   void _onTapDropdownItem(SettingsContentType contentType) {
-    Analytics().logSelect(target: contentType.displayStringEn);
+    Analytics().logSelect(target: contentType.displayTitleEn);
     if (contentType == SettingsContentType.favorites) {
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
@@ -372,10 +372,10 @@ class _DebugContainerState extends State<_DebugContainer> {
 // SettingsContentTypeImpl
 
 extension SettingsContentTypeImpl on SettingsContentType {
-  String get displayString => displayLanguageString();
-  String get displayStringEn => displayLanguageString(language: 'en');
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
 
-  String displayLanguageString({ String? language }) {
+  String displayTitleLng([ String? language ]) {
     switch (this) {
       case SettingsContentType.food_filters: return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter', language: language);
       case SettingsContentType.sports: return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams', language: language);
@@ -444,7 +444,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
 }
 
 extension _SettingsContentTypeList on List<SettingsContentType> {
-  void sortAlphabetical() => sort((SettingsContentType t1, SettingsContentType t2) => t1.displayString.compareTo(t2.displayString));
+  void sortAlphabetical() => sort((SettingsContentType t1, SettingsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 
   static List<SettingsContentType> fromAvailableContentTypes(Iterable<SettingsContentType> contentTypes) {
     List<SettingsContentType> contentTypesList = List<SettingsContentType>.from(contentTypes.where((contentType) => contentType.isAvailable));
