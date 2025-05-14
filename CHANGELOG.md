@@ -5,9 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Make sure to use everywhere "denied" instead of "rejected" as group member status [#482](https://github.com/rokwire/illinois-app/issues/482).
+
+## [7.1.3] - 2025-05-12
 ### Changed
 - Copy to Clipboard UI in Assistant [#5021](https://github.com/rokwire/illinois-app/issues/5021).
 - Updated empty content message in primary care providers [#5114](https://github.com/rokwire/illinois-app/issues/5114).
+- Replace "User Directory" to "Directory of Users" display text everywhere in the UI [#5115](https://github.com/rokwire/illinois-app/issues/5115).
+- Use correct Research Participation term in UI [#5116](https://github.com/rokwire/illinois-app/issues/5116).
+- Update order of tabs when creating new groups [#5106](https://github.com/rokwire/illinois-app/issues/5106).
+- Use shorter title in Group Members date updated label, improved layout [#5127](https://github.com/rokwire/illinois-app/issues/5127).
 ### Added
 - Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 

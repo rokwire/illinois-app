@@ -30,7 +30,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   Widget build(BuildContext context) =>
     Scaffold(
       appBar: RootHeaderBar(
-        title: Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'User Directory'),
+        title: Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'Directory of Users'),
         leading: RootHeaderBarLeading.Back,
       ),
       body: _scaffoldContent,

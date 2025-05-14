@@ -156,7 +156,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
 
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view Directory of Users, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)

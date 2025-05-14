@@ -283,7 +283,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  String get _desriptionText => _editing ? Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.') : (directoryVisibility ? Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.') : '');
+  String get _desriptionText => _editing ? Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the Directory of Users.') : (directoryVisibility ? Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the Directory of Users.') : '');
 
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:
