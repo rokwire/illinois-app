@@ -23,12 +23,12 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsLanguageContentWidget extends StatefulWidget {
+class SettingsLanguagePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingsLanguageContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsLanguagePageState();
 }
 
-class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentWidget> with NotificationsListener {
+class _SettingsLanguagePageState extends State<SettingsLanguagePage> with NotificationsListener {
 
   bool _localeChanged = false;
 

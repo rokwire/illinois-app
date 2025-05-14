@@ -23,18 +23,18 @@ import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsContactsContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsICardContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsLanguageContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsMapsContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsRecentItemsContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsAppointmentsPage.dart';
+import 'package:illinois/ui/settings/SettingsAssessmentsPage.dart';
+import 'package:illinois/ui/settings/SettingsCalendarPage.dart';
+import 'package:illinois/ui/settings/SettingsContactsPage.dart';
+import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
+import 'package:illinois/ui/settings/SettingsICardPage.dart';
+import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
+import 'package:illinois/ui/settings/SettingsMapsPage.dart';
+import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
+import 'package:illinois/ui/settings/SettingsRecentItemsPage.dart';
+import 'package:illinois/ui/settings/SettingsResearchPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -45,36 +45,36 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications}
+enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
-class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
-  static final List<SettingsContent> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
-    SettingsContent.contact,
-    SettingsContent.maps,
-    SettingsContent.appointments,
-    SettingsContent.assessments,
-    SettingsContent.research,
-    SettingsContent.calendar,
-    SettingsContent.recent_items,
-    SettingsContent.language,
-    SettingsContent.privacy,
-    SettingsContent.notifications,
-    SettingsContent.i_card,
+class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
+  static final List<SettingsContentType> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
+    SettingsContentType.contact,
+    SettingsContentType.maps,
+    SettingsContentType.appointments,
+    SettingsContentType.assessments,
+    SettingsContentType.research,
+    SettingsContentType.calendar,
+    SettingsContentType.recent_items,
+    SettingsContentType.language,
+    SettingsContentType.privacy,
+    SettingsContentType.notifications,
+    SettingsContentType.i_card,
   ];
 
   static final String routeName = 'settings_home_content_panel';
   
-  final SettingsContent? content;
+  final SettingsContentType? content;
 
-  SettingsHomeContentPanel._({this.content});
+  SettingsHomePanel._({this.content});
 
   @override
-  _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
+  _SettingsHomePanelState createState() => _SettingsHomePanelState();
 
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Settings;
 
-  static void present(BuildContext context, { SettingsContent? content}) {
+  static void present(BuildContext context, { SettingsContentType? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -89,7 +89,7 @@ class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return SettingsHomeContentPanel._(content: content);
+          return SettingsHomePanel._(content: content);
         }
       );
       /*Navigator.push(context, PageRouteBuilder(
@@ -102,9 +102,9 @@ class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> with NotificationsListener {
-  static SettingsContent? _lastSelectedContent;
-  late SettingsContent _selectedContent;
+class _SettingsHomePanelState extends State<SettingsHomePanel> with NotificationsListener {
+  static SettingsContentType? _lastSelectedContent;
+  late SettingsContentType _selectedContent;
   bool _contentValuesVisible = false;
 
   @override
@@ -114,7 +114,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
       MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
     ]);
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.contact);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContentType.contact);
   }
 
   @override
@@ -246,10 +246,10 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (SettingsContent section in SettingsHomeContentPanel._dropdownSettings) {
+    for (SettingsContentType section in SettingsHomePanel._dropdownSettings) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
-        if ((section != SettingsContent.i_card) || (MobileAccess().isMobileAccessAvailable)) {
+        if ((section != SettingsContentType.i_card) || (MobileAccess().isMobileAccessAvailable)) {
           sectionList.add(_buildContentItem(section));
         }
       }
@@ -257,7 +257,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
   }
 
-  Widget _buildContentItem(SettingsContent contentItem) {
+  Widget _buildContentItem(SettingsContentType contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -271,9 +271,9 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
     _changeSettingsContentValuesVisibility();
   }
 
-  void _onTapContentItem(SettingsContent contentItem) {
+  void _onTapContentItem(SettingsContentType contentItem) {
     Analytics().logSelect(target: "Content Item: ${contentItem.toString()}");
-    if (contentItem == SettingsContent.favorites) {
+    if (contentItem == SettingsContentType.favorites) {
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
     else {
@@ -292,34 +292,34 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsContent.food_filters:
-        return SettingsFoodFiltersContentWidget();
-      case SettingsContent.sports:
+      case SettingsContentType.food_filters:
+        return SettingsFoodFiltersPage();
+      case SettingsContentType.sports:
         return AthleticsTeamsWidget();
-      case SettingsContent.calendar:
-        return SettingsCalendarContentWidget();
-      case SettingsContent.recent_items:
-        return SettingsRecentItemsContentWidget();
-      case SettingsContent.appointments:
-        return SettingsAppointmentsContentWidget();
-      case SettingsContent.favorites:
+      case SettingsContentType.calendar:
+        return SettingsCalendarPage();
+      case SettingsContentType.recent_items:
+        return SettingsRecentItemsPage();
+      case SettingsContentType.appointments:
+        return SettingsAppointmentsPage();
+      case SettingsContentType.favorites:
         return Container();
-      case SettingsContent.assessments:
-        return SettingsAssessmentsContentWidget();
-      case SettingsContent.i_card:
-        return SettingsICardContentWidget();
-      case SettingsContent.language:
-        return SettingsLanguageContentWidget();
-      case SettingsContent.contact:
-        return SettingsContactsContentWidget();
-      case SettingsContent.maps:
-        return SettingsMapsContentWidget();
-      case SettingsContent.research:
-        return SettingsResearchContentWidget(parentRouteName: SettingsHomeContentPanel.routeName);
-      case SettingsContent.privacy:
-        return SettingsPrivacyCenterContentWidget();
-      case SettingsContent.notifications:
-       return SettingsNotificationPreferencesContentWidget();
+      case SettingsContentType.assessments:
+        return SettingsAssessmentsPage();
+      case SettingsContentType.i_card:
+        return SettingsICardPage();
+      case SettingsContentType.language:
+        return SettingsLanguagePage();
+      case SettingsContentType.contact:
+        return SettingsContactsPage();
+      case SettingsContentType.maps:
+        return SettingsMapsPage();
+      case SettingsContentType.research:
+        return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
+      case SettingsContentType.privacy:
+        return SettingsPrivacyCenterPage();
+      case SettingsContentType.notifications:
+       return SettingsNotificationPreferencesPage();
     }
   }
 
@@ -337,35 +337,35 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> wit
 
   // Utilities
 
-  String _getContentLabel(SettingsContent section) {
+  String _getContentLabel(SettingsContentType section) {
     switch (section) {
-      case SettingsContent.food_filters:
+      case SettingsContentType.food_filters:
         return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter');
-      case SettingsContent.sports:
+      case SettingsContentType.sports:
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
-      case SettingsContent.calendar:
+      case SettingsContentType.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
-      case SettingsContent.recent_items:
+      case SettingsContentType.recent_items:
         return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History');
-      case SettingsContent.appointments:
+      case SettingsContentType.appointments:
         return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Appointments');
-      case SettingsContent.favorites:
+      case SettingsContentType.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
-      case SettingsContent.assessments:
+      case SettingsContentType.assessments:
         return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
-      case SettingsContent.i_card:
+      case SettingsContentType.i_card:
         return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID');
-      case SettingsContent.language:
+      case SettingsContentType.language:
         return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language');
-      case SettingsContent.contact:
+      case SettingsContentType.contact:
         return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us');
-      case SettingsContent.maps:
+      case SettingsContentType.maps:
         return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding');
-      case SettingsContent.research:
+      case SettingsContentType.research:
         return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research');
-      case SettingsContent.privacy:
+      case SettingsContentType.privacy:
         return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings');
-      case SettingsContent.notifications:
+      case SettingsContentType.notifications:
         return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences');
     }
   }

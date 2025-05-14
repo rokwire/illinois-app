@@ -47,7 +47,7 @@ import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
@@ -462,37 +462,37 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseProfileNotification(profileContent: ProfileContent.login);
     }
     else if (name == FirebaseMessaging.notifySettingsFoodFiltersNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.food_filters);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.food_filters);
     }
     else if (name == FirebaseMessaging.notifySettingsSportsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.sports);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.sports);
     }
     else if (name == FirebaseMessaging.notifySettingsFavoritesNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.favorites);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.favorites);
     }
     else if (name == FirebaseMessaging.notifySettingsAssessmentsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.assessments);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.assessments);
     }
     else if (name == FirebaseMessaging.notifySettingsCalendarNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.calendar);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.calendar);
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments);
     }
     else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.maps);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
     }
     else if (name == FirebaseMessaging.notifySettingsContactsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.contact);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.contact);
     }
     else if (name == FirebaseMessaging.notifySettingsResearchNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.research);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.research);
     }
     else if (name == FirebaseMessaging.notifySettingsPrivacyNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.privacy);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.privacy);
     }
     else if (name == FirebaseMessaging.notifySettingsNotificationsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.notifications);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.notifications);
     }
     else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
       _onFirebaseGuideArticleNotification(param);
@@ -1163,11 +1163,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     ProfileHomePanel.present(context, content: profileContent);
   }
 
-  void _onFirebaseSettingsNotification({required SettingsContent settingsContent}) {
-    if (settingsContent == SettingsContent.favorites) {
+  void _onFirebaseSettingsNotification({required SettingsContentType settingsContent}) {
+    if (settingsContent == SettingsContentType.favorites) {
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     } else {
-      SettingsHomeContentPanel.present(context, content: settingsContent);
+      SettingsHomePanel.present(context, content: settingsContent);
     }
   }
 
