@@ -30,6 +30,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -904,7 +905,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
                   constraints: BoxConstraints(maxWidth: maxImageWidgth),
                   // width: _smallImageSize,
                   height: _smallImageSize,
-                  child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true,
+                  child: WebNetworkImage(imageUrl: imageUrl ?? '', excludeFromSemantics: true,
                     fit: BoxFit.fill,),),))
         // )
       );
@@ -1136,7 +1137,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Visibility(visible: StringUtils.isNotEmpty(imageUrl),
                               child: Container(
                                 padding: EdgeInsets.only(top: 14),
-                                child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders, excludeFromSemantics: true)
+                                child: WebNetworkImage(imageUrl: imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true)
                             )),
                             WebEmbed(body: htmlBody),
                             // Container(
@@ -1394,7 +1395,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: Image.network(Config().wrapWebProxyUrl(sourceUrl: widget.reply!.imageUrl) ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders, excludeFromSemantics: true)
+                      child: WebNetworkImage(imageUrl: widget.reply!.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true)
               )),
 
               WebEmbed(body: bodyText),
@@ -2168,7 +2169,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
+              ? Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl ?? '', semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),

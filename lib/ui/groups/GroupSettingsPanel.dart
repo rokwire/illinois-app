@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -32,7 +31,6 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -212,7 +210,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: _group!.imageURL) ?? '', excludeFromSemantics: true, fit: BoxFit.cover, headers: kIsWeb ? rokwire_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders)))) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: WebNetworkImage(imageUrl: _group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover)))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(

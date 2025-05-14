@@ -20,14 +20,13 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/ext/Game.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -250,9 +249,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
-          child: ModalImageHolder(child: Image.network(
-            Config().wrapWebProxyUrl(sourceUrl: game!.newsImageUrl) ?? '',
-            headers: Auth2Csrf().networkAuthHeaders,
+          child: ModalImageHolder(child: WebNetworkImage(imageUrl: game!.newsImageUrl!,
             semanticLabel: "game",
             fit: BoxFit.fitWidth,
           )),

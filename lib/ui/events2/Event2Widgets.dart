@@ -11,18 +11,17 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as app_auth2;
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as plugin_auth2;
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -425,7 +424,6 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
   Widget get _imageHeadingWidget {
-    String imageUrl = Config().wrapWebProxyUrl(sourceUrl: _event.imageUrl) ?? '';
     double screenWidth = MediaQuery.of(context).size.width;
     double preferredWidth = screenWidth / 4.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
@@ -433,8 +431,8 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
         visible: _hasImage,
         child: Container(
           decoration: _imageHeadingDecoration,
-          child: Image.network(imageUrl, width: imageWidth,
-                  fit: BoxFit.cover, headers: (kIsWeb ? plugin_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders), excludeFromSemantics: true),
+          child: WebNetworkImage(imageUrl: _event.imageUrl!, width: imageWidth,
+                  fit: BoxFit.cover, excludeFromSemantics: true),
         ));
   }
 

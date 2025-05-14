@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Event2.dart';
@@ -24,13 +23,13 @@ import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -101,7 +100,7 @@ class _ExploreCardState extends State<ExploreCard> with NotificationsListener {
     Widget? imageWidget = StringUtils.isNotEmpty(imageUrl) ?
       SizedBox(width: _smallImageSize, height: _smallImageSize, child:
         InkWell(onTap: () => _onTapCardImage(imageUrl),
-          child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: (kIsWeb ? rokwire_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders))),
+          child: WebNetworkImage(imageUrl: widget.explore!.exploreImageUrl!, excludeFromSemantics: true, fit: BoxFit.fill)),
       ) : null;
     Widget? rightWidget = ((selectWidget != null) || (imageWidget != null)) ?
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: _hasPaymentTypes ? 12 : 16, top: (isEvent2 || isGame) ? 12 : 0), child:

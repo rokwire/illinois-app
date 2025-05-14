@@ -15,10 +15,10 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -661,7 +661,7 @@ class _TweetWidget extends StatelessWidget {
                 Column(children: [
                   StringUtils.isNotEmpty(tweet?.media?.imageUrl) ?
                     InkWell(onTap: () => _onTap(context), child:
-                      Image.network(Config().wrapWebProxyUrl(sourceUrl: tweet!.media!.imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true)) :
+                      WebNetworkImage(imageUrl: tweet!.media!.imageUrl!, excludeFromSemantics: true)) :
                   Container(),
                   Row(
                     mainAxisSize: MainAxisSize.max,

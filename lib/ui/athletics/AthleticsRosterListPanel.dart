@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';
@@ -369,7 +369,7 @@ class _RosterItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(roster.thumbPhotoUrl) ?
-                      ModalImageHolder(url: Config().wrapWebProxyUrl(sourceUrl: roster.fullSizePhotoUrl), child: Image.network(Config().wrapWebProxyUrl(sourceUrl: roster.fullSizePhotoUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)) :
+                      ModalImageHolder(url: Config().wrapWebProxyUrl(sourceUrl: roster.fullSizePhotoUrl), child: WebNetworkImage(imageUrl: roster.fullSizePhotoUrl!, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)) :
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),

@@ -546,6 +546,7 @@ class AppLaunchUrl {
 
 class AppWebUtils {
   static final double screenWidth = 1092;
+  static final String webNetworkImageCacheKey = 'web_network_image_cache';
 }
 
 class AppFile {

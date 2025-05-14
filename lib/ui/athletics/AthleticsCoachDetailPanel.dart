@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/material.dart';
@@ -185,7 +184,7 @@ class _CoachDetailHeading extends StatelessWidget{
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
-                      Image.network(Config().wrapWebProxyUrl(sourceUrl: coach!.thumbPhotoUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      WebNetworkImage(imageUrl: coach!.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)
                       ),
                     ),

@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
@@ -184,6 +185,10 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     // Log app create analytics event
     Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
+
+    // Init hive for web network image cache
+    await Hive.initFlutter();
+    await Hive.openBox(AppWebUtils.webNetworkImageCacheKey);
 
     runApp(App(initializeError: serviceError));
   }, FirebaseCrashlytics().handleZoneError);

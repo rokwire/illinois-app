@@ -15,8 +15,7 @@
  */
 
 
-import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 import 'dart:math';
 
@@ -34,7 +33,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -306,7 +304,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(url)
-              ? Positioned.fill(child: ModalImageHolder(child:Image.network(Config().wrapWebProxyUrl(sourceUrl: _group!.imageURL) ?? '', excludeFromSemantics: true, fit: BoxFit.cover, headers: kIsWeb ? rokwire_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders)))
+              ? Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: url!, excludeFromSemantics: true, fit: BoxFit.cover)))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),

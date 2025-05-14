@@ -17,11 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -107,11 +106,11 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
   }
 
   Widget get _buildImage {
-    String? imageUrl = Config().wrapWebProxyUrl(sourceUrl: widget.dining?.imageURL);
+    String? imageUrl = widget.dining?.imageURL;
     return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
-          Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true)
+          WebNetworkImage(imageUrl: imageUrl!, fit: BoxFit.cover, excludeFromSemantics: true)
         ),
       )
     );

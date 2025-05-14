@@ -1,10 +1,10 @@
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -12,8 +12,6 @@ import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event2.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -160,7 +158,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', fit: BoxFit.cover, headers: kIsWeb ? rokwire_auth2.Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl!, fit: BoxFit.cover, excludeFromSemantics: true))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
