@@ -40,21 +40,12 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   final WalletContentType? contentType;
   final List<WalletContentType>? contentTypes;
 
-  static Set<WalletContentType> requireOidcContentTypes = {
+  static Set<WalletContentType> requireOidcContentTypes = <WalletContentType>{
     WalletContentType.illiniId,
     WalletContentType.busPass,
     WalletContentType.libraryCard,
     WalletContentType.mealPlan,
     WalletContentType.illiniCash,
-  };
-
-  static Map<WalletContentType, AnalyticsFeature> contentAnalyticsFeatures = {
-    WalletContentType.illiniId:    AnalyticsFeature.WalletIlliniID,
-    WalletContentType.busPass:     AnalyticsFeature.WalletBusPass,
-    WalletContentType.libraryCard: AnalyticsFeature.WalletLibraryCard,
-    WalletContentType.mealPlan:    AnalyticsFeature.WalletMealPlan,
-    WalletContentType.illiniCash:  AnalyticsFeature.WalletIlliniCash,
-    // Everything not mentioned here would go as AnalyticsFeature.Wallet
   };
 
   WalletHomePanel._({this.contentType, this.contentTypes});
@@ -63,7 +54,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   _WalletHomePanelState createState() => _WalletHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[getTargetContentType(contentType: contentType, contentTypes: contentTypes)];
+  AnalyticsFeature? get analyticsFeature => getTargetContentType(contentType: contentType, contentTypes: contentTypes)?.analyticsFeature;
 
   static void present(BuildContext context, { WalletContentType? contentType }) {
     List<WalletContentType> contentTypes = buildContentTypes();
@@ -101,7 +92,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wallet']);
     if (contentCodes != null) {
       for (String code in contentCodes) {
-        WalletContentType? value = _WalletContentType.fromJsonString(code);
+        WalletContentType? value = WalletContentTypeImpl.fromJsonString(code);
         if (value != null) {
           contentTypes.add(value);
         }
@@ -305,7 +296,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   }
 
   void _onTapDropdownItem(WalletContentType contentType) {
-    Analytics().logSelect(target: contentType.displayString, source: widget.runtimeType.toString());
+    Analytics().logSelect(target: contentType.displayStringEn, source: widget.runtimeType.toString());
 
     if (contentType != _selectedContentType) {
       if (!Auth2().isOidcLoggedIn && WalletHomePanel.requireOidcContentTypes.contains(contentType)) {
@@ -348,16 +339,19 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
 ////////////////////
 // WalletContentType
 
-extension _WalletContentType on WalletContentType {
+extension WalletContentTypeImpl on WalletContentType {
 
-  String get displayString {
+  String get displayString => displayLanguageString();
+  String get displayStringEn => displayLanguageString(language: 'en');
+
+  String displayLanguageString({ String? language }) {
     switch (this) {
-      case WalletContentType.illiniId: return Localization().getStringEx('panel.wallet.content_type.illini_id.label', 'Illini ID');
-      case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass');
-      case WalletContentType.libraryCard: return Localization().getStringEx('panel.wallet.content_type.library_card.label', 'University Library Card');
-      case WalletContentType.mealPlan: return Localization().getStringEx('panel.wallet.content_type.meal_plan.label', 'Meal Plan');
-      case WalletContentType.illiniCash: return Localization().getStringEx('panel.wallet.content_type.illini_cash.label', 'Illini Cash');
-      case WalletContentType.addIlliniCash: return Localization().getStringEx('panel.wallet.content_type.add_illini_cash.label', 'Add Illini Cash');
+      case WalletContentType.illiniId: return Localization().getStringEx('panel.wallet.content_type.illini_id.label', 'Illini ID', language: language);
+      case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass', language: language);
+      case WalletContentType.libraryCard: return Localization().getStringEx('panel.wallet.content_type.library_card.label', 'University Library Card', language: language);
+      case WalletContentType.mealPlan: return Localization().getStringEx('panel.wallet.content_type.meal_plan.label', 'Meal Plan', language: language);
+      case WalletContentType.illiniCash: return Localization().getStringEx('panel.wallet.content_type.illini_cash.label', 'Illini Cash', language: language);
+      case WalletContentType.addIlliniCash: return Localization().getStringEx('panel.wallet.content_type.add_illini_cash.label', 'Add Illini Cash', language: language);
     }
   }
 
@@ -383,6 +377,17 @@ extension _WalletContentType on WalletContentType {
       default: return null;
     }
   }
+
+  AnalyticsFeature? get analyticsFeature {
+    switch(this) {
+      case WalletContentType.illiniId: return AnalyticsFeature.WalletIlliniID;
+      case WalletContentType.busPass:     return AnalyticsFeature.WalletBusPass;
+      case WalletContentType.libraryCard: return AnalyticsFeature.WalletLibraryCard;
+      case WalletContentType.mealPlan:    return AnalyticsFeature.WalletMealPlan;
+      case WalletContentType.illiniCash:  return AnalyticsFeature.WalletIlliniCash;
+      default: return null;
+    }
+  }
 }
 
 extension _WalletContentTypeList on List<WalletContentType> {
@@ -390,7 +395,7 @@ extension _WalletContentTypeList on List<WalletContentType> {
 }
 
 extension _StorageWalletExt on Storage {
-  WalletContentType? get _contentType => _WalletContentType.fromJsonString(walletContentType);
+  WalletContentType? get _contentType => WalletContentTypeImpl.fromJsonString(walletContentType);
   set _contentType(WalletContentType? value) => walletContentType = value?.jsonString;
 }
 
