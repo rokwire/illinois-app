@@ -134,7 +134,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
       pronunciationAudioData: widget.pronunciationAudioData,
     );*/
     NotificationService().notify(ProfileHomePanel.notifySelectContent, [
-      ProfileContent.share,
+      ProfileContentType.share,
       <String, dynamic>{
         ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
           profile: _profile,

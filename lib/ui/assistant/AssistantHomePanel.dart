@@ -465,7 +465,7 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
     } else if (url == _signInUrl) {
       Analytics().logSelect(target: 'Profile: Sign In / Sign Out', source: widget.runtimeType.toString());
       Navigator.of(context).pop();
-      ProfileHomePanel.present(context, content: ProfileContent.login);
+      ProfileHomePanel.present(context, contentType: ProfileContentType.login);
       return true;
     } else {
       return false;

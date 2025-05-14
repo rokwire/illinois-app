@@ -268,7 +268,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   }
 
   void _onTapDropdownItem(SettingsContentType contentType) {
-    Analytics().logSelect(target: "Content Item: ${contentType.toString()}");
+    Analytics().logSelect(target: contentType.displayStringEn);
     if (contentType == SettingsContentType.favorites) {
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
@@ -328,6 +328,44 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     else if (name == Localization.notifyLocaleChanged) {
       setStateIfMounted(() {});
     }
+  }
+}
+
+// _DebugContainer
+
+class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
+  final Widget _child;
+
+  _DebugContainer({required Widget child}) : _child = child;
+
+  // PreferredSizeWidget
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  _DebugContainerState createState() => _DebugContainerState();
+}
+
+class _DebugContainerState extends State<_DebugContainer> {
+  int _clickedCount = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: widget._child,
+      onTap: () {
+        Analytics().logSelect(target: 'Debug 7 Clicks', source: 'Header Bar');
+        Log.d("On tap debug widget");
+        _clickedCount++;
+
+        if (_clickedCount == 7) {
+          if (Auth2().isDebugManager) {
+            Analytics().logSelect(target: 'Debug 7th Click', source: 'Header Bar');
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+          }
+          _clickedCount = 0;
+        }
+      },
+    );
   }
 }
 
@@ -420,40 +458,3 @@ extension _StorageSettingsExt on Storage {
   set _settingsContentType(SettingsContentType? value) => walletContentType = value?.jsonString;
 }
 
-// _DebugContainer
-
-class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
-  final Widget _child;
-
-  _DebugContainer({required Widget child}) : _child = child;
-
-  // PreferredSizeWidget
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  _DebugContainerState createState() => _DebugContainerState();
-}
-
-class _DebugContainerState extends State<_DebugContainer> {
-  int _clickedCount = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: widget._child,
-      onTap: () {
-        Analytics().logSelect(target: 'Debug 7 Clicks', source: 'Header Bar');
-        Log.d("On tap debug widget");
-        _clickedCount++;
-
-        if (_clickedCount == 7) {
-          if (Auth2().isDebugManager) {
-            Analytics().logSelect(target: 'Debug 7th Click', source: 'Header Bar');
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-          }
-          _clickedCount = 0;
-        }
-      },
-    );
-  }
-}

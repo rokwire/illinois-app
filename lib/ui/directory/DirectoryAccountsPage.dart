@@ -183,7 +183,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
 
   void _onTapSignIn() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login, );
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login, );
   }
 
   Future<void> refresh() async => _accountsListKey.currentState?.refresh();

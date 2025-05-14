@@ -571,7 +571,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
 

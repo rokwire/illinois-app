@@ -18,6 +18,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoWrapperPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
@@ -29,21 +31,21 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { login, profile, share, who_are_you, }
+enum ProfileContentType { login, profile, share, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.profile.command.select";
   static const String routeName = 'settings_profile_content_panel';
 
-  final ProfileContent? content;
+  final ProfileContentType? contentType;
   final Map<String, dynamic>? contentParams;
 
-  ProfileHomePanel._({this.content, this.contentParams});
+  ProfileHomePanel._({this.contentType, this.contentParams});
 
   @override
   _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, { ProfileContent? content, Map<String, dynamic>? contentParams }) {
+  static void present(BuildContext context, { ProfileContentType? contentType, Map<String, dynamic>? contentParams }) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -58,7 +60,7 @@ class ProfileHomePanel extends StatefulWidget {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return ProfileHomePanel._(content: content, contentParams: contentParams,);
+          return ProfileHomePanel._(contentType: contentType, contentParams: contentParams,);
         }
       );
 
@@ -74,9 +76,10 @@ class ProfileHomePanel extends StatefulWidget {
 
 class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsListener {
 
-  ProfileContent? _selectedContent;
-  static ProfileContent? _lastSelectedContent;
+  late List<ProfileContentType> _contentTypes;
+  ProfileContentType? _selectedContentType;
   bool _contentValuesVisible = false;
+  static ProfileContentType get _defaultContentType => Auth2().isLoggedIn ? ProfileContentType.profile : ProfileContentType.login;
 
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
@@ -84,7 +87,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   final ScrollController _scrollController = ScrollController();
 
-  final Map<ProfileContent?, Map<String, dynamic>?> _contentParams = <ProfileContent?, Map<String, dynamic>?>{};
+  final Map<ProfileContentType?, Map<String, dynamic>?> _contentParams = <ProfileContentType?, Map<String, dynamic>?>{};
 
   @override
   void initState() {
@@ -93,15 +96,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
       ProfileHomePanel.notifySelectContent,
     ]);
 
-    if (widget.content != null) {
-      _selectedContent = _lastSelectedContent = widget.content;
-      _contentParams[widget.content] = widget.contentParams;
+    _contentTypes = _ProfileContentTypeList.fromContentTypes(ProfileContentType.values);
+
+    if (widget.contentType != null) {
+      Storage()._profileContentType = _selectedContentType = widget.contentType;
+      _contentParams[widget.contentType] = widget.contentParams;
     }
-    else if (_lastSelectedContent != null) {
-      _selectedContent = _lastSelectedContent;
-    }
-    else  {
-      _selectedContent = _lastSelectedContent = ProfileContent.values.first;
+    else {
+      ProfileContentType? lastContentType = Storage()._profileContentType;
+      _selectedContentType = (lastContentType != null) ? lastContentType : (Storage()._profileContentType = _defaultContentType);
     }
   }
 
@@ -193,7 +196,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                    label: _getContentItemName(_selectedContent) ?? '',
+                    label: _selectedContentType?.displayString ?? '',
                     onTap: _onTapContentSwitch
                   )
                 )
@@ -219,14 +222,14 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     return Visibility(visible: _contentValuesVisible, child:
       Positioned.fill(child:
         Stack(children: <Widget>[
-          _buildContentDismissLayer(),
-          _buildContentValuesWidget()
+          _dropdownDismissLayer,
+          _dropdownList,
         ])
       )
     );
   }
 
-  Widget _buildContentDismissLayer() {
+  Widget get _dropdownDismissLayer {
     return Positioned.fill(child:
       BlockSemantics(child:
         Semantics(excludeSemantics: true, child:
@@ -238,13 +241,18 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     );
   }
 
-  Widget _buildContentValuesWidget() {
+  Widget get _dropdownList {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (ProfileContent contentItem in ProfileContent.values) {
-      if (_selectedContent != contentItem) {
-        contentList.add(_buildContentItem(contentItem));
-      }
+    for (ProfileContentType contentType in _contentTypes) {
+      contentList.add(RibbonButton(
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+          label: contentType.displayString,
+          onTap: () => _onTapDropdownItem(contentType))
+      );
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
@@ -253,23 +261,14 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     );
   }
 
-  Widget _buildContentItem(ProfileContent contentItem) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentItemName(contentItem),
-        onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _onTapContentItem(ProfileContent contentItem) async {
-    Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
-    bool? modifiedResult = (_selectedContent == ProfileContent.profile) ? await saveModifiedProfile() : null;
+  void _onTapDropdownItem(ProfileContentType contentItem) async {
+    Analytics().logSelect(target: contentItem.displayStringEn, source: widget.runtimeType.toString());
+    bool? modifiedResult = (_selectedContentType == ProfileContentType.profile) ? await saveModifiedProfile() : null;
     if (mounted) {
       setState(() {
         if (modifiedResult != false) {
-          _contentParams.remove(_selectedContent);
-          _selectedContent = _lastSelectedContent = contentItem;
+          _contentParams.remove(_selectedContentType);
+          Storage()._profileContentType = _selectedContentType = contentItem;
         }
         _contentValuesVisible = !_contentValuesVisible;
       });
@@ -310,13 +309,13 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   Future<bool?> saveModifiedProfile() async => _profileInfoKey.currentState?.saveModified();
 
   void _handleSelectNotification(param) {
-    ProfileContent? content;
+    ProfileContentType? content;
     Map<String, dynamic>? contentParam;
-    if (param is ProfileContent) {
+    if (param is ProfileContentType) {
       content = param;
     }
     else if (param is List) {
-      if ((0 < param.length) && (param[0] is ProfileContent)) {
+      if ((0 < param.length) && (param[0] is ProfileContentType)) {
         content = param[0];
       }
       if ((1 < param.length) && (param[1] is Map<String, dynamic>)) {
@@ -326,8 +325,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
     if ((content != null) && mounted) {
       setState(() {
-        _contentParams.remove(_selectedContent);
-        _selectedContent = _lastSelectedContent = content;
+        _contentParams.remove(_selectedContentType);
+        Storage()._profileContentType = _selectedContentType = content;
         _contentParams[content] = contentParam;
       });
     }
@@ -346,22 +345,62 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   }
 
   Widget get _contentWidget {
-    switch (_selectedContent) {
-      case ProfileContent.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, key: _profileInfoKey, contentParams: _contentParams[ProfileContent.profile]);
-      case ProfileContent.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: _contentParams[ProfileContent.share]);
-      case ProfileContent.who_are_you: return ProfileRolesPage();
-      case ProfileContent.login: return ProfileLoginPage();
+    switch (_selectedContentType) {
+      case ProfileContentType.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, key: _profileInfoKey, contentParams: _contentParams[ProfileContentType.profile]);
+      case ProfileContentType.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: _contentParams[ProfileContentType.share]);
+      case ProfileContentType.who_are_you: return ProfileRolesPage();
+      case ProfileContentType.login: return ProfileLoginPage();
       default: return Container();
     }
   }
+}
 
-  String? _getContentItemName(ProfileContent? contentItem) {
-    switch (contentItem) {
-      case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
-      case ProfileContent.share: return Localization().getStringEx('panel.settings.profile.content.share.label', 'My Digital Business Card');
-      case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
-      case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
+// ProfileContentType
+
+extension ProfileContentTypeImpl on ProfileContentType {
+  String get displayString => displayLanguageString();
+  String get displayStringEn => displayLanguageString(language: 'en');
+
+  String displayLanguageString({ String? language }) {
+    switch (this) {
+      case ProfileContentType.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile', language: language);
+      case ProfileContentType.share: return Localization().getStringEx('panel.settings.profile.content.share.label', 'My Digital Business Card', language: language);
+      case ProfileContentType.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You', language: language);
+      case ProfileContentType.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out', language: language);
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case ProfileContentType.profile: return 'profile';
+      case ProfileContentType.share: return 'share';
+      case ProfileContentType.who_are_you: return 'who_are_you';
+      case ProfileContentType.login: return 'login';
+    }
+  }
+
+  static ProfileContentType? fromJsonString(String? value) {
+    switch(value) {
+      case 'profile': return ProfileContentType.profile;
+      case 'share': return ProfileContentType.share;
+      case 'who_are_you': return ProfileContentType.who_are_you;
+      case 'login': return ProfileContentType.login;
       default: return null;
     }
   }
+}
+
+extension _ProfileContentTypeList on List<ProfileContentType> {
+  void sortAlphabetical() => sort((ProfileContentType t1, ProfileContentType t2) => t1.displayString.compareTo(t2.displayString));
+
+  static List<ProfileContentType> fromContentTypes(Iterable<ProfileContentType> contentTypes) {
+    List<ProfileContentType> contentTypesList = List<ProfileContentType>.from(contentTypes);
+    contentTypesList.sortAlphabetical();
+    return contentTypesList;
+  }
+}
+
+extension _StorageProfileExt on Storage {
+  ProfileContentType? get _profileContentType => ProfileContentTypeImpl.fromJsonString(profileContentType);
+  set _profileContentType(ProfileContentType? value) => profileContentType = value?.jsonString;
 }

@@ -509,7 +509,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
   // Content Data

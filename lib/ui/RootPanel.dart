@@ -450,16 +450,16 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseWellnessToDoItemNotification(param);
     }
     else if (name == FirebaseMessaging.notifyProfileMyNotification) {
-      _onFirebaseProfileNotification(profileContent: ProfileContent.profile);
+      _onFirebaseProfileNotification(profileContent: ProfileContentType.profile);
     }
     else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
-      _onFirebaseProfileNotification(profileContent: ProfileContent.who_are_you);
+      _onFirebaseProfileNotification(profileContent: ProfileContentType.who_are_you);
     }
     else if (name == FirebaseMessaging.notifyProfileLoginNotification) {
-      _onFirebaseProfileNotification(profileContent: ProfileContent.login);
+      _onFirebaseProfileNotification(profileContent: ProfileContentType.login);
     }
     else if (name == FirebaseMessaging.notifySettingsSectionsNotification) { //TBD deprecate use notifyProfileLoginNotification instead
-      _onFirebaseProfileNotification(profileContent: ProfileContent.login);
+      _onFirebaseProfileNotification(profileContent: ProfileContentType.login);
     }
     else if (name == FirebaseMessaging.notifySettingsFoodFiltersNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.food_filters);
@@ -1159,8 +1159,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     _onGuideDetail(param);
   }
 
-  void _onFirebaseProfileNotification({required ProfileContent profileContent}) {
-    ProfileHomePanel.present(context, content: profileContent);
+  void _onFirebaseProfileNotification({required ProfileContentType profileContent}) {
+    ProfileHomePanel.present(context, contentType: profileContent);
   }
 
   void _onFirebaseSettingsNotification({required SettingsContentType settingsContent}) {
