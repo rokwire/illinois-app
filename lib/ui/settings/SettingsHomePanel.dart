@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/MobileAccess.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -48,7 +49,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
-  static final List<SettingsContentType> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
+  static final String routeName = 'settings_home_content_panel';
+
+  static final Set<SettingsContentType> _dropdownContentTypes = <SettingsContentType>{
+    //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
     SettingsContentType.contact,
     SettingsContentType.maps,
     SettingsContentType.appointments,
@@ -60,13 +64,11 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
     SettingsContentType.privacy,
     SettingsContentType.notifications,
     SettingsContentType.i_card,
-  ];
+  };
 
-  static final String routeName = 'settings_home_content_panel';
-  
-  final SettingsContentType? content;
+  final SettingsContentType? contentType;
 
-  SettingsHomePanel._({this.content});
+  SettingsHomePanel._({this.contentType});
 
   @override
   _SettingsHomePanelState createState() => _SettingsHomePanelState();
@@ -89,7 +91,7 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return SettingsHomePanel._(content: content);
+          return SettingsHomePanel._(contentType: content);
         }
       );
       /*Navigator.push(context, PageRouteBuilder(
@@ -103,8 +105,8 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _SettingsHomePanelState extends State<SettingsHomePanel> with NotificationsListener {
-  static SettingsContentType? _lastSelectedContent;
-  late SettingsContentType _selectedContent;
+  late List<SettingsContentType> _contentTypes;
+  late SettingsContentType? _selectedContentType;
   bool _contentValuesVisible = false;
 
   @override
@@ -114,7 +116,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
     ]);
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContentType.contact);
+    _contentTypes = _SettingsContentTypeList.fromAvailableContentTypes(SettingsHomePanel._dropdownContentTypes);
+    _selectedContentType = widget.contentType ?? Storage()._settingsContentType ?? (_contentTypes.isNotEmpty ? _contentTypes.first : null);
   }
 
   @override
@@ -193,7 +196,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                      label: _getContentLabel(_selectedContent),
+                      label: _selectedContentType?.displayString ?? '',
                       onTap: _onTapContentDropdown
                     )
                   )
@@ -210,7 +213,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   Widget _buildContent() {
     return Stack(children: [
       Padding(padding: EdgeInsets.all(16), child:
-        _contentWidget
+        _contentWidget ?? Container()
       ),
       _buildContentValuesContainer()
     ]);
@@ -221,12 +224,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       visible: _contentValuesVisible,
       child: Container /* Positioned.fill*/ (child:
         Stack(children: <Widget>[
-          _buildContentDismissLayer(),
-          _buildContentValuesWidget()
+          _dropdownDismissLayer,
+          _dropdownList
         ])));
   }
 
-  Widget _buildContentDismissLayer() {
+  Widget get _dropdownDismissLayer {
     return Container /* Positioned.fill */ (
         child: BlockSemantics(
             child: Semantics(excludeSemantics: true,
@@ -243,27 +246,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
                 )))));
   }
 
-  Widget _buildContentValuesWidget() {
+  Widget get _dropdownList {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (SettingsContentType section in SettingsHomePanel._dropdownSettings) {
-      if ((_selectedContent != section)) {
-        // Add i_card content only if icard mobile is available
-        if ((section != SettingsContentType.i_card) || (MobileAccess().isMobileAccessAvailable)) {
-          sectionList.add(_buildContentItem(section));
-        }
-      }
-    }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
-  }
-
-  Widget _buildContentItem(SettingsContentType contentItem) {
-    return RibbonButton(
+    for (SettingsContentType contentType in _contentTypes) {
+      sectionList.add(RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentLabel(contentItem),
-        onTap: () => _onTapContentItem(contentItem));
+        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+        rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+        label: contentType.displayString,
+        onTap: () => _onTapDropdownItem(contentType)
+      ));
+    }
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
   }
 
   void _onTapContentDropdown() {
@@ -271,13 +267,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     _changeSettingsContentValuesVisibility();
   }
 
-  void _onTapContentItem(SettingsContentType contentItem) {
-    Analytics().logSelect(target: "Content Item: ${contentItem.toString()}");
-    if (contentItem == SettingsContentType.favorites) {
+  void _onTapDropdownItem(SettingsContentType contentType) {
+    Analytics().logSelect(target: "Content Item: ${contentType.toString()}");
+    if (contentType == SettingsContentType.favorites) {
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
     else {
-      _selectedContent = _lastSelectedContent = contentItem;
+      _selectedContentType = Storage()._settingsContentType = contentType;
     }
     _changeSettingsContentValuesVisibility();
   }
@@ -290,36 +286,23 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     }
   }
 
-  Widget get _contentWidget {
-    switch (_selectedContent) {
-      case SettingsContentType.food_filters:
-        return SettingsFoodFiltersPage();
-      case SettingsContentType.sports:
-        return AthleticsTeamsWidget();
-      case SettingsContentType.calendar:
-        return SettingsCalendarPage();
-      case SettingsContentType.recent_items:
-        return SettingsRecentItemsPage();
-      case SettingsContentType.appointments:
-        return SettingsAppointmentsPage();
-      case SettingsContentType.favorites:
-        return Container();
-      case SettingsContentType.assessments:
-        return SettingsAssessmentsPage();
-      case SettingsContentType.i_card:
-        return SettingsICardPage();
-      case SettingsContentType.language:
-        return SettingsLanguagePage();
-      case SettingsContentType.contact:
-        return SettingsContactsPage();
-      case SettingsContentType.maps:
-        return SettingsMapsPage();
-      case SettingsContentType.research:
-        return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
-      case SettingsContentType.privacy:
-        return SettingsPrivacyCenterPage();
-      case SettingsContentType.notifications:
-       return SettingsNotificationPreferencesPage();
+  Widget? get _contentWidget {
+    switch (_selectedContentType) {
+      case SettingsContentType.food_filters: return SettingsFoodFiltersPage();
+      case SettingsContentType.sports: return AthleticsTeamsWidget();
+      case SettingsContentType.calendar: return SettingsCalendarPage();
+      case SettingsContentType.recent_items: return SettingsRecentItemsPage();
+      case SettingsContentType.appointments: return SettingsAppointmentsPage();
+      case SettingsContentType.favorites: return null;
+      case SettingsContentType.assessments: return SettingsAssessmentsPage();
+      case SettingsContentType.i_card: return SettingsICardPage();
+      case SettingsContentType.language: return SettingsLanguagePage();
+      case SettingsContentType.contact: return SettingsContactsPage();
+      case SettingsContentType.maps: return SettingsMapsPage();
+      case SettingsContentType.research: return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
+      case SettingsContentType.privacy: return SettingsPrivacyCenterPage();
+      case SettingsContentType.notifications: return SettingsNotificationPreferencesPage();
+      default: return null;
     }
   }
 
@@ -335,41 +318,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     Navigator.of(context).pop();
   }
 
-  // Utilities
-
-  String _getContentLabel(SettingsContentType section) {
-    switch (section) {
-      case SettingsContentType.food_filters:
-        return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter');
-      case SettingsContentType.sports:
-        return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
-      case SettingsContentType.calendar:
-        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
-      case SettingsContentType.recent_items:
-        return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History');
-      case SettingsContentType.appointments:
-        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Appointments');
-      case SettingsContentType.favorites:
-        return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
-      case SettingsContentType.assessments:
-        return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
-      case SettingsContentType.i_card:
-        return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID');
-      case SettingsContentType.language:
-        return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language');
-      case SettingsContentType.contact:
-        return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us');
-      case SettingsContentType.maps:
-        return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding');
-      case SettingsContentType.research:
-        return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research');
-      case SettingsContentType.privacy:
-        return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings');
-      case SettingsContentType.notifications:
-        return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences');
-    }
-  }
-
   // NotificationsListener
   
   @override
@@ -382,6 +330,97 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     }
   }
 }
+
+// SettingsContentTypeImpl
+
+extension SettingsContentTypeImpl on SettingsContentType {
+  String get displayString => displayLanguageString();
+  String get displayStringEn => displayLanguageString(language: 'en');
+
+  String displayLanguageString({ String? language }) {
+    switch (this) {
+      case SettingsContentType.food_filters: return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter', language: language);
+      case SettingsContentType.sports: return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams', language: language);
+      case SettingsContentType.calendar: return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar', language: language);
+      case SettingsContentType.recent_items: return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History', language: language);
+      case SettingsContentType.appointments: return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Appointments', language: language);
+      case SettingsContentType.favorites: return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites', language: language);
+      case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
+      case SettingsContentType.i_card: return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID', language: language);
+      case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
+      case SettingsContentType.contact: return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us', language: language);
+      case SettingsContentType.maps: return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding', language: language);
+      case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
+      case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
+      case SettingsContentType.notifications: return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences', language: language);
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case SettingsContentType.food_filters: return 'food_filters';
+      case SettingsContentType.sports: return 'sports';
+      case SettingsContentType.calendar: return 'calendar';
+      case SettingsContentType.recent_items: return 'recent_items';
+      case SettingsContentType.appointments: return 'appointments';
+      case SettingsContentType.favorites: return 'favorites';
+      case SettingsContentType.assessments: return 'assessments';
+      case SettingsContentType.i_card: return 'i_card';
+      case SettingsContentType.language: return 'language';
+      case SettingsContentType.contact: return 'contact';
+      case SettingsContentType.maps: return 'maps';
+      case SettingsContentType.research: return 'research';
+      case SettingsContentType.privacy: return 'privacy';
+      case SettingsContentType.notifications: return 'notifications';
+    }
+  }
+
+  static SettingsContentType? fromJsonString(String? value) {
+    switch(value) {
+      case 'food_filters': return SettingsContentType.food_filters;
+      case 'sports': return SettingsContentType.sports;
+      case 'calendar': return SettingsContentType.calendar;
+      case 'recent_items': return SettingsContentType.recent_items;
+      case 'appointments': return SettingsContentType.appointments;
+      case 'favorites': return SettingsContentType.favorites;
+      case 'assessments': return SettingsContentType.assessments;
+      case 'i_card': return SettingsContentType.i_card;
+      case 'language': return SettingsContentType.language;
+      case 'contact': return SettingsContentType.contact;
+      case 'maps': return SettingsContentType.maps;
+      case 'research': return SettingsContentType.research;
+      case 'privacy': return SettingsContentType.privacy;
+      case 'notifications': return SettingsContentType.notifications;
+      default: return null;
+    }
+  }
+
+  bool get isAvailable {
+    switch (this) {
+      // Add i_card content only if icard mobile is available
+      case SettingsContentType.i_card: return MobileAccess().isMobileAccessAvailable;
+
+      default: return true;
+    }
+  }
+}
+
+extension _SettingsContentTypeList on List<SettingsContentType> {
+  void sortAlphabetical() => sort((SettingsContentType t1, SettingsContentType t2) => t1.displayString.compareTo(t2.displayString));
+
+  static List<SettingsContentType> fromAvailableContentTypes(Iterable<SettingsContentType> contentTypes) {
+    List<SettingsContentType> contentTypesList = List<SettingsContentType>.from(contentTypes.where((contentType) => contentType.isAvailable));
+    contentTypesList.sortAlphabetical();
+    return contentTypesList;
+  }
+}
+
+extension _StorageSettingsExt on Storage {
+  SettingsContentType? get _settingsContentType => SettingsContentTypeImpl.fromJsonString(walletContentType);
+  set _settingsContentType(SettingsContentType? value) => walletContentType = value?.jsonString;
+}
+
+// _DebugContainer
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

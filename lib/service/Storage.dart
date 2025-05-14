@@ -482,14 +482,17 @@ class Storage extends rokwire.Storage {
   set essentialSkillsCoachModule(String? value) => setStringWithName(essentialSkillsCoachModuleKey, value);
 
   // Wallet
-
   static const String walletContentTypeKey = 'edu.illinois.rokwire.wallet.content_type';
   String? get walletContentType => getStringWithName(walletContentTypeKey);
   set walletContentType(String? value) => setStringWithName(walletContentTypeKey, value);
 
   // Wellness
-
   static const String wellnessContentTypeKey = 'edu.illinois.rokwire.wellness.content_type';
   String? get wellnessContentType => getStringWithName(wellnessContentTypeKey);
   set wellnessContentType(String? value) => setStringWithName(wellnessContentTypeKey, value);
+
+  // Settings
+  static const String settingsContentTypeKey = 'edu.illinois.rokwire.settings.content_type';
+  String? get settingsContentType => getStringWithName(settingsContentTypeKey);
+  set settingsContentType(String? value) => setStringWithName(settingsContentTypeKey, value);
 }
