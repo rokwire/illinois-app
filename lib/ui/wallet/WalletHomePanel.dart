@@ -110,7 +110,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     }
 
     if (resultContentType == null) {
-      WalletContentType? lastContentType = Storage()._contentType;
+      WalletContentType? lastContentType = Storage()._waletContentType;
       if ((lastContentType != null) && ((contentTypes == null) || contentTypes.contains(lastContentType))) {
         resultContentType = lastContentType;
       }
@@ -142,7 +142,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
     _contentTypes = widget.contentTypes ?? WalletHomePanel.buildContentTypes();
     _selectedContentType = WalletHomePanel.getTargetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
     if ((widget.contentType != null) && (widget.contentType == _selectedContentType)) {
-      Storage()._contentType = _selectedContentType;
+      Storage()._waletContentType = _selectedContentType;
     }
   }
 
@@ -267,8 +267,8 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
     for (WalletContentType contentType in _contentTypes) {
       contentList.add(RibbonButton(
         backgroundColor: Styles().colors.white,
-        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
         label: contentType.displayString,
         onTap: () => _onTapDropdownItem(contentType)
@@ -305,7 +305,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       }
       else {
         setState(() {
-          Storage()._contentType = _selectedContentType = contentType;
+          Storage()._waletContentType = _selectedContentType = contentType;
           _contentValuesVisible = false;
         });
         Analytics().logPageWidget(_contentPage);
@@ -395,8 +395,8 @@ extension _WalletContentTypeList on List<WalletContentType> {
 }
 
 extension _StorageWalletExt on Storage {
-  WalletContentType? get _contentType => WalletContentTypeImpl.fromJsonString(walletContentType);
-  set _contentType(WalletContentType? value) => walletContentType = value?.jsonString;
+  WalletContentType? get _waletContentType => WalletContentTypeImpl.fromJsonString(walletContentType);
+  set _waletContentType(WalletContentType? value) => walletContentType = value?.jsonString;
 }
 
 class WalletHomePage {

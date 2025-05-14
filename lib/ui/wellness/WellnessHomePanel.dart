@@ -93,7 +93,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     ]);
     _contentTypes = _buildContentTypes();
     _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
-      _ensureContentType(Storage()._contentType, contentTypes: _contentTypes) ??
+      _ensureContentType(Storage()._wellnessContentType, contentTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
   }
 
@@ -193,11 +193,11 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     for (WellnessContentType contentType in _contentTypes) {
       sectionList.add(RibbonButton(
         backgroundColor: Styles().colors.white,
-        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
         label: contentType.displayString,
-        onTap: () => _onTapContentItem(contentType)
+        onTap: () => _onTapDropdownItem(contentType)
         )
       );
     }
@@ -208,7 +208,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     );
   }
 
-  void _onTapContentItem(WellnessContentType contentItem) {
+  void _onTapDropdownItem(WellnessContentType contentItem) {
     Analytics().logSelect(target: contentItem.displayStringEn);
     _changeSettingsContentValuesVisibility();
     NotificationService().notify(WellnessHomePanel.notifySelectContent, contentItem);
@@ -217,7 +217,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   void _onSelectedContentTypeChanged(WellnessContentType contentItem) {
     if (mounted) {
       setState(() {
-        Storage()._contentType = _selectedContentType = contentItem;
+        Storage()._wellnessContentType = _selectedContentType = contentItem;
       });
       Analytics().logPageWidget(_contentWidget);
     }
@@ -372,6 +372,6 @@ extension _WellnessContentTypeList on List<WellnessContentType> {
 }
 
 extension _StorageWellnessExt on Storage {
-  WellnessContentType? get _contentType => WellnessContentTypeImpl.fromJsonString(wellnessContentType);
-  set _contentType(WellnessContentType? value) => wellnessContentType = value?.jsonString;
+  WellnessContentType? get _wellnessContentType => WellnessContentTypeImpl.fromJsonString(wellnessContentType);
+  set _wellnessContentType(WellnessContentType? value) => wellnessContentType = value?.jsonString;
 }
