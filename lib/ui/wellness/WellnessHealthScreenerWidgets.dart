@@ -42,7 +42,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/storage.dart';
 
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
@@ -410,7 +410,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   void _onTapSettings() {
-    SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
+    SettingsHomePanel.present(context, content: SettingsContentType.assessments);
   }
 
   // Logged Out
@@ -437,7 +437,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
   // Notifications Listener

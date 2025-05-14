@@ -24,13 +24,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 //TBD Update content
-class SettingsAppointmentsContentWidget extends StatefulWidget {
+class SettingsAppointmentsPage extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => _SettingsAppointmentsContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsAppointmentsPageState();
 }
 
-class _SettingsAppointmentsContentWidgetState extends State<SettingsAppointmentsContentWidget> {
+class _SettingsAppointmentsPageState extends State<SettingsAppointmentsPage> {
   @override
   Widget build(BuildContext context) {
     return _buildContent();
