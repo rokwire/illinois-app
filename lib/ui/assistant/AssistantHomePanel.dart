@@ -27,7 +27,7 @@ import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -460,12 +460,12 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
     if (url == _privacyUrl) {
       Analytics().logSelect(target: 'Settings: My App Privacy', source: widget.runtimeType.toString());
       Navigator.of(context).pop();
-      SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      SettingsHomePanel.present(context, content: SettingsContentType.privacy);
       return true;
     } else if (url == _signInUrl) {
       Analytics().logSelect(target: 'Profile: Sign In / Sign Out', source: widget.runtimeType.toString());
       Navigator.of(context).pop();
-      ProfileHomePanel.present(context, content: ProfileContent.login);
+      ProfileHomePanel.present(context, contentType: ProfileContentType.login);
       return true;
     } else {
       return false;

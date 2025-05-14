@@ -227,7 +227,7 @@ class _AccessContent extends StatelessWidget {
   void _onTapUpdateButton(BuildContext context, String ruleType) {
     switch (ruleType) {
       case 'privacy': Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,))); break;
-      case 'auth' :  ProfileHomePanel.present(context, content: ProfileContent.login);
+      case 'auth' :  ProfileHomePanel.present(context, contentType: ProfileContentType.login);
     }
   }
 

@@ -24,7 +24,7 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -1026,7 +1026,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
 
   void _onFoodFilersTapped() {
     Analytics().logSelect(target: "Food filters");
-    SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
+    SettingsHomePanel.present(context, content: SettingsContentType.food_filters);
   }
 
 

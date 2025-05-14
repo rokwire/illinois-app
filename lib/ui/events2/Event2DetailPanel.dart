@@ -1280,7 +1280,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   void _onTapPopupSignIn() {
     Analytics().logSelect(target: 'sign in');
     Navigator.pop(context);
-    ProfileHomePanel.present(context, content: ProfileContent.login);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login);
   }
 
   void _onTapPopupProfile() {

@@ -55,7 +55,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
 
   void _onEditProfile(DirectoryAccounts contentType) {
     ProfileHomePanel.present(context,
-      content: ProfileContent.profile,
+      contentType: ProfileContentType.profile,
       contentParams: {
         ProfileInfoPage.editParamKey : true,
       }
@@ -67,7 +67,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
       profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
     );*/
     ProfileHomePanel.present(context,
-      content: ProfileContent.share,
+      contentType: ProfileContentType.share,
     );
   }
 

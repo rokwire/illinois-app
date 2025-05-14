@@ -238,7 +238,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
 
   void _onTapUpcomingAppointments() {
     Analytics().logSelect(target: 'Upcoming appointments');
-    NotificationService().notify(WellnessHomePanel.notifySelectContent, WellnessContent.appointments);
+    NotificationService().notify(WellnessHomePanel.notifySelectContent, WellnessContentType.appointments);
   }
 
   void _changeActiveAdvisor(int direction) {

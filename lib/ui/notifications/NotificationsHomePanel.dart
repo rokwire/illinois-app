@@ -22,7 +22,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -540,7 +540,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   void _onTapBanner() {
     Analytics().logSelect(target: 'Notifications Paused', source: widget.runtimeType.toString());
     if (mounted) {
-      SettingsHomeContentPanel.present(context, content: SettingsContent.notifications);
+      SettingsHomePanel.present(context, content: SettingsContentType.notifications);
     }
   }
 
