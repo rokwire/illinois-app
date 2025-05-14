@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -121,8 +121,8 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
     Future.delayed(Duration(milliseconds: 500), (){
       BuildContext? context = App.instance?.currentContext;
       if (context != null) {
-        SettingsHomeContentPanel.present(context,
-          content: SettingsContent.language,
+        SettingsHomePanel.present(context,
+          content: SettingsContentType.language,
         );
       }
     });
