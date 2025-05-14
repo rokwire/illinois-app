@@ -2542,7 +2542,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = event.id;
     if (eventId == null) {
       if (_callCreateGroupEvent) {
-        result = await Events2().createGroupEvent(event, adminIdentifiers: adminIdentifiers);
+        result = await Events2().createEventWithContext(event, adminIdentifiers: adminIdentifiers);
       } else {
         result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
       }
@@ -3266,7 +3266,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       for (Event2 recurringEvent in recurringEvents!) {
         dynamic recurringResult;
         if (_callCreateGroupEvent) {
-          recurringResult = await Events2().createGroupEvent(recurringEvent);
+          recurringResult = await Events2().createEventWithContext(recurringEvent);
         } else {
           recurringResult = await Events2().createEvent(recurringEvent);
         }
@@ -3345,15 +3345,13 @@ String _event2VisibilityToDisplayString(_Event2Visibility value) {
 
 _Event2Visibility? _event2VisibilityFromAuthorizationContext(Event2AuthorizationContext? authorizationContext) {
   if (authorizationContext == null) {
-    return _Event2Visibility.public;
+    return null;
+  } else if (authorizationContext.isGroupMembersOnly) {
+    return _Event2Visibility.group_member;
+  } else if (authorizationContext.isGuestListOnly) {
+    return _Event2Visibility.registered_user;
   } else {
-    if (authorizationContext.isGroupMembersOnly) {
-      return _Event2Visibility.group_member;
-    } else if (authorizationContext.isGuestListOnly) {
-      return _Event2Visibility.registered_user;
-    } else {
-      return _Event2Visibility.public;
-    }
+    return _Event2Visibility.public;
   }
 }
 
