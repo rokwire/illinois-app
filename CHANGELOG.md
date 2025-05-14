@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supply group details in analytics logs [#5101](https://github.com/rokwire/illinois-app/issues/5101).
 - Send analytics logs for manual attendance taking [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 - Emoji picker search layout above keyboard [#5110](https://github.com/rokwire/illinois-app/issues/5110).
+- Create recurring event without end DateTime [#4990](https://github.com/rokwire/illinois-app/issues/4990).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
 - Updated empty content message in primary care providers [#5114](https://github.com/rokwire/illinois-app/issues/5114).
