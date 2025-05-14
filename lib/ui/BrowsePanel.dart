@@ -673,17 +673,17 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
-    AcademicsHomePanel.push(context, AcademicsContent.skills_self_evaluation);
+    AcademicsHomePanel.push(context, AcademicsContentType.skills_self_evaluation);
   }
 
   static void _onTapEssentialSkillCoach(BuildContext context) {
     Analytics().logSelect(target: "Essential Skills Coach");
-    AcademicsHomePanel.push(context, AcademicsContent.essential_skills_coach);
+    AcademicsHomePanel.push(context, AcademicsContentType.essential_skills_coach);
   }
 
   static void _onTapAcademicsToDo(BuildContext context) {
     Analytics().logSelect(target: "Academics To Do");
-    AcademicsHomePanel.push(context, AcademicsContent.todo_list);
+    AcademicsHomePanel.push(context, AcademicsContentType.todo_list);
   }
 
   static void _onTapCanvasCourses(BuildContext context) {

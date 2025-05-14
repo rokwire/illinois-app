@@ -172,7 +172,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(contentType: AcademicsContentType.todo_list)));
   }
 
   void _loadToDoItems() {

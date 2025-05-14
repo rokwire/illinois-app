@@ -257,7 +257,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   }
 
   static WellnessContentType? _ensureContentType(WellnessContentType? contentType, { List<WellnessContentType>? contentTypes }) =>
-    (contentTypes?.contains(contentType) != false) ? contentType : null;
+    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
 
   Widget get _contentWidget {
     switch (_selectedContentType) {
@@ -303,7 +303,8 @@ class WellnessFavorite extends Favorite {
   @override String? get favoriteId => id;
 }
 
-// WellnessContentImpl
+// WellnessContentType
+
 extension WellnessContentTypeImpl on WellnessContentType {
 
   String get displayTitle => displayTitleLng();

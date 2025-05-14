@@ -359,40 +359,40 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseTabNotification(RootTab.Academics);
     }
     else if (name == FirebaseMessaging.notifyAcademicsAppointmentsNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.appointments);
+      _onFirebaseAcademicsNotification(AcademicsContentType.appointments);
     }
     else if (name == FirebaseMessaging.notifyAcademicsCanvasCoursesNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.canvas_courses);
+      _onFirebaseAcademicsNotification(AcademicsContentType.canvas_courses);
     }
     else if (name == FirebaseMessaging.notifyAcademicsGiesCanvasCoursesNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.gies_canvas_courses);
+      _onFirebaseAcademicsNotification(AcademicsContentType.gies_canvas_courses);
     }
     else if (name == FirebaseMessaging.notifyAcademicsDueDateCatalogNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.due_date_catalog);
+      _onFirebaseAcademicsNotification(AcademicsContentType.due_date_catalog);
     }
     else if (name == FirebaseMessaging.notifyAcademicsEventsNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.events);
+      _onFirebaseAcademicsNotification(AcademicsContentType.events);
     }
     else if (name == FirebaseMessaging.notifyAcademicsGiesChecklistNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.gies_checklist);
+      _onFirebaseAcademicsNotification(AcademicsContentType.gies_checklist);
     }
     else if (name == FirebaseMessaging.notifyAcademicsMedicineCoursesNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.medicine_courses);
+      _onFirebaseAcademicsNotification(AcademicsContentType.medicine_courses);
     }
     else if (name == FirebaseMessaging.notifyAcademicsMyIlliniNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.my_illini);
+      _onFirebaseAcademicsNotification(AcademicsContentType.my_illini);
     }
     else if (name == FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
+      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
     }
     else if (name == FirebaseMessaging.notifyAcademicsStudentCoursesNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.student_courses);
+      _onFirebaseAcademicsNotification(AcademicsContentType.student_courses);
     }
     else if (name == FirebaseMessaging.notifyAcademicsToDoListNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
+      _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
     }
     else if (name == FirebaseMessaging.notifyAcademicsUiucChecklistNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.uiuc_checklist);
+      _onFirebaseAcademicsNotification(AcademicsContentType.uiuc_checklist);
     }
     else if (name == FirebaseMessaging.notifyWellnessNotification) {
       _onFirebaseTabNotification(RootTab.Wellness);
@@ -537,7 +537,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onCanvasEventDetail(param);
     }
     else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
-      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
+      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
     }
     else if (name == Gateway.notifyBuildingDetail) {
       _onGatewayBuildingDetail(param);
@@ -1150,7 +1150,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       if (StringUtils.isNotEmpty(todoItemId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
       } else {
-        _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
+        _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
       }
     }
   }
@@ -1175,7 +1175,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     WalletHomePanel.present(context, contentType: contentType);
   }
 
-  void _onFirebaseAcademicsNotification(AcademicsContent content) {
+  void _onFirebaseAcademicsNotification(AcademicsContentType content) {
     if (AcademicsHomePanel.hasState) {
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
     } else {
