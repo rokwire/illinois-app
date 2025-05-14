@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Create recurring event without end DateTime [#4990](https://github.com/rokwire/illinois-app/issues/4990).
+- Make sure to use everywhere "denied" instead of "rejected" as group member status [#482](https://github.com/rokwire/illinois-app/issues/482).
 
 ## [7.1.3] - 2025-05-12
 ### Changed
