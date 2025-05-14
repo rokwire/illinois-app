@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AthleticsContent { events, game_day, my_events, my_news, news, teams }
 
-class AthleticsContentPanel extends StatefulWidget {
+class AthleticsHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.athletics.content.select";
   static const String contentItemKey = "content-item";
 
@@ -40,16 +40,16 @@ class AthleticsContentPanel extends StatefulWidget {
 
   final Map<String, dynamic> params = <String, dynamic>{};
 
-  AthleticsContentPanel({this.content});
+  AthleticsHomePanel({this.content});
 
   @override
-  _AthleticsContentPanelState createState() => _AthleticsContentPanelState();
+  _AthleticsHomePanelState createState() => _AthleticsHomePanelState();
 
   static bool get hasState {
-    Set<NotificationsListener>? subscribers = NotificationService().subscribers(AthleticsContentPanel.notifySelectContent);
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(AthleticsHomePanel.notifySelectContent);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
-        if ((subscriber is _AthleticsContentPanelState) && subscriber.mounted) {
+        if ((subscriber is _AthleticsHomePanelState) && subscriber.mounted) {
           return true;
         }
       }
@@ -58,8 +58,8 @@ class AthleticsContentPanel extends StatefulWidget {
   }
 }
 
-class _AthleticsContentPanelState extends State<AthleticsContentPanel>
-  with NotificationsListener, AutomaticKeepAliveClientMixin<AthleticsContentPanel> {
+class _AthleticsHomePanelState extends State<AthleticsHomePanel>
+  with NotificationsListener, AutomaticKeepAliveClientMixin<AthleticsHomePanel> {
 
   static AthleticsContent? _lastSelectedContent;
   late AthleticsContent _selectedContent;
@@ -69,7 +69,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel>
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [FlexUI.notifyChanged, AthleticsContentPanel.notifySelectContent]);
+    NotificationService().subscribe(this, [FlexUI.notifyChanged, AthleticsHomePanel.notifySelectContent]);
     _buildContentValues();
     _selectedContent = _ensureContent(_initialContentItem) ?? (_lastSelectedContent ?? AthleticsContent.events);
   }
@@ -86,7 +86,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel>
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _buildContentValues();
-    } else if (name == AthleticsContentPanel.notifySelectContent) {
+    } else if (name == AthleticsHomePanel.notifySelectContent) {
       AthleticsContent? contentItem = (param is AthleticsContent) ? param : null;
       if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {
         _onContentItemChanged(contentItem);
@@ -192,7 +192,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel>
   void _onTapContentItem(AthleticsContent contentItem) {
     Analytics().logSelect(target: _getContentLabel(contentItem));
     _changeSettingsContentValuesVisibility();
-    NotificationService().notify(AthleticsContentPanel.notifySelectContent, contentItem);
+    NotificationService().notify(AthleticsHomePanel.notifySelectContent, contentItem);
   }
 
   void _onContentItemChanged(AthleticsContent contentItem) {
@@ -236,7 +236,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel>
     return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
 
-  AthleticsContent? get _initialContentItem => widget.params[AthleticsContentPanel.contentItemKey] ?? widget.content;
+  AthleticsContent? get _initialContentItem => widget.params[AthleticsHomePanel.contentItemKey] ?? widget.content;
 
   Widget get _contentWidget {
     switch (_selectedContent) {
