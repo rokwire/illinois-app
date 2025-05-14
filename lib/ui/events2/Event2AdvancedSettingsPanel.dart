@@ -25,7 +25,7 @@ class _Event2AdvancedSettingsState extends State<Event2AdvancedSettingsPanel>{
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.settings.advanced.header.title', 'Advanced Settings')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -35,13 +35,16 @@ class _Event2AdvancedSettingsState extends State<Event2AdvancedSettingsPanel>{
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Event2SettingsButton(
                 title: Localization().getStringEx('panel.event2.create.button.custom_notifications.title', 'CUSTOM NOTIFICATIONS'), //TBD localize
-                subTitle: Localization().getStringEx('panel.event2.create.button.custom_notifications.description', 'Create and schedule up to two custom Illinois app event notifications.'), //TBD localize
+                subTitle: Localization().getStringEx('panel.event2.create.button.custom_notifications.description', 'Create and schedule up to two custom NEOM U app event notifications.'), //TBD localize
                 onTap: _onCustomNotifications),
               Visibility(visible: _showSuperEvent,
-                child:Event2SettingsButton(
-                  title: 'SUPER EVENT',
-                  subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the Illinois app.',
-                  onTap: _onSuperEvent)),
+                child:Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: Event2SettingsButton(
+                    title: 'SUPER EVENT',
+                    subTitle: 'Manage this event as a multi-part “super event” by linking one or more of your other events as sub-events (e.g., sessions in a conference, performances in a festival, etc.). The super event will display all related events as one group of events in the NEOM U app.',
+                    onTap: _onSuperEvent),
+                )),
           ]),
         )
     );

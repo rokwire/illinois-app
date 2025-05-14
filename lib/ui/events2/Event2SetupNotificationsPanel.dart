@@ -103,8 +103,8 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                 RoundedButton(
                                     label: 'Save',
                                     borderColor: Styles().colors.fillColorSecondary,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    backgroundColor: Colors.white,
+                                    textColor: Styles().colors.surface,
+                                    backgroundColor: Styles().colors.background,
                                     progress: _saving,
                                     onTap: _onTapSave)),
                               Container(width: 16),
@@ -112,14 +112,14 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                 RoundedButton(
                                     label: 'Clear All',
                                     borderColor: Styles().colors.fillColorSecondary,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    backgroundColor: Colors.white,
+                                    textColor: Styles().colors.surface,
+                                    backgroundColor: Styles().colors.background,
                                     progress: _deleting,
                                     onTap: _onTapClearAll)),
                             ]))
                   ])
         )),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.background,
     );
   }
 
@@ -260,13 +260,19 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                 Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
                   Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                     DropdownButtonHideUnderline(child:
-                      DropdownButton<Location>(
-                          icon: Styles().images.getImage('chevron-down'),
-                          isExpanded: true,
-                          style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                          hint: Text(_timeZones[index]?.name ?? ""),
-                          items: _timezoneDropDownItems,
-                          onChanged: (value) => _onTimezoneChanged(index: index, value: value)
+                      Theme(
+                        data: ThemeData(
+                          canvasColor: Styles().colors.surface,
+                        ),
+                        child: DropdownButton<Location>(
+                            dropdownColor: Styles().colors.surface,
+                            icon: Styles().images.getImage('chevron-down'),
+                            isExpanded: true,
+                            style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.light.regular"),
+                            hint: Text(_timeZones[index]?.name ?? ""),
+                            items: _timezoneDropDownItems,
+                            onChanged: (value) => _onTimezoneChanged(index: index, value: value)
+                        ),
                       ),
                     ),
                   ),
@@ -330,13 +336,13 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     List<DropdownMenuItem<Location>> items = [];
    timeZoneDatabase.locations.forEach((String name,
         Location location) {
-      if (name.startsWith('US/')) {
+      if (name.startsWith('US/') || name.startsWith('Europe/') || name.startsWith('Asia/')) {
         items.add(DropdownMenuItem<Location>(
           value: location,
           child: Semantics(label: name,
               excludeSemantics: true,
               container: true,
-              child: Text(name,)),
+              child: Text(name, style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"))),
         ));
       }
     });
@@ -356,9 +362,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
         firstDate: minDate,
         lastDate: maxDate,
         currentDate: now,
-        // builder: (context, child) {
-        //   return AppThemes.datePickerTheme(context, child!);
-        //  }
+        builder: (context, child) => _datePickerTransitionBuilder(context, child!),
       ).then((DateTime? result) {
         if ((result != null) && mounted) {
           setState(() {
@@ -373,9 +377,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     showTimePicker(
         context: context,
         initialTime: _sendTimes[index] ?? TimeOfDay(hour: 0, minute: 0),
-        // builder: (context, child) {
-        //   return AppThemes.timePickerTheme(context, child!);
-        // }
+        builder: (context, child) => _timePickerTransitionBuilder(context, child!),
       ).then((TimeOfDay? result) {
         if ((result != null) && mounted) {
           setState(() {
@@ -383,6 +385,24 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
           });
         }
     });
+  }
+
+  Widget _datePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.background)), child: child);
+  }
+
+  Widget _timePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              dayPeriodColor: Styles().colors.fillColorSecondary,
+              backgroundColor: Styles().colors.background,
+              dialBackgroundColor: Styles().colors.backgroundVariant,
+              // hourMinuteColor: Styles().colors.background
+            )),
+        child: child);
   }
 
   Widget _buildHorizontalDividerWidget() => Container(height: 1, color: Styles().colors.dividerLine);
@@ -673,7 +693,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
 
   bool get _allowGroupMembers => (widget.isGroupEvent == true);
 
-  TextStyle? get _enabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.title.enabled");
+  TextStyle? get _enabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat");
 
   TextStyle? get _disabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.title.disabled");
 

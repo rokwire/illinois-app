@@ -25,7 +25,7 @@ class Event2SetupSuperEventPanel extends StatefulWidget{
   State<StatefulWidget> createState() => Event2SetupSuperEventState();
 
   static Widget buildTextEditWidget(TextEditingController controller,
-      {TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = const EdgeInsets.all(0), void Function()? onChanged}) {
+      {TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = const EdgeInsets.all(16), void Function()? onChanged}) {
     return TextField(
         controller: controller,
         decoration: InputDecoration(
@@ -48,7 +48,7 @@ class Event2SetupSuperEventPanel extends StatefulWidget{
             child: Text(text,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 8,
-                style: Styles().textStyles.getTextStyle("widget.description.regular")))
+                style: Styles().textStyles.getTextStyle("widget.description.regular.light")))
       ]);
 }
 
@@ -101,7 +101,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> with 
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.super_event.header.title', 'Super Event Settings'), actions: _headerBarActions,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -136,13 +136,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> with 
               _buildSubEventsSection(_selectedSubEvents,
                   emptyMsg: 'This event is not linked to any sub-events. Please see below.',
                   showUnlink: true),
-              Padding(padding: EdgeInsets.only(top: 12), child:
-              Container(decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(top: BorderSide(color: Color(0xFF717273), width: 1))
-              ), padding: EdgeInsets.only(top: 12, left: 16, right: 16)
-              )),
-              Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('LINK EVENT(s)')),
+              Padding(padding: EdgeInsets.only(top: 24, bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('LINK EVENT(s)')),
               _buildSubeventSelectionSection(),
               _buildSubEventsSection(_subEventCandidates,
                 emptyMsg:  'You currently have no upcoming events. To link and create sub-events within a super event, please first create your sub-events as basic events.',

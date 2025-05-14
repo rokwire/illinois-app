@@ -1084,13 +1084,16 @@ class Event2SettingsButton extends StatelessWidget{
   //   ),
   // );
 
-Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
-  heading: RibbonButton(
+Widget _buildWidget() => RibbonButton(
         label: title?? "",
+        textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'),
         description: subTitle,
+        descriptionTextStyle: Styles().textStyles.getTextStyle('widget.button.light.description.small'),
         progress: progress,
         onTap: () => onTap?.call(),
         borderRadius: BorderRadius.all(Radius.circular(15)),
+        border: Border.all(color: Styles().colors.surface,),
         progressSize: 18,
-      ));
+        backgroundColor: Styles().colors.background,
+      );
 }
