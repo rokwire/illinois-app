@@ -516,7 +516,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
       }
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        Text(text, style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin")),
       );
     }
   }
