@@ -595,8 +595,8 @@ extension ResearchProjectsContentTypeImpl on ResearchProjectsContentType {
 
   String displayLanguageString({ String? language }) {
     switch (this) {
-      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects');
-      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects');
+      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects', language: language);
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects', language: language);
     }
   }
 

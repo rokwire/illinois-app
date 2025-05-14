@@ -751,8 +751,8 @@ extension GroupsContentTypeImpl on GroupsContentType {
 
   String displayLanguageString({ String? language }) {
     switch (this) {
-      case GroupsContentType.all: return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');;
-      case GroupsContentType.my: return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
+      case GroupsContentType.all: return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups', language: language);
+      case GroupsContentType.my: return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups', language: language);
     }
   }
 
