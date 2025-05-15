@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated dropdown menus: sort alphabetically, show current selection indicator where applicable [#5117](https://github.com/rokwire/illinois-app/issues/5117).
 ### Added
 - Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
+- Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).
 
 ## [7.0.20] - 2025-04-29
 ### Fixed
