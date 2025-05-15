@@ -83,7 +83,7 @@ class HomeRecentPollsWidget extends StatefulWidget {
   State<HomeRecentPollsWidget> createState() => _HomeRecentPollsWidgetState();
 }
 
-class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implements NotificationsListener {
+class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with NotificationsListener {
 
   List<Poll>? _recentPolls;
   bool _loadingPolls = false;

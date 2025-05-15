@@ -37,7 +37,7 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
 }
 
-class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> implements NotificationsListener {
+class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with NotificationsListener {
 
   List<CanvasCourse>? _courses;
 

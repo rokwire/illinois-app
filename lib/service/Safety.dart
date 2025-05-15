@@ -4,7 +4,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Safety with Service implements NotificationsListener {
+class Safety with Service, NotificationsListener {
 
   static const String notifySafeWalkDetail = "edu.illinois.rokwire.safety.safewalk.detail";
   static const String safeWalkRequestAction = "edu.illinois.rokwire.safety.safewalk.request";

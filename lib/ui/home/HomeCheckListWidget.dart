@@ -46,7 +46,7 @@ class HomeCheckListWidget extends StatefulWidget{
   State<StatefulWidget> createState() => _HomeCheckListWidgetState();
 }
 
-class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements NotificationsListener{
+class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with NotificationsListener{
   @override
   void initState() {
     super.initState();

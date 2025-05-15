@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -109,7 +107,7 @@ class GuideDetailWidget extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get _theGuideEntry => Guide().entryById(guideEntryId) ?? guideEntry;
 }
 
-class _GuideDetailWidgetState extends State<GuideDetailWidget> implements NotificationsListener {
+class _GuideDetailWidgetState extends State<GuideDetailWidget> with NotificationsListener {
   Map<String, dynamic>? _guideEntry;
   String? _guideEntryId;
   bool _isFavorite = false;
@@ -562,18 +560,8 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         DeepLink().launchUrl(url);
       }
       else {
-        if (useInternalBrowser == true) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
-            url: url,
-            analyticsSource: Guide().entryAnalyticsAttributes(_guideEntry),
-            analyticsFeature: widget.analyticsFeature,
-          )));
-        } else {
-          Uri? uri = Uri.tryParse(url!);
-          if (uri != null) {
-            UrlUtils.launchExternal(url);
-          }
-        }
+        // use internal browser but only if allowed
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: (useInternalBrowser == true), analyticsSource: Guide().entryAnalyticsAttributes(_guideEntry), analyticsFeature: widget.analyticsFeature);
       }
     }
   }

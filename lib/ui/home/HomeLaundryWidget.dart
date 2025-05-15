@@ -42,7 +42,7 @@ class HomeLaundryWidget extends StatefulWidget {
   State<HomeLaundryWidget> createState() => _HomeLaundryWidgetState();
 }
 
-class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements NotificationsListener {
+class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with NotificationsListener {
 
   LaundrySchool? _laundrySchool;
   bool _loading = false;
@@ -259,7 +259,7 @@ class LaundryRoomCard extends StatefulWidget {
   State<LaundryRoomCard> createState() => _LaundryRoomCardState();
 }
 
-class _LaundryRoomCardState extends State<LaundryRoomCard> implements NotificationsListener {
+class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsListener {
 
   @override
   void initState() {

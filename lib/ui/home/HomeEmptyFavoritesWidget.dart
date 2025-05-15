@@ -67,11 +67,11 @@ class HomeFavoritesInstructionsMessageCard extends StatelessWidget {
       }
       // else if (uri?.host == _signInLocalUrl) {
       //   Analytics().logSelect(target: 'Sign In', source: runtimeType.toString());
-      //   ProfileHomePanel.present(context, content: ProfileContent.login);
+      //   ProfileHomePanel.present(context, contentType: ProfileContentType.login);
       // }
       // else if (uri?.host == _privacySettingsLocalUrl) {
       //   Analytics().logSelect(target: 'Privacy Settings', source: runtimeType.toString());
-      //   SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      //   SettingsHomePanel.present(context, content: SettingsContentType.privacy);
       // }
     }
   }

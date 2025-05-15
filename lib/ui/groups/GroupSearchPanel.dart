@@ -42,7 +42,7 @@ class GroupsSearchPanel extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => (researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
-class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements NotificationsListener {
+class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with NotificationsListener {
   List<Group>? _groups;
   String? _searchValue;
   TextEditingController _searchController = TextEditingController();

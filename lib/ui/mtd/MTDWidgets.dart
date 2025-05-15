@@ -217,7 +217,7 @@ class MTDStopScheduleCard extends StatefulWidget {
   State<MTDStopScheduleCard> createState() => _MTDStopScheduleCardState();
 }
 
-class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements NotificationsListener {
+class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> with NotificationsListener {
   
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;

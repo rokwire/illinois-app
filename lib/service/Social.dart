@@ -4,7 +4,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Social with Service implements NotificationsListener {
+class Social with Service, NotificationsListener {
 
   List<Message> _displayMessages = <Message>[];
 

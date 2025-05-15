@@ -33,7 +33,7 @@ class PublicSurveysPanel extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProviderStateMixin implements NotificationsListener  {
+class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProviderStateMixin, NotificationsListener  {
 
   late PublicSurveysContentType _selectedContentType;
 
@@ -203,7 +203,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProv
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
   Widget _messageContent(String message, { String? title }) => Center(child:

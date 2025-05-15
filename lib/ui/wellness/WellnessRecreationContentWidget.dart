@@ -28,7 +28,7 @@ class WellnessRecreationContentWidget extends StatefulWidget{
 
 }
 
-class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> implements NotificationsListener {
+class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> with NotificationsListener {
   Video? _video;
   List<dynamic>? _commands;
   Map<String, dynamic>? _strings;

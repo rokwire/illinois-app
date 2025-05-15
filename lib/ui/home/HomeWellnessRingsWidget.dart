@@ -32,7 +32,7 @@ class HomeWellnessRingsWidget extends StatefulWidget {
   State<HomeWellnessRingsWidget> createState() => _HomeWellnessRingsWidgetState();
 }
 
-class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> implements NotificationsListener {
+class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -181,7 +181,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   void _onTapViewAll(){
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.rings)));
   }
 
   Future<void> _onTapIncrease(WellnessRingDefinition data) async{

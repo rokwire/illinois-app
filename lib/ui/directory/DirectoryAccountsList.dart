@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -15,10 +14,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum DirectoryAccounts { connections, directory }
-
 class DirectoryAccountsList extends StatefulWidget {
-  final DirectoryAccounts contentType;
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
   final String? searchText;
@@ -26,14 +22,14 @@ class DirectoryAccountsList extends StatefulWidget {
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
 
-  DirectoryAccountsList(this.contentType, { super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
+  DirectoryAccountsList({ super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
     this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsListState();
 }
 
-class DirectoryAccountsListState extends State<DirectoryAccountsList> with AutomaticKeepAliveClientMixin<DirectoryAccountsList> implements NotificationsListener  {
+class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
 
   List<Auth2PublicAccount>? _accounts;
   bool _loading = false;
@@ -89,10 +85,10 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Autom
       return _loadingContent;
     }
     else if (_accounts == null) {
-      return _messageContent(_failedText);
+      return _messageContent(Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load Directory of Users content.'));
     }
     else if (_accounts?.isEmpty == true) {
-      return _messageContent(_emptyText);
+      return _messageContent(Localization().getStringEx('panel.directory.accounts.directory.empty.text', 'No results found.'));
     }
     else {
       return _accountsContent;
@@ -175,19 +171,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Autom
     )
   );
 
-  String get _emptyText {
-    switch (widget.contentType) {
-      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.empty.text', 'You do not have any Connections. Your connections will appear after you swap info with another ${AppTextUtils.universityLongNameMacro} student or employee.').replaceAll(AppTextUtils.universityLongNameMacro, AppTextUtils.universityLongName);
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.empty.text', 'The User Directory is empty.');
-    }
-  }
-
-  String get _failedText {
-    switch (widget.contentType) {
-      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.failed.text', 'Failed to load Connections content.');
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.failed.text', 'Failed to load User Directory content.');
-    }
-  }
 
   void _scrollListener() {
     ScrollController? scrollController = widget.scrollController;
@@ -265,13 +248,4 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Autom
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
   String? get directoryKey => (profile?.lastName?.isNotEmpty == true) ?
     profile?.lastName?.substring(0, 1).toUpperCase() : null;
-}
-
-extension DirectoryAccountsProfile on DirectoryAccounts {
-  ProfileInfo get profileInfo {
-    switch(this) {
-      case DirectoryAccounts.directory: return ProfileInfo.directoryInfo;
-      case DirectoryAccounts.connections: return ProfileInfo.connectionsInfo;
-    }
-  }
 }

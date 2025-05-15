@@ -29,7 +29,7 @@ class DebugMobileAccessKeysEndpointSetupPanel extends StatefulWidget {
   _DebugMobileAccessKeysEndpointSetupPanelState createState() => _DebugMobileAccessKeysEndpointSetupPanelState();
 }
 
-class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAccessKeysEndpointSetupPanel> implements NotificationsListener {
+class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAccessKeysEndpointSetupPanel> with NotificationsListener {
   TextEditingController? _invitationCodeController;
 
   int _loadingProgress = 0;

@@ -25,22 +25,22 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2LoginNetIdPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2LoginNetIdPanel({ this.onboardingCode = '', this.onboardingContext });
+  Onboarding2LoginNetIdPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  GlobalKey<_Onboarding2LoginNetIdPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2LoginNetIdPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2LoginNetIdPanelState>) : null;
-
-  @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
-  @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  _Onboarding2LoginNetIdPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  _Onboarding2LoginNetIdPanelState createState() => _Onboarding2LoginNetIdPanelState();
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2LoginNetIdPanelState();
 }
 
 class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel> {

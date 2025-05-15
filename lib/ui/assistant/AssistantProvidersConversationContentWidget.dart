@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -48,8 +49,9 @@ class AssistantProvidersConversationContentWidget extends StatefulWidget {
 }
 
 class _AssistantProvidersConversationContentWidgetState extends State<AssistantProvidersConversationContentWidget>
-    with AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget>, WidgetsBindingObserver
-    implements NotificationsListener {
+    with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget> {
+
+  List<AssistantProvider>? _availableProviders;
 
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
@@ -86,10 +88,13 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       SpeechToText.notifyError,
       LocationServices.notifyStatusChanged,
       LocationServices.notifyLocationChanged,
+      FlexUI.notifyChanged,
+      Assistant.notifyProvidersChanged,
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
 
+    _buildAvailableProviders();
     _loadLocationStatus();
     _onPullToRefresh();
 
@@ -113,6 +118,10 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     super.dispose();
   }
 
+  void _buildAvailableProviders() {
+    _availableProviders = Assistant().providers;
+  }
+
   // AutomaticKeepAliveClientMixin
   @override
   bool get wantKeepAlive => true;
@@ -133,11 +142,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         _loadLocationStatus();
       } else if (param is LocationServicesStatus) {
         _locationStatus = param;
-        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
-          _loadLocationStatus();
-        } else {
-          _loadLocationIfAllowed();
-        }
+        _loadLocationIfAllowed();
       }
     } else if (name == LocationServices.notifyLocationChanged) {
       if (_locationStatus == LocationServicesStatus.permissionAllowed) {
@@ -145,6 +150,10 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       } else {
         _currentLocation = null;
       }
+    } else if (name == FlexUI.notifyChanged) {
+      _onPullToRefresh();
+    } else if (name == Assistant.notifyProvidersChanged) {
+      _buildAvailableProviders();
     }
   }
 
@@ -259,11 +268,13 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.surface)))),
-                                                  TextSpan(
-                                                      text: (message.user ? message.content : '[${assistantProviderToDisplayString(message.provider)}] ${message.content}'),
-                                                      style: message.user
-                                                          ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
-                                                          : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
+                                                  WidgetSpan(
+                                                      child: MarkdownBody(
+                                                          data: (message.user ? message.content : '**[${assistantProviderToDisplayString(message.provider)}]** ${message.content}'),
+                                                          styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                          onTapLink: (text, href, title) {
+                                                            AppLaunchUrl.launch(url: href, context: context);
+                                                          }))
                                                 ])),
                                           ])),
                                     ]))))))
@@ -274,10 +285,10 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
   Widget _buildSourcesExpandedWidget(Message message) {
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sourceDatEntries) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
-    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
+    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sourceDatEntries);
 
     return Visibility(
         visible: additionalControlsVisible,
@@ -285,7 +296,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Visibility(
                 visible: areSourcesLabelsVisible,
-                child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)),
+                child: Padding(padding: EdgeInsets.only(top: 10, left: 5),
                     child: Semantics(
                         child: InkWell(
                             onTap: () => _onTapSourcesAndLinksLabel(message),
@@ -349,19 +360,21 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                         flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
   }
 
-  List<Widget> _buildWebLinkWidgets(List<String> sources) {
+  List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
     List<Widget> sourceLinks = [];
-    for (String source in sources) {
-      Uri? uri = Uri.tryParse(source);
-      if ((uri != null) && uri.host.isNotEmpty) {
-        sourceLinks.add(_buildWebLinkWidget(source));
+    if (CollectionUtils.isNotEmpty(sourceDataEntries)) {
+      for (SourceDataEntry sourceDataEntry in sourceDataEntries!) {
+        String? actionLink = sourceDataEntry.actionLink;
+        Uri? uri = UriExt.tryParse(actionLink);
+        if (uri?.isValid ?? false) {
+          sourceLinks.add(_buildWebLinkWidget(uri: uri!));
+        }
       }
     }
     return sourceLinks;
   }
 
-  Widget _buildWebLinkWidget(String source) {
-    Uri? uri = Uri.tryParse(source);
+  Widget _buildWebLinkWidget({required Uri uri}) {
     return Padding(
         padding: EdgeInsets.only(bottom: 8, right: 140),
         child: Material(
@@ -369,14 +382,16 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                 borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
             color: Styles().colors.surface,
             child: InkWell(
-                onTap: () => _onTapSourceLink(source),
+                onTap: () {
+                  UriExt.launchExternal(uri);
+                },
                 borderRadius: BorderRadius.circular(22),
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')),
                       Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(uri?.host),
+                          child: Text(StringUtils.ensureNotEmpty(uri.host),
                               overflow: TextOverflow.ellipsis,
                               style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
                     ])))));
@@ -701,6 +716,11 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       return;
     }
 
+    if (CollectionUtils.isEmpty(_availableProviders)) {
+      // Do not allow sending message if there is no available providers
+      return;
+    }
+
     if (message.isNotEmpty) {
       _addMessage(Message(content: message, user: true));
     }
@@ -729,8 +749,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     List<Future<dynamic>> assistantFutures = [];
     Map<int, AssistantProvider> providerPositions = {};
-    for (int i = 0; i < AssistantProvider.values.length; i++) {
-      AssistantProvider provider = AssistantProvider.values[i];
+    for (int i = 0; i < _availableProviders!.length; i++) {
+      AssistantProvider provider = _availableProviders![i];
       providerPositions.addAll({i: provider});
       assistantFutures.add(Assistant().sendQuery(message, provider: provider, location: _currentLocation, context: userContext));
     }
@@ -739,7 +759,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     for (int j = 0; j<queryResults.length;j++) {
       dynamic result = queryResults[j];
-      AssistantProvider provider = AssistantProvider.values[j];
+      AssistantProvider provider = _availableProviders![j];
       if (result is Message) {
         result.provider = provider;
         _addMessage(result);
@@ -782,10 +802,6 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     }
 
     return context.isNotEmpty ? context : null;
-  }
-
-  void _onTapSourceLink(String source) {
-    UrlUtils.launchExternal(source);
   }
 
   void _startListening() {
@@ -853,23 +869,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
   void _loadLocationStatus() {
     LocationServices().status.then((LocationServicesStatus? status) {
-      if (status == LocationServicesStatus.serviceDisabled) {
-        LocationServices().requestService().then((status) {
-          if (status == LocationServicesStatus.permissionNotDetermined) {
-            LocationServices().requestPermission().then((LocationServicesStatus? status) {
-              _onLocationStatus(status);
-            });
-          } else {
-            _onLocationStatus(status);
-          }
-        });
-      } else if (status == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices().requestPermission().then((LocationServicesStatus? status) {
-          _onLocationStatus(status);
-        });
-      } else {
-        _onLocationStatus(status);
-      }
+      _onLocationStatus(status);
     });
   }
 
@@ -891,7 +891,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   AssistantLocation? _getLocation(Position? position) => Storage().debugAssistantLocation ?? AssistantLocation.fromPosition(position);
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    final checkPosition = () => _keyboardHeight;
     //Check if the position of the keyboard is still changing
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
@@ -907,7 +907,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     return _hideChatBar ? 0 : _keyboardHeight;
   }
 
-  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
+  double get _keyboardHeight => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0.0;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();

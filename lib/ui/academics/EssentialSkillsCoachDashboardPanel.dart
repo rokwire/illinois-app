@@ -37,7 +37,7 @@ class EssentialSkillsCoachDashboardPanel extends StatefulWidget with AnalyticsIn
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsEssentialSkillsCoach;
 }
 
-class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> implements NotificationsListener {
+class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> with NotificationsListener {
   Course? _course;
   UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;

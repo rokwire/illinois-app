@@ -22,7 +22,7 @@ class GroupMembersSearchPanel extends StatefulWidget{
 
 }
 
-class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements NotificationsListener{
+class _GroupMembersSearchState extends State<GroupMembersSearchPanel> with NotificationsListener{
   static final int _defaultMembersLimit = 10;
 
   List<Member>? _visibleMembers;

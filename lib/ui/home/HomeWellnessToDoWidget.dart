@@ -35,7 +35,7 @@ class HomeWellnessToDoWidget extends StatefulWidget {
   State<HomeWellnessToDoWidget> createState() => _HomeWellnessToDoWidgetState();
 }
 
-class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> implements NotificationsListener {
+class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with NotificationsListener {
 
   List<WellnessToDoItem>? _toDoItems;
   bool _loading = false;
@@ -172,7 +172,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(contentType: AcademicsContentType.todo_list)));
   }
 
   void _loadToDoItems() {

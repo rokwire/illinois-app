@@ -34,20 +34,17 @@ import 'Onboarding2Widgets.dart';
 class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2RolesPanel({ this.onboardingCode = 'roles', this.onboardingContext });
+  Onboarding2RolesPanel({ super.key, this.onboardingCode = 'roles', this.onboardingContext });
 
-  GlobalKey<_Onboarding2RoleSelectionPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2RoleSelectionPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2RoleSelectionPanelState>) : null;
-
-  @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
-  @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
-  @override
-  Future<bool> isOnboardingEnabled() async => !(ListUtils.contains(Auth2().prefs?.roles, UserRole.values) ?? false);
+  _Onboarding2RoleSelectionPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  _Onboarding2RoleSelectionPanelState createState() => _Onboarding2RoleSelectionPanelState();
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2RoleSelectionPanelState();
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
@@ -138,14 +135,14 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
       );
 
   void _onRoleGridButton(RoleGridButton button) {
-      Analytics().logSelect(target: "Role: ${button.role}");
-      setState(() {
-        if (_selectedRoles.contains(button.role) == true) {
-          _selectedRoles.remove(button.role);
-        } else {
-          _selectedRoles.add(button.role);
-        }
-      });
+    Analytics().logSelect(target: "Role: ${button.role}");
+    setState(() {
+      if (_selectedRoles.contains(button.role) == true) {
+        _selectedRoles.remove(button.role);
+      } else {
+        _selectedRoles.add(button.role);
+      }
+    });
   }
 
   void _onTapContinue() {

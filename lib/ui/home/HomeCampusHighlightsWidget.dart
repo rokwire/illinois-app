@@ -38,7 +38,7 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
 }
 
-class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget> implements NotificationsListener {
+class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget> with NotificationsListener {
 
   List<Map<String, dynamic>>? _promotedItems;
 

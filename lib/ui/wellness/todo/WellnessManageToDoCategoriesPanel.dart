@@ -38,7 +38,7 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget with AnalyticsInf
   State<WellnessManageToDoCategoriesPanel> createState() => _WellnessManageToDoCategoriesPanelState();
 }
 
-class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
+class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> with NotificationsListener {
   static final List<String> _availableCategoryHexColors = ['#E45434', '#F5821E', '#54A747', '#009FD4', '#1D58A7', '#662d91'];
 
   WellnessToDoCategory? _category;

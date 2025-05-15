@@ -10,6 +10,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -93,13 +94,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
+  Widget build(BuildContext context) => PopScopeFix(onBack: _onSwipeHeaderBack, child:
+    Scaffold(
+      appBar: HeaderBar(title: widget.title, onLeading: _onTapHeaderBack, actions: _headerBarActions),
       backgroundColor: Styles().colors.background,
       body: _buildScaffoldContent(),
-    );
-  }
+    )
+  );
 
   Widget _buildScaffoldContent() => (widget.bgImageKey != null) ?
     Stack(children: [
@@ -116,7 +117,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           SingleChildScrollView(child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               ..._buildAttributesContent(),
-              _buildClearAttributes(),
+              if (!_isOnboardingMode)
+                _buildApplyCommand(),
               _buildFooter(),
               Padding(padding: const EdgeInsets.only(top: 24)),
             ]),
@@ -125,7 +127,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ),
       // Container(height: 1, color: Styles().colors.surfaceAccent),
       SafeArea(child:
-        _buildCommands(),
+        _buildExternalCommands(),
       ),
     ]) : Container();
   }
@@ -362,59 +364,38 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
   }
 
-  bool get _isSelectionNotEmpty => _isSelectionNotEmptyA(_selection);
-
-  bool get _isInitialSelectionNotEmpty => _isSelectionNotEmptyA(_initialSelection);
-
-  static bool _isSelectionNotEmptyA(Map<String, LinkedHashSet<dynamic>> selection) {
-    for (LinkedHashSet<dynamic> attributeLabels in selection.values) {
-      if (attributeLabels.isNotEmpty) {
-        return true;
-      }
-    }
-    return false;
-  }
+  bool get _isSelectionNotEmpty => _selection.isSelectionNotEmpty;
 
   bool get _isSelectionValid => widget.contentAttributes?.isSelectionValid(_selection) ?? false;
 
   bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueBuilder != null);
 
-  bool get _canApply => (!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes)) && (widget.filtersMode || _isSelectionValid);
+  bool get _isModified => (!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes));
 
-  bool get _canClear =>  _isInitialSelectionNotEmpty && _isSelectionNotEmpty;
+  bool get _canApply => _isModified && (widget.filtersMode || _isSelectionValid);
 
-  List<Widget>? get _headerBarActions {
-    List<Widget> actions = <Widget>[];
-    if (!_isOnboardingMode) {
-      if (_canApply) {
-        actions.add(HeaderBarActionTextButton(
-          title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
-          onTap: _onTapApply,
-        ));
-      }
-      else if (_canClear) {
-        actions.add(HeaderBarActionTextButton(
-          title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-          onTap: _onTapClear,
-        ));
-      }
-    }
-    return actions;
-  }
+  bool get _canClearAttributes => _isSelectionNotEmpty;
+
+  List<Widget>? get _headerBarActions => (!_isOnboardingMode && _canClearAttributes) ? <Widget>[
+    HeaderBarActionTextButton(
+      title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+      onTap: _onTapClearAttributes,
+    ),
+  ] : null;
 
   Widget _buildImageBackground() => Positioned.fill(child:
     Styles().images.getImage(widget.bgImageKey, excludeFromSemantics: true, fit: BoxFit.cover) ?? Container()
   );
 
-  Widget _buildCommands() {
+  Widget _buildExternalCommands() {
     List<Widget> commands = <Widget>[];
 
     if ((widget.applyBuilder != null)) {
-      commands.add(_buildApply());
+      commands.add(_buildExternalApply());
     }
 
-    if (widget.applyBuilder != null) {
-      commands.add(_buildContinue());
+    if (widget.continueBuilder != null) {
+      commands.add(_buildExternalContinue());
     }
 
     return commands.isNotEmpty ?
@@ -423,20 +404,19 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ) : Container();
   }
 
-  Widget _buildClearAttributes() {
-    bool canClearAttributes = _isSelectionNotEmpty;
+  Widget _buildApplyCommand() {
     return Padding(padding: EdgeInsets.only(top: 16), child:
       Row(children: <Widget>[
         Expanded(flex: 1, child: Container()),
         Expanded(flex: 2, child: RoundedButton(
-          label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+          label: Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply'),
           textColor: Styles().colors.fillColorPrimary,
           borderColor: Styles().colors.fillColorSecondary,
           backgroundColor: Styles().colors.background,
-          textStyle: canClearAttributes ? Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.medium.fat.variant_two'),
+          textStyle: _canApply ? Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.medium.fat.variant_two'),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          enabled: canClearAttributes,
-          onTap: _onTapClearAttributes
+          enabled: _canApply,
+          onTap: _onTapApply
         )),
         Expanded(flex: 1, child: Container()),
       ],),
@@ -449,47 +429,28 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return (footerWidget != null) ? Padding(padding: EdgeInsets.only(top: 24), child: footerWidget) : Container();
   }
 
-  Widget _buildApply() {
-    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
-    return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onApply) :
-      Row(children: <Widget>[
-        Expanded(flex: 1, child: Container()),
-        Expanded(flex: 2, child: RoundedButton(
-          label: _applyTitle,
-          textColor: canApply ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-          borderColor: canApply ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-          backgroundColor: Styles().colors.surface,
-          enabled: canApply,
-          onTap: _onTapApply
-        )),
-        Expanded(flex: 1, child: Container()),
-      ],);
+  Widget _buildExternalApply() {
+    bool canApply = widget.filtersMode ? _isSelectionNotEmpty : _isSelectionValid;
+    return  widget.applyBuilder?.call(context, canApply, _popAndApply) ?? Container();
   }
-
-  String get _applyTitle => _applyTitleEx();
-
-  String _applyTitleEx({String? language}) => widget.filtersMode ?
-    Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter', language: language) :
-    Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes', language: language);
 
   void _onTapApply() {
-    Analytics().logSelect(target: _applyTitleEx(language: 'en'));
-    _onApply();
+    Analytics().logSelect(target: Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply', language: 'en'));
+    _popAndApply();
   }
 
-  void _onApply() {
+  void _popAndApply() {
     Navigator.of(context).pop(ContentAttributes.selectionToAttributesSelection(_selection) ?? <String, dynamic>{});
   }
 
-  Widget _buildContinue() => widget.continueBuilder?.call(context, _onContinue) ?? Container();
+  void _popAndSkip() {
+    Navigator.of(context).pop(null);
+  }
+
+  Widget _buildExternalContinue() => widget.continueBuilder?.call(context, _onContinue) ?? Container();
 
   void _onContinue() =>
     Navigator.of(context).pop((widget.selection != null) ? Map<String, dynamic>.from(widget.selection!) : <String, dynamic>{});
-
-  void _onTapClear() {
-    Analytics().logSelect(target: 'Clear');
-    Navigator.of(context).pop(<String, dynamic>{});
-  }
 
   void _onTapClearAttributes() {
     Analytics().logSelect(target: 'Clear Attributes');
@@ -497,6 +458,93 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       _selection.clear();
     });
   }
+
+  void _onTapHeaderBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
+    _onHeaderBack();
+  }
+
+  void _onSwipeHeaderBack() {
+    Analytics().logSelect(target: 'Swipte Right: Back');
+    _onHeaderBack();
+  }
+
+  void _onHeaderBack() {
+    Analytics().logSelect(target: 'Back');
+    if (_isModified) {
+      if (_canApply) {
+        showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+          content: Text(_headerBackApplyPromptText(), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.regular.fat'),),
+          actions: [
+            _headerBackPromptButton(context, promptBuilder: _headerBackApplyPromptText, textBuilder: _headerBackPromptYesText, value: true),
+            _headerBackPromptButton(context, promptBuilder: _headerBackApplyPromptText, textBuilder: _headerBackPromptNoText, value: false),
+            _headerBackPromptButton(context, promptBuilder: _headerBackApplyPromptText, textBuilder: _headerBackPromptCancelText, value: null),
+          ],
+        )).then((bool? result) {
+          if (mounted) {
+            if (result == true) {
+              _popAndApply();
+            }
+            else if (result == false) {
+              _popAndSkip();
+            }
+          }
+        });
+      }
+      else {
+        showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+          content: Text(_headerBackLoosePromptText(), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.regular.fat'),),
+          actions: [
+            _headerBackPromptButton(context, promptBuilder: _headerBackLoosePromptText, textBuilder: _headerBackPromptOKText, value: true),
+            _headerBackPromptButton(context, promptBuilder: _headerBackLoosePromptText, textBuilder: _headerBackPromptCancelText, value: null),
+          ],
+        )).then((bool? result) {
+          if (mounted) {
+            if (result == true) {
+              _popAndSkip();
+            }
+          }
+        });
+      }
+    }
+    else {
+      _popAndSkip();
+    }
+  }
+
+  Widget _headerBackPromptButton(BuildContext context, {String Function({String? language})? promptBuilder, String Function({String? language})? textBuilder, bool? value}) =>
+    OutlinedButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),)),
+      ),
+      onPressed: () => _onTapHeaderBackPromptButton(context,
+        prompt: (promptBuilder != null) ? promptBuilder(language: 'en') : null,
+        text: (textBuilder != null) ? textBuilder(language: 'en') : null,
+        value: value
+      ),
+      child: Text((textBuilder != null)  ? textBuilder() : '',
+        style: Styles().textStyles.getTextStyle('widget.message.regular.semi_fat'),
+      ),
+    );
+
+  void _onTapHeaderBackPromptButton(BuildContext context, {String? prompt, String? text, bool? value}) {
+    Analytics().logAlert(text: prompt, selection: text);
+    Navigator.of(context).pop(value);
+  }
+
+  String _headerBackLoosePromptText({String? language}) =>
+    Localization().getStringEx('panel.content.attributes.prompt.loose_changes.title', 'Loose your changes?', language: language);
+
+  String _headerBackApplyPromptText({String? language}) =>
+    Localization().getStringEx('panel.content.attributes.prompt.apply_changes.title', 'Apply your changes?', language: language);
+
+  String _headerBackPromptYesText({String? language}) => Localization().getStringEx("dialog.yes.title", "Yes", language: language);
+  String _headerBackPromptNoText({String? language}) => Localization().getStringEx("dialog.no.title", "No", language: language);
+  String _headerBackPromptOKText({String? language}) => Localization().getStringEx("dialog.ok.title", "OK", language: language);
+  String _headerBackPromptCancelText({String? language}) => Localization().getStringEx("dialog.cancel.title", "Cancel", language: language);
+
 }
 
 class _AttributeRibbonButton extends StatelessWidget {
@@ -532,5 +580,16 @@ class _AttributeRibbonButton extends StatelessWidget {
         ])
       ),
     );
+  }
+}
+
+extension _SelectionUtils on Map<String, LinkedHashSet<dynamic>> {
+  bool get isSelectionNotEmpty {
+    for (LinkedHashSet<dynamic> attributeLabels in values) {
+      if (attributeLabels.isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
   }
 }

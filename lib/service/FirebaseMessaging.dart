@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Analytics.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -36,7 +37,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
-class FirebaseMessaging extends rokwire.FirebaseMessaging implements NotificationsListener {
+class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsListener {
 
   static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
@@ -50,6 +51,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyPollOpen                                   = "$notifyBase.poll.create";
   static const String notifyEventsNotification                         = "$notifyBase.events";
   static const String notifyEventDetail                                = "$notifyBase.event.detail";
+  static const String notifyEventSelfCheckIn                           = "$notifyBase.event.self_checkin";
   static const String notifyEventAttendeeSurveyInvitation              = "$notifyBase.event.attendee.survey.invitation";
   static const String notifyGameDetail                                 = "$notifyBase.game.detail";
   static const String notifyAthleticsGameStarted                       = "$notifyBase.athletics_game.started";
@@ -58,6 +60,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyAthleticsTeamRoster                        = "$notifyBase.athletics.team.roster";
   static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
   static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
+  static const String notifyGroupPostReactionNotification        = "$notifyBase.group.post.reaction.updated";
   static const String notifySocialMessageNotification                  = "$notifyBase.conversation";
   static const String notifyHomeNotification                           = "$notifyBase.home";
   static const String notifyHomeFavoritesNotification                  = "$notifyBase.home.favorites";
@@ -200,6 +203,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeOpenPoll = 'poll_open';
   static const String payloadTypeEvents = 'events';
   static const String payloadTypeEventDetail = 'event_detail';
+  static const String payloadTypeEventSelfCheckIn = 'event.self_checkin';
   static const String payloadTypeEvent = 'event';
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
@@ -207,6 +211,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAthleticsTeam = 'athletics.team';
   static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
+  static const String payloadTypePostReaction = 'post.reaction';
   static const String payloadTypeSocialMessage = 'conversation';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeHomeFavorites = 'home.favorites';
@@ -365,11 +370,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   @override
   void processDataMessage(Map<String, dynamic>? data) {
+
     String? messageId = JsonUtils.stringValue(data?['message_id']);
     if (messageId != null) {
       Inbox().readMessage(messageId);
     }
-    _processDataMessage(data);
+
+    String? type = _getMessageType(data);
+    Analytics().logFCM(command: type, data: data);
+    _processDataMessage(data, type: type);
   }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
@@ -396,11 +405,17 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeEventDetail) {
       NotificationService().notify(notifyEventDetail, data);
     }
+    else if (type == payloadTypeEventSelfCheckIn) {
+      NotificationService().notify(notifyEventSelfCheckIn, data);
+    }
     else if (type == payloadTypeEvent) {
       String? entityType = JsonUtils.stringValue(data?['entity_type']);
       String? operation = JsonUtils.stringValue(data?['operation']);
       if ((entityType == 'event_attendance') && (operation == 'survey_invite')) {
         NotificationService().notify(notifyEventAttendeeSurveyInvitation, data);
+      }
+      else if ((entityType == 'event.self_checkin') && (operation == 'self_checkin_invite')) {
+        NotificationService().notify(notifyEventSelfCheckIn, data);
       } else if (entityType == 'event') {
         // Handle 'upcoming_event' and 'event_notification' operations as showing event detail
         NotificationService().notify(notifyEventDetail, data);
@@ -428,6 +443,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       } else {
         NotificationService().notify(notifyGroupsNotification, data);
       }
+    }
+    else if(type == payloadTypePostReaction) {
+      NotificationService().notify(notifyGroupPostReactionNotification, data);
     }
     else if (type == payloadTypeSocialMessage) {
       NotificationService().notify(notifySocialMessageNotification, data);

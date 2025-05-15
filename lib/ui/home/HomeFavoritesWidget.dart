@@ -27,7 +27,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -132,7 +132,7 @@ class HomeFavoritesWidget extends StatefulWidget {
   }
 }
 
-class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements NotificationsListener {
+class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with NotificationsListener {
 
   List<Favorite>? _favorites;
   LinkedHashSet<String>? _favoriteIds;
@@ -612,9 +612,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     if (widget.favoriteKey == MTDStop.favoriteKeyName) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.my)));
     } else if(widget.favoriteKey == Game.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_events)));
     } else if(widget.favoriteKey == News.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
     }

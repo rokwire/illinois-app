@@ -37,7 +37,7 @@ class Event2SetupNotificationsPanel extends StatefulWidget {
   _Event2SetupNotificationsPanelState createState() => _Event2SetupNotificationsPanelState();
 }
 
-class _Event2SetupNotificationsPanelState extends State<Event2SetupNotificationsPanel> implements NotificationsListener {
+class _Event2SetupNotificationsPanelState extends State<Event2SetupNotificationsPanel> with NotificationsListener {
   static final EdgeInsets _defaultBottomPadding = EdgeInsets.only(bottom: 8);
   static final int _notificationsCount = 2;
 
@@ -103,8 +103,8 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                 RoundedButton(
                                     label: 'Save',
                                     borderColor: Styles().colors.fillColorSecondary,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    backgroundColor: Colors.white,
+                                    textColor: Styles().colors.surface,
+                                    backgroundColor: Styles().colors.background,
                                     progress: _saving,
                                     onTap: _onTapSave)),
                               Container(width: 16),
@@ -112,13 +112,15 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                                 RoundedButton(
                                     label: 'Clear All',
                                     borderColor: Styles().colors.fillColorSecondary,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    backgroundColor: Colors.white,
+                                    textColor: Styles().colors.surface,
+                                    backgroundColor: Styles().colors.background,
                                     progress: _deleting,
                                     onTap: _onTapClearAll)),
                             ]))
                   ])
-            )));
+        )),
+        backgroundColor: Styles().colors.background,
+    );
   }
 
   Widget _buildNotificationsContent({required EdgeInsets defaultBottomPadding, required EdgeInsets bottom10Padding}) {
@@ -258,13 +260,19 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
                 Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
                   Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                     DropdownButtonHideUnderline(child:
-                      DropdownButton<Location>(
-                          icon: Styles().images.getImage('chevron-down'),
-                          isExpanded: true,
-                          style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                          hint: Text(_timeZones[index]?.name ?? ""),
-                          items: _timezoneDropDownItems,
-                          onChanged: (value) => _onTimezoneChanged(index: index, value: value)
+                      Theme(
+                        data: ThemeData(
+                          canvasColor: Styles().colors.surface,
+                        ),
+                        child: DropdownButton<Location>(
+                            dropdownColor: Styles().colors.surface,
+                            icon: Styles().images.getImage('chevron-down'),
+                            isExpanded: true,
+                            style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.light.regular"),
+                            hint: Text(_timeZones[index]?.name ?? ""),
+                            items: _timezoneDropDownItems,
+                            onChanged: (value) => _onTimezoneChanged(index: index, value: value)
+                        ),
                       ),
                     ),
                   ),
@@ -328,13 +336,13 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     List<DropdownMenuItem<Location>> items = [];
    timeZoneDatabase.locations.forEach((String name,
         Location location) {
-      if (name.startsWith('US/')) {
+      if (name.startsWith('US/') || name.startsWith('Europe/') || name.startsWith('Asia/')) {
         items.add(DropdownMenuItem<Location>(
           value: location,
           child: Semantics(label: name,
               excludeSemantics: true,
               container: true,
-              child: Text(name,)),
+              child: Text(name, style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"))),
         ));
       }
     });
@@ -354,9 +362,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
         firstDate: minDate,
         lastDate: maxDate,
         currentDate: now,
-        // builder: (context, child) {
-        //   return AppThemes.datePickerTheme(context, child!);
-        //  }
+        builder: (context, child) => _datePickerTransitionBuilder(context, child!),
       ).then((DateTime? result) {
         if ((result != null) && mounted) {
           setState(() {
@@ -371,9 +377,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     showTimePicker(
         context: context,
         initialTime: _sendTimes[index] ?? TimeOfDay(hour: 0, minute: 0),
-        // builder: (context, child) {
-        //   return AppThemes.timePickerTheme(context, child!);
-        // }
+        builder: (context, child) => _timePickerTransitionBuilder(context, child!),
       ).then((TimeOfDay? result) {
         if ((result != null) && mounted) {
           setState(() {
@@ -381,6 +385,24 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
           });
         }
     });
+  }
+
+  Widget _datePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.background)), child: child);
+  }
+
+  Widget _timePickerTransitionBuilder(BuildContext context, Widget child) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              dayPeriodColor: Styles().colors.fillColorSecondary,
+              backgroundColor: Styles().colors.background,
+              dialBackgroundColor: Styles().colors.backgroundVariant,
+              // hourMinuteColor: Styles().colors.background
+            )),
+        child: child);
   }
 
   Widget _buildHorizontalDividerWidget() => Container(height: 1, color: Styles().colors.dividerLine);
@@ -392,10 +414,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     Event2NotificationSetting? notification = _notificationSettings[index];
     setStateIfMounted(() {
       if (notification == null) {
-        notification = Event2NotificationSetting(sendToFavorited: true);
-        _notificationSettings[index] = notification;
+        _notificationSettings[index] = Event2NotificationSetting(sendToFavorited: true);
       } else {
-        notification!.sendToFavorited = !notification!.sendToFavorited;
+        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToFavorited: !notification.sendToFavorited);
       }
     });
   }
@@ -411,10 +432,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     Event2NotificationSetting? notification = _notificationSettings[index];
     setStateIfMounted(() {
       if (notification == null) {
-        notification = Event2NotificationSetting(sendToRegistered: true);
-        _notificationSettings[index] = notification;
+        _notificationSettings[index] = Event2NotificationSetting(sendToRegistered: true);
       } else {
-        notification!.sendToRegistered = !notification!.sendToRegistered;
+        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToRegistered: !notification.sendToRegistered);
       }
     });
   }
@@ -430,10 +450,9 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     Event2NotificationSetting? notification = _notificationSettings[index];
     setStateIfMounted(() {
       if (notification == null) {
-        notification = Event2NotificationSetting(sendToPublishedInGroups: true);
-        _notificationSettings[index] = notification;
+        _notificationSettings[index] = Event2NotificationSetting(sendToPublishedInGroups: true);
       } else {
-        notification!.sendToPublishedInGroups = !notification!.sendToPublishedInGroups;
+        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToPublishedInGroups: !notification.sendToPublishedInGroups);
       }
     });
   }
@@ -455,10 +474,12 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
         DateTime sendDate = _sendDates[i];
         DateTime sendDateTime = DateTime(sendDate.year, sendDate.month, sendDate.day, _sendTimes[i].hour, _sendTimes[i].minute);
         TZDateTime? eventTzDateTime = (tzLocation != null) ? DateTimeUtils.changeTimeZoneToDate(sendDateTime, tzLocation) : null;
-        notification.sendDateTimeUtc = eventTzDateTime?.toUtc();
-        notification.subject = _notificationSubject;
-        notification.body = _bodyControllers[i].text;
-        notification.sendTimezone = tzLocation?.name;
+        _notificationSettings[i] = Event2NotificationSetting.fromOther(notification,
+          sendDateTimeUtc: eventTzDateTime?.toUtc(),
+          subject: _notificationSubject,
+          body: _bodyControllers[i].text,
+          sendTimezone: tzLocation?.name,
+        );
       }
     }
     if (_eventId == null) {
@@ -672,7 +693,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
 
   bool get _allowGroupMembers => (widget.isGroupEvent == true);
 
-  TextStyle? get _enabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.title.enabled");
+  TextStyle? get _enabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat");
 
   TextStyle? get _disabledButtonTextStyle => Styles().textStyles.getTextStyle("widget.button.title.disabled");
 

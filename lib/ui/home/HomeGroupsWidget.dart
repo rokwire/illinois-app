@@ -85,7 +85,7 @@ class HomeGroupsWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeGroupsWidgetState();
 }
 
-class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
+class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsListener{
   List<Group>? _groups;
   Map<String, GlobalKey> _groupCardKeys = <String, GlobalKey>{};
   DateTime? _pausedDateTime;
@@ -269,6 +269,10 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
           textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onSeeAll,
         ),
+        semanticsController: SemanticsController(
+            adapter: SemanticsPageAdapter.fromList(keys: _groupCardKeys.values.toList())),
+            // adapter: SemanticsPageAdapter.fromMap(keys: _groupCardKeys,
+            //     mapper: (dynamic index) => index is int ? (visibleGroups?[index].id) : null))
       ),
     ],);
 
@@ -354,4 +358,5 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
   }
+
 }

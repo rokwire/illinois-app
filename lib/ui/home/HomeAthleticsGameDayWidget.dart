@@ -47,7 +47,7 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
   State<HomeAthleticsGameDayWidget> createState() => _HomeAthleticsGameDayWidgetState();
 }
 
-class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget> implements NotificationsListener {
+class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget> with NotificationsListener {
 
   List<Game>? _todayGames;
   DateTime? _pausedDateTime;

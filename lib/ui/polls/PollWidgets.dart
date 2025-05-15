@@ -50,7 +50,7 @@ class PollCard extends StatefulWidget{
   }
 }
 
-class _PollCardState extends State<PollCard> implements NotificationsListener {
+class _PollCardState extends State<PollCard> with NotificationsListener {
   GroupStats? _groupStats;
 
   List<GlobalKey>? _progressKeys;

@@ -24,6 +24,7 @@ import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -55,7 +56,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:universal_io/io.dart';
 
-class Analytics extends rokwire.Analytics implements NotificationsListener {
+class Analytics extends rokwire.Analytics with NotificationsListener {
 
   static const String notifyEvent = "edu.illinois.rokwire.analytics.event";
 
@@ -196,6 +197,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogWidgetFavoriteEventName          = "widget_favorite";
 
+  // Reaction Event
+  // {  "event" : { "name":"reaction", "action":"on/off", "target":"...", "source":"..." }}
+  static const String   LogReactionEventName                 = "reaction";
+  static const String   LogReactionActionName                = "action";
+  static const String   LogReactionTargetName                = "target";
+  static const String   LogReactionTypeName                  = "type";
+  static const String   LogReactionValueName                 = "value";
+  static const String   LogReactionDetailName                = "detail";
+  static const String   LogReactionFeatureName               = "feature";
+
+  static const String   LogReactionOnActionName              = "on";
+  static const String   LogReactionOffActionName             = "off";
+
   // Poll Event
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogPollEventName                    = "poll";
@@ -284,7 +298,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogWellnessToDoReminderType        = "reminder";
   static const String   LogWellnessToDoWorkdays            = "workdays";
 
-  // Video Attributes
+  // Video Event
   static const String   LogVideoEventName                  = "video";
   static const String   LogAttributeVideoId                = "video_id";
   static const String   LogAttributeVideoTitle             = "video_title";
@@ -299,6 +313,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // "event" : { "name":"research_questionnaire", "page":"...", "answers":["question": yes/no, ] } }
   static const String   LogResearchQuestionnaireEventName  = "research_questionnaire";
   static const String   LogResearchQuestionnaireAnswersName= "answers";
+
+  // DeepLink Event
+  // "event" : { "name":"deep_link", "page":"...", "url":"...", "command": "", params: { ... } } }
+  static const String   LogDeepLinkEventName               = "deep_link";
+  static const String   LogDeepLinkUrlName                 = "url";
+  static const String   LogDeepLinkCommandName             = "command";
+  static const String   LogDeepLinkParamsName              = "params";
+
+  // Firebase Cloud Message Event
+  // "event" : { "name":"fcm", "page":"...", "command": "", params: { ... } } }
+  static const String   LogFCMEventName                    = "fcm";
+  static const String   LogFCMCommandName                  = "command";
+  static const String   LogFCMDataName                     = "data";
 
   // Attributes
   static const String   LogAttributeUrl                    = "url";
@@ -930,6 +957,20 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     });
   }
 
+  void logReaction(Reaction? reaction, { String? target, AnalyticsFeature? feature, Map<String, dynamic>? attributes }) =>
+    logEvent({
+      LogEventName          : LogReactionEventName,
+      LogReactionActionName : (reaction?.id == null) ? LogReactionOnActionName : LogReactionOffActionName,
+      LogReactionTargetName : target,
+      LogReactionTypeName   : reaction?.type?.name,
+      LogReactionValueName  : JsonUtils.stringValue(reaction?.data?['emoji_source']),
+      LogReactionDetailName : JsonUtils.stringValue(reaction?.data?['emoji_name']),
+      if (feature != null)
+        LogReactionFeatureName: feature.name,
+      if (attributes != null)
+        ...attributes
+    });
+
   void logWidgetFavorite(dynamic favorite, bool? selected, { List<Favorite>? used, List<Favorite>? unused }) {
     dynamic target;
     if (favorite is Favorite) {
@@ -1151,5 +1192,29 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
     // Log the event
     logEvent(event);
+  }
+
+  void logDeepLink(Uri uri) {
+    logEvent({
+      LogEventName                        : LogDeepLinkEventName,
+      LogDeepLinkUrlName                  : uri.toString(),
+      LogDeepLinkCommandName              : uri.command,
+      LogDeepLinkParamsName               : uri.queryParameters,
+    });
+  }
+
+  void logFCM({String? command, Map<String, dynamic>? data }) {
+    logEvent({
+      LogEventName                        : LogFCMEventName,
+      LogFCMCommandName                   : command,
+      LogFCMDataName                      : data,
+    });
+  }
+}
+
+extension _UriAnalytics on Uri {
+  String get command {
+    String value = path;
+    return  value.startsWith('/') ? value.substring(1) : value;
   }
 }

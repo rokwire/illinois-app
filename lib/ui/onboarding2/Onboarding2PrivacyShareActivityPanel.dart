@@ -23,24 +23,24 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2PrivacyShareActivityPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2PrivacyShareActivityPanel({ this.onboardingCode = '', this.onboardingContext });
+  Onboarding2PrivacyShareActivityPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
 
-  GlobalKey<_Onboarding2PrivacyShareActivityPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2PrivacyShareActivityPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2PrivacyShareActivityPanelState>) : null;
-
-  @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
-  @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
+  _Onboarding2PrivacyShareActivityPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  _Onboarding2PrivacyShareActivityPanelState createState() => _Onboarding2PrivacyShareActivityPanelState();
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+
+  @override
+  State<StatefulWidget> createState() => _Onboarding2PrivacyShareActivityPanelState();
 }
 
 class _Onboarding2PrivacyShareActivityPanelState extends State<Onboarding2PrivacyShareActivityPanel> {

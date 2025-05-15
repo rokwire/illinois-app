@@ -135,7 +135,7 @@ class _RadioControl extends StatefulWidget {
   State<_RadioControl> createState() => _RadioControlState();
 }
 
-class _RadioControlState extends State<_RadioControl> implements NotificationsListener {
+class _RadioControlState extends State<_RadioControl> with NotificationsListener {
 
   @override
   void initState() {

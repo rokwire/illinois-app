@@ -205,7 +205,7 @@ String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
     } else if (value == GroupMemberStatus.member) {
       return Localization().getStringEx('model.research_project.member.status.member', 'Participant');
     } else if (value == GroupMemberStatus.admin) {
-      return Localization().getStringEx('model.research_project.member.status.admin', 'Principal Investigator');
+      return Localization().getStringEx('model.research_project.member.status.admin', 'Admin');
     } else if (value == GroupMemberStatus.rejected) {
       return Localization().getStringEx('model.research_project.member.status.rejected', 'Denied');
     }
@@ -238,7 +238,7 @@ TextStyle? groupMemberStatusToTextStyle(GroupMemberStatus? value) {
 }
 
 extension GroupSettingsExt on GroupSettings{
-  static List<DetailTab?>? getDefaultDetailTabs() => GroupContentItemExt.defaultContentCodes.map(
+  static List<DetailTab?> getDefaultDetailTabs() => GroupContentItemExt.defaultContentCodes.map(
           (code) => GroupContentItemExt.getDetailTabByCode(code)).toList();
 
   static GroupSettings initialDefaultSettings({Group? group}){
@@ -268,12 +268,13 @@ extension GroupSettingsExt on GroupSettings{
 }
 
 extension GroupContentItemExt on GroupContentItem{
-  static final List<String> availableContentCodes =  ["events", "posts"/*, "messages"*/, "polls", "about"];
-  static final List<String> defaultContentCodes =  ["events", "posts"/*, "messages"*/, "polls", "about"];
+  static final List<String> availableContentCodes =   ["posts", "events", "messages", "polls"];
+  static final List<String> defaultContentCodes =  ["posts", "events", "messages", "polls"];
 
   static String getTitleByCode(String code) {
     switch(code){
       case 'events' : return 'Events';
+      case 'past_events' : return 'Past Events';
       case 'posts' : return 'Posts';
       case 'scheduled' : return 'Scheduled';
       //case 'messages' : return 'Messages';
@@ -286,9 +287,10 @@ extension GroupContentItemExt on GroupContentItem{
   static DetailTab? getDetailTabByCode(String? code){
     switch(code){
       case 'events' : return DetailTab.Events;
+      case 'past_events' : return DetailTab.PastEvents;
       case 'posts' : return DetailTab.Posts;
-      case 'scheduled' : return DetailTab.Scheduled;
-      //case 'messages' : return DetailTab.Messages;
+      case 'scheduled' : return DetailTab.ScheduledPosts;
+      // case 'messages' : return DetailTab.Messages;
       case 'polls' : return DetailTab.Polls;
     }
     return null;

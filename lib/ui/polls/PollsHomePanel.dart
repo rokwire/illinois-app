@@ -43,7 +43,7 @@ class PollsHomePanel extends StatefulWidget {
   _PollsHomePanelState createState() => _PollsHomePanelState();
 }
 
-class _PollsHomePanelState extends State<PollsHomePanel> implements NotificationsListener{
+class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListener{
 
   _PollType? _selectedPollType;
 
@@ -703,7 +703,7 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
   final bool selected;
   final GestureTapCallback? onTap;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _PollsHomePanelFilterTab({Key? key, this.text, this.hint = '', this.tabPosition = _PollFilterTabPosition.left, this.selected = false, this.onTap}) : super(key: key);
 
   @override

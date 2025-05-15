@@ -42,23 +42,28 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
-  final Comment? focusedReply;
+  final String? visibleCommentId;
+  final Comment? focusedReply; //TBD remove as we do not support nested replies anymore. We can simplify this panel logic
   final Group group;
   final bool hidePostOptions;
+  final AnalyticsFeature? _analyticsFeature;
 
-  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false, AnalyticsFeature? analyticsFeature, this.visibleCommentId}) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? _defaultAnalyticsFeature;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
+
+  AnalyticsFeature? get _defaultAnalyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
-class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with NotificationsListener {
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
   Post? _post; //Main post {Data Presentation}
@@ -71,6 +76,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Comment? _editingReply; //Edit Mode for Reply {Data Edit}
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
+  String? _ensureVisibleCommentId; //If we have comment that needs to be scrolled to when content is loaded
+
   bool _loading = false;
 
   //Scroll and focus utils
@@ -78,6 +85,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
+  GlobalKey? _visibleCommentKey;
   double? _sliverHeaderHeight;
   //Refresh
   GlobalKey _postInputKey = GlobalKey();
@@ -91,11 +99,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _loadMembersAllowedToPost();
     _loadComments();
     _focusedReply = widget.focusedReply;
-
+    _ensureVisibleCommentId = widget.visibleCommentId;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();
+      }
+      else if(_visibleCommentKey != null){
+        _scrollToEnsuredVisibleComment();
       }
     });
   }
@@ -268,21 +279,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               children: [
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                                    child: TextField(
-                                        onChanged: (txt) => _mainPostUpdateData?.body = txt,
-                                        controller: bodyController,
-                                        maxLines: null,
-                                        autofocus: true,
-                                        decoration: InputDecoration(
-                                            hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
-                                            fillColor: Styles().colors.surface,
-                                            filled: true,
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
-                                                    width: 0.0))),
-                                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                                       )),
+                                    child: PostInputField(
+                                      onBodyChanged: (txt) => _mainPostUpdateData?.body = txt,
+                                      text:  _mainPostUpdateData?.body ?? '',
+                                      minLines: 1,
+                                      maxLines: null,
+                                      autofocus: true,
+                                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
+                                      boxDecoration: BoxDecoration(color: Styles().colors.background),
+                                      inputDecoration: InputDecoration(
+                                          hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
+                                          fillColor: Styles().colors.surface,
+                                          filled: true,
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Styles().colors.mediumGray,
+                                                  width: 0.0))),
+                                    )
+                                ),
                                 Visibility(visible: _isPost && _canPinPost,
                                     child: Container(
                                       padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
@@ -357,6 +371,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         _replies = comments;
         _sortReplies(_replies);
         _setLoading(false);
+        Future.delayed(Duration(milliseconds: 20), () =>
+         _scrollToEnsuredVisibleComment());
       });
     }
   }
@@ -489,6 +505,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             child: Padding(
               padding: EdgeInsets.only(left: leftPaddingOffset),
               child: GroupReplyCard(
+                key: _ensureVisibleCommentId != null && _ensureVisibleCommentId == reply.id ? _visibleCommentKey = GlobalKey() : GlobalKey(),
                 onCardTap: () => {}, // Do not allow nested comments
                 reply: reply,
                 post: widget.post,
@@ -497,6 +514,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 iconPath: optionsIconPath,
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
+                analyticsFeature: widget.analyticsFeature,
                 onIconTap: optionsFunctionTap
             ))));
     }
@@ -894,6 +912,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     setStateIfMounted(() {
       _sliverHeaderHeight = sliverHeaderHeight;
     });
+  }
+
+  void _scrollToEnsuredVisibleComment(){
+    if(_ensureVisibleCommentId != null && _visibleCommentKey != null && mounted){
+      Scrollable.ensureVisible(
+          _visibleCommentKey!.currentContext!, duration: Duration(milliseconds: 300)).then(
+              (_) => _ensureVisibleCommentId = null); // Do it only once then forget about this comments visibility
+    }
   }
 
   void _scrollToPostEdit() {

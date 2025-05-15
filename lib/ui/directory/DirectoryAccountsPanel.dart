@@ -1,19 +1,14 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class DirectoryAccountsPanel extends StatefulWidget {
-  final DirectoryAccounts contentType;
-  DirectoryAccountsPanel(this.contentType, {super.key});
+  DirectoryAccountsPanel({super.key});
 
   @override
   State<StatefulWidget> createState() => _DirectoryAccountsPanelState();
@@ -34,40 +29,39 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   @override
   Widget build(BuildContext context) =>
     Scaffold(
-      appBar: RootHeaderBar(title: _appTitle, leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(
+        title: Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'Directory of Users'),
+        leading: RootHeaderBarLeading.Back,
+      ),
       body: _scaffoldContent,
       backgroundColor: Styles().colors.background,
       //bottomNavigationBar: uiuc.TabBar(),
     );
 
-  String get _appTitle {
-    switch(widget.contentType) {
-      case DirectoryAccounts.connections: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.connections.title', 'My Connections');
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.profile.info_and_directory.tab.accounts.directory.title', 'User Directory');
-    }
-  }
-
   Widget get _scaffoldContent =>
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-          DirectoryAccountsPage(widget.contentType, key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
+          DirectoryAccountsPage(key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
         )
       )
     );
 
-  void _onEditProfile(DirectoryAccounts contentType) {
+  void _onEditProfile() {
     ProfileHomePanel.present(context,
-      content: ProfileContent.profile,
+      contentType: ProfileContentType.profile,
       contentParams: {
         ProfileInfoPage.editParamKey : true,
       }
     );
   }
 
-  void _onShareProfile(DirectoryAccounts contentType) {
-    ProfileInfoSharePanel.present(context,
+  void _onShareProfile() {
+    /*ProfileInfoShareSheet.present(context,
       profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
+    );*/
+    ProfileHomePanel.present(context,
+      contentType: ProfileContentType.share,
     );
   }
 

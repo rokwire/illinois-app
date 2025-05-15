@@ -35,7 +35,7 @@ class MTDStopSearchPanel extends StatefulWidget {
   State<MTDStopSearchPanel> createState() => _MTDStopSearchPanelState();
 }
 
-class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements NotificationsListener {
+class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> with NotificationsListener {
 
   TextEditingController _searchController = TextEditingController();
   String? _searchText;

@@ -61,7 +61,7 @@ class MessagesConversationPanel extends StatefulWidget {
 enum _ScrollTarget { bottom, targetMessage }
 
 class _MessagesConversationPanelState extends State<MessagesConversationPanel>
-    with AutomaticKeepAliveClientMixin<MessagesConversationPanel>, WidgetsBindingObserver implements NotificationsListener {
+    with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<MessagesConversationPanel> {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _chatBarKey = GlobalKey();
@@ -1599,7 +1599,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    final checkPosition = () => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0.0;
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
 

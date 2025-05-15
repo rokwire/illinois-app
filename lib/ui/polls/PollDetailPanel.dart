@@ -37,7 +37,7 @@ class PollDetailPanel extends StatefulWidget {
   _PollDetailPanelState createState() => _PollDetailPanelState();
 }
 
-class _PollDetailPanelState extends State<PollDetailPanel> implements NotificationsListener {
+class _PollDetailPanelState extends State<PollDetailPanel> with NotificationsListener {
   Poll? _poll;
   Group? _group;
   int _loadingProgress = 0;
@@ -76,7 +76,11 @@ class _PollDetailPanelState extends State<PollDetailPanel> implements Notificati
   }
 
   Widget _buildPollContent() {
-    return PollCard(poll: _poll, group: _group);
+    if (_poll != null) {
+      return PollCard(poll: _poll!, group: _group);
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildErrorContent() {

@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SkillsSelfEvaluation with Service implements NotificationsListener {
+class SkillsSelfEvaluation with Service, NotificationsListener {
   static const String notifyLaunchSkillsSelfEvaluation = "edu.illinois.rokwire.skills_self_evaluation.launch";
 
   // Singleton Factory

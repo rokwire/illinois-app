@@ -281,7 +281,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         }
         else {
           AppAlert.showDialogResult(context, sprintf(Localization().getStringEx("panel.pending_member_detail.label.failed.hint", 'Failed to %s the membership request'),
-              [(_approved ? Localization().getStringEx("panel.pending_member_detail.label.accept", "accept") : Localization().getStringEx( "panel.pending_member_detail.label.reject", " reject "))]));
+              [(_approved ? Localization().getStringEx("panel.pending_member_detail.label.accept", " accept ") : Localization().getStringEx( "panel.pending_member_detail.label.reject", " deny "))]));
         }
       }
     });
