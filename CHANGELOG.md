@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow group admins to create events [#5099](https://github.com/rokwire/illinois-app/issues/5099).
 ### Added
 - Option for downloading survey results in survey responses panel [#5020](https://github.com/rokwire/illinois-app/issues/5020).
+### Changed
+- Updated more dropdown menus: sort alphabetically, show current selection indicator where applicable [#5117](https://github.com/rokwire/illinois-app/issues/5117).
 
 ## [7.1.4] - 2025-05-14
 ### Fixed
