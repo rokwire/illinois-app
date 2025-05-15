@@ -23,12 +23,12 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 
-class SettingsFoodFiltersContentWidget extends StatefulWidget{
+class SettingsFoodFiltersPage extends StatefulWidget{
 
-  _SettingsFoodFiltersContentWidgetState createState() => _SettingsFoodFiltersContentWidgetState();
+  _SettingsFoodFiltersPageState createState() => _SettingsFoodFiltersPageState();
 }
 
-class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersContentWidget> {
+class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
 
   //Set<String> selectedPreferences;
   late Set<String>? _selectedTypesPrefs;
