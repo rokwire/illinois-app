@@ -1448,6 +1448,7 @@
 
     "panel.event2.survey.responses.surveys.empty.msg": "No hay respuestas a las encuestas disponibles.",
     "panel.event2.survey.responses.header.title": "Respuestas de la Encuesta {{event_name}}",
+    "panel.event2.survey.responses.download.label": "Descargar resultados de la encuesta",
 
     "panel.event2.attributes.attributes.header.title": "Atributos del Evento",
     "panel.event2.attributes.attributes.header.description": "Elige uno o más atributos que ayuden a describir este evento",
