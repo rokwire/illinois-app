@@ -1117,7 +1117,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return _hideChatBar ? 0 : _keyboardHeight;
   }
 
-  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
+  double get _keyboardHeight => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
@@ -1130,7 +1130,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool get _hideChatBar => _negativeFeedbackFocusNode.hasFocus && _keyboardHeight > 0;
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    final checkPosition = () => _keyboardHeight;
     //Check if the position of the keyboard is still changing
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
