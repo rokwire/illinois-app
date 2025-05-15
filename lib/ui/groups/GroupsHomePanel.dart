@@ -55,17 +55,12 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature {
-    switch (contentType) {
-      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
-      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
-      case null:                          return AnalyticsFeature.Groups;
-    }
-  }
+  AnalyticsFeature? get analyticsFeature => contentType?.analyticsFeature ?? AnalyticsFeature.Groups;
 }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderStateMixin, NotificationsListener {
   final Color _dimmedBackgroundColor = Color(0x99000000);
+  static rokwire.GroupsContentType get _defaultContentType => Auth2().isLoggedIn ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all;
 
   bool _loadingProgress = false;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
@@ -73,6 +68,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   String? _newGroupId;
   GlobalKey? _newGroupKey;
 
+  late List<rokwire.GroupsContentType> _contentTypes;
   rokwire.GroupsContentType? _selectedContentType;
 
   GestureRecognizer? _loginRecognizer;
@@ -113,7 +109,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     ]);
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
-    _selectedContentType = widget.contentType;
+
+    _contentTypes = _GroupsContentTypeList.fromContentTypes(GroupsContentType.values);
+    _selectedContentType = widget.contentType ?? _defaultContentType;
+
     _reloadGroupsContent();
     super.initState();
   }
@@ -543,7 +542,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
 
@@ -701,5 +700,51 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
         _reloadGroupsContent();
       }
     }
+  }
+}
+
+// GroupsContentType
+
+extension GroupsContentTypeImpl on GroupsContentType {
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
+
+  String displayTitleLng([String? language]) {
+    switch (this) {
+      case GroupsContentType.all: return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups', language: language);
+      case GroupsContentType.my: return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups', language: language);
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case GroupsContentType.all: return 'all';
+      case GroupsContentType.my: return 'my';
+    }
+  }
+
+  static GroupsContentType? fromJsonString(String? value) {
+    switch(value) {
+      case 'all': return GroupsContentType.all;
+      case 'my': return GroupsContentType.my;
+      default: return null;
+    }
+  }
+
+  AnalyticsFeature? get analyticsFeature {
+    switch (this) {
+      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
+      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
+    }
+  }
+}
+
+extension _GroupsContentTypeList on List<GroupsContentType> {
+  void sortAlphabetical() => sort((GroupsContentType t1, GroupsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+
+  static List<GroupsContentType> fromContentTypes(Iterable<GroupsContentType> contentTypes) {
+    List<GroupsContentType> contentTypesList = List<GroupsContentType>.from(contentTypes);
+    contentTypesList.sortAlphabetical();
+    return contentTypesList;
   }
 }

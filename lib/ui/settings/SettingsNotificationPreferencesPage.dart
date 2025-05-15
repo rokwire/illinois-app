@@ -32,13 +32,13 @@ import 'package:universal_io/io.dart';
 
 import 'SettingsWidgets.dart';
 
-class SettingsNotificationPreferencesContentWidget extends StatefulWidget{
+class SettingsNotificationPreferencesPage extends StatefulWidget{
 
   @override
-  State<StatefulWidget> createState() => _SettingsNotificationPreferencesContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsNotificationPreferencesPageState();
 }
 
-class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsNotificationPreferencesContentWidget> with NotificationsListener{
+class _SettingsNotificationPreferencesPageState extends State<SettingsNotificationPreferencesPage> with NotificationsListener{
   bool _notificationsAuthorized = false;
 
   // bool _newAppointmentProgress = false;

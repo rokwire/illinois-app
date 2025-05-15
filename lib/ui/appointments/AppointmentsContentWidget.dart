@@ -186,7 +186,8 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       items.add(RibbonButton(
         backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
+        textStyle: Styles().textStyles.getTextStyle((_selectedProvider == null) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+        rightIconKey: (_selectedProvider == null) ? 'check-accent' : null,
         label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
       ));
@@ -195,7 +196,8 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
         items.add(RibbonButton(
           backgroundColor: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          rightIconKey: null,
+          textStyle: Styles().textStyles.getTextStyle(((provider.id != null) && (_selectedProvider?.id == provider.id)) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: ((provider.id != null) && (_selectedProvider?.id == provider.id)) ? 'check-accent' : null,
           label: _getDropDownProviderName(provider),
           onTap: () => _onTapProvider(provider)
         ));
@@ -344,16 +346,23 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       _isLoadingProviders = true;
     });
     Appointments().loadProviders().then((List<AppointmentProvider>? result) {
+
+      result?.sort((AppointmentProvider p1, AppointmentProvider p2) {
+        String name1 = _getDropDownProviderName(p1) ?? '';
+        String name2 = _getDropDownProviderName(p2) ?? '';
+        return name1.compareTo(name2);
+      });
+
       setStateIfMounted(() {
         _providers = result;
         _isLoadingProviders = false;
-        _updateSelectedProvder();
+        _initSelectedProvder();
       });
       _loadAppointments();
     });
   }
 
-  void _updateSelectedProvder() {
+  void _initSelectedProvder() {
     if ((_providers == null) || _providers!.isEmpty) {
       _selectedProvider = null;  
     }
@@ -361,7 +370,8 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       _selectedProvider = _providers!.first;  
     }
     else {
-      _selectedProvider = AppointmentProvider.findInList(_providers, id: Storage().selectedAppointmentProviderId);
+      String? selectedProviderId = Storage().selectedAppointmentProviderId;
+      _selectedProvider = (selectedProviderId != null) ? AppointmentProvider.findInList(_providers, id: selectedProviderId) : null;
     }
   }
 

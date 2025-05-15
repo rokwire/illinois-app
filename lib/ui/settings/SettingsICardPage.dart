@@ -29,12 +29,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:universal_io/io.dart';
 
-class SettingsICardContentWidget extends StatefulWidget {
+class SettingsICardPage extends StatefulWidget {
   @override
-  _SettingsICardContentWidgetState createState() => _SettingsICardContentWidgetState();
+  _SettingsICardPageState createState() => _SettingsICardPageState();
 }
 
-class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> with NotificationsListener {
+class _SettingsICardPageState extends State<SettingsICardPage> with NotificationsListener {
   bool _vibrationEnabled = false;
   bool _soundEnabled = false;
 

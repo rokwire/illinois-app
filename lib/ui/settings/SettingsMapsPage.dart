@@ -8,13 +8,13 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsMapsContentWidget extends StatefulWidget{
+class SettingsMapsPage extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() => _SettingsMapsContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsMapsPageState();
 
 }
 
-class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> with NotificationsListener{
+class _SettingsMapsPageState extends State<SettingsMapsPage> with NotificationsListener{
 
   @override
   void initState() {

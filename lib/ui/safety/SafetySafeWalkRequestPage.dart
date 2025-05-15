@@ -17,7 +17,7 @@ import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -222,7 +222,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
 
   void _onTapLocationSettings(BuildContext context) {
     Analytics().logSelect(target: Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings', language: 'en'));
-    SettingsHomeContentPanel.present(context, content: SettingsContent.maps);
+    SettingsHomePanel.present(context, content: SettingsContentType.maps);
   }
 
   void _onTapLink(String url, { required BuildContext context, String? analyticsTarget, bool launchInternal = false }) {

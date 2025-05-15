@@ -17,18 +17,18 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsLanguageContentWidget extends StatefulWidget {
+class SettingsLanguagePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingsLanguageContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsLanguagePageState();
 }
 
-class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentWidget> with NotificationsListener {
+class _SettingsLanguagePageState extends State<SettingsLanguagePage> with NotificationsListener {
 
   bool _localeChanged = false;
 
@@ -121,8 +121,8 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
     Future.delayed(Duration(milliseconds: 500), (){
       BuildContext? context = App.instance?.currentContext;
       if (context != null) {
-        SettingsHomeContentPanel.present(context,
-          content: SettingsContent.language,
+        SettingsHomePanel.present(context,
+          content: SettingsContentType.language,
         );
       }
     });

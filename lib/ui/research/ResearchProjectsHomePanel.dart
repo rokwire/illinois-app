@@ -28,13 +28,7 @@ class ResearchProjectsHomePanel extends StatefulWidget with AnalyticsInfo {
   ResearchProjectsHomePanel({Key? key, this.contentType}) : super(key: key);
   
   @override
-  AnalyticsFeature? get analyticsFeature {
-    switch (contentType) {
-      case ResearchProjectsContentType.my:   return AnalyticsFeature.ResearchProjectMy;
-      case ResearchProjectsContentType.open: return AnalyticsFeature.ResearchProjectOpen;
-      case null:                             return AnalyticsFeature.ResearchProject;
-    }
-  }
+  AnalyticsFeature? get analyticsFeature => contentType?.analyticsFeature ?? AnalyticsFeature.ResearchProject;
 
   @override
   State<ResearchProjectsHomePanel> createState() => _ResearchProjectsHomePanelState();
@@ -44,10 +38,12 @@ enum _FilterType { category, tags }
 enum _TagFilter { all, my }
 
 class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> with NotificationsListener {
-  
-  static String _allCategories = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
-  static Color _dimmedBackgroundColor = Color(0x99000000);
 
+  static Color _dimmedBackgroundColor = Color(0x99000000);
+  static String _allCategories = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
+  static ResearchProjectsContentType get _defaultContentType => Auth2().isLoggedIn ? ResearchProjectsContentType.my : ResearchProjectsContentType.open;
+
+  late List<ResearchProjectsContentType> _contentTypes;
   ResearchProjectsContentType? _selectedContentType;
   bool _contentTypesDropdownExpanded = false;
 
@@ -72,9 +68,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
       Auth2.notifyLoginChanged,
     ]);
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
-    if (widget.contentType != null) {
-      _selectedContentType = widget.contentType;
-    }
+    _contentTypes = _ResearchProjectsContentTypeList.fromContentTypes(ResearchProjectsContentType.values);
+    _selectedContentType = widget.contentType ?? _defaultContentType;
     _loadInitialContent();
     _loadFilters();
     super.initState();
@@ -148,7 +143,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
-        label: _getContentTypeName(_selectedContentType),
+        label: _selectedContentType?.displayTitle ?? '',
         onTap: _onTapContentTypeDropdownButton
       )
     );
@@ -161,18 +156,24 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
           Container(color: _dimmedBackgroundColor)),
         Semantics(
           container: true, //Take accessibility access when shown
-          child: _buildContentTypesDropdownList()
+          child: _dropdownList
         )
     ]));
   }
 
-  Widget _buildContentTypesDropdownList() {
-    
+  Widget get _dropdownList  {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (ResearchProjectsContentType contentType in ResearchProjectsContentType.values) {
-      if ((_selectedContentType != contentType)) {
-        contentList.add(_buildContentTypeDropdownItem(contentType));
+    for (ResearchProjectsContentType contentType in _contentTypes) {
+      if (contentType != _selectedContentType) {
+        contentList.add(RibbonButton(
+          backgroundColor: Styles().colors.surface,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+          label: contentType.displayTitle,
+          onTap: () => _onTapContentTypeDropdownItem(contentType)
+        ));
       }
     }
 
@@ -181,15 +182,6 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         Column(children: contentList)
       )
     );
-  }
-
-  Widget _buildContentTypeDropdownItem(ResearchProjectsContentType contentType) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.surface,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentTypeName(contentType),
-        onTap: () => _onTapContentTypeDropdownItem(contentType));
   }
 
   void _onTapContentTypeDropdownButton() {
@@ -206,7 +198,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
   }
 
   void _onTapContentTypeDropdownItem(ResearchProjectsContentType contentType) {
-    Analytics().logSelect(target: _getContentTypeName(contentType, languageCode: 'en'));
+    Analytics().logSelect(target: contentType.displayTitleEn);
     if (_selectedContentType != contentType) {
       setState(() {
         _selectedContentType = contentType;
@@ -214,16 +206,13 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
       });
       _updateContent();
     }
-  }
-
-
-  static String _getContentTypeName(ResearchProjectsContentType? contentType, {String? languageCode} )  {
-    switch (contentType) {
-      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects');
-      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects');
-      default: return '';
+    else {
+      setState(() {
+        _contentTypesDropdownExpanded = false;
+      });
     }
   }
+
 
   // ToolBar
 
@@ -509,7 +498,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
   // Content Data
@@ -518,7 +507,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
     if ((_loadingResearchProjects == false) && ((contentType != ResearchProjectsContentType.my) || Auth2().isLoggedIn)) {
       _loadingResearchProjects = _researchProjectsBusy = true;
-
+      
       Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
         if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
           contentType = ResearchProjectsContentType.open;
@@ -597,5 +586,51 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
 
       }
     });
+  }
+}
+
+// ResearchProjectsContentType
+
+extension ResearchProjectsContentTypeImpl on ResearchProjectsContentType {
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
+
+  String displayTitleLng([ String? language ]) {
+    switch (this) {
+      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects', language: language);
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects', language: language);
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case ResearchProjectsContentType.open: return 'open';
+      case ResearchProjectsContentType.my: return 'my';
+    }
+  }
+
+  static ResearchProjectsContentType? fromJsonString(String? value) {
+    switch(value) {
+      case 'open': return ResearchProjectsContentType.open;
+      case 'my': return ResearchProjectsContentType.my;
+      default: return null;
+    }
+  }
+
+  AnalyticsFeature? get analyticsFeature {
+    switch (this) {
+      case ResearchProjectsContentType.my:   return AnalyticsFeature.ResearchProjectMy;
+      case ResearchProjectsContentType.open: return AnalyticsFeature.ResearchProjectOpen;
+    }
+  }
+}
+
+extension _ResearchProjectsContentTypeList on List<ResearchProjectsContentType> {
+  void sortAlphabetical() => sort((ResearchProjectsContentType t1, ResearchProjectsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+
+  static List<ResearchProjectsContentType> fromContentTypes(Iterable<ResearchProjectsContentType> contentTypes) {
+    List<ResearchProjectsContentType> contentTypesList = List<ResearchProjectsContentType>.from(contentTypes);
+    contentTypesList.sortAlphabetical();
+    return contentTypesList;
   }
 }

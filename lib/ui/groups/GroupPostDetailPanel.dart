@@ -42,12 +42,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Post? post;
-  final Comment? focusedReply;
+  final String? visibleCommentId;
+  final Comment? focusedReply; //TBD remove as we do not support nested replies anymore. We can simplify this panel logic
   final Group group;
   final bool hidePostOptions;
   final AnalyticsFeature? _analyticsFeature;
 
-  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false, AnalyticsFeature? analyticsFeature}) :
+  GroupPostDetailPanel({required this.group, this.post, this.focusedReply, this.hidePostOptions = false, AnalyticsFeature? analyticsFeature, this.visibleCommentId}) :
     _analyticsFeature = analyticsFeature;
 
   @override
@@ -75,6 +76,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
   Comment? _editingReply; //Edit Mode for Reply {Data Edit}
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
+  String? _ensureVisibleCommentId; //If we have comment that needs to be scrolled to when content is loaded
+
   bool _loading = false;
 
   //Scroll and focus utils
@@ -82,6 +85,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
+  GlobalKey? _visibleCommentKey;
   double? _sliverHeaderHeight;
   //Refresh
   GlobalKey _postInputKey = GlobalKey();
@@ -95,11 +99,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
     _loadMembersAllowedToPost();
     _loadComments();
     _focusedReply = widget.focusedReply;
-
+    _ensureVisibleCommentId = widget.visibleCommentId;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();
+      }
+      else if(_visibleCommentKey != null){
+        _scrollToEnsuredVisibleComment();
       }
     });
   }
@@ -364,6 +371,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
         _replies = comments;
         _sortReplies(_replies);
         _setLoading(false);
+        Future.delayed(Duration(milliseconds: 20), () =>
+         _scrollToEnsuredVisibleComment());
       });
     }
   }
@@ -496,6 +505,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
             child: Padding(
               padding: EdgeInsets.only(left: leftPaddingOffset),
               child: GroupReplyCard(
+                key: _ensureVisibleCommentId != null && _ensureVisibleCommentId == reply.id ? _visibleCommentKey = GlobalKey() : GlobalKey(),
                 onCardTap: () => {}, // Do not allow nested comments
                 reply: reply,
                 post: widget.post,
@@ -902,6 +912,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
     setStateIfMounted(() {
       _sliverHeaderHeight = sliverHeaderHeight;
     });
+  }
+
+  void _scrollToEnsuredVisibleComment(){
+    if(_ensureVisibleCommentId != null && _visibleCommentKey != null && mounted){
+      Scrollable.ensureVisible(
+          _visibleCommentKey!.currentContext!, duration: Duration(milliseconds: 300)).then(
+              (_) => _ensureVisibleCommentId = null); // Do it only once then forget about this comments visibility
+    }
   }
 
   void _scrollToPostEdit() {

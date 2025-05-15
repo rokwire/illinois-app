@@ -32,7 +32,7 @@ import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -387,7 +387,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with Notifi
 
   void _onBrowsingHistory() {
     Analytics().logSelect(target: "Browsing History", source: widget.runtimeType.toString());
-    SettingsHomeContentPanel.present(context, content: SettingsContent.recent_items);
+    SettingsHomePanel.present(context, content: SettingsContentType.recent_items);
   }
 
   Widget get _clearAllButton => LinkButton(

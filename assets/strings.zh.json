@@ -1419,6 +1419,7 @@
 
 	"panel.event2.survey.responses.surveys.empty.msg": "目前还没有问卷回答。",
 	"panel.event2.survey.responses.header.title": "{{event_name}} 问卷回答",
+	"panel.event2.survey.responses.download.label": "下載調查結果",
 
 	"panel.event2.attributes.attributes.header.title": "活动特征",
 	"panel.event2.attributes.attributes.header.description": "请选择其他特征形容您的活动",
@@ -2366,6 +2367,7 @@
 	"panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
 	"panel.profile.info.share.command.button.share.digital_card.text": "Add to Device Contacts",
 	"panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
+	"panel.profile.info.share.command.button.edit.profile.text": "Edit My Info",
 	"panel.profile.info.share.command.save.image.succeeded": "Contact card image saved successfully.",
 	"panel.profile.info.share.command.save.image.failed": "Failed to save contact card image.",
 	"panel.profile.info.share.command.save.digital_card.failed": "Failed to save Digital Business Card.",

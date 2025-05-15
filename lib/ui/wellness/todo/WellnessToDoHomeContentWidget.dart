@@ -84,9 +84,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _scrollPagerController.registerScrollController(_scrollController);
 
     if (Wellness().isToDoListAccessed != true) {
-      Wellness().toDoListAccessed(true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showWelcomePopup();
+        _showWelcomePopup().then((_){
+          Wellness().toDoListAccessed(true);
+        });
       });
     }
 
@@ -373,7 +374,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         ]));
   }
 
-  void _showWelcomePopup() {
+  Future<bool?> _showWelcomePopup() =>
     AppAlert.showCustomDialog(
         context: context,
         contentPadding: EdgeInsets.all(0),
@@ -403,7 +404,6 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                       onTap: _onClose,
                       child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
             ])));
-  }
 
   void _onClose() {
     Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());

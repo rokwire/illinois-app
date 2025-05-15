@@ -862,7 +862,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
           _buildSettingButton(title: "Advanced settings", onTap: _onSettingAdvancedSettings),
           if (Auth2().isCalendarAdmin)
             _buildSettingButton(title: "Duplicate event", onTap: _onSettingDuplicateEvent),
-          if (Auth2().isCalendarAdmin)
+          if (_isAdmin)
             _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -1284,7 +1284,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   void _onTapPopupSignIn() {
     Analytics().logSelect(target: 'sign in');
     Navigator.pop(context);
-    ProfileHomePanel.present(context, content: ProfileContent.login);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login);
   }
 
   void _onTapPopupProfile() {
@@ -1425,7 +1425,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     Analytics().logSelect(target: "Event Survey Responses", attributes: _event?.analyticsAttributes);
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
       surveyId: _survey?.id,
-      eventName: _event?.name,
+      event: _event,
       analyticsFeature: widget.analyticsFeature,
     )));
   }

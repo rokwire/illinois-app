@@ -18,7 +18,7 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsList.dart';

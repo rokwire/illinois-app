@@ -25,12 +25,12 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
-class SettingsCalendarContentWidget extends StatefulWidget {
+class SettingsCalendarPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingsCalendarContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsCalendarPageState();
 }
 
-class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentWidget> with NotificationsListener {
+class _SettingsCalendarPageState extends State<SettingsCalendarPage> with NotificationsListener {
 
   @override
   void initState() {

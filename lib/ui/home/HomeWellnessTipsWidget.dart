@@ -160,7 +160,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
 
   void _onTap() {
     Analytics().logSelect(target: "View", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.dailyTips,)));
   }
 
   void _updateTipColor() {

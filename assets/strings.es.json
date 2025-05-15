@@ -1432,6 +1432,7 @@
 
     "panel.event2.survey.responses.surveys.empty.msg": "No hay respuestas a las encuestas disponibles.",
     "panel.event2.survey.responses.header.title": "Respuestas de la Encuesta {{event_name}}",
+    "panel.event2.survey.responses.download.label": "Descargar resultados de la encuesta",
 
     "panel.event2.attributes.attributes.header.title": "Atributos del Evento",
     "panel.event2.attributes.attributes.header.description": "Elige uno o más atributos que ayuden a describir este evento",
@@ -2378,6 +2379,7 @@
     "panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
     "panel.profile.info.share.command.button.share.digital_card.text": "Add to Device Contacts",
     "panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
+    "panel.profile.info.share.command.button.edit.profile.text": "Edit My Info",
     "panel.profile.info.share.command.save.image.succeeded": "Contact card image saved successfully.",
     "panel.profile.info.share.command.save.image.failed": "Failed to save contact card image.",
     "panel.profile.info.share.command.save.digital_card.failed": "Failed to save Digital Business Card.",

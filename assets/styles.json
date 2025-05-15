@@ -887,6 +887,7 @@
     "panel.create_event.dropdown_button.title.light.regular":  {"font_family": "regular", "size": 16.0, "color": "textLight"},
 
     "panel.event.attendance.detail.description.italic":  {"font_family": "regular_italic", "size": 14.0, "color": "textSurface"},
+    "panel.event.survey.responses.hyperlink.underlined":  {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorPrimary"},
 
     "panel.laundry_room_detail.map_button.title.regular.underline":  {"extends": "widget.button.title.medium.underline", "decoration_thickness" : 1.17},
 
