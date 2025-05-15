@@ -2395,6 +2395,7 @@
     "panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
     "panel.profile.info.share.command.button.share.digital_card.text": "Add to Device Contacts",
     "panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
+    "panel.profile.info.share.command.button.edit.profile.text": "Edit My Info",
     "panel.profile.info.share.command.save.image.succeeded": "Contact card image saved successfully.",
     "panel.profile.info.share.command.save.image.failed": "Failed to save contact card image.",
     "panel.profile.info.share.command.save.digital_card.failed": "Failed to save Digital Business Card.",

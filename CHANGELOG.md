@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reaction Notifications open GroupPostDetail panel [#4891](https://github.com/rokwire/illinois-app/issues/4891).
 ### Added
 - Option for downloading survey results in survey responses panel [#5020](https://github.com/rokwire/illinois-app/issues/5020).
+- Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).
 ### Changed
 - Updated more dropdown menus: sort alphabetically, show current selection indicator where applicable [#5117](https://github.com/rokwire/illinois-app/issues/5117).
 
