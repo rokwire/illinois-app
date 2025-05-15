@@ -1267,7 +1267,7 @@ class GroupReplyCard extends StatefulWidget {
   final bool showRepliesCount;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
+  GroupReplyCard({super.key, required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();

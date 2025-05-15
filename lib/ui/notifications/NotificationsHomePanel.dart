@@ -113,6 +113,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
       FirebaseMessaging.payloadTypeGroup,
+      FirebaseMessaging.payloadTypePostReaction,
       FirebaseMessaging.payloadTypeAppointment,
       FirebaseMessaging.payloadTypePoll,
       FirebaseMessaging.payloadTypeProfileMy,
