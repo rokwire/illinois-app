@@ -510,4 +510,9 @@ class Storage extends rokwire.Storage {
   static const String athleticsContentTypeKey = 'edu.illinois.rokwire.athletics.content_type';
   String? get athleticsContentType => getStringWithName(athleticsContentTypeKey);
   set athleticsContentType(String? value) => setStringWithName(athleticsContentTypeKey, value);
+
+  // Assistant
+  static const String assistantContentTypeKey = 'edu.illinois.rokwire.assistant.content_type';
+  String? get assistantContentType => getStringWithName(assistantContentTypeKey);
+  set assistantContentType(String? value) => setStringWithName(assistantContentTypeKey, value);
 }
