@@ -100,7 +100,7 @@ class _ExploreCardState extends State<ExploreCard> with NotificationsListener {
     Widget? imageWidget = StringUtils.isNotEmpty(imageUrl) ?
       SizedBox(width: _smallImageSize, height: _smallImageSize, child:
         InkWell(onTap: () => _onTapCardImage(imageUrl),
-          child: WebNetworkImage(imageUrl: widget.explore!.exploreImageUrl!, excludeFromSemantics: true, fit: BoxFit.fill)),
+          child: WebNetworkImage(imageUrl: widget.explore?.exploreImageUrl, excludeFromSemantics: true, fit: BoxFit.fill)),
       ) : null;
     Widget? rightWidget = ((selectWidget != null) || (imageWidget != null)) ?
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: _hasPaymentTypes ? 12 : 16, top: (isEvent2 || isGame) ? 12 : 0), child:

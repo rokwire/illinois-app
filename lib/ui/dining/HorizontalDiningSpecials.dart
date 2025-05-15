@@ -117,7 +117,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
         Container(width: width, color: Styles().colors.white, child:
           Row(/*crossAxisAlignment: CrossAxisAlignment.stretch,*/ children: <Widget>[
             _hasImage ? ModalImageHolder(child:
-              WebNetworkImage(imageUrl: widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)
+              WebNetworkImage(imageUrl: widget.special?.imageUrl, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)
             ) : Container(),
             Expanded(child:
               GestureDetector(onTap: _onOfferTap, child:

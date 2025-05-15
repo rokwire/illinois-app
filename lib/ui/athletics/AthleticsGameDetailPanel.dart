@@ -249,7 +249,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
-          child: ModalImageHolder(child: WebNetworkImage(imageUrl: game!.newsImageUrl!,
+          child: ModalImageHolder(child: WebNetworkImage(imageUrl: game?.newsImageUrl,
             semanticLabel: "game",
             fit: BoxFit.fitWidth,
           )),

@@ -431,7 +431,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
         visible: _hasImage,
         child: Container(
           decoration: _imageHeadingDecoration,
-          child: WebNetworkImage(imageUrl: _event.imageUrl!, width: imageWidth,
+          child: WebNetworkImage(imageUrl: _event.imageUrl, width: imageWidth,
                   fit: BoxFit.cover, excludeFromSemantics: true),
         ));
   }

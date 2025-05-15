@@ -423,7 +423,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
       if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
             child: ModalImageHolder(
-                child: WebNetworkImage(imageUrl: widget.game!.imageUrl!,
+                child: WebNetworkImage(imageUrl: widget.game?.imageUrl,
               semanticLabel: widget.game?.sport?.title ?? "sport",
             ))));
       }
@@ -741,7 +741,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true));
+        return ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -793,7 +793,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true));
+        return ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -901,7 +901,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, excludeFromSemantics: true)) : null;
     }
   }
 
@@ -912,7 +912,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, excludeFromSemantics: true)) : null;
     }
   }
 

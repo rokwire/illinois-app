@@ -21,9 +21,10 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class WebNetworkImage extends StatefulWidget {
-  final String imageUrl;
+  final String? imageUrl;
   final BoxFit? fit;
   final AlignmentGeometry alignment;
   final bool excludeFromSemantics;
@@ -33,7 +34,7 @@ class WebNetworkImage extends StatefulWidget {
   final double? width;
   final double? height;
 
-  WebNetworkImage({required this.imageUrl, this.fit, this.alignment = Alignment.center, this.excludeFromSemantics = false,
+  WebNetworkImage({this.imageUrl, this.fit, this.alignment = Alignment.center, this.excludeFromSemantics = false,
     this.semanticLabel, this.loadingBuilder, this.errorBuilder, this.width, this.height});
 
   @override
@@ -90,14 +91,17 @@ class _WebNetworkImageState extends State<WebNetworkImage> {
   }
 
   void _loadImage() {
-    final box = Hive.box(AppWebUtils.webNetworkImageCacheKey);
+    if (StringUtils.isEmpty(_imageUrl)) {
+      return;
+    }
 
-    if (box.containsKey(widget.imageUrl)) {
+    final box = Hive.box(AppWebUtils.webNetworkImageCacheKey);
+    if (box.containsKey(_imageUrl)) {
       setStateIfMounted(() {
-        _imageBytes = box.get(widget.imageUrl);
+        _imageBytes = box.get(_imageUrl);
       });
     } else {
-      String proxyUrl = Config().wrapWebProxyUrl(sourceUrl: widget.imageUrl) ?? '';
+      String proxyUrl = Config().wrapWebProxyUrl(sourceUrl: _imageUrl) ?? '';
       setStateIfMounted(() {
         _loading = true;
       });
@@ -105,7 +109,7 @@ class _WebNetworkImageState extends State<WebNetworkImage> {
         Uint8List? responseBytes;
         if ((response.statusCode >= 200) && (response.statusCode <= 304)) {
           responseBytes = response.bodyBytes;
-          box.put(widget.imageUrl, responseBytes);
+          box.put(_imageUrl, responseBytes);
         } else {
           debugPrint('WebNetworkImage: Failed to load image. Reason: ${response.statusCode}, ${response.body}');
         }
@@ -116,4 +120,6 @@ class _WebNetworkImageState extends State<WebNetworkImage> {
       });
     }
   }
+
+  String? get _imageUrl => widget.imageUrl;
 }

@@ -213,7 +213,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
-                                  child: WebNetworkImage(imageUrl: imageUrl!,
+                                  child: WebNetworkImage(imageUrl: imageUrl,
                                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                     return (loadingProgress == null) ? child : emptyImagePlaceholder;
                                   }))

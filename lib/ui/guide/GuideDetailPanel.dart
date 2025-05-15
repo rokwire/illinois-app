@@ -288,7 +288,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               Row(children: [
                 Expanded(child:
                   Column(children: [
-                      WebNetworkImage(imageUrl: imageUrl!, excludeFromSemantics: true,),
+                      WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true,),
                   ]),
                 ),
               ],)
