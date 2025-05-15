@@ -60,6 +60,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyAthleticsTeamRoster                        = "$notifyBase.athletics.team.roster";
   static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
   static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
+  static const String notifyGroupPostReactionNotification        = "$notifyBase.group.post.reaction.updated";
   static const String notifySocialMessageNotification                  = "$notifyBase.conversation";
   static const String notifyHomeNotification                           = "$notifyBase.home";
   static const String notifyHomeFavoritesNotification                  = "$notifyBase.home.favorites";
@@ -210,6 +211,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeAthleticsTeam = 'athletics.team';
   static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
+  static const String payloadTypePostReaction = 'post.reaction';
   static const String payloadTypeSocialMessage = 'conversation';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeHomeFavorites = 'home.favorites';
@@ -441,6 +443,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
       } else {
         NotificationService().notify(notifyGroupsNotification, data);
       }
+    }
+    else if(type == payloadTypePostReaction) {
+      NotificationService().notify(notifyGroupPostReactionNotification, data);
     }
     else if (type == payloadTypeSocialMessage) {
       NotificationService().notify(notifySocialMessageNotification, data);
