@@ -616,7 +616,7 @@
     "widget.event.card.title.medium.fat": {"extends":  "widget.card.title.medium.fat", "height": 1.20, "letter_spacing": 1.0},
 
     "widget.group.card.poll.title": { "font_family": "extra_bold", "size": 24.0, "color": "textDark", "height":  1.2},
-    "widget.group.card.poll.option": {"extends": "widget.card.title.medium", "height":  1.25,  "weight" :  "w500"},
+    "widget.group.card.poll.option": {"extends": "widget.card.title.small", "height":  1.25,  "weight" :  "w500"},
     "widget.group.card.poll.option_variant": { "font_family": "regular", "size": 16.0, "color": "white", "height":  1.25,  "weight" :  "w500"},
     "widget.group.card.poll.votes": {"extends":  "widget.card.detail.regular", "height":  1.29,  "weight" :  "w500"},
 

@@ -1137,7 +1137,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     if (canSelfCheckIn) {
       setState(() { _selfCheckingIn = true; });
 
-      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#D29E01';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
       String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
       if (mounted) {

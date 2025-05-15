@@ -117,7 +117,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                   container: true,
                   child: RibbonButton(
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
@@ -156,7 +156,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (AthleticsContentType contentType in _contentTypes!) {
       sectionList.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,

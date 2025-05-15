@@ -59,7 +59,6 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderStateMixin, NotificationsListener {
-  final Color _dimmedBackgroundColor = Color(0x99000000);
   static rokwire.GroupsContentType get _defaultContentType => Auth2().isLoggedIn ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all;
 
   bool _loadingProgress = false;
@@ -68,7 +67,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   String? _newGroupId;
   GlobalKey? _newGroupKey;
 
-  late List<rokwire.GroupsContentType> _contentTypes;
   rokwire.GroupsContentType? _selectedContentType;
 
   GestureRecognizer? _loginRecognizer;
@@ -110,7 +108,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
 
-    _contentTypes = _GroupsContentTypeList.fromContentTypes(GroupsContentType.values);
     _selectedContentType = widget.contentType ?? _defaultContentType;
 
     _reloadGroupsContent();

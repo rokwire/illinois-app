@@ -388,7 +388,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
       widgetList.add(RibbonButton(
         backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        textStyle: Styles().textStyles.getTextStyle((_selectedMemberFilter == statusFilter) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+        textStyle: Styles().textStyles.getTextStyle((_selectedMemberFilter == statusFilter) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat.darkwidget.group.members.title'),
         rightIconKey: (_selectedMemberFilter == statusFilter) ? 'check-accent' : null,
         label: _memberStatusFilterTitle(statusFilter),
         onTap: () => _onTapStatusFilter(statusFilter)
