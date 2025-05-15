@@ -54,17 +54,17 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
 
   static final Set<SettingsContentType> _dropdownContentTypes = <SettingsContentType>{
     //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
-    SettingsContentType.contact,
-    SettingsContentType.maps,
-    SettingsContentType.appointments,
-    SettingsContentType.assessments,
-    SettingsContentType.research,
-    SettingsContentType.calendar,
-    SettingsContentType.recent_items,
-    SettingsContentType.language,
-    SettingsContentType.privacy,
+    // SettingsContentType.contact,
+    // SettingsContentType.maps,
+    // SettingsContentType.appointments,
+    // SettingsContentType.assessments,
+    // SettingsContentType.research,
+    // SettingsContentType.calendar,
+    // SettingsContentType.recent_items,
+    // SettingsContentType.language,
+    // SettingsContentType.privacy,
     SettingsContentType.notifications,
-    SettingsContentType.i_card,
+    // SettingsContentType.i_card,
   };
 
   final SettingsContentType? contentType;

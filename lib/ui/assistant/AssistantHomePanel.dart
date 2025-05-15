@@ -58,9 +58,11 @@ class AssistantHomePanel extends StatefulWidget {
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
     } else if (!Auth2().isLoggedIn) {
       showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
-    } else if (!Assistant().hasUserAcceptedTerms()) {
-      showDialog(context: context, builder: (context) => _AssistantTermsPopup());
-    } else {
+    }
+    // else if (!Assistant().hasUserAcceptedTerms()) {
+    //   showDialog(context: context, builder: (context) => _AssistantTermsPopup());
+    // }
+    else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
@@ -110,7 +112,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       // 1. Force to calculate correct content height
       setStateIfMounted((){});
       // 2. Check if the Assistant is available
-      _checkAvailable();
+      // _checkAvailable();
     });
   }
 
@@ -129,7 +131,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         name == FlexUI.notifyChanged ||
         name == Assistant.notifyProvidersChanged ||
         name == Assistant.notifySettingsChanged) {
-      _checkAvailable();
+      // _checkAvailable();
       _updateContentTypes();
     }
   }
@@ -306,14 +308,14 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   // Global On/Off / Available
 
-  void _checkAvailable() {
-    if (!_isAvailable) {
-      String unavailableMessage = Assistant().localizedUnavailableText ??
-          Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
-          'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
-      AppAlert.showDialogResult(context, unavailableMessage);
-    }
-  }
+  // void _checkAvailable() {
+  //   if (!_isAvailable) {
+  //     String unavailableMessage = Assistant().localizedUnavailableText ??
+  //         Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
+  //         'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
+  //     AppAlert.showDialogResult(context, unavailableMessage);
+  //   }
+  // }
 
   bool get _isAvailable => Assistant().isAvailable;
 
@@ -337,7 +339,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       case AssistantContentType.openai: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
       case AssistantContentType.all: return AssistantProvidersConversationContentWidget();
       case AssistantContentType.faqs: return AssistantFaqsContentWidget();
-      default: return null;
+      default: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream);
     }
   }
 
