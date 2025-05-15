@@ -138,6 +138,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifySocialMessageNotification,
       FirebaseMessaging.notifyGroupPostNotification,
+      FirebaseMessaging.notifyGroupPostReactionNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyHomeFavoritesNotification,
       FirebaseMessaging.notifyHomeBrowseNotification,
@@ -300,6 +301,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyGroupPostNotification) {
       _onFirebaseGroupPostNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyGroupPostReactionNotification) {
+      _onFirebaseGroupPostReactionNotification(param);
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
@@ -1046,9 +1050,18 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
+  void _onFirebaseGroupPostReactionNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? groupId = param["group_id"];
+      String? groupPostId = param["post_id"];
+      String? commentId = param["comment_id"];
+      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
+    }
+  }
+
+  void _presentGroupDetailPanel({String? groupId, String? groupPostId, String? commentId}) {
     if (StringUtils.isNotEmpty(groupId)) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId, groupPostCommentId: commentId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
     }
