@@ -1437,6 +1437,7 @@
 
 	"panel.event2.survey.responses.surveys.empty.msg": "目前还没有问卷回答。",
 	"panel.event2.survey.responses.header.title": "{{event_name}} 问卷回答",
+	"panel.event2.survey.responses.download.label": "下載調查結果",
 
 	"panel.event2.attributes.attributes.header.title": "活动特征",
 	"panel.event2.attributes.attributes.header.description": "请选择其他特征形容您的活动",

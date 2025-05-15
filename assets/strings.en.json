@@ -1453,6 +1453,7 @@
 
     "panel.event2.survey.responses.surveys.empty.msg": "There are no survey responses available.",
     "panel.event2.survey.responses.header.title": "{{event_name}} Survey Responses",
+    "panel.event2.survey.responses.download.label": "Download survey results",
 
     "panel.event2.attributes.attributes.header.title": "Event Attributes",
     "panel.event2.attributes.attributes.header.description": "Choose at least one attribute to describe this event.",
