@@ -1021,7 +1021,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   double get _scrollContentPaddingBottom => _chatBarHeight;
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    final checkPosition = () => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0.0;
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
 
