@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added Pinch and Zoom on group post images [#5128](https://github.com/rokwire/illinois-app/issues/5128).
 
 ## [7.1.5] - 2025-05-15
 ### Fixed
@@ -55,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ReactionsLayout visibility depends on group settings [#5085](https://github.com/rokwire/illinois-app/issues/5085).
 - Strict check for all input parameters for barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
 - Handle all exceptions raised during barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
+- Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).
 
 ## [7.0.20] - 2025-04-29
 ### Fixed
