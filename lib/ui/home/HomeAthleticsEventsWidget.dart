@@ -42,7 +42,7 @@ class HomeAthliticsEventsWidget extends StatefulWidget {
   State<HomeAthliticsEventsWidget> createState() => _HomeAthleticsEventsWidgetState();
 }
 
-class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> implements NotificationsListener {
+class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> with NotificationsListener {
 
   List<Event2>? _sportEvents;
   bool _loadingGames = false;

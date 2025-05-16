@@ -46,7 +46,7 @@ class AthleticsNewsArticlePanel extends StatefulWidget {
   _AthleticsNewsArticlePanelState createState() => _AthleticsNewsArticlePanelState();
 }
 
-class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> implements NotificationsListener {
+class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> with NotificationsListener {
 
   News? _article;
   bool _loading = false;

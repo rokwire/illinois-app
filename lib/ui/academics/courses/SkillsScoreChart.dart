@@ -223,12 +223,12 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                   getDrawingVerticalLine: (value) {
                     if (value == 0) {
                       return FlLine(
-                        color: Styles().colors.surface.withOpacity(0.1),
+                        color: Styles().colors.surface.withValues(alpha: 0.1),
                         strokeWidth: 3,
                       );
                     }
                     return FlLine(
-                      color: Styles().colors.surface.withOpacity(0.05),
+                      color: Styles().colors.surface.withValues(alpha: 0.05),
                       strokeWidth: 0.8,
                     );
                   },
@@ -285,7 +285,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   Widget bottomTitles(double value, TitleMeta meta) {
     String text = bottomTitleStrings(value.toInt());
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: _chartItems.length >= 8 ? 8 : 10)),
     );
   }
@@ -298,7 +298,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     if (value >= 0 && value <= _maxScore) {
       String text = value.toInt().toString();;
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        meta: meta,
         child: Text(
           text,
           style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10),

@@ -16,8 +16,12 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -39,17 +43,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
-  final AssistantProvider provider;
+  final AssistantProvider? provider;
 
-  AssistantConversationContentWidget({required this.shouldClearAllMessages, required AssistantProvider this.provider});
+  AssistantConversationContentWidget({required this.shouldClearAllMessages, this.provider});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
 }
 
 class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
-    with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>, WidgetsBindingObserver
-    implements NotificationsListener {
+    with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantConversationContentWidget> {
   static final String resourceName = 'assistant';
 
   TextEditingController _inputController = TextEditingController();
@@ -153,11 +156,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _loadLocationStatus();
       } else if (param is LocationServicesStatus) {
         _locationStatus = param;
-        if (_locationStatus == LocationServicesStatus.permissionNotDetermined) {
-          _loadLocationStatus();
-        } else {
-          _loadLocationIfAllowed();
-        }
+        _loadLocationIfAllowed();
       }
     } else if (name == LocationServices.notifyLocationChanged) {
       if (_locationStatus == LocationServicesStatus.permissionAllowed) {
@@ -230,7 +229,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBubble(Message message) {
+    if (_provider == null) {
+      return Container();
+    }
     bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
+    bool isPositiveFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.positive);
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
     String answer = message.isAnswerUnknown
         ? Localization()
@@ -257,8 +260,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             child: InkWell(
                                 onTap: message.example
                                     ? () {
-                                        Assistant().removeMessage(provider: _provider, message: message);
-                                        _submitMessage(message: message.content, provider: _provider);
+                                        Assistant().removeMessage(provider: _provider!, message: message);
+                                        _submitMessage(message: message.content, provider: _provider!);
                                       }
                                     : null,
                                 child: Container(
@@ -271,7 +274,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                       Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                            message.example
+                                            InkWell(onLongPress: () => _onLongPressMessage(message), splashColor: Colors.transparent, child:
+                                              message.example
                                                 ? Text(
                                                 Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
                                                     message.content,
@@ -287,16 +291,22 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.surface)))),
-                                                  TextSpan(
-                                                      text: answer,
-                                                      style: message.user
-                                                          ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
-                                                          : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
-                                                ])),
+                                                  WidgetSpan(
+                                                      child: MarkdownBody(
+                                                          data: answer,
+                                                          builders: {
+                                                            'thumb_up': _AssistantMarkdownIconBuilder(icon: Icons.thumb_up_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                            'thumb_down': _AssistantMarkdownIconBuilder(icon: Icons.thumb_down_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                          },
+                                                          inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
+                                                          styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                          onTapLink: (text, href, title) {
+                                                            AppLaunchUrl.launch(url: href, context: context);
+                                                          }))
+                                                ]))
+                                            ),
                                             Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
-                                            Visibility(
-                                                visible: (message.feedbackResponseType == FeedbackResponseType.positive),
-                                                child: _buildFeedbackResponseDisclaimer())
+                                            Visibility(visible: isPositiveFeedbackFormVisible, child: _buildFeedbackResponseDisclaimer())
                                           ])),
                                           Visibility(visible: isNegativeFeedbackFormVisible, child:
                                             Align(alignment: Alignment.centerRight, child:
@@ -309,18 +319,45 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           )
                                     ])))))))
               ])),
+
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
+  }
+
+  void _onLongPressMessage(Message message) {
+    Analytics().logSelect(target: 'Copy To Clipboard');
+    if (!_canCopyMessage(message)) {
+      return;
+    }
+    String textContent = message.content;
+    Clipboard.setData(ClipboardData(text: textContent));
+  }
+
+  bool _canCopyMessage(Message message) {
+    int? messageIndex = _getMessageIndex(message);
+    if (messageIndex == null) {
+      return false;
+    }
+    if (messageIndex == (_messages.length - 1)) {
+      return !_loadingResponse;
+    } else {
+      return true;
+    }
+  }
+
+  int? _getMessageIndex(Message message) {
+    int index = _messages.indexOf(message);
+    return (index > -1) ? index : null;
   }
 
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
     bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sourceDatEntries) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
-    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
+    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sourceDatEntries);
 
     return Visibility(
         visible: additionalControlsVisible,
@@ -446,7 +483,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _sendFeedback(Message message, bool good) {
-    if (message.feedbackExplanation != null) {
+    if ((_provider == null) || message.feedbackExplanation != null) {
       return;
     }
 
@@ -459,7 +496,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         } else {
           message.feedback = MessageFeedback.good;
           Assistant().addMessage(
-              provider: _provider,
+              provider: _provider!,
               message: Message(
                   content:
                       Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
@@ -474,7 +511,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         } else {
           message.feedback = MessageFeedback.bad;
           Assistant().addMessage(
-              provider: _provider,
+              provider: _provider!,
               message: Message(
                   content:
                       Localization().getStringEx('panel.assistant.label.feedback.disclaimer.prompt.title', 'Thanks for your feedback!'),
@@ -489,7 +526,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
 
     if (!bad && _feedbackMessage != null) {
-      Assistant().removeLastMessage(provider: _provider);
+      Assistant().removeLastMessage(provider: _provider!);
       _feedbackMessage = null;
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -513,19 +550,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                         flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
   }
 
-  List<Widget> _buildWebLinkWidgets(List<String> sources) {
+  List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
     List<Widget> sourceLinks = [];
-    for (String source in sources) {
-      Uri? uri = Uri.tryParse(source);
-      if ((uri != null) && uri.host.isNotEmpty) {
-        sourceLinks.add(_buildWebLinkWidget(source));
+    if (CollectionUtils.isNotEmpty(sourceDataEntries)) {
+      for (SourceDataEntry sourceDataEntry in sourceDataEntries!) {
+        String? actionLink = sourceDataEntry.actionLink;
+        Uri? uri = UriExt.tryParse(actionLink);
+        if (uri?.isValid ?? false) {
+          sourceLinks.add(_buildWebLinkWidget(uri: uri!));
+        }
       }
     }
     return sourceLinks;
   }
 
-  Widget _buildWebLinkWidget(String source) {
-    Uri? uri = Uri.tryParse(source);
+  Widget _buildWebLinkWidget({required Uri uri}) {
     return Padding(
         padding: EdgeInsets.only(bottom: 8, right: 140),
         child: Material(
@@ -533,14 +572,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
             color: Styles().colors.surface,
             child: InkWell(
-                onTap: () => _onTapSourceLink(source),
+                onTap: () {
+                  UriExt.launchExternal(uri);
+                },
                 borderRadius: BorderRadius.circular(22),
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')),
                       Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(uri?.host),
+                          child: Text(StringUtils.ensureNotEmpty(uri.host),
                               overflow: TextOverflow.ellipsis,
                               style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
                     ])))));
@@ -587,7 +628,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBar() {
-    int? queryLimit = _queryLimit;
+    if (_provider == null) {
+      return Container();
+    }
+    int? queryLimit = _availableQueryLimit;
     bool enabled = (queryLimit == null) || (queryLimit > 0);
     return Semantics(container: true,
         child: Material(
@@ -614,7 +658,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     textInputAction: TextInputAction.send,
                                     focusNode: _inputFieldFocus,
                                     onSubmitted: (value) {
-                                      _submitMessage(message: value, provider: _provider);
+                                      _submitMessage(message: value, provider: _provider!);
                                     },
                                     onChanged: (_) => setStateIfMounted((){}),
                                     decoration: InputDecoration(
@@ -640,9 +684,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           child: IconButton(
             splashRadius: 24,
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled, semanticLabel: "",),
-            onPressed: enabled
+            onPressed: ((_provider != null) && enabled)
                 ? () {
-              _submitMessage(message: _inputController.text, provider: _provider);
+              _submitMessage(message: _inputController.text, provider: _provider!);
             }
                 : null)));
     } else {
@@ -665,7 +709,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildQueryLimit() {
-    int? queryLimit = _queryLimit;
+    int? queryLimit = _availableQueryLimit;
     if ((queryLimit == null) && !_evaluatingQueryLimit) {
       return Container();
     }
@@ -713,8 +757,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       padding: const EdgeInsets.only(top: 8.0),
       child: Semantics(container: true,
         child: RoundedButton(
+          enabled: _isAssistantAvailable,
           label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
-          onTap: _showContext,
+          borderColor: _isAssistantAvailable ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+          textColor: _isAssistantAvailable ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
+          onTap: _isAssistantAvailable ? () => _showContext() : null,
         ),
     ));
   }
@@ -861,7 +908,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Future<void> _submitMessage({required String message, required AssistantProvider provider}) async {
     FocusScope.of(context).requestFocus(FocusNode());
-    if (_loadingResponse) {
+    if ((_provider == null) || _loadingResponse) {
       return;
     }
 
@@ -879,7 +926,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if ((queryLimit != null) && (queryLimit <= 0)) {
       setState(() {
         Assistant().addMessage(
-            provider: _provider,
+            provider: _provider!,
             message: Message(
                 content: Localization().getStringEx(
                     'panel.assistant.label.queries.limit.title',
@@ -897,7 +944,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (mounted) {
       setState(() {
         if (response != null) {
-          Assistant().addMessage(provider: _provider, message: response);
+          Assistant().addMessage(provider: _provider!, message: response);
           if (response.queryLimit != null) {
             _queryLimit = response.queryLimit;
           } else if (_queryLimit != null) {
@@ -905,7 +952,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           }
         } else {
           Assistant().addMessage(
-              provider: _provider,
+              provider: _provider!,
               message: Message(
                   content: Localization().getStringEx('panel.assistant.label.error.title',
                       'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
@@ -919,13 +966,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _submitNegativeFeedbackMessage({required Message systemMessage, required String negativeFeedbackExplanation}) async {
-    if ((_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
+    if ((_provider == null) || (_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
       return;
     }
     FocusScope.of(context).requestFocus(FocusNode());
     setStateIfMounted(() {
       Assistant().addMessage(
-          provider: _provider, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
+          provider: _provider!, message: Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
       _negativeFeedbackController.text = '';
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
@@ -957,16 +1004,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return context.isNotEmpty ? context : null;
   }
 
-  void _onTapSourceLink(String source) {
-    UrlUtils.launchExternal(source);
-  }
-
   void _onTapCloseNegativeFeedbackForm(Message message) {
-    Assistant().removeMessage(provider: _provider, message: message);
-    setStateIfMounted(() {
-      _negativeFeedbackController.text = '';
-      _feedbackMessage = null;
-    });
+    if (_provider != null) {
+      Assistant().removeMessage(provider: _provider!, message: message);
+      setStateIfMounted(() {
+        _negativeFeedbackController.text = '';
+        _feedbackMessage = null;
+      });
+    }
   }
 
   void _startListening() {
@@ -1062,23 +1107,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _loadLocationStatus() {
     // LocationServices().status.then((LocationServicesStatus? status) {
-    //   if (status == LocationServicesStatus.serviceDisabled) {
-    //     LocationServices().requestService().then((status) {
-    //       if (status == LocationServicesStatus.permissionNotDetermined) {
-    //         LocationServices().requestPermission().then((LocationServicesStatus? status) {
-    //           _onLocationStatus(status);
-    //         });
-    //       } else {
-    //         _onLocationStatus(status);
-    //       }
-    //     });
-    //   } else if (status == LocationServicesStatus.permissionNotDetermined) {
-    //     LocationServices().requestPermission().then((LocationServicesStatus? status) {
-    //       _onLocationStatus(status);
-    //     });
-    //   } else {
-    //     _onLocationStatus(status);
-    //   }
+    //   _onLocationStatus(status);
     // });
   }
 
@@ -1099,7 +1128,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   AssistantLocation? _getLocation(Position? position) => Storage().debugAssistantLocation ?? AssistantLocation.fromPosition(position);
 
-  AssistantProvider get _provider => widget.provider;
+  AssistantProvider? get _provider => widget.provider;
 
   List<Message> get _messages => Assistant().getMessages(provider: _provider);
 
@@ -1107,7 +1136,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return _hideChatBar ? 0 : _keyboardHeight;
   }
 
-  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
+  double get _keyboardHeight => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
@@ -1120,7 +1149,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool get _hideChatBar => _negativeFeedbackFocusNode.hasFocus && _keyboardHeight > 0;
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    final checkPosition = () => _keyboardHeight;
     //Check if the position of the keyboard is still changing
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
@@ -1130,5 +1159,32 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     } else {
       return _checkKeyboardVisible; //Check again
     }
+  }
+
+  int? get _availableQueryLimit => _isAssistantAvailable ? _queryLimit : 0;
+  bool get _isAssistantAvailable => Assistant().isAvailable;
+}
+
+class _AssistantMarkdownCustomIconSyntax extends md.InlineSyntax {
+  _AssistantMarkdownCustomIconSyntax() : super(r'\[:(thumb_up|thumb_down):\]');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final tag = match.group(1)!;
+    parser.addNode(md.Element.text(tag, ''));
+    return true;
+  }
+}
+
+class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
+  final IconData icon;
+  final Color? color;
+  final double? size;
+
+  _AssistantMarkdownIconBuilder({required this.icon, this.color, this.size});
+
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
   }
 }

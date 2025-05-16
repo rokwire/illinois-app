@@ -6,7 +6,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -77,7 +76,7 @@ class HomeIlliniCashWalletWidget extends StatefulWidget {
   State<HomeIlliniCashWalletWidget> createState() => _HomeIlliniCashWalletWidgetState();
 }
 
-class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget> implements NotificationsListener {
+class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -165,11 +164,9 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       Expanded(child:
                         contentWidget
                       ),
-                      Visibility(visible: WalletAddIlliniCashPanel.canPresent, child:
-                        Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
-                        ),
-                      )
+                      Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
+                        IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
+                      ),
                     ]),
                   ),
                 ),
@@ -204,7 +201,7 @@ class HomeMealPlanWalletWidget extends StatefulWidget {
   State<HomeMealPlanWalletWidget> createState() => _HomeMealPlanWalletWidgetState();
 }
 
-class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> implements NotificationsListener {
+class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -345,7 +342,7 @@ class HomeBusPassWalletWidget extends StatefulWidget {
   State<HomeBusPassWalletWidget> createState() => _HomeBusPassWalletWidgetState();
 }
 
-class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> implements NotificationsListener {
+class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -438,7 +435,7 @@ class HomeIlliniIdWalletWidget extends StatefulWidget {
   State<HomeIlliniIdWalletWidget> createState() => _HomeIlliniIdWalletWidgetState();
 }
 
-class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> implements NotificationsListener {
+class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> with NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [

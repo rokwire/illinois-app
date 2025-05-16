@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:universal_io/io.dart';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +14,13 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/SavedPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -38,7 +45,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 ///////////////////////////
 // BrowsePanel
@@ -116,7 +122,7 @@ class BrowseContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Browse;
 }
 
-class _BrowseContentWidgetState extends State<BrowseContentWidget> implements NotificationsListener {
+class _BrowseContentWidgetState extends State<BrowseContentWidget> with NotificationsListener {
 
   List<String>? _contentCodes;
   List<String>? _browseListContentCodes;
@@ -483,7 +489,7 @@ class _BrowseSection extends StatelessWidget {
 
   void _onTapUserDirectory(BuildContext context) {
     Analytics().logSelect(target: "User Directory");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(DirectoryAccounts.directory); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(); } ));
   }
 
   void _onTapMessages(BuildContext context) {
@@ -501,19 +507,19 @@ class _BrowseSection extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
   }
 
+  // ignore: unused_element
+  static void _notImplemented(BuildContext context) {
+    AppAlert.showDialogResult(context, "Not implemented yet.");
+  }
+
   static void _launchUrl(BuildContext context, String? url, {bool launchInternal = false}) {
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (launchInternal && UrlUtils.canLaunchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
       }
     }
   }
@@ -585,7 +591,7 @@ class _BrowseToutWidget extends StatefulWidget {
   State<_BrowseToutWidget> createState() => _BrowseToutWidgetState();
 }
 
-class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements NotificationsListener {
+class _BrowseToutWidgetState extends State<_BrowseToutWidget> with NotificationsListener {
 
   String? _imageUrl;
   DateTime? _imageDateTime;

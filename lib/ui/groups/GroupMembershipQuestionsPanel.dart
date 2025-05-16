@@ -110,7 +110,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
 
   Widget _buildHeading() {
     String description = (widget.group?.researchProject == true) ?
-      Localization().getStringEx("panel.recruitment_questions.label.description", 'Learn more about people who want to participate to your research project by asking them some questions. Only the principal investigator(s) of your research project will see the answers.') :
+      Localization().getStringEx("panel.recruitment_questions.label.description", 'Learn more about people who want to participate to your research project by asking them some questions. Only the research team will see the answers.') :
       Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.');
     return Container(color:Colors.white,
       child: Padding(padding: EdgeInsets.all(32),

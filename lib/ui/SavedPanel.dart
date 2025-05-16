@@ -100,7 +100,7 @@ class SavedPanel extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _SavedPanelState extends State<SavedPanel> implements NotificationsListener {
+class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
 
   Map<String, List<Favorite>?> _favorites = <String, List<Favorite>>{};
   bool _loadingFavorites = false;
@@ -459,7 +459,7 @@ class _SavedItemsList extends StatefulWidget {
   final Color? slantColor;
   final void Function(Favorite favorite)? onTapFavorite;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor, this.onTapFavorite});
 
   _SavedItemsListState createState() => _SavedItemsListState();

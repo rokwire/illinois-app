@@ -8,7 +8,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -39,7 +39,7 @@ class HomeAthliticsNewsWidget extends StatefulWidget {
   State<HomeAthliticsNewsWidget> createState() => _HomeAthleticsNewsWidgetState();
 }
 
-class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> implements NotificationsListener {
+class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with NotificationsListener {
 
   List<News>? _news;
   bool _loadingNews = false;
@@ -203,7 +203,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
   }
 
   void _refreshNews({bool showProgress = false}) {

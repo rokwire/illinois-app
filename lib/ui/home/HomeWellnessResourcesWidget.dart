@@ -58,7 +58,7 @@ class HomeWellnessResourcesWidget extends StatefulWidget {
 
 }
 
-class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidget> implements NotificationsListener {
+class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidget> with NotificationsListener {
 
   List<dynamic>? _favoriteCommands;
   Map<String, dynamic>? _strings;
@@ -339,7 +339,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
       Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.resources,)));
     }
     else if (url == privacyUrl) {
       Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
@@ -349,7 +349,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.resources,)));
   }
 
   void _onCommand(Map<String, dynamic> command) {

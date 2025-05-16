@@ -57,7 +57,7 @@ class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
     _analyticsFeature = analyticsFeature;
   
   @override
-  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? ExploreMapPanel.contentAnalyticsFeatures[mapType] ?? AnalyticsFeature.Map;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? mapType?.analyticsFeature ?? AnalyticsFeature.Map;
 
   @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();
@@ -75,7 +75,7 @@ class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
-  with SingleTickerProviderStateMixin implements NotificationsListener {
+  with NotificationsListener, SingleTickerProviderStateMixin {
 
   List<Explore>? _explores;
   bool _exploreProgress = false;
@@ -832,7 +832,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
       Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
-      String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
+      String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
         (_markerIconCache[markerKey] = await _groupMarkerIcon(
           context: context,

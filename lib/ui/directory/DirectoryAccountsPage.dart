@@ -9,24 +9,24 @@ import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class DirectoryAccountsPage extends StatefulWidget {
   static const String notifyEditInfo  = "edu.illinois.rokwire.directory.accounts.edit";
 
-  final DirectoryAccounts contentType;
   final ScrollController? scrollController;
-  final void Function(DirectoryAccounts contentType)? onEditProfile;
-  final void Function(DirectoryAccounts contentType)? onShareProfile;
+  final void Function()? onEditProfile;
+  final void Function()? onShareProfile;
 
-  DirectoryAccountsPage(this.contentType, { super.key, this.scrollController, this.onEditProfile, this.onShareProfile});
+  DirectoryAccountsPage({ super.key, this.scrollController, this.onEditProfile, this.onShareProfile });
 
   @override
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
 }
 
-class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
+class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with NotificationsListener {
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
@@ -37,6 +37,9 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+    ]);
     _editInfoRecognizer = TapGestureRecognizer()..onTap = _onTapEditInfo;
     _shareInfoRecognizer = TapGestureRecognizer()..onTap = _onTapShareInfo;
     _signInRecognizer = TapGestureRecognizer()..onTap = _onTapSignIn;
@@ -45,12 +48,19 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _editInfoRecognizer?.dispose();
     _shareInfoRecognizer?.dispose();
     _signInRecognizer?.dispose();
     super.dispose();
   }
 
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +75,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
       _accountsListWidget,
     ]);
 
-  Widget get _accountsListWidget => DirectoryAccountsList(widget.contentType,
+  Widget get _accountsListWidget => DirectoryAccountsList(
     key: _accountsListKey,
     displayMode: DirectoryDisplayMode.browse,
     scrollController: widget.scrollController,
@@ -77,7 +87,8 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
   static const String _linkShareMacro = "{{link.share.info}}";
 
   Widget get _editOrShareDescription {
-    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(_editOrShareDescriptionTemplate,
+    String templateString = Localization().getStringEx('panel.directory.accounts.directory.edit.info.description', '$_linkEditMacro or $_linkShareMacro your directory information.');
+    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(templateString,
       macros: [_linkEditMacro, _linkShareMacro],
       builder: (String entry) {
         if (entry == _linkEditMacro) {
@@ -107,21 +118,14 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
     );
   }
 
-  String get _editOrShareDescriptionTemplate {
-    switch(widget.contentType) {
-      case DirectoryAccounts.connections: return Localization().getStringEx('panel.directory.accounts.connections.edit.info.description', '$_linkEditMacro or $_linkShareMacro your connections information.');
-      case DirectoryAccounts.directory: return Localization().getStringEx('panel.directory.accounts.directory.edit.info.description', '$_linkEditMacro or $_linkShareMacro your directory information.');
-    }
-  }
-
   void _onTapEditInfo() {
     Analytics().logSelect(target: 'Edit Info');
-    widget.onEditProfile?.call(widget.contentType);
+    widget.onEditProfile?.call();
   }
 
   void _onTapShareInfo() {
     Analytics().logSelect(target: 'Share Info');
-    widget.onShareProfile?.call(widget.contentType);
+    widget.onShareProfile?.call();
   }
 
   Widget get _searchBarWidget =>
@@ -152,7 +156,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   Widget get _loggedOutContent {
     final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view User Directory, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view Directory of Users, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
     List<String> messages = messageTemplate.split(linkLoginMacro);
     List<InlineSpan> spanList = <InlineSpan>[];
     if (0 < messages.length)
@@ -172,7 +176,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   void _onTapSignIn() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login, );
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login, );
   }
 
   Future<void> refresh() async => _accountsListKey.currentState?.refresh();

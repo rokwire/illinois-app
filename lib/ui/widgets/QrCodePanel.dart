@@ -70,7 +70,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   factory QrCodePanel.fromEvent(Event2? event, {Key? key, AnalyticsFeature? analyticsFeature }) => QrCodePanel(
     key: key,
-    deepLinkUrl: Events2.eventDetailUrl(event),
+    deepLinkUrl: (event?.id != null) ? Events2.eventDetailUrl(event?.id ?? '') : null,
     saveFileName: 'event - ${event?.name}',
     saveWatermarkText: event?.name,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textDark),
@@ -284,18 +284,20 @@ class _QrCodePanelState extends State<QrCodePanel> {
       (widget.modalSheet ? Styles().colors.surface : Styles().colors.background);
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    String qrContent = StringUtils.ensureNotEmpty(_promotionUrl ?? widget.digitalCardQrCode);
+    String? content = _promotionUrl ?? widget.digitalCardQrCode;
     Uint8List? imageBytes;
-    if (kIsWeb) {
-      ByteData? qrPainterImage = await QrPainter(data: qrContent, version: QrVersions.auto).toImageData(_imageSize.toDouble());
-      imageBytes = qrPainterImage?.buffer.asUint8List();
-    } else {
-      imageBytes = await NativeCommunicator().getBarcodeImageData({
-        'content': qrContent,
-        'format': 'qrCode',
-        'width': _imageSize,
-        'height': _imageSize,
-      });
+    if (content != null) {
+      if (kIsWeb) {
+        ByteData? qrPainterImage = await QrPainter(data: content, version: QrVersions.auto).toImageData(_imageSize.toDouble());
+        imageBytes = qrPainterImage?.buffer.asUint8List();
+      } else {
+        imageBytes = await NativeCommunicator().getBarcodeImageData(
+          content,
+          format: 'qrCode',
+          width: _imageSize,
+          height: _imageSize,
+        );
+      }
     }
     return imageBytes;
   }
@@ -377,11 +379,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
       AppFile.downloadFile(context: context, fileBytes: fileBytes, fileName: fileName);
     } else {
       final String dir = (await getApplicationDocumentsDirectory()).path;
-      final String fullPath = '$dir/$fileName';
+      final String fullPath = '$dir/${widget.saveFileName}.vcf';
       XFile capturedFile = XFile.fromData(fileBytes, mimeType: mimeType, path: fullPath);
       if (mounted) {
-        Share.shareXFiles(
-          [capturedFile],
+        Share.shareXFiles([XFile(fullPath, mimeType: 'text/vcard',)],
           text: widget.saveWatermarkText,
         );
       }

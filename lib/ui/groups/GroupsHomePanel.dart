@@ -55,16 +55,12 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature {
-    switch (contentType) {
-      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
-      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
-      case null:                          return AnalyticsFeature.Groups;
-    }
-  }
+  AnalyticsFeature? get analyticsFeature => contentType?.analyticsFeature ?? AnalyticsFeature.Groups;
 }
 
-class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderStateMixin implements NotificationsListener {
+class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderStateMixin, NotificationsListener {
+  static rokwire.GroupsContentType get _defaultContentType => Auth2().isLoggedIn ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all;
+
   bool _loadingProgress = false;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
 
@@ -111,7 +107,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     ]);
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
-    _selectedContentType = widget.contentType;
+
+    _selectedContentType = widget.contentType ?? _defaultContentType;
+
     _reloadGroupsContent();
     super.initState();
   }
@@ -262,7 +260,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
     String filtersTitle = Localization().getStringEx("panel.groups_home.filter.filter.label", "Filters");
     
     return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-      Visibility(visible: Groups().contentAttributes?.isNotEmpty ?? false, child:
+      Visibility(visible: Groups().groupsContentAttributes?.isNotEmpty ?? false, child:
         Padding(padding: EdgeInsets.only(right: 6), child:
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
@@ -294,11 +292,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
   Widget _buildContentAttributesDescription() {
     if (_selectedContentType == rokwire.GroupsContentType.all) {
       List<InlineSpan> attributesList = <InlineSpan>[];
-      ContentAttributes? contentAttributes = Groups().contentAttributes;
-      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      List<ContentAttribute>? attributes = Groups().groupsContentAttributes?.attributes;
       TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.fat");
       TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
-      if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      if (_contentAttributesSelection.isNotEmpty && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
@@ -389,24 +386,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
 
   void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
-    if (Groups().contentAttributes != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
-        description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
-        scope: Groups.contentAttributesScope,
-        contentAttributes: Groups().contentAttributes,
-        selection: _contentAttributesSelection,
-        sortType: ContentAttributesSortType.alphabetical,
-        filtersMode: true,
-      ))).then((selection) {
-        if ((selection != null) && mounted) {
-          setState(() {
-            _contentAttributesSelection = selection;
-          });
-          _reloadGroupsContent();
-        }
-      });
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
+      description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
+      scope: Groups.groupsContentAttributesScope,
+      contentAttributes: Groups().groupsContentAttributes,
+      selection: _contentAttributesSelection,
+      sortType: ContentAttributesSortType.alphabetical,
+      filtersMode: true,
+    ))).then((selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _contentAttributesSelection = selection;
+        });
+        _reloadGroupsContent();
+      }
+    });
   }
 
   Widget _buildMyGroupsContent(){
@@ -517,7 +512,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
       }
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        Text(text, style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin")),
       );
     }
   }
@@ -544,7 +539,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
 
@@ -702,5 +697,51 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with TickerProviderSt
         _reloadGroupsContent();
       }
     }
+  }
+}
+
+// GroupsContentType
+
+extension GroupsContentTypeImpl on GroupsContentType {
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
+
+  String displayTitleLng([String? language]) {
+    switch (this) {
+      case GroupsContentType.all: return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups', language: language);
+      case GroupsContentType.my: return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups', language: language);
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case GroupsContentType.all: return 'all';
+      case GroupsContentType.my: return 'my';
+    }
+  }
+
+  static GroupsContentType? fromJsonString(String? value) {
+    switch(value) {
+      case 'all': return GroupsContentType.all;
+      case 'my': return GroupsContentType.my;
+      default: return null;
+    }
+  }
+
+  AnalyticsFeature? get analyticsFeature {
+    switch (this) {
+      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
+      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
+    }
+  }
+}
+
+extension _GroupsContentTypeList on List<GroupsContentType> {
+  void sortAlphabetical() => sort((GroupsContentType t1, GroupsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+
+  static List<GroupsContentType> fromContentTypes(Iterable<GroupsContentType> contentTypes) {
+    List<GroupsContentType> contentTypesList = List<GroupsContentType>.from(contentTypes);
+    contentTypesList.sortAlphabetical();
+    return contentTypesList;
   }
 }

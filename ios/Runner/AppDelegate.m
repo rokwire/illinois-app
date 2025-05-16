@@ -282,7 +282,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	int width = [parameters inaIntForKey:@"width"];
 	int height = [parameters inaIntForKey:@"height"];
 
-	ZXBarcodeFormat format = 0;
+	ZXBarcodeFormat format = -1;
 	if ([formatName isEqualToString:@"aztec"]) {
 		format = kBarcodeFormatAztec;
 	} else if ([formatName isEqualToString:@"codabar"]) {
@@ -319,19 +319,28 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		format = kBarcodeFormatUPCEANExtension;
 	}
 	
-	NSError *error = nil;
-	UIImage *image = nil;
-	ZXEncodeHints *hints = [ZXEncodeHints hints];
-	hints.margin = @(0);
-	ZXBitMatrix* matrix = [[ZXMultiFormatWriter writer] encode:content format:format width:width height:height hints:hints error:&error];
-	if (matrix != nil) {
-		CGImageRef imageRef = CGImageRetain([[ZXImage imageWithMatrix:matrix] cgimage]);
-		image = [UIImage imageWithCGImage:imageRef];
-		CGImageRelease(imageRef);
+	NSString *base64ImageData = nil;
+	if ((content != nil) && (0 < content.length) && (0 <= format) && (0 < width) && (0 < height)) {
+		@try {
+			UIImage *image = nil;
+			NSError *error = nil;
+			ZXEncodeHints *hints = [ZXEncodeHints hints];
+			hints.margin = @(0);
+
+			ZXBitMatrix* matrix = [[ZXMultiFormatWriter writer] encode:content format:format width:width height:height hints:hints error:&error];
+			if (matrix != nil) {
+				CGImageRef imageRef = CGImageRetain([[ZXImage imageWithMatrix:matrix] cgimage]);
+				image = [UIImage imageWithCGImage:imageRef];
+				CGImageRelease(imageRef);
+			}
+
+			NSData *imageData = (image != nil) ? UIImagePNGRepresentation(image) : nil;
+			base64ImageData = (imageData != nil) ? [imageData base64EncodedStringWithOptions:0] : nil;
+		}
+		@catch (NSException *exception) {
+			NSLog(@"ZXMultiFormatWriter.encode exception: %@", exception);
+		}
 	}
-	
-	NSData *imageData = (image != nil) ? UIImagePNGRepresentation(image) : nil;
-	NSString *base64ImageData = (imageData != nil) ? [imageData base64EncodedStringWithOptions:0] : nil;
 	result(base64ImageData);
 }
 

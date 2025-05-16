@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_io/io.dart';
 
-class MTD with Service implements NotificationsListener {
+class MTD with Service, NotificationsListener {
 
   static const String notifyStopsChanged = 'edu.illinois.rokwire.mtd.stops.changed';
   static const String _mtdStopsName = "mtdStops.json";

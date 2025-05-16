@@ -9,7 +9,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class OnCampus with Service implements NotificationsListener {
+class OnCampus with Service, NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.oncampus.state.changed";
 

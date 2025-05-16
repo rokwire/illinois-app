@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/RadioPlayer.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -268,7 +268,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsListener {
+class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListener {
 
   @override
   void initState() {
@@ -451,7 +451,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       widget.onSettings!();
     }
     else {
-      SettingsHomeContentPanel.present(context);
+      SettingsHomePanel.present(context);
     }
   }
 

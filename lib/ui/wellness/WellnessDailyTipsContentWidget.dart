@@ -36,7 +36,7 @@ class WellnessDailyTipsContentWidget extends StatefulWidget {
   State<WellnessDailyTipsContentWidget> createState() => _WellnessDailyTipsContentWidgetState();
 }
 
-class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsContentWidget> implements NotificationsListener {
+class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsContentWidget> with NotificationsListener {
   Color? _tipColor;
   bool _loading = false;
 

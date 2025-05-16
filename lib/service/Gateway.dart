@@ -10,7 +10,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 
-class Gateway with Service implements NotificationsListener {
+class Gateway with Service, NotificationsListener {
 
   static const String notifyBuildingDetail = "edu.illinois.rokwire.gateway.building.detail";
 

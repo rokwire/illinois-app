@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_io/io.dart';
 
-class StudentCourses with Service implements NotificationsListener {
+class StudentCourses with Service, NotificationsListener {
 
   static const String notifyTermsChanged = 'edu.illinois.rokwire.student_courses.terms.changed';
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.student_courses.selected.term.changed';

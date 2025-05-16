@@ -43,7 +43,7 @@ class AccessCard extends StatefulWidget {
   _AccessCardState createState() => _AccessCardState();
 }
 
-class _AccessCardState extends State<AccessCard> implements NotificationsListener {
+class _AccessCardState extends State<AccessCard> with NotificationsListener {
 
   @override
   void initState() {
@@ -120,7 +120,7 @@ class AccessDialog extends StatefulWidget {
   );   
 }
 
-class _AccessDialogState extends State<AccessDialog> implements NotificationsListener {
+class _AccessDialogState extends State<AccessDialog> with NotificationsListener {
   
   @override
   void initState() {
@@ -227,7 +227,7 @@ class _AccessContent extends StatelessWidget {
   void _onTapUpdateButton(BuildContext context, String ruleType) {
     switch (ruleType) {
       case 'privacy': Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,))); break;
-      case 'auth' :  ProfileHomePanel.present(context, content: ProfileContent.login);
+      case 'auth' :  ProfileHomePanel.present(context, contentType: ProfileContentType.login);
     }
   }
 

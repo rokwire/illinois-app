@@ -42,7 +42,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
-class Wellness with Service implements NotificationsListener, ContentItemCategoryClient {
+class Wellness with Service, NotificationsListener, ContentItemCategoryClient {
   static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
@@ -537,7 +537,9 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   }
 
   void toDoListAccessed(bool accessed) {
-    _applyUserSetting(settingName: _userAccessedToDoListSetting, settingValue: accessed);
+    if (isToDoListAccessed != accessed) {
+      _applyUserSetting(settingName: _userAccessedToDoListSetting, settingValue: accessed);
+    }
   }
 
   bool? get isRingsAccessed {

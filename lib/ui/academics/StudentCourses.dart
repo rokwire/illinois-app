@@ -29,7 +29,7 @@ class StudentCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsStudentCourses;
 }
 
-class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidget> implements NotificationsListener {
+class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidget> with NotificationsListener {
 
   List<StudentCourse>? _courses;
   bool _loading = false;

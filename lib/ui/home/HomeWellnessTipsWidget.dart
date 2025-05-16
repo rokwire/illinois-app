@@ -6,15 +6,14 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeWellnessTipsWidget extends StatefulWidget {
   
@@ -34,7 +33,7 @@ class HomeWellnessTipsWidget extends StatefulWidget {
   State<HomeWellnessTipsWidget> createState() => _HomeWellnessTipsWidgetState();
 }
 
-class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> implements NotificationsListener {
+class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with NotificationsListener {
 
   Color? _tipColor;
   bool _loadingTipColor = false;
@@ -161,7 +160,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
 
   void _onTap() {
     Analytics().logSelect(target: "View", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.dailyTips,)));
   }
 
   void _updateTipColor() {
@@ -181,14 +180,9 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (UrlUtils.canLaunchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
-      else{
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      else {
+        bool canLaunchInternal = UrlUtils.canLaunchInternal(url);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: canLaunchInternal);
       }
     }
   }

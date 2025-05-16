@@ -28,17 +28,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum ProfileInfo { connectionsInfo, directoryInfo }
-
 class ProfileInfoPage extends StatefulWidget {
   static const String editParamKey = 'edu.illinois.rokwire.profile.directory.info.edit';
 
-  final ProfileInfo contentType;
   final Map<String, dynamic>? params;
   final bool onboarding;
   final void Function()? onStateChanged;
 
-  ProfileInfoPage({super.key, required this.contentType, this.params, this.onboarding = false, this.onStateChanged});
+  ProfileInfoPage({super.key, this.params, this.onboarding = false, this.onStateChanged});
 
   @override
   State<StatefulWidget> createState() => ProfileInfoPageState();
@@ -49,7 +46,7 @@ class ProfileInfoPage extends StatefulWidget {
   }
 }
 
-class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPage> implements NotificationsListener {
+class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsListener {
 
   final GlobalKey<ProfileInfoPreviewPageState> _profileInfoPreviewKey = GlobalKey<ProfileInfoPreviewPageState>();
   final GlobalKey<ProfileInfoEditPageState> _profileInfoEditKey = GlobalKey<ProfileInfoEditPageState>();
@@ -72,11 +69,9 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   bool get isEditing => _editing;
   bool get directoryVisibility => (_privacy?.public == true);
 
-  bool get _directoryVisibilityAvailable =>
-    FlexUI().isPrivacyAvailable;
-
-  bool get _directoryVisibilityEnabled =>
-    _profile?.isNameNotEmpty == true;
+  bool get _privacyAvailable => FlexUI().isPrivacyAvailable;
+  bool get _directoryVisibilityAvailable =>  _privacyAvailable;
+  bool get _directoryVisibilityEnabled => _profile?.isNameNotEmpty == true;
 
   void setEditing(bool value) {
     if (mounted && (_editing != value)) {
@@ -130,10 +125,10 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
         if (_directoryVisibilityAvailable)
           _directoryVisibilityContent,
 
-        if (widget.onboarding == false && _directoryVisibilityAvailable)
-          Padding(padding: EdgeInsets.only(top: 16), child:
+        if ((widget.onboarding == false) && _directoryVisibilityAvailable)
+          ((_editing || directoryVisibility)) ? Padding(padding: EdgeInsets.only(top: 16), child:
             Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.info.tiny'), textAlign: TextAlign.center,),
-          ),
+          ) : Container(height: 4,),
 
         Padding(padding: EdgeInsets.only(top: 16), child:
           _editing ? _editContent : _previewContent,
@@ -150,7 +145,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       Column(children: [
         ProfileInfoPreviewPage(
           key: _profileInfoPreviewKey,
-          contentType: widget.contentType,
           profile: _profile,
           privacy: _privacy,
           identifiers: _identifiers,
@@ -168,7 +162,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
   Widget get _editContent =>
     ProfileInfoEditPage(
       key: _profileInfoEditKey,
-      contentType: widget.contentType,
       authType: Auth2().account?.authType,
       profile: _profile,
       privacy: _privacy,
@@ -296,21 +289,10 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     });
   }
 
-  String get _desriptionText => _editing ? _editDesriptionText : _previewDesriptionText;
+  TextStyle? get nameTextStyle =>
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  String get _previewDesriptionText {
-    switch (widget.contentType) {
-      case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
-      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
-    }
-  }
-
-  String get _editDesriptionText {
-    switch (widget.contentType) {
-      case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.edit.description.text', 'Choose how your profile displays for your Connections.');
-      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.');
-    }
-  }
+  String get _desriptionText => _editing ? Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the Directory of Users.') : (directoryVisibility ? Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the Directory of Users.') : '');
 
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:
@@ -320,20 +302,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     )
   );
 
-  Widget get _previewCommandBar {
-    switch (widget.contentType) {
-      case ProfileInfo.connectionsInfo: return _myConnectionsInfoPreviewCommandBar;
-      case ProfileInfo.directoryInfo: return _myDirectoryInfoPreviewCommandBar;
-    }
-  }
-
-  Widget get _myConnectionsInfoPreviewCommandBar => Row(children: [
-    Expanded(child: _editInfoButton,),
-    Container(width: 8),
-    Expanded(child: _swapInfoButton,),
-  ]);
-
-  Widget get _myDirectoryInfoPreviewCommandBar => Row(children: [
+  Widget get _previewCommandBar => Row(children: [
     Expanded(flex: 1, child: Container(),),
     Expanded(flex: 2, child: _editInfoButton,),
     Expanded(flex: 1, child: Container(),),
@@ -350,17 +319,6 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
   String get _editInfoButtonTitle =>
     Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit my info');
-
-  Widget get _swapInfoButton => RoundedButton(
-    label: Localization().getStringEx('panel.profile.info.command.button.swap.text', 'Swap Info'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    onTap: _onSwapInfo,
-  );
-
-  void _onSwapInfo() {
-    Analytics().logSelect(target: 'Swap Info');
-  }
 
   Widget get _accountCommands =>
     Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -481,6 +439,63 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       widget.onStateChanged?.call();
     });
 
+    ProfileInfoLoadResult loadResult = await ProfileInfoLoad.loadInitial();
+    setStateIfMounted(() {
+      _profile = loadResult.profile;
+      _privacy = loadResult.privacy;
+      _photoImageData = loadResult.photoImageData;
+      _pronunciationAudioData = loadResult.pronunciationAudioData;
+      _loading = false;
+      widget.onStateChanged?.call();
+    });
+  }
+
+  void _onEditInfo() {
+    Analytics().logSelect(target: 'Edit My Info');
+    setStateIfMounted(() {
+      _editing = true;
+      widget.onStateChanged?.call();
+    });
+  }
+
+  void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy,
+    Uint8List? pronunciationAudioData,
+    Uint8List? photoImageData,
+    String? photoImageToken
+  }) {
+    setStateIfMounted((){
+      if (profile != null) {
+        _profile = profile;
+      }
+
+      if (privacy != null) {
+        _privacy = privacy;
+      }
+
+      if (!DeepCollectionEquality().equals(_photoImageData, photoImageData)) {
+        _photoImageData = photoImageData;
+      }
+
+      if (!DeepCollectionEquality().equals(_pronunciationAudioData, pronunciationAudioData)) {
+        _pronunciationAudioData = pronunciationAudioData;
+      }
+
+      if (_showProfileCommands) {
+        _editing = false;
+      }
+      widget.onStateChanged?.call();
+    });
+  }
+}
+
+///////////////////////////////////////////
+// ProfileInfoLoad
+
+class ProfileInfoLoad {
+
+  static bool get _privacyAvailable => FlexUI().isPrivacyAvailable;
+
+  static Future<ProfileInfoLoadResult> loadInitial() async {
     List<dynamic> results = await Future.wait([
       Auth2().loadUserProfile(),
       Auth2().loadUserPrivacy(),
@@ -493,31 +508,39 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
     AudioResult? pronunciationResult = StringUtils.isNotEmpty(profile?.pronunciationUrl) ? await Content().loadUserNamePronunciation(fileName: profile?.pronunciationUrl) : null;
 
-    if (mounted) {
-      _ProfileInfoSyncResult? syncResult = await _syncUserProfileAndPrivacy(Auth2().account, profile, privacy,
-        hasContentUserPhoto: photoResult?.succeeded == true,
-        hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
-      );
+    ProfileInfoLoadResult? syncResult = await _syncUserProfileAndPrivacy(
+      Auth2().account, profile, privacy,
+      hasContentUserPhoto: photoResult?.succeeded == true,
+      hasContentUserNamePronunciation: pronunciationResult?.succeeded == true,
+    );
 
-      if (syncResult?.profile != null) {
-        profile = syncResult?.profile;
-      }
-      if (syncResult?.privacy != null) {
-        privacy = syncResult?.privacy;
-      }
-
-      setState(() {
-        _profile = Auth2UserProfile.fromOther(profile ?? Auth2().profile,);
-        _privacy = privacy;
-        _photoImageData = photoResult?.imageData;
-        _pronunciationAudioData = pronunciationResult?.audioData;
-        _loading = false;
-        widget.onStateChanged?.call();
-      });
+    if (syncResult?.profile != null) {
+      profile = syncResult?.profile;
     }
+
+    if (syncResult?.privacy != null) {
+      privacy = syncResult?.privacy;
+    }
+
+    Uint8List? photoImageData = photoResult?.imageData;
+    if (syncResult?.photoImageData != null) {
+      photoImageData = syncResult?.photoImageData;
+    }
+
+    Uint8List? pronunciationAudioData = pronunciationResult?.audioData;
+    if (syncResult?.pronunciationAudioData != null) {
+      pronunciationAudioData = syncResult?.pronunciationAudioData;
+    }
+
+    return ProfileInfoLoadResult(
+      profile: Auth2UserProfile.fromOther(profile ?? Auth2().profile,),
+      privacy: privacy,
+      photoImageData: photoImageData,
+      pronunciationAudioData: pronunciationAudioData,
+    );
   }
 
-  Future<_ProfileInfoSyncResult?> _syncUserProfileAndPrivacy(Auth2Account? account, Auth2UserProfile? profile, Auth2UserPrivacy? privacy, {
+  static Future<ProfileInfoLoadResult?> _syncUserProfileAndPrivacy(Auth2Account? account, Auth2UserProfile? profile, Auth2UserPrivacy? privacy, {
     bool? hasContentUserPhoto,
     bool? hasContentUserNamePronunciation
   }) async {
@@ -603,7 +626,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
     }
 
     bool isProfileNameNotEmpty = StringUtils.isNotEmpty(profileFirstName) || StringUtils.isNotEmpty(profileMiddleName) || StringUtils.isNotEmpty(profileLastName);
-    bool? privacyIsPublic = ((privacy?.public == null) && isProfileNameNotEmpty) ? true : privacy?.public;
+    bool? privacyIsPublic = (_privacyAvailable && (privacy?.public == null) && isProfileNameNotEmpty) ? true : privacy?.public;
     Auth2UserPrivacy? updatedPrivacy = (privacyIsPublic != null) ? Auth2UserPrivacy.fromOther(privacy,
       public: privacyIsPublic,
       fieldsVisibility: Auth2AccountFieldsVisibility.fromOther(privacy?.fieldsVisibility,
@@ -618,12 +641,12 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
 
     List<Future<bool>> updateFutures = <Future<bool>>[];
 
-    int updateProfileIndex = (updatedProfile != null) ? updateFutures.length : -1;
+    int updateProfileIndex = ((updatedProfile != null) && (updatedProfile != profile)) ? updateFutures.length : -1;
     if (0 <= updateProfileIndex) {
       updateFutures.add(Auth2().saveUserProfile(updatedProfile));
     }
 
-    int updatePrivacyIndex = ((updatedPrivacy != null) && (updatedPrivacy != privacy)) ? updateFutures.length : -1;
+    int updatePrivacyIndex = (_privacyAvailable && (updatedPrivacy != null) && (updatedPrivacy != privacy)) ? updateFutures.length : -1;
     if (0 <= updatePrivacyIndex) {
       updateFutures.add(Auth2().saveUserPrivacy(updatedPrivacy));
     }
@@ -632,7 +655,7 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       List<bool> updateResults = await Future.wait(updateFutures);
       bool? updateProfileResult = (0 <= updateProfileIndex) ? updateResults[updateProfileIndex] : null;
       bool? updatePrivacyResult = (0 <= updatePrivacyIndex) ? updateResults[updatePrivacyIndex] : null;
-      return _ProfileInfoSyncResult(
+      return ProfileInfoLoadResult(
         profile: (updateProfileResult == true) ? updatedProfile : null,
         privacy: (updatePrivacyResult == true) ? updatedPrivacy : null,
       );
@@ -641,91 +664,20 @@ class ProfileInfoPageState extends ProfileDirectoryMyInfoBasePageState<ProfileIn
       return null;
     }
   }
-
-  void _onEditInfo() {
-    Analytics().logSelect(target: 'Edit My Info');
-    setStateIfMounted(() {
-      _editing = true;
-      widget.onStateChanged?.call();
-    });
-  }
-
-  void _onFinishEditInfo({Auth2UserProfile? profile, Auth2UserPrivacy? privacy,
-    Uint8List? pronunciationAudioData,
-    Uint8List? photoImageData,
-  }) {
-    setStateIfMounted((){
-      if (profile != null) {
-        _profile = profile;
-      }
-
-      if (privacy != null) {
-        _privacy = privacy;
-      }
-
-      if (!DeepCollectionEquality().equals(_photoImageData, photoImageData)) {
-        _photoImageData = photoImageData;
-      }
-
-      if (!DeepCollectionEquality().equals(_pronunciationAudioData, pronunciationAudioData)) {
-        _pronunciationAudioData = pronunciationAudioData;
-      }
-
-      if (_showProfileCommands) {
-        _editing = false;
-      }
-      widget.onStateChanged?.call();
-    });
-  }
-}
-
-///////////////////////////////////////////
-// ProfileDirectoryMyInfoBasePageState
-
-class ProfileDirectoryMyInfoBasePageState<T extends StatefulWidget> extends State<T> {
-
-  // Name Text Style
-
-  TextStyle? get nameTextStyle =>
-    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
-
-  @override
-  Widget build(BuildContext context) =>
-    throw UnimplementedError();
 }
 
 ///////////////////////////////////////////
 // ProfileInfoSyncResult
 
-class _ProfileInfoSyncResult {
+class ProfileInfoLoadResult {
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
-  _ProfileInfoSyncResult({this.profile, this.privacy});
-}
+  final Uint8List? photoImageData;
+  final Uint8List? pronunciationAudioData;
 
-///////////////////////////////////////////
-// ProfileInfoVisibility
+  ProfileInfoLoadResult({this.profile, this.privacy, this.photoImageData, this.pronunciationAudioData});
 
-extension ProfileInfoVisibility on ProfileInfo {
-
-  static const Auth2FieldVisibility _directoryPositiveVisibility = Auth2FieldVisibility.public;
-  static const Auth2FieldVisibility _connectionsPositiveVisibility = Auth2FieldVisibility.connections;
-
-  Auth2FieldVisibility get positiveVisibility {
-    switch(this) {
-      case ProfileInfo.directoryInfo: return _directoryPositiveVisibility;
-      case ProfileInfo.connectionsInfo: return _connectionsPositiveVisibility;
-    }
-  }
-
-  static const Set<Auth2FieldVisibility> _directoryPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility };
-  static const Set<Auth2FieldVisibility> _connectionsPermittedVisibility = const <Auth2FieldVisibility>{ _directoryPositiveVisibility, _connectionsPositiveVisibility };
-
-  Set<Auth2FieldVisibility> get permitedVisibility {
-    switch(this) {
-      case ProfileInfo.directoryInfo: return _directoryPermittedVisibility;
-      case ProfileInfo.connectionsInfo: return _connectionsPermittedVisibility;
-    }
-  }
+  Auth2UserProfile? publicProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) =>
+    profile?.buildPublic(privacy, permitted: permitted);
 
 }

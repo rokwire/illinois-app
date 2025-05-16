@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -460,17 +461,21 @@ class DirectoryProfileDetails extends StatelessWidget {
   final List<Auth2PublicAccountIdentifier>? identifiers;
 
   DirectoryProfileDetails(this.profile, this.identifiers, { super.key });
-  
+
   String? get college => null;
+
   String? get department => null;
+
   String? get major => null;
 
   String? get website => null;
 
   @override
   Widget build(BuildContext context) {
-    List<Auth2PublicAccountIdentifier> emails = Auth2PublicAccountIdentifier.listForType(identifiers, Auth2Identifier.typeEmail);
-    List<Auth2PublicAccountIdentifier> phones = Auth2PublicAccountIdentifier.listForType(identifiers, Auth2Identifier.typePhone);
+    List<Auth2PublicAccountIdentifier> emails = Auth2PublicAccountIdentifier
+        .listForType(identifiers, Auth2Identifier.typeEmail);
+    List<Auth2PublicAccountIdentifier> phones = Auth2PublicAccountIdentifier
+        .listForType(identifiers, Auth2Identifier.typePhone);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (profile?.title?.isNotEmpty == true)
         _textDetail(profile?.title ?? ''),
@@ -480,45 +485,77 @@ class DirectoryProfileDetails extends StatelessWidget {
         _textDetail(profile?.department ?? ''),
       if (profile?.major?.isNotEmpty == true)
         _textDetail(profile?.major ?? ''),
+      if (profile?.department2?.isNotEmpty == true)
+        _textDetail(profile?.department2 ?? ''),
+      if (profile?.major2?.isNotEmpty == true)
+        _textDetail(profile?.major2 ?? ''),
+
+      if (profile?.address?.isNotEmpty == true)
+        _textDetail(profile?.address ?? ''),
+      if (profile?.address2?.isNotEmpty == true)
+        _textDetail(profile?.address2 ?? ''),
+      if (profile?.poBox?.isNotEmpty == true)
+        _textDetail(profile?.displayPOBox ?? ''),
+      if (profile?.isCityStateZipCountryNotEmpty == true)
+        _textDetail(profile?.displayCityStateZipCountry ?? ''),
+
       if (emails.isNotEmpty)
-        Column(children: List.generate(emails.length, (index) => _linkDetail(emails[index].identifier ?? '', 'mailto:${emails[index].identifier}', analyticsTarget: Analytics.LogAnonymousEmail)),),
+        Column(children: List.generate(emails.length, (index) =>
+            _linkDetail(emails[index].identifier ?? '',
+                'mailto:${emails[index].identifier}',
+                analyticsTarget: Analytics.LogAnonymousEmail)),),
+      if (profile?.email2?.isNotEmpty == true)
+        _linkDetail(profile?.email2 ?? '', 'mailto:${profile?.email2}',
+            analyticsTarget: Analytics.LogAnonymousEmail),
       if (phones.isNotEmpty)
-        Column(children: List.generate(phones.length, (index) => _linkDetail(phones[index].identifier ?? '', 'tel:${phones[index].identifier}', analyticsTarget: Analytics.LogAnonymousPhone)),),
+        Column(children: List.generate(phones.length, (index) =>
+            _linkDetail(
+            phones[index].identifier ?? '', 'tel:${phones[index].identifier}',
+            analyticsTarget: Analytics.LogAnonymousPhone)),),
       if (profile?.website?.isNotEmpty == true)
-        _linkDetail(profile?.website ?? '', UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ?? profile?.website ?? '', analyticsTarget: Analytics.LogAnonymousWebsite),
+        _linkDetail(profile?.website ?? '',
+            UrlUtils.fixUrl(profile?.website ?? '', scheme: 'https') ??
+                profile?.website ?? '',
+            analyticsTarget: Analytics.LogAnonymousWebsite),
     ],);
   }
 
-  Widget _textDetail(String text) =>
-    Text(text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
 
-  Widget _linkDetail(String text, String url, { String? analyticsTarget } ) =>
-    InkWell(onTap: () => _onTapLink(url, analyticsTarget: analyticsTarget ?? text), child:
-      Text(text, style: Styles().textStyles.getTextStyleEx('widget.button.title.small.underline',),),
-    );
+  Widget _textDetail(String text) =>
+      Text(
+        text, style: Styles().textStyles.getTextStyle('widget.detail.small'),);
+
+  Widget _linkDetail(String text, String url, { String? analyticsTarget }) =>
+      InkWell(
+        onTap: () => _onTapLink(url, analyticsTarget: analyticsTarget ?? text),
+        child:
+        Text(text, style: Styles().textStyles.getTextStyleEx(
+          'widget.button.title.small.underline',),),
+      );
 
   void _onTapLink(String url, { String? analyticsTarget }) {
     Analytics().logSelect(target: analyticsTarget ?? url);
     _launchUrl(url);
   }
-}
 
-void _launchUrl(String? url) {
-  if (StringUtils.isNotEmpty(url)) {
-    if (DeepLink().isAppUrl(url)) {
-      DeepLink().launchUrl(url);
-    } else {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(
-          uri,
-          mode: (!kIsWeb && Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault),
-        );
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(
+            uri,
+            mode: (!kIsWeb && Platform.isAndroid ? LaunchMode
+                .externalApplication : LaunchMode.platformDefault),
+          );
+        }
       }
     }
   }
 }
-
 // DirectoryProfilePhoto
 
 class DirectoryProfilePhoto extends StatefulWidget {
@@ -888,7 +925,7 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
       if (directoryAttributes != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
           title: Localization().getStringEx('panel.directory.accounts.filters.header.title', 'Directory Filters'),
-          description: Localization().getStringEx('panel.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the User Directory.'),
+          description: Localization().getStringEx('panel.directory.accounts.filters.header.description', 'Choose at leasrt one attribute to filter the Directory of Users.'),
           scope: Auh2Directory.attributesScope,
           contentAttributes: directoryAttributes,
           selection: widget.filterAttributes,

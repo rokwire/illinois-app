@@ -8,24 +8,26 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
-//import 'package:share/share.dart';
+//import 'package:share_plus/share_plus.dart';
 
-class ProfileInfoSharePanel extends StatefulWidget {
-
+class ProfileInfoShareSheet extends StatelessWidget {
   final Auth2UserProfile? profile;
   final Uint8List? photoImageData;
   final Uint8List? pronunciationAudioData;
 
-  ProfileInfoSharePanel._({this.profile, this.photoImageData, this.pronunciationAudioData});
+  ProfileInfoShareSheet._({this.profile, this.photoImageData, this.pronunciationAudioData});
 
   static void present(BuildContext context, {
     Auth2UserProfile? profile,
@@ -42,19 +44,134 @@ class ProfileInfoSharePanel extends StatefulWidget {
       backgroundColor: Styles().colors.backgroundVariant,
       constraints: BoxConstraints(maxHeight: height),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-      builder: (context) => ProfileInfoSharePanel._(
+      builder: (context) => ProfileInfoShareSheet._(
         profile: profile,
         photoImageData: photoImageData,
         pronunciationAudioData: pronunciationAudioData,
       ),
     );
   }
-  
+
   @override
-  State<StatefulWidget> createState() => _ProfileInfoSharePanelState();
+  Widget build(BuildContext context) => Stack(children: [
+      ProfileInfoShareWidget(
+        profile: profile,
+        photoImageData: photoImageData,
+        pronunciationAudioData: pronunciationAudioData,
+        topOffset: 24 + 2 * 16 /* close button size */,
+        contentPaddingX: 16,
+      ),
+      Align(alignment: Alignment.topRight, child: _closeButton(context)),
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
 }
 
-class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
+class ProfileInfoSharePage extends StatefulWidget {
+
+  static const String profileResultKey = 'profile_result';
+
+  final Auth2UserProfile? _profile;
+  final Uint8List? _photoImageData;
+  final Uint8List? _pronunciationAudioData;
+  final Map<String, dynamic>? params;
+
+  ProfileInfoSharePage({Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
+    _profile = profile,
+    _photoImageData = photoImageData,
+    _pronunciationAudioData = pronunciationAudioData;
+
+  Auth2UserProfile? get profile => _profile ?? _profileResultParam?.profile;
+  Uint8List? get photoImageData => _photoImageData ?? _profileResultParam?.photoImageData;
+  Uint8List? get pronunciationAudioData => _pronunciationAudioData ?? _profileResultParam?.pronunciationAudioData;
+
+  ProfileInfoLoadResult? get _profileResultParam => JsonUtils.cast(params?[profileResultKey]);
+
+  @override
+  State<StatefulWidget> createState() => _ProfileInfoSharePageState();
+}
+
+class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
+  Auth2UserProfile? _profile;
+  Uint8List? _photoImageData;
+  Uint8List? _pronunciationAudioData;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    _loadInitialContent();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) => _loading ?
+    _loadingContent : _pageContent;
+
+  Widget get _pageContent => ProfileInfoShareWidget(
+    profile: _profile,
+    photoImageData: _photoImageData,
+    pronunciationAudioData: _pronunciationAudioData
+  );
+
+  Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+      )
+    )
+  );
+
+  Future<void> _loadInitialContent() async {
+    if (widget.profile != null) {
+      _profile = widget.profile;
+      _photoImageData = widget.photoImageData;
+      _pronunciationAudioData = widget.pronunciationAudioData;
+    }
+    else {
+      setState(() {
+        _loading = true;
+      });
+      ProfileInfoLoadResult loadResult = await ProfileInfoLoad.loadInitial();
+      setStateIfMounted(() {
+        _profile = loadResult.publicProfile();
+        _photoImageData = loadResult.photoImageData;
+        _pronunciationAudioData = loadResult.pronunciationAudioData;
+        _loading = false;
+      });
+    }
+  }
+}
+
+class ProfileInfoShareWidget extends StatefulWidget {
+
+  final Auth2UserProfile? profile;
+  final Uint8List? photoImageData;
+  final Uint8List? pronunciationAudioData;
+  final double topOffset;
+  final double contentPaddingX;
+
+  ProfileInfoShareWidget({this.profile, this.photoImageData, this.pronunciationAudioData,
+    this.topOffset = 16,
+    this.contentPaddingX = 0,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _ProfileInfoShareWidgetState();
+}
+
+class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
 
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _savingToPhotos = false;
@@ -64,15 +181,13 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
   bool _preparingClipboardText = false;
 
   @override
-  Widget build(BuildContext context) => Stack(children: [
-    _panelContent,
-    Align(alignment: Alignment.topRight, child: _closeButton),
-  ],);
+  Widget build(BuildContext context) =>
+    _panelContent;
 
   Widget get _panelContent => SingleChildScrollView(child:
-    Padding(padding: EdgeInsets.only(top: 24 + 2 * 16 /* close button size */, bottom: 16), child:
+    Padding(padding: EdgeInsets.only(top: widget.topOffset, bottom: 16), child:
       Column(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: widget.contentPaddingX), child:
           RepaintBoundary(key: _repaintBoundaryKey, child:
             DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
           ),
@@ -110,34 +225,31 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
           progress: _preparingClipboardText,
           onTap: _onTapCopyTextToClipboard,
         ),
+        _buildCommand(
+          icon: Styles().images.getImage('edit', size: _commandIconSize, weight: 'regular'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.edit.profile.text', 'Edit My Info'),
+          onTap: _onTapEditProfile,
+        ),
       ]),
     ),
   );
 
-  Widget get _closeButton =>
-    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-      InkWell(onTap : _onTapClose, child:
-        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-          Styles().images.getImage('close-circle', excludeFromSemantics: true),
-        ),
-      ),
-    );
 
   final double _commandIconSize = 14;
   
   Widget _buildCommand({Widget? icon, String? text, bool progress = false, void Function()? onTap}) =>
     InkWell(onTap: onTap, child:
-      Row(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: widget.contentPaddingX, vertical: 16), child:
+        Row(children: [
           SizedBox(width: _commandIconSize, height: _commandIconSize, child: progress ?
             CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary, ) :
             (icon ?? SizedBox(width: _commandIconSize, height: _commandIconSize,)),
           ),
-        ),
-        Padding(padding: EdgeInsets.only(right: 16), child:
-          Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),),
-        ),
-      ],)
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),),
+          ),
+        ],),
+      ),
     );
 
   void _onTapSaveToPhotos() async {
@@ -257,6 +369,22 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
     }
   }
 
+  void _onTapEditProfile() {
+    Analytics().logSelect(target: 'Edit My Info');
+    /*ProfileHomePanel.present(context,
+      contentType: ProfileContentType.profile,
+      contentParams: {
+        ProfileInfoPage.editParamKey : true,
+      }
+    );*/
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+      ProfileContentType.profile,
+      <String, dynamic>{
+        ProfileInfoPage.editParamKey : true,
+      }
+    ]);
+  }
+
   Future<String?> _saveImage({bool addToGallery = false} ) async {
     try {
       RenderRepaintBoundary? boundary = JsonUtils.cast(_repaintBoundaryKey.currentContext?.findRenderObject());
@@ -308,10 +436,5 @@ class _ProfileInfoSharePanelState extends State<ProfileInfoSharePanel> {
       debugPrint(e.toString());
       return false;
     }
-  }
-
-  void _onTapClose() {
-    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
-    Navigator.of(context).pop();
   }
 }

@@ -44,7 +44,7 @@ class GroupPollListPanel extends StatefulWidget with AnalyticsInfo {
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
 }
 
-class _GroupPollListPanelState extends State<GroupPollListPanel> implements NotificationsListener {
+class _GroupPollListPanelState extends State<GroupPollListPanel> with NotificationsListener {
   List<Poll>? _polls;
   PollsCursor? _pollsCursor;
   String? _pollsError;

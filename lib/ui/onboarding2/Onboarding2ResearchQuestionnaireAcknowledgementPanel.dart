@@ -9,27 +9,25 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
   final void Function()? onContinue;
-  Onboarding2ResearchQuestionnaireAcknowledgementPanel({ this.onboardingCode = '', this.onboardingContext, this.onContinue });
+  Onboarding2ResearchQuestionnaireAcknowledgementPanel({ super.key, this.onboardingCode = '', this.onboardingContext, this.onContinue });
 
-  GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>? get globalKey => (super.key is GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>) ?
-    (super.key as GlobalKey<_Onboarding2ResearchQuestionnaireAcknowledgementPanelState>) : null;
-
-  @override
-  bool get onboardingProgress => (globalKey?.currentState?.onboardingProgress == true);
+  _Onboarding2ResearchQuestionnaireAcknowledgementPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
   @override
-  set onboardingProgress(bool value) => globalKey?.currentState?.onboardingProgress = value;
-
+  bool get onboardingProgress => (_currentState?.onboardingProgress == true);
+  @override
+  set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
   @override
   Future<bool> isOnboardingEnabled() async => Onboarding2ResearchQuestionnairePanel(onboardingContext: onboardingContext).isOnboardingEnabled();
 
   @override
-  State<Onboarding2ResearchQuestionnaireAcknowledgementPanel> createState() => _Onboarding2ResearchQuestionnaireAcknowledgementPanelState();
+  State<StatefulWidget> createState() => _Onboarding2ResearchQuestionnaireAcknowledgementPanelState();
 }
 
 class _Onboarding2ResearchQuestionnaireAcknowledgementPanelState extends State<Onboarding2ResearchQuestionnaireAcknowledgementPanel> {

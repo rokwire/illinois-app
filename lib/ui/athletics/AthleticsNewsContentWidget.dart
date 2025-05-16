@@ -47,7 +47,7 @@ class AthleticsNewsContentWidget extends StatefulWidget {
   _AthleticsNewsContentWidgetState createState() => _AthleticsNewsContentWidgetState();
 }
 
-class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget> implements NotificationsListener {
+class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget> with NotificationsListener {
   List<News>? _news;
   List<News>? _displayNews;
 
@@ -73,8 +73,8 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   void didUpdateWidget(AthleticsNewsContentWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.showFavorites != oldWidget.showFavorites) {
-      setState(() {
-        _buildDisplayNews();
+      setStateIfMounted(() {
+        _displayNews = _buildDisplayNews();
       });
     }
   }
@@ -94,34 +94,29 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       _loading = true;
     });
     Sports().loadNews(null, 0).then((news) {
+      _news = news;
       setStateIfMounted(() {
         _loading = false;
-        _news = news;
-        _buildDisplayNews();
+        _displayNews = _buildDisplayNews();
       });
     });
   }
 
-  void _buildDisplayNews() {
+  List<News>? _buildDisplayNews() {
     Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
     if (CollectionUtils.isEmpty(favoriteSports)) {
-      _displayNews = <News>[];
+      return <News>[];
     } else if (_news == null) {
-      _displayNews = null;
+      return null;
     } else {
-      _displayNews = <News>[];
+      List<News> displayNews = <News>[];
       LinkedHashSet<String>? favoriteIds = Auth2().account?.prefs?.getFavorites(News.favoriteKeyName);
-      bool hasFavorites = CollectionUtils.isNotEmpty(favoriteIds);
       for (News article in _news!) {
-        String? articleSport = article.sportKey;
-        String? articleId = article.id;
-        if ((articleSport != null) && favoriteSports!.contains(articleSport)) {
-          bool includeArticle = _favoritesMode ? (hasFavorites && favoriteIds!.contains(articleId)) : true;
-          if (includeArticle) {
-            _displayNews!.add(article);
-          }
+        if ((favoriteSports?.contains(article.sportKey) == true) && (!_favoritesMode || (favoriteIds?.contains(article.id) == true))) {
+          displayNews.add(article);
         }
       }
+      return displayNews;
     }
   }
 
@@ -221,11 +216,13 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   void onNotification(String name, param) {
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
       setStateIfMounted(() {
-        _buildDisplayNews();
+        _displayNews = _buildDisplayNews();
       });
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       if (_favoritesMode) {
-        _buildDisplayNews();
+        setStateIfMounted((){
+          _displayNews = _buildDisplayNews();
+        });
       }
     }
   }

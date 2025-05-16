@@ -422,10 +422,10 @@ class _ProfileStoredDataEntryWidget extends StatefulWidget {
 
   final String? contentText;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _ProfileStoredDataEntryWidget({ super.key,
     this.titleKey,
-    // ignore: unused_element
+    // ignore: unused_element_parameter
     this.hintKey, this.hintText,
     this.contentText,
   });
@@ -551,7 +551,7 @@ class _ProfileStoredDataHeadingWidget extends StatelessWidget {
   final Offset iconPadding = Offset(16, 12);
   final Size iconSize = Size(16, 16);
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   _ProfileStoredDataHeadingWidget({super.key,
     this.title, this.hint,
     this.progress, this.expanded, this.onExpand, this.onCopy,

@@ -56,7 +56,7 @@ class WellnessToDoItemDetailPanel extends StatefulWidget  with AnalyticsInfo {
   }
 }
 
-class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> implements NotificationsListener {
+class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> with NotificationsListener {
   static final String _workDayFormat = 'yyyy-MM-dd';
 
   WellnessToDoItem? _item;
@@ -136,14 +136,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                 Stack(children: [
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [_buildWorkDaysContainer(), _buildLocationContainer(), _buildDescriptionContainer()]),
+                      children: [_buildWorkDaysContainer(), _buildLocationContainer(), _buildDescriptionContainer(), Visibility(visible: _optionalFieldsVisible, child: _buildSaveButton())]),
                   _buildReminderTypeDropDown()
                 ]),
               ]),
               _buildCategoryDropDown()
             ])
           ])),
-      _buildSaveButton()
+      Visibility(visible: !_optionalFieldsVisible, child: _buildSaveButton())
     ]);
   }
 

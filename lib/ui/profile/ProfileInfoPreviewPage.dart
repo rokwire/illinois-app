@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
@@ -13,10 +14,10 @@ import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ProfileInfoPreviewPage extends StatefulWidget {
-  final ProfileInfo contentType;
   final Auth2UserProfile? profile;
   final Auth2UserPrivacy? privacy;
   final List<Auth2Identifier>? identifiers;
@@ -25,7 +26,7 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   final Uint8List? photoImageData;
   final String? photoImageToken;
 
-  ProfileInfoPreviewPage({super.key, required this.contentType,
+  ProfileInfoPreviewPage({super.key,
     this.profile, this.privacy, this.identifiers, this.onboarding = false,
     this.photoImageData, this.photoImageToken, this.pronunciationAudioData
   });
@@ -34,22 +35,15 @@ class ProfileInfoPreviewPage extends StatefulWidget {
   State<StatefulWidget> createState() => ProfileInfoPreviewPageState();
 }
 
-class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<ProfileInfoPreviewPage> {
+class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
 
   Auth2UserProfile? _profile;
   List<Auth2PublicAccountIdentifier>? _identifiers;
 
   @override
   void initState() {
-    Auth2UserProfileFieldsVisibility profileVisibility = Auth2UserProfileFieldsVisibility.fromOther(widget.privacy?.fieldsVisibility?.profile,
-      firstName: Auth2FieldVisibility.public,
-      middleName: Auth2FieldVisibility.public,
-      lastName: Auth2FieldVisibility.public,
-    );
-
-    _profile = Auth2UserProfile.fromFieldsVisibility(widget.profile, profileVisibility, permitted: _permittedVisibility);
+    _profile = widget.profile?.buildPublic(widget.privacy, permitted: { Auth2FieldVisibility.public });
     _identifiers = List.generate(widget.identifiers?.length ?? 0, (index) => Auth2PublicAccountIdentifier.fromUserIdentifier(widget.identifiers![index]));
-
     super.initState();
   }
 
@@ -131,14 +125,24 @@ class ProfileInfoPreviewPageState extends ProfileDirectoryMyInfoBasePageState<Pr
 
   void _onShare() {
     Analytics().logSelect(target: 'Share');
-    ProfileInfoSharePanel.present(context,
+    /*ProfileInfoShareSheet.present(context,
       profile: _profile,
       photoImageData: widget.photoImageData,
       pronunciationAudioData: widget.pronunciationAudioData,
-    );
+    );*/
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+      ProfileContentType.share,
+      <String, dynamic>{
+        ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
+          profile: _profile,
+          photoImageData: widget.photoImageData,
+          pronunciationAudioData: widget.pronunciationAudioData,
+        )
+      }
+    ]);
   }
 
-  Set<Auth2FieldVisibility> get _permittedVisibility =>
-    widget.contentType.permitedVisibility;
+  TextStyle? get nameTextStyle =>
+    Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 }
 

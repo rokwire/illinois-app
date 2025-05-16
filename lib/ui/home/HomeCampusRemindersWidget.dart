@@ -50,7 +50,7 @@ class HomeCampusRemindersWidget extends StatefulWidget {
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
 }
 
-class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
+class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> with NotificationsListener {
 
   List<Map<String, dynamic>>? _reminderItems;
 

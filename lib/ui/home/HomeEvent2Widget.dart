@@ -170,7 +170,7 @@ class HomeMyEvents2Widget extends HomeEvent2Widget {
 
 enum _Staled { none, refresh, reload }
 
-class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements NotificationsListener {
+class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsListener {
   final Event2TimeFilter? timeFilter;
   final TZDateTime? customStartTime;
   final TZDateTime? customEndTime;
