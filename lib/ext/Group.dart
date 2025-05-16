@@ -265,8 +265,8 @@ extension GroupSettingsExt on GroupSettings{
 }
 
 extension GroupContentItemExt on GroupContentItem{
-  static final List<String> availableContentCodes =  ["events", "posts", "messages", "polls"];
-  static final List<String> defaultContentCodes =  ["events", "posts", "messages", "polls"];
+  static final List<String> availableContentCodes =   ["posts", "events", "messages", "polls"];
+  static final List<String> defaultContentCodes =  ["posts", "events", "messages", "polls"];
 
   static String getTitleByCode(String code) {
     switch(code){

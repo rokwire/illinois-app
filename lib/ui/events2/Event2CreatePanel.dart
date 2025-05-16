@@ -575,7 +575,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _onlinePasscodeController.text = widget.event?.onlineDetails?.meetingPasscode ?? '';
 
     _attributes = widget.event?.attributes;
-    _visibility = _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public;
+    _visibility = _defaultVisibility;
 
     //NA: canceled
     //NA: userRole
@@ -2266,6 +2266,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         canShowValue = false;
       } else if ((value == _Event2Visibility.group_member) && !_isGroupEvent) {
         canShowValue = false;
+      } else if ((value == _Event2Visibility.public) && !Auth2().isCalendarAdmin) {
+        canShowValue = false;
       }
       if (canShowValue) {
         menuItems.add(DropdownMenuItem<_Event2Visibility>(value: value, child: Text(_event2VisibilityToDisplayString(value))));
@@ -2282,6 +2284,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         _visibility = value;
       });
     }
+  }
+
+  _Event2Visibility get _defaultVisibility {
+    return _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ??
+        (Auth2().isCalendarAdmin ? _Event2Visibility.public :
+        (CollectionUtils.isNotEmpty(widget.targetGroups) ? _Event2Visibility.group_member : _Event2Visibility.registered_user));
   }
 
   // Published
@@ -2533,7 +2541,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     String? eventId = event.id;
     if (eventId == null) {
-      result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
+      if (_callCreateGroupEvent) {
+        result = await Events2().createEventWithContext(event, adminIdentifiers: adminIdentifiers);
+      } else {
+        result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
+      }
     } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {
@@ -2642,6 +2654,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
     }
   }
+
+  bool get _callCreateGroupEvent => (!Auth2().isCalendarAdmin && _isGroupEvent);
 
   Future<bool> _promptFavorite(Event2 event, {bool? surveySucceeded} ) async {
     final String eventNameMacro = '{{event_name}}';
@@ -2839,7 +2853,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ((widget.event?.onlineDetails?.meetingPasscode ?? '') != _onlinePasscodeController.text) ||
 
         !DeepCollectionEquality().equals(widget.event?.attributes, _attributes) ||
-        ((_event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public) != _visibility) ||
+        (_defaultVisibility != _visibility) ||
         ((widget.event?.free ?? true) != _free) ||
         ((widget.event?.cost ?? '') != _costController.text) ||
 
@@ -2964,14 +2978,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
     DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    DateTime? nextEndDateUtc = _endDateTimeUtc;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
       }
       int daysToAdd = (nextStartDateUtc.weekday == 7) ? (1 + (_weeklyRepeatPeriod! - 1) * 7) : 1;
       nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysToAdd));
-      nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
+      nextEndDateUtc = nextEndDateUtc?.add(Duration(days: daysToAdd));
     }
     return pairs;
   }
@@ -2995,7 +3009,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
     DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    DateTime? nextEndDateUtc = _endDateTimeUtc;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if ((_recurrenceRepeatDay == 0) || (_recurrenceRepeatDay == nextStartDateUtc.day)) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
@@ -3023,7 +3037,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
       Duration duration = Duration(days: daysDiff);
       nextStartDateUtc = nextStartDateUtc.add(duration);
-      nextEndDateUtc = nextEndDateUtc.add(duration);
+      nextEndDateUtc = nextEndDateUtc?.add(duration);
     }
     return pairs;
   }
@@ -3032,7 +3046,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
     DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    DateTime? nextEndDateUtc = _endDateTimeUtc;
     int? nThDayOfMonth = _nThDayOfMonth;
     DateTime? desiredDateTime = _getInitialRecurringDesiredDay(nextStartDateUtc: nextStartDateUtc, nThDayOfMonth: nThDayOfMonth);
     if (desiredDateTime != null) {
@@ -3042,14 +3056,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         } else if (nextStartDateUtc.day < desiredDateTime.day) {
           int daysDiff = desiredDateTime.difference(nextStartDateUtc).inDays;
           nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysDiff));
-          nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysDiff));
+          nextEndDateUtc = nextEndDateUtc?.add(Duration(days: daysDiff));
           pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
         }
         desiredDateTime = _getNextRecurringDesiredDay(nextStartDateUtc: nextStartDateUtc, nThDayOfMonth: nThDayOfMonth);
         int daysDiffToNext = desiredDateTime!.difference(nextStartDateUtc).inDays;
         Duration duration = Duration(days: daysDiffToNext);
         nextStartDateUtc = nextStartDateUtc.add(duration);
-        nextEndDateUtc = nextEndDateUtc.add(duration);
+        nextEndDateUtc = nextEndDateUtc?.add(duration);
       }
     }
     return pairs;
@@ -3250,7 +3264,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: mainEvent, dates: recurringDates);
     if (CollectionUtils.isNotEmpty(recurringEvents)) {
       for (Event2 recurringEvent in recurringEvents!) {
-        dynamic recurringResult = await Events2().createEvent(recurringEvent);
+        dynamic recurringResult;
+        if (_callCreateGroupEvent) {
+          recurringResult = await Events2().createEventWithContext(recurringEvent);
+        } else {
+          recurringResult = await Events2().createEvent(recurringEvent);
+        }
         if (recurringResult is Event2) {
           debugPrint('Successfully created recurring event: ${recurringResult.id}');
         } else {
@@ -3270,8 +3289,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (day == null) {
       return '-----';
     }
-
-
     return '$day${_getOrdinalDaySuffix(day)} ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
   }
 
@@ -3328,15 +3345,13 @@ String _event2VisibilityToDisplayString(_Event2Visibility value) {
 
 _Event2Visibility? _event2VisibilityFromAuthorizationContext(Event2AuthorizationContext? authorizationContext) {
   if (authorizationContext == null) {
-    return _Event2Visibility.public;
+    return null;
+  } else if (authorizationContext.isGroupMembersOnly) {
+    return _Event2Visibility.group_member;
+  } else if (authorizationContext.isGuestListOnly) {
+    return _Event2Visibility.registered_user;
   } else {
-    if (authorizationContext.isGroupMembersOnly) {
-      return _Event2Visibility.group_member;
-    } else if (authorizationContext.isGuestListOnly) {
-      return _Event2Visibility.registered_user;
-    } else {
-      return _Event2Visibility.public;
-    }
+    return _Event2Visibility.public;
   }
 }
 
@@ -3398,7 +3413,7 @@ String _recurrenceMonthWeekDayToDisplayString(_RecurrenceMonthWeekDay? value) {
 
 class _RecurringDatesPair {
   final DateTime startDateTimeUtc;
-  final DateTime endDateTimeUtc;
+  final DateTime? endDateTimeUtc;
 
-  _RecurringDatesPair({required this.startDateTimeUtc, required this.endDateTimeUtc});
+  _RecurringDatesPair({required this.startDateTimeUtc, this.endDateTimeUtc});
 }

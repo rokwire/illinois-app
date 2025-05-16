@@ -23,11 +23,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantProvidersConversationContentWidget.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -38,19 +39,19 @@ import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AssistantContent { google_conversation, grok_conversation, perplexity_conversation, openai_conversation, all_assistants, faqs }
+enum AssistantContentType { google, grok, perplexity, openai, all, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
-  final AssistantContent? content;
+  final AssistantContentType? contentType;
 
-  AssistantHomePanel._({this.content});
+  AssistantHomePanel._({this.contentType});
 
   @override
   _AssistantHomePanelState createState() => _AssistantHomePanelState();
 
   static String pageRuntimeTypeName = 'AssistantHomePanel';
 
-  static void present(BuildContext context, {AssistantContent? content}) {
+  static void present(BuildContext context, {AssistantContentType? content}) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
@@ -72,16 +73,15 @@ class AssistantHomePanel extends StatefulWidget {
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
           builder: (context) {
-            return AssistantHomePanel._(content: content);
+            return AssistantHomePanel._(contentType: content);
           });
     }
   }
 }
 
 class _AssistantHomePanelState extends State<AssistantHomePanel> with NotificationsListener {
-  late List<AssistantContent> _contentTypes;
-  AssistantContent? _selectedContent;
-  static AssistantContent? _lastSelectedContent;
+  late List<AssistantContentType> _contentTypes;
+  AssistantContentType? _selectedContentType;
   bool _contentValuesVisible = false;
 
   final GlobalKey _pageKey = GlobalKey();
@@ -101,13 +101,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
     _contentTypes = _buildAssistantContentTypes();
 
-    if (widget.content != null) {
-      _selectedContent = _lastSelectedContent = widget.content;
-    } else if (_lastSelectedContent != null) {
-      _selectedContent = _lastSelectedContent;
-    } else {
-      _selectedContent = _initialSelectedContent;
-    }
+    _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
+      _ensureContentType(Storage()._assistantContentType, contentTypes: _contentTypes) ??
+      (_contentTypes.isNotEmpty ? _contentTypes.first : null);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 1. Force to calculate correct content height
       setStateIfMounted((){});
@@ -142,7 +139,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   Widget _buildSheet(BuildContext context) {
-    bool clearAllVisible = (_selectedContent != null) && (_selectedContent != AssistantContent.all_assistants) && (_selectedContent != AssistantContent.faqs);
+    bool clearAllVisible = (_selectedContentType != null) && (_selectedContentType != AssistantContentType.all) && (_selectedContentType != AssistantContentType.faqs);
     return Column(children: [
       Container(
           color: Styles().colors.white,
@@ -184,7 +181,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                           rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                          label: _getContentItemName(_selectedContent) ?? '',
+                          label: _selectedContentType?.displayTitle ?? '',
                           onTap: _onTapContentSwitch))),
                 _buildContent(),
               ]))
@@ -214,27 +211,23 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (AssistantContent contentItem in _contentTypes) {
-      if (_selectedContent != contentItem) {
-        contentList.add(_buildContentItem(contentItem));
-      }
+    for (AssistantContentType contentType in _contentTypes) {
+      contentList.add(RibbonButton(
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+        rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+        label: contentType.displayTitle,
+        onTap: () => _onTapContentItem(contentType)
+      ));
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: contentList)));
   }
 
-  Widget _buildContentItem(AssistantContent contentItem) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentItemName(contentItem),
-        onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _onTapContentItem(AssistantContent contentItem) {
+  void _onTapContentItem(AssistantContentType contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
     setState(() {
-      _selectedContent = _lastSelectedContent = contentItem;
+      Storage()._assistantContentType = _selectedContentType = contentItem;
       _contentValuesVisible = !_contentValuesVisible;
     });
   }
@@ -272,38 +265,40 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   // Content Codes
 
   void _updateContentTypes() {
-    List<AssistantContent> contentTypes = _buildAssistantContentTypes();
+    List<AssistantContentType> contentTypes = _buildAssistantContentTypes();
     if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
       setState(() {
         _contentTypes = contentTypes;
         _contentValuesVisible = false;
-        if (!_contentTypes.contains(_selectedContent)) {
-          _selectedContent = _contentTypes.isNotEmpty ? _contentTypes.first : null;
+        if (!_contentTypes.contains(_selectedContentType)) {
+          Storage()._assistantContentType = _selectedContentType = _contentTypes.isNotEmpty ? _contentTypes.first : null;
         }
       });
     }
   }
 
-  List<AssistantContent> _buildAssistantContentTypes() {
-    List<AssistantContent> contentTypes = <AssistantContent>[];
+  static List<AssistantContentType> _buildAssistantContentTypes() {
+    List<AssistantContentType> contentTypes = <AssistantContentType>[];
     List<AssistantProvider>? availableProviders = Assistant().providers;
     if (availableProviders != null) {
       for (AssistantProvider provider in availableProviders) {
-        AssistantContent? value = _assistantContentFromProvider(provider);
-        if (value != null) {
-          contentTypes.add(value);
-        }
+        contentTypes.add(AssistantContentTypeImpl.fromProvider(provider));
       }
-      int contentTypesLength = contentTypes.length;
-      if ((contentTypesLength > 1) && FlexUI().isAllAssistantsAvailable) {
-        contentTypes.add(AssistantContent.all_assistants);
+      contentTypes.sortAlphabetical();
+
+      int numberOfProviders = contentTypes.length;
+      if ((numberOfProviders > 1) && FlexUI().isAllAssistantsAvailable) {
+        contentTypes.add(AssistantContentType.all);
       }
-      if ((contentTypesLength > 0) && FlexUI().isAssistantFaqsAvailable) {
-        contentTypes.add(AssistantContent.faqs);
+      if ((numberOfProviders > 0) && FlexUI().isAssistantFaqsAvailable) {
+        contentTypes.add(AssistantContentType.faqs);
       }
     }
     return contentTypes;
   }
+
+  static AssistantContentType? _ensureContentType(AssistantContentType? contentType, { List<AssistantContentType>? contentTypes }) =>
+    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
 
   // Global On/Off / Available
 
@@ -320,40 +315,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   // Utilities
 
-  String? _getContentItemName(AssistantContent? contentItem) {
-    switch (contentItem) {
-      case AssistantContent.google_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
-      case AssistantContent.grok_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
-      case AssistantContent.perplexity_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
-      case AssistantContent.openai_conversation:
-        return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
-      case AssistantContent.all_assistants:
-        return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
-      case AssistantContent.faqs:
-        return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
-      default:
-        return null;
-    }
-  }
-
-  AssistantContent? _assistantContentFromProvider(AssistantProvider? provider) {
-    switch (provider) {
-      case AssistantProvider.google:
-        return AssistantContent.google_conversation;
-      case AssistantProvider.grok:
-        return AssistantContent.grok_conversation;
-      case AssistantProvider.perplexity:
-        return AssistantContent.perplexity_conversation;
-      case AssistantProvider.openai:
-        return AssistantContent.openai_conversation;
-      default:
-        return null;
-    }
-  }
-
   double? get _contentHeight {
     RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
     double? pageHeight = ((pageRenderBox is RenderBox) && pageRenderBox.hasSize) ? pageRenderBox.size.height : null;
@@ -365,40 +326,18 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   Widget? get _contentWidget {
-    switch (_selectedContent) {
-      case AssistantContent.google_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContent.grok_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContent.perplexity_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContent.openai_conversation:
-        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContent.all_assistants:
-        return AssistantProvidersConversationContentWidget();
-      case AssistantContent.faqs:
-        return AssistantFaqsContentWidget();
-      default:
-        return null;
+    switch (_selectedContentType) {
+      case AssistantContentType.google: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContentType.grok: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContentType.perplexity: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContentType.openai: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContentType.all: return AssistantProvidersConversationContentWidget();
+      case AssistantContentType.faqs: return AssistantFaqsContentWidget();
+      default: return null;
     }
   }
 
-  AssistantProvider? get _selectedProvider {
-    switch (_selectedContent) {
-      case AssistantContent.google_conversation:
-        return AssistantProvider.google;
-      case AssistantContent.grok_conversation:
-        return AssistantProvider.grok;
-      case AssistantContent.perplexity_conversation:
-        return AssistantProvider.perplexity;
-      case AssistantContent.openai_conversation:
-        return AssistantProvider.openai;
-      default:
-        return null;
-    }
-  }
-
-  AssistantContent? get _initialSelectedContent => CollectionUtils.isNotEmpty(_contentTypes) ? _contentTypes.first : null;
+  AssistantProvider? get _selectedProvider => _selectedContentType?.provider;
 }
 
 class _AssistantSignInInfoPopup extends StatefulWidget {
@@ -460,12 +399,12 @@ class _AssistantSignInInfoPopupState extends State<_AssistantSignInInfoPopup> {
     if (url == _privacyUrl) {
       Analytics().logSelect(target: 'Settings: My App Privacy', source: widget.runtimeType.toString());
       Navigator.of(context).pop();
-      SettingsHomeContentPanel.present(context, content: SettingsContent.privacy);
+      SettingsHomePanel.present(context, content: SettingsContentType.privacy);
       return true;
     } else if (url == _signInUrl) {
       Analytics().logSelect(target: 'Profile: Sign In / Sign Out', source: widget.runtimeType.toString());
       Navigator.of(context).pop();
-      ProfileHomePanel.present(context, content: ProfileContent.login);
+      ProfileHomePanel.present(context, contentType: ProfileContentType.login);
       return true;
     } else {
       return false;
@@ -549,4 +488,71 @@ class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
       }
     });
   }
+}
+
+extension AssistantContentTypeImpl on AssistantContentType {
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
+
+  String displayTitleLng([String? language]) {
+    switch (this) {
+      case AssistantContentType.google: return Localization().getStringEx('panel.assistant.content.conversation.google.label', 'Ask the Google Assistant');
+      case AssistantContentType.grok: return Localization().getStringEx('panel.assistant.content.conversation.grok.label', 'Ask the Grok Assistant');
+      case AssistantContentType.perplexity: return Localization().getStringEx('panel.assistant.content.conversation.perplexity.label', 'Ask the Perplexity Assistant');
+      case AssistantContentType.openai: return Localization().getStringEx('panel.assistant.content.conversation.openai.label', 'Ask the Open AI Assistant');
+      case AssistantContentType.all: return Localization().getStringEx('panel.assistant.content.conversation.all.label', 'Use All Assistants',);
+      case AssistantContentType.faqs: return Localization().getStringEx('panel.assistant.content.faqs.label', 'Illinois Assistant FAQs');
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case AssistantContentType.google: return 'google';
+      case AssistantContentType.grok: return 'grok';
+      case AssistantContentType.perplexity: return 'perplexity';
+      case AssistantContentType.openai: return 'openai';
+      case AssistantContentType.all: return 'all';
+      case AssistantContentType.faqs: return 'faqs';
+    }
+  }
+
+  static AssistantContentType? fromJsonString(String? value) {
+    switch (value) {
+      case 'google': return AssistantContentType.google;
+      case 'grok': return AssistantContentType.grok;
+      case 'perplexity': return AssistantContentType.perplexity;
+      case 'openai': return AssistantContentType.openai;
+      case 'all': return AssistantContentType.all;
+      case 'faqs': return AssistantContentType.faqs;
+      default: return null;
+    }
+  }
+
+  static AssistantContentType fromProvider(AssistantProvider provider) {
+    switch (provider) {
+      case AssistantProvider.google: return AssistantContentType.google;
+      case AssistantProvider.grok: return AssistantContentType.grok;
+      case AssistantProvider.perplexity: return AssistantContentType.perplexity;
+      case AssistantProvider.openai: return AssistantContentType.openai;
+    }
+  }
+
+  AssistantProvider? get provider {
+    switch (this) {
+      case AssistantContentType.google: return AssistantProvider.google;
+      case AssistantContentType.grok: return AssistantProvider.grok;
+      case AssistantContentType.perplexity: return AssistantProvider.perplexity;
+      case AssistantContentType.openai: return AssistantProvider.openai;
+      default: return null;
+    }
+  }
+}
+
+extension _AssistantContentTypeList on List<AssistantContentType> {
+  void sortAlphabetical() => sort((AssistantContentType t1, AssistantContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+}
+
+extension _StorageAssistantExt on Storage {
+  AssistantContentType? get _assistantContentType => AssistantContentTypeImpl.fromJsonString(assistantContentType);
+  set _assistantContentType(AssistantContentType? value) => assistantContentType = value?.jsonString;
 }

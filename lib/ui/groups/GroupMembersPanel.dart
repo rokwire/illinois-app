@@ -40,6 +40,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'GroupAddMembersPanel.dart';
 
+enum GroupMembersFilter { all, admin, member, pending, rejected }
+
 class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
@@ -65,8 +67,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
   int? _membersOffset;
   int? _membersLimit;
   ScrollController? _scrollController;
-  GroupMemberStatus? _selectedMemberStatus;
-  List<GroupMemberStatus>? _sortedMemberStatusList;
+  late List<GroupMembersFilter> _memberFilters;
+  late GroupMembersFilter _selectedMemberFilter;
   bool _statusValuesVisible = false;
   int _loadingProgress = 0;
   bool _isLoadingMembers = false;
@@ -89,116 +91,29 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
     _searchFocus = FocusNode();
     _scrollController = ScrollController();
-    _scrollController!.addListener(_scrollListener);
+    _scrollController?.addListener(_scrollListener);
 
     _group = widget.group;
 
+    _memberFilters = _buildMemberFilters();
+
     // First try to load pending members if the user is admin.
-    if (widget.group?.currentUserIsAdmin ?? false) {
-      _selectedMemberStatus = GroupMemberStatus.pending;
+    if (widget.group?.currentUserIsAdmin == true) {
+      _selectedMemberFilter = GroupMembersFilter.pending;
       _switchToAllIfNoPendingMembers = true;
     }
-    _buildSortedMemberStatusList();
+    else {
+      _selectedMemberFilter = _ensureMemberFilter(GroupMembersFilter.all, filters: _memberFilters) ??
+          _defaultMemberFilter(filters: _memberFilters);
+    }
     _reloadGroupContent();
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
     _searchFocus.dispose();
-  }
-
-  ///
-  /// Constructs alphabetically sorted list of GroupMemberStatus values
-  ///
-  void _buildSortedMemberStatusList() {
-    _sortedMemberStatusList = [GroupMemberStatus.admin];
-
-    if (_group?.currentUserIsAdmin == true) {
-      _sortedMemberStatusList?.addAll([GroupMemberStatus.member, GroupMemberStatus.pending, GroupMemberStatus.rejected]);
-    }
-    else if (_group?.currentUserIsMember == true) {
-      if (_group?.researchProject != true) {
-        _sortedMemberStatusList?.addAll([GroupMemberStatus.member]);
-      }
-    }
-    else {
-      // Do not allow users that are not members to see who is member
-    }
-    if ((_selectedMemberStatus == null) && (_sortedMemberStatusList?.length == 1)) {
-      _selectedMemberStatus = _sortedMemberStatusList?.first;
-    }
-    _sortedMemberStatusList?.sort((s1, s2) => s1.toString().compareTo(s2.toString()));
-  }
-
-  void _reloadGroupContent() {
-    _loadGroup();
-    _reloadMembers();
-  }
-
-  void _loadGroup() {
-    _increaseProgress();
-    Groups().loadGroup(widget.groupId).then((Group? group) {
-      _group = group;
-      _buildSortedMemberStatusList();
-      _decreaseProgress();
-    });
-  }
-
-  void _loadMembers({bool showLoadingIndicator = true}) {
-    if (!_isLoadingMembers && ((_visibleMembers == null) || ((_membersLimit != null) && (_membersOffset != null)))) {
-      _isLoadingMembers = true;
-      if (showLoadingIndicator) {
-        _increaseProgress();
-      }
-      List<GroupMemberStatus>? memberStatuses;
-      if (_selectedMemberStatus != null) {
-        memberStatuses = [_selectedMemberStatus!];
-      }
-      Groups().loadMembers(groupId: widget.groupId, name: _searchTextValue, statuses: memberStatuses, offset: _membersOffset, limit: _membersLimit).then((members) {
-        _isLoadingMembers = false;
-        int resultsCount = members?.length ?? 0;
-        // If there are no pending members and the user is admin - select 'All' value
-        if ((resultsCount == 0) && _switchToAllIfNoPendingMembers && (widget.group?.currentUserIsAdmin ?? false)) {
-          _switchToAllIfNoPendingMembers = false; // Do not switch after this
-          _selectedMemberStatus = null; // All group statuses
-          if (showLoadingIndicator) {
-            _decreaseProgress();
-          }
-          _loadMembers(showLoadingIndicator: showLoadingIndicator);
-          return;
-        } else if (_switchToAllIfNoPendingMembers) {
-          _switchToAllIfNoPendingMembers = false;
-        }
-
-        if (resultsCount > 0) {
-          if (_visibleMembers == null) {
-            _visibleMembers = <Member>[];
-          }
-          _visibleMembers!.addAll(members!);
-          _membersOffset = (_membersOffset ?? 0) + resultsCount;
-          _membersLimit = 10;
-        }
-        else {
-          _membersOffset = null;
-          _membersLimit = null;
-        }
-
-        if (showLoadingIndicator) {
-          _decreaseProgress();
-        } else {
-          _updateState();
-        }
-      });
-    }
-  }
-
-  void _reloadMembers() {
-    _membersOffset = 0;
-    _membersLimit = _defaultMembersLimit;
-    _visibleMembers = null;
-    _loadMembers();
+    super.dispose();
   }
 
   @override
@@ -217,7 +132,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
     if (reloadMembers) {
       // Switch to all members if there are no more pending users
-      if (_selectedMemberStatus == GroupMemberStatus.pending) {
+      if (_selectedMemberFilter == GroupMemberStatus.pending) {
         _switchToAllIfNoPendingMembers = true;
       }
       _reloadMembers();
@@ -257,7 +172,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
         Container(height: MediaQuery.of(context).size.height / 5),
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
+            child: Text(_emptyStatusText, textAlign: TextAlign.center,
                 style: Styles().textStyles.getTextStyle('widget.group.members.title'))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
@@ -282,16 +197,16 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
     }
 
     return Column(children: <Widget>[
-        Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
+        Visibility(visible: 1 < CollectionUtils.length(_memberFilters), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
           RibbonButton(
-              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-              backgroundColor: Styles().colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-              rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
-              label: _memberStatusToString(_selectedMemberStatus),
-              onTap: _onTapRibbonButton))),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+            backgroundColor: Styles().colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
+            label: _selectedMemberStatusFilterTitle,
+            onTap: _onTapRibbonButton))),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Row(
             children: [
@@ -401,12 +316,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
   void _onTapSearch(){
     Analytics().logSelect(target: "Group Members Search", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSearchPanel(group: _group, selectedMemberStatus: _selectedMemberStatus)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSearchPanel(group: _group, selectedMemberStatus: _selectedMemberFilter.memberStatus)));
   }
 
   void _onTapAddMembers(){
     Analytics().logSelect(target: "Group Members Add Members", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAddMembersPanel(group: _group, memberStatus: _selectedMemberStatus))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAddMembersPanel(group: _group, memberStatus: _selectedMemberFilter.memberStatus))).then((result) {
       if ((result == true) && mounted) {
         _reloadMembers();
       }
@@ -467,39 +382,29 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
   Widget _buildStatusValuesWidget() {
     List<Widget> widgetList = <Widget>[];
     widgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    if ((_selectedMemberStatus != null) && (1 < CollectionUtils.length(_sortedMemberStatusList))) {
-      widgetList.add(_buildStatusItem(null));
-    }
-    if (CollectionUtils.isNotEmpty(_sortedMemberStatusList)) {
-      for (GroupMemberStatus status in _sortedMemberStatusList!) {
-        if ((_selectedMemberStatus != status)) {
-          widgetList.add(_buildStatusItem(status));
-        }
-      }
+    for (GroupMembersFilter statusFilter in _memberFilters) {
+      widgetList.add(RibbonButton(
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        textStyle: Styles().textStyles.getTextStyle((_selectedMemberFilter == statusFilter) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+        rightIconKey: (_selectedMemberFilter == statusFilter) ? 'check-accent' : null,
+        label: _memberStatusFilterTitle(statusFilter),
+        onTap: () => _onTapStatusFilter(statusFilter)
+      ));
     }
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 32), child: SingleChildScrollView(child: Column(children: widgetList)));
   }
 
-  Widget _buildStatusItem(GroupMemberStatus? status) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        rightIcon: null,
-        label: _memberStatusToString(status),
-        onTap: () => _onTapStatusItem(status));
-  }
-
   void _onTapRibbonButton() {
     Analytics().logSelect(target: 'Toggle Dropdown');
-    if (1 < CollectionUtils.length(_sortedMemberStatusList)) {
+    if (1 < CollectionUtils.length(_memberFilters)) {
       _changeMemberStatusValuesVisibility();
     }
   }
 
-  void _onTapStatusItem(GroupMemberStatus? status) {
+  void _onTapStatusFilter(GroupMembersFilter status) {
     Analytics().logSelect(target: '$status');
-    _selectedMemberStatus = status;
+    _selectedMemberFilter = status;
     _reloadMembers();
     _changeMemberStatusValuesVisibility();
   }
@@ -525,51 +430,107 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
     }
   }
 
-  String _getEmptyMembersMessage() {
-    switch (_selectedMemberStatus) {
-      case GroupMemberStatus.admin:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.admin.empty.project.message', 'There are no principal investigators.') : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
-      case GroupMemberStatus.member:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.member.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
-      case GroupMemberStatus.pending:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.pending.empty.project.message', 'There are no pending participants.') : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
-      case GroupMemberStatus.rejected:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no rejected participants.') : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
-      default: // All
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.all.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
+  ///
+  /// Constructs alphabetically sorted list of GroupMemberStatus values
+  ///
+  List<GroupMembersFilter> _buildMemberFilters() {
+    if (_group?.currentUserIsAdmin == true) {
+      return <GroupMembersFilter>[GroupMembersFilter.all, GroupMembersFilter.admin, GroupMembersFilter.member, GroupMembersFilter.pending, GroupMembersFilter.rejected];
+    }
+    else if ((_group?.currentUserIsMember == true) && (_group?.researchProject != true)) {
+        return <GroupMembersFilter>[GroupMembersFilter.all, GroupMembersFilter.admin, GroupMembersFilter.member];
+    }
+    else {
+      return <GroupMembersFilter>[GroupMembersFilter.admin];
     }
   }
 
-  String? _memberStatusToString(GroupMemberStatus? status) {
-    switch (status) {
-      case GroupMemberStatus.admin:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.admin.project.label', 'Principal Investigator') : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
-      case GroupMemberStatus.member:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.member.project.label', 'Participant') : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
-      case GroupMemberStatus.pending:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.pending.project.label', 'Pending') : Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
-      case GroupMemberStatus.rejected:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Rejected') : Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
-      default:
-        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.all.project.label', 'All') : Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
+  GroupMembersFilter? _ensureMemberFilter(GroupMembersFilter? filter, { List<GroupMembersFilter>? filters }) =>
+    (filters?.contains(filter) != false) ? filter : null;
+
+  GroupMembersFilter _defaultMemberFilter({ List<GroupMembersFilter>? filters }) =>
+    ((filters != null) && filters.isNotEmpty) ? filters.first : GroupMembersFilter.all;
+
+  void _reloadGroupContent() {
+    _loadGroup();
+    _reloadMembers();
+  }
+
+  void _loadGroup() {
+    _increaseProgress();
+    Groups().loadGroup(widget.groupId).then((Group? group) {
+      _group = group;
+      _memberFilters = _buildMemberFilters();
+      if (_memberFilters.contains(_selectedMemberFilter) == false) {
+        _selectedMemberFilter = _memberFilters.isNotEmpty ? _memberFilters.first : GroupMembersFilter.admin;
+      }
+      _decreaseProgress();
+    });
+  }
+
+  void _loadMembers({bool showLoadingIndicator = true}) async {
+    if (!_isLoadingMembers && ((_visibleMembers == null) || ((_membersLimit != null) && (_membersOffset != null)))) {
+      _isLoadingMembers = true;
+      if (showLoadingIndicator) {
+        _increaseProgress();
+      }
+      List<Member>? members = await Groups().loadMembers(groupId: widget.groupId, name: _searchTextValue, statuses: _selectedMemberFilter.memberStatuses, offset: _membersOffset, limit: _membersLimit);
+      if (mounted && _switchToAllIfNoPendingMembers) {
+        _switchToAllIfNoPendingMembers = false; // Do not switch after this
+
+        int resultsCount = members?.length ?? 0;
+        // If there are no pending members and the user is admin - select 'All' value
+        if ((resultsCount == 0) && (_selectedMemberFilter == GroupMembersFilter.pending) && (widget.group?.currentUserIsAdmin ?? false)) {
+          _selectedMemberFilter = _ensureMemberFilter(GroupMembersFilter.all, filters: _memberFilters) ?? _defaultMemberFilter(filters: _memberFilters); // All group statuses
+          members = await Groups().loadMembers(groupId: widget.groupId, name: _searchTextValue, statuses: _selectedMemberFilter.memberStatuses, offset: _membersOffset, limit: _membersLimit);
+        }
+      }
+
+      if (mounted) {
+        int resultsCount = members?.length ?? 0;
+        _isLoadingMembers = false;
+        if (resultsCount > 0) {
+          if (_visibleMembers == null) {
+            _visibleMembers = <Member>[];
+          }
+          _visibleMembers!.addAll(members!);
+          _membersOffset = (_membersOffset ?? 0) + resultsCount;
+          _membersLimit = 10;
+        }
+        else {
+          _membersOffset = null;
+          _membersLimit = null;
+        }
+
+        if (showLoadingIndicator) {
+          _decreaseProgress();
+        } else {
+          _updateState();
+        }
+      }
     }
   }
 
-  bool get _isLoading {
-    return (_loadingProgress > 0);
+  void _reloadMembers() {
+    _membersOffset = 0;
+    _membersLimit = _defaultMembersLimit;
+    _visibleMembers = null;
+    _loadMembers();
   }
 
-  bool get _isAdmin {
-    return _group?.currentMember?.isAdmin ?? false;
-  }
+  String get _emptyStatusText =>
+    _isResearchProject ? _selectedMemberFilter.emptyResearchProjectStatusText : _selectedMemberFilter.emptyGroupStatusText;
 
-  bool get _isResearchProject {
-    return _group?.researchProject == true;
-  }
+  String get _selectedMemberStatusFilterTitle =>
+    _memberStatusFilterTitle(_selectedMemberFilter);
 
-  bool get _isApproveAllVisible => _isAdmin
-        && (_selectedMemberStatus == null /*All*/ || _selectedMemberStatus == GroupMemberStatus.pending);
+  String _memberStatusFilterTitle(GroupMembersFilter statusFilter) =>
+    _isResearchProject ? statusFilter.displayResearchProjectTitle : statusFilter.displayGroupTitle;
 
+  bool get _isLoading => (_loadingProgress > 0);
+  bool get _isResearchProject => _group?.researchProject == true;
+  bool get _isAdmin => _group?.currentMember?.isAdmin ?? false;
+  bool get _isApproveAllVisible => _isAdmin && (_selectedMemberFilter == GroupMemberStatus.pending);
   bool get _canAddMembers => _isAdmin;
 }
 
@@ -752,5 +713,77 @@ class GroupMemberCard extends StatelessWidget {
 
   bool get _displayAttended {
     return (group?.attendanceGroup == true) && _isAdmin && (member?.dateAttendedUtc != null);
+  }
+}
+
+extension GroupMembersFilterImpl on GroupMembersFilter {
+  String get displayGroupTitle => displayGroupTitleLng();
+  String get displayGroupTitleEn => displayGroupTitleLng('en');
+
+  String displayGroupTitleLng([String? language]) {
+    switch (this) {
+      case GroupMembersFilter.all: return Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
+      case GroupMembersFilter.admin: return Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
+      case GroupMembersFilter.member: return Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
+      case GroupMembersFilter.pending: return Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
+      case GroupMembersFilter.rejected: return Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Denied');
+    }
+  }
+
+  String get displayResearchProjectTitle => displayResearchProjectTitleLng();
+  String get displayResearchProjectTitleEn => displayResearchProjectTitleLng('en');
+
+  String displayResearchProjectTitleLng([String? language]) {
+    switch (this) {
+      case GroupMembersFilter.all: return Localization().getStringEx('panel.manage_members.member.status.all.project.label', 'All');
+      case GroupMembersFilter.admin: return Localization().getStringEx('panel.manage_members.member.status.admin.project.label', 'Principal Investigator');
+      case GroupMembersFilter.member: return Localization().getStringEx('panel.manage_members.member.status.member.project.label', 'Participant');
+      case GroupMembersFilter.pending: return Localization().getStringEx('panel.manage_members.member.status.pending.project.label', 'Pending');
+      case GroupMembersFilter.rejected: return Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Denied');
+    }
+  }
+
+  String get emptyGroupStatusText {
+    switch (this) {
+      case GroupMembersFilter.all: return Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
+      case GroupMembersFilter.admin: return Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+      case GroupMembersFilter.member: return Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+      case GroupMembersFilter.pending: return Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+      case GroupMembersFilter.rejected: return Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no denied members.');
+    }
+  }
+
+  String get emptyResearchProjectStatusText {
+    switch (this) {
+      case GroupMembersFilter.all: return Localization().getStringEx('panel.manage_members.status.all.empty.project.message', 'There are no participants.');
+      case GroupMembersFilter.admin: return Localization().getStringEx('panel.manage_members.status.admin.empty.project.message', 'There are no principal investigators.') ;
+      case GroupMembersFilter.member: return Localization().getStringEx('panel.manage_members.status.member.empty.project.message', 'There are no participants.');
+      case GroupMembersFilter.pending: return Localization().getStringEx('panel.manage_members.status.pending.empty.project.message', 'There are no pending participants.');
+      case GroupMembersFilter.rejected: return Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no denied participants.');
+    }
+  }
+
+  static GroupMembersFilter fromMemberStatus(GroupMemberStatus status) {
+    switch (status) {
+      case GroupMemberStatus.admin: return GroupMembersFilter.admin;
+      case GroupMemberStatus.member: return GroupMembersFilter.member;
+      case GroupMemberStatus.pending: return GroupMembersFilter.pending;
+      case GroupMemberStatus.rejected: return GroupMembersFilter.rejected;
+    }
+  }
+
+  GroupMemberStatus? get memberStatus {
+    switch (this) {
+      case GroupMembersFilter.all: return null;
+      case GroupMembersFilter.admin: return GroupMemberStatus.admin;
+      case GroupMembersFilter.member: return GroupMemberStatus.member;
+      case GroupMembersFilter.pending: return GroupMemberStatus.pending;
+      case GroupMembersFilter.rejected: return GroupMemberStatus.rejected;
+    }
+  }
+
+  List<GroupMemberStatus>? get memberStatuses {
+    GroupMemberStatus? status = memberStatus;
+    return (status != null) ? <GroupMemberStatus>[status] : null;
   }
 }

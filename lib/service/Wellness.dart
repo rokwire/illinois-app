@@ -537,7 +537,9 @@ class Wellness with Service, NotificationsListener, ContentItemCategoryClient {
   }
 
   void toDoListAccessed(bool accessed) {
-    _applyUserSetting(settingName: _userAccessedToDoListSetting, settingValue: accessed);
+    if (isToDoListAccessed != accessed) {
+      _applyUserSetting(settingName: _userAccessedToDoListSetting, settingValue: accessed);
+    }
   }
 
   bool? get isRingsAccessed {

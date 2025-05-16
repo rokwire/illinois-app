@@ -90,9 +90,10 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final String? groupIdentifier;
   final String? groupPostId;
+  final String? groupPostCommentId;
   final AnalyticsFeature? _analyticsFeature;
 
-  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature}) :
+  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature, this.groupPostCommentId}) :
     _analyticsFeature = analyticsFeature;
 
   @override
@@ -444,7 +445,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _postId = null; // Clear _postId in order not to redirect on the next group load.
         _decreaseProgress();
         if (post != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post, analyticsFeature: widget.analyticsFeature)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post, visibleCommentId: widget.groupPostCommentId, analyticsFeature: widget.analyticsFeature)));
         }
       });
     }

@@ -419,7 +419,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   void _onViewProfileClicked() {
     Analytics().logSelect(target: 'View Profile');
-    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContent.profile);
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContentType.profile);
   }
 
   // Linked

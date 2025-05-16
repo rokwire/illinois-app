@@ -22,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -303,7 +303,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
 
   void _onTapDisplaySettings() {
     Analytics().logSelect(target: 'Appointments display settings');
-    SettingsHomeContentPanel.present(context, content: SettingsContent.appointments);
+    SettingsHomePanel.present(context, content: SettingsContentType.appointments);
   }
 
   void _initAppointments() {
