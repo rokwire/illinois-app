@@ -1064,7 +1064,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
   @override
   Widget build(BuildContext context) {
     String? htmlBody = widget.post?.body;
-    String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = (widget.post?.commentsCount ?? 0);
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String? repliesLabel = (visibleRepliesCount == 1)
@@ -1132,11 +1131,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               //   ),
                               // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
 
-                            Visibility(visible: StringUtils.isNotEmpty(imageUrl),
-                              child: Container(
+                            if (StringUtils.isNotEmpty(widget.post?.imageUrl))
+                              Container(
                                 padding: EdgeInsets.only(top: 14),
-                                child: Image.network(imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
-                            )),
+                                child: _imageWidget
+                              ),
                             WebEmbed(body: htmlBody),
                             // Container(
                             //   constraints: BoxConstraints(maxHeight: 200),
@@ -1181,6 +1180,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   ]))))),
     ]);
   }
+
+  Widget get _imageWidget => (widget.isClickable != true) ? ModalImageHolder(child: _rawImageWidget) : _rawImageWidget;
+  Widget get _rawImageWidget => Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true);
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
