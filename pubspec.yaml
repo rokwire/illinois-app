@@ -51,7 +51,6 @@ dependencies:
   package_info_plus: ^8.3.0
   device_calendar: ^4.3.3
   image_cropping: ^0.0.15 # used for the native app and does not work for the web app
-  image_cropper: ^8.1.0 # used for the web app
   dropdown_button2: ^2.3.9
   video_player: ^2.9.3
   just_audio: ^0.9.46
@@ -82,6 +81,7 @@ dependencies:
   ai_barcode_scanner: ^6.0.1
   pointer_interceptor: ^0.10.1+2
   file_picker: ^10.1.0
+  image_cropper: ^9.1.0
   barcode_widget: ^2.0.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added Pinch and Zoom on group post images [#5128](https://github.com/rokwire/illinois-app/issues/5128).
+### Fixed
+- WEB: Show Crop image UI as dialog - prevent dark buttons in the page [#4683](https://github.com/rokwire/illinois-app/issues/4683).
 
 ## [7.1.5] - 2025-05-15
 ### Fixed
