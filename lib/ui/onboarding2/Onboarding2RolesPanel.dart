@@ -44,6 +44,9 @@ class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
   set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
+  Future<bool> isOnboardingEnabled() async => !(ListUtils.contains(Auth2().prefs?.roles, UserRole.values) ?? false);
+
+  @override
   State<StatefulWidget> createState() => _Onboarding2RoleSelectionPanelState();
 }
 

@@ -30,6 +30,9 @@ class Onboarding2ProfileInfoPanel extends StatefulWidget with Onboarding2Panel {
   set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
 
   @override
+  Future<bool> isOnboardingEnabled() async => StringUtils.isEmpty(Auth2().fullName);
+
+  @override
   State<StatefulWidget> createState() => _Onboarding2ProfileInfoPanelState();
 }
 
