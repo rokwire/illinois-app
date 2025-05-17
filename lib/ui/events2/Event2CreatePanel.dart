@@ -1893,12 +1893,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   Widget _buildLocationBuildingInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
-    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING'), required: true),
     body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.location.building.field', 'LOCATION BUILDING FIELD')),
   );
 
   Widget _buildLocationAddressInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
-    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS'), required: true),
     body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.location.address.field', 'LOCATION ADDRESS FIELD')),
   );
 

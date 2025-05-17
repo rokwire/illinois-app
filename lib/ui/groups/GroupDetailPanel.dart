@@ -830,7 +830,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       labelPadding: const EdgeInsets.symmetric(horizontal: 6.0,),
       controller: _tabController,
       backgroundColor: Styles().colors.fillColorPrimary,
-      isScrollable: false,
+      isScrollable: true,
       onTap: (index) => _onTab(_tabAtIndex(index)),
     );
   }
