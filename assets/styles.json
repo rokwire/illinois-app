@@ -1033,6 +1033,12 @@
     "attendance": {"src": "0xf7f3", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "report": {"src": "0xf06a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "clock": {"src": "0xf017", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "ellipsis": {"src": "0xf141", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "user": {"src": "0xf007", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "user-tie": {"src": "0xf508", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "users": {"src": "0xf0c0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "users-gear": {"src": "0xf509", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+
     "fingerprint": {"src": "0xf577", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},
     "mobile": {"src": "0xf3ce", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},
     "shield-halved": {"src": "0xf3ed", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},

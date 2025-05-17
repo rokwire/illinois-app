@@ -327,7 +327,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
   void _onTapAddMembers(){
     Analytics().logSelect(target: "Group Members Add Members", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAddMembersPanel(group: _group, selectedMemberStatus: _selectedMemberFilter.memberStatus))); //TBD
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAddMembersPanel(group: _group, memberStatus: _selectedMemberFilter.memberStatus))).then((result) {
+      if ((result == true) && mounted) {
+        _reloadMembers();
+      }
+    });
   }
 
   void _onTapApproveAll(){

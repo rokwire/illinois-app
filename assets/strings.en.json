@@ -2328,6 +2328,9 @@
     "panel.directory.accounts.groups.hint.empty": "Select groups",
     "panel.directory.accounts.groups.hint.semantics": "Double type to show groups.",
 
+    "panel.directory.accounts.select.header.title": "Directory of Users",
+    "panel.directory.accounts.select.apply.prompt": "Apply your changes?",
+
     "panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the Directory of Users.",
     "panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the Directory of Users.",
     "panel.profile.info.command.button.edit.text": "Edit my info",
@@ -4249,11 +4252,23 @@
     "model.groups.member.status.rejected": "Denied",
     "model.groups.member.status.unknown": "Unknown",
 
+    "model.groups.member.status.group.pending": "Pending",
+    "model.groups.member.status.group.member": "Members",
+    "model.groups.member.status.group.admin": "Admins",
+    "model.groups.member.status.group.rejected": "Denied",
+    "model.groups.member.status.group.unknown": "Unknown",
+
     "model.research_project.member.status.pending": "Pending",
     "model.research_project.member.status.member": "Participant",
     "model.research_project.member.status.admin": "Admin",
     "model.research_project.member.status.rejected": "Denied",
     "model.research_project.member.status.unknown": "Unknown",
+
+    "model.research_project.member.status.group.pending": "Pending",
+    "model.research_project.member.status.group.member": "Participants",
+    "model.research_project.member.status.group.admin": "Admins",
+    "model.research_project.member.status.group.rejected": "Denied",
+    "model.research_project.member.status.group.unknown": "Unknown",
 
     "model.event2.sort_type.date_time": "Date & Time",
     "model.event2.sort_type.alphabetical": "Alphabetical",

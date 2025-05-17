@@ -198,6 +198,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Illinois
 ## Unreleased
+###
+- Add group members from directory [#5098](https://github.com/rokwire/illinois-app/issues/5098)
 
 ## [7.1.5] - 2025-05-15
 ### Fixed
