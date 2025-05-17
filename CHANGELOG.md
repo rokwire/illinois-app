@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM U
+## [0.5.18] = 2025-05-17
+### Added
+- Add group members from directory [#94](https://github.com/rokmetro/neom-app/issues/94)
 ### Fixed
+- Issues with polls [#93](https://github.com/rokmetro/neom-app/issues/93)
+- Group post image upload success message not immediately visible [#95](https://github.com/rokmetro/neom-app/issues/95)
+- Fix group admin event creation [#96](https://github.com/rokmetro/neom-app/issues/96)
 - Issue creating event with location [#106](https://github.com/rokmetro/neom-app/issues/106)
+
 ## [0.5.17] = 2025-05-10
 ### Changed
 - Update media file transfers to use AWS S3 directly [#104](https://github.com/rokmetro/neom-app/issues/104)
