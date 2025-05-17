@@ -314,6 +314,7 @@ class Event2CreatePanel extends StatefulWidget {
     void Function()? onChanged,
     String? semanticsLabel,
     String? semanticsHint,
+    TextCapitalization capitalization = TextCapitalization.none,
   }) =>
     Semantics(
       label: semanticsLabel,
@@ -330,6 +331,7 @@ class Event2CreatePanel extends StatefulWidget {
         minLines: minLines,
         keyboardType: keyboardType,
         autocorrect: autocorrect,
+        textCapitalization: capitalization,
         onChanged: (onChanged != null) ? ((_) => onChanged) : null,
       ));
 
@@ -608,6 +610,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _locationLongitudeController.addListener(_updateErrorMap);
     _costController.addListener(_updateErrorMap);
     _websiteController.addListener(_updateErrorMap);
+    _locationBuildingController.addListener(_updateErrorMap);
+    _locationAddressController.addListener(_updateErrorMap);
 
     _initEventGroups();
     _initEventAdmins();
@@ -765,7 +769,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
-    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
+    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, capitalization: TextCapitalization.words, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
   );
 
   Widget _buildDescriptionSection() {
@@ -2882,9 +2886,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   bool get _hasLocation {
-    bool stupid1 = _locationBuildingController.text.isNotEmpty;
-    bool stupid2 = _locationAddressController.text.isNotEmpty;
-    return stupid1 || stupid2;
+    bool building = _locationBuildingController.text.isNotEmpty;
+    bool address = _locationAddressController.text.isNotEmpty;
+    return building || address;
     // double? latitude = _parseLatLng(_locationLatitudeController);
     // double? longitude = _parseLatLng(_locationLongitudeController);
     // return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0));
