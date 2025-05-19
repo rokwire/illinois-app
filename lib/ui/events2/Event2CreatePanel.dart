@@ -47,6 +47,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Even2SetupSuperEvent.dart';
+
 class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
@@ -489,6 +491,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   late bool _free;
   late bool _published;
 
+  late SuperEvent? _superEvent;
+  bool _publishSubEvents = false;
+
   Map<String, dynamic>? _attributes;
 
   Event2RegistrationDetails? _registrationDetails;
@@ -609,6 +614,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _initEventGroups();
     _initEventAdmins();
 
+    _superEvent = SuperEvent.fromEvent(widget.event);
+    _superEvent?.syncSubEvents(onLoaded: () =>
+        setStateIfMounted(() =>
+          _publishSubEvents = !_superEvent!.haveUnpublishedSubEvents
+    ));
+
     super.initState();
   }
 
@@ -670,6 +681,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             _buildSponsorshipAndContactsButtonSection(),
             _buildGroupsButtonSection(),
             _buildPublishedSection(),
+            _buildSuperEventSection(),
             _buildVisibilitySection(),
             _buildCreateEventSection(),
           ]),
@@ -2294,7 +2306,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   // Published
 
-  Widget _buildPublishedSection() =>  Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
+  Widget _buildPublishedSection() => Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
 
   Widget _buildPublishedToggle() => Semantics(toggled: _published, excludeSemantics: true,
     label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
@@ -2317,6 +2329,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     });
   }
 
+  //Super event
+  Widget _buildSuperEventSection() =>  Visibility(visible: widget.event?.isSuperEvent == true && _published == true, child:
+    Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishSubEventsToggle()));
+
+  Widget _buildPublishSubEventsToggle() => Semantics(toggled: _published, excludeSemantics: true,
+      label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish All Linked Sub-Events"),
+      hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
+      child: ToggleRibbonButton(
+        label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish All Linked Sub-Events"),
+        padding: _togglePadding,
+        toggled: _publishSubEvents,
+        onTap: _onTapPublishSubEvents,
+        border: _toggleBorder,
+        borderRadius: _toggleBorderRadius,
+      ));
+
+  void _onTapPublishSubEvents(){
+    Analytics().logSelect(target: "Toggle publish sub events");
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _publishSubEvents = !_publishSubEvents;
+    });
+  }
   // Create Event
 
   Widget _buildCreateEventSection() => Padding(padding: Event2CreatePanel.sectionPadding, child:
@@ -2550,6 +2585,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       bool eventModified = (event != widget.event);
       if (eventModified) {
         result = await Events2().updateEvent(event, adminIdentifiers: adminIdentifiers, initialGroupIds: _initialGroupIds);
+        if(_shouldPublishSubEvents) {
+          _superEvent?.superEvent = result is Event2 ? result : _superEvent!.superEvent;
+          await _superEvent?.publishAllSubEvents();
+        }
       }
       else {
         result = event;
@@ -2716,6 +2755,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   bool get _shouldCreateRecurringEvents =>
       ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat));
+
+  bool get _shouldPublishSubEvents =>
+      _superEvent?.haveUnpublishedSubEvents == true && _publishSubEvents == true;
+
   bool get _hasRecurrenceEndDate => (_recurrenceEndDate != null);
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
