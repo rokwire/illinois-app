@@ -233,7 +233,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   void _onTapClearAll() {
-    Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
+    Analytics().logSelect(target: 'Assistant: Clear All', source: widget.runtimeType.toString());
     AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('panel.assistant.clear_all.confirm_prompt.text', 'Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.'),
       positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
@@ -246,7 +246,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   void _onTapClose() {
-    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Analytics().logSelect(target: 'Assistant: Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
   }
 
