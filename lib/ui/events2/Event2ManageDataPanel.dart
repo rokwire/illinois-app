@@ -384,21 +384,20 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
     List<List<dynamic>> rows = <List<dynamic>>[];
     for (SurveyResponse response in responses) {
       String? accountId = response.userId;
-      Event2Account? account =
-      ((accountId != null) && hasAccounts) ? accounts!.firstWhereOrNull((account) => (account.accountId == accountId)) : null;
+      Event2Account? account = ((accountId != null) && hasAccounts) ? accounts!.firstWhereOrNull((account) => (account.accountId == accountId)) : null;
       Map<String, SurveyData> data = response.survey.data;
+      List<dynamic> userAnswers = <dynamic>[];
       for (String key in data.keys) {
         SurveyData? value = data[key];
         if (value != null) {
-          String question = value.text;
           String answer = value.response;
-          rows.add([_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
-            _buildCsvAccountUin(account), _buildCsvAccountNetId(account), _buildCsvAccountFirstName(account), _buildCsvAccountLastName(account),
-            question,
-            answer
-          ]);
+          userAnswers.add(answer);
         }
       }
+      List<dynamic> singleRow = [_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
+        _buildCsvAccountUin(account), _buildCsvAccountNetId(account), _buildCsvAccountFirstName(account), _buildCsvAccountLastName(account),
+        ...userAnswers];
+      rows.add(singleRow);
     }
     String fileName = 'event_survey_results_$_csvFormattedDateExported.csv';
     AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
