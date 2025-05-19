@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.1.7] - 2025-05-19
 ### Changed
 - Move the "Publish All Linked Sub-Events" toggle to underneath the "publish this event" toggle when an event is set as a super event.[#4995](https://github.com/rokwire/illinois-app/issues/4995).
 - Rename ModalImagePanel to ModalPinchZoomImagePanel, introduce ModalPhotoImagePanel and use it by default [#5165](https://github.com/rokwire/illinois-app/issues/5165).
