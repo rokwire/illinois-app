@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Emoji picker search layout above keyboard [#5110](https://github.com/rokwire/illinois-app/issues/5110).
 - Create recurring event without end DateTime [#4990](https://github.com/rokwire/illinois-app/issues/4990).
 - Reaction Notifications open GroupPostDetail panel [#4891](https://github.com/rokwire/illinois-app/issues/4891).
+- Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
 - Updated empty content message in primary care providers [#5114](https://github.com/rokwire/illinois-app/issues/5114).
