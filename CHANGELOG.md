@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use shorter title in Group Members date updated label, improved layout [#5127](https://github.com/rokwire/illinois-app/issues/5127).
 - Updated dropdown menus: sort alphabetically, show current selection indicator where applicable [#5117](https://github.com/rokwire/illinois-app/issues/5117).
 - Move the "Publish All Linked Sub-Events" toggle to underneath the "publish this event" toggle when an event is set as a super event.[#4995](https://github.com/rokwire/illinois-app/issues/4995).
+- Rename ModalImagePanel to ModalPinchZoomImagePanel, introduce ModalPhotoImagePanel and use it by default [#5165](https://github.com/rokwire/illinois-app/issues/5165).
 ### Added
 - Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 - Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).

@@ -668,7 +668,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   void _onTapImage(Group? group){
     Analytics().logSelect(target: "Image");
     if(group?.imageURL!=null){
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 
