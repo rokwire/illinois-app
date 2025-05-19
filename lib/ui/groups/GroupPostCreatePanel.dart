@@ -333,13 +333,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
     DateTime? scheduleDate =  _postData.dateScheduled;
-    // if (_isPost && StringUtils.isEmpty(subject)) {
-    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
-    //   return;
-    // }
 
-    if (StringUtils.isEmpty(body)) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required"));
+    if (StringUtils.isEmpty(body) && StringUtils.isEmpty(imageUrl)) {
+      AppAlert.showDialogResult(context,
+          Localization().getStringEx('', "Please add a message or an image"));
       return;
     }
 
@@ -348,7 +345,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       return;
     }
 
-    String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
+    String htmlModifiedBody = body?.isNotEmpty == true? HtmlUtils.replaceNewLineSymbols(body) : "";
     _increaseProgress();
     List<Group>? selectedGroups;
     if (_canSentToOtherAdminGroups) {
