@@ -2871,7 +2871,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
     if (_imageBytes != null) {
       String? imageUrl = Content().getUserPhotoUrl(accountId: widget.userId, type: UserProfileImageType.defaultType);
       if (StringUtils.isNotEmpty(imageUrl)) {
-        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
       }
     }
   }
