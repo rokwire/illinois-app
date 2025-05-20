@@ -125,46 +125,71 @@ class IlliniCashEligibility {
 
 class IlliniStudentClassification {
   final String? termCode;
+  final String? admittedTerm;
   final String? studentType;
   final String? studentTypeCode;
-  final String? admittedTerm;
   final String? collegeName;
   final String? departmentName;
+  final String? departmentCode;
+  final String? major;
+  final String? department2;
+  final String? major2;
   final String? studentLevelCode;
   final String? studentLevelDescription;
   final String? classification;
+  final String? ferpaSuppressed;
   final bool? firstYear;
+  final bool? isHousingResident;
 
-  IlliniStudentClassification({this.termCode, this.studentType, this.studentTypeCode, this.admittedTerm,
-    this.collegeName, this.departmentName, this.studentLevelCode, this.studentLevelDescription, this.classification, this.firstYear});
+  IlliniStudentClassification({
+    this.termCode, this.admittedTerm,
+    this.studentType, this.studentTypeCode,
+    this.collegeName, this.departmentName, this.departmentCode, this.major,
+    this.department2, this.major2,
+    this.studentLevelCode, this.studentLevelDescription,
+    this.classification, this.ferpaSuppressed,
+    this.firstYear, this.isHousingResident
+  });
 
   static IlliniStudentClassification? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? IlliniStudentClassification(
-      termCode:                JsonUtils.stringValue(json['TermCode']),
-      studentType:             JsonUtils.stringValue(json['StudentTypeCode']),
-      studentTypeCode:         JsonUtils.stringValue(json['StudentType']),
-      admittedTerm:            JsonUtils.stringValue(json['AdmittedTerm']),
-      collegeName:             JsonUtils.stringValue(json['CollegeName']),
-      departmentName:          JsonUtils.stringValue(json['DepartmentName']),
-      studentLevelCode:        JsonUtils.stringValue(json['StudentLevelCode']),
-      studentLevelDescription: JsonUtils.stringValue(json['StudentLevelDescription']),
-      classification:          JsonUtils.stringValue(json['Classification']),
-      firstYear:               JsonUtils.boolValue(json['FirstYear']),
+      termCode:                  JsonUtils.stringValue(json['TermCode']),
+      admittedTerm:              JsonUtils.stringValue(json['AdmittedTerm']),
+      studentType:               JsonUtils.stringValue(json['StudentTypeCode']),
+      studentTypeCode:           JsonUtils.stringValue(json['StudentType']),
+      collegeName:               JsonUtils.stringValue(json['CollegeName']),
+      departmentName:            JsonUtils.stringValue(json['DepartmentName']),
+      departmentCode:            JsonUtils.stringValue(json['DepartmentCode']),
+      major:                     JsonUtils.stringValue(json['Major']),
+      department2:               JsonUtils.stringValue(json['SecondDept']),
+      major2:                    JsonUtils.stringValue(json['SecondMajor']),
+      studentLevelCode:          JsonUtils.stringValue(json['StudentLevelCode']),
+      studentLevelDescription:   JsonUtils.stringValue(json['StudentLevelDescription']),
+      classification:            JsonUtils.stringValue(json['Classification']),
+      ferpaSuppressed:           JsonUtils.stringValue(json['FerpaSuppressed']),
+      firstYear:                 JsonUtils.boolValue(json['FirstYear']),
+      isHousingResident:         JsonUtils.boolValue(json['IsHousingResident'])
     ): null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'TermCode': termCode,
-      'StudentType': studentType,
-      'StudentTypeCode': studentTypeCode,
-      'AdmittedTerm': admittedTerm,
-      'CollegeName': collegeName,
-      'DepartmentName': departmentName,
-      'StudentLevelCode': studentLevelCode,
+      'TermCode':                termCode,
+      'AdmittedTerm':            admittedTerm,
+      'StudentType':             studentType,
+      'StudentTypeCode':         studentTypeCode,
+      'CollegeName':             collegeName,
+      'DepartmentName':          departmentName,
+      'DepartmentCode':          departmentCode,
+      'Major':                   major,
+      'SecondDept':              department2,
+      'SecondMajor':             major2,
+      'StudentLevelCode':        studentLevelCode,
       'StudentLevelDescription': studentLevelDescription,
-      'Classification': classification,
-      'FirstYear': firstYear,
+      'Classification':          classification,
+      'FerpaSuppressed':         ferpaSuppressed,
+      'FirstYear':               firstYear,
+      'IsHousingResident':       isHousingResident,
     };
   }
 
@@ -172,28 +197,40 @@ class IlliniStudentClassification {
   bool operator ==(other) =>
     other is IlliniStudentClassification &&
       other.termCode == termCode &&
+      other.admittedTerm == admittedTerm &&
       other.studentType == studentType &&
       other.studentTypeCode == studentTypeCode &&
-      other.admittedTerm == admittedTerm &&
       other.collegeName == collegeName &&
       other.departmentName == departmentName &&
+      other.departmentCode == departmentCode &&
+      other.major == major &&
+      other.department2 == department2 &&
+      other.major2 == major2 &&
       other.studentLevelCode == studentLevelCode &&
       other.studentLevelDescription == studentLevelDescription &&
       other.classification == classification &&
-      other.firstYear == firstYear;
+      other.ferpaSuppressed == ferpaSuppressed &&
+      other.firstYear == firstYear &&
+      other.isHousingResident == isHousingResident;
 
   @override
   int get hashCode =>
     (termCode?.hashCode ?? 0) ^
+    (admittedTerm?.hashCode ?? 0) ^
     (studentType?.hashCode ?? 0) ^
     (studentTypeCode?.hashCode ?? 0) ^
-    (admittedTerm?.hashCode ?? 0) ^
     (collegeName?.hashCode ?? 0) ^
     (departmentName?.hashCode ?? 0) ^
+    (departmentCode?.hashCode ?? 0) ^
+    (major?.hashCode ?? 0) ^
+    (department2?.hashCode ?? 0) ^
+    (major2?.hashCode ?? 0) ^
     (studentLevelCode?.hashCode ?? 0) ^
     (studentLevelDescription?.hashCode ?? 0) ^
     (classification?.hashCode ?? 0) ^
-    (firstYear?.hashCode ?? 0);
+    (ferpaSuppressed?.hashCode ?? 0) ^
+    (firstYear?.hashCode ?? 0) ^
+    (isHousingResident?.hashCode ?? 0);
 }
 
 //////////////////////////////
