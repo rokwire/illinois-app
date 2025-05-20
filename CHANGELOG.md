@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - WEB: Show survey results in one line per user [#5160](https://github.com/rokwire/illinois-app/issues/5160).
 
+## [7.1.7] - 2025-05-19
+### Changed
+- Move the "Publish All Linked Sub-Events" toggle to underneath the "publish this event" toggle when an event is set as a super event.[#4995](https://github.com/rokwire/illinois-app/issues/4995).
+- Rename ModalImagePanel to ModalPinchZoomImagePanel, introduce ModalPhotoImagePanel and use it by default [#5165](https://github.com/rokwire/illinois-app/issues/5165).
+### Fixed
+- Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
+
 ## [7.1.6] - 2025-05-16
 ### Added
 - Added Pinch and Zoom on group post images [#5128](https://github.com/rokwire/illinois-app/issues/5128).

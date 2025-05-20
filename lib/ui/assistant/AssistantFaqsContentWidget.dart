@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -69,6 +70,7 @@ class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget>
   }
 
   void _launchUrl(String? url) async {
+    Analytics().logSelect(target: 'Assistant FAQs: Open Link');
     if (StringUtils.isNotEmpty(url)) {
       if (StringUtils.isNotEmpty(url)) {
         Uri? uri = Uri.tryParse(url!);

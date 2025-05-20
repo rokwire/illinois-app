@@ -220,7 +220,7 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
   void _onTapCardImage(String? imageKey) {
     Analytics().logSelect(target: 'Appointment Image');
     Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) =>
-      ModalImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image')))
+      ModalPhotoImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image')))
     );
   }
 

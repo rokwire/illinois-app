@@ -1469,7 +1469,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
             if (result == true) {
               bool subDeleteResultSuccess = true; //Delete sub events if any
               if (_event?.isSuperEvent == true && CollectionUtils.isNotEmpty(_linkedEvents)) {//TBD check if there are more to load
-                subDeleteResultSuccess = (await Event2SuperEventsController.multiUpload(events: _linkedEvents,
+                subDeleteResultSuccess = (await SuperEventsController.multiUpload(events: _linkedEvents,
                     uploadAPI: (event) => event.id != null ? Events2().deleteEvent(eventId: event.id!) : Future.value("missing id"))).successful;
                 // for (Event2 subEvent in _linkedEvents!) {
                 //   var subDeleteResult = await Events2().deleteEvent(eventId: subEvent.id ?? "");

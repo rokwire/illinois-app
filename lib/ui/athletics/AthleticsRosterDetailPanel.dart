@@ -50,7 +50,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
   void _onTapPhoto(){
     Analytics().logSelect(target: "Photo");
     if (widget.roster.fullSizePhotoUrl != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: widget.roster.fullSizePhotoUrl!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Photo"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: widget.roster.fullSizePhotoUrl!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Photo"))));
     }
   }
 
