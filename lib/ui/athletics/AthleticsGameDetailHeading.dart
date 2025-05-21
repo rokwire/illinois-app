@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/material.dart';
@@ -424,7 +423,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
       if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
             child: ModalImageHolder(
-                child: Image.network(Config().wrapWebProxyUrl(sourceUrl: widget.game!.imageUrl) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders,
+                child: WebNetworkImage(imageUrl: widget.game!.imageUrl!,
               semanticLabel: widget.game?.sport?.title ?? "sport",
             ))));
       }
@@ -742,7 +741,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: opponentUrl) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true));
+        return ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -794,7 +793,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: opponentUrl) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true));
+        return ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -901,8 +900,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
       return Styles().images.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      String? opponentUrl = Config().wrapWebProxyUrl(sourceUrl: widget._game!.opponent?.logoImage);
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true)) : null;
+      String? opponentUrl = widget._game!.opponent?.logoImage;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true)) : null;
     }
   }
 
@@ -912,8 +911,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
       return Styles().images.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      String? opponentUrl = Config().wrapWebProxyUrl(sourceUrl: widget._game?.opponent?.logoImage);
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true)) : null;
+      String? opponentUrl = widget._game?.opponent?.logoImage;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl!, excludeFromSemantics: true)) : null;
     }
   }
 

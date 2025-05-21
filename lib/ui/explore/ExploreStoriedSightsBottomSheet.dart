@@ -2,13 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -343,8 +342,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       width: 75,
       height: 75,
       child: place.images?.isNotEmpty ?? false
-          ? Image.network(
-        Config().wrapWebProxyUrl(sourceUrl: place.images!.first.imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders,
+          ? WebNetworkImage(imageUrl: place.images!.first.imageUrl,
         fit: BoxFit.cover,
       )
           : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
@@ -988,8 +986,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
       width: 75,
       height: 75,
       child: widget.place.images?.isNotEmpty ?? false
-          ? Image.network(
-        Config().wrapWebProxyUrl(sourceUrl: widget.place.images!.first.imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders,
+          ? WebNetworkImage(imageUrl: widget.place.images!.first.imageUrl,
         fit: BoxFit.cover,
       ) : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
           SizedBox(width: 75, height: 75),
@@ -1021,9 +1018,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           return Container(
             margin: EdgeInsets.only(right: 12.0),
             child: ModalImageHolder(
-              child: Image.network(
-                Config().wrapWebProxyUrl(sourceUrl: widget.place.images![index].imageUrl) ?? '',
-                headers: Auth2Csrf().networkAuthHeaders,
+              child: WebNetworkImage(imageUrl: widget.place.images![index].imageUrl,
                 width: 140,
                 height: 140,
                 fit: BoxFit.cover,

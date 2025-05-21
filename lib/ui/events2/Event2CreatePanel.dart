@@ -1,10 +1,10 @@
 
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -12,7 +12,6 @@ import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
@@ -703,7 +702,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return Container(height: 200, color: Styles().colors.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Positioned.fill(child: (_imageUrl != null) ?
-            Image.network(Config().wrapWebProxyUrl(sourceUrl: _imageUrl) ?? '', excludeFromSemantics: true, fit: BoxFit.cover, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders) : Container()
+            WebNetworkImage(imageUrl: _imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover) : Container()
           ),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),

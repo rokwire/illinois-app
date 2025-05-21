@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -618,7 +619,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     return StringUtils.isNotEmpty(_group?.imageURL) ? Semantics(label: "group image", hint: "Double tap to zoom", child:
       Container(height: 200, color: Styles().colors.background, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-            Positioned.fill(child: ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: _group!.imageURL) ?? '', excludeFromSemantics: true, fit: BoxFit.cover, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders))),
+            Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: _group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover))),
             CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
               Container(height: 53,),
             ),

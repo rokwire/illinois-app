@@ -9,9 +9,9 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -131,7 +131,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
               child: SizedBox(
                   width: imageWidth,
                   height: imageHeight,
-                  child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, semanticLabel: '', fit: BoxFit.cover, alignment: Alignment.center,
+                  child: WebNetworkImage(imageUrl: imageUrl, semanticLabel: '', fit: BoxFit.cover, alignment: Alignment.center,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                     return (loadingProgress != null)
                         ? Container(

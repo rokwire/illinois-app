@@ -15,7 +15,7 @@
  */
 
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -125,7 +125,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
                   ? Positioned(
                       child: InkWell(
                           onTap: () => _onTapCardImage(wrappedImageUrl),
-                          child: Image.network(wrappedImageUrl ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, semanticLabel: "Sports")))
+                          child: WebNetworkImage(imageUrl: game!.imageUrl!, semanticLabel: "Sports")))
                   : Container(),
               showImage
                   ? Container(

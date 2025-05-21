@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -12,7 +12,6 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth2;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -253,7 +252,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               GestureDetector(onTap: () => (locationGps != null) ? _onTapLocation(locationGps) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(Config().wrapWebProxyUrl(sourceUrl: icon) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
+                    (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: WebNetworkImage(imageUrl: icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
                         Text(text, style: underline ? Styles().textStyles.getTextStyle("widget.button.title.regular.thin.underline") :  Styles().textStyles.getTextStyle("widget.button.title.regular.thin"))
@@ -289,7 +288,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               Row(children: [
                 Expanded(child:
                   Column(children: [
-                    Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true,),
+                      WebNetworkImage(imageUrl: imageUrl!, excludeFromSemantics: true,),
                   ]),
                 ),
               ],)
@@ -299,7 +298,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               Row(children: [
                 Expanded(child:
                   Column(children: [
-                    ModalImageHolder(child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: rokwire_auth2.Auth2Csrf().networkAuthHeaders, excludeFromSemantics: true,)),
+                    ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true,)),
                   ]),
                 ),
               ],)

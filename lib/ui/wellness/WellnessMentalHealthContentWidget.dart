@@ -24,8 +24,8 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -199,7 +199,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
                         hasImage
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
-                                child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders,
+                                child: WebNetworkImage(imageUrl: imageUrl ?? '',
                                     loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                   return (loadingProgress == null) ? child : emptyImagePlaceholder;
                                 }))

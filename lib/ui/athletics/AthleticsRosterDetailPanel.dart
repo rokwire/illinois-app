@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/material.dart';
@@ -235,7 +234,7 @@ class _RosterDetailHeading extends StatelessWidget{
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(roster?.thumbPhotoUrl) ?
-                      Image.network(Config().wrapWebProxyUrl(sourceUrl: roster!.thumbPhotoUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      WebNetworkImage(imageUrl: roster!.thumbPhotoUrl!, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)
                       ),
                     ),

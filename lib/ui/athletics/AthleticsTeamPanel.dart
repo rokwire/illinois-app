@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:illinois/ui/widgets/WebNetworkImage.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter/material.dart';
@@ -644,7 +645,7 @@ class _RosterItem extends StatelessWidget {
     double width = 128;
     double height = 144;
     if (StringUtils.isNotEmpty(imageUrl)) {
-      return Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', headers: Auth2Csrf().networkAuthHeaders,
+      return WebNetworkImage(imageUrl: imageUrl!,
           excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
     } else {
       return Container(width: width, height: height, color: Styles().colors.background);
