@@ -382,6 +382,8 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
     }
     bool hasAccounts = CollectionUtils.isNotEmpty(accounts);
     List<List<dynamic>> rows = <List<dynamic>>[];
+    List<dynamic> questions = <dynamic>[];
+    bool headersImported = false;
     for (SurveyResponse response in responses) {
       String? accountId = response.userId;
       Event2Account? account = ((accountId != null) && hasAccounts) ? accounts!.firstWhereOrNull((account) => (account.accountId == accountId)) : null;
@@ -390,14 +392,20 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
       for (String key in data.keys) {
         SurveyData? value = data[key];
         if (value != null) {
-          String answer = value.response;
-          userAnswers.add(answer);
+          if (!headersImported) {
+            questions.add(value.text);
+          }
+          userAnswers.add(value.response);
         }
       }
-      List<dynamic> singleRow = [_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
+      List<dynamic> userRow = [_csvFormattedEventName, _csvFormattedEventStartDate, _csvFormattedEventStartTime,
         _buildCsvAccountUin(account), _buildCsvAccountNetId(account), _buildCsvAccountFirstName(account), _buildCsvAccountLastName(account),
         ...userAnswers];
-      rows.add(singleRow);
+      if (!headersImported) {
+        rows.add(['Event Title', 'Event Date', 'Event Time', 'UIN', 'NetID', 'First Name', 'Last Name', ...questions]);
+        headersImported = true;
+      }
+      rows.add(userRow);
     }
     String fileName = 'event_survey_results_$_csvFormattedDateExported.csv';
     AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {

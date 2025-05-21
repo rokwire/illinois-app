@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename ModalImagePanel to ModalPinchZoomImagePanel, introduce ModalPhotoImagePanel and use it by default [#5165](https://github.com/rokwire/illinois-app/issues/5165).
 - Update default SettingsContentType selection to contactUs [#5169](https://github.com/rokwire/illinois-app/issues/5169).
 - WEB: Show survey results in one line per user [#5160](https://github.com/rokwire/illinois-app/issues/5160).
+- WEB: Show header row for survey response [#5160](https://github.com/rokwire/illinois-app/issues/5160).
 ### Added
 - Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 - Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).
