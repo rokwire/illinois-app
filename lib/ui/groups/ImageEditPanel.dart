@@ -276,7 +276,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         sourcePath: initialImage.path,
         compressFormat: ImageCompressFormat.jpg,
         compressQuality: 100,
-        uiSettings: [WebUiSettings(context: this.context, presentStyle: WebPresentStyle.page)]);
+        uiSettings: [WebUiSettings(context: this.context, presentStyle: WebPresentStyle.dialog)]);
     return croppedImage;
   }
 

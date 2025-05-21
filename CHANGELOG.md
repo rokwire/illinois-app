@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create recurring event without end DateTime [#4990](https://github.com/rokwire/illinois-app/issues/4990).
 - Reaction Notifications open GroupPostDetail panel [#4891](https://github.com/rokwire/illinois-app/issues/4891).
 - Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
+- WEB: Show Crop image UI as dialog - prevent dark buttons in the page [#4683](https://github.com/rokwire/illinois-app/issues/4683).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
 - Add thumbs up/down to the opening message in Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
