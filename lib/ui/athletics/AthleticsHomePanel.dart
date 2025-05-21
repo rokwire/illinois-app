@@ -63,18 +63,25 @@ class AthleticsHomePanel extends StatefulWidget {
 class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   with NotificationsListener, AutomaticKeepAliveClientMixin<AthleticsHomePanel> {
 
-  late AthleticsContentType _selectedContentType;
-  List<AthleticsContentType>? _contentTypes;
+  static AthleticsContentType _defaultContentType = AthleticsContentType.events;
+
+  late List<AthleticsContentType> _contentTypes;
+  AthleticsContentType? _selectedContentType;
   bool _contentValuesVisible = false;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [FlexUI.notifyChanged, AthleticsHomePanel.notifySelectContent]);
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      AthleticsHomePanel.notifySelectContent
+    ]);
+
     _contentTypes = _buildContentTypes();
-    _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
-        _ensureContentType(Storage()._athleticsContentType, contentTypes: _contentTypes) ??
-        _defaultContentType(contentTypes: _contentTypes);
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+        Storage()._athleticsContentType?._ensure(availableTypes: _contentTypes) ??
+        _defaultContentType._ensure(availableTypes: _contentTypes) ??
+        (_contentTypes.isNotEmpty ? _contentTypes.first : null);
   }
 
   @override
@@ -121,7 +128,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
-                      label: _selectedContentType.displayTitle,
+                      label: _selectedContentType?.displayTitle ?? '',
                       onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
               child: Stack(children: [
@@ -154,7 +161,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (AthleticsContentType contentType in _contentTypes!) {
+    for (AthleticsContentType contentType in _contentTypes) {
       sectionList.add(RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -207,13 +214,6 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     }
     contentTypes.sortAlphabetical();
     return contentTypes;
-  }
-
-  static AthleticsContentType? _ensureContentType(AthleticsContentType? contentType, { List<AthleticsContentType>? contentTypes }) =>
-    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
-
-  static AthleticsContentType _defaultContentType({List<AthleticsContentType>? contentTypes}) {
-    return AthleticsContentType.events;
   }
 
   PreferredSizeWidget get _headerBar {
@@ -276,6 +276,8 @@ extension AthleticsContentTypeImpl on AthleticsContentType {
     }
   }
 
+  AthleticsContentType? _ensure({List<AthleticsContentType>? availableTypes}) =>
+      (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _AthleticsContentTypeList on List<AthleticsContentType> {
