@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
+- Add thumbs up/down to the opening message in Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
 - Updated empty content message in primary care providers [#5114](https://github.com/rokwire/illinois-app/issues/5114).
 - Replace "User Directory" to "Directory of Users" display text everywhere in the UI [#5115](https://github.com/rokwire/illinois-app/issues/5115).
 - Use correct Research Participation term in UI [#5116](https://github.com/rokwire/illinois-app/issues/5116).
