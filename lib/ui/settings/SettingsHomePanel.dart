@@ -66,6 +66,8 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
     SettingsContentType.i_card,
   };
 
+  static final SettingsContentType _defaultContentType = SettingsContentType.contact;
+
   final SettingsContentType? contentType;
 
   SettingsHomePanel._({this.contentType});
@@ -117,7 +119,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       Localization.notifyLocaleChanged,
     ]);
     _contentTypes = _SettingsContentTypeList.fromAvailableContentTypes(SettingsHomePanel._dropdownContentTypes);
-    _selectedContentType = widget.contentType ?? Storage()._settingsContentType ?? (_contentTypes.isNotEmpty ? _contentTypes.first : null);
+
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      Storage()._settingsContentType?._ensure(availableTypes: _contentTypes) ??
+      SettingsHomePanel._defaultContentType._ensure(availableTypes: _contentTypes) ??
+      (_contentTypes.isNotEmpty ? _contentTypes.first : null);
   }
 
   @override
@@ -441,6 +447,9 @@ extension SettingsContentTypeImpl on SettingsContentType {
       default: return true;
     }
   }
+
+  SettingsContentType? _ensure({List<SettingsContentType>? availableTypes}) =>
+      (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _SettingsContentTypeList on List<SettingsContentType> {

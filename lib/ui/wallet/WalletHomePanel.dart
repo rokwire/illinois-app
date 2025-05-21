@@ -37,8 +37,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
-  final WalletContentType? contentType;
-  final List<WalletContentType>? contentTypes;
+
+  static const String _stateAccess  = "edu.illinois.rokwire.wallet.state.access";
 
   static Set<WalletContentType> requireOidcContentTypes = <WalletContentType>{
     WalletContentType.illiniId,
@@ -48,16 +48,22 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     WalletContentType.illiniCash,
   };
 
+  static WalletContentType _defaultContentType = WalletContentType.illiniId;
+
+  final WalletContentType? contentType;
+  final List<WalletContentType>? contentTypes;
+
   WalletHomePanel._({this.contentType, this.contentTypes});
 
   @override
   _WalletHomePanelState createState() => _WalletHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => getTargetContentType(contentType: contentType, contentTypes: contentTypes)?.analyticsFeature;
+  AnalyticsFeature? get analyticsFeature => _state?._selectedContentType?.analyticsFeature ??
+    _targetContentType(contentType: contentType, contentTypes: contentTypes)?.analyticsFeature;
 
   static void present(BuildContext context, { WalletContentType? contentType }) {
-    List<WalletContentType> contentTypes = buildContentTypes();
+    List<WalletContentType> contentTypes = _buildContentTypes();
     if ((contentType != null) && !contentTypes.contains(contentType)) {
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.not_available.content_type.label', '{{content_type}} is not available.').
         replaceAll('{{content_type}}', contentType.displayTitle));
@@ -65,7 +71,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     else if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
-    else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(getTargetContentType(contentType: contentType, contentTypes: contentTypes))) {
+    else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(_targetContentType(contentType: contentType, contentTypes: contentTypes))) {
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
     }
     else {
@@ -87,7 +93,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     }
   }
 
-  static List<WalletContentType> buildContentTypes() {
+  static List<WalletContentType> _buildContentTypes() {
     List<WalletContentType> contentTypes = <WalletContentType>[];
     List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wallet']);
     if (contentCodes != null) {
@@ -102,25 +108,36 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     return contentTypes;
   }
 
-  static WalletContentType? getTargetContentType({ WalletContentType? contentType, List<WalletContentType>? contentTypes}) {
-    WalletContentType? resultContentType = null;
+  static WalletContentType? _targetContentType({ WalletContentType? contentType, List<WalletContentType>? contentTypes}) {
 
-    if ((contentType != null) && ((contentTypes == null) || contentTypes.contains(contentType))) {
-      resultContentType = contentType;
+    WalletContentType? lastContentType;
+    if ((contentType != null) && (contentTypes?.contains(contentType) != false)) {
+      return contentType;
     }
+    else if (((lastContentType = Storage()._waletContentType) != null) && (contentTypes?.contains(lastContentType) != false)) {
+      return lastContentType;
+    }
+    else if ((contentTypes?.contains(_defaultContentType) != false)) {
+      return _defaultContentType;
+    }
+    else if ((contentTypes?.isNotEmpty == true)) {
+      return contentTypes?.first;
+    }
+    else {
+      return null;
+    }
+  }
 
-    if (resultContentType == null) {
-      WalletContentType? lastContentType = Storage()._waletContentType;
-      if ((lastContentType != null) && ((contentTypes == null) || contentTypes.contains(lastContentType))) {
-        resultContentType = lastContentType;
+  static _WalletHomePanelState? get _state {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(_stateAccess);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _WalletHomePanelState) && subscriber.mounted) {
+          return subscriber;
+        }
       }
     }
-
-    if ((resultContentType == null) && (contentTypes != null) && contentTypes.isNotEmpty) {
-      resultContentType = contentTypes.first;
-    }
-
-    return resultContentType;
+    return null;
   }
 }
 
@@ -135,15 +152,13 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
     super.initState();
 
     NotificationService().subscribe(this, [
+      WalletHomePanel._stateAccess,
       FlexUI.notifyChanged,
       WalletIlliniCashPage.notifyAddIlliniCash,
     ]);
 
-    _contentTypes = widget.contentTypes ?? WalletHomePanel.buildContentTypes();
-    _selectedContentType = WalletHomePanel.getTargetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
-    if ((widget.contentType != null) && (widget.contentType == _selectedContentType)) {
-      Storage()._waletContentType = _selectedContentType;
-    }
+    _contentTypes = widget.contentTypes ?? WalletHomePanel._buildContentTypes();
+    _selectedContentType = WalletHomePanel._targetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
   }
 
   @override
@@ -283,7 +298,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   }
 
   void _updateContentTypes() {
-    List<WalletContentType> contentTypes = WalletHomePanel.buildContentTypes();
+    List<WalletContentType> contentTypes = WalletHomePanel._buildContentTypes();
     if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
       setState(() {
         _contentTypes = contentTypes;

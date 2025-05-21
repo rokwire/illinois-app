@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - WEB: Show header row for survey response [#5160](https://github.com/rokwire/illinois-app/issues/5160).
+- Update default SettingsContentType selection to contactUs [#5169](https://github.com/rokwire/illinois-app/issues/5169).
+### Added
+- Acknowledged new student classification fields in IlliniStudentClassification [#4865](https://github.com/rokwire/illinois-app/issues/4865).
 
 ## [7.1.7] - 2025-05-19
 ### Changed
