@@ -450,7 +450,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
 
   SettingsContentType? _ensure({List<SettingsContentType>? availableTypes}) =>
       (availableTypes?.contains(this) != false) ? this : null;
-
 }
 
 extension _SettingsContentTypeList on List<SettingsContentType> {
