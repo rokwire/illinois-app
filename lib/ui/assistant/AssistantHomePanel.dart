@@ -100,9 +100,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     ]);
 
     _contentTypes = _buildAssistantContentTypes();
-
-    _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
-      _ensureContentType(Storage()._assistantContentType, contentTypes: _contentTypes) ??
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      Storage()._assistantContentType?._ensure(availableTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -296,9 +295,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     }
     return contentTypes;
   }
-
-  static AssistantContentType? _ensureContentType(AssistantContentType? contentType, { List<AssistantContentType>? contentTypes }) =>
-    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
 
   // Global On/Off / Available
 
@@ -546,6 +542,9 @@ extension AssistantContentTypeImpl on AssistantContentType {
       default: return null;
     }
   }
+
+  AssistantContentType? _ensure({ List<AssistantContentType>? availableTypes }) =>
+      (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _AssistantContentTypeList on List<AssistantContentType> {

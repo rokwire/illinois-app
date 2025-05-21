@@ -97,14 +97,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     ]);
 
     _contentTypes = _ProfileContentTypeList.fromContentTypes(ProfileContentType.values);
-
     if (widget.contentType != null) {
-      Storage()._profileContentType = _selectedContentType = widget.contentType;
+      _selectedContentType = widget.contentType;
       _contentParams[widget.contentType] = widget.contentParams;
     }
     else {
-      ProfileContentType? lastContentType = Storage()._profileContentType;
-      _selectedContentType = (lastContentType != null) ? lastContentType : (Storage()._profileContentType = _defaultContentType);
+      _selectedContentType = Storage()._profileContentType ?? _defaultContentType;
     }
   }
 

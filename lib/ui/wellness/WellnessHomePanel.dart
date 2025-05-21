@@ -92,8 +92,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       WellnessHomePanel.notifySelectContent
     ]);
     _contentTypes = _buildContentTypes();
-    _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
-      _ensureContentType(Storage()._wellnessContentType, contentTypes: _contentTypes) ??
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      Storage()._wellnessContentType?._ensure(availableTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
   }
 
@@ -256,9 +256,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return contentTypes;
   }
 
-  static WellnessContentType? _ensureContentType(WellnessContentType? contentType, { List<WellnessContentType>? contentTypes }) =>
-    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
-
   Widget get _contentWidget {
     switch (_selectedContentType) {
       case WellnessContentType.dailyTips:
@@ -366,6 +363,9 @@ extension WellnessContentTypeImpl on WellnessContentType {
       case WellnessContentType.recreation:     return AnalyticsFeature.WellnessRecreation;
     }
   }
+
+  WellnessContentType? _ensure({List<WellnessContentType>? availableTypes}) =>
+    (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _WellnessContentTypeList on List<WellnessContentType> {
