@@ -157,6 +157,6 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
 
   void _onTapDownloadResults() {
     Analytics().logSelect(target: 'Download survey results');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2ManageDataPanel(event: widget.event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2ManageDataPanel(event: widget.event, surveyId: _survey?.id)));
   }
 }
