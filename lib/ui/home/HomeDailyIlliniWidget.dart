@@ -269,7 +269,7 @@ class _MainStoryWidget extends _StoryWidget {
     double preferredWidth = screenWidth / 3.0;
     double? imageWidth = kIsWeb ? max(preferredWidth, 600) : null;
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? ModalImageHolder(child: WebNetworkImage(imageUrl: illiniItem!.thumbImageUrl!, excludeFromSemantics: true, width: imageWidth, loadingBuilder: (context, child, loadingProgress) {
+        ? ModalImageHolder(child: WebNetworkImage(imageUrl: illiniItem?.thumbImageUrl, excludeFromSemantics: true, width: imageWidth, loadingBuilder: (context, child, loadingProgress) {
       if (loadingProgress == null) {
         return child;
       }

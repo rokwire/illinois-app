@@ -110,7 +110,7 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
     return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
-          WebNetworkImage(imageUrl: imageUrl!, fit: BoxFit.cover, excludeFromSemantics: true)
+          WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true)
         ),
       )
     );

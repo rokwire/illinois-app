@@ -1397,7 +1397,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: WebNetworkImage(imageUrl: widget.reply!.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true)
+                      child: WebNetworkImage(imageUrl: widget.reply?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true)
               )),
 
               WebEmbed(body: bodyText),

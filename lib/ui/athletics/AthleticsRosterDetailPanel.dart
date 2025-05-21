@@ -234,7 +234,7 @@ class _RosterDetailHeading extends StatelessWidget{
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(roster?.thumbPhotoUrl) ?
-                      WebNetworkImage(imageUrl: roster!.thumbPhotoUrl!, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      WebNetworkImage(imageUrl: roster?.thumbPhotoUrl, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)
                       ),
                     ),

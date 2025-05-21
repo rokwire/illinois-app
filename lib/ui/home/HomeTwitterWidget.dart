@@ -661,7 +661,7 @@ class _TweetWidget extends StatelessWidget {
                 Column(children: [
                   StringUtils.isNotEmpty(tweet?.media?.imageUrl) ?
                     InkWell(onTap: () => _onTap(context), child:
-                      WebNetworkImage(imageUrl: tweet!.media!.imageUrl!, excludeFromSemantics: true)) :
+                      WebNetworkImage(imageUrl: tweet?.media?.imageUrl, excludeFromSemantics: true)) :
                   Container(),
                   Row(
                     mainAxisSize: MainAxisSize.max,

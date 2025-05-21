@@ -702,7 +702,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return Container(height: 200, color: Styles().colors.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Positioned.fill(child: (_imageUrl != null) ?
-            WebNetworkImage(imageUrl: _imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover) : Container()
+            WebNetworkImage(imageUrl: _imageUrl, excludeFromSemantics: true, fit: BoxFit.cover) : Container()
           ),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),

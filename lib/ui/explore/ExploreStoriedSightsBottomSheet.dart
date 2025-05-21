@@ -342,7 +342,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
       width: 75,
       height: 75,
       child: place.images?.isNotEmpty ?? false
-          ? WebNetworkImage(imageUrl: place.images!.first.imageUrl,
+          ? WebNetworkImage(imageUrl: place.images?.first.imageUrl,
         fit: BoxFit.cover,
       )
           : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
@@ -986,7 +986,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
       width: 75,
       height: 75,
       child: widget.place.images?.isNotEmpty ?? false
-          ? WebNetworkImage(imageUrl: widget.place.images!.first.imageUrl,
+          ? WebNetworkImage(imageUrl: widget.place.images?.first.imageUrl,
         fit: BoxFit.cover,
       ) : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
           SizedBox(width: 75, height: 75),
@@ -1018,7 +1018,7 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           return Container(
             margin: EdgeInsets.only(right: 12.0),
             child: ModalImageHolder(
-              child: WebNetworkImage(imageUrl: widget.place.images![index].imageUrl,
+              child: WebNetworkImage(imageUrl: widget.place.images?[index].imageUrl,
                 width: 140,
                 height: 140,
                 fit: BoxFit.cover,

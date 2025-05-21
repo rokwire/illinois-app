@@ -1078,7 +1078,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
   @override
   Widget build(BuildContext context) {
     return (_imageUrl != null) ? Stack(children: [
-      ModalImageHolder(child: WebNetworkImage(imageUrl: _imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+      ModalImageHolder(child: WebNetworkImage(imageUrl: _imageUrl, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ?

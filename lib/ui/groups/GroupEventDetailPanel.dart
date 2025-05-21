@@ -158,7 +158,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl!, fit: BoxFit.cover, excludeFromSemantics: true))) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(

@@ -404,7 +404,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                     Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(unit.imageUrl) ?
-                          WebNetworkImage(imageUrl: unit.imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover,) :
+                          WebNetworkImage(imageUrl: unit.imageUrl, excludeFromSemantics: true, fit: BoxFit.cover,) :
                           Styles().images.getImage(unit.imageKey(provider: provider), excludeFromSemantics: true, fit: BoxFit.fill)
                       ),
                     ),
