@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -272,6 +273,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                   WidgetSpan(
                                                           child: MarkdownBody(
                                                               data: answer,
+                                                              builders: {
+                                                                'thumb_up': _AssistantMarkdownIconBuilder(icon: Icons.thumb_up_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                                'thumb_down': _AssistantMarkdownIconBuilder(icon: Icons.thumb_down_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                              },
+                                                              inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
                                                               styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
                                                               onTapLink: (text, href, title) {
                                                                 AppLaunchUrl.launch(url: href, context: context);
@@ -1175,4 +1181,28 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   int? get _availableQueryLimit => _isAssistantAvailable ? _queryLimit : 0;
   bool get _isAssistantAvailable => Assistant().isAvailable;
+}
+
+class _AssistantMarkdownCustomIconSyntax extends md.InlineSyntax {
+  _AssistantMarkdownCustomIconSyntax() : super(r'\[:(thumb_up|thumb_down):\]');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final tag = match.group(1)!;
+    parser.addNode(md.Element.text(tag, ''));
+    return true;
+  }
+}
+
+class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
+  final IconData icon;
+  final Color? color;
+  final double? size;
+
+  _AssistantMarkdownIconBuilder({required this.icon, this.color, this.size});
+
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
+  }
 }

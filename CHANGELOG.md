@@ -11,12 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Handle all exceptions raised during barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
 - Supply group details in analytics logs [#5101](https://github.com/rokwire/illinois-app/issues/5101).
 - Send analytics logs for manual attendance taking [#5100](https://github.com/rokwire/illinois-app/issues/5100).
+- Polls issues [#5097](https://github.com/rokwire/illinois-app/issues/5097).
 - Emoji picker search layout above keyboard [#5110](https://github.com/rokwire/illinois-app/issues/5110).
 - Create recurring event without end DateTime [#4990](https://github.com/rokwire/illinois-app/issues/4990).
 - Reaction Notifications open GroupPostDetail panel [#4891](https://github.com/rokwire/illinois-app/issues/4891).
 - Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
+- Add thumbs up/down to the opening message in Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
 - Updated empty content message in primary care providers [#5114](https://github.com/rokwire/illinois-app/issues/5114).
 - Replace "User Directory" to "Directory of Users" display text everywhere in the UI [#5115](https://github.com/rokwire/illinois-app/issues/5115).
 - Use correct Research Participation term in UI [#5116](https://github.com/rokwire/illinois-app/issues/5116).
