@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added Analytics events for deep links and Firebase cloud messaging [#5100](https://github.com/rokwire/illinois-app/issues/5100).
 - Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).
+- Option for downloading survey results in survey responses panel [#5020](https://github.com/rokwire/illinois-app/issues/5020).
 - Added Pinch and Zoom on group post images [#5128](https://github.com/rokwire/illinois-app/issues/5128).
 - Acknowledged new student classification fields in IlliniStudentClassification [#4865](https://github.com/rokwire/illinois-app/issues/4865).
 
