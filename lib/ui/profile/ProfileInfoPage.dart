@@ -293,14 +293,14 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   String get _previewDesriptionText {
     switch (widget.contentType) {
       case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.preview.description.text', 'Preview of how your profile displays for your Connections.');
-      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the User Directory.');
+      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the Directory of Users.');
     }
   }
 
   String get _editDesriptionText {
     switch (widget.contentType) {
       case ProfileInfo.connectionsInfo: return Localization().getStringEx('panel.profile.info.connections.edit.description.text', 'Choose how your profile displays for your Connections.');
-      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the User Directory.');
+      case ProfileInfo.directoryInfo: return Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the Directory of Users.');
     }
   }
 

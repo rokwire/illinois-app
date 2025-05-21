@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
 
@@ -124,10 +125,10 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
   void onNotification(String name, dynamic param) {
     if ((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) {
       if (widget.pollId == param) {
-        setState(() {
+        setStateIfMounted(() {
           _poll = Polls().getPoll(pollId: widget.pollId);
         });
-        if (_poll!.status == PollStatus.closed) {
+        if (_poll?.status == PollStatus.closed) {
           _onClose();
         }
       }
@@ -144,7 +145,7 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
   }
 
   List<Widget> _buildContent() {
-    if (_voteDone && _poll!.settings!.hideResultsUntilClosed! && (_poll!.status != PollStatus.closed)) {
+    if (_voteDone && (_poll?.settings?.hideResultsUntilClosed == true) && (_poll?.status != PollStatus.closed)) {
       return _buildCheckoutContent();
     }
     else {
@@ -231,7 +232,7 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Stack(children: <Widget>[
         RoundedButton(
-            label: _poll!.options![optionIndex],
+            label: StringUtils.ensureNotEmpty(_poll?.options?[optionIndex]),
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
@@ -263,8 +264,8 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       String checkboxIconKey = (0 < _optionVotes(optionIndex)) ? 'check-circle-filled' : 'check-circle-outline-gray';
 
-      String optionString = _poll!.options![optionIndex];
-      String votesString;
+      String optionString = StringUtils.ensureNotEmpty(_poll?.options?[optionIndex]);
+      late String votesString;
       int votesCount = _optionVotes(optionIndex);
       double votesPercent = (0 < totalVotes) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if (votesCount <= 0) {
@@ -317,11 +318,12 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
     List<Widget> result = [];
     _progressKeys = [];
     int totalVotes = _poll?.results?.totalVotes ?? 0;
-    for (int optionIndex = 0; optionIndex < _poll!.options!.length; optionIndex++) {
+    int optionsCount = _poll?.options?.length ?? 0;
+    for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       String checkboxImageKey = (0 < _optionVotes(optionIndex)) ? 'check-circle-outline-gray-white-2' : 'check-circle-outline-gray-white';
 
-      String optionString = _poll!.options![optionIndex];
-      String votesString;
+      String optionString = StringUtils.ensureNotEmpty(_poll?.options?[optionIndex]);
+      late String votesString;
       int? votesCount = (_poll!.results != null) ? _poll!.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount <= 0)) {
@@ -347,7 +349,7 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
           CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withValues(alpha: 0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
           Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 5), child:
-            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
+            Text(StringUtils.ensureNotEmpty(_poll?.options?[optionIndex]),  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
           ],),),
         ],)
         ),
@@ -367,9 +369,11 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
         backgroundColor: _backgroundColor,
         borderColor: _doneButtonColor,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        onTap: (){
-          AppSemantics.announceMessage(context, Localization().getStringEx('panel.poll_prompt.button.done_voting.status.success', 'Poll voting ended successfully'));
-          handler();
+        onTap: () {
+          if (mounted) {
+            AppSemantics.announceMessage(context, Localization().getStringEx('panel.poll_prompt.button.done_voting.status.success', 'Poll voting ended successfully'));
+            handler();
+          }
         })
     );
   }
@@ -386,7 +390,7 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
         }
       }
       if (0 < progressWidth) {
-        setState(() {
+        setStateIfMounted(() {
           _progressWidth = progressWidth;
         });
       }
@@ -394,12 +398,12 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
   }
 
   int _optionVotes(int optionIndex) {
-    int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+    int? userVotes = (_poll?.userVote != null) ? _poll!.userVote![optionIndex] : null;
     return (userVotes ?? 0) + (_votingOptions[optionIndex] ?? 0);
   }
 
   int get _totalOptionVotes {
-    int total = (_poll!.userVote?.totalVotes ?? 0);
+    int total = (_poll?.userVote?.totalVotes ?? 0);
     _votingOptions.forEach((int optionIndex, int optionVotes) {
       total += optionVotes;
     });
@@ -413,7 +417,7 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
   int get _totalVotedOptions {
     int totalOptions = 0;
     for (int optionIndex = 0; optionIndex < _totalOptions; optionIndex++) {
-      int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+      int? userVotes = (_poll?.userVote != null) ? _poll!.userVote![optionIndex] : null;
       if ((userVotes != null) || (_votingOptions[optionIndex] != null)) {
         totalOptions++;
       }
@@ -455,41 +459,45 @@ class _PollContentState extends State<PollContentWidget> with NotificationsListe
   }
 
   void _onVote(int optionIndex) {
-    setState(() {
+    setStateIfMounted(() {
       _votingOptions[optionIndex] = (_votingOptions[optionIndex] ?? 0) + 1;
     });
     Polls().vote(widget.pollId, PollVote(votes: { optionIndex : 1 })).then((_) {
       if ((!_allowMultipleOptions && !_allowRepeatOptions) ||
           (_allowMultipleOptions && !_allowRepeatOptions && (_totalVotedOptions == _totalOptions))) {
-        setState(() {
+        setStateIfMounted(() {
           _voteDone = true;
         });
       }
     }).catchError((e){
-      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
-    }).whenComplete((){
-      AppSemantics.announceMessage(context,  Localization().getStringEx("panel.poll_prompt.vote.status.announce.success", "Successfully Voted"));
-      setState(() {
-        int? value = _votingOptions[optionIndex];
-        if (value != null) {
-          if (1 < value) {
-            _votingOptions[optionIndex] = value - 1;
+      if (mounted) {
+        AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+      }
+    }).whenComplete(() {
+      if (mounted) {
+        AppSemantics.announceMessage(context,  Localization().getStringEx("panel.poll_prompt.vote.status.announce.success", "Successfully Voted"));
+        setState(() {
+          int? value = _votingOptions[optionIndex];
+          if (value != null) {
+            if (1 < value) {
+              _votingOptions[optionIndex] = value - 1;
+            }
+            else {
+              _votingOptions.remove(optionIndex);
+            }
           }
-          else {
-            _votingOptions.remove(optionIndex);
+          if(!_allowMultipleOptions && !_allowRepeatOptions){
+            //We only want to see the 2nd panel for multi voting. If a Poll is a single vote poll then when a user votes close the panel.
+            _onClose();
           }
-        }
-        if(!_allowMultipleOptions && !_allowRepeatOptions){
-          //We only want to see the 2nd panel for multi voting. If a Poll is a single vote poll then when a user votes close the panel.
-          _onClose();
-        }
-      });
+        });
+      }
     });
   }
 
   void _onVoteDone() {
     if (_votingOptions.length == 0) {
-      setState(() {
+      setStateIfMounted(() {
         _voteDone = true;
       });
     }

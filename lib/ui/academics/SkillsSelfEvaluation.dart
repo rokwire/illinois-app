@@ -21,7 +21,7 @@ import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
@@ -294,7 +294,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
   }
 
   void _onTapSettings() {
-    SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
+    SettingsHomePanel.present(context, content: SettingsContentType.assessments);
   }
 
   void _onTapShare() {

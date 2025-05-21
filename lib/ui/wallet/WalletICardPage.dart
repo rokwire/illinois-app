@@ -26,7 +26,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -512,7 +512,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
 
   void _onTapMobileAccessPermissions() {
     Analytics().logSelect(target: 'Mobile Access Permissions');
-    SettingsHomeContentPanel.present(context, content: SettingsContent.i_card);
+    SettingsHomePanel.present(context, content: SettingsContentType.i_card);
   }
 
   void _checkIcarMobileAvailable() {

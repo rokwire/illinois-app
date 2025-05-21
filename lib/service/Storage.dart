@@ -482,8 +482,37 @@ class Storage extends rokwire.Storage {
   set essentialSkillsCoachModule(String? value) => setStringWithName(essentialSkillsCoachModuleKey, value);
 
   // Wallet
-
   static const String walletContentTypeKey = 'edu.illinois.rokwire.wallet.content_type';
   String? get walletContentType => getStringWithName(walletContentTypeKey);
   set walletContentType(String? value) => setStringWithName(walletContentTypeKey, value);
+
+  // Wellness
+  static const String wellnessContentTypeKey = 'edu.illinois.rokwire.wellness.content_type';
+  String? get wellnessContentType => getStringWithName(wellnessContentTypeKey);
+  set wellnessContentType(String? value) => setStringWithName(wellnessContentTypeKey, value);
+
+  // Settings
+  static const String settingsContentTypeKey = 'edu.illinois.rokwire.settings.content_type';
+  String? get settingsContentType => getStringWithName(settingsContentTypeKey);
+  set settingsContentType(String? value) => setStringWithName(settingsContentTypeKey, value);
+
+  // Profile
+  static const String profileContentTypeKey = 'edu.illinois.rokwire.profile.content_type';
+  String? get profileContentType => getStringWithName(profileContentTypeKey);
+  set profileContentType(String? value) => setStringWithName(profileContentTypeKey, value);
+
+  // Academics
+  static const String academicsContentTypeKey = 'edu.illinois.rokwire.academics.content_type';
+  String? get academicsContentType => getStringWithName(academicsContentTypeKey);
+  set academicsContentType(String? value) => setStringWithName(academicsContentTypeKey, value);
+
+  // Athletics
+  static const String athleticsContentTypeKey = 'edu.illinois.rokwire.athletics.content_type';
+  String? get athleticsContentType => getStringWithName(athleticsContentTypeKey);
+  set athleticsContentType(String? value) => setStringWithName(athleticsContentTypeKey, value);
+
+  // Assistant
+  static const String assistantContentTypeKey = 'edu.illinois.rokwire.assistant.content_type';
+  String? get assistantContentType => getStringWithName(assistantContentTypeKey);
+  set assistantContentType(String? value) => setStringWithName(assistantContentTypeKey, value);
 }

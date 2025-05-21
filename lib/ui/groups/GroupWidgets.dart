@@ -1065,7 +1065,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
   @override
   Widget build(BuildContext context) {
     String? htmlBody = widget.post?.body;
-    String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = (widget.post?.commentsCount ?? 0);
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String? repliesLabel = (visibleRepliesCount == 1)
@@ -1133,11 +1132,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               //   ),
                               // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
 
-                            Visibility(visible: StringUtils.isNotEmpty(imageUrl),
-                              child: Container(
+                            if (StringUtils.isNotEmpty(widget.post?.imageUrl))
+                              Container(
                                 padding: EdgeInsets.only(top: 14),
-                                child: Image.network(Config().wrapWebProxyUrl(sourceUrl: imageUrl) ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: kIsWeb ? Auth2Csrf().networkAuthHeaders : Config().networkAuthHeaders, excludeFromSemantics: true)
-                            )),
+                                child: _imageWidget
+                              ),
                             WebEmbed(body: htmlBody),
                             // Container(
                             //   constraints: BoxConstraints(maxHeight: 200),
@@ -1182,6 +1181,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   ]))))),
     ]);
   }
+
+  Widget get _imageWidget => (widget.isClickable != true) ? ModalImageHolder(child: _rawImageWidget) : _rawImageWidget;
+  Widget get _rawImageWidget => Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true);
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
@@ -1245,7 +1247,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
     "text-overflow:ellipsis;max-lines:3" :
     "white-space: normal";
 
-  bool get _reactionsEnabled => true;
+  bool get _reactionsEnabled => Config().showGroupPostReactions &&
+      (widget.post?.isMessage == true ||
+        (widget.post?.isPost == true &&
+            widget.group.settings?.memberPostPreferences?.sendPostReactions == true));
 }
 
 //////////////////////////////////////
@@ -1263,7 +1268,7 @@ class GroupReplyCard extends StatefulWidget {
   final bool showRepliesCount;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupReplyCard({required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
+  GroupReplyCard({super.key, required this.reply, required this.post, required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.creator, this.analyticsFeature});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1428,7 +1433,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     }
   }
 
-  bool get _reactionsEnabled => Config().showGroupPostReactions;
+  bool get _reactionsEnabled => Config().showGroupPostReactions &&
+      (widget.post?.isMessage == true ||
+        (widget.post?.isPost == true &&
+            widget.group?.settings?.memberPostPreferences?.sendPostReactions == true)
+      );
 }
 
 //////////////////////////////////////
@@ -2646,7 +2655,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 
   void _onEndPollTapped() {
     if (_isEnding != true) {
-      setState(() {
+      setStateIfMounted(() {
         _isEnding = true;
       });
       Polls().close(widget.pollCard.poll?.pollId).then((_) {
@@ -2658,11 +2667,9 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
           AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
         }
       }).whenComplete(() {
-        if (mounted) {
-          setState(() {
-            _isEnding = false;
-          });
-        }
+        setStateIfMounted(() {
+          _isEnding = false;
+        });
       });
     }
   }
@@ -2865,7 +2872,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
     if (_imageBytes != null) {
       String? imageUrl = Content().getUserPhotoUrl(accountId: widget.userId, type: UserProfileImageType.defaultType);
       if (StringUtils.isNotEmpty(imageUrl)) {
-        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
       }
     }
   }
@@ -3654,10 +3661,11 @@ class ReactionKeyboard {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return SizedBox(
-          height: 310,
-          child: emoji.EmojiPicker(
+        return
+          Padding(padding: MediaQuery.of(context).viewInsets, //Above keyboard
+            child: emoji.EmojiPicker(
             config: emoji.Config(
+                // searchViewConfig: emoji.SearchViewConfig(),
                 categoryViewConfig: emoji.CategoryViewConfig(
                   indicatorColor: Styles().colors.fillColorSecondary,
                   iconColorSelected: Styles().colors.fillColorSecondary

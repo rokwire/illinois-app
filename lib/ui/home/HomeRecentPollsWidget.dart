@@ -207,8 +207,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
       );
     }
     else {
+      Poll? firstPoll = _recentPolls?.first;
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        PollCard(poll: _recentPolls?.first, group: _getGroup(_recentPolls?.first.groupId))
+        (firstPoll != null) ?
+          PollCard(poll: firstPoll, group: _getGroup(firstPoll.groupId)) :
+          Container()
       );
     }
 

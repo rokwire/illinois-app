@@ -417,7 +417,7 @@ extension Event2Ext on Event2 {
     );
   }
 
-  Event2 toRecurringEvent({required DateTime startDateTimeUtc, required DateTime endDateTimeUtc}) => Event2(
+  Event2 toRecurringEvent({required DateTime startDateTimeUtc, DateTime? endDateTimeUtc}) => Event2(
     name: this.name,
     description: this.description,
     instructions: this.instructions,
@@ -750,8 +750,8 @@ extension Events2Ext on Events2 {
           return Event2Result.fail("Unable to load sub events");
         }
         //Duplicate sub events
-        Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
-            events: Event2SuperEventsController.applyCollectionChange(
+        Event2SuperEventResult<int> updateResult = await  SuperEventsController.multiUpload(
+            events: SuperEventsController.applyCollectionChange(
                 collection: subEventsLoad?.events,
                 change: (subEvent) {
                   Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);

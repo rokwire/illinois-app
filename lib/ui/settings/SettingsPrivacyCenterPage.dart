@@ -36,13 +36,13 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsPrivacyCenterContentWidget extends StatefulWidget{
+class SettingsPrivacyCenterPage extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() => _SettingsPrivacyCenterContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsPrivacyCenterPageState();
 
 }
 
-class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> with NotificationsListener {
+class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> with NotificationsListener {
   PrivacyData? _privacyData;
   bool _loadingPrivacyData = false;
 

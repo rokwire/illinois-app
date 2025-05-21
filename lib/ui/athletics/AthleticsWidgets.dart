@@ -250,7 +250,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
           PageRouteBuilder(
               opaque: false,
               pageBuilder: (context, _, __) =>
-                  ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+                  ModalPhotoImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 

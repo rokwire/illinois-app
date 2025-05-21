@@ -289,12 +289,11 @@ class _QrCodePanelState extends State<QrCodePanel> {
       ByteData? qrPainterImage = await QrPainter(data: qrContent, version: QrVersions.auto).toImageData(_imageSize);
       imageBytes = qrPainterImage?.buffer.asUint8List();
     } else {
-      imageBytes = await NativeCommunicator().getBarcodeImageData({
-        'content': qrContent,
-        'format': 'qrCode',
-        'width': _imageSize,
-        'height': _imageSize,
-      });
+      imageBytes = await NativeCommunicator().getBarcodeImageData(qrContent,
+        format: 'qrCode',
+        width: _imageSize,
+        height: _imageSize,
+      );
     }
     return imageBytes;
   }

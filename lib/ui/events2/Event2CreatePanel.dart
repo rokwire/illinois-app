@@ -48,6 +48,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Even2SetupSuperEvent.dart';
+
 class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
@@ -490,6 +492,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   late bool _free;
   late bool _published;
 
+  late SuperEvent? _superEvent;
+  bool _publishSubEvents = false;
+
   Map<String, dynamic>? _attributes;
 
   Event2RegistrationDetails? _registrationDetails;
@@ -576,7 +581,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _onlinePasscodeController.text = widget.event?.onlineDetails?.meetingPasscode ?? '';
 
     _attributes = widget.event?.attributes;
-    _visibility = _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public;
+    _visibility = _defaultVisibility;
 
     //NA: canceled
     //NA: userRole
@@ -609,6 +614,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     _initEventGroups();
     _initEventAdmins();
+
+    _superEvent = SuperEvent.fromEvent(widget.event);
+    _superEvent?.syncSubEvents(onLoaded: () =>
+        setStateIfMounted(() =>
+          _publishSubEvents = !_superEvent!.haveUnpublishedSubEvents
+    ));
 
     super.initState();
   }
@@ -671,6 +682,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             _buildSponsorshipAndContactsButtonSection(),
             _buildGroupsButtonSection(),
             _buildPublishedSection(),
+            _buildSuperEventSection(),
             _buildVisibilitySection(),
             _buildCreateEventSection(),
           ]),
@@ -2267,6 +2279,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         canShowValue = false;
       } else if ((value == _Event2Visibility.group_member) && !_isGroupEvent) {
         canShowValue = false;
+      } else if ((value == _Event2Visibility.public) && !Auth2().isCalendarAdmin) {
+        canShowValue = false;
       }
       if (canShowValue) {
         menuItems.add(DropdownMenuItem<_Event2Visibility>(value: value, child: Text(_event2VisibilityToDisplayString(value))));
@@ -2285,9 +2299,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
+  _Event2Visibility get _defaultVisibility {
+    return _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ??
+        (Auth2().isCalendarAdmin ? _Event2Visibility.public :
+        (CollectionUtils.isNotEmpty(widget.targetGroups) ? _Event2Visibility.group_member : _Event2Visibility.registered_user));
+  }
+
   // Published
 
-  Widget _buildPublishedSection() =>  Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
+  Widget _buildPublishedSection() => Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
 
   Widget _buildPublishedToggle() => Semantics(toggled: _published, excludeSemantics: true,
     label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
@@ -2310,6 +2330,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     });
   }
 
+  //Super event
+  Widget _buildSuperEventSection() =>  Visibility(visible: widget.event?.isSuperEvent == true && _published == true, child:
+    Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishSubEventsToggle()));
+
+  Widget _buildPublishSubEventsToggle() => Semantics(toggled: _published, excludeSemantics: true,
+      label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish All Linked Sub-Events"),
+      hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
+      child: ToggleRibbonButton(
+        label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish All Linked Sub-Events"),
+        padding: _togglePadding,
+        toggled: _publishSubEvents,
+        onTap: _onTapPublishSubEvents,
+        border: _toggleBorder,
+        borderRadius: _toggleBorderRadius,
+      ));
+
+  void _onTapPublishSubEvents(){
+    Analytics().logSelect(target: "Toggle publish sub events");
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _publishSubEvents = !_publishSubEvents;
+    });
+  }
   // Create Event
 
   Widget _buildCreateEventSection() => Padding(padding: Event2CreatePanel.sectionPadding, child:
@@ -2534,11 +2577,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     String? eventId = event.id;
     if (eventId == null) {
-      result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
+      if (_callCreateGroupEvent) {
+        result = await Events2().createEventWithContext(event, adminIdentifiers: adminIdentifiers);
+      } else {
+        result = await Events2().createEvent(event, adminIdentifiers: adminIdentifiers);
+      }
     } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {
         result = await Events2().updateEvent(event, adminIdentifiers: adminIdentifiers, initialGroupIds: _initialGroupIds);
+        if(_shouldPublishSubEvents) {
+          _superEvent?.superEvent = result is Event2 ? result : _superEvent!.superEvent;
+          await _superEvent?.publishAllSubEvents();
+        }
       }
       else {
         result = event;
@@ -2644,6 +2695,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
+  bool get _callCreateGroupEvent => (!Auth2().isCalendarAdmin && _isGroupEvent);
+
   Future<bool> _promptFavorite(Event2 event, {bool? surveySucceeded} ) async {
     final String eventNameMacro = '{{event_name}}';
     final String starColorMacro = '{{star_color}}';
@@ -2703,6 +2756,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   bool get _shouldCreateRecurringEvents =>
       ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat));
+
+  bool get _shouldPublishSubEvents =>
+      _superEvent?.haveUnpublishedSubEvents == true && _publishSubEvents == true;
+
   bool get _hasRecurrenceEndDate => (_recurrenceEndDate != null);
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
@@ -2840,7 +2897,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ((widget.event?.onlineDetails?.meetingPasscode ?? '') != _onlinePasscodeController.text) ||
 
         !DeepCollectionEquality().equals(widget.event?.attributes, _attributes) ||
-        ((_event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public) != _visibility) ||
+        (_defaultVisibility != _visibility) ||
         ((widget.event?.free ?? true) != _free) ||
         ((widget.event?.cost ?? '') != _costController.text) ||
 
@@ -2965,14 +3022,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
     DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    DateTime? nextEndDateUtc = _endDateTimeUtc;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
       }
       int daysToAdd = (nextStartDateUtc.weekday == 7) ? (1 + (_weeklyRepeatPeriod! - 1) * 7) : 1;
       nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysToAdd));
-      nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysToAdd));
+      nextEndDateUtc = nextEndDateUtc?.add(Duration(days: daysToAdd));
     }
     return pairs;
   }
@@ -2996,7 +3053,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
     DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    DateTime? nextEndDateUtc = _endDateTimeUtc;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if ((_recurrenceRepeatDay == 0) || (_recurrenceRepeatDay == nextStartDateUtc.day)) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
@@ -3024,7 +3081,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
       Duration duration = Duration(days: daysDiff);
       nextStartDateUtc = nextStartDateUtc.add(duration);
-      nextEndDateUtc = nextEndDateUtc.add(duration);
+      nextEndDateUtc = nextEndDateUtc?.add(duration);
     }
     return pairs;
   }
@@ -3033,7 +3090,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
     DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime nextEndDateUtc = _endDateTimeUtc!;
+    DateTime? nextEndDateUtc = _endDateTimeUtc;
     int? nThDayOfMonth = _nThDayOfMonth;
     DateTime? desiredDateTime = _getInitialRecurringDesiredDay(nextStartDateUtc: nextStartDateUtc, nThDayOfMonth: nThDayOfMonth);
     if (desiredDateTime != null) {
@@ -3043,14 +3100,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         } else if (nextStartDateUtc.day < desiredDateTime.day) {
           int daysDiff = desiredDateTime.difference(nextStartDateUtc).inDays;
           nextStartDateUtc = nextStartDateUtc.add(Duration(days: daysDiff));
-          nextEndDateUtc = nextEndDateUtc.add(Duration(days: daysDiff));
+          nextEndDateUtc = nextEndDateUtc?.add(Duration(days: daysDiff));
           pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
         }
         desiredDateTime = _getNextRecurringDesiredDay(nextStartDateUtc: nextStartDateUtc, nThDayOfMonth: nThDayOfMonth);
         int daysDiffToNext = desiredDateTime!.difference(nextStartDateUtc).inDays;
         Duration duration = Duration(days: daysDiffToNext);
         nextStartDateUtc = nextStartDateUtc.add(duration);
-        nextEndDateUtc = nextEndDateUtc.add(duration);
+        nextEndDateUtc = nextEndDateUtc?.add(duration);
       }
     }
     return pairs;
@@ -3251,7 +3308,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     List<Event2>? recurringEvents = _buildRecurringEventsFrom(mainEvent: mainEvent, dates: recurringDates);
     if (CollectionUtils.isNotEmpty(recurringEvents)) {
       for (Event2 recurringEvent in recurringEvents!) {
-        dynamic recurringResult = await Events2().createEvent(recurringEvent);
+        dynamic recurringResult;
+        if (_callCreateGroupEvent) {
+          recurringResult = await Events2().createEventWithContext(recurringEvent);
+        } else {
+          recurringResult = await Events2().createEvent(recurringEvent);
+        }
         if (recurringResult is Event2) {
           debugPrint('Successfully created recurring event: ${recurringResult.id}');
         } else {
@@ -3271,8 +3333,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (day == null) {
       return '-----';
     }
-
-
     return '$day${_getOrdinalDaySuffix(day)} ${Localization().getStringEx('panel.event2.create.label.recurrence.period.day.label', 'day')}';
   }
 
@@ -3329,15 +3389,13 @@ String _event2VisibilityToDisplayString(_Event2Visibility value) {
 
 _Event2Visibility? _event2VisibilityFromAuthorizationContext(Event2AuthorizationContext? authorizationContext) {
   if (authorizationContext == null) {
-    return _Event2Visibility.public;
+    return null;
+  } else if (authorizationContext.isGroupMembersOnly) {
+    return _Event2Visibility.group_member;
+  } else if (authorizationContext.isGuestListOnly) {
+    return _Event2Visibility.registered_user;
   } else {
-    if (authorizationContext.isGroupMembersOnly) {
-      return _Event2Visibility.group_member;
-    } else if (authorizationContext.isGuestListOnly) {
-      return _Event2Visibility.registered_user;
-    } else {
-      return _Event2Visibility.public;
-    }
+    return _Event2Visibility.public;
   }
 }
 
@@ -3399,7 +3457,7 @@ String _recurrenceMonthWeekDayToDisplayString(_RecurrenceMonthWeekDay? value) {
 
 class _RecurringDatesPair {
   final DateTime startDateTimeUtc;
-  final DateTime endDateTimeUtc;
+  final DateTime? endDateTimeUtc;
 
-  _RecurringDatesPair({required this.startDateTimeUtc, required this.endDateTimeUtc});
+  _RecurringDatesPair({required this.startDateTimeUtc, this.endDateTimeUtc});
 }

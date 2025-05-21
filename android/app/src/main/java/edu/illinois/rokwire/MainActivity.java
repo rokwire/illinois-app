@@ -308,23 +308,20 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             }
         }
 
-        if (barcodeFormat != null) {
-            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-            Bitmap bitmap = null;
+        if (Utils.Str.isNotEmpty(content) && (barcodeFormat != null) && (0 < width) && (0 < height)) {
             try {
+                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
                 BitMatrix bitMatrix = multiFormatWriter.encode(content, barcodeFormat, width, height);
-                bitmap = createBitmap(bitMatrix);
-            } catch (WriterException e) {
+                Bitmap bitmap = (bitMatrix != null) ? createBitmap(bitMatrix) : null;
+                if (bitmap != null) {
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                    byte[] byteArray = byteArrayOutputStream.toByteArray();
+                    barcodeImageData = (byteArray != null) ? Base64.encodeToString(byteArray, Base64.NO_WRAP) : null;
+                }
+            } catch (Exception e) {
                 Log.e(TAG, "Failed to encode image:");
                 e.printStackTrace();
-            }
-            if (bitmap != null) {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                byte[] byteArray = byteArrayOutputStream.toByteArray();
-                if (byteArray != null) {
-                    barcodeImageData = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-                }
             }
         }
         return barcodeImageData;

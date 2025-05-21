@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -398,7 +398,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
   void _onTapNotificationPreferences(){
     Analytics().logSelect(target: "Notifications");
-    SettingsHomeContentPanel.present(context, content: SettingsContent.notifications);
+    SettingsHomePanel.present(context, content: SettingsContentType.notifications);
   }
 
   void _updateOverrideValuesIfNeeded(){

@@ -30,7 +30,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -90,7 +90,7 @@ class AppAlert {
       message: Localization().getStringEx('common.message.login.not_available', 'To sign in, $linkSettingsMacro to 4 or 5 under Settings'),
       linkMacro: linkSettingsMacro,
       linkText: Localization().getStringEx('common.message.login.not_available.link.settings', 'set your privacy level'),
-      linkAction: () { Navigator.pop(context); SettingsHomeContentPanel.present(context, content: SettingsContent.privacy); },
+      linkAction: () { Navigator.pop(context); SettingsHomePanel.present(context, content: SettingsContentType.privacy); },
     );
   }
 

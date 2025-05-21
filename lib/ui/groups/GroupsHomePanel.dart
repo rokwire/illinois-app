@@ -54,17 +54,12 @@ class GroupsHomePanel extends StatefulWidget with AnalyticsInfo {
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature {
-    switch (contentType) {
-      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
-      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
-      case null:                          return AnalyticsFeature.Groups;
-    }
-  }
+  AnalyticsFeature? get analyticsFeature => contentType?.analyticsFeature ?? AnalyticsFeature.Groups;
 }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsListener {
   final Color _dimmedBackgroundColor = Color(0x99000000);
+  static rokwire.GroupsContentType get _defaultContentType => Auth2().isLoggedIn ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all;
 
   bool _loadingProgress = false;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
@@ -72,6 +67,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   String? _newGroupId;
   GlobalKey? _newGroupKey;
 
+  late List<rokwire.GroupsContentType> _contentTypes;
   rokwire.GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
 
@@ -97,7 +93,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
     ]);
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
-    _selectedContentType = widget.contentType;
+
+    _contentTypes = _GroupsContentTypeList.fromContentTypes(GroupsContentType.values);
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      _defaultContentType._ensure(availableTypes: _contentTypes) ??
+      (_contentTypes.isNotEmpty ? _contentTypes.first : null);
+
     _reloadGroupsContent();
     super.initState();
   }
@@ -225,28 +226,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   Widget _buildContentTypesContainer() {
     return Visibility(visible: _contentTypesVisible, child: Stack(children: [
         GestureDetector(onTap: _changeContentTypesVisibility, child: Container(color: _dimmedBackgroundColor)),
-        _buildTypesValuesWidget()
+      _dropdownList,
     ]));
   }
 
-  Widget _buildTypesValuesWidget() {
+  Widget get _dropdownList {
     List<Widget> typeWidgetList = <Widget>[];
     typeWidgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
-      if ((_selectedContentType != type)) {
-        typeWidgetList.add(_buildContentItem(type));
+    for (rokwire.GroupsContentType contentType in _contentTypes) {
+      if (contentType != _selectedContentType) {
+        typeWidgetList.add(RibbonButton(
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+          label: contentType.displayTitle,
+          onTap: () => _onTapContentTypeDropdownItem(contentType)
+        ));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: typeWidgetList)));
-  }
-
-  Widget _buildContentItem(rokwire.GroupsContentType contentType) {
-    return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentLabel(contentType),
-        onTap: () => _onTapContentType(contentType));
   }
 
   Widget _buildGroupsContentSelection() {
@@ -256,7 +255,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
-      label: _getContentLabel(_selectedContentType),
+      label: _selectedContentType?.displayTitle ?? '',
       onTap: _changeContentTypesVisibility
     ));
   }
@@ -571,7 +570,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
 
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
-    ProfileHomePanel.present(context, content: ProfileContent.login,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
   }
 
 
@@ -597,29 +596,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
     }
   }
 
-  String _getContentLabel(rokwire.GroupsContentType? contentType) {
-    switch (contentType) {
-      case rokwire.GroupsContentType.all:
-        return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');
-      case rokwire.GroupsContentType.my:
-        return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
-      default:
-        return '';
-    }
-  }
-  
   void _changeContentTypesVisibility() {
     _contentTypesVisible = !_contentTypesVisible;
     _updateState();
   }
 
-  void _onTapContentType(rokwire.GroupsContentType contentType) {
-    Analytics().logSelect(target: _getContentLabel(contentType));
-    if (contentType == rokwire.GroupsContentType.all) {
-      _onSelectAllGroups();
-    }
-    else if (contentType == rokwire.GroupsContentType.my) {
-      _onSelectMyGroups();
+  void _onTapContentTypeDropdownItem(rokwire.GroupsContentType contentType) {
+    Analytics().logSelect(target: contentType.displayTitleEn);
+    if (_selectedContentType != contentType) {
+      if (contentType == rokwire.GroupsContentType.all) {
+        _onSelectAllGroups();
+      }
+      else if (contentType == rokwire.GroupsContentType.my) {
+        _onSelectMyGroups();
+      }
     }
     _changeContentTypesVisibility();
   }
@@ -680,7 +670,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   void _onTapImage(Group? group){
     Analytics().logSelect(target: "Image");
     if(group?.imageURL!=null){
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 
@@ -754,5 +744,54 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
         _reloadGroupsContent();
       }
     }
+  }
+}
+
+// GroupsContentType
+
+extension GroupsContentTypeImpl on GroupsContentType {
+  String get displayTitle => displayTitleLng();
+  String get displayTitleEn => displayTitleLng('en');
+
+  String displayTitleLng([String? language]) {
+    switch (this) {
+      case GroupsContentType.all: return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups', language: language);
+      case GroupsContentType.my: return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups', language: language);
+    }
+  }
+
+  String get jsonString {
+    switch (this) {
+      case GroupsContentType.all: return 'all';
+      case GroupsContentType.my: return 'my';
+    }
+  }
+
+  static GroupsContentType? fromJsonString(String? value) {
+    switch(value) {
+      case 'all': return GroupsContentType.all;
+      case 'my': return GroupsContentType.my;
+      default: return null;
+    }
+  }
+
+  AnalyticsFeature? get analyticsFeature {
+    switch (this) {
+      case rokwire.GroupsContentType.my:  return AnalyticsFeature.GroupsMy;
+      case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
+    }
+  }
+
+  GroupsContentType? _ensure({List<GroupsContentType>? availableTypes}) =>
+    (availableTypes?.contains(this) != false) ? this : null;
+}
+
+extension _GroupsContentTypeList on List<GroupsContentType> {
+  void sortAlphabetical() => sort((GroupsContentType t1, GroupsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+
+  static List<GroupsContentType> fromContentTypes(Iterable<GroupsContentType> contentTypes) {
+    List<GroupsContentType> contentTypesList = List<GroupsContentType>.from(contentTypes);
+    contentTypesList.sortAlphabetical();
+    return contentTypesList;
   }
 }

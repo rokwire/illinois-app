@@ -57,7 +57,7 @@ class ExploreMapSelectLocationPanel extends StatefulWidget with AnalyticsInfo {
     _analyticsFeature = analyticsFeature;
   
   @override
-  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? ExploreMapPanel.contentAnalyticsFeatures[mapType] ?? AnalyticsFeature.Map;
+  AnalyticsFeature? get analyticsFeature => _analyticsFeature ?? mapType?.analyticsFeature ?? AnalyticsFeature.Map;
 
   @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();

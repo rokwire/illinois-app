@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -16,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
@@ -225,6 +227,11 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
           progress: _preparingClipboardText,
           onTap: _onTapCopyTextToClipboard,
         ),
+        _buildCommand(
+          icon: Styles().images.getImage('edit', size: _commandIconSize, weight: 'regular'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.edit.profile.text', 'Edit My Info'),
+          onTap: _onTapEditProfile,
+        ),
       ]),
     ),
   );
@@ -409,6 +416,22 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
         Localization().getStringEx('panel.profile.info.share.command.copy.clipboard.failed', 'Failed to copy profile detail to Clipboard.');
       AppAlert.showTextMessage(context, message);
     }
+  }
+
+  void _onTapEditProfile() {
+    Analytics().logSelect(target: 'Edit My Info');
+    /*ProfileHomePanel.present(context,
+      contentType: ProfileContentType.profile,
+      contentParams: {
+        ProfileInfoPage.editParamKey : true,
+      }
+    );*/
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+      ProfileContentType.profile,
+      <String, dynamic>{
+        ProfileInfoPage.editParamKey : true,
+      }
+    ]);
   }
 
   Future<String?> _saveImage({bool addToGallery = false} ) async {
