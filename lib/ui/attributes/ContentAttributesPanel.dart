@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -253,6 +254,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       selection: attributeRawValues,
       filtersMode: widget.filtersMode,
       handleAttributeValue: widget.handleAttributeValue,
+      countAttributeValues: _countSampleAttributeValues,
     ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
         if ((attribute.nullValue is String) && selection.contains(attribute.nullValue)) {
@@ -545,6 +547,14 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   String _headerBackPromptOKText({String? language}) => Localization().getStringEx("dialog.ok.title", "OK", language: language);
   String _headerBackPromptCancelText({String? language}) => Localization().getStringEx("dialog.cancel.title", "Cancel", language: language);
 
+  Future<List<int?>?> _countSampleAttributeValues({
+      required ContentAttribute attribute,
+      required List<ContentAttributeValue> attributeValues,
+    }) async {
+    Random random = Random();
+    await Future.delayed(Duration(milliseconds: 5000));
+    return List.from(attributeValues.map((_) => random.nextInt(10000)));
+  }
 }
 
 class _AttributeRibbonButton extends StatelessWidget {
