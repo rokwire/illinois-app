@@ -27,7 +27,12 @@ class ContentAttributesCategoryPanel extends StatefulWidget with AnalyticsInfo {
     required ContentAttributeValue value
   })? handleAttributeValue;
 
-  ContentAttributesCategoryPanel({required this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false, this.handleAttributeValue });
+  final Future<List<int?>?> Function({
+    required ContentAttribute attribute,
+    required List<ContentAttributeValue> attributeValues,
+  })? countAttributeValues;
+
+  ContentAttributesCategoryPanel({required this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false, this.handleAttributeValue, this.countAttributeValues });
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
@@ -42,6 +47,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
+  Map<dynamic, int>? _attributeValuesCounts;
+  bool _countingAttributeValues = false;
+
 
   int get _requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
   bool get _hasAnyRequirements => widget.attribute.hasAnyRequirements(_requirementsFunctionalScope);
@@ -50,6 +58,21 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   bool get _isMultipleSelection => widget.attribute.isMultipleSelection(_requirementsFunctionalScope);
   bool _isGroupMultipleSelection({String? group}) => widget.attribute.isGroupMultipleSelection(_requirementsFunctionalScope, group: group);
   bool _canDeselect(dynamic attributeRawValue) => widget.attribute.canDeselect(_requirementsFunctionalScope, _selection, attributeRawValue);
+  int? _attributeValueCount(dynamic value) => _attributeValuesCounts?[value];
+  String? _attributeValueCountText(dynamic value) {
+    if (_countingAttributeValues) {
+      return " (...)";
+    }
+    else {
+      int? count = _attributeValueCount(value);
+      if ((count != null) && (count > 0)) {
+        return " ($count)";
+      }
+      else {
+        return null;
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -96,6 +119,17 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         // spacing
         _contentList.add(_ContentItem.spacing);
       });
+
+      if (widget.filtersMode) {
+        _countingAttributeValues = true;
+        _evalAttributeValuesCounts().then((Map<dynamic, int>? attributeValuesCounts) {
+          setStateIfMounted(() {
+            _countingAttributeValues = false;
+            _attributeValuesCounts = attributeValuesCounts;
+          });
+        });
+
+      }
     }
   }
 
@@ -124,12 +158,24 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     )
   );
 
-  List<Widget>? get _headerBarActions => (_canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(_selection, widget.emptySelection)) ? <Widget>[
-    HeaderBarActionTextButton(
-      title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-      onTap: _onTapClearAttributes,
-    ),
-  ] : null;
+  List<Widget>? get _headerBarActions {
+    List<Widget>? result;
+    bool canClear = _canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(_selection, widget.emptySelection);
+    if (_countingAttributeValues) {
+      result ??= <Widget>[];
+      result.add(HeaderBarActionProgress(
+        padding: EdgeInsets.symmetric(horizontal: canClear ? 0 : 16, vertical: 12),
+      ),);
+    }
+    if (canClear) {
+      result ??= <Widget>[];
+      result.add(HeaderBarActionTextButton(
+        title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+        onTap: _onTapClearAttributes,
+      ),);
+    }
+    return result;
+  }
 
   Widget _buildListItem(BuildContext context, int index) {
     dynamic sourceData = ((0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
@@ -184,14 +230,21 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? title = StringUtils.isNotEmpty(attributeValue.selectLabel) ?
       widget.attribute.displayString(attributeValue.selectLabel) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
-    
+
+    TextStyle? titleStyle = (attributeValue.value != null) ?
+      Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
+      Styles().textStyles.getTextStyle("widget.label.regular.thin");
+
+    String? count = (title != null) ?
+      _attributeValueCountText(attributeValue.value) : null;
+
+    TextStyle? countStyle = (attributeValue.value != null) ?
+      Styles().textStyles.getTextStyle("widget.detail.light.regular") :
+      Styles().textStyles.getTextStyle("widget.label.regular.thin");
+
     String? info = StringUtils.isNotEmpty(attributeValue.info) ?
       widget.attribute.displayString(attributeValue.info) : null;
 
-    TextStyle? textStyle = (attributeValue.value != null) ?
-      Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
-      Styles().textStyles.getTextStyle("widget.label.regular.thin");
-    
     bool multipleSelection = _isGroupMultipleSelection(group: attributeValue.group);
     String? imageAsset = (attributeValue.value != null) ?
       (multipleSelection ?
@@ -207,14 +260,19 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
             Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
               Flexible(child:
                 Padding(padding: const EdgeInsets.only(right: 8), child:
-                  Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                  RichText(text:
+                    TextSpan(text: title ?? '', style: titleStyle, children: <InlineSpan>[
+                      if (count != null)
+                        TextSpan(text: count, style: countStyle,),
+                    ]),
+                  )
                 )
               ),
 
               Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Visibility(visible: StringUtils.isNotEmpty(info), child:
                   Padding(padding: const EdgeInsets.only(right: 8), child:
-                    Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                    Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: titleStyle,),
                   )
                 ),
 
@@ -276,6 +334,32 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     else {
       Navigator.of(context).pop(_selection);
     }
+  }
+
+  Future<Map<dynamic, int>?> _evalAttributeValuesCounts() async {
+    final List<ContentAttributeValue>? attributeValues = widget.attributeValues;
+    final Future<List<int?>?> Function({
+      required ContentAttribute attribute,
+      required List<ContentAttributeValue> attributeValues,
+    })? countAttributeValues = widget.countAttributeValues;
+
+    List<int?>? counts = ((attributeValues != null) && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
+    return _mapAttributeValuesCounts(attributeValues: attributeValues, counts: counts);
+  }
+
+  Map<dynamic, int>? _mapAttributeValuesCounts({List<ContentAttributeValue>? attributeValues, List<int?>? counts } ) {
+    Map<dynamic, int>? attributeValuesCounts;
+    if ((attributeValues != null) && (counts != null)) {
+      attributeValuesCounts = <dynamic, int>{};
+      for (int index = 0; index < attributeValues.length; index++) {
+        ContentAttributeValue attributeValue = attributeValues[index];
+        int? attributeValueCount = (index < counts.length) ? counts[index] : null;
+        if (attributeValueCount != null) {
+          attributeValuesCounts[attributeValue.value] = attributeValueCount;
+        }
+      }
+    }
+    return attributeValuesCounts;
   }
 
   void _onHeaderBack() {
