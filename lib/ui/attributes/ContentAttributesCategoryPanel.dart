@@ -202,10 +202,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? semanticsValue = isSelected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
 
     return Semantics(button: true, inMutuallyExclusiveGroup: !multipleSelection, value: semanticsValue,  child:
-        InkWell(onTap: (){
-            _onTapAttributeValue(attributeValue);
-            AppSemantics.announceCheckBoxStateChange(context, !isSelected, title);
-          }, child:
+        InkWell(onTap: () => _onTapAttributeValue(attributeValue, isSelected: isSelected, title: title), child:
           Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
               Flexible(child:
@@ -228,8 +225,10 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     ));
   }
 
-  void _onTapAttributeValue(ContentAttributeValue attributeValue) {
+  void _onTapAttributeValue(ContentAttributeValue attributeValue, { bool? isSelected, String? title }) {
     Analytics().logSelect(target: attributeValue.selectLabel, source: widget.attribute.title);
+
+    AppSemantics.announceCheckBoxStateChange(context, isSelected != true, title);
 
     if (widget.handleAttributeValue != null) {
       widget.handleAttributeValue!(
