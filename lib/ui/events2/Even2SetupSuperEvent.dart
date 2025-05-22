@@ -392,7 +392,7 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> with 
 
   bool get _isSuperEvent => CollectionUtils.isNotEmpty(_selectedSubEvents);
 
-  bool get _publishAllSubEventsVisible => _isSuperEvent;
+  bool get _publishAllSubEventsVisible => _isSuperEvent && widget.event?.published == true;
 
   @override
   void onNotification(String name, param) {

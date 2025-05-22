@@ -2330,17 +2330,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   //Super event
-  Widget _buildSuperEventSection() =>  Visibility(visible: widget.event?.isSuperEvent == true && _published == true, child:
+  Widget _buildSuperEventSection() =>  Visibility(visible: widget.event?.isSuperEvent == true, child:
     Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishSubEventsToggle()));
 
-  Widget _buildPublishSubEventsToggle() => Semantics(toggled: _published, excludeSemantics: true,
-      label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish All Linked Sub-Events"),
-      hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
+  Widget _buildPublishSubEventsToggle() => Semantics(toggled: _publishSubEvents, excludeSemantics: true,
+      label: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
+      hint: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle.hint", ""),
       child: ToggleRibbonButton(
-        label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish All Linked Sub-Events"),
+        label: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
+        textStyle: _publishSubEventsEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
         padding: _togglePadding,
-        toggled: _publishSubEvents,
-        onTap: _onTapPublishSubEvents,
+        toggled: _publishSubEvents && _publishSubEventsEnabled,// show as untoggled when disabled ,
+        onTap: _publishSubEventsEnabled ? _onTapPublishSubEvents : (){},
         border: _toggleBorder,
         borderRadius: _toggleBorderRadius,
       ));
@@ -2352,6 +2353,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       _publishSubEvents = !_publishSubEvents;
     });
   }
+
   // Create Event
 
   Widget _buildCreateEventSection() => Padding(padding: Event2CreatePanel.sectionPadding, child:
@@ -2756,8 +2758,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   bool get _shouldCreateRecurringEvents =>
       ((_recurrenceRepeatType != null) && (_recurrenceRepeatType != _RecurrenceRepeatType.does_not_repeat));
 
-  bool get _shouldPublishSubEvents =>
-      _superEvent?.haveUnpublishedSubEvents == true && _publishSubEvents == true;
+  bool get _shouldPublishSubEvents => _publishSubEventsEnabled &&
+      _publishSubEvents == true &&
+      _superEvent?.haveUnpublishedSubEvents == true;
+
+  bool get _publishSubEventsEnabled => _published == true;
 
   bool get _hasRecurrenceEndDate => (_recurrenceEndDate != null);
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
