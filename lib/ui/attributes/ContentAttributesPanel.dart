@@ -552,7 +552,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       required List<ContentAttributeValue> attributeValues,
     }) async {
     Random random = Random();
-    await Future.delayed(Duration(milliseconds: 5000));
+    await Future.delayed(Duration(milliseconds: 1500));
     return List.from(attributeValues.map((_) => random.nextInt(10000)));
   }
 }
