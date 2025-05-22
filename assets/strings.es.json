@@ -1339,6 +1339,8 @@
     "panel.event2.create.label.visibility.title": "VISIBILIDAD DEL EVENTO",
     "panel.event2.create.published.toggle.title": "Publicar este evento",
     "panel.event2.create.published.toggle.hint": "",
+    "panel.event2.create.publish_sub_events.toggle": "Publish All Linked Sub-Events",
+    "panel.event2.create.publish_sub_events.toggle.hint": "",
     "panel.event2.create.button.create.title": "Crear un Evento",
     "panel.event2.create.button.create.hint": "",
     "panel.event2.update.button.update.title": "Actualizar un Evento",

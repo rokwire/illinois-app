@@ -1329,6 +1329,8 @@
 	"panel.event2.create.label.visibility.title": "活动关注度",
 	"panel.event2.create.published.toggle.title": "公開此活動",
 	"panel.event2.create.published.toggle.hint": "",
+	"panel.event2.create.publish_sub_events.toggle": "Publish All Linked Sub-Events",
+	"panel.event2.create.publish_sub_events.toggle.hint": "",
 	"panel.event2.create.button.create.title": "举办活动",
 	"panel.event2.create.button.create.hint": "",
 	"panel.event2.update.button.update.title": "活动更新",
