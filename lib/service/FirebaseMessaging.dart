@@ -211,7 +211,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeAthleticsTeam = 'athletics.team';
   static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
-  static const String payloadTypePostReaction = 'post.reaction';
+  static const String payloadTypePostReaction = 'post.reaction'; //TBD do we need this or we should use payloadTypeGroup
   static const String payloadTypeSocialMessage = 'conversation';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeHomeFavorites = 'home.favorites';
