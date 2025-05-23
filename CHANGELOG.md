@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reaction Notifications open GroupPostDetail panel [#4891](https://github.com/rokwire/illinois-app/issues/4891).
 - Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
 - Dates for recurring events [#4992](https://github.com/rokwire/illinois-app/issues/4992).
+- Acknowledge comment_id property for _onFirebaseGroupPostNotification[#5030](https://github.com/rokwire/illinois-app/issues/5030).
 ### Changed
 - Updated empty directory content text [#5096](https://github.com/rokwire/illinois-app/issues/5096).
 - Add thumbs up/down to the opening message in Assistant [#5007](https://github.com/rokwire/illinois-app/issues/5007).
