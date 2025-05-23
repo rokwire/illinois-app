@@ -1120,6 +1120,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
     TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
 
+  DateTime _dateTimeWithMicroSecond(int year, int month, int day, int hour, int minute,
+    int second, int millisecond, int microsecond) =>
+      TZDateTime(_timeZone, year, month, day, hour, minute, second, millisecond, microsecond);
+
   void _onTapAllDay() {
     Analytics().logSelect(target: "Toggle All Day");
     Event2CreatePanel.hideKeyboard(context);
@@ -3023,10 +3027,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   List<_RecurringDatesPair>? _buildWeeklyRecurringDates() {
     List<int>? recurrenceWeekDaysIndexes = _recurrenceWeekDays?.map((day) => day.index).toList();
     recurrenceWeekDaysIndexes?.sort();
-    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
-    DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime? nextEndDateUtc = _endDateTimeUtc;
+    DateTime recurringEndDateTimeUtc = Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59));
+    DateTime nextStartDateUtc = Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime);
+    DateTime? nextEndDateUtc = (_endDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime) : null;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if (recurrenceWeekDaysIndexes?.contains(nextStartDateUtc.weekday - 1) ?? false) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
@@ -3054,10 +3058,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   List<_RecurringDatesPair>? _buildMonthlyRecurringDatesByOrdinalDay() {
-    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
+    DateTime recurringEndDateTimeUtc = Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59));
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
-    DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime? nextEndDateUtc = _endDateTimeUtc;
+    DateTime nextStartDateUtc = Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime);
+    DateTime? nextEndDateUtc = (_endDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime) : null;
     while (nextStartDateUtc.isBefore(recurringEndDateTimeUtc)) {
       if ((_recurrenceRepeatDay == 0) || (_recurrenceRepeatDay == nextStartDateUtc.day)) {
         pairs.add(_RecurringDatesPair(startDateTimeUtc: nextStartDateUtc, endDateTimeUtc: nextEndDateUtc));
@@ -3070,7 +3074,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         if (nextStartDateUtc.day < _recurrenceRepeatDay!) {
           daysDiff = (_recurrenceRepeatDay! - nextStartDateUtc.day);
         } else {
-          DateTime nextDate = DateTime.utc(
+          DateTime nextDate = _dateTimeWithMicroSecond(
               nextStartDateUtc.year,
               (nextStartDateUtc.month + _monthlyRepeatPeriod!),
               _recurrenceRepeatDay!,
@@ -3091,10 +3095,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   List<_RecurringDatesPair>? _buildMonthlyRecurringDatesByWeekDay() {
-    DateTime recurringEndDateTimeUtc = _recurrenceEndDateTimeUtc!;
     List<_RecurringDatesPair> pairs = <_RecurringDatesPair>[];
-    DateTime nextStartDateUtc = _startDateTimeUtc!;
-    DateTime? nextEndDateUtc = _endDateTimeUtc;
+    DateTime recurringEndDateTimeUtc = Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59));
+    DateTime nextStartDateUtc = Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime);
+    DateTime? nextEndDateUtc = (_endDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime) : null;
     int? nThDayOfMonth = _nThDayOfMonth;
     DateTime? desiredDateTime = _getInitialRecurringDesiredDay(nextStartDateUtc: nextStartDateUtc, nThDayOfMonth: nThDayOfMonth);
     if (desiredDateTime != null) {
@@ -3123,7 +3127,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.day) {
       int month = (nThDayOfMonth != null) ? nextStartDateUtc.month : (nextStartDateUtc.month + 1);
       int day = (nThDayOfMonth != null) ? nThDayOfMonth : 0;
-      dateTime = DateTime.utc(nextStartDateUtc.year, month, day, nextStartDateUtc.hour, nextStartDateUtc.minute, nextStartDateUtc.second,
+      dateTime = _dateTimeWithMicroSecond(nextStartDateUtc.year, month, day, nextStartDateUtc.hour, nextStartDateUtc.minute, nextStartDateUtc.second,
           nextStartDateUtc.millisecond, nextStartDateUtc.microsecond);
     }
     // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
@@ -3147,7 +3151,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (_recurrenceMonthWeekDay == _RecurrenceMonthWeekDay.day) {
       int month = ((nThDayOfMonth != null) ? nextStartDateUtc.month : (nextStartDateUtc.month + 1)) + _monthlyRepeatPeriod!;
       int day = (nThDayOfMonth != null) ? nThDayOfMonth : 0;
-      dateTime = DateTime.utc(nextStartDateUtc.year, month, day, nextStartDateUtc.hour, nextStartDateUtc.minute, nextStartDateUtc.second,
+      dateTime = _dateTimeWithMicroSecond(nextStartDateUtc.year, month, day, nextStartDateUtc.hour, nextStartDateUtc.minute, nextStartDateUtc.second,
           nextStartDateUtc.millisecond, nextStartDateUtc.microsecond);
     }
     // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
@@ -3183,8 +3187,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       return null;
     }
     int month = nextMonth ? (dateTimeUtc.month + (monthsAhead ?? 1)) : dateTimeUtc.month;
-    DateTime firstDayOfMonth = DateTime.utc(dateTimeUtc.year, month, 1, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
-        dateTimeUtc.millisecond, dateTimeUtc.microsecond);
+    DateTime firstDayOfMonth = _dateTimeWithMicroSecond(dateTimeUtc.year, month, 1, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second, dateTimeUtc.millisecond, dateTimeUtc.microsecond);
     int firstDayOfWeek = firstDayOfMonth.weekday;
     int daysUntilTarget = (targetWeekDayNumber - firstDayOfWeek + 7) % 7;
     DateTime targetDay = firstDayOfMonth.add(Duration(days: daysUntilTarget));
@@ -3204,7 +3207,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       return null;
     }
     int month = (nextMonth ? (dateTimeUtc.month + (monthsAhead ?? 1)) : dateTimeUtc.month) + 1;
-    DateTime lastDayOfMonth = DateTime.utc(dateTimeUtc.year, month, 0, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
+    DateTime lastDayOfMonth = _dateTimeWithMicroSecond(dateTimeUtc.year, month, 0, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
         dateTimeUtc.millisecond, dateTimeUtc.microsecond);
     int lastDayOfWeek = lastDayOfMonth.weekday;
     int daysUntilTargetDay = (lastDayOfWeek - targetWeekDayNumber + 7) % 7;
@@ -3223,9 +3226,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     int month = nextMonth ? (dateTimeUtc.month + (monthsAhead ?? 1)) : dateTimeUtc.month;
 
-    DateTime firstDayOfMonth = DateTime.utc(dateTimeUtc.year, month, 1, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
+    DateTime firstDayOfMonth = _dateTimeWithMicroSecond(dateTimeUtc.year, month, 1, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
         dateTimeUtc.millisecond, dateTimeUtc.microsecond);
-    DateTime lastDayOfMonth = DateTime.utc(dateTimeUtc.year, month + 1, 0, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
+    DateTime lastDayOfMonth = _dateTimeWithMicroSecond(dateTimeUtc.year, month + 1, 0, dateTimeUtc.hour, dateTimeUtc.minute, dateTimeUtc.second,
         dateTimeUtc.millisecond, dateTimeUtc.microsecond);
 
     for (DateTime date = firstDayOfMonth; date.isBefore(lastDayOfMonth.add(Duration(days: 1))); date = date.add(Duration(days: 1))) {
