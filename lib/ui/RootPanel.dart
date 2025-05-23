@@ -1037,24 +1037,25 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = param["entity_id"];
+      String? groupId = JsonUtils.stringValue(param["entity_id"]);
       _presentGroupDetailPanel(groupId: groupId);
     }
   }
 
   void _onFirebaseGroupPostNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = param["entity_id"];
-      String? groupPostId = param["post_id"];
-      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId);
+      String? groupId = JsonUtils.stringValue(param["entity_id"]);
+      String? groupPostId = JsonUtils.stringValue(param["post_id"]);
+      String? commentId = JsonUtils.stringValue(param["comment_id"]);
+      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
     }
   }
 
   void _onFirebaseGroupPostReactionNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = param["group_id"];
-      String? groupPostId = param["post_id"];
-      String? commentId = param["comment_id"];
+      String? groupId =JsonUtils.stringValue(param["group_id"]);
+      String? groupPostId = JsonUtils.stringValue(param["post_id"]);
+      String? commentId = JsonUtils.stringValue(param["comment_id"]);
       _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
     }
   }
