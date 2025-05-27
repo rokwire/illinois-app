@@ -10,17 +10,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import '../../utils/AppUtils.dart';
 
-class SettingsResearchContentWidget extends StatefulWidget{
+class SettingsResearchPage extends StatefulWidget{
   final String? parentRouteName;
 
-  const SettingsResearchContentWidget({super.key, this.parentRouteName});
+  const SettingsResearchPage({super.key, this.parentRouteName});
 
   @override
   State<StatefulWidget> createState() => _SettingsContactsContentWidgetState();
 
 }
 
-class _SettingsContactsContentWidgetState extends State<SettingsResearchContentWidget> {
+class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
 
   @override
   Widget build(BuildContext context) =>
@@ -37,7 +37,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
     Column(children:<Widget>[
       Row(children: [
         Expanded(child:
-        Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
+        Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research Participation'), style:
         Styles().textStyles.getTextStyle("widget.title.large.fat")
         ),
         ),
@@ -88,7 +88,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
   }
 
   Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.';
+    String promptEn = 'Please confirm that you wish to no longer participate in Research Projects. All information filled out in your questionnaire will be deleted.';
     return await AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),

@@ -181,7 +181,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
 
   void _onTapViewAll(){
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.rings)));
   }
 
   Future<void> _onTapIncrease(WellnessRingDefinition data) async{

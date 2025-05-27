@@ -9,17 +9,17 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 
-class SettingsRecentItemsContentWidget extends StatefulWidget{
+class SettingsRecentItemsPage extends StatefulWidget{
   final String? parentRouteName;
 
-  const SettingsRecentItemsContentWidget({super.key, this.parentRouteName});
+  const SettingsRecentItemsPage({super.key, this.parentRouteName});
 
   @override
-  State<StatefulWidget> createState() => _SettingsRecentItemsContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsRecentItemsPageState();
 
 }
 
-class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsContentWidget> with NotificationsListener {
+class _SettingsRecentItemsPageState extends State<SettingsRecentItemsPage> with NotificationsListener {
 
   @override
   void initState() {

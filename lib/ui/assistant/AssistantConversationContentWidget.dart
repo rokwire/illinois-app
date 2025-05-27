@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -213,6 +214,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return Container();
     }
     bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
+    bool isPositiveFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.positive);
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
     String answer = message.isAnswerUnknown
         ? Localization()
@@ -253,7 +255,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                       Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                            message.example
+                                            InkWell(onLongPress: () => _onLongPressMessage(message), splashColor: Colors.transparent, child:
+                                              message.example
                                                 ? Text(
                                                 Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
                                                     message.content,
@@ -270,17 +273,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                               padding: EdgeInsets.only(right: 6),
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
                                                   WidgetSpan(
-                                                          child: MarkdownBody(
-                                                              data: answer,
-                                                              styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
-                                                              onTapLink: (text, href, title) {
-                                                                AppLaunchUrl.launch(url: href, context: context);
-                                                              }))
-                                                    ])),
+                                                      child: MarkdownBody(
+                                                          data: answer,
+                                                          builders: {
+                                                            'thumb_up': _AssistantMarkdownIconBuilder(icon: Icons.thumb_up_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                            'thumb_down': _AssistantMarkdownIconBuilder(icon: Icons.thumb_down_outlined, size: 18, color: Styles().colors.fillColorPrimary),
+                                                          },
+                                                          inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
+                                                          styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
+                                                          onTapLink: (text, href, title) {
+                                                            AppLaunchUrl.launch(url: href, context: context);
+                                                          }))
+                                                ]))
+                                            ),
                                             Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
-                                            Visibility(
-                                                visible: (message.feedbackResponseType == FeedbackResponseType.positive),
-                                                child: _buildFeedbackResponseDisclaimer())
+                                            Visibility(visible: isPositiveFeedbackFormVisible, child: _buildFeedbackResponseDisclaimer())
                                           ])),
                                           Visibility(visible: isNegativeFeedbackFormVisible, child:
                                             Align(alignment: Alignment.centerRight, child:
@@ -294,45 +301,20 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      _buildCopyButton(message),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
 
-  Widget _buildCopyButton(Message message) {
-    return Visibility(
-        visible: _isCopyButtonVisible(message),
-        child: Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: RoundedButton(
-              label: Localization().getStringEx('panel.assistant.copy_to_clipboard.button', 'Copy To Clipboard'),
-              fontSize: 12,
-              conentAlignment: MainAxisAlignment.end,
-              padding: EdgeInsets.symmetric(vertical: 3.5),
-              contentWeight: 0.35,
-              onTap: () => _onTapCopy(message),
-            )));
-  }
-
-  void _onTapCopy(Message message) {
-    Analytics().logSelect(target: 'Copy To Clipboard');
-    String? question = message.content;
-    String? answer;
-    int? questionIndex = _getMessageIndex(message);
-    if (questionIndex != null) {
-      int answerIndex = questionIndex + 1;
-      if (_messages.length > answerIndex) {
-        answer = _messages[answerIndex].content;
-      }
+  void _onLongPressMessage(Message message) {
+    Analytics().logSelect(target: 'Assistant: Copy To Clipboard');
+    if (!_canCopyMessage(message)) {
+      return;
     }
-    String textContent = 'Q: ${StringUtils.ensureNotEmpty(question)}\nA: ${StringUtils.ensureNotEmpty(answer)}';
+    String textContent = message.content;
     Clipboard.setData(ClipboardData(text: textContent));
   }
 
-  bool _isCopyButtonVisible(Message message) {
-    if (!message.user) {
-      return false;
-    }
+  bool _canCopyMessage(Message message) {
     int? messageIndex = _getMessageIndex(message);
     if (messageIndex == null) {
       return false;
@@ -430,6 +412,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapSourcesAndLinksLabel(Message message) {
+    Analytics().logSelect(target: 'Assistant: Sources and Links');
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
       int msgsLength = _messages.length;
@@ -482,6 +465,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _sendFeedback(Message message, bool good) {
+    Analytics().logSelect(target: 'Assistant: Thumb ${good ? 'Up' : 'Down'}');
     if ((_provider == null) || message.feedbackExplanation != null) {
       return;
     }
@@ -572,6 +556,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             color: Styles().colors.white,
             child: InkWell(
                 onTap: () {
+                  Analytics().logSelect(target: 'Assistant: Open Source Link');
                   UriExt.launchExternal(uri);
                 },
                 borderRadius: BorderRadius.circular(22),
@@ -611,6 +596,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             child: InkWell(
                 borderRadius: BorderRadius.circular(10.0),
                 onTap: () {
+                  Analytics().logSelect(target: 'Assistant: Open Deep Link');
                   NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}', link.params);
                 },
                 child: Padding(
@@ -766,6 +752,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _showContext() {
+    Analytics().logSelect(target: 'Assistant: Show Context');
     List<String> userContextKeys = _userContext?.keys.toList() ?? [];
     List<String> userContextVals = _userContext?.values.toList() ?? [];
     return showDialog<void>(
@@ -813,6 +800,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                     child: RoundedButton(
                       label: Localization().getStringEx('panel.assistant.dialog.context.button.add.title', 'Add'),
                       onTap: () {
+                        Analytics().logSelect(target: 'Assistant: Add Context');
                         setStateForDialog(() {
                           userContextKeys.add('');
                           userContextVals.add('');
@@ -829,6 +817,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.default.title', 'Default'),
                         onTap: () {
+                          Analytics().logSelect(target: 'Assistant: Default Context');
                           _userContext = _getUserContext();
                           Navigator.of(context).pop();
                           _showContext();
@@ -847,6 +836,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.profile1.title', 'Profile 1'),
                         onTap: () {
+                          Analytics().logSelect(target: 'Assistant: Context Profile 1');
                           _userContext = _getUserContext(
                               name: 'John Doe', netID: 'jdoe', college: 'Media', department: 'Journalism', studentLevel: 'Sophomore');
                           Navigator.of(context).pop();
@@ -864,6 +854,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.profile2.title', 'Profile 2'),
                         onTap: () {
+                          Analytics().logSelect(target: 'Assistant: Context Profile 2');
                           _userContext = _getUserContext(
                               name: 'Jane Smith',
                               netID: 'jsmith',
@@ -883,6 +874,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: RoundedButton(
                   label: Localization().getStringEx('panel.assistant.dialog.context.button.save.title', 'Save'),
                   onTap: () {
+                    Analytics().logSelect(target: 'Assistant: Save Context');
                     _userContext = {};
                     for (int i = 0; i < userContextKeys.length; i++) {
                       String key = userContextKeys[i];
@@ -906,6 +898,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _submitMessage({required String message, required AssistantProvider provider}) async {
+    Analytics().logSelect(target: 'Assistant: Send query');
     FocusScope.of(context).requestFocus(FocusNode());
     if ((_provider == null) || _loadingResponse) {
       return;
@@ -965,6 +958,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _submitNegativeFeedbackMessage({required Message systemMessage, required String negativeFeedbackExplanation}) async {
+    Analytics().logSelect(target: 'Assistant: Submit feedback');
     if ((_provider == null) || (_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
       return;
     }
@@ -1004,6 +998,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapCloseNegativeFeedbackForm(Message message) {
+    Analytics().logSelect(target: 'Assistant: Close Feedback Form');
     if (_provider != null) {
       Assistant().removeMessage(provider: _provider!, message: message);
       setStateIfMounted(() {
@@ -1135,7 +1130,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return _hideChatBar ? 0 : _keyboardHeight;
   }
 
-  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
+  double get _keyboardHeight => (mounted && context.mounted) ? MediaQuery.of(context).viewInsets.bottom : 0;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
@@ -1148,7 +1143,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool get _hideChatBar => _negativeFeedbackFocusNode.hasFocus && _keyboardHeight > 0;
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    final checkPosition = () => _keyboardHeight;
     //Check if the position of the keyboard is still changing
     final double position = checkPosition();
     final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
@@ -1162,4 +1157,28 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   int? get _availableQueryLimit => _isAssistantAvailable ? _queryLimit : 0;
   bool get _isAssistantAvailable => Assistant().isAvailable;
+}
+
+class _AssistantMarkdownCustomIconSyntax extends md.InlineSyntax {
+  _AssistantMarkdownCustomIconSyntax() : super(r'\[:(thumb_up|thumb_down):\]');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final tag = match.group(1)!;
+    parser.addNode(md.Element.text(tag, ''));
+    return true;
+  }
+}
+
+class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
+  final IconData icon;
+  final Color? color;
+  final double? size;
+
+  _AssistantMarkdownIconBuilder({required this.icon, this.color, this.size});
+
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
+  }
 }

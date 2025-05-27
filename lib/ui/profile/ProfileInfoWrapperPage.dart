@@ -80,7 +80,6 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
     switch(widget.content) {
       case ProfileInfoWrapperContent.info: return ProfileInfoPage(
         key: _profileInfoKey,
-        contentType: ProfileInfo.directoryInfo,
         params: widget.contentParams(ProfileInfoWrapperContent.info),
       );
 
@@ -136,7 +135,7 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
 
   void _onTapSignIn() {
     Analytics().logSelect(target: 'sign in');
-    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContent.login);
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContentType.login);
   }
 
   void _onTapProfile() {

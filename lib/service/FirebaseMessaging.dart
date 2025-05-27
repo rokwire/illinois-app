@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Analytics.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -59,6 +60,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyAthleticsTeamRoster                        = "$notifyBase.athletics.team.roster";
   static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
   static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
+  static const String notifyGroupPostReactionNotification        = "$notifyBase.group.post.reaction.updated";
   static const String notifySocialMessageNotification                  = "$notifyBase.conversation";
   static const String notifyHomeNotification                           = "$notifyBase.home";
   static const String notifyHomeFavoritesNotification                  = "$notifyBase.home.favorites";
@@ -209,6 +211,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeAthleticsTeam = 'athletics.team';
   static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
+  static const String payloadTypePostReaction = 'post.reaction'; //TBD do we need this or we should use payloadTypeGroup
   static const String payloadTypeSocialMessage = 'conversation';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeHomeFavorites = 'home.favorites';
@@ -367,11 +370,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
 
   @override
   void processDataMessage(Map<String, dynamic>? data) {
+
     String? messageId = JsonUtils.stringValue(data?['message_id']);
     if (messageId != null) {
       Inbox().readMessage(messageId);
     }
-    _processDataMessage(data);
+
+    String? type = _getMessageType(data);
+    Analytics().logFCM(command: type, data: data);
+    _processDataMessage(data, type: type);
   }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
@@ -436,6 +443,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
       } else {
         NotificationService().notify(notifyGroupsNotification, data);
       }
+    }
+    else if(type == payloadTypePostReaction) {
+      NotificationService().notify(notifyGroupPostReactionNotification, data);
     }
     else if (type == payloadTypeSocialMessage) {
       NotificationService().notify(notifySocialMessageNotification, data);

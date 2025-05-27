@@ -19,20 +19,23 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/SyrveyPanel.dart';
+import 'package:illinois/ui/events2/Event2ManageDataPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SurveyResponsesPanel extends StatefulWidget with AnalyticsInfo {
   final String? surveyId;
-  final String? eventName;
+  final Event2? event;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  SurveyResponsesPanel({Key? key, this.surveyId, this.eventName, this.analyticsFeature}) : super(key: key);
+  SurveyResponsesPanel({Key? key, this.surveyId, this.event, this.analyticsFeature}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SurveyResponsesPanelState();
@@ -75,17 +78,25 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
       children: [
         // TODO: _buildFiltersWidget(), (for start, end dates)
         // TODO: _buildSortWidget(),
+        _buildDownloadWidget(),
         SizedBox(height: 16.0),
         ..._buildResponseWidgets(),
       ]
     ));
   }
 
+  Widget _buildDownloadWidget() {
+    return Visibility(visible: _isDownloadVisible, child: GestureDetector(onTap: _onTapDownloadResults, child: Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
+      Text(Localization().getStringEx('panel.event2.survey.responses.download.label', 'Download survey results'),
+        style: Styles().textStyles.getTextStyle('panel.event.survey.responses.hyperlink.underlined')))));
+  }
+
   List<Widget> _buildResponseWidgets() {
     List<Widget> content = [];
+
     for(int i = 0; i < _surveyResponses.length; i++) {
       SurveyResponse response = _surveyResponses[i];
-      response.survey.replaceKey('event_name', widget.eventName);
+      response.survey.replaceKey('event_name', widget.event?.name);
       Widget responseCard = SurveyBuilder.surveyResponseCard(context, response, title: 'Response ${i+1}', onTap: () => _onTapSurveyResponse(response));
       content.add(responseCard);
       content.add(Container(height: 16.0));
@@ -131,12 +142,21 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
   // HeaderBar
 
   PreferredSizeWidget get _headerBar => HeaderBar(
-    title: Localization().getStringEx('panel.survey.responses.header.title', '{{survey_name}} Survey Responses').replaceAll('{{survey_name}}', widget.eventName ?? _survey?.title ?? ''),
+    title: Localization().getStringEx('panel.survey.responses.header.title', '{{survey_name}} Survey Responses').replaceAll('{{survey_name}}', widget.event?.name ?? _survey?.title ?? ''),
     onLeading: _onHeaderBarBack,
   );
 
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop();
+  }
+
+  // Download responses
+
+  bool get _isDownloadVisible => CollectionUtils.isNotEmpty(_surveyResponses) && Event2ManageDataPanel.canManage;
+
+  void _onTapDownloadResults() {
+    Analytics().logSelect(target: 'Download survey results');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2ManageDataPanel(event: widget.event)));
   }
 }

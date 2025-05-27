@@ -22,10 +22,9 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -673,17 +672,17 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
-    AcademicsHomePanel.push(context, AcademicsContent.skills_self_evaluation);
+    AcademicsHomePanel.push(context, AcademicsContentType.skills_self_evaluation);
   }
 
   static void _onTapEssentialSkillCoach(BuildContext context) {
     Analytics().logSelect(target: "Essential Skills Coach");
-    AcademicsHomePanel.push(context, AcademicsContent.essential_skills_coach);
+    AcademicsHomePanel.push(context, AcademicsContentType.essential_skills_coach);
   }
 
   static void _onTapAcademicsToDo(BuildContext context) {
     Analytics().logSelect(target: "Academics To Do");
-    AcademicsHomePanel.push(context, AcademicsContent.todo_list);
+    AcademicsHomePanel.push(context, AcademicsContentType.todo_list);
   }
 
   static void _onTapCanvasCourses(BuildContext context) {
@@ -713,17 +712,17 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
   }
 
   static void _onTapSportNews(BuildContext context) {
     Analytics().logSelect(target: "News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
   }
 
   static void _onTapSportTeams(BuildContext context) {
     Analytics().logSelect(target: "Teams");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.teams)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.teams)));
   }
 
   static void _onTapCampusHighlights(BuildContext context) {
@@ -759,8 +758,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapUserDirectory(BuildContext context) {
-    Analytics().logSelect(target: "User Directory");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(DirectoryAccounts.directory); } ));
+    Analytics().logSelect(target: "Directory of Users");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(); } ));
   }
 
   static void _onTapLaundry(BuildContext context) {
@@ -835,7 +834,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "It's Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.game_day)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
   }
 
   static void _onTapMyDinings(BuildContext context) {
@@ -845,12 +844,12 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMyAthletics(BuildContext context) {
     Analytics().logSelect(target: "My Big 10 Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_events)));
   }
 
   static void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
   }
 
   static void _onTapMyLaundry(BuildContext context) {
@@ -875,22 +874,22 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapWellnessResources(BuildContext context) {
     Analytics().logSelect(target: "Wellness Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(contentType: WellnessContentType.resources,); } ));
   }
 
   static void _onTapWellnessRecreation(BuildContext context) {
     Analytics().logSelect(target: "Campus Recreation");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.recreation,); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(contentType: WellnessContentType.recreation,); } ));
   }
 
   static void _onTapWellnessMentalHealth(BuildContext context) {
     Analytics().logSelect(target: "Wellness Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(contentType: WellnessContentType.mentalHealth,); } ));
   }
 
   static void _onTapWellnessAppointments(BuildContext context) {
     Analytics().logSelect(target: "MyMcKinley Appointments");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(contentType: WellnessContentType.appointments); } ));
   }
 
   static void _onTapAppointments(BuildContext context, { AnalyticsFeature? analyticsFeature }) {
@@ -987,27 +986,27 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.rings,)));
   }
 
   static void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.todo,)));
   }
 
   static void _onTapWellnessTips(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Tips");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.dailyTips,)));
   }
 
   static void _onTapWellnessHealthScreener(BuildContext context) {
     Analytics().logSelect(target: "Illinois Health Screener");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.healthScreener,)));
   }
 
   static void _onTapWellnessSuccessTeam(BuildContext context) {
     Analytics().logSelect(target: "My Primary Care Provider");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.successTeam,)));
   }
 
   // ignore: unused_element

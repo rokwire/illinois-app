@@ -27,12 +27,12 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
-class SettingsAssessmentsContentWidget extends StatefulWidget {
+class SettingsAssessmentsPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingsAssessmentsContentWidgetState();
+  State<StatefulWidget> createState() => _SettingsAssessmentsPageState();
 }
 
-class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsContentWidget> with NotificationsListener {
+class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with NotificationsListener {
 
   @override
   void initState() {

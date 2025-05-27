@@ -333,7 +333,7 @@ extension Event2Ext on Event2 {
       return Event2Grouping.superEvents(superEventId: id);
     }
     else if (isRecurring) {
-      return Event2Grouping.recurringEvents(groupId: grouping?.recurrenceId, individual: false);
+      return Event2Grouping.recurringEvents(groupId: grouping?.recurrenceId);
     }
     else {
       return null;
@@ -417,7 +417,7 @@ extension Event2Ext on Event2 {
     );
   }
 
-  Event2 toRecurringEvent({required DateTime startDateTimeUtc, required DateTime endDateTimeUtc}) => Event2(
+  Event2 toRecurringEvent({required DateTime startDateTimeUtc, DateTime? endDateTimeUtc}) => Event2(
     name: this.name,
     description: this.description,
     instructions: this.instructions,
@@ -433,7 +433,7 @@ extension Event2Ext on Event2 {
     location: this.location,
     onlineDetails: this.onlineDetails,
 
-    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId, individual: false), // set "sub-events" not to show as individuals
+    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId, individual: true), // set "sub-events" to show as individuals
     attributes: this.attributes,
     authorizationContext: this.authorizationContext,
     context: this.context,
@@ -750,8 +750,8 @@ extension Events2Ext on Events2 {
           return Event2Result.fail("Unable to load sub events");
         }
         //Duplicate sub events
-        Event2SuperEventResult<int> updateResult = await  Event2SuperEventsController.multiUpload(
-            events: Event2SuperEventsController.applyCollectionChange(
+        Event2SuperEventResult<int> updateResult = await  SuperEventsController.multiUpload(
+            events: SuperEventsController.applyCollectionChange(
                 collection: subEventsLoad?.events,
                 change: (subEvent) {
                   Event2Grouping subGrouping = subEvent.grouping?.copyWith(superEventId:  createdEvent.id) ?? Event2Grouping.superEvent(createdEvent.id);

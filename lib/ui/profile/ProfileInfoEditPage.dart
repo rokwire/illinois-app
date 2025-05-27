@@ -10,7 +10,6 @@ import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -27,7 +26,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoEditPage extends StatefulWidget {
-  final ProfileInfo contentType;
   final bool onboarding;
 
   final Auth2Type? authType;
@@ -41,7 +39,7 @@ class ProfileInfoEditPage extends StatefulWidget {
   final void Function({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? pronunciationAudioData, Uint8List? photoImageData, String? photoImageToken})? onFinishEdit;
 
   ProfileInfoEditPage({super.key,
-    required this.contentType, this.onboarding = false,
+    this.onboarding = false,
     this.authType, this.profile, this.privacy,
     this.pronunciationAudioData, this.photoImageData, this.photoImageToken,
     this.onFinishEdit
@@ -844,11 +842,11 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   }
 
   bool isProfileFieldVisibilityPermitted(_ProfileField field) =>
-    _permittedVisibility.contains(_fieldVisibilities[field]) && (_fieldTextNotEmpty[field] == true);
+    (_fieldVisibilities[field] == Auth2FieldVisibility.public) && (_fieldTextNotEmpty[field] == true);
 
   Auth2FieldVisibility profileFieldVisibility(_ProfileField field) {
     Auth2FieldVisibility? profileFieldVisibility = _fieldVisibilities[field];
-    return ((_fieldTextNotEmpty[field] == true) && (profileFieldVisibility != null) && _permittedVisibility.contains(profileFieldVisibility)) ? profileFieldVisibility : Auth2FieldVisibility.private;
+    return ((_fieldTextNotEmpty[field] == true) && (profileFieldVisibility != null) && (profileFieldVisibility == Auth2FieldVisibility.public)) ? profileFieldVisibility : Auth2FieldVisibility.private;
   }
 
   static Widget? get _editIcon => Styles().images.getImage('edit', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
@@ -924,7 +922,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     List<DropdownMenuItem<Auth2FieldVisibility>> items = <DropdownMenuItem<Auth2FieldVisibility>>[];
     Auth2FieldVisibility selectedFieldVisibility = profileFieldVisibility(field);
     for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values.reversed) {
-      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || (fieldVisibility == Auth2FieldVisibility.public)) {
         items.add(_visibilityDropdownItem(fieldVisibility, selected: selectedFieldVisibility == fieldVisibility));
       }
     }
@@ -970,7 +968,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   double _evaluateVisibilityDropdownItemsWidth() {
     double maxTextWidth = 0;
     for (Auth2FieldVisibility fieldVisibility in Auth2FieldVisibility.values) {
-      if ((fieldVisibility == Auth2FieldVisibility.private) || _permittedVisibility.contains(fieldVisibility)) {
+      if ((fieldVisibility == Auth2FieldVisibility.private) || (fieldVisibility == Auth2FieldVisibility.public)) {
         final Size textSizeFull = (TextPainter(
           text: TextSpan(text: fieldVisibility.displayTitle, style: _selectedDropdownItemTextStyle,),
           textScaler: MediaQuery.of(context).textScaler,
@@ -1048,8 +1046,8 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     Analytics().logSelect(target: 'Toggle $field Visibility');
     setState(() {
       Auth2FieldVisibility? visibility = _fieldVisibilities[field];
-      _fieldVisibilities[field] = (_permittedVisibility.contains(visibility)) ?
-        Auth2FieldVisibility.private : _positiveVisibility;
+      _fieldVisibilities[field] = (visibility == Auth2FieldVisibility.public) ?
+        Auth2FieldVisibility.private : Auth2FieldVisibility.public;
     });
   }
 
@@ -1238,12 +1236,6 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
       return true;
     }
   }
-
-  Auth2FieldVisibility get _positiveVisibility =>
-    widget.contentType.positiveVisibility;
-
-  Set<Auth2FieldVisibility> get _permittedVisibility =>
-    widget.contentType.permitedVisibility;
 }
 
 ///////////////////////////////////////////
@@ -1514,7 +1506,7 @@ extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
 
   String get displayDescription {
     switch(this) {
-      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'User directory, business card');
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Directory of Users, business card');
       case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
       case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
     }
