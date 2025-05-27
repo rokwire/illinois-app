@@ -24,6 +24,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -113,7 +114,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24,), child:
       Column( children: [
         HtmlWidget(_phoneDetailHtml,
-          onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber); return true;},
+          onTapUrl : (url) => _launchUrl(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber),
           textStyle:  _htmlDetailTextStyle,
           customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
         ),
@@ -125,7 +126,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
           Expanded(child:
             Align(alignment: Alignment.topLeft, child:
             HtmlWidget(_safeRidesDetailHtml,
-              onTapUrl : (url) { _onTapLink(url, context: context, analyticsTarget: 'SafeRides'); return true;},
+              onTapUrl : (url) => _launchUrl(url, context: context, analyticsTarget: 'SafeRides'),
               textStyle:  _htmlDetailTextStyle,
               customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
             ),
@@ -225,18 +226,8 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
     SettingsHomePanel.present(context, content: SettingsContentType.maps);
   }
 
-  void _onTapLink(String url, { required BuildContext context, String? analyticsTarget, bool launchInternal = false }) {
-    Analytics().logSelect(target: analyticsTarget ?? url);
-    if (url.isNotEmpty) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
-      }
-    }
-  }
+  static bool _launchUrl(String url, { required BuildContext context, String? analyticsTarget, bool launchInternal = false }) =>
+    _SafetySafeWalkRequestCardState._launchUrl(url, context: context, analyticsTarget: analyticsTarget, launchInternal: launchInternal);
 
   void _onTapAboutSafeWalks(BuildContext context) {
     Analytics().logSelect(target: 'About SafeWalks');
@@ -500,10 +491,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       else {
         updateProgress?.call(false);
         if (status == LocationServicesStatus.permissionNotDetermined) {
-          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.service_disabled.title', 'Location Services not enabled.'));
+          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.location.service.disabled.title', 'Location Services not enabled.'));
         }
         else if (status == LocationServicesStatus.permissionDenied) {
-          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.service_denied.title', 'Location Services access denied.'));
+          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.location.service.denied.title', 'Location Services access denied.'));
         }
         else {
           ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.service_not_available.title', 'Location Services not available.'));
@@ -647,7 +638,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   void _onTapSend() async {
     Analytics().logSelect(target: 'Start with a Text', feature: AnalyticsFeature.Safety);
     if (_sendProgress != true) {
-      if (_originLocation == null) {
+      if (_isSafeWalkInWorkHours == false) {
+        ExploreMessagePopup.show(context, _safeWalkOutOfWorkHoursHtml, onTapUrl: (String url) => _launchUrl(url, context: context, analyticsTarget: Config().safeWalkPhoneNumber));
+      }
+      else if (_originLocation == null) {
         ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.origin.title', 'Please select your current location.'));
       }
       else if (_destinationLocation == null) {
@@ -694,6 +688,42 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 
         }
       }
+    }
+  }
+
+  bool? get _isSafeWalkInWorkHours {
+    int? startTimeInterval = Config().safeWalkStartTimeInterval;
+    int? endTimeInterval = Config().safeWalkEndTimeInterval;
+    DateTime? currentDateTimeUni = DateTimeUni.nowUni(); // ?? DateTime.now();
+    if ((currentDateTimeUni != null) && (startTimeInterval != null) && (endTimeInterval != null)) {
+      int currentTimeInterval = currentDateTimeUni.hour * 60 + currentDateTimeUni.minute;
+      return (startTimeInterval <= endTimeInterval) ?
+        ((startTimeInterval <= currentTimeInterval) && (currentTimeInterval <= endTimeInterval)) :
+        ((startTimeInterval <= currentTimeInterval) || (currentTimeInterval <= endTimeInterval));
+    }
+    return null;
+  }
+
+  static const String _safeWalkPhoneNumberMacro = '{{safewalk_phone_number}}';
+
+  String get _safeWalkOutOfWorkHoursHtml =>
+    Localization().getStringEx('widget.safewalks_request.message.service.worktime.out_of_hours.html', '<b>SafeWalks is not available at this time.</b><br>For more information, call <a href=\'tel:$_safeWalkPhoneNumberMacro\'>$_safeWalkPhoneNumberMacro</a>.')
+      .replaceAll(_safeWalkPhoneNumberMacro, Config().safeWalkPhoneNumber ?? '');
+  
+  static bool _launchUrl(String url, { required BuildContext context, String? analyticsTarget, bool launchInternal = false }) {
+    Analytics().logSelect(target: analyticsTarget ?? url);
+    if (url.isNotEmpty) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
+      }
+      return true;
+    }
+    else {
+      return false;
     }
   }
 }
