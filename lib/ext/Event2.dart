@@ -333,7 +333,7 @@ extension Event2Ext on Event2 {
       return Event2Grouping.superEvents(superEventId: id);
     }
     else if (isRecurring) {
-      return Event2Grouping.recurringEvents(groupId: grouping?.recurrenceId, individual: false);
+      return Event2Grouping.recurringEvents(groupId: grouping?.recurrenceId);
     }
     else {
       return null;
@@ -433,7 +433,7 @@ extension Event2Ext on Event2 {
     location: this.location,
     onlineDetails: this.onlineDetails,
 
-    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId, individual: false), // set "sub-events" not to show as individuals
+    grouping: Event2Grouping.recurrence(this.grouping?.recurrenceId, individual: true), // set "sub-events" to show as individuals
     attributes: this.attributes,
     authorizationContext: this.authorizationContext,
     context: this.context,
