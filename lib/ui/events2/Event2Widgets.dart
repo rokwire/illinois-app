@@ -617,7 +617,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   List<Widget> get _linkedEventsPagerWidget {
     List<Event2Grouping>? linkedGroupingQueries = _event.linkedEventsGroupingQuery;
     return (linkedGroupingQueries != null) ? <Widget>[
-      LinkedEvents2Pager(linkedGroupingQueries, contentBuilder: _linkedEventsPagerBuilder, userLocation: widget.userLocation)
+      LinkedEvents2Pager(linkedGroupingQueries, mainEventId: _event.id, contentBuilder: _linkedEventsPagerBuilder, userLocation: widget.userLocation)
     ] : <Widget>[];
   }
 
@@ -708,10 +708,11 @@ enum LinkedEvents2PagerContentStatus { loading, error, empty, content }
 typedef LinkedEvents2PagerContentBuilder = Widget Function(LinkedEvents2PagerContentStatus state, { required Widget child } );
 
 class LinkedEvents2Pager extends StatefulWidget {
+  final String? mainEventId;
   final List<Event2Grouping> linkedGroupingQueries;
   final LinkedEvents2PagerContentBuilder? contentBuilder;
   final Position? userLocation;
-  LinkedEvents2Pager(this.linkedGroupingQueries, {super.key, this.contentBuilder, this.userLocation });
+  LinkedEvents2Pager(this.linkedGroupingQueries, {super.key, this.mainEventId, this.contentBuilder, this.userLocation });
 
   @override
   State<StatefulWidget> createState() => _LinkedEvents2PagerState();
@@ -779,17 +780,19 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < eventsCount; index++) {
         Event2 event = _events![index];
-        String contentKey = "${event.id}-$index";
-        pages.add(Padding(
-          key: _contentKeys[contentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
-          child: Event2Card(event,
-            displayMode: Event2CardDisplayMode.cardLink,
-            linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
-            userLocation: widget.userLocation,
-            onTap: () => _onTapEvent2(event),
-          )
-        ));
+        if (!_isMainEvent(event.id)) {
+          String contentKey = "${event.id}-$index";
+          pages.add(Padding(
+            key: _contentKeys[contentKey] ??= GlobalKey(),
+            padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
+            child: Event2Card(event,
+              displayMode: Event2CardDisplayMode.cardLink,
+              linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
+              userLocation: widget.userLocation,
+              onTap: () => _onTapEvent2(event),
+            )
+          ));
+        }
       }
 
       if (_hasMoreEvents != false) {
@@ -820,14 +823,15 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
       );
     }
     else {
-      return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      // Show it if the event is not the main event
+      return Visibility(visible: !_isMainEvent(_events?.first.id), child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
         Event2Card(_events!.first,
           displayMode: Event2CardDisplayMode.cardLink,
           linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
           userLocation: widget.userLocation,
           onTap: () => _onTapEvent2(_events!.first)
         )
-      );
+      ));
     }
   }
 
@@ -872,8 +876,23 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
   bool? get _hasMoreEvents => (_totalEventsCount != null) ?
     ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
 
+  bool get _hasMainEvent => StringUtils.isNotEmpty(widget.mainEventId);
+
+  bool _isMainEvent(String? eventId) => _hasMainEvent ? (widget.mainEventId == eventId) : false;
+
+  bool get _containsMainEvent {
+    if (_hasMainEvent && CollectionUtils.isNotEmpty(_events)) {
+      for (Event2 event in _events!) {
+        if (_isMainEvent(event.id)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   void _onPageChanged(int index) {
-    if ((_events?.length ?? 0) < (index + 1) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents) {
+    if ((_events?.length ?? 0) < (index + (_containsMainEvent ? 2 : 1)) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents) {
       _extend();
     }
   }
