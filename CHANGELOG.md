@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Fixed
+### Added
 - Added check for SafeWalk working hours [#5176](https://github.com/rokwire/illinois-app/issues/5176).
+### Fixed
 - Display recurring events with a specific display date [#4737](https://github.com/rokwire/illinois-app/issues/4737).
 
 ## [7.1.9] - 2025-05-23
