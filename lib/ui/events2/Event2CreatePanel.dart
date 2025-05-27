@@ -2566,8 +2566,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     List<_RecurringDatesPair>? recurringDates = _buildRecurringDatesPairs();
     DateTime? eventStartDate, eventEndDate;
     if (CollectionUtils.isNotEmpty(recurringDates)) {
-      eventStartDate = recurringDates!.first.startDateTime;
-      eventEndDate = recurringDates.last.endDateTime;
+      // Set the first dates for the first event. And create the other events after that
+      _RecurringDatesPair firstPair = recurringDates!.first;
+      eventStartDate = firstPair.startDateTime;
+      eventEndDate = firstPair.endDateTime;
+      _RecurringDatesPair removed = recurringDates.removeAt(0);
     }
 
     dynamic result;
