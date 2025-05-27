@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow group admins to create events [#5099](https://github.com/rokwire/illinois-app/issues/5099).
 - Added Pinch and Zoom on group post images [#5128](https://github.com/rokwire/illinois-app/issues/5128).
 - Acknowledged new student classification fields in IlliniStudentClassification [#4865](https://github.com/rokwire/illinois-app/issues/4865).
+- Added check for SafeWalk working hours [#5176](https://github.com/rokwire/illinois-app/issues/5176).
 
 ## [7.0.20] - 2025-04-29
 ### Fixed
