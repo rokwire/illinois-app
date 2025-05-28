@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.1.11] - 2025-05-28
+### Changed
+- Load different polls content for a group depending on its member status [#5175](https://github.com/rokwire/illinois-app/issues/5175).
+
 ## [7.1.10] - 2025-05-27
 ### Added
 - Added check for SafeWalk working hours [#5176](https://github.com/rokwire/illinois-app/issues/5176).
