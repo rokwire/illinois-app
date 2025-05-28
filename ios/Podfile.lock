@@ -173,7 +173,7 @@ PODS:
     - Flutter
   - record_darwin (1.0.0):
     - Flutter
-  - rokwire_plugin (1.10.0):
+  - rokwire_plugin (1.10.1):
     - Flutter
   - SeosMobileKeysSDK-Debug (7.7.5):
     - BerTlv
@@ -425,7 +425,7 @@ SPEC CHECKSUMS:
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   quick_actions_ios: 4b07fb49d8d8f3518d7565fbb7a91014067a7d82
   record_darwin: fb1f375f1d9603714f55b8708a903bbb91ffdb0a
-  rokwire_plugin: 10e01b376f2789904fac5e38b35d32a5379a1bc0
+  rokwire_plugin: 9fe93d6d1d5642275aaff888047635c81fafda1b
   SeosMobileKeysSDK-Debug: 904c47d1a191addfa7ad5af4f41d1253ab7a73d4
   SeosMobileKeysSDK-Release: daed718b42c97f3d5337de9f081881077d9815f0
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
