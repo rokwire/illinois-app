@@ -2570,7 +2570,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       _RecurringDatesPair firstPair = recurringDates!.first;
       eventStartDate = firstPair.startDateTime;
       eventEndDate = firstPair.endDateTime;
-      _RecurringDatesPair removed = recurringDates.removeAt(0);
+      /* _RecurringDatesPair removed = */ recurringDates.removeAt(0);
     }
 
     dynamic result;
@@ -2785,8 +2785,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   DateTime? get _endDateTimeUtc =>
     (_endDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime).millisecondsSinceEpoch) : null;
 
-  DateTime? get _recurrenceEndDateTimeUtc =>
-      _hasRecurrenceEndDate ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59)).millisecondsSinceEpoch) : null;
+  //DateTime? get _recurrenceEndDateTimeUtc =>
+  //    _hasRecurrenceEndDate ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _recurrenceEndDate!, TimeOfDay(hour: 23, minute: 59)).millisecondsSinceEpoch) : null;
 
   bool get _private => (_visibility != _Event2Visibility.public);
 
