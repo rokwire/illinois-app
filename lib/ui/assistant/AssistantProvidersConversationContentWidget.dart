@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -315,6 +316,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   }
 
   void _onTapSourcesAndLinksLabel(Message message) {
+    Analytics().logSelect(target: 'Assistant: Sources and Links');
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
       int msgsLength = _messages.length;
@@ -364,6 +366,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
             color: Styles().colors.white,
             child: InkWell(
                 onTap: () {
+                  Analytics().logSelect(target: 'Assistant: Open Source Link');
                   UriExt.launchExternal(uri);
                 },
                 borderRadius: BorderRadius.circular(22),
@@ -403,6 +406,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
             child: InkWell(
                 borderRadius: BorderRadius.circular(10.0),
                 onTap: () {
+                  Analytics().logSelect(target: 'Assistant: Open Deep Link');
                   NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}', link.params);
                 },
                 child: Padding(
@@ -552,6 +556,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   }
 
   Future<void> _showContext() {
+    Analytics().logSelect(target: 'Assistant: Show Context');
     List<String> userContextKeys = _userContext?.keys.toList() ?? [];
     List<String> userContextVals = _userContext?.values.toList() ?? [];
     return showDialog<void>(
@@ -599,6 +604,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                     child: RoundedButton(
                       label: Localization().getStringEx('panel.assistant.dialog.context.button.add.title', 'Add'),
                       onTap: () {
+                        Analytics().logSelect(target: 'Assistant: Add Context');
                         setStateForDialog(() {
                           userContextKeys.add('');
                           userContextVals.add('');
@@ -615,6 +621,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.default.title', 'Default'),
                         onTap: () {
+                          Analytics().logSelect(target: 'Assistant: Default Context');
                           _userContext = _getUserContext();
                           Navigator.of(context).pop();
                           _showContext();
@@ -633,6 +640,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.profile1.title', 'Profile 1'),
                         onTap: () {
+                          Analytics().logSelect(target: 'Assistant: Context Profile 1');
                           _userContext = _getUserContext(
                               name: 'John Doe', netID: 'jdoe', college: 'Media', department: 'Journalism', studentLevel: 'Sophomore');
                           Navigator.of(context).pop();
@@ -650,6 +658,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.profile2.title', 'Profile 2'),
                         onTap: () {
+                          Analytics().logSelect(target: 'Assistant: Context Profile 2');
                           _userContext = _getUserContext(
                               name: 'Jane Smith',
                               netID: 'jsmith',
@@ -669,6 +678,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                 child: RoundedButton(
                   label: Localization().getStringEx('panel.assistant.dialog.context.button.save.title', 'Save'),
                   onTap: () {
+                    Analytics().logSelect(target: 'Assistant: Save Context');
                     _userContext = {};
                     for (int i = 0; i < userContextKeys.length; i++) {
                       String key = userContextKeys[i];
@@ -692,6 +702,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   }
 
   Future<void> _submitMessage({required String message}) async {
+    Analytics().logSelect(target: 'Assistant: Send query');
     FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;

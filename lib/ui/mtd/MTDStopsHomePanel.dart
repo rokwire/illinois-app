@@ -67,7 +67,9 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
     ]);
     
     _scopes = _MTDStopsScopeList.fromContentTypes(MTDStopsScope.values);
-    _selectedScope = widget.scope ?? _defaultScope;
+    _selectedScope = widget.scope?._ensure(availableScopes: _scopes) ??
+      _defaultScope._ensure(availableScopes: _scopes) ??
+      (_scopes.isNotEmpty ? _scopes.first : null);
 
     _updateStops();
     super.initState();
@@ -459,6 +461,9 @@ extension MTDStopsScopeImpl on MTDStopsScope {
       default: return null;
     }
   }
+
+  MTDStopsScope? _ensure({List<MTDStopsScope>? availableScopes}) =>
+      (availableScopes?.contains(this) != false) ? this : null;
 }
 
 extension _MTDStopsScopeList on List<MTDStopsScope> {

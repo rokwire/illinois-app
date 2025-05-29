@@ -18,9 +18,11 @@ import 'dart:ui';
 
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:intl/intl.dart';
@@ -171,6 +173,19 @@ extension GroupExt on Group {
     return ((currentUserIsAdmin == true) ||
         (currentUserIsMember == true &&
             isMemberAllowedToReplyToPost == true));
+  }
+
+  // Returns PollsChunk? or PollsException?
+  Future<dynamic>? loadPolls({PollsCursor? cursor}) async {
+    try {
+      return (id != null) ? Polls().getGroupPolls(
+        groupIds: {id!},
+        pollStatuses: currentUserIsAdmin ? null /* no status filter */ : { PollStatus.opened }
+      ) : null;
+    }
+    catch (e) {
+      return e;
+    }
   }
 }
 

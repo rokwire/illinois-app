@@ -5,6 +5,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+<!-- The next version number should be the version already set in pubspec.yaml -->
+
+## [7.1.11] - 2025-05-28
+### Changed
+- Load different polls content for a group depending on its member status [#5175](https://github.com/rokwire/illinois-app/issues/5175).
+
+## [7.1.10] - 2025-05-27
+### Added
+- Added check for SafeWalk working hours [#5176](https://github.com/rokwire/illinois-app/issues/5176).
+### Fixed
+- Display recurring events with a specific display date [#4737](https://github.com/rokwire/illinois-app/issues/4737).
+
+## [7.1.9] - 2025-05-23
+### Fixed
+- Dates for recurring events [#4992](https://github.com/rokwire/illinois-app/issues/4992).
+- Acknowledge comment_id property for _onFirebaseGroupPostNotification[#5030](https://github.com/rokwire/illinois-app/issues/5030).
+
+## [7.1.8] - 2025-05-22
+### Added
+- Acknowledged new student classification fields in IlliniStudentClassification [#4865](https://github.com/rokwire/illinois-app/issues/4865).
+### Changed
+- Update default SettingsContentType selection to contactUs [#5169](https://github.com/rokwire/illinois-app/issues/5169).
+
+## [7.1.7] - 2025-05-19
+### Changed
+- Move the "Publish All Linked Sub-Events" toggle to underneath the "publish this event" toggle when an event is set as a super event.[#4995](https://github.com/rokwire/illinois-app/issues/4995).
+- Rename ModalImagePanel to ModalPinchZoomImagePanel, introduce ModalPhotoImagePanel and use it by default [#5165](https://github.com/rokwire/illinois-app/issues/5165).
+### Fixed
+- Improve Assistant Analytics [#5112](https://github.com/rokwire/illinois-app/issues/5112).
+
+## [7.1.6] - 2025-05-16
+### Added
+- Added Pinch and Zoom on group post images [#5128](https://github.com/rokwire/illinois-app/issues/5128).
 
 ## [7.1.5] - 2025-05-15
 ### Fixed
@@ -53,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ReactionsLayout visibility depends on group settings [#5085](https://github.com/rokwire/illinois-app/issues/5085).
 - Strict check for all input parameters for barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
 - Handle all exceptions raised during barcode generation [#5102](https://github.com/rokwire/illinois-app/issues/5102).
+- Added "Edit My Info" command in "My Digital Business Card" Profile page [#5146](https://github.com/rokwire/illinois-app/issues/5146).
 
 ## [7.0.20] - 2025-04-29
 ### Fixed

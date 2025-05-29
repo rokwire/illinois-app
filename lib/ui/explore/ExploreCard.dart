@@ -426,7 +426,7 @@ class _ExploreCardState extends State<ExploreCard> with NotificationsListener {
           PageRouteBuilder(
               opaque: false,
               pageBuilder: (context, _, __) =>
-                  ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+                  ModalPhotoImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 

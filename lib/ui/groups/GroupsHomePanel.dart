@@ -95,7 +95,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
     _selectAllRecognizer = TapGestureRecognizer()..onTap = _onSelectAllGroups;
 
     _contentTypes = _GroupsContentTypeList.fromContentTypes(GroupsContentType.values);
-    _selectedContentType = widget.contentType ?? _defaultContentType;
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      _defaultContentType._ensure(availableTypes: _contentTypes) ??
+      (_contentTypes.isNotEmpty ? _contentTypes.first : null);
 
     _reloadGroupsContent();
     super.initState();
@@ -668,7 +670,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   void _onTapImage(Group? group){
     Analytics().logSelect(target: "Image");
     if(group?.imageURL!=null){
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 
@@ -779,6 +781,9 @@ extension GroupsContentTypeImpl on GroupsContentType {
       case rokwire.GroupsContentType.all: return AnalyticsFeature.GroupsAll;
     }
   }
+
+  GroupsContentType? _ensure({List<GroupsContentType>? availableTypes}) =>
+    (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _GroupsContentTypeList on List<GroupsContentType> {

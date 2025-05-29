@@ -100,9 +100,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     ]);
 
     _contentTypes = _buildAssistantContentTypes();
-
-    _selectedContentType = _ensureContentType(widget.contentType, contentTypes: _contentTypes) ??
-      _ensureContentType(Storage()._assistantContentType, contentTypes: _contentTypes) ??
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      Storage()._assistantContentType?._ensure(availableTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -233,7 +232,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   void _onTapClearAll() {
-    Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
+    Analytics().logSelect(target: 'Assistant: Clear All', source: widget.runtimeType.toString());
     AppAlert.showConfirmationDialog(context,
       message: Localization().getStringEx('panel.assistant.clear_all.confirm_prompt.text', 'Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.'),
       positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
@@ -246,7 +245,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   }
 
   void _onTapClose() {
-    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Analytics().logSelect(target: 'Assistant: Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
   }
 
@@ -296,9 +295,6 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     }
     return contentTypes;
   }
-
-  static AssistantContentType? _ensureContentType(AssistantContentType? contentType, { List<AssistantContentType>? contentTypes }) =>
-    ((contentType != null) && (contentTypes?.contains(contentType) != false)) ? contentType : null;
 
   // Global On/Off / Available
 
@@ -546,6 +542,9 @@ extension AssistantContentTypeImpl on AssistantContentType {
       default: return null;
     }
   }
+
+  AssistantContentType? _ensure({ List<AssistantContentType>? availableTypes }) =>
+      (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _AssistantContentTypeList on List<AssistantContentType> {

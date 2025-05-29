@@ -69,7 +69,9 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     ]);
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
     _contentTypes = _ResearchProjectsContentTypeList.fromContentTypes(ResearchProjectsContentType.values);
-    _selectedContentType = widget.contentType ?? _defaultContentType;
+    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+      _defaultContentType._ensure(availableTypes: _contentTypes) ??
+      (_contentTypes.isNotEmpty ? _contentTypes.first : null);
     _loadInitialContent();
     _loadFilters();
     super.initState();
@@ -470,7 +472,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
   void _onTapImage(Group? group){
     Analytics().logSelect(target: "Image");
     if (group?.imageURL != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 
@@ -623,6 +625,9 @@ extension ResearchProjectsContentTypeImpl on ResearchProjectsContentType {
       case ResearchProjectsContentType.open: return AnalyticsFeature.ResearchProjectOpen;
     }
   }
+
+  ResearchProjectsContentType? _ensure({List<ResearchProjectsContentType>? availableTypes}) =>
+      (availableTypes?.contains(this) != false) ? this : null;
 }
 
 extension _ResearchProjectsContentTypeList on List<ResearchProjectsContentType> {
