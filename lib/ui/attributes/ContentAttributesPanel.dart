@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +19,18 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum ContentAttributesSortType { native, explicit, alphabetical, }
+
+typedef AttributeValueCallback = Future<bool?> Function({
+  required BuildContext context,
+  required ContentAttribute attribute,
+  required ContentAttributeValue value
+});
+
+typedef AttributeCountsCallback = Future<List<int?>?> Function({
+  required ContentAttribute attribute,
+  required List<ContentAttributeValue> attributeValues,
+  Map<String, LinkedHashSet<dynamic>>? selection,
+});
 
 class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final String? title;
@@ -43,12 +54,8 @@ class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final ContentAttributesSortType sortType;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
-
-  final Future<bool?> Function({
-    required BuildContext context,
-    required ContentAttribute attribute,
-    required ContentAttributeValue value
-  })? handleAttributeValue;
+  final AttributeValueCallback? handleAttributeValue;
+  final AttributeCountsCallback? countAttributeValues;
 
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
     this.description, this.descriptionTextStyle, this.descriptionBuilder,
@@ -59,7 +66,7 @@ class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
     this.scope, this.filtersMode = false,
-    this.handleAttributeValue,
+    this.handleAttributeValue, this.countAttributeValues,
   }) : super(key: key);
 
   @override
@@ -254,7 +261,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       selection: attributeRawValues,
       filtersMode: widget.filtersMode,
       handleAttributeValue: widget.handleAttributeValue,
-      countAttributeValues: _countSampleAttributeValues,
+      countAttributeValues: (widget.countAttributeValues != null) ? _countAttributeValues : null,
     ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
         if ((attribute.nullValue is String) && selection.contains(attribute.nullValue)) {
@@ -547,13 +554,25 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   String _headerBackPromptOKText({String? language}) => Localization().getStringEx("dialog.ok.title", "OK", language: language);
   String _headerBackPromptCancelText({String? language}) => Localization().getStringEx("dialog.cancel.title", "Cancel", language: language);
 
-  Future<List<int?>?> _countSampleAttributeValues({
+  Future<List<int?>?> _countAttributeValues({
       required ContentAttribute attribute,
       required List<ContentAttributeValue> attributeValues,
+      Map<String, LinkedHashSet<dynamic>>? selection
     }) async {
-    Random random = Random();
-    await Future.delayed(Duration(milliseconds: 1500));
-    return List.from(attributeValues.map((_) => random.nextInt(10000)));
+
+    final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
+    if (countAttributeValues != null) {
+      final Map<String, LinkedHashSet<dynamic>> selection = Map<String, LinkedHashSet<dynamic>>.from(_selection);
+      selection.remove(attribute.id);
+      return countAttributeValues(
+        attribute: attribute,
+        attributeValues: attributeValues,
+        selection: selection,
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

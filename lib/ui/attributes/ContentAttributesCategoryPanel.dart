@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/ContentAttributes.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -21,16 +22,8 @@ class ContentAttributesCategoryPanel extends StatefulWidget with AnalyticsInfo {
   final List<ContentAttributeValue>? attributeValues;
   final LinkedHashSet<dynamic>? selection;
   final bool filtersMode;
-  final Future<bool?> Function({
-    required BuildContext context,
-    required ContentAttribute attribute,
-    required ContentAttributeValue value
-  })? handleAttributeValue;
-
-  final Future<List<int?>?> Function({
-    required ContentAttribute attribute,
-    required List<ContentAttributeValue> attributeValues,
-  })? countAttributeValues;
+  final AttributeValueCallback? handleAttributeValue;
+  final AttributeCountsCallback? countAttributeValues;
 
   ContentAttributesCategoryPanel({required this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false, this.handleAttributeValue, this.countAttributeValues });
 
@@ -338,11 +331,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   Future<Map<dynamic, int>?> _evalAttributeValuesCounts() async {
     final List<ContentAttributeValue>? attributeValues = widget.attributeValues;
-    final Future<List<int?>?> Function({
-      required ContentAttribute attribute,
-      required List<ContentAttributeValue> attributeValues,
-    })? countAttributeValues = widget.countAttributeValues;
-
+    final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
     List<int?>? counts = ((attributeValues != null) && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
     return _mapAttributeValuesCounts(attributeValues: attributeValues, counts: counts);
   }
