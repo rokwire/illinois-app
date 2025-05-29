@@ -2196,10 +2196,13 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
 
   Future<void> _loadPolls() async {
     if (StringUtils.isNotEmpty(_groupId) && _group!.currentUserIsMemberOrAdmin) {
-      _setPollsLoading(true);
-      Polls().getGroupPolls(groupIds: {_groupId!})!.then((result) {
-        _groupPolls = (result != null) ? result.polls : null;
-        _setPollsLoading(false);
+      setStateIfMounted(() {
+        _pollsLoading = true;
+      });
+      dynamic result = await _group?.loadPolls();
+      setStateIfMounted(() {
+        _groupPolls = (result is PollsChunk) ? result.polls : null;
+        _pollsLoading = false;
       });
     }
   }
@@ -2217,13 +2220,6 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
           _updatePollInList(poll);
         });
       }
-    }
-  }
-
-  void _setPollsLoading(bool loading) {
-    _pollsLoading = loading;
-    if (mounted) {
-      setState(() {});
     }
   }
 

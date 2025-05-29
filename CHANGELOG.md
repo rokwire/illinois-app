@@ -5,6 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+<!-- The next version number should be the version already set in pubspec.yaml -->
+
+## [7.1.11] - 2025-05-28
+### Changed
+- Load different polls content for a group depending on its member status [#5175](https://github.com/rokwire/illinois-app/issues/5175).
+
+## [7.1.10] - 2025-05-27
+### Added
+- Added check for SafeWalk working hours [#5176](https://github.com/rokwire/illinois-app/issues/5176).
+### Fixed
+- Display recurring events with a specific display date [#4737](https://github.com/rokwire/illinois-app/issues/4737).
+
+## [7.1.9] - 2025-05-23
+### Fixed
+- Dates for recurring events [#4992](https://github.com/rokwire/illinois-app/issues/4992).
+- Acknowledge comment_id property for _onFirebaseGroupPostNotification[#5030](https://github.com/rokwire/illinois-app/issues/5030).
+
+## [7.1.8] - 2025-05-22
 ### Added
 - Acknowledged new student classification fields in IlliniStudentClassification [#4865](https://github.com/rokwire/illinois-app/issues/4865).
 ### Changed
