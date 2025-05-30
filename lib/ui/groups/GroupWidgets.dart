@@ -2214,7 +2214,7 @@ class GroupPollCard extends StatefulWidget{
   final Group? group;
   final bool? isAdmin;
 
-  GroupPollCard({required this.poll, this.group, this.isAdmin});
+  GroupPollCard({super.key, required this.poll, this.group, this.isAdmin});
 
   @override
   State<StatefulWidget> createState() => _GroupPollCardState();
