@@ -279,6 +279,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                               children: [
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
+                                    color: Styles().colors.surface,
                                     child: PostInputField(
                                       onBodyChanged: (txt) => _mainPostUpdateData?.body = txt,
                                       text:  _mainPostUpdateData?.body ?? '',
@@ -286,7 +287,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                                       maxLines: null,
                                       autofocus: true,
                                       style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
-                                      boxDecoration: BoxDecoration(color: Styles().colors.background),
+                                      boxDecoration: BoxDecoration(color: Styles().colors.surface),
                                       inputDecoration: InputDecoration(
                                           hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
                                           border: OutlineInputBorder(

@@ -84,6 +84,12 @@
 @import flutter_exif_rotation;
 #endif
 
+#if __has_include(<flutter_keyboard_visibility_temp_fork/FlutterKeyboardVisibilityTempForkPlugin.h>)
+#import <flutter_keyboard_visibility_temp_fork/FlutterKeyboardVisibilityTempForkPlugin.h>
+#else
+@import flutter_keyboard_visibility_temp_fork;
+#endif
+
 #if __has_include(<flutter_local_notifications/FlutterLocalNotificationsPlugin.h>)
 #import <flutter_local_notifications/FlutterLocalNotificationsPlugin.h>
 #else
@@ -168,6 +174,12 @@
 @import quick_actions_ios;
 #endif
 
+#if __has_include(<quill_native_bridge_ios/QuillNativeBridgePlugin.h>)
+#import <quill_native_bridge_ios/QuillNativeBridgePlugin.h>
+#else
+@import quill_native_bridge_ios;
+#endif
+
 #if __has_include(<record_darwin/RecordPlugin.h>)
 #import <record_darwin/RecordPlugin.h>
 #else
@@ -250,6 +262,7 @@
   [SwiftFlutterBarcodeScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterBarcodeScannerPlugin"]];
   [FlutterEmailSenderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterEmailSenderPlugin"]];
   [FlutterExifRotationPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterExifRotationPlugin"]];
+  [FlutterKeyboardVisibilityTempForkPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterKeyboardVisibilityTempForkPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FLTPDFViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPDFViewFlutterPlugin"]];
   [FlutterTimezonePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterTimezonePlugin"]];
@@ -264,6 +277,7 @@
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [PrintingPlugin registerWithRegistrar:[registry registrarForPlugin:@"PrintingPlugin"]];
   [QuickActionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"QuickActionsPlugin"]];
+  [QuillNativeBridgePlugin registerWithRegistrar:[registry registrarForPlugin:@"QuillNativeBridgePlugin"]];
   [RecordPlugin registerWithRegistrar:[registry registrarForPlugin:@"RecordPlugin"]];
   [RokwirePlugin registerWithRegistrar:[registry registrarForPlugin:@"RokwirePlugin"]];
   [FPPSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPSharePlusPlugin"]];

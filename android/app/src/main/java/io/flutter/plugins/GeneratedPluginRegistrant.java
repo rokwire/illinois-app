@@ -81,6 +81,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_exif_rotation, io.flutter.plugins.flutterexifrotation.FlutterExifRotationPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.jrai.flutter_keyboard_visibility_temp_fork.FlutterKeyboardVisibilityTempForkPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_keyboard_visibility_temp_fork, com.jrai.flutter_keyboard_visibility_temp_fork.FlutterKeyboardVisibilityTempForkPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin flutter_local_notifications, com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin", e);
@@ -159,6 +164,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new io.flutter.plugins.quickactions.QuickActionsPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin quick_actions_android, io.flutter.plugins.quickactions.QuickActionsPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new dev.flutterquill.quill_native_bridge.QuillNativeBridgePlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin quill_native_bridge_android, dev.flutterquill.quill_native_bridge.QuillNativeBridgePlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.llfbandit.record.RecordPlugin());

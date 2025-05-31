@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
@@ -285,6 +286,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
+          FlutterQuillLocalizations.delegate,
         ],
         supportedLocales: Localization().supportedLocales(),
         navigatorObservers:[AppNavigation()],
@@ -435,7 +437,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
 
   ThemeData get _appTheme => ThemeData(
     appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: Styles().colors.surface,
       contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
       titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
