@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 <!-- The next version number should be the version already set in pubspec.yaml -->
-
+### Added
+- Group post text formatting UX [#5194](https://github.com/rokwire/illinois-app/issues/5194)
 ## [7.1.12] - 2025-05-30
 ### Fixed
 - Associate Group Event/Post/Poll Cards with the post/poll/event object [#4991](https://github.com/rokwire/illinois-app/issues/4991).
