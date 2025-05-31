@@ -73,6 +73,9 @@ dependencies:
   sms_mms: ^0.0.3
   pdf: ^3.11.3
   printing: ^5.14.2
+  flutter_quill_delta_from_html: ^1.5.2
+  flutter_quill: ^11.4.1
+  vsc_quill_delta_to_html: ^1.0.5
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
@@ -117,9 +120,9 @@ dev_dependencies:
     sdk: flutter
 
 # comment the override below if published plugin is used
-dependency_overrides:
-  font_awesome_flutter:
-    path: plugin/plugins/font_awesome_flutter
+#dependency_overrides:
+#  font_awesome_flutter:
+#    path: plugin/plugins/font_awesome_flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
