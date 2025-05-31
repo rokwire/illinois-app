@@ -22,6 +22,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -1617,7 +1618,9 @@ class PostInputField extends StatefulWidget{
   final TextStyle? style;
 
   const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title,
-    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines, this.autofocus = false, this.inputDecoration, this.boxDecoration, this.style}) : super(key: key);
+    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines,
+    this.autofocus = false, this.inputDecoration, this.boxDecoration,
+    this.style}) : super(key: key);
 
   static get fieldDecoration => BoxDecoration(
       color: Styles().colors.white,
@@ -1634,6 +1637,7 @@ class PostInputField extends StatefulWidget{
 class _PostInputFieldState extends State<PostInputField> {
   late quill.QuillController _controller;
   final FocusNode _focusNode = FocusNode();
+  final GlobalKey<EditorState> _editorKey = GlobalKey();
 
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
@@ -1667,13 +1671,6 @@ class _PostInputFieldState extends State<PostInputField> {
     }
 
     _controller.addListener(_handleContentChange);
-
-    // Add listener for selection changes to update toolbar
-    _controller.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   @override
@@ -1706,9 +1703,7 @@ class _PostInputFieldState extends State<PostInputField> {
         _controller.document = quill.Document();
       }
 
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted(() {});
     }
   }
 
@@ -1716,8 +1711,9 @@ class _PostInputFieldState extends State<PostInputField> {
     if (widget.onBodyChanged != null) {
       // Convert Delta to HTML
       final html = _deltaToHtml();
-      widget.onBodyChanged!(html);
+      widget.onBodyChanged?.call(html);
     }
+    setStateIfMounted(() {});
   }
 
   String _deltaToHtml() {
@@ -1762,15 +1758,18 @@ class _PostInputFieldState extends State<PostInputField> {
                     padding: const EdgeInsets.all(8),
                     child: quill.QuillEditor.basic(
                       controller: _controller,
+                      focusNode: _focusNode,
                       config: quill.QuillEditorConfig(
+                        editorKey: _editorKey,
                         autoFocus: widget.autofocus,
                         placeholder: _hint,
                         expands: false,
                         scrollable: true,
                         padding: EdgeInsets.zero,
                         customStyles: quill.DefaultStyles(
+                          link: (widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular'))?.apply(color: Styles().colors.fillColorSecondary, decoration: TextDecoration.underline),
                           paragraph: quill.DefaultTextBlockStyle(
-                            widget.style ?? Styles().textStyles.getTextStyle('widget.message.medium')!,
+                            widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular')!,
                             const quill.HorizontalSpacing(0, 0),
                             const quill.VerticalSpacing(0, 0),
                             const quill.VerticalSpacing(0, 0),
@@ -1897,7 +1896,7 @@ class _PostInputFieldState extends State<PostInputField> {
     _controller.formatSelection(
       _isFormatActive(attribute) ? quill.Attribute.clone(attribute, null) : attribute,
     );
-    setState(() {});
+    setStateIfMounted(() {});
   }
 
   void _onTapEditLink() {
@@ -1939,26 +1938,29 @@ class _PostInputFieldState extends State<PostInputField> {
     Navigator.of(context).pop();
 
     final linkText = _linkTextController.text;
-    final linkUrl = _linkUrlController.text;
+    String linkUrl = _linkUrlController.text;
+    if (!linkUrl.startsWith('http://') && !linkUrl.startsWith('https://')) {
+      linkUrl = 'https://' + linkUrl;
+    }
 
     if (linkText.isEmpty || linkUrl.isEmpty) {
       return;
     }
 
     final selection = _controller.selection;
-    final length = selection.end - selection.start;
+    // final length = selection.end - selection.start;
 
     // Replace selected text with link text and apply link attribute
-    if (length > 0) {
-      _controller.replaceText(
-        selection.start,
-        length,
-        linkText,
-        null,
-      );
-    } else {
-      _controller.document.insert(selection.start, linkText);
-    }
+    // if (length > 0) {
+    //   _controller.replaceText(
+    //     selection.start,
+    //     length,
+    //     linkText,
+    //     null,
+    //   );
+    // } else {
+    //   _controller.document.insert(selection.start, linkText);
+    // }
 
     // Apply link formatting
     _controller.formatText(

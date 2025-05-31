@@ -437,7 +437,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
 
   ThemeData get _appTheme => ThemeData(
     appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: Styles().colors.surface,
       contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
       titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
