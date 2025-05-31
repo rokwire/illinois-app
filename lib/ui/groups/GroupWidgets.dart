@@ -1631,7 +1631,7 @@ class PostInputField extends StatefulWidget{
   }
 }
 
-class _PostInputFieldState extends State<PostInputField>{ //TBD localize properly
+class _PostInputFieldState extends State<PostInputField> {
   late quill.QuillController _controller;
   final FocusNode _focusNode = FocusNode();
 
@@ -1666,8 +1666,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
       _controller = quill.QuillController.basic();
     }
 
-    // Add listener to notify changes
     _controller.addListener(_handleContentChange);
+
+    // Add listener for selection changes to update toolbar
+    _controller.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -1747,7 +1753,6 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
               child: Column(
                 children: [
-                  // Custom toolbar with only the buttons we need
                   // Quill Editor
                   Container(
                     constraints: BoxConstraints(
@@ -1802,52 +1807,53 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-          // Bold button
-          _buildFormatButton(
-            icon: Icons.format_bold,
-            isActive: _isFormatActive(quill.Attribute.bold),
-            onPressed: () {
-              Analytics().logSelect(target: 'Bold');
-              _toggleFormat(quill.Attribute.bold);
-            },
-          ),
-          const SizedBox(width: 20),
-          // Italic button
-          _buildFormatButton(
-            icon: Icons.format_italic,
-            isActive: _isFormatActive(quill.Attribute.italic),
-            onPressed: () {
-              Analytics().logSelect(target: 'Italic');
-              _toggleFormat(quill.Attribute.italic);
-            },
-          ),
-          const SizedBox(width: 20),
-          // Underline button
-          _buildFormatButton(
-            icon: Icons.format_underline,
-            isActive: _isFormatActive(quill.Attribute.underline),
-            onPressed: () {
-              Analytics().logSelect(target: 'Underline');
-              _toggleFormat(quill.Attribute.underline);
-            },
-          ),
-          const SizedBox(width: 20),
-          // Link button
-          Semantics(
-            button: true,
-            child: GestureDetector(
-              onTap: _onTapEditLink,
-              child: Text(
-                Localization().getStringEx(
-                  'panel.group.detail.post.create.link.label',
-                  'Link',
+            // Bold button
+            _buildFormatButton(
+              icon: Icons.format_bold,
+              isActive: _isFormatActive(quill.Attribute.bold),
+              onPressed: () {
+                Analytics().logSelect(target: 'Bold');
+                _toggleFormat(quill.Attribute.bold);
+              },
+            ),
+            const SizedBox(width: 20),
+            // Italic button
+            _buildFormatButton(
+              icon: Icons.format_italic,
+              isActive: _isFormatActive(quill.Attribute.italic),
+              onPressed: () {
+                Analytics().logSelect(target: 'Italic');
+                _toggleFormat(quill.Attribute.italic);
+              },
+            ),
+            const SizedBox(width: 20),
+            // Underline button
+            _buildFormatButton(
+              icon: Icons.format_underline,
+              isActive: _isFormatActive(quill.Attribute.underline),
+              onPressed: () {
+                Analytics().logSelect(target: 'Underline');
+                _toggleFormat(quill.Attribute.underline);
+              },
+            ),
+            const SizedBox(width: 20),
+            // Link button
+            Semantics(
+              button: true,
+              child: GestureDetector(
+                onTap: _onTapEditLink,
+                child: Text(
+                  Localization().getStringEx(
+                    'panel.group.detail.post.create.link.label',
+                    'Link',
+                  ),
+                  style: Styles().textStyles.getTextStyle('widget.group.input_field.link'),
                 ),
-                style: Styles().textStyles.getTextStyle('widget.group.input_field.link'),
               ),
             ),
-          ),
-        ],
-      ),),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1856,14 +1862,29 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     required bool isActive,
     required VoidCallback onPressed,
   }) {
-    return IconButton(
-      icon: Icon(
-        icon,
-        color: isActive ? Styles().colors.fillColorPrimary : Styles().colors.black,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      decoration: BoxDecoration(
+        color: isActive ? Styles().colors.fillColorSecondary : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
       ),
-      onPressed: onPressed,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: 40,
+            height: 40,
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              size: 20,
+              color: isActive ? Colors.white : Styles().colors.black,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -1876,6 +1897,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     _controller.formatSelection(
       _isFormatActive(attribute) ? quill.Attribute.clone(attribute, null) : attribute,
     );
+    setState(() {});
   }
 
   void _onTapEditLink() {
