@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - WEB: Show sign in panel after version change [#5195](https://github.com/rokwire/illinois-app/issues/5195).
 
+## [7.1.12] - 2025-05-30
+### Fixed
+- Associate Group Event/Post/Poll Cards with the post/poll/event object [#4991](https://github.com/rokwire/illinois-app/issues/4991).
+
 ## [7.1.11] - 2025-05-28
 ### Changed
 - Load different polls content for a group depending on its member status [#5175](https://github.com/rokwire/illinois-app/issues/5175).
