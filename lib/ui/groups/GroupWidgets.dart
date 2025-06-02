@@ -1919,7 +1919,7 @@ class _PostInputFieldState extends State<PostInputField> {
         TextButton(
           onPressed: () {
             Analytics().logSelect(target: 'Set Link Url');
-            _onTapOkLink();
+            _onTapOkLink(selection);
           },
           child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),
         ),
@@ -1934,7 +1934,7 @@ class _PostInputFieldState extends State<PostInputField> {
     );
   }
 
-  void _onTapOkLink() {
+  void _onTapOkLink(TextSelection selection) {
     Navigator.of(context).pop();
 
     final linkText = _linkTextController.text;
@@ -1947,7 +1947,7 @@ class _PostInputFieldState extends State<PostInputField> {
       return;
     }
 
-    final selection = _controller.selection;
+    // final selection = _controller.selection;
     // final length = selection.end - selection.start;
 
     // Replace selected text with link text and apply link attribute
