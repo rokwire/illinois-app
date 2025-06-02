@@ -59,6 +59,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/WebLoginNetIdPanel.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -240,6 +241,8 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   Future<ServiceError?>? _retryInitialzeFuture;
   DateTime? _pausedDateTime;
 
+  bool _showWebSignInPanel = false;
+
   @override
   void initState() {
     Log.d("App UI initialized");
@@ -342,7 +345,12 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
     }
     else if (Auth2().prefs?.privacyLevel == null) {
+      _showWebSignInPanel = kIsWeb;
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
+    }
+    else if (_showWebSignInPanel && !Auth2().isOidcLoggedIn) {
+      _showWebSignInPanel = false;
+      return WebLoginNetIdPanel();
     }
     else if ((Storage().participateInResearchPrompted != true) && (Questionnaires().participateInResearch == null) && Auth2().isOidcLoggedIn) {
       return Onboarding2ResearchQuestionnairePromptPanel(
@@ -350,6 +358,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       );
     }
     else {
+      _showWebSignInPanel = false;
       return RootPanel();
     }
   }
