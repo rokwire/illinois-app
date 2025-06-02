@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 <!-- The next version number should be the version already set in pubspec.yaml -->
+### Added
+- WEB: Show sign in panel after version change [#5195](https://github.com/rokwire/illinois-app/issues/5195).
 
 ## [7.1.11] - 2025-05-28
 ### Changed
