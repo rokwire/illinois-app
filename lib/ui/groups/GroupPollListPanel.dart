@@ -152,13 +152,13 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> with Notificati
         ]));
   }
 
-  void _loadPolls() {
+  void _loadPolls() async {
     if (((_polls == null) || (_pollsCursor != null)) && !_pollsLoading) {
       setStateIfMounted((){
         _pollsLoading = true;
       });
 
-      dynamic result = widget.group.loadPolls(cursor: _pollsCursor);
+      dynamic result = await widget.group.loadPolls(cursor: _pollsCursor);
       setStateIfMounted((){
         if (result is PollsChunk) {
           _polls ??= [];
