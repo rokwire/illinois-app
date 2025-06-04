@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 <!-- The next version number should be the version already set in pubspec.yaml -->
+### Added
+- Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
 
 ## [7.1.13] - 2025-06-02
 ### Fixed

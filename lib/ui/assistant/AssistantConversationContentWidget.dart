@@ -17,11 +17,17 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -35,6 +41,7 @@ import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -315,6 +322,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
+      Visibility(visible: (message.eventsResult?.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.eventsResult?.events)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
@@ -472,6 +480,28 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _shouldScrollToBottom = true;
       }
     });
+  }
+
+  Widget _buildEventsContainerWidget(List<Event2>? events) {
+    if (events == null || events.isEmpty) {
+      return Container();
+    }
+    int eventsCount = events.length;
+    List<Widget> pages = <Widget>[];
+    for (int index = 0; index < eventsCount; index++) {
+      Event2 event = events[index];
+      pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: Event2Card(event, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(event))));
+    }
+    return Container(padding: EdgeInsets.only(top: 10), child: ExpandablePageView(allowImplicitScrolling: true, children: pages));
+  }
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Assistant: Event "${event.name}"');
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
+    }
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
