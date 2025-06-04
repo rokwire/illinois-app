@@ -2741,6 +2741,7 @@
     "panel.groups.common.privacy.description.short.public":  "Solo los miembros pueden ver los eventos y las publicaciones del grupo, a menos que un evento esté marcado público.",
     "panel.groups.common.privacy.description.long.private": "Cualquier persona que utilice la aplicación puede encontrar este grupo si busca y coincide con el nombre completo. Solo los administradores pueden ver los miembros del grupo.",
     "panel.groups.common.privacy.description.long.public":  "Cualquier persona que utilice la aplicación verá este grupo. Solo los administradores pueden ver los miembros del grupo.",
+    "panel.groups.common.administrative.switch.label": "¿Es este un grupo administrativo?",
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
     "panel.groups.common.private.search.hidden.description": "Un grupo oculto no es visible en las búsquedas.",
 

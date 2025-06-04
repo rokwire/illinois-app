@@ -202,6 +202,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         
         _buildPrivacyDropDown(),
         _buildHiddenForSearch(),
+        _buildAdministrative(),
       ]);
 
       if (_isManagedGroupAdmin) {
@@ -754,6 +755,18 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }
 
+  Widget _buildAdministrative() {
+    return Padding(padding: EdgeInsets.all(16), child: Container(child:
+      _buildSwitch(title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
+          value: _group?.administrative, onTap: _onTapAdministrative)));
+  }
+
+  void _onTapAdministrative() {
+    setStateIfMounted(() {
+      _group?.administrative = (_group?.administrative != true);
+    });
+  }
+
   // Membership Questions
   Widget _buildMembershipLayout() {
     String buttonTitle = _isResearchProject ? Localization().getStringEx("panel.groups_settings.recruitment.button.question.title", "Recruitment Questions") : Localization().getStringEx("panel.groups_settings.membership.button.question.title", "Membership Questions");
@@ -1296,6 +1309,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _isAuthManGroup{
     return _group?.authManEnabled ?? false;
   }
+
+  bool get _isAdministrativeGroup => (_group?.administrative == true);
 
   bool get _isResearchProject {
     return _group?.researchProject ?? false;
