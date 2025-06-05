@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-<!-- The next version number should be the version already set in pubspec.yaml -->
+## [7.2.0] - 2025-06-05
 ### Added
 - Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
 - Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
