@@ -35,6 +35,7 @@ import com.google.zxing.common.BitMatrix;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,7 +112,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private void initScreenOrientation() {
         preferredScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-        supportedScreenOrientations = new HashSet<>(Collections.singletonList(preferredScreenOrientation));
+        supportedScreenOrientations =new HashSet<>(Arrays.asList(
+                preferredScreenOrientation,
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE //Enable Landscape support
+        ));
         setRequestedOrientation(preferredScreenOrientation);
         initOrientationListener();
     }
