@@ -1310,8 +1310,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return _group?.authManEnabled ?? false;
   }
 
-  bool get _isAdministrativeGroup => (_group?.administrative == true);
-
   bool get _isResearchProject {
     return _group?.researchProject ?? false;
   }
