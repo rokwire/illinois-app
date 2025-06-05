@@ -1246,6 +1246,8 @@
 	"panel.event2.create.header.title": "举办活动",
 	"panel.event2.update.header.title": "活动更新",
 	"panel.event2.create.section.image.description": "事件圖像顯示 16:9 或 1000px x 615px jpg、png 或 gif（非動畫）。 較大的圖像會自動定位在框架內，並且可以點擊以在伊利諾伊州應用程式中完整查看。",
+	"panel.event2.create.section.admin.teams.title": "管理團隊",
+	"panel.event2.create.section.admin.teams.description": " （授予 {{app_title}} 應用程式中私人管理群組成員管理員存取權限）",
 	"panel.event2.create.section.title.title": "活动名称",
 	"panel.event2.create.section.description.title": "活动细节",
 	"panel.event2.create.section.description.description": " (在此栏新增的超链接无法使用。请将网址输入至正确的字段，如在线活动的活动网址、活动网页链接、或是外部的活动注册链接。)",

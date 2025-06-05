@@ -509,6 +509,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   // List<Event2PersonIdentifier>? _initialAdmins;
   bool _loadingAdmins = false;
 
+  List<Group>? _adminGroups;
+  List<String>? _selectedAdminGroupIds;
+  bool _loadingAdminGroups = false;
+
   String? _sponsor;
   String? _speaker;
   List<Event2Contact>? _contacts;
@@ -613,6 +617,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     _initEventGroups();
     _initEventAdmins();
+    _initAdminGroups();
 
     _superEvent = SuperEvent.fromEvent(widget.event);
     _superEvent?.syncSubEvents(onLoaded: () =>
@@ -667,6 +672,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _buildAdminSettingsSection(),
+            _buildAdminTeamsSection(),
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildRecurrenceDropdownSection(),
@@ -753,7 +759,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   //
-  // AdminSection
+  // Admins Section
 
   Widget _buildAdminSettingsSection() => Stack(alignment: Alignment.center ,children: [
     Event2CreatePanel.buildSectionWidget(
@@ -770,6 +776,46 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         )
     )
   ]);
+
+  // Admin Teams
+
+  Widget _buildAdminTeamsSection() {
+    String title = Localization().getStringEx('panel.event2.create.section.admin.teams.title', 'ADMIN TEAMS');
+    String description = Localization().getStringEx('panel.event2.create.section.admin.teams.description',
+        ' (grant admin access to the members of your private administrative groups in the {{app_title}} app)')
+        .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
+    String semanticsLabel = title + description;
+
+    return Event2CreatePanel.buildSectionWidget(
+      heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
+        Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
+          Row(children: [
+            Expanded(child:
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
+                TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
+                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                ])
+              )
+            ),
+          ]),
+        )
+      ),
+      //TBD: DD - implement admin groups
+      body: Container(
+          decoration: Event2CreatePanel.dropdownButtonDecoration,
+          child: Padding(
+              padding: EdgeInsets.only(left: 12, right: 8),
+              child: DropdownButtonHideUnderline(
+                  child: DropdownButton<_RecurrenceRepeatType>(
+                      dropdownColor: Styles().colors.white,
+                      icon: Styles().images.getImage('chevron-down'),
+                      isExpanded: true,
+                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(_repeatTypeToDisplayString(_recurrenceRepeatType) ?? '-----',),
+                      items: _buildRepeatTypeDropDownItems(),
+                      onChanged: _onRepeatTypeChanged)))),
+    );
+  }
 
   // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
@@ -2226,6 +2272,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     else {
       _eventGroups = widget.targetGroups;
     }
+  }
+
+  void _initAdminGroups() {
+    _selectedAdminGroupIds = widget.event?.authorizationContext?.externalAdmins?.groupIds;
+    _loadingAdminGroups = true;
+    Groups().loadGroups(contentType: GroupsContentType.my, administrative: true).then((List<Group>? groups) {
+      setStateIfMounted(() {
+        _loadingAdminGroups = false;
+        _adminGroups = groups;
+      });
+    });
   }
 
   void _initEventAdmins() async {
