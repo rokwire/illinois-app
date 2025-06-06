@@ -785,7 +785,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ' (grant admin access to the members of your private administrative groups in the {{app_title}} app)')
         .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     String semanticsLabel = title + description;
-
     return Event2CreatePanel.buildSectionWidget(
       heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
         Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
@@ -800,21 +799,78 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           ]),
         )
       ),
-      //TBD: DD - implement admin groups
-      body: Container(
-          decoration: Event2CreatePanel.dropdownButtonDecoration,
-          child: Padding(
-              padding: EdgeInsets.only(left: 12, right: 8),
-              child: DropdownButtonHideUnderline(
-                  child: DropdownButton<_RecurrenceRepeatType>(
-                      dropdownColor: Styles().colors.white,
-                      icon: Styles().images.getImage('chevron-down'),
-                      isExpanded: true,
-                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                      hint: Text(_repeatTypeToDisplayString(_recurrenceRepeatType) ?? '-----',),
-                      items: _buildRepeatTypeDropDownItems(),
-                      onChanged: _onRepeatTypeChanged)))),
+      body: Stack(alignment: Alignment.center, children: [
+        Container(
+            decoration: Event2CreatePanel.sectionDecoration,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, right: 8, top: 5, bottom: 5),
+                child: DropdownButtonHideUnderline(
+                    child: DropdownButton<Group>(
+                        dropdownColor: Styles().colors.white,
+                        icon: Styles().images.getImage('chevron-down'),
+                        isExpanded: true,
+                        style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                        hint: Row(children: [Expanded(child: Text(_selectedAdminGroupNamesText, maxLines: 2, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.message.regular')))]),
+                        items: _buildAdminGroupsDropDownItems(),
+                        onChanged: _onGroupSelected)))),
+        Visibility(visible: _loadingAdminGroups, child: SizedBox(height: 25, width: 25, child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary)))
+      ]),
     );
+  }
+
+  List<DropdownMenuItem<Group>>? _buildAdminGroupsDropDownItems() {
+    List<DropdownMenuItem<Group>> groups = <DropdownMenuItem<Group>>[];
+    if ((_adminGroups != null) && _adminGroups?.isNotEmpty == true) {
+      for (Group group in _adminGroups ?? <Group>[]) {
+        groups.add(DropdownMenuItem<Group>(value: group, child: _buildAdminGroupDropDownItemWidget(group)));
+      }
+    }
+    return groups;
+  }
+
+  void _onGroupSelected(Group? group) {
+    Analytics().logSelect(target: "Admin Group selected: $group");
+    Event2CreatePanel.hideKeyboard(context);
+    if (group != null) {
+      String? groupId = group.id;
+      if (groupId != null) {
+        if (_selectedAdminGroupIds == null) {
+          _selectedAdminGroupIds = <String>[];
+        }
+        setStateIfMounted(() {
+          if ((_selectedAdminGroupIds?.contains(groupId) ?? false) != true) {
+            _selectedAdminGroupIds?.add(groupId);
+          } else {
+            _selectedAdminGroupIds?.remove(groupId);
+          }
+        });
+      }
+    }
+  }
+
+  Widget _buildAdminGroupDropDownItemWidget(Group group) {
+    String? groupId = group.id;
+    bool isSelected = _selectedAdminGroupIds?.contains(groupId) ?? false;
+    String imageKey = isSelected ? 'check-box-filled' : 'box-outline-gray';
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(imageKey)),
+      Expanded(child: Text(group.title ?? '', overflow: TextOverflow.ellipsis, style: Event2CreatePanel.headingTextStype))
+    ]));
+  }
+
+  String get _selectedAdminGroupNamesText {
+    if ((_adminGroups != null) && (_adminGroups?.isNotEmpty ?? false) &&
+        (_selectedAdminGroupIds != null) && (_selectedAdminGroupIds?.isNotEmpty ?? false)) {
+      List<String> selectedGroupNames = <String>[];
+      for (Group group in _adminGroups ?? <Group>[]) {
+        if (_selectedAdminGroupIds?.contains(group.id) ?? false) {
+          selectedGroupNames.add(group.title ?? '');
+        }
+      }
+      return selectedGroupNames.join(', ');
+    } else {
+      return '';
+    }
   }
 
   // Title and Description
