@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Text updates [#5195](https://github.com/rokwire/illinois-app/issues/5195).
+- Text updates [#5193](https://github.com/rokwire/illinois-app/issues/5193).
 
 ## [7.1.13] - 2025-06-02
 ### Fixed
