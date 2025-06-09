@@ -40,7 +40,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
-  Map<dynamic, int>? _attributeValuesCounts;
+  Map<dynamic, int?>? _attributeValuesCounts;
   bool _countingAttributeValues = false;
 
 
@@ -115,7 +115,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
       if (widget.filtersMode) {
         _countingAttributeValues = true;
-        _evalAttributeValuesCounts().then((Map<dynamic, int>? attributeValuesCounts) {
+        _evalAttributeValuesCounts().then((Map<dynamic, int?>? attributeValuesCounts) {
           setStateIfMounted(() {
             _countingAttributeValues = false;
             _attributeValuesCounts = attributeValuesCounts;
@@ -329,26 +329,10 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
   }
 
-  Future<Map<dynamic, int>?> _evalAttributeValuesCounts() async {
+  Future<Map<dynamic, int?>?> _evalAttributeValuesCounts() async {
     final List<ContentAttributeValue>? attributeValues = widget.attributeValues;
     final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
-    List<int?>? counts = ((attributeValues != null) && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
-    return _mapAttributeValuesCounts(attributeValues: attributeValues, counts: counts);
-  }
-
-  Map<dynamic, int>? _mapAttributeValuesCounts({List<ContentAttributeValue>? attributeValues, List<int?>? counts } ) {
-    Map<dynamic, int>? attributeValuesCounts;
-    if ((attributeValues != null) && (counts != null)) {
-      attributeValuesCounts = <dynamic, int>{};
-      for (int index = 0; index < attributeValues.length; index++) {
-        ContentAttributeValue attributeValue = attributeValues[index];
-        int? attributeValueCount = (index < counts.length) ? counts[index] : null;
-        if (attributeValueCount != null) {
-          attributeValuesCounts[attributeValue.value] = attributeValueCount;
-        }
-      }
-    }
-    return attributeValuesCounts;
+    return ((attributeValues != null) && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
   }
 
   void _onHeaderBack() {

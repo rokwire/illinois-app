@@ -26,7 +26,7 @@ typedef AttributeValueCallback = Future<bool?> Function({
   required ContentAttributeValue value
 });
 
-typedef AttributeCountsCallback = Future<List<int?>?> Function({
+typedef AttributeCountsCallback = Future<Map<dynamic, int?>?> Function({
   required ContentAttribute attribute,
   required List<ContentAttributeValue> attributeValues,
   Map<String, LinkedHashSet<dynamic>>? selection,
@@ -554,7 +554,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   String _headerBackPromptOKText({String? language}) => Localization().getStringEx("dialog.ok.title", "OK", language: language);
   String _headerBackPromptCancelText({String? language}) => Localization().getStringEx("dialog.cancel.title", "Cancel", language: language);
 
-  Future<List<int?>?> _countAttributeValues({
+  Future<Map<dynamic, int?>?> _countAttributeValues({
       required ContentAttribute attribute,
       required List<ContentAttributeValue> attributeValues,
       Map<String, LinkedHashSet<dynamic>>? selection
