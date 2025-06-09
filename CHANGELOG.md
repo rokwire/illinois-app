@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Text updates [#5193](https://github.com/rokwire/illinois-app/issues/5193).
+
 ## [7.2.0] - 2025-06-05
 ### Added
 - Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
