@@ -413,19 +413,29 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   static Future<Map<dynamic, int?>?> countAttributeValues({
     required ContentAttribute attribute,
     required List<ContentAttributeValue> attributeValues,
-    Map<String, LinkedHashSet<dynamic>>? selection,
+    Map<String, dynamic>? attributesSelection,
+    ContentAttributes? contentAttributes,
   }) async {
-    // TMP resolution for now until we get backend support
-    Random random = Random();
-    await Future.delayed(Duration(milliseconds: 1500));
-    Map<dynamic, int?> counts = <dynamic, int?>{};
-    for (ContentAttributeValue attributeValue in attributeValues) {
-      dynamic attributeId = attributeValue.value;
-      if (attributeId != null) {
-        counts[attributeId] = (random.nextInt(2) == 0) ? random.nextInt(10000) : null;
+    String? attributeId = attribute.id;
+    if ((attributeId != null) && (attributesSelection != null)) {
+      Events2Query baseFilterQuery = Events2QueryImpl.fromFilterParam(Event2FilterParam.fromAttributesSelection(attributesSelection, contentAttributes: contentAttributes), groupings: Event2Grouping.individualEvents());
+
+      Map<String, dynamic> valueIds = <String, dynamic>{};
+      Map<String, Events2Query> countQueries = <String, Events2Query>{};
+      for (ContentAttributeValue attributeValue in attributeValues) {
+        String? valueId = attributeValue.valueId;
+        if (valueId != null) {
+          valueIds[valueId] = attributeValue.value;
+          countQueries[valueId] = Events2QueryImpl.fromFilterParam(Event2FilterParam.fromAttributesSelection({
+            attributeId: attributeValue.value,
+          }, contentAttributes: contentAttributes));
+        }
       }
+
+      Map<String, int?>? counts = await Events2().loadEventsCounts(baseQuery: baseFilterQuery, countQueries: countQueries,);
+      return counts?.map<dynamic, int?>((String valueId, int? count) => MapEntry(valueIds[valueId], count));
     }
-    return counts;
+    return null;
   }
 }
 
@@ -1376,7 +1386,7 @@ extension Event2SortOrderImpl on Event2SortOrder {
 // Events2QueryImpl
 
 extension Events2QueryImpl on Events2Query {
-  static Events2Query fromFilterParam(Event2FilterParam filterParam, { int? offset, int? limit, Event2SortType? sortType, Position? location }) =>
+  static Events2Query fromFilterParam(Event2FilterParam filterParam, { int? offset, int? limit, List<Event2Grouping>? groupings, Event2SortType? sortType, Position? location }) =>
     Events2Query(
       offset: offset,
       limit: limit,
@@ -1384,10 +1394,30 @@ extension Events2QueryImpl on Events2Query {
       customStartTimeUtc: filterParam.customStartTime?.toUtc(),
       customEndTimeUtc: filterParam.customEndTime?.toUtc(),
       types: filterParam.types,
-      groupings: Event2Grouping.individualEvents(),
+      groupings: groupings,
       attributes: filterParam.attributes,
       sortType: sortType,
       sortOrder: Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: filterParam.timeFilter),
       location: location,
     );
+}
+
+// _ContentAttributeValueImpl
+
+extension _ContentAttributeValueImpl on ContentAttributeValue {
+  String? get valueId {
+    dynamic v = value;
+    if (v is String) {
+      return v;
+    }
+    else if (v is Event2TimeFilter) {
+      return v.toJson();
+    }
+    else if (v is Event2TypeFilter) {
+      return v.toJson();
+    }
+    else {
+      return null;
+    }
+  }
 }

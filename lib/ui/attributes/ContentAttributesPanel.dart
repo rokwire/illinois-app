@@ -29,7 +29,8 @@ typedef AttributeValueCallback = Future<bool?> Function({
 typedef AttributeCountsCallback = Future<Map<dynamic, int?>?> Function({
   required ContentAttribute attribute,
   required List<ContentAttributeValue> attributeValues,
-  Map<String, LinkedHashSet<dynamic>>? selection,
+  Map<String, dynamic>? attributesSelection,
+  ContentAttributes? contentAttributes,
 });
 
 class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
@@ -557,7 +558,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Future<Map<dynamic, int?>?> _countAttributeValues({
       required ContentAttribute attribute,
       required List<ContentAttributeValue> attributeValues,
-      Map<String, LinkedHashSet<dynamic>>? selection
+      Map<String, dynamic>? attributesSelection, // does not come from ContentAttributesCategoryPanel
+      ContentAttributes? contentAttributes,      // does not come from ContentAttributesCategoryPanel
     }) async {
 
     final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
@@ -567,7 +569,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       return countAttributeValues(
         attribute: attribute,
         attributeValues: attributeValues,
-        selection: selection,
+        attributesSelection: ContentAttributes.selectionToAttributesSelection(selection),
+        contentAttributes: widget.contentAttributes,
       );
     }
     else {
