@@ -106,7 +106,7 @@ class _SettingsContactsPageState extends State<SettingsContactsPage> {
           ),
         ),
         Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
-        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Institute of Government and Public Affairs \n 1007 W Nevada St; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         RichText(textAlign: TextAlign.left, text:
           TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
               TextSpan(text: _contactEmail,
