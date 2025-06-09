@@ -3051,22 +3051,23 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   Event2 _createEventFromData({DateTime? recurringStartDateUtc, DateTime? recurringEndDateUtc}) {
-    List<String>? groupIds = _eventGroups?.map((group) => group.id!).toList();
+    List<String>? publishedGroupIds = _eventGroups?.map((group) => group.id!).toList();
+    Event2ExternalAdmins? externalAdmins = ((_selectedAdminGroupIds != null) && (_selectedAdminGroupIds?.isNotEmpty == true)) ? Event2ExternalAdmins(groupIds: _selectedAdminGroupIds) : null;
     Event2AuthorizationContext? authorizationContext;
     Event2Context? event2Context;
     switch (_visibility) {
       case _Event2Visibility.public:
-        authorizationContext = Event2AuthorizationContext.none();
-        if (CollectionUtils.isNotEmpty(groupIds)) {
-          event2Context = Event2Context.fromIdentifiers(identifiers: groupIds);
+        authorizationContext = Event2AuthorizationContext.none(externalAdmins: externalAdmins);
+        if (CollectionUtils.isNotEmpty(publishedGroupIds)) {
+          event2Context = Event2Context.fromIdentifiers(identifiers: publishedGroupIds);
         }
         break;
       case _Event2Visibility.registered_user:
-        authorizationContext = Event2AuthorizationContext.registeredUser();
+        authorizationContext = Event2AuthorizationContext.registeredUser(externalAdmins: externalAdmins);
         break;
       case _Event2Visibility.group_member:
-        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: groupIds);
-        event2Context = Event2Context.fromIdentifiers(identifiers: groupIds);
+        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: publishedGroupIds, externalAdmins: externalAdmins);
+        event2Context = Event2Context.fromIdentifiers(identifiers: publishedGroupIds);
         break;
     }
 
