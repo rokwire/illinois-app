@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Questionnaire.dart';
@@ -104,6 +105,14 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
     WidgetsFlutterBinding.ensureInitialized();
+
+    //Set your preferred orientations. To allow all standard orientations (portrait up/down, landscape left/right):
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
 
     NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
