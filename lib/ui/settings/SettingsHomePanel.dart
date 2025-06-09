@@ -392,7 +392,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
       case SettingsContentType.i_card: return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID', language: language);
       case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
-      case SettingsContentType.contact: return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us', language: language);
+      case SettingsContentType.contact: return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'About the App', language: language);
       case SettingsContentType.maps: return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding', language: language);
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
       case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
