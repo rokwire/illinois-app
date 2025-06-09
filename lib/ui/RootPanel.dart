@@ -986,8 +986,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     List<String>? types = (content != null) ? JsonUtils.listStringsValue(content['types']) : null;
     String? time =  (content != null) ? JsonUtils.stringValue(content['time']) : null;
 
-    LinkedHashSet<Event2TypeFilter>? typeFilters = types != null ? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(types)) : null;
-    Event2TimeFilter? timeFilter = time != null ? event2TimeFilterFromString(time) : null;
+    LinkedHashSet<Event2TypeFilter>? typeFilters = types != null ? LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(types)) : null;
+    Event2TimeFilter? timeFilter = time != null ? Event2TimeFilterImpl.fromJson(time) : null;
 
     if (attributes != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel(attributes: attributes, types: typeFilters, timeFilter: timeFilter,)));
