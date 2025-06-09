@@ -106,10 +106,10 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
           if (selection != null) {
 
             List<Event2TypeFilter>? typesList = ListUtils.combine([
-              event2TypeFilterListFromSelection(selection[eventDetailsContentAttributeId]),
-              event2TypeFilterListFromSelection(selection[eventLimitsContentAttributeId]),
+              Event2TypeFilterListImpl.fromAttributeSelection(selection[eventDetailsContentAttributeId]),
+              Event2TypeFilterListImpl.fromAttributeSelection(selection[eventLimitsContentAttributeId]),
             ]);
-            Storage().events2Types = event2TypeFilterListToStringList(typesList) ;
+            Storage().events2Types = typesList?.toJson();
 
             Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
             attributes.remove(eventDetailsContentAttributeId);
@@ -410,7 +410,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     }
   }
 
-  static Future<List<int?>?> countAttributeValues({
+  static Future<Map<dynamic, int?>?> countAttributeValues({
     required ContentAttribute attribute,
     required List<ContentAttributeValue> attributeValues,
     Map<String, LinkedHashSet<dynamic>>? selection,
@@ -418,7 +418,14 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     // TMP resolution for now until we get backend support
     Random random = Random();
     await Future.delayed(Duration(milliseconds: 1500));
-    return List.from(attributeValues.map((_) => random.nextInt(10000)));
+    Map<dynamic, int?> counts = <dynamic, int?>{};
+    for (ContentAttributeValue attributeValue in attributeValues) {
+      dynamic attributeId = attributeValue.value;
+      if (attributeId != null) {
+        counts[attributeId] = (random.nextInt(2) == 0) ? random.nextInt(10000) : null;
+      }
+    }
+    return counts;
   }
 }
 
@@ -472,12 +479,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       _customEndTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customEndTime : null;
     }
     else {
-      _timeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+      _timeFilter = Event2TimeFilterImpl.fromJson(Storage().events2Time) ?? Event2TimeFilter.upcoming;
       _customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
       _customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     }
 
-    _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
+    _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
     _sortType = widget.sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
@@ -849,10 +856,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             _attributes = filterResult.attributes ?? <String, dynamic>{};
           });
 
-          Storage().events2Time = event2TimeFilterToString(_timeFilter);
+          Storage().events2Time = _timeFilter.toJson();
           Storage().events2CustomStartTime = JsonUtils.encode(_customStartTime?.toJson());
           Storage().events2CustomEndTime = JsonUtils.encode(_customEndTime?.toJson());
-          Storage().events2Types = event2TypeFilterListToStringList(_types.toList());
+          Storage().events2Types = _types.toJson();
           Storage().events2Attributes = _attributes;
 
           Event2FilterParam.notifySubscribersChanged(except: this);
@@ -866,10 +873,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   }
 
   void _updateFilers() {
-    Event2TimeFilter? timeFilter = event2TimeFilterFromString(Storage().events2Time);
+    Event2TimeFilter? timeFilter = Event2TimeFilterImpl.fromJson(Storage().events2Time);
     TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
     TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
-    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types));
     Map<String, dynamic>? attributes = Storage().events2Attributes;
 
     setStateIfMounted(() {
@@ -1129,10 +1136,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       _sortType = Event2SortType.dateTime;
     });
 
-    Storage().events2Time = event2TimeFilterToString(_timeFilter);
+    Storage().events2Time = _timeFilter.toJson();
     Storage().events2CustomStartTime = JsonUtils.encode(_customStartTime?.toJson());
     Storage().events2CustomEndTime = JsonUtils.encode(_customEndTime?.toJson());
-    Storage().events2Types = event2TypeFilterListToStringList(_types.toList());
+    Storage().events2Types = _types.toJson();
     Storage().events2Attributes = _attributes;
     Storage().events2SortType = event2SortTypeToString(_sortType);
 
@@ -1212,27 +1219,27 @@ class Event2FilterParam {
 
   factory Event2FilterParam.fromUriParams(Map<String, String> uriParams) {
     return Event2FilterParam(
-      timeFilter: event2TimeFilterFromString(uriParams['time_filter']),
+      timeFilter: Event2TimeFilterImpl.fromJson(uriParams['time_filter']),
       customStartTime: TZDateTimeExt.fromJson(JsonUtils.decodeMap(uriParams['custom_start_time'])),
       customEndTime: TZDateTimeExt.fromJson(JsonUtils.decodeMap(uriParams['custom_end_time'])),
-      types: LinkedHashSetUtils.from(event2TypeFilterListFromStringList(JsonUtils.listStringsValue(JsonUtils.decodeList(uriParams['types'])))),
+      types: LinkedHashSetUtils.from(Event2TypeFilterListImpl.listFromJson(JsonUtils.listStringsValue(JsonUtils.decodeList(uriParams['types'])))),
       attributes: JsonUtils.decodeMap(uriParams['attributes']),
     );
   }
 
   Map<String, String> toUriParams() {
     Map <String, String> uriParams = <String, String>{};
-    MapUtils.add(uriParams, 'time_filter', event2TimeFilterToString(timeFilter));
+    MapUtils.add(uriParams, 'time_filter', timeFilter?.toJson());
     MapUtils.add(uriParams, 'custom_start_time', JsonUtils.encode(customStartTime?.toJson()));
     MapUtils.add(uriParams, 'custom_end_time', JsonUtils.encode(customEndTime?.toJson()));
-    MapUtils.add(uriParams, 'types', JsonUtils.encode(event2TypeFilterListToStringList(types)));
+    MapUtils.add(uriParams, 'types', JsonUtils.encode(types?.toJson()));
     MapUtils.add(uriParams, 'attributes', JsonUtils.encode(attributes));
     return uriParams;
   }
 
   factory Event2FilterParam.fromAttributesSelection(Map<String, dynamic> selection, { required ContentAttributes? contentAttributes }) {
     TZDateTime? customStartTime, customEndTime;
-    Event2TimeFilter? timeFilter = event2TimeFilterListFromSelection(selection[eventTimeContentAttributeId]);
+    Event2TimeFilter? timeFilter = Event2TimeFilterImpl.fromAttributeSelection(selection[eventTimeContentAttributeId]);
     if (timeFilter == Event2TimeFilter.customRange) {
       Map<String, dynamic>? customData = contentAttributes?.findAttribute(id: eventTimeContentAttributeId)?.findValue(value: Event2TimeFilter.customRange)?.customData;
       customStartTime = Event2TimeRangePanel.getStartTime(customData);
@@ -1240,8 +1247,8 @@ class Event2FilterParam {
     }
 
     List<Event2TypeFilter>? typesList = ListUtils.combine([
-      event2TypeFilterListFromSelection(selection[eventDetailsContentAttributeId]),
-      event2TypeFilterListFromSelection(selection[eventLimitsContentAttributeId]),
+      Event2TypeFilterListImpl.fromAttributeSelection(selection[eventDetailsContentAttributeId]),
+      Event2TypeFilterListImpl.fromAttributeSelection(selection[eventLimitsContentAttributeId]),
     ]);
 
     Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
