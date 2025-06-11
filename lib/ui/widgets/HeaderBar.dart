@@ -457,15 +457,16 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
 class HeaderBarActionTextButton extends StatelessWidget {
   final String? title;
   final bool enabled;
+  final EdgeInsetsGeometry padding;
   final void Function()? onTap;
-  HeaderBarActionTextButton({super.key, this.title, this.enabled = true, this.onTap, });
+  HeaderBarActionTextButton({super.key, this.title, this.enabled = true, this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12), this.onTap, });
 
   @override
   Widget build(BuildContext context) =>
     Semantics(label: title, button: true, child:
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+          Padding(padding: padding, child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.white : Styles().colors.whiteTransparent06, width: 1.5, ))),
@@ -481,5 +482,18 @@ class HeaderBarActionTextButton extends StatelessWidget {
         //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
         //),
       ),
+    );
+}
+
+class HeaderBarActionProgress extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+  HeaderBarActionProgress({ super.key, this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12) });
+
+  @override
+  Widget build(BuildContext context) =>
+    Padding(padding: padding, child:
+      SizedBox(width: 16, height: 16, child:
+        CircularProgressIndicator(color: Styles().colors.white, strokeWidth: 2,)
+      )
     );
 }

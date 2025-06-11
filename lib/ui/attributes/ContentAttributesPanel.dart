@@ -20,6 +20,19 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum ContentAttributesSortType { native, explicit, alphabetical, }
 
+typedef AttributeValueCallback = Future<bool?> Function({
+  required BuildContext context,
+  required ContentAttribute attribute,
+  required ContentAttributeValue value
+});
+
+typedef AttributeCountsCallback = Future<Map<dynamic, int?>?> Function({
+  required ContentAttribute attribute,
+  required List<ContentAttributeValue> attributeValues,
+  Map<String, dynamic>? attributesSelection,
+  ContentAttributes? contentAttributes,
+});
+
 class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final String? title;
   final String? bgImageKey;
@@ -42,12 +55,8 @@ class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final ContentAttributesSortType sortType;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
-
-  final Future<bool?> Function({
-    required BuildContext context,
-    required ContentAttribute attribute,
-    required ContentAttributeValue value
-  })? handleAttributeValue;
+  final AttributeValueCallback? handleAttributeValue;
+  final AttributeCountsCallback? countAttributeValues;
 
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
     this.description, this.descriptionTextStyle, this.descriptionBuilder,
@@ -58,7 +67,7 @@ class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
     this.scope, this.filtersMode = false,
-    this.handleAttributeValue,
+    this.handleAttributeValue, this.countAttributeValues,
   }) : super(key: key);
 
   @override
@@ -253,6 +262,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       selection: attributeRawValues,
       filtersMode: widget.filtersMode,
       handleAttributeValue: widget.handleAttributeValue,
+      countAttributeValues: (widget.countAttributeValues != null) ? _countAttributeValues : null,
     ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
         if ((attribute.nullValue is String) && selection.contains(attribute.nullValue)) {
@@ -545,6 +555,28 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   String _headerBackPromptOKText({String? language}) => Localization().getStringEx("dialog.ok.title", "OK", language: language);
   String _headerBackPromptCancelText({String? language}) => Localization().getStringEx("dialog.cancel.title", "Cancel", language: language);
 
+  Future<Map<dynamic, int?>?> _countAttributeValues({
+      required ContentAttribute attribute,
+      required List<ContentAttributeValue> attributeValues,
+      Map<String, dynamic>? attributesSelection, // does not come from ContentAttributesCategoryPanel
+      ContentAttributes? contentAttributes,      // does not come from ContentAttributesCategoryPanel
+    }) async {
+
+    final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
+    if (countAttributeValues != null) {
+      final Map<String, LinkedHashSet<dynamic>> selection = Map<String, LinkedHashSet<dynamic>>.from(_selection);
+      selection.remove(attribute.id);
+      return countAttributeValues(
+        attribute: attribute,
+        attributeValues: attributeValues,
+        attributesSelection: ContentAttributes.selectionToAttributesSelection(selection),
+        contentAttributes: widget.contentAttributes,
+      );
+    }
+    else {
+      return null;
+    }
+  }
 }
 
 class _AttributeRibbonButton extends StatelessWidget {
