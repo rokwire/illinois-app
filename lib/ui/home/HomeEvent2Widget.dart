@@ -470,7 +470,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
       queryCustomEndTime = (queryTimeFilter == Event2TimeFilter.customRange) ? customEndTime : null;
     }
     else {
-      queryTimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+      queryTimeFilter = Event2TimeFilterImpl.fromJson(Storage().events2Time) ?? Event2TimeFilter.upcoming;
       queryCustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
       queryCustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     }
@@ -506,7 +506,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
   }
 
   LinkedHashSet<Event2TypeFilter>? get _queryTypes =>
-    types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    types ?? LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types));
 
   Map<String, dynamic>? get _queryAttributes =>
     attributes ?? Storage().events2Attributes;

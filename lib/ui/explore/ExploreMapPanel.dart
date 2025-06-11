@@ -262,10 +262,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _selectedMapType = widget._selectedExploreType(exploreTypes: _exploreTypes);
     _selectedEventsDisplayType = EventsDisplayType.single;
     
-    _event2TimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+    _event2TimeFilter = Event2TimeFilterImpl.fromJson(Storage().events2Time) ?? Event2TimeFilter.upcoming;
     _event2CustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
     _event2CustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
-    _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
+    _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
     _event2SearchText = _initialEvent2SearchParam?.searchText;
 
@@ -1298,10 +1298,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           _event2Attributes = filterResult.attributes ?? <String, dynamic>{};
         });
         
-        Storage().events2Time = event2TimeFilterToString(_event2TimeFilter);
+        Storage().events2Time = _event2TimeFilter.toJson();
         Storage().events2CustomStartTime = JsonUtils.encode(_event2CustomStartTime?.toJson());
         Storage().events2CustomEndTime = JsonUtils.encode(_event2CustomEndTime?.toJson());
-        Storage().events2Types = event2TypeFilterListToStringList(_event2Types.toList());
+        Storage().events2Types = _event2Types.toJson();
         Storage().events2Attributes = _event2Attributes;
 
         Event2FilterParam.notifySubscribersChanged(except: this);
@@ -1312,10 +1312,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _updateEvent2Filers() {
-    Event2TimeFilter? timeFilter = event2TimeFilterFromString(Storage().events2Time);
+    Event2TimeFilter? timeFilter = Event2TimeFilterImpl.fromJson(Storage().events2Time);
     TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
     TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
-    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types));
     Map<String, dynamic>? attributes = Storage().events2Attributes;
 
     setStateIfMounted(() {

@@ -136,6 +136,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Container(height: 8),
         _buildPrivacyDropDown(),
         _buildHiddenForSearch(),
+        _buildAdministrative(),
       ]);
 
       if (_canViewManagedSettings) {
@@ -647,6 +648,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Widget _buildAdministrative() { // Administrative cannot be updated
+    return Padding(padding: EdgeInsets.all(16), child: Container(child:
+    _buildSwitch(title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
+        value: _group?.administrative, enabled: false)));
   }
 
   //

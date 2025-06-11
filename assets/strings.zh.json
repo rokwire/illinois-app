@@ -1248,6 +1248,8 @@
 	"panel.event2.create.header.title": "举办活动",
 	"panel.event2.update.header.title": "活动更新",
 	"panel.event2.create.section.image.description": "事件圖像顯示 16:9 或 1000px x 615px jpg、png 或 gif（非動畫）。 較大的圖像會自動定位在框架內，並且可以點擊以在伊利諾伊州應用程式中完整查看。",
+	"panel.event2.create.section.admin.teams.title": "管理團隊",
+	"panel.event2.create.section.admin.teams.description": " （授予 {{app_title}} 應用程式中私人管理群組成員管理員存取權限）",
 	"panel.event2.create.section.title.title": "活动名称",
 	"panel.event2.create.section.description.title": "活动细节",
 	"panel.event2.create.section.description.description": " (在此栏新增的超链接无法使用。请将网址输入至正确的字段，如在线活动的活动网址、活动网页链接、或是外部的活动注册链接。)",
@@ -2739,6 +2741,7 @@
 	"panel.groups.common.privacy.description.short.public":  "只有成员可以看到群组活动与贴文，除非该活动标示为公开。",
 	"panel.groups.common.privacy.description.long.private": "当任何应用程序用户以全名搜寻群组，都可以找到这个群组。只有管理员可以看到群组成员。",
 	"panel.groups.common.privacy.description.long.public":  "当任何应用程序用户以都会看到这个群组。只有管理员可以看到群组成员。",
+	"panel.groups.common.administrative.switch.label": "這是一個管理群組嗎？",
 	"panel.groups.common.private.search.hidden.label": "隐藏群组",
 	"panel.groups.common.private.search.hidden.description": "隐藏的群组无法被搜寻到。",
 

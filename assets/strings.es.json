@@ -1248,6 +1248,8 @@
     "panel.event2.create.header.title": "Crear un Evento",
     "panel.event2.update.header.title": "Actualizar un Evento",
     "panel.event2.create.section.image.description": "La imagen del evento muestra un formato jpg, png o gif de 16:9 o 1000 px x 615 px (no animado). Las imágenes más grandes se colocan automáticamente dentro del marco y se pueden tocar para verlas en su totalidad dentro de la aplicación de Illinois.",
+    "panel.event2.create.section.admin.teams.title": "EQUIPOS DE ADMINISTRACIÓN",
+    "panel.event2.create.section.admin.teams.description": " (conceder acceso de administrador a los miembros de sus grupos administrativos privados en la aplicación {{app_title}})",
     "panel.event2.create.section.title.title": "TÍTULO DEL EVENTO",
     "panel.event2.create.section.title.field.title": "TITLE FIELD",
     "panel.event2.create.section.description.title": "DESCRIPCIÓN DEL EVENTO",
@@ -2760,6 +2762,7 @@
     "panel.groups.common.privacy.description.short.public":  "Solo los miembros pueden ver los eventos y las publicaciones del grupo, a menos que un evento esté marcado público.",
     "panel.groups.common.privacy.description.long.private": "Cualquier persona que utilice la aplicación puede encontrar este grupo si busca y coincide con el nombre completo. Solo los administradores pueden ver los miembros del grupo.",
     "panel.groups.common.privacy.description.long.public":  "Cualquier persona que utilice la aplicación verá este grupo. Solo los administradores pueden ver los miembros del grupo.",
+    "panel.groups.common.administrative.switch.label": "¿Es este un grupo administrativo?",
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
     "panel.groups.common.private.search.hidden.description": "Un grupo oculto no es visible en las búsquedas.",
 
