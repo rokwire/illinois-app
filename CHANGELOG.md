@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
 - Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
 
+## [7.1.15] - 2025-06-11
+### Added
+- Added event filters counts [#4890](https://github.com/rokwire/illinois-app/issues/4890).
+- Allow managing events by group members [#4696](https://github.com/rokwire/illinois-app/issues/4696).
+### Fixed
+- Fixed Food Filters [#5206](https://github.com/rokwire/illinois-app/issues/5206).
+- Fixed missing approve all button [#5199](https://github.com/rokwire/illinois-app/issues/5199).
+- Change group label from "Update Questions" to "Save Questions" [#360](https://github.com/rokwire/illinois-app/issues/360).
+### Changed
+- Improve Business Card Sharing Text [#5202](https://github.com/rokwire/illinois-app/issues/5202).
+
 ## [7.1.14] - 2025-06-09
 ### Changed
 - Text updates [#5193](https://github.com/rokwire/illinois-app/issues/5193).

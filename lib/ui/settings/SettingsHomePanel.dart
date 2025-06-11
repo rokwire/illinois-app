@@ -120,7 +120,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     ]);
     _contentTypes = _SettingsContentTypeList.fromAvailableContentTypes(SettingsHomePanel._dropdownContentTypes);
 
-    _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
+    _selectedContentType = widget.contentType ?? // Some content types are not available in dropdown list.
       Storage()._settingsContentType?._ensure(availableTypes: _contentTypes) ??
       SettingsHomePanel._defaultContentType._ensure(availableTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
