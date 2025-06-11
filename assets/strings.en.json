@@ -2982,7 +2982,7 @@
     "panel.membership_questions.button.add_question.title": "Add Question",
     "panel.membership_questions.label.question": "QUESTION #",
     "panel.membership_questions.button.clear.hint": "clear",
-    "panel.membership_questions.button.update_question.title": "Update Questions",
+    "panel.membership_questions.button.update_question.title": "Save Questions",
     "panel.membership_questions.label.question.alert": "Please input question #",
 
     "panel.recruitment_questions.label.title": "Recruitment Questions",
