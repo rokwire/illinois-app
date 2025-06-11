@@ -196,3 +196,65 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     }
   }
 }
+
+class SettingsFoodFiltersBottomSheet extends StatelessWidget {
+  SettingsFoodFiltersBottomSheet._();
+
+  static void present(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      useRootNavigator: true,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: Styles().colors.background,
+      constraints: BoxConstraints(maxHeight: height, minHeight: height),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (context) {
+        return SettingsFoodFiltersBottomSheet._();
+      }
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+    Padding(padding: MediaQuery.of(context).viewInsets, child:
+      Column(children: [
+        _buildHeaderBar(context),
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        Expanded(child:
+          SingleChildScrollView(child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+              SettingsFoodFiltersPage()
+            )
+          ),
+        ),
+      ],),
+    );
+
+  Widget _buildHeaderBar(BuildContext context) =>
+    Container(color: Styles().colors.white, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16), child:
+            Text(Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+          )
+        ),
+        Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+          InkWell(onTap : () => _onTapClose(context), child:
+            Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+              Styles().images.getImage('close-circle', excludeFromSemantics: true),
+            ),
+          ),
+        ),
+
+      ],),
+    );
+
+  void _onTapClose(BuildContext context)  {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+}
