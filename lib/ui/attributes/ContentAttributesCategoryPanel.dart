@@ -52,18 +52,14 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   bool _isGroupMultipleSelection({String? group}) => widget.attribute.isGroupMultipleSelection(_requirementsFunctionalScope, group: group);
   bool _canDeselect(dynamic attributeRawValue) => widget.attribute.canDeselect(_requirementsFunctionalScope, _selection, attributeRawValue);
   int? _attributeValueCount(dynamic value) => _attributeValuesCounts?[value];
+
   String? _attributeValueCountText(dynamic value) {
     if (_countingAttributeValues) {
       return " (...)";
     }
     else {
       int? count = _attributeValueCount(value);
-      if ((count != null) && (count > 0)) {
-        return " ($count)";
-      }
-      else {
-        return null;
-      }
+      return (count != null) ? " ($count)" : null;
     }
   }
 
