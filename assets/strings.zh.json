@@ -2963,7 +2963,7 @@
 	"panel.membership_questions.button.add_question.title": "增加问题",
 	"panel.membership_questions.label.question": "问题#",
 	"panel.membership_questions.button.clear.hint": "清除",
-	"panel.membership_questions.button.update_question.title": "更新问题",
+	"panel.membership_questions.button.update_question.title": "保存問題",
 	"panel.membership_questions.label.question.alert": "请输入问题 #",
 
 	"panel.recruitment_questions.label.title": "会员资格问题",

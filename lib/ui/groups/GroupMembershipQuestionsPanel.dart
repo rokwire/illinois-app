@@ -188,7 +188,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Row(children: <Widget>[
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
-          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update Questions'),
+          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Save Questions'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors.white,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
@@ -225,7 +225,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   void _onSubmit() {
-    Analytics().logSelect(target: 'Update questions');
+    Analytics().logSelect(target: 'Save Questions');
     for (int index = 0; index < _questions!.length; index++) {
       String question = _controllers![index].text;
       if ((0 < question.length)) {
