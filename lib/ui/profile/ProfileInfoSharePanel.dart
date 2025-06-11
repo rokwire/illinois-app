@@ -203,7 +203,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
         ),
         _buildCommand(
           icon: Styles().images.getImage('envelope', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share Digital Business Card'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.email.text', 'Share via Email'),
           progress: _preparingEmail,
           onTap: _onTapShareViaEmail,
         ),
@@ -215,7 +215,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
         ),
         _buildCommand(
           icon: Styles().images.getImage('up-from-bracket', size: _commandIconSize),
-          text: Localization().getStringEx('panel.profile.info.share.command.button.share.digital_card.text', 'Add to Device Contacts'),
+          text: Localization().getStringEx('panel.profile.info.share.command.button.share.digital_card.text', 'Share My QR Code'),
           progress: _sharingDigitalCard,
           onTap: _onTapShareDigitalCard,
         ),

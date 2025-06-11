@@ -148,11 +148,11 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     key: key, modalSheet: modalSheet,
     digitalCardQrCode: profile?.toDigitalCard(), // photoImageData: photoImageData
     digitalCardShare: profile?.toDigitalCard(photoImageData: photoImageData),
-    saveFileName: profile?.vcardFullName ?? 'Digital Business Card',
+    saveFileName: profile?.vcardFullName ?? 'My QR Code',
     saveWatermarkText: profile?.vcardFullName,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
-    title: Localization().getStringEx('panel.qr_code.digital_card.title', 'Digital Business Card'),
-    description: Localization().getStringEx('panel.qr_code.digital_card.description.label', 'Scan the QR code image below to import your Digital Business Card.'),
+    title: Localization().getStringEx('panel.qr_code.digital_card.title', 'My QR Code'),
+    description: Localization().getStringEx('panel.qr_code.digital_card.description.label', 'Others can scan the QR code to import your information to their device’s contacts.'),
   );
 
   static void presentProfile(BuildContext context, { Key? key, Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, AnalyticsFeature? analyticsFeature}) {
@@ -264,7 +264,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
         if (_canShareDigitalCard)
           Padding(padding: EdgeInsets.only(top: 12), child:
             RoundedButton(
-              label: Localization().getStringEx('panel.qr_code.button.share_digital_card.title', 'Share Digital Business Card'),
+              label: Localization().getStringEx('panel.qr_code.button.share_digital_card.title', 'Share Via . . . '),
               hint: '',
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
               backgroundColor: _backgroundColor,
