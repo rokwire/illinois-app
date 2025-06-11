@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added event filters counts [#4890](https://github.com/rokwire/illinois-app/issues/4890).
 - Allow managing events by group members [#4696](https://github.com/rokwire/illinois-app/issues/4696).
+### Fixed
+- Fixed Food Filters [#5206](https://github.com/rokwire/illinois-app/issues/5206).
 
 ## [7.1.14] - 2025-06-09
 ### Changed
