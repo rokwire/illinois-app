@@ -417,8 +417,8 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
     ContentAttributes? contentAttributes,
   }) async {
     String? attributeId = attribute.id;
-    if ((attributeId != null) && (attributesSelection != null)) {
-      Events2Query baseFilterQuery = Events2QueryImpl.fromFilterParam(Event2FilterParam.fromAttributesSelection(attributesSelection, contentAttributes: contentAttributes), groupings: Event2Grouping.individualEvents());
+    if (attributeId != null) {
+      Events2Query baseFilterQuery = Events2QueryImpl.fromFilterParam(Event2FilterParam.fromAttributesSelection(attributesSelection ?? {}, contentAttributes: contentAttributes), groupings: Event2Grouping.individualEvents());
 
       Map<String, dynamic> valueIds = <String, dynamic>{};
       Map<String, Events2Query> countQueries = <String, Events2Query>{};
