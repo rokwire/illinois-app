@@ -3003,7 +3003,7 @@
     "panel.membership_questions.button.add_question.title": "Agregar una Pregunta",
     "panel.membership_questions.label.question": "PREGUNTA #",
     "panel.membership_questions.button.clear.hint": "limpiar",
-    "panel.membership_questions.button.update_question.title": "Actualizar las Preguntas",
+    "panel.membership_questions.button.update_question.title": "Guardar preguntas",
     "panel.membership_questions.label.question.alert": "Favor de ingresar la pregunta #",
 
     "panel.recruitment_questions.label.title": "Preguntas de Reclutamiento",
