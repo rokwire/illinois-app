@@ -1249,6 +1249,8 @@
     "panel.event2.create.header.title": "Create an Event",
     "panel.event2.update.header.title": "Update Event",
     "panel.event2.create.section.image.description": "The event image displays a 16:9 or 1000px x 615px jpg, png, or gif (not animated). Larger images are automatically positioned within the frame and can be tapped to view in their entirety within the Illinois app.",
+    "panel.event2.create.section.admin.teams.title": "ADMIN TEAMS",
+    "panel.event2.create.section.admin.teams.description": " (grant admin access to the members of your private administrative groups in the {{app_title}} app)",
     "panel.event2.create.section.title.title": "EVENT TITLE",
     "panel.event2.create.section.title.field.title": "TITLE FIELD",
     "panel.event2.create.section.description.title": "EVENT DESCRIPTION",
@@ -2737,6 +2739,7 @@
     "panel.groups.common.privacy.description.short.public":  "Only members can see group events and posts, unless an event is marked public.",
     "panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group.",
     "panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group. Only admins can see who is in the group.",
+    "panel.groups.common.administrative.switch.label": "Is this an administrative group?",
     "panel.groups.common.private.search.hidden.label": "Make Group Hidden",
     "panel.groups.common.private.search.hidden.description": "A hidden group is unsearchable.",
 
