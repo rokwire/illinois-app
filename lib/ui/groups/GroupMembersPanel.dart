@@ -526,7 +526,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
   bool get _isLoading => (_loadingProgress > 0);
   bool get _isResearchProject => _group?.researchProject == true;
   bool get _isAdmin => _group?.currentMember?.isAdmin ?? false;
-  bool get _isApproveAllVisible => _isAdmin && (_selectedMemberFilter == GroupMemberStatus.pending);
+  bool get _isApproveAllVisible => _isAdmin && (_selectedMemberFilter == GroupMembersFilter.pending);
   bool get _canAddMembers => _isAdmin;
 }
 

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow managing events by group members [#4696](https://github.com/rokwire/illinois-app/issues/4696).
 ### Fixed
 - Fixed Food Filters [#5206](https://github.com/rokwire/illinois-app/issues/5206).
+- Fixed missing approve all button [#5199](https://github.com/rokwire/illinois-app/issues/5199).
+### Changed
+- Improve Business Card Sharing Text [#5202](https://github.com/rokwire/illinois-app/issues/5202).
 
 ## [7.1.14] - 2025-06-09
 ### Changed
