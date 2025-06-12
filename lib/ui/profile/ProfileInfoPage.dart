@@ -8,9 +8,11 @@ import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -293,21 +295,31 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
     )
   );
 
-  Widget get _previewCommandBar => Row(children: [
+  Widget get _previewCommandBar => Row(children: _canShare ? [
+    Expanded(flex: 1, child: _shareInfoButton,),
+    Container(width: 16,),
+    Expanded(flex: 1, child: _editInfoButton,),
+  ] : [
     Expanded(flex: 1, child: Container(),),
     Expanded(flex: 2, child: _editInfoButton,),
     Expanded(flex: 1, child: Container(),),
   ],);
 
+  bool get _canShare => (widget.onboarding == false) && Auth2().isOidcLoggedIn && (_profile?.isNotEmpty == true);
+
+  Widget get _shareInfoButton => RoundedButton(
+    label: Localization().getStringEx('panel.profile.info.command.button.share.text', 'Export Business Card'),
+    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    onTap: _onShareInfo,
+  );
+
   Widget get _editInfoButton => RoundedButton(
-    label: _editInfoButtonTitle,
+    label: Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info'),
     fontFamily: Styles().fontFamilies.bold, fontSize: 16,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onEditInfo,
   );
-
-  String get _editInfoButtonTitle =>
-    Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info');
 
   Widget get _accountCommands =>
     Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -437,6 +449,20 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
       _loading = false;
       widget.onStateChanged?.call();
     });
+  }
+
+  void _onShareInfo() {
+    Analytics().logSelect(target: 'Export Business Card');
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+      ProfileContentType.share,
+      <String, dynamic>{
+        ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
+          profile: _profile,
+          photoImageData: _photoImageData,
+          pronunciationAudioData: _pronunciationAudioData,
+        )
+      }
+    ]);
   }
 
   void _onEditInfo() {
