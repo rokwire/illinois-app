@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.2.0] - 2025-06-05
+### Added
+- Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
+- Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
+
+## [7.1.16] - 2025-06-12
 ### Added
 - Added VideoTutorialThumbButton to Onboarding2GetStartedPanel [#4863](https://github.com/rokwire/illinois-app/issues/4863).
 ### Fixed
@@ -16,11 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Food Filters icon [#5206](https://github.com/rokwire/illinois-app/issues/5206).
 ### Added
 - Assistant Events Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
-
-## [7.2.0] - 2025-06-05
-### Added
-- Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
-- Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
 
 ## [7.1.15] - 2025-06-11
 ### Added
