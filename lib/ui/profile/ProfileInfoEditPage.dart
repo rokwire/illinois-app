@@ -856,9 +856,9 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   static Widget? get _lockIcon => Styles().images.getImage('lock', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
   static Widget? get _playIcon => Styles().images.getImage('play', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
   static Widget? get _pauseIcon => Styles().images.getImage('pause', color: Styles().colors.fillColorPrimary, size: _buttonIconSize);
-  static Widget? get _publicDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.fillColorSecondary, size: _buttonIconSize);
-  static Widget? get _privateDropdownIcon => Styles().images.getImage('earth-americas', color: Styles().colors.mediumGray2, size: _buttonIconSize);
-  static Widget? get _lockDropdownIcon => Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize);
+  static Widget? get _publicDropdownIcon => Styles().images.getImage('eye', color: Styles().colors.fillColorSecondary, size: _buttonIconSize); // 'earth-americas'
+  static Widget? get _privateDropdownIcon => Styles().images.getImage('eye-slash', color: Styles().colors.mediumGray2, size: _buttonIconSize); // 'earth-americas'
+  //static Widget? get _lockDropdownIcon => Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize);
   static Widget? get _chevronDropdownIcon => Styles().images.getImage('chevron-down', color: Styles().colors.mediumGray2, size: _dropdownButtonChevronIconSize);
   static Widget? get _redioOnDropdownIcon => Styles().images.getImage('radio-button-on', size: _buttonIconSize);
   static Widget? get _redioOffDropdownIcon => Styles().images.getImage('radio-button-off', size: _buttonIconSize);
@@ -1506,7 +1506,7 @@ extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
 
   String get displayDescription {
     switch(this) {
-      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Directory of Users, business card');
+      case Auth2FieldVisibility.public: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.public.description', 'Directory, business card');
       case Auth2FieldVisibility.connections: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.connections.description', '');
       case Auth2FieldVisibility.private: return Localization().getStringEx('panel.profile.info.directory_visibility.dropdown.private.description', '');
     }
@@ -1518,8 +1518,8 @@ extension _Auth2FieldVisibilityUI on Auth2FieldVisibility {
   Widget? get displayDropdownItemIcon {
     switch(this) {
       case Auth2FieldVisibility.public: return ProfileInfoEditPageState._publicDropdownIcon;
-      case Auth2FieldVisibility.connections: return ProfileInfoEditPageState._lockDropdownIcon;
-      case Auth2FieldVisibility.private: return ProfileInfoEditPageState._lockDropdownIcon;
+      case Auth2FieldVisibility.connections: return ProfileInfoEditPageState._privateDropdownIcon;
+      case Auth2FieldVisibility.private: return ProfileInfoEditPageState._privateDropdownIcon;
     }
   }
 }

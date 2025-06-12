@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed address field in Digital Business Card generation [#5203](https://github.com/rokwire/illinois-app/issues/5203).
 ### Changed
 - Share My Info moved to Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
+- Updated privacy icons in profile edit page [#5200](https://github.com/rokwire/illinois-app/issues/5200).
 
 ## [7.1.15] - 2025-06-11
 ### Added
