@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -27,7 +26,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:illinois/ui/widgets/VideoPauseButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -68,6 +66,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   bool _ccVisible = false;
   bool _onboardingProgress = false;
 
+  GlobalKey? _videoContent;
+
   @override
   void initState() {
     super.initState();
@@ -98,7 +98,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             Center(child:
               _buildVideoContent(),
             ),
-            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
+            // MergeSemantics(
+            //   child: Semantics(/*focused: false,*/ child:
+                Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
+              // )),
             Positioned.fill(child:
               Align(alignment: (_isPortrait ? Alignment.bottomCenter : Alignment.bottomLeft), child:
                 LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _skipButtonLabel(), onTap: _onTapContinue, textColor: Styles().colors.white)
@@ -127,9 +130,11 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
               double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
               double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
               return Semantics(
+                key: _videoContent ??= GlobalKey(),
                 focused: true,
                 label: "Onboarding Video",
                 hint: "Double tap to " + (_isPlaying == true ? "Pause" : "Play"),
+                container: true,
                 excludeSemantics: true,
                 child: GestureDetector(
                   onTap: _onTapPlayPause,
@@ -186,6 +191,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           _showCc(true);
           if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
             _playVideo();// Automatically play video after initialization
+            AppSemantics.requestSemanticsUpdates(_videoContent?.currentContext);
+            Future.delayed(Duration(milliseconds: 200), () { //IOS autofocus workaround
+              AppSemantics.triggerAccessibilityFocus(_videoContent);
+            });
           }
         });
       }
@@ -426,6 +435,7 @@ class _VideoTutorialThumbState extends State<VideoTutorialThumbButton>{
   Widget build(BuildContext context) =>
     Semantics(label: "Onboarding video tutorial",
       hint: "Double tap to Play video",
+      button: true,
       excludeSemantics: true,
       child: InkWell(
         onTap: widget.onTap,
