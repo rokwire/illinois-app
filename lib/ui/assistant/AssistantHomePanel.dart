@@ -51,6 +51,8 @@ class AssistantHomePanel extends StatefulWidget {
 
   static String pageRuntimeTypeName = 'AssistantHomePanel';
 
+  static final AssistantContentType _defaultContentType = AssistantContentType.openai;
+
   static void present(BuildContext context, {AssistantContentType? content}) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
@@ -102,6 +104,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     _contentTypes = _buildAssistantContentTypes();
     _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
       Storage()._assistantContentType?._ensure(availableTypes: _contentTypes) ??
+      AssistantHomePanel._defaultContentType._ensure(availableTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
