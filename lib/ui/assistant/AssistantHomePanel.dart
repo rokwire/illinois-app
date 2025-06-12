@@ -43,15 +43,18 @@ enum AssistantContentType { google, grok, perplexity, openai, all, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
   final AssistantContentType? contentType;
+  final String? initialQuestion;
 
-  AssistantHomePanel._({this.contentType});
+  AssistantHomePanel._({this.contentType, this.initialQuestion});
 
   @override
   _AssistantHomePanelState createState() => _AssistantHomePanelState();
 
   static String pageRuntimeTypeName = 'AssistantHomePanel';
 
-  static void present(BuildContext context, {AssistantContentType? content}) {
+  static final AssistantContentType _defaultContentType = AssistantContentType.openai;
+
+  static void present(BuildContext context, {AssistantContentType? content, String? initialQuestion}) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
@@ -73,7 +76,7 @@ class AssistantHomePanel extends StatefulWidget {
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
           builder: (context) {
-            return AssistantHomePanel._(contentType: content);
+            return AssistantHomePanel._(contentType: content, initialQuestion: initialQuestion);
           });
     }
   }
@@ -88,6 +91,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   final GlobalKey _pageHeadingKey = GlobalKey();
   final _clearMessagesNotifier = new StreamController.broadcast();
 
+  String? _initialQuestion;
 
   @override
   void initState() {
@@ -102,6 +106,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     _contentTypes = _buildAssistantContentTypes();
     _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
       Storage()._assistantContentType?._ensure(availableTypes: _contentTypes) ??
+      AssistantHomePanel._defaultContentType._ensure(availableTypes: _contentTypes) ??
       (_contentTypes.isNotEmpty ? _contentTypes.first : null);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,6 +114,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       setStateIfMounted((){});
       // 2. Check if the Assistant is available
       _checkAvailable();
+      // 3. If available, set the initial question
+      if (_isAvailable) {
+        _initialQuestion = widget.initialQuestion;
+      }
     });
   }
 
@@ -228,6 +237,9 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     setState(() {
       Storage()._assistantContentType = _selectedContentType = contentItem;
       _contentValuesVisible = !_contentValuesVisible;
+      if (_initialQuestion != null) {
+        _initialQuestion = null;
+      }
     });
   }
 
@@ -323,10 +335,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   Widget? get _contentWidget {
     switch (_selectedContentType) {
-      case AssistantContentType.google: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContentType.grok: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContentType.perplexity: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
-      case AssistantContentType.openai: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider);
+      case AssistantContentType.google: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
+      case AssistantContentType.grok: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
+      case AssistantContentType.perplexity: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
+      case AssistantContentType.openai: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
       case AssistantContentType.all: return AssistantProvidersConversationContentWidget();
       case AssistantContentType.faqs: return AssistantFaqsContentWidget();
       default: return null;

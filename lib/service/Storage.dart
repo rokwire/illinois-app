@@ -519,4 +519,8 @@ class Storage extends rokwire.Storage {
   static const String assistantContentTypeKey = 'edu.illinois.rokwire.assistant.content_type';
   String? get assistantContentType => getStringWithName(assistantContentTypeKey);
   set assistantContentType(String? value) => setStringWithName(assistantContentTypeKey, value);
+
+  static const String _assistantEventsPromptHiddenKey = 'edu.illinois.rokwire.assistant.events.prompt.hidden';
+  bool? get assistantEventsPromptHidden => getBoolWithName(_assistantEventsPromptHiddenKey);
+  set assistantEventsPromptHidden(bool? value) => setBoolWithName(_assistantEventsPromptHiddenKey, value);
 }
