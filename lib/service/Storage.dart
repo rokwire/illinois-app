@@ -101,6 +101,10 @@ class Storage extends rokwire.Storage {
   bool? get onBoarding2PrivacyShareActivitySelection => getBoolWithName(onBoarding2PrivacyShareActivitySelectionKey, defaultValue: true);
   set onBoarding2PrivacyShareActivitySelection(bool? value) => setBoolWithName(onBoarding2PrivacyShareActivitySelectionKey, value);
 
+  static const String onBoarding2ShowTutorialKey  = 'onBoarding2ShowTutorial';
+  bool? get onBoarding2ShowTutorial => getBoolWithName(onBoarding2ShowTutorialKey, defaultValue: false);
+  set onBoarding2ShowTutorial(bool? value) => setBoolWithName(onBoarding2ShowTutorialKey, value);
+
   // Privacy Update Version
   static const String privacyUpdateVersionKey  = 'privacy_update_version';
   String? get privacyUpdateVersion => getStringWithName(privacyUpdateVersionKey);

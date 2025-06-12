@@ -16,6 +16,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -41,7 +42,8 @@ import 'package:video_player/video_player.dart';
 class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2VideoTutorialPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
+  final Video? video;
+  Onboarding2VideoTutorialPanel({ super.key, this.onboardingCode = '', this.onboardingContext, this.video});
 
   _Onboarding2VideoTutorialPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
@@ -199,32 +201,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _loadOnboardingVideoTutorial() {
-    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
-    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
-    if (CollectionUtils.isEmpty(videos)) {
-      return null;
-    }
-    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials?['strings']);
-    Map<String, dynamic>? onboardingMap = videoTutorials?['onboarding'];
-    String? onboardingVideoId;
-    String? envKey = configEnvToString(Config().configEnvironment);
-    if (StringUtils.isNotEmpty(envKey)) {
-      onboardingVideoId = onboardingMap?[envKey];
-    }
-    Map<String, dynamic>? videoMap;
-    if (StringUtils.isNotEmpty(onboardingVideoId)) {
-      for(dynamic video in videos!) {
-        if (onboardingVideoId == video['id']) {
-          videoMap = video;
-          break;
-        }
-      }
-    }
-    if (videoMap == null) {
-      videoMap = videos!.first;
-    }
-    videoMap!['title'] = Localization().getContentString(strings, videoMap['id']);
-    _video = Video.fromJson(videoMap);
+    _video = widget.video ?? _loadVideoTutorial();
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
@@ -389,4 +366,72 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
       }
     }
   }
+
+  static Video? _loadVideoTutorial(){
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
+    if (CollectionUtils.isEmpty(videos)) {
+      return null;
+    }
+    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials?['strings']);
+    Map<String, dynamic>? onboardingMap = videoTutorials?['onboarding'];
+    String? onboardingVideoId;
+    String? envKey = configEnvToString(Config().configEnvironment);
+    if (StringUtils.isNotEmpty(envKey)) {
+      onboardingVideoId = onboardingMap?[envKey];
+    }
+    Map<String, dynamic>? videoMap;
+    if (StringUtils.isNotEmpty(onboardingVideoId)) {
+      for(dynamic video in videos!) {
+        if (onboardingVideoId == video['id']) {
+          videoMap = video;
+          break;
+        }
+      }
+    }
+    if (videoMap == null) {
+      videoMap = videos!.first;
+    }
+    videoMap!['title'] = Localization().getContentString(strings, videoMap['id']);
+    return Video.fromJson(videoMap);
+  }
+}
+
+class VideoTutorialThumbButton extends StatefulWidget{
+  final VoidCallback? onTap;
+
+  const VideoTutorialThumbButton({super.key, this.onTap});
+  @override
+  State<StatefulWidget> createState() =>_VideoTutorialThumbState();
+
+}
+
+class _VideoTutorialThumbState extends State<VideoTutorialThumbButton>{
+  Video? _video;
+
+  @override
+  void initState() {
+  _video = _Onboarding2VideoTutorialPanelState._loadVideoTutorial();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+    InkWell(
+      onTap: widget.onTap,
+        // () {
+        // Onboarding2().privacyReturningUser = false;
+        // Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        //     Onboarding2VideoTutorialPanel(onboardingCode: widget.onboardingCode, onboardingContext: widget.onboardingContext, video: _video,)));
+        // },
+      child: Container(
+          child: Visibility(visible:_video?.thumbUrl != null,
+            child: Stack(alignment: Alignment.center, children: [
+              _video?.thumbUrl != null ? Image.network(_video?.thumbUrl ?? "") : Container(),
+              VideoPlayButton()
+            ])
+          )
+        )
+      );
+
 }

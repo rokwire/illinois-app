@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added VideoTutorialThumbButton to Onboarding2GetStartedPanel [#4863](https://github.com/rokwire/illinois-app/issues/4863).
 ### Fixed
 - Do not include "rejected" groups in user groups' count [#5207](https://github.com/rokwire/illinois-app/issues/5207).
 - Fixed address field in Digital Business Card generation [#5203](https://github.com/rokwire/illinois-app/issues/5203).
