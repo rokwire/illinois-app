@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,6 +17,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -792,6 +794,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget _buildEventsList() {
     List<Widget> cardsList = <Widget>[];
+    if (_isAssistantPromptVisible) {
+      cardsList.add(_buildAssistantPrompt());
+    }
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
         Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),
@@ -806,6 +811,51 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Column(children:  cardsList,)
     );
   }
+
+  Widget _buildAssistantPrompt() {
+    Widget? imageWidget = Styles().images.getImage('assistant-prompt-orange');
+    return Padding(padding: EdgeInsets.only(bottom: 10), child:
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.25), spreadRadius: 0.0, blurRadius: 4.0, offset: Offset(0, 0))]),
+          child: Stack(children: [
+            Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 26), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              (imageWidget != null) ? Padding(padding: EdgeInsets.only(right: 10), child: imageWidget) : Container(),
+              Expanded(child: RichText(textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, maxLines: 4, text:
+              TextSpan(style: Styles().textStyles.getTextStyle('widget.message.regular'), children:[
+                TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.header.text', 'Try asking the Illinois Assistant: '),
+                    style: Styles().textStyles.getTextStyle('widget.message.regular')),
+                TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"),
+                    style: Styles().textStyles.getTextStyle('widget.item.regular_underline.thin'),
+                    recognizer: TapGestureRecognizer()..onTap = () => _onTapAskAssistant()),
+              ])))
+              // Text('Try asking the Illinois Assistant', style: Styles().textStyles.getTextStyle('widget.message.regular'))
+            ])),
+            Align(alignment: Alignment.topRight, child:
+              GestureDetector(onTap: _onTapCloseAssistantPrompt, child:
+                Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
+                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                )
+              )
+            )
+          ])));
+  }
+
+  void _onTapAskAssistant() {
+    Analytics().logSelect(target: 'Ask Assistant');
+    AssistantHomePanel.present(context, initialQuestion: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"));
+    setStateIfMounted(() {
+      Storage().assistantEventsPromptHidden = true;
+    });
+  }
+
+  void _onTapCloseAssistantPrompt() {
+    Analytics().logSelect(target: 'Close Assistant Prompt');
+    setStateIfMounted(() {
+      Storage().assistantEventsPromptHidden = true;
+    });
+  }
+
+  bool get _isAssistantPromptVisible => Auth2().isOidcLoggedIn && (Storage().assistantEventsPromptHidden != true);
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
