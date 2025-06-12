@@ -1240,6 +1240,8 @@
 	"panel.events2.home.attributes.event_time.hint.semantics": "点击两下显示日期与时间的选项。",
 	"panel.events2.home.message.failed.title": "失败",
 	"panel.events2.home.message.empty.description": "没有活动符合筛选条件。",
+	"panel.events2.assistant.prompt.header.text": "試著詢問伊利諾伊州助理： ",
+	"panel.events2.assistant.prompt.question.text": "這個週末有什麼活動？",
 
 	"panel.event2.filters.header.title": "活动筛选器",
 
@@ -2329,6 +2331,7 @@
  	"panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the Directory of Users.",
 	"panel.profile.info.command.button.edit.text": "Edit My Info",
 	"panel.profile.info.command.button.swap.text": "Swap Info",
+	"panel.profile.info.command.button.share.text": "Export Business Card",
 	"panel.profile.info.command.link.sign_out.text": "Sign Out",
 	"panel.profile.info.command.link.delete_account.text": "Delete My {{app_title}} App Account",
 	"panel.profile.info.command.link.view_stored_data.text": "View My Stored Information",
@@ -2375,7 +2378,7 @@
 	"panel.profile.info.directory_visibility.private.text": "Private",
 	"panel.profile.info.directory_visibility.not_enabled.text": "Not Enabled",
 	"panel.profile.info.directory_visibility.dropdown.public.title": "Enable sharing",
-	"panel.profile.info.directory_visibility.dropdown.public.description": "Directory of Users, business card",
+	"panel.profile.info.directory_visibility.dropdown.public.description": "Directory, business card",
 	"panel.profile.info.directory_visibility.dropdown.connections.title": "Only My Connections",
 	"panel.profile.info.directory_visibility.dropdown.connections.description": "",
 	"panel.profile.info.directory_visibility.dropdown.private.title": "Only me",

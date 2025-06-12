@@ -95,8 +95,11 @@ extension Auth2UserProfileVCard on Auth2UserProfile {
     }
   }
 
-  String get _vcardAddr => "$poBox;$address2;$address;$city;$state;$zip;$country";
-
+  String? get _vcardAddr {
+    return ((poBox?.isNotEmpty == true) || (address2?.isNotEmpty == true) || (address?.isNotEmpty == true) ||
+      (city?.isNotEmpty == true) || (state?.isNotEmpty == true) || (zip?.isNotEmpty == true) || (country?.isNotEmpty == true)) ?
+      "${poBox ?? ''};${address2 ?? ''};${address ?? ''};${city ?? ''};${state ?? ''};${zip ?? ''};${country ?? ''}" : null;
+  }
 }
 
 extension Auth2UserProfileDisplayText on Auth2UserProfile {

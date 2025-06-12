@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
@@ -57,6 +58,12 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
                   Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus\nIn Your Pocket",)),
                 ),
                 Container(height: 14,),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: VideoTutorialThumbButton(
+                      onTap: _onTapTutorial
+                  ),
+                ),
+                Container(height: 8,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
                   Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                     textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.get_started.description"),),
@@ -89,12 +96,17 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
 
   void _onReturningUser(BuildContext context){
     Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue', language: 'en'));
-    _onboardingNext(true);
+    _onboardingNext(returningUser: true);
   }
 
   void _onTapContinue(BuildContext context) {
     Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?", language: 'en'));
-    _onboardingNext(false);
+    _onboardingNext();
+  }
+
+  void _onTapTutorial(){
+    Analytics().logSelect(target: "Video Tutorial");
+    _onboardingNext(showTutorial: true);
   }
 
   // Onboarding
@@ -106,7 +118,8 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
     });
   }
 
-  void _onboardingNext([bool returningUser = false]) async {
+  void _onboardingNext({bool returningUser = false, bool showTutorial = false}) async {
+    Onboarding2().showTutorial = showTutorial;
     Onboarding2().privacyReturningUser = returningUser;
     Onboarding2().next(context, widget);
   }
