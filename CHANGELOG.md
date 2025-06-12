@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not include "rejected" groups in user groups' count [#5207](https://github.com/rokwire/illinois-app/issues/5207).
+- Fixed address field in Digital Business Card generation [#5203](https://github.com/rokwire/illinois-app/issues/5203).
 
 ## [7.1.15] - 2025-06-11
 ### Added
