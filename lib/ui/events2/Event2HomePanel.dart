@@ -16,6 +16,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -792,6 +793,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget _buildEventsList() {
     List<Widget> cardsList = <Widget>[];
+    //TBD: DD - implement
+    if (true) {
+      cardsList.add(_buildAssistantPrompt());
+    }
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
         Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),
@@ -805,6 +810,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     return Padding(padding: EdgeInsets.all(16), child:
       Column(children:  cardsList,)
     );
+  }
+
+  Widget _buildAssistantPrompt() {
+    //TBD: DD - implement
+    return Padding(padding: EdgeInsets.only(bottom: 10), child: GestureDetector(onTap: _onTapAskAssistant, child: Container(color: Colors.green, height: 50, width: 100)));
+  }
+
+  void _onTapAskAssistant() {
+    Analytics().logSelect(target: 'Assistant Prompt');
+    AssistantHomePanel.present(context, initialQuestion: "What's happening this weekend?");
   }
 
   double get _screenHeight => MediaQuery.of(context).size.height;
