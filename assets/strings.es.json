@@ -2388,7 +2388,7 @@
     "panel.profile.info.directory_visibility.private.text": "Private",
     "panel.profile.info.directory_visibility.not_enabled.text": "Not Enabled",
     "panel.profile.info.directory_visibility.dropdown.public.title": "Enable sharing",
-    "panel.profile.info.directory_visibility.dropdown.public.description": "Directory of Users, business card",
+    "panel.profile.info.directory_visibility.dropdown.public.description": "Directory, business card",
     "panel.profile.info.directory_visibility.dropdown.connections.title": "Only My Connections",
     "panel.profile.info.directory_visibility.dropdown.connections.description": "",
     "panel.profile.info.directory_visibility.dropdown.private.title": "Only me",
