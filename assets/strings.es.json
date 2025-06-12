@@ -2341,6 +2341,7 @@
     "panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the Directory of Users.",
     "panel.profile.info.command.button.edit.text": "Edit My Info",
     "panel.profile.info.command.button.swap.text": "Swap Info",
+    "panel.profile.info.command.button.share.text": "Export Business Card",
     "panel.profile.info.command.link.sign_out.text": "Sign Out",
     "panel.profile.info.command.link.delete_account.text": "Delete My {{app_title}} App Account",
     "panel.profile.info.command.link.view_stored_data.text": "View My Stored Information",

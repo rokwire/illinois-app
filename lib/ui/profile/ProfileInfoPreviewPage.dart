@@ -3,17 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -87,8 +79,8 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
           DirectoryProfileDetails(_profile)
         ),
-        if ((widget.onboarding == false) && Auth2().isOidcLoggedIn && (_profile?.isNotEmpty == true))
-          _shareButton,
+        //if (_canShare)
+        //  _shareButton,
     ],)
   );
 
@@ -110,7 +102,9 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
     Text(_profile?.pronouns ?? '', style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
   ],);
 
-  Widget get _shareButton => Row(children: [
+  // bool get _canShare => (widget.onboarding == false) && Auth2().isOidcLoggedIn && (_profile?.isNotEmpty == true);
+
+  /* Widget get _shareButton => Row(children: [
     Padding(padding: EdgeInsets.only(right: 4), child:
       Styles().images.getImage('share', size: 14) ?? Container()
     ),
@@ -123,9 +117,9 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
         onTap: _onShare,
       ),
     ),
-  ],);
+  ],); */
 
-  void _onShare() {
+  /* void _onShare() {
     Analytics().logSelect(target: 'Share');
     /*ProfileInfoShareSheet.present(context,
       profile: _profile,
@@ -142,7 +136,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
         )
       }
     ]);
-  }
+  } */
 
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
