@@ -817,7 +817,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
                           Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images.getImage('settings', excludeFromSemantics: true),
+                                Styles().images.getImage('filters', excludeFromSemantics: true),
                               ),
                               Text(filtersLabel, style:
                                   Styles().textStyles.getTextStyle("widget.title.regular.underline"),

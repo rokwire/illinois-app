@@ -226,7 +226,7 @@
 				"home.wallet"                             : false,
 				"browse.wallet"                           : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
-				"onboarding2.video_tutorial"              : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],

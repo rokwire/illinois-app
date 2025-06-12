@@ -141,7 +141,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
         _allGroups = (1 < result.length) ? result[1] : null;
         setStateIfMounted(() {
           _loadingProgress = false;
-          _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all);
+          _selectedContentType ??= (_hasActiveUserGroups ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all);
         });
 
         if (_reloadGroupsContentCompleters != null) {
@@ -172,8 +172,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   }
 
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
-    if (_userGroups != null) {
-      for (Group group in _userGroups!) {
+    if (_hasActiveUserGroups) {
+      for (Group group in _userGroups ?? []) {
         Member? currentUserAsMember = group.currentMember;
         if (currentUserAsMember != null) {
           if (currentUserAsMember.isMemberOrAdmin) {
@@ -345,7 +345,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
     int groupsCount = 0;
     switch (_selectedContentType) {
       case rokwire.GroupsContentType.all: groupsCount = _allGroups?.length ?? 0; break;
-      case rokwire.GroupsContentType.my: groupsCount = _userGroups?.length ?? 0; break;
+      case rokwire.GroupsContentType.my: groupsCount = _activeUserGroupsCount; break;
       default: break;
     }
     String groupsLabel = (groupsCount == 1)
@@ -691,7 +691,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
 
   bool get _hasOptions => _canSyncAuthmanGroups;
 
-  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin; 
+  bool get _canSyncAuthmanGroups => Auth2().isManagedGroupAdmin;
+
+  bool get _hasActiveUserGroups => (_activeUserGroupsCount > 0);
+
+  int get _activeUserGroupsCount {
+    int count = 0;
+    if ((_userGroups != null) && (_userGroups?.isNotEmpty == true)) {
+      for (Group group in _userGroups ?? []) {
+        if (group.currentUserIsMemberOrAdminOrPending) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
 
   ///////////////////////////////////
   // NotificationsListener

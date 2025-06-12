@@ -116,6 +116,8 @@ class Onboarding2 with Service, NotificationsListener {
   }
 
   // Privacy Selection
+  bool get showTutorial => Storage().onBoarding2ShowTutorial == true;
+  set showTutorial(bool value) => Storage().onBoarding2ShowTutorial = value;
 
   bool get privacyReturningUser => Storage().onBoarding2PrivacyReturningUser == true;
   set privacyReturningUser(bool value) => Storage().onBoarding2PrivacyReturningUser = value;
