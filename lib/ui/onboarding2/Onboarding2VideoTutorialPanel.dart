@@ -27,6 +27,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/VideoPauseButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -125,19 +126,25 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
               double deviceHeight = MediaQuery.of(context).size.height;
               double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
               double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
-              return GestureDetector(
+              return Semantics(
+                focused: true,
+                label: "Onboarding Video",
+                hint: "Double tap to " + (_isPlaying == true ? "Pause" : "Play"),
+                excludeSemantics: true,
+                child: GestureDetector(
                   onTap: _onTapPlayPause,
                   child: Center(child: SizedBox(
                       width: playerWidth,
                       height: playerHeight,
                       child: Stack(alignment: Alignment.center, children: [
                         Stack(children: [
-                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
+                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
                           ClosedCaption(
                               text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
-                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
-                      ]))));
+                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton()),
+                        // Visibility(visible: (_isPlayerInitialized && _isPlaying), child: VideoPauseButton())
+                      ])))));
             } else {
               return const Center(child: CircularProgressIndicator());
             }
@@ -417,21 +424,25 @@ class _VideoTutorialThumbState extends State<VideoTutorialThumbButton>{
 
   @override
   Widget build(BuildContext context) =>
-    InkWell(
-      onTap: widget.onTap,
-        // () {
-        // Onboarding2().privacyReturningUser = false;
-        // Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-        //     Onboarding2VideoTutorialPanel(onboardingCode: widget.onboardingCode, onboardingContext: widget.onboardingContext, video: _video,)));
-        // },
-      child: Container(
-          child: Visibility(visible:_video?.thumbUrl != null,
-            child: Stack(alignment: Alignment.center, children: [
-              _video?.thumbUrl != null ? Image.network(_video?.thumbUrl ?? "") : Container(),
-              VideoPlayButton()
-            ])
+    Semantics(label: "Onboarding video tutorial",
+      hint: "Double tap to Play video",
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: widget.onTap,
+          // () {
+          // Onboarding2().privacyReturningUser = false;
+          // Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          //     Onboarding2VideoTutorialPanel(onboardingCode: widget.onboardingCode, onboardingContext: widget.onboardingContext, video: _video,)));
+          // },
+        child: Container(
+            child: Visibility(visible:_video?.thumbUrl != null,
+              child: Stack(alignment: Alignment.center, children: [
+                _video?.thumbUrl != null ? Image.network(_video?.thumbUrl ?? "") : Container(),
+                VideoPlayButton()
+              ])
+            )
           )
         )
-      );
+    );
 
 }
