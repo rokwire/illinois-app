@@ -794,8 +794,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget _buildEventsList() {
     List<Widget> cardsList = <Widget>[];
-    //TBD: DD - implement
-    if (true) {
+    if (_isAssistantPromptVisible) {
       cardsList.add(_buildAssistantPrompt());
     }
     for (Event2 event in _events!) {
@@ -844,11 +843,19 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   void _onTapAskAssistant() {
     Analytics().logSelect(target: 'Ask Assistant');
     AssistantHomePanel.present(context, initialQuestion: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"));
+    setStateIfMounted(() {
+      Storage().assistantEventsPromptHidden = true;
+    });
   }
 
   void _onTapCloseAssistantPrompt() {
     Analytics().logSelect(target: 'Close Assistant Prompt');
+    setStateIfMounted(() {
+      Storage().assistantEventsPromptHidden = true;
+    });
   }
+
+  bool get _isAssistantPromptVisible => Auth2().isOidcLoggedIn && (Storage().assistantEventsPromptHidden != true);
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
