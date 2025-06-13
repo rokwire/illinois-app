@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.1.17] - 2025-06-13
 ### Changed
 - Additional updates in Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
 - Analytics for the Events Assistant Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
