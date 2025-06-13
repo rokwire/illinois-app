@@ -65,7 +65,7 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
                 ),
                 Container(height: 8,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to campus.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                     textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.get_started.description"),),
                 ),
               ]),
