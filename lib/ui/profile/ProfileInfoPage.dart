@@ -293,7 +293,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   Widget get _previewCommandBar => Row(children: _canShare ? [
     Expanded(flex: 1, child: _shareInfoButton,),
-    Container(width: 16,),
+    Container(width: 12,),
     Expanded(flex: 1, child: _editInfoButton,),
   ] : [
     Expanded(flex: 1, child: Container(),),
@@ -305,14 +305,14 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   Widget get _shareInfoButton => RoundedButton(
     label: Localization().getStringEx('panel.profile.info.command.button.share.text', 'Export Business Card'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    fontFamily: Styles().fontFamilies.bold, fontSize: 14,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onShareInfo,
   );
 
   Widget get _editInfoButton => RoundedButton(
     label: Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    fontFamily: Styles().fontFamilies.bold, fontSize: 14,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onEditInfo,
   );
