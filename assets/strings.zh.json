@@ -793,7 +793,7 @@
 	"panel.onboarding2.privacy.location_services.button.untoggle.title": "不要开启基于位置的服务.",
 
 	"panel.onboarding2.get_started.title": "口袋中的\n智慧校园",
-	"panel.onboarding2.get_started.description": "從紀念體育場到校園廣場乃至更遠的地方，應用程式将您与我们的校园生态系统连接起来。",
+	"panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to campus.",
 	"panel.onboarding2.get_started.button.continue.title": "继续",
 	"panel.onboarding2.get_started.button.continue.hint": "",
 	"panel.onboarding2.get_started.button.returning_user.title": "已经是注册用户？",
@@ -2346,8 +2346,6 @@
 	"panel.directory.accounts.groups.hint.empty": "Select groups",
 	"panel.directory.accounts.groups.hint.semantics": "Double type to show groups.",
 
- 	"panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the Directory of Users.",
- 	"panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the Directory of Users.",
 	"panel.profile.info.command.button.edit.text": "Edit My Info",
 	"panel.profile.info.command.button.swap.text": "Swap Info",
 	"panel.profile.info.command.button.share.text": "Export Business Card",

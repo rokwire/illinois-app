@@ -796,7 +796,7 @@
     "panel.onboarding2.privacy.location_services.button.untoggle.title": "Don't enable location services",
 
     "panel.onboarding2.get_started.title": "A Smart Campus\nIn Your Pocket",
-    "panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.",
+    "panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to campus.",
     "panel.onboarding2.get_started.button.continue.title": "Continue",
     "panel.onboarding2.get_started.button.continue.hint": "",
     "panel.onboarding2.get_started.button.returning_user.title": "Returning user?",
@@ -2361,8 +2361,6 @@
     "panel.directory.accounts.groups.hint.empty": "Select groups",
     "panel.directory.accounts.groups.hint.semantics": "Double type to show groups.",
 
-    "panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the Directory of Users.",
-    "panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the Directory of Users.",
     "panel.profile.info.command.button.edit.text": "Edit My Info",
     "panel.profile.info.command.button.swap.text": "Swap Info",
     "panel.profile.info.command.button.share.text": "Export Business Card",

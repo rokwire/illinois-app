@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.1.17] - 2025-06-13
+### Changed
+- Additional updates in Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
+- Analytics for the Events Assistant Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
+### Fixed
+- Do not count groups if they are hidden for search and the user is not an admin [#5207](https://github.com/rokwire/illinois-app/issues/5207).
+- UI tweak for the Assistant Events prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
+
 ## [7.1.16] - 2025-06-12
 ### Added
+- Assistant Events Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
 - Added VideoTutorialThumbButton to Onboarding2GetStartedPanel [#4863](https://github.com/rokwire/illinois-app/issues/4863).
 ### Fixed
 - Do not include "rejected" groups in user groups' count [#5207](https://github.com/rokwire/illinois-app/issues/5207).
@@ -16,8 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Share My Info moved to Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
 - Updated privacy icons in profile edit page [#5200](https://github.com/rokwire/illinois-app/issues/5200).
 - Updated Food Filters icon [#5206](https://github.com/rokwire/illinois-app/issues/5206).
-### Added
-- Assistant Events Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
 
 ## [7.1.15] - 2025-06-11
 ### Added

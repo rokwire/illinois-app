@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class VideoPauseButton extends StatelessWidget {
   final bool hasBackground;
