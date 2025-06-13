@@ -794,7 +794,7 @@
     "panel.onboarding2.privacy.location_services.button.untoggle.title": "Don't enable location services",
 
     "panel.onboarding2.get_started.title": "A Smart Campus\nIn Your Pocket",
-    "panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.",
+    "panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to campus.",
     "panel.onboarding2.get_started.button.continue.title": "Continue",
     "panel.onboarding2.get_started.button.continue.hint": "",
     "panel.onboarding2.get_started.button.returning_user.title": "Returning user?",

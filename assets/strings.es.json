@@ -791,7 +791,7 @@
     "panel.onboarding2.privacy.location_services.button.untoggle.title": "No permitir servicios de ubicación.",
 
     "panel.onboarding2.get_started.title": "Un Campus Inteligente\nen tu Bolsillo",
-    "panel.onboarding2.get_started.description": "Desde Memorial Stadium hasta el Quad y más allá, la aplicación {{app_title}} te conecta con nuestro ecosistema universitario.",
+    "panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to campus.",
     "panel.onboarding2.get_started.button.continue.title": "Continuar",
     "panel.onboarding2.get_started.button.continue.hint": "",
     "panel.onboarding2.get_started.button.returning_user.title": "¿Eres un usuario habitual?",
