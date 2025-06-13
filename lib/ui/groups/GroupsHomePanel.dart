@@ -344,7 +344,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   Widget _buildGroupsCountBar() {
     int groupsCount = 0;
     switch (_selectedContentType) {
-      case rokwire.GroupsContentType.all: groupsCount = _allGroups?.length ?? 0; break;
+      case rokwire.GroupsContentType.all: groupsCount = _activeAllGroupsCount; break;
       case rokwire.GroupsContentType.my: groupsCount = _activeUserGroupsCount; break;
       default: break;
     }
@@ -515,9 +515,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   }
 
   Widget _buildAllGroupsContent(){
-    if(CollectionUtils.isNotEmpty(_allGroups)){
+    if(_hasActiveAllGroups) {
       List<Widget> widgets = [];
-      for(Group group in _allGroups!) {
+      for(Group group in _allGroups ?? []) {
         if (group.isVisible) {
           EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
           widgets.add(Padding(padding: padding, child:
@@ -536,7 +536,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
-      else if (_allGroups!.isEmpty) {
+      else if (!_hasActiveAllGroups) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups matching your filters.");
       }
       else {
@@ -699,7 +699,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
     int count = 0;
     if ((_userGroups != null) && (_userGroups?.isNotEmpty == true)) {
       for (Group group in _userGroups ?? []) {
-        if (group.currentUserIsMemberOrAdminOrPending) {
+        if (group.currentUserIsMemberOrAdminOrPending && group.isVisible) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  bool get _hasActiveAllGroups => (_activeAllGroupsCount > 0);
+
+  int get _activeAllGroupsCount {
+    int count = 0;
+    if ((_allGroups != null) && (_allGroups?.isNotEmpty == true)) {
+      for (Group group in _allGroups ?? []) {
+        if (group.isVisible) {
           count++;
         }
       }
