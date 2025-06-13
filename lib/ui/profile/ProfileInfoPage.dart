@@ -118,9 +118,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
           _directoryVisibilityContent,
 
         if ((widget.onboarding == false) && _directoryVisibilityAvailable)
-          ((_editing || directoryVisibility)) ? Padding(padding: EdgeInsets.only(top: 16), child:
-            Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-          ) : Container(height: 4,),
+          Container(height: 4,),
 
         Padding(padding: EdgeInsets.only(top: 16), child:
           _editing ? _editContent : _previewContent,
@@ -284,8 +282,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
-
-  String get _desriptionText => _editing ? Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the Directory of Users.') : (directoryVisibility ? Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the Directory of Users.') : '');
 
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:

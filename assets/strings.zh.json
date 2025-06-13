@@ -2327,8 +2327,6 @@
 	"panel.directory.accounts.groups.hint.empty": "Select groups",
 	"panel.directory.accounts.groups.hint.semantics": "Double type to show groups.",
 
- 	"panel.profile.info.directory.preview.description.text": "Preview of how your profile displays in the Directory of Users.",
- 	"panel.profile.info.directory.edit.description.text": "Choose how your profile displays in the Directory of Users.",
 	"panel.profile.info.command.button.edit.text": "Edit My Info",
 	"panel.profile.info.command.button.swap.text": "Swap Info",
 	"panel.profile.info.command.button.share.text": "Export Business Card",
