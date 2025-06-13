@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Additional updates in Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
+- Analytics for the Events Assistant Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
 ### Fixed
 - Do not count groups if they are hidden for search and the user is not an admin [#5207](https://github.com/rokwire/illinois-app/issues/5207).
+- UI tweak for the Assistant Events prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
 
 ## [7.1.16] - 2025-06-12
 ### Added
