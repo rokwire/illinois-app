@@ -814,30 +814,36 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget _buildAssistantPrompt() {
     Widget? imageWidget = Styles().images.getImage('assistant-prompt-orange');
-    return Padding(padding: EdgeInsets.only(bottom: 10), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.25), spreadRadius: 0.0, blurRadius: 4.0, offset: Offset(0, 0))]),
-          child: Stack(children: [
-            Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 26), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              (imageWidget != null) ? Padding(padding: EdgeInsets.only(right: 10), child: imageWidget) : Container(),
-              Expanded(child: RichText(textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, maxLines: 4, text:
-              TextSpan(style: Styles().textStyles.getTextStyle('widget.message.regular'), children:[
-                TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.header.text', 'Try asking the Illinois Assistant: '),
-                    style: Styles().textStyles.getTextStyle('widget.message.regular')),
-                TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"),
-                    style: Styles().textStyles.getTextStyle('widget.item.regular_underline.thin'),
-                    recognizer: TapGestureRecognizer()..onTap = () => _onTapAskAssistant()),
-              ])))
-              // Text('Try asking the Illinois Assistant', style: Styles().textStyles.getTextStyle('widget.message.regular'))
+    return CustomPaint(
+      painter: _AssistantPromptShadowPainter(),
+      child: ClipPath(
+        clipper: _AssistantPromptClipper(),
+        child: Container(
+            padding: EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: Styles().colors.surface,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Stack(children: [
+              Padding(
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 30),
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    (imageWidget != null) ? Padding(padding: EdgeInsets.only(right: 10), child: imageWidget) : Container(),
+                    Expanded(
+                        child: RichText(
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 4,
+                            text: TextSpan(style: Styles().textStyles.getTextStyle('widget.message.regular'), children: [
+                              TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.header.text', 'Try asking the Illinois Assistant: '), style: Styles().textStyles.getTextStyle('widget.message.regular')),
+                              TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"), style: Styles().textStyles.getTextStyle('widget.item.regular_underline.thin'), recognizer: TapGestureRecognizer()..onTap = () => _onTapAskAssistant()),
+                            ])))
+                    // Text('Try asking the Illinois Assistant', style: Styles().textStyles.getTextStyle('widget.message.regular'))
+                  ])),
+              Align(alignment: Alignment.topRight, child: GestureDetector(onTap: _onTapCloseAssistantPrompt, child: Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child: Styles().images.getImage('close-circle-small', excludeFromSemantics: true))))
             ])),
-            Align(alignment: Alignment.topRight, child:
-              GestureDetector(onTap: _onTapCloseAssistantPrompt, child:
-                Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
-                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
-                )
-              )
-            )
-          ])));
+      ),
+    );
   }
 
   void _onTapAskAssistant() {
@@ -1470,4 +1476,63 @@ extension _ContentAttributeValueImpl on ContentAttributeValue {
       return null;
     }
   }
+}
+
+class _AssistantPromptShadowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = _AssistantPromptClipper().getClip(size);
+    final shadowPaint = Paint()
+      ..color = const Color(0x40000000)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+
+    canvas.drawPath(path, shadowPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _AssistantPromptClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    const radius = 12.0;
+    const triangleHeight = 14.0;
+    const triangleBase = 18.0;
+    const triangleOffsetPercent = 0.82;
+
+    final triangleLeftX = size.width * triangleOffsetPercent;
+    final triangleRightX = triangleLeftX + triangleBase;
+    final triangleTipX = triangleLeftX;
+    final triangleTipY = size.height;
+    final triangleBaseY = size.height - triangleHeight;
+
+    final path = Path();
+
+    // Start from top-left
+    path.moveTo(radius, 0);
+    path.lineTo(size.width - radius, 0);
+    path.quadraticBezierTo(size.width, 0, size.width, radius);
+    path.lineTo(size.width, triangleBaseY - radius);
+    path.quadraticBezierTo(size.width, triangleBaseY, size.width - radius, triangleBaseY);
+
+    // Line to before triangle
+    path.lineTo(triangleRightX, triangleBaseY);
+
+    // Triangle
+    path.lineTo(triangleTipX, triangleTipY);
+    path.lineTo(triangleLeftX, triangleBaseY);
+
+    // Continue left
+    path.lineTo(radius, triangleBaseY);
+    path.quadraticBezierTo(0, triangleBaseY, 0, triangleBaseY - radius);
+    path.lineTo(0, radius);
+    path.quadraticBezierTo(0, 0, radius, 0);
+
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
