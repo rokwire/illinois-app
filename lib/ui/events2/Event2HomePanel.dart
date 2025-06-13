@@ -841,7 +841,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   }
 
   void _onTapAskAssistant() {
-    Analytics().logSelect(target: 'Ask Assistant');
+    Analytics().logEventsAssistantPrompt(action: 'clicked');
     AssistantHomePanel.present(context, initialQuestion: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"));
     setStateIfMounted(() {
       Storage().assistantEventsPromptHidden = true;
@@ -849,7 +849,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   }
 
   void _onTapCloseAssistantPrompt() {
-    Analytics().logSelect(target: 'Close Assistant Prompt');
+    Analytics().logEventsAssistantPrompt(action: 'closed');
     setStateIfMounted(() {
       Storage().assistantEventsPromptHidden = true;
     });
