@@ -255,7 +255,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
   // Content
 
   void _refreshFavorites({Set<String>? favoriteCategories, bool showProgress = true}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingFavorites = true;
