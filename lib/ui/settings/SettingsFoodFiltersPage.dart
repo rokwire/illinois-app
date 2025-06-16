@@ -176,10 +176,10 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
 class SettingsFoodFiltersBottomSheet extends StatelessWidget {
   SettingsFoodFiltersBottomSheet._();
 
-  static void present(BuildContext context) {
+  static Future<void> present(BuildContext context) {
     MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
