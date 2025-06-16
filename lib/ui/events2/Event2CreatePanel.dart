@@ -509,6 +509,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   // List<Event2PersonIdentifier>? _initialAdmins;
   bool _loadingAdmins = false;
 
+  List<Group>? _adminGroups;
+  List<String>? _selectedAdminGroupIds;
+  bool _loadingAdminGroups = false;
+
   String? _sponsor;
   String? _speaker;
   List<Event2Contact>? _contacts;
@@ -613,6 +617,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     _initEventGroups();
     _initEventAdmins();
+    _initAdminGroups();
 
     _superEvent = SuperEvent.fromEvent(widget.event);
     _superEvent?.syncSubEvents(onLoaded: () =>
@@ -667,6 +672,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _buildAdminSettingsSection(),
+            _buildAdminTeamsSection(),
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildRecurrenceDropdownSection(),
@@ -753,7 +759,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   //
-  // AdminSection
+  // Admins Section
 
   Widget _buildAdminSettingsSection() => Stack(alignment: Alignment.center ,children: [
     Event2CreatePanel.buildSectionWidget(
@@ -770,6 +776,102 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         )
     )
   ]);
+
+  // Admin Teams
+
+  Widget _buildAdminTeamsSection() {
+    String title = Localization().getStringEx('panel.event2.create.section.admin.teams.title', 'ADMIN TEAMS');
+    String description = Localization().getStringEx('panel.event2.create.section.admin.teams.description',
+        ' (grant admin access to the members of your private administrative groups in the {{app_title}} app)')
+        .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
+    String semanticsLabel = title + description;
+    return Event2CreatePanel.buildSectionWidget(
+      heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
+        Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
+          Row(children: [
+            Expanded(child:
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
+                TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
+                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                ])
+              )
+            ),
+          ]),
+        )
+      ),
+      body: Stack(alignment: Alignment.center, children: [
+        Container(
+            decoration: Event2CreatePanel.sectionDecoration,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, right: 8, top: 5, bottom: 5),
+                child: DropdownButtonHideUnderline(
+                    child: DropdownButton<Group>(
+                        dropdownColor: Styles().colors.white,
+                        icon: Styles().images.getImage('chevron-down'),
+                        isExpanded: true,
+                        style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                        hint: Row(children: [Expanded(child: Text(_selectedAdminGroupNamesText, maxLines: 2, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.message.regular')))]),
+                        items: _buildAdminGroupsDropDownItems(),
+                        onChanged: _onGroupSelected)))),
+        Visibility(visible: _loadingAdminGroups, child: SizedBox(height: 25, width: 25, child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary)))
+      ]),
+    );
+  }
+
+  List<DropdownMenuItem<Group>>? _buildAdminGroupsDropDownItems() {
+    List<DropdownMenuItem<Group>> groups = <DropdownMenuItem<Group>>[];
+    if ((_adminGroups != null) && _adminGroups?.isNotEmpty == true) {
+      for (Group group in _adminGroups ?? <Group>[]) {
+        groups.add(DropdownMenuItem<Group>(value: group, child: _buildAdminGroupDropDownItemWidget(group)));
+      }
+    }
+    return groups;
+  }
+
+  void _onGroupSelected(Group? group) {
+    Analytics().logSelect(target: "Admin Group selected: $group");
+    Event2CreatePanel.hideKeyboard(context);
+    if (group != null) {
+      String? groupId = group.id;
+      if (groupId != null) {
+        if (_selectedAdminGroupIds == null) {
+          _selectedAdminGroupIds = <String>[];
+        }
+        setStateIfMounted(() {
+          if ((_selectedAdminGroupIds?.contains(groupId) ?? false) != true) {
+            _selectedAdminGroupIds?.add(groupId);
+          } else {
+            _selectedAdminGroupIds?.remove(groupId);
+          }
+        });
+      }
+    }
+  }
+
+  Widget _buildAdminGroupDropDownItemWidget(Group group) {
+    String? groupId = group.id;
+    bool isSelected = _selectedAdminGroupIds?.contains(groupId) ?? false;
+    String imageKey = isSelected ? 'check-box-filled' : 'box-outline-gray';
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(imageKey)),
+      Expanded(child: Text(group.title ?? '', overflow: TextOverflow.ellipsis, style: Event2CreatePanel.headingTextStype))
+    ]));
+  }
+
+  String get _selectedAdminGroupNamesText {
+    if ((_adminGroups != null) && (_adminGroups?.isNotEmpty ?? false) &&
+        (_selectedAdminGroupIds != null) && (_selectedAdminGroupIds?.isNotEmpty ?? false)) {
+      List<String> selectedGroupNames = <String>[];
+      for (Group group in _adminGroups ?? <Group>[]) {
+        if (_selectedAdminGroupIds?.contains(group.id) ?? false) {
+          selectedGroupNames.add(group.title ?? '');
+        }
+      }
+      return selectedGroupNames.join(', ');
+    } else {
+      return '';
+    }
+  }
 
   // Title and Description
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
@@ -2228,6 +2330,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
+  void _initAdminGroups() {
+    _selectedAdminGroupIds = widget.event?.authorizationContext?.externalAdmins?.groupIds;
+    _loadingAdminGroups = true;
+    Groups().loadGroups(contentType: GroupsContentType.my, administrative: true).then((List<Group>? groups) {
+      setStateIfMounted(() {
+        _loadingAdminGroups = false;
+        _adminGroups = groups;
+      });
+    });
+  }
+
   void _initEventAdmins() async {
     if(widget.event != null) {
       setStateIfMounted(() => _loadingAdmins = true);
@@ -2938,22 +3051,23 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   Event2 _createEventFromData({DateTime? recurringStartDateUtc, DateTime? recurringEndDateUtc}) {
-    List<String>? groupIds = _eventGroups?.map((group) => group.id!).toList();
+    List<String>? publishedGroupIds = _eventGroups?.map((group) => group.id!).toList();
+    Event2ExternalAdmins? externalAdmins = ((_selectedAdminGroupIds != null) && (_selectedAdminGroupIds?.isNotEmpty == true)) ? Event2ExternalAdmins(groupIds: _selectedAdminGroupIds) : null;
     Event2AuthorizationContext? authorizationContext;
     Event2Context? event2Context;
     switch (_visibility) {
       case _Event2Visibility.public:
-        authorizationContext = Event2AuthorizationContext.none();
-        if (CollectionUtils.isNotEmpty(groupIds)) {
-          event2Context = Event2Context.fromIdentifiers(identifiers: groupIds);
+        authorizationContext = Event2AuthorizationContext.none(externalAdmins: externalAdmins);
+        if (CollectionUtils.isNotEmpty(publishedGroupIds)) {
+          event2Context = Event2Context.fromIdentifiers(identifiers: publishedGroupIds);
         }
         break;
       case _Event2Visibility.registered_user:
-        authorizationContext = Event2AuthorizationContext.registeredUser();
+        authorizationContext = Event2AuthorizationContext.registeredUser(externalAdmins: externalAdmins);
         break;
       case _Event2Visibility.group_member:
-        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: groupIds);
-        event2Context = Event2Context.fromIdentifiers(identifiers: groupIds);
+        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: publishedGroupIds, externalAdmins: externalAdmins);
+        event2Context = Event2Context.fromIdentifiers(identifiers: publishedGroupIds);
         break;
     }
 

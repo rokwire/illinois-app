@@ -326,6 +326,11 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   static const String   LogFCMCommandName                  = "command";
   static const String   LogFCMDataName                     = "data";
 
+  // Events Assistant Prompt
+  // { "event" : { "name":"events_assistant_promo", "action":"..." } }
+  static const String   LogEventsAssistantPromptEventName  = "events_assistant_promo";
+  static const String   LogEventsAssistantPromptAction     = "action";
+
   // Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeSource                 = "source";
@@ -1211,6 +1216,13 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogEventName                        : LogFCMEventName,
       LogFCMCommandName                   : command,
       LogFCMDataName                      : data,
+    });
+  }
+
+  void logEventsAssistantPrompt({required String action}) {
+    logEvent({
+      LogEventName                        : LogEventsAssistantPromptEventName,
+      LogEventsAssistantPromptAction      : action,
     });
   }
 }

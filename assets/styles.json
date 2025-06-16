@@ -960,6 +960,7 @@
     "plus-circle-large": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34},
 
     "close-circle": {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24},
+    "close-circle-small": {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "close-circle-white": {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 24},
     "close-circle-white-large": {"src": "0xf057", "type": "fa.icon", "weight": "light", "color": "surface", "size": 40},
     "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},
@@ -1147,6 +1148,8 @@
     "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
     "volume": {"src": "0xf6a8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "volume-high": {"src": "0xf028", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+
+    "assistant-prompt-orange": {"src": "images/icon-illinois-assistant.png", "type": "flutter.asset"},
 
     "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
 

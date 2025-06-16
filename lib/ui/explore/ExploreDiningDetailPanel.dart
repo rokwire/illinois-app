@@ -24,7 +24,7 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -89,6 +89,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFoodChanged,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
@@ -117,18 +118,21 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == LocationServices.notifyStatusChanged) {
+    if (name == Auth2UserPrefs.notifyFoodChanged) {
+      setStateIfMounted();
+    }
+    else if (name == LocationServices.notifyStatusChanged) {
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setStateIfMounted(() {});
+      setStateIfMounted();
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setStateIfMounted(() {});
+      setStateIfMounted();
     }
     else if (name == FlexUI.notifyChanged) {
-      setStateIfMounted(() {});
+      setStateIfMounted();
       _updateCurrentLocation();
     }
   }
@@ -584,7 +588,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   void _updateCurrentLocation() {
     _loadCurrentLocation().then((_) {
-      setStateIfMounted(() {});
+      setStateIfMounted();
     });
   }
 
@@ -815,7 +819,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
                           Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images.getImage('settings', excludeFromSemantics: true),
+                                Styles().images.getImage('filters', excludeFromSemantics: true),
                               ),
                               Text(filtersLabel, style:
                                   Styles().textStyles.getTextStyle("widget.title.regular.underline"),
@@ -1026,9 +1030,11 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
 
   void _onFoodFilersTapped() {
     Analytics().logSelect(target: "Food filters");
-    SettingsHomePanel.present(context, content: SettingsContentType.food_filters);
+    //#5206: SettingsHomePanel.present(context, content: SettingsContentType.food_filters);
+    SettingsFoodFiltersBottomSheet.present(context).then((_) {
+      setStateIfMounted();
+    });
   }
-
 
   List<DiningSchedule>? get _schedules{
     return __schedules;

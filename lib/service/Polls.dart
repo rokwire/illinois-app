@@ -70,7 +70,7 @@ class Polls extends rokwire.Polls with NotificationsListener {
     return sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
   }
 
-  static String localizedErrorString(Object error) {
+  static String localizedErrorString(Object? error) {
     if (error is rokwire.PollsException) {
       String errorText;
       switch(error.error) {
@@ -81,7 +81,8 @@ class Polls extends rokwire.Polls with NotificationsListener {
       return (error.descrition != null) ? '$errorText: ${error.descrition}' : errorText;
     }
     else  {
-      return error.toString();
+      return error?.toString() ??
+          Localization().getStringEx("logic.general.unknown_error", "Unknown Error Occurred");
     }
   }
 }

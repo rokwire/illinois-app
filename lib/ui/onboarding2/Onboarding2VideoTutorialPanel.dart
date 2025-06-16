@@ -41,7 +41,8 @@ import 'package:video_player/video_player.dart';
 class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
   final Onboarding2Context? onboardingContext;
-  Onboarding2VideoTutorialPanel({ super.key, this.onboardingCode = '', this.onboardingContext });
+  final Video? video;
+  Onboarding2VideoTutorialPanel({ super.key, this.onboardingCode = '', this.onboardingContext, this.video});
 
   _Onboarding2VideoTutorialPanelState? get _currentState => JsonUtils.cast(globalKey?.currentState);
 
@@ -64,6 +65,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   bool _ccEnabled = false;
   bool _ccVisible = false;
   bool _onboardingProgress = false;
+
+  GlobalKey? _videoContent;
 
   @override
   void initState() {
@@ -95,7 +98,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             Center(child:
               _buildVideoContent(),
             ),
-            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
+            // MergeSemantics(
+            //   child: Semantics(/*focused: false,*/ child:
+                Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
+              // )),
             Positioned.fill(child:
               Align(alignment: (_isPortrait ? Alignment.bottomCenter : Alignment.bottomLeft), child:
                 LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _skipButtonLabel(), onTap: _onTapContinue, textColor: Styles().colors.white)
@@ -123,19 +129,27 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
               double deviceHeight = MediaQuery.of(context).size.height;
               double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
               double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
-              return GestureDetector(
+              return Semantics(
+                key: _videoContent ??= GlobalKey(),
+                focused: true,
+                label: "Onboarding Video",
+                hint: "Double tap to " + (_isPlaying == true ? "Pause" : "Play"),
+                container: true,
+                excludeSemantics: true,
+                child: GestureDetector(
                   onTap: _onTapPlayPause,
                   child: Center(child: SizedBox(
                       width: playerWidth,
                       height: playerHeight,
                       child: Stack(alignment: Alignment.center, children: [
                         Stack(children: [
-                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
+                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
                           ClosedCaption(
                               text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
-                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
-                      ]))));
+                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton()),
+                        // Visibility(visible: (_isPlayerInitialized && _isPlaying), child: VideoPauseButton())
+                      ])))));
             } else {
               return const Center(child: CircularProgressIndicator());
             }
@@ -177,6 +191,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           _showCc(true);
           if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
             _playVideo();// Automatically play video after initialization
+            AppSemantics.requestSemanticsUpdates(_videoContent?.currentContext);
+            Future.delayed(Duration(milliseconds: 200), () { //IOS autofocus workaround
+              AppSemantics.triggerAccessibilityFocus(_videoContent);
+            });
           }
         });
       }
@@ -199,32 +217,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _loadOnboardingVideoTutorial() {
-    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
-    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
-    if (CollectionUtils.isEmpty(videos)) {
-      return null;
-    }
-    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials?['strings']);
-    Map<String, dynamic>? onboardingMap = videoTutorials?['onboarding'];
-    String? onboardingVideoId;
-    String? envKey = configEnvToString(Config().configEnvironment);
-    if (StringUtils.isNotEmpty(envKey)) {
-      onboardingVideoId = onboardingMap?[envKey];
-    }
-    Map<String, dynamic>? videoMap;
-    if (StringUtils.isNotEmpty(onboardingVideoId)) {
-      for(dynamic video in videos!) {
-        if (onboardingVideoId == video['id']) {
-          videoMap = video;
-          break;
-        }
-      }
-    }
-    if (videoMap == null) {
-      videoMap = videos!.first;
-    }
-    videoMap!['title'] = Localization().getContentString(strings, videoMap['id']);
-    _video = Video.fromJson(videoMap);
+    _video = widget.video ?? _loadVideoTutorial();
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
@@ -389,4 +382,77 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
       }
     }
   }
+
+  static Video? _loadVideoTutorial(){
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
+    if (CollectionUtils.isEmpty(videos)) {
+      return null;
+    }
+    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials?['strings']);
+    Map<String, dynamic>? onboardingMap = videoTutorials?['onboarding'];
+    String? onboardingVideoId;
+    String? envKey = configEnvToString(Config().configEnvironment);
+    if (StringUtils.isNotEmpty(envKey)) {
+      onboardingVideoId = onboardingMap?[envKey];
+    }
+    Map<String, dynamic>? videoMap;
+    if (StringUtils.isNotEmpty(onboardingVideoId)) {
+      for(dynamic video in videos!) {
+        if (onboardingVideoId == video['id']) {
+          videoMap = video;
+          break;
+        }
+      }
+    }
+    if (videoMap == null) {
+      videoMap = videos!.first;
+    }
+    videoMap!['title'] = Localization().getContentString(strings, videoMap['id']);
+    return Video.fromJson(videoMap);
+  }
+}
+
+class VideoTutorialThumbButton extends StatefulWidget{
+  final VoidCallback? onTap;
+
+  const VideoTutorialThumbButton({super.key, this.onTap});
+  @override
+  State<StatefulWidget> createState() =>_VideoTutorialThumbState();
+
+}
+
+class _VideoTutorialThumbState extends State<VideoTutorialThumbButton>{
+  Video? _video;
+
+  @override
+  void initState() {
+  _video = _Onboarding2VideoTutorialPanelState._loadVideoTutorial();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: "Onboarding video tutorial",
+      hint: "Double tap to Play video",
+      button: true,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: widget.onTap,
+          // () {
+          // Onboarding2().privacyReturningUser = false;
+          // Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          //     Onboarding2VideoTutorialPanel(onboardingCode: widget.onboardingCode, onboardingContext: widget.onboardingContext, video: _video,)));
+          // },
+        child: Container(
+            child: Visibility(visible:_video?.thumbUrl != null,
+              child: Stack(alignment: Alignment.center, children: [
+                _video?.thumbUrl != null ? Image.network(_video?.thumbUrl ?? "") : Container(),
+                VideoPlayButton()
+              ])
+            )
+          )
+        )
+    );
+
 }
