@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.1.18] - 2025-06-16
+### Fixed
+- Fixed dining content update on food filters changes [#5233](https://github.com/rokwire/illinois-app/issues/5233).
+- Fixed public profile fields in Profile / Share [#5234](https://github.com/rokwire/illinois-app/issues/5234).
+
 ## [7.1.17] - 2025-06-13
 ### Changed
 - Additional updates in Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
