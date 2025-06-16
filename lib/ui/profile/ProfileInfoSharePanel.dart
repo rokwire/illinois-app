@@ -23,14 +23,18 @@ import 'package:sms_mms/sms_mms.dart';
 //import 'package:share_plus/share_plus.dart';
 
 class ProfileInfoShareSheet extends StatelessWidget {
+  final Auth2UserProfile? publicProfile;
   final Auth2UserProfile? profile;
+  final Auth2UserPrivacy? privacy;
   final Uint8List? photoImageData;
   final Uint8List? pronunciationAudioData;
 
-  ProfileInfoShareSheet._({this.profile, this.photoImageData, this.pronunciationAudioData});
+  ProfileInfoShareSheet._({this.profile, this.privacy, this.photoImageData, this.pronunciationAudioData}) :
+    publicProfile = profile?.buildPublic(privacy, permitted: { Auth2FieldVisibility.public });
 
   static void present(BuildContext context, {
     Auth2UserProfile? profile,
+    Auth2UserPrivacy? privacy,
     Uint8List? photoImageData,
     Uint8List? pronunciationAudioData,
   }) {
@@ -46,6 +50,7 @@ class ProfileInfoShareSheet extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => ProfileInfoShareSheet._(
         profile: profile,
+        privacy: privacy,
         photoImageData: photoImageData,
         pronunciationAudioData: pronunciationAudioData,
       ),
@@ -55,7 +60,7 @@ class ProfileInfoShareSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Stack(children: [
       ProfileInfoShareWidget(
-        profile: profile,
+        publicProfile: publicProfile,
         photoImageData: photoImageData,
         pronunciationAudioData: pronunciationAudioData,
         topOffset: 24 + 2 * 16 /* close button size */,
@@ -84,16 +89,19 @@ class ProfileInfoSharePage extends StatefulWidget {
   static const String profileResultKey = 'profile_result';
 
   final Auth2UserProfile? _profile;
+  final Auth2UserPrivacy? _privacy;
   final Uint8List? _photoImageData;
   final Uint8List? _pronunciationAudioData;
   final Map<String, dynamic>? params;
 
-  ProfileInfoSharePage({Auth2UserProfile? profile, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
+  ProfileInfoSharePage({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
     _profile = profile,
+    _privacy = privacy,
     _photoImageData = photoImageData,
     _pronunciationAudioData = pronunciationAudioData;
 
   Auth2UserProfile? get profile => _profile ?? _profileResultParam?.profile;
+  Auth2UserPrivacy? get privacy => _privacy ?? _profileResultParam?.privacy;
   Uint8List? get photoImageData => _photoImageData ?? _profileResultParam?.photoImageData;
   Uint8List? get pronunciationAudioData => _pronunciationAudioData ?? _profileResultParam?.pronunciationAudioData;
 
@@ -104,7 +112,9 @@ class ProfileInfoSharePage extends StatefulWidget {
 }
 
 class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
+  Auth2UserProfile? _publicProfile;
   Auth2UserProfile? _profile;
+  Auth2UserPrivacy? _privacy;
   Uint8List? _photoImageData;
   Uint8List? _pronunciationAudioData;
   bool _loading = false;
@@ -120,7 +130,7 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
     _loadingContent : _pageContent;
 
   Widget get _pageContent => ProfileInfoShareWidget(
-    profile: _profile,
+    publicProfile: _publicProfile,
     photoImageData: _photoImageData,
     pronunciationAudioData: _pronunciationAudioData
   );
@@ -134,12 +144,16 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
   );
 
   Future<void> _loadInitialContent() async {
-    if (widget.profile != null) {
-      _profile = widget.profile;
-      _photoImageData = widget.photoImageData;
-      _pronunciationAudioData = widget.pronunciationAudioData;
-    }
-    else {
+    _profile = widget.profile;
+    _privacy = widget.privacy;
+    _photoImageData = widget.photoImageData;
+    _pronunciationAudioData = widget.pronunciationAudioData;
+    _publicProfile = _profile?.buildPublic(_privacy, permitted: { Auth2FieldVisibility.public });
+
+    if ((_profile == null) || (_privacy == null) ||
+        ((_profile?.photoUrl?.isNotEmpty == true) && (_photoImageData == null)) ||
+        ((_profile?.pronunciationUrl?.isNotEmpty == true) && (_pronunciationAudioData == null))
+    ) {
       setState(() {
         _loading = true;
       });
@@ -148,6 +162,7 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
         _profile = loadResult.publicProfile();
         _photoImageData = loadResult.photoImageData;
         _pronunciationAudioData = loadResult.pronunciationAudioData;
+        _publicProfile = _profile?.buildPublic(_privacy, permitted: { Auth2FieldVisibility.public });
         _loading = false;
       });
     }
@@ -156,13 +171,13 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
 
 class ProfileInfoShareWidget extends StatefulWidget {
 
-  final Auth2UserProfile? profile;
+  final Auth2UserProfile? publicProfile;
   final Uint8List? photoImageData;
   final Uint8List? pronunciationAudioData;
   final double topOffset;
   final double contentPaddingX;
 
-  ProfileInfoShareWidget({this.profile, this.photoImageData, this.pronunciationAudioData,
+  ProfileInfoShareWidget({this.publicProfile, this.photoImageData, this.pronunciationAudioData,
     this.topOffset = 16,
     this.contentPaddingX = 0,
   });
@@ -189,7 +204,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
       Column(children: [
         Padding(padding: EdgeInsets.symmetric(horizontal: widget.contentPaddingX), child:
           RepaintBoundary(key: _repaintBoundaryKey, child:
-            DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.profile), printMode: true,),
+            DirectoryAccountContactCard(account: Auth2PublicAccount(profile: widget.publicProfile), printMode: true,),
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
@@ -272,7 +287,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
   void _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
     QrCodePanel.presentProfile(context,
-      profile: widget.profile,
+      profile: widget.publicProfile,
       photoImageData: widget.photoImageData,
       pronunciationAudioData: widget.pronunciationAudioData,
     );
@@ -318,7 +333,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
       });
 
       final Email email = Email(
-        body: widget.profile?.toDisplayText() ?? '',
+        body: widget.publicProfile?.toDisplayText() ?? '',
         attachmentPaths: [
           if (imageFilePath != null)
             imageFilePath,
@@ -344,7 +359,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
       });
       SmsMms.send(
         recipients: [],
-        message: widget.profile?.toDisplayText() ?? '',
+        message: widget.publicProfile?.toDisplayText() ?? '',
         filePath: imagePath,
       );
     }
@@ -394,7 +409,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
         if (byteData != null) {
           Uint8List buffer = byteData.buffer.asUint8List();
           final String dir = (await getApplicationDocumentsDirectory()).path;
-          final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
+          final String saveFileName = '${widget.publicProfile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
           final String fullPath = '$dir/$saveFileName.png';
           File capturedFile = File(fullPath);
           await capturedFile.writeAsBytes(buffer);
@@ -411,12 +426,12 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
 
   Future<String?> _saveDigitalCard() async {
     try {
-      String? vcfContent = widget.profile?.toDigitalCard(
+      String? vcfContent = widget.publicProfile?.toDigitalCard(
         photoImageData: widget.photoImageData,
       );
       if ((vcfContent != null) && vcfContent.isNotEmpty) {
         final String dir = (await getApplicationDocumentsDirectory()).path;
-        final String saveFileName = '${widget.profile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
+        final String saveFileName = '${widget.publicProfile?.vcardFullName} ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}';
         final String fullPath = '$dir/$saveFileName.vcf';
         File capturedFile = File(fullPath);
         await capturedFile.writeAsString(vcfContent);
@@ -429,7 +444,7 @@ class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
 
   Future<bool> _copyTextToClipbiard() async {
     try {
-      await Clipboard.setData(ClipboardData(text: widget.profile?.toDisplayText() ?? ''));
+      await Clipboard.setData(ClipboardData(text: widget.publicProfile?.toDisplayText() ?? ''));
       return true;
     }
     catch(e) {

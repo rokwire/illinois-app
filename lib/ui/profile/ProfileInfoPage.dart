@@ -454,6 +454,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
       <String, dynamic>{
         ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
           profile: _profile,
+          privacy: _privacy,
           photoImageData: _photoImageData,
           pronunciationAudioData: _pronunciationAudioData,
         )
