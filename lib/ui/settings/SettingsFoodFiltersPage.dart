@@ -36,15 +36,26 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
   @override
   void initState() {
 
-    // Validate selection: make sure selection does not contain unavailable items
-    Set<String> availableFoodTypes = Set.from(Dinings().foodTypes ?? <String>[]);
     _includedFoodTypes = Set.from(Auth2().prefs?.includedFoodTypes ?? <String>{});
-    _includedFoodTypes.removeWhere((foodType) => availableFoodTypes.contains(foodType) != true);
 
     // Validate selection: make sure selection does not contain unavailable items
-    Set<String> availableFoodIngredients = Set.from(Dinings().foodIngredients ?? <String>[]);
+    int includedCount = _includedFoodTypes.length;
+    Set<String> availableFoodTypes = Set.from(Dinings().foodTypes ?? <String>[]);
+    _includedFoodTypes.removeWhere((foodType) => availableFoodTypes.contains(foodType) != true);
+    if (includedCount != _includedFoodTypes.length) {
+      Auth2().prefs?.includedFoodTypes = _includedFoodTypes;
+    }
+
+
     _excludedFoodIngredients = Set.from(Auth2().prefs?.excludedFoodIngredients ?? <String>{});
+
+    // Validate selection: make sure selection does not contain unavailable items
+    int excludedCount = _excludedFoodIngredients.length;
+    Set<String> availableFoodIngredients = Set.from(Dinings().foodIngredients ?? <String>[]);
     _excludedFoodIngredients.removeWhere((foodIngredient) => availableFoodIngredients.contains(foodIngredient) != true);
+    if (excludedCount != _excludedFoodIngredients.length) {
+      Auth2().prefs?.excludedFoodIngredients = _excludedFoodIngredients;
+    }
 
     super.initState();
   }
