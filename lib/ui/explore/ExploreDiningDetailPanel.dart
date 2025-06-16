@@ -89,6 +89,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFoodChanged,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
@@ -117,7 +118,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == LocationServices.notifyStatusChanged) {
+    if (name == Auth2UserPrefs.notifyFoodChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == LocationServices.notifyStatusChanged) {
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
