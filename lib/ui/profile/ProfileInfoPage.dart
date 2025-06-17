@@ -118,9 +118,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
           _directoryVisibilityContent,
 
         if ((widget.onboarding == false) && _directoryVisibilityAvailable)
-          ((_editing || directoryVisibility)) ? Padding(padding: EdgeInsets.only(top: 16), child:
-            Text(_desriptionText, style: Styles().textStyles.getTextStyle('widget.detail.small'), textAlign: TextAlign.center,),
-          ) : Container(height: 4,),
+          Container(height: 4,),
 
         Padding(padding: EdgeInsets.only(top: 16), child:
           _editing ? _editContent : _previewContent,
@@ -285,8 +283,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   TextStyle? get nameTextStyle =>
     Styles().textStyles.getTextStyleEx('widget.title.medium_large.fat', fontHeight: 0.85, textOverflow: TextOverflow.ellipsis);
 
-  String get _desriptionText => _editing ? Localization().getStringEx('panel.profile.info.directory.edit.description.text', 'Choose how your profile displays in the Directory of Users.') : (directoryVisibility ? Localization().getStringEx('panel.profile.info.directory.preview.description.text', 'Preview of how your profile displays in the Directory of Users.') : '');
-
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
     Center(child:
       SizedBox(width: 32, height: 32, child:
@@ -297,7 +293,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   Widget get _previewCommandBar => Row(children: _canShare ? [
     Expanded(flex: 1, child: _shareInfoButton,),
-    Container(width: 16,),
+    Container(width: 12,),
     Expanded(flex: 1, child: _editInfoButton,),
   ] : [
     Expanded(flex: 1, child: Container(),),
@@ -309,14 +305,14 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   Widget get _shareInfoButton => RoundedButton(
     label: Localization().getStringEx('panel.profile.info.command.button.share.text', 'Export Business Card'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    fontFamily: Styles().fontFamilies.bold, fontSize: 14,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onShareInfo,
   );
 
   Widget get _editInfoButton => RoundedButton(
     label: Localization().getStringEx('panel.profile.info.command.button.edit.text', 'Edit My Info'),
-    fontFamily: Styles().fontFamilies.bold, fontSize: 16,
+    fontFamily: Styles().fontFamilies.bold, fontSize: 14,
     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     onTap: _onEditInfo,
   );
@@ -458,6 +454,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
       <String, dynamic>{
         ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
           profile: _profile,
+          privacy: _privacy,
           photoImageData: _photoImageData,
           pronunciationAudioData: _pronunciationAudioData,
         )

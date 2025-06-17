@@ -30,13 +30,33 @@ class SettingsFoodFiltersPage extends StatefulWidget{
 
 class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
 
-  //Set<String> selectedPreferences;
-  late Set<String>? _selectedTypesPrefs;
-  Set<String>? _selectedIngredientsPrefs;
+  late Set<String> _includedFoodTypes;
+  late Set<String> _excludedFoodIngredients;
 
   @override
   void initState() {
-    _loadFoodPreferences();
+
+    _includedFoodTypes = Set.from(Auth2().prefs?.includedFoodTypes ?? <String>{});
+
+    // Validate selection: make sure selection does not contain unavailable items
+    int includedCount = _includedFoodTypes.length;
+    Set<String> availableFoodTypes = Set.from(Dinings().foodTypes ?? <String>[]);
+    _includedFoodTypes.removeWhere((foodType) => availableFoodTypes.contains(foodType) != true);
+    if (includedCount != _includedFoodTypes.length) {
+      Auth2().prefs?.includedFoodTypes = _includedFoodTypes;
+    }
+
+
+    _excludedFoodIngredients = Set.from(Auth2().prefs?.excludedFoodIngredients ?? <String>{});
+
+    // Validate selection: make sure selection does not contain unavailable items
+    int excludedCount = _excludedFoodIngredients.length;
+    Set<String> availableFoodIngredients = Set.from(Dinings().foodIngredients ?? <String>[]);
+    _excludedFoodIngredients.removeWhere((foodIngredient) => availableFoodIngredients.contains(foodIngredient) != true);
+    if (excludedCount != _excludedFoodIngredients.length) {
+      Auth2().prefs?.excludedFoodIngredients = _excludedFoodIngredients;
+    }
+
     super.initState();
   }
 
@@ -45,154 +65,110 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     super.dispose();
   }
 
-  void _loadFoodPreferences(){
-    _selectedTypesPrefs = (Auth2().prefs?.includedFoodTypes != null) ? Set.from(Auth2().prefs!.includedFoodTypes!) : null;
-    _selectedIngredientsPrefs = (Auth2().prefs?.excludedFoodIngredients != null) ? Set.from(Auth2().prefs!.excludedFoodIngredients!) : null;
-  }
-
   @override
-  Widget build(BuildContext context) {
-    String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE");
-    return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(height: 20,),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Styles().colors.fillColorPrimary,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              topRight: Radius.circular(4))),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
-                        child: Semantics(
-                          label: onlyShow,
-                          hint: Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.hint", ""),
-                          button: false,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                              child: Text(
-                                onlyShow,
-                                textAlign: TextAlign.left,
-                                style: Styles().textStyles.getTextStyle("panel.settings.food_filter.title")
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    _buildFoodTypes(),
-                    Container(height: 20,),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Styles().colors.fillColorPrimary,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              topRight: Radius.circular(4))),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
-                        child: Semantics(
-                          label: Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS"),
-                          hint: Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", ""),
-                          button: false,
-                          child: Row(
-                            children: <Widget>[
-                            Expanded(
-                            child: Text(
-                              Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS"),
-                              textAlign: TextAlign.left,
-                              style: Styles().textStyles.getTextStyle("panel.settings.food_filter.title")
-                              ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    _buildFoodIngredients(),
-                    Container(height: 20,),
-                  ],
-                );
-  }
+  Widget build(BuildContext context) =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Container(height: 20,),
+
+      Container(decoration: _sectionDecoration, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10), child:
+          Semantics(label: _onlyShowText, hint: _onlyShowHint, button: false, child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(_onlyShowText, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("panel.settings.food_filter.title")),
+              )
+            ],),
+          ),
+        ),
+      ),
+
+      _buildFoodTypes(),
+
+      Container(height: 20,),
+
+      Container(decoration: _sectionDecoration, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10), child:
+          Semantics(label: _excludeText, hint: _excludeHint, button: false, child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(_excludeText, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("panel.settings.food_filter.title")),
+              )
+            ],),
+          ),
+        ),
+      ),
+
+      _buildFoodIngredients(),
+
+      Container(height: 20,),
+    ],);
 
   Widget _buildFoodTypes(){
     List<Widget> list = [];
     List<String>? foodTypes = Dinings().foodTypes;
     if (foodTypes != null) {
-      for(String foodType in foodTypes){
-        bool selected = _selectedTypesPrefs?.contains(foodType) ?? false;
-        String? foodLabel = Dinings().getLocalizedString(foodType);
-        list.add(
-            ToggleRibbonButton(
-              label: foodLabel,
-              onTap: (){_onFoodTypePrefTapped(foodType);},
-              toggled: selected,
-            ));
+      for (String foodType in foodTypes) {
+        list.add(ToggleRibbonButton(
+          label: Dinings().getLocalizedString(foodType),
+          toggled: _includedFoodTypes.contains(foodType),
+          onTap: () => _onFoodTypePrefTapped(foodType),
+        ));
       }
     }
 
-    return Column(
-      children: list,
-    );
+    return Column(children: list,);
   }
 
   Widget _buildFoodIngredients(){
     List<Widget> list = [];
     List<String>? foodIngredients = Dinings().foodIngredients;
     if (foodIngredients != null) {
-      for(String foodIngredient in foodIngredients){
-        bool selected = _selectedIngredientsPrefs?.contains(foodIngredient) ?? false;
-        String? ingredientLabel = Dinings().getLocalizedString(foodIngredient);
-        list.add(
-            ToggleRibbonButton(
-              label: ingredientLabel,
-              onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
-              toggled: selected,
-            ));
+      for(String foodIngredient in foodIngredients) {
+        list.add(ToggleRibbonButton(
+          label: Dinings().getLocalizedString(foodIngredient),
+          toggled: _excludedFoodIngredients.contains(foodIngredient),
+          onTap: () => _onFoodIngredientPrefTapped(foodIngredient),
+        ));
       }
     }
 
-    return Column(
-      children: list,
-    );
+    return Column(children: list,);
   }
+
+  String get _onlyShowText => Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE");
+  String get _onlyShowHint => Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.hint", "");
+
+  String get _excludeText => Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS");
+  String get _excludeHint => Localization().getStringEx("panel.food_filters.label.exclude_ingredients.hint", "");
+
+  BorderRadiusGeometry get _topRounding => BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4));
+  Decoration get _sectionDecoration => BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: _topRounding);
 
   void _onFoodTypePrefTapped(String? foodOption){
     Analytics().logSelect(target: "FoodType: $foodOption");
-    if(foodOption != null) {
-      if(_selectedTypesPrefs == null) {
-        _selectedTypesPrefs = <String>{ foodOption };
-      }
-      else if(_selectedTypesPrefs!.contains(foodOption)){
-        _selectedTypesPrefs!.remove(foodOption);
-      }
-      else{
-        _selectedTypesPrefs!.add(foodOption);
-      }
-      Auth2().prefs?.includedFoodTypes = _selectedTypesPrefs;
-
-      setState((){});
+    if (foodOption != null) {
+      setState((){
+        if (_includedFoodTypes.contains(foodOption)) {
+          _includedFoodTypes.remove(foodOption);
+        } else {
+          _includedFoodTypes.add(foodOption);
+        }
+        Auth2().prefs?.includedFoodTypes = _includedFoodTypes;
+      });
     }
   }
 
   void _onFoodIngredientPrefTapped(String? foodOption){
     Analytics().logSelect(target: "FoodIngredient: $foodOption");
-    if(foodOption != null) {
-      if(_selectedIngredientsPrefs == null){
-        _selectedIngredientsPrefs = <String>{ foodOption };
-      }
-      if(_selectedIngredientsPrefs!.contains(foodOption)){
-        _selectedIngredientsPrefs!.remove(foodOption);
-      }
-      else{
-        _selectedIngredientsPrefs!.add(foodOption);
-      }
-      Auth2().prefs?.excludedFoodIngredients = _selectedIngredientsPrefs;
-      setState((){});
+    if (foodOption != null) {
+      setState((){
+        if (_excludedFoodIngredients.contains(foodOption)) {
+          _excludedFoodIngredients.remove(foodOption);
+        } else {
+          _excludedFoodIngredients.add(foodOption);
+        }
+        Auth2().prefs?.excludedFoodIngredients = _excludedFoodIngredients;
+      });
     }
   }
 }
@@ -200,10 +176,10 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
 class SettingsFoodFiltersBottomSheet extends StatelessWidget {
   SettingsFoodFiltersBottomSheet._();
 
-  static void present(BuildContext context) {
+  static Future<void> present(BuildContext context) {
     MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
