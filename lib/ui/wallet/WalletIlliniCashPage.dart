@@ -115,7 +115,8 @@ class _WalletIlliniCashPageState extends State<WalletIlliniCashPage> with Notifi
           _buildPrivacyAlertSection(),
         if (_isLoggedIn || _canLogin)
           _buildBalanceSection(),
-        _buildAddIlliniCashSection(),
+        if (FlexUI().isAddIlliniCashAvailable)
+          _buildAddIlliniCashSection(),
         if (_isLoggedIn)
           _buildHistorySection(),
       ],),
