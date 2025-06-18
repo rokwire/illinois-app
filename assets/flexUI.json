@@ -94,8 +94,12 @@
 
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
-			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "all_assistants", "assistant_faqs", "safewalk_request", "privacy"],
+			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing", "privacy",
+				"login", "netid_login",
+				"gies", "new_student", "canvas",
+				"illini_cash", "add_illini_cash", "mtd_bus_pass", "safewalk_request", "messages", "student",
+				"assistant", "assistant_personalization", "all_assistants", "assistant_faqs"
+			],
 
 			"attributes": ["groups", "research_projects", "events"],
 			"attributes.groups": ["rso"],
