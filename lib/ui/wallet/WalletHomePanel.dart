@@ -175,7 +175,9 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       _updateContentTypes();
     }
     else if (name == WalletIlliniCashPage.notifyAddIlliniCash) {
-      _onTapDropdownItem(WalletContentType.addIlliniCash);
+      if (FlexUI().isAddIlliniCashAvailable) {
+        _onTapDropdownItem(WalletContentType.addIlliniCash);
+      }
     }
   }
 
@@ -318,7 +320,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
         AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.content_type.label', 'To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.').
           replaceAll('{{content_type}}', contentType.displayTitle));
       }
-      else {
+      else if (_contentTypes.contains(contentType)) {
         setState(() {
           Storage()._waletContentType = _selectedContentType = contentType;
           _contentValuesVisible = false;
