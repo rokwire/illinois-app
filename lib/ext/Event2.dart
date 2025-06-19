@@ -552,7 +552,7 @@ String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
     case Event2TypeFilter.inPerson: return Localization().getStringEx('model.event2.event_type.in_person', 'In-person');
     case Event2TypeFilter.online: return Localization().getStringEx('model.event2.event_type.online', 'Online');
     case Event2TypeFilter.hybrid: return Localization().getStringEx('model.event2.event_type.hybrid', 'Hybrid');
-    case Event2TypeFilter.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case Event2TypeFilter.public: return Localization().getStringEx('model.event2.event_type.public', 'All App Users');
     case Event2TypeFilter.private: return Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
     case Event2TypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby', 'Nearby');
     case Event2TypeFilter.superEvent: return Localization().getStringEx('model.event2.event_type.super_event', 'Multi-event');
@@ -578,7 +578,7 @@ String? event2TypeGroupToDisplayString(Event2TypeGroup? value, {String? language
   switch (value) {
     case Event2TypeGroup.cost: return Localization().getStringEx('model.event2.event_type_group.cost', 'Cost', language: language);
     case Event2TypeGroup.format: return Localization().getStringEx('model.event2.event_type_group.format', 'Format', language: language);
-    case Event2TypeGroup.access: return Localization().getStringEx('model.event2.event_type_group.access', 'Access', language: language);
+    case Event2TypeGroup.visibility: return Localization().getStringEx('model.event2.event_type_group.visibility', 'Visibility', language: language);
     case Event2TypeGroup.limits: return Localization().getStringEx('model.event2.event_type_group.limits', 'Limit Results To', language: language);
     default: return null;
   }
