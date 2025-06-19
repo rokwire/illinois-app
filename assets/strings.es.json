@@ -4279,7 +4279,7 @@
     "model.event2.event_type.in_person": "En persona",
     "model.event2.event_type.online": "En línea",
     "model.event2.event_type.hybrid": "Híbrido",
-    "model.event2.event_type.public": "Público",
+    "model.event2.event_type.public": "All App Users",
     "model.event2.event_type.private": "Lista de invitados cargada únicamente",
     "model.event2.event_type.group_members": "Solo miembros del grupo",
     "model.event2.event_type.nearby": "Cerca",
@@ -4293,7 +4293,7 @@
 
     "model.event2.event_type_group.cost": "Cost",
     "model.event2.event_type_group.format": "Format",
-    "model.event2.event_type_group.access": "Access",
+    "model.event2.event_type_group.visibility": "Visibility",
     "model.event2.event_type_group.limits": "Limit Results To",
 
     "model.event2.event_time.past": "Pasado",
