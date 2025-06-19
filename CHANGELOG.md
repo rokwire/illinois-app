@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
 - Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
 
+## [7.1.19] - 2025-06-18
+### Changed
+- Control "Buy Illini Cash" section availability in Illini Cash page from FlexUI [#5239](https://github.com/rokwire/illinois-app/issues/5239).
+
 ## [7.1.18] - 2025-06-16
 ### Fixed
 - Fixed dining content update on food filters changes [#5233](https://github.com/rokwire/illinois-app/issues/5233).
