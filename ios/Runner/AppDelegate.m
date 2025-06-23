@@ -98,14 +98,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
-    //support only portrait
-    //	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
-    // Support All orientations
-    NSMutableSet *initialOrientations = [NSMutableSet set];
-    [initialOrientations addObject:@(UIInterfaceOrientationPortrait)];
-    [initialOrientations addObject:@(UIInterfaceOrientationLandscapeLeft)];
-    [initialOrientations addObject:@(UIInterfaceOrientationLandscapeRight)];
-    _supportedInterfaceOrientations = [initialOrientations copy];
+
+	//_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
+	_supportedInterfaceOrientations = [NSSet setWithObjects:
+		@(UIInterfaceOrientationPortrait),
+		@(UIInterfaceOrientationLandscapeLeft),
+		@(UIInterfaceOrientationLandscapeRight),
+	nil];
 
 	// Setup root ViewController
 	UIViewController *rootViewController = self.window.rootViewController;
@@ -115,10 +114,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	_navigationViewController.navigationBarHidden = YES;
 	[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
 	_navigationViewController.delegate = self;
-
-    //At this point prompts the system to re-evaluate the supported orientations based on the values RootNavigationController will provide
-    //Call this AFTER _navigationViewController is initialized and its essential properties are set.
-    [_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
 
 	_navigationViewController.navigationBar.translucent = NO;
 	_navigationViewController.navigationBar.barTintColor = [UIColor inaColorWithHex:@"13294b"];
