@@ -185,8 +185,6 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> contentList = <Widget>[];
-
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
       for (String code in _contentCodes!) {
@@ -202,16 +200,9 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
       }
     }
 
-    if (sectionsList.isNotEmpty) {
-      contentList.add(
-        _BrowseSlantWidget(
-          childPadding: _BrowseSlantWidget.defaultChildPadding,
-          child: Column(children: sectionsList,),
-        )
-      );
-    }
-
-    return Column(children: contentList,);
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(children: sectionsList,),
+    ) ;
   }
 
   void _updateContentCodes() {
