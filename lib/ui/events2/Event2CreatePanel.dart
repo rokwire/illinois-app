@@ -3503,7 +3503,7 @@ enum _Event2Visibility { public, group_member, registered_user }
 String _event2VisibilityToDisplayString(_Event2Visibility value) {
   switch (value) {
     case _Event2Visibility.public:
-      return Localization().getStringEx('model.event2.event_type.public', 'Public');
+      return Localization().getStringEx('model.event2.event_type.public', 'All App Users');
     case _Event2Visibility.group_member:
       return Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only');
     case _Event2Visibility.registered_user:
