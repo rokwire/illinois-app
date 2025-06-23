@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeEmptyFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -70,32 +72,37 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
 
   @override
   Widget build(BuildContext context) => Visibility(visible: _isWidgetVisible, child:
-    Container(color: Styles().colors.fillColorPrimary, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 1, color: Styles().colors.disabledTextColor),
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
-              Text(Localization().getStringEx("widget.home.welcome_message.title.text", 'Tailor Your App Experience'),
-                style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")
-              ),
-            ),
-          ),
-          Visibility(visible: _isCloseVisible, child:
-            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-              InkWell(onTap : _onClose, child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
+    Padding(padding: EdgeInsets.all(16), child:
+      Container(padding: EdgeInsets.only(left: 12, bottom: 12), decoration: HomeMessageCard.decoration, child:
+        Column(children: [
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
+                Text(Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
+                  style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
                 ),
               ),
             ),
+            Visibility(visible: _isCloseVisible, child:
+              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+                InkWell(onTap : _onClose, child:
+                  Padding(padding: EdgeInsets.all(12), child:
+                    Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                  ),
+                ),
+              ),
+            ),
+          ],),
+
+          Padding(padding: EdgeInsets.only(right: 12), child:
+            HtmlWidget(HomeFavoritesInstructionsMessageCard.messageHtml,
+              onTapUrl : (url) { HomeFavoritesInstructionsMessageCard.handleLinkTap(context, url, analyticsSource: widget.runtimeType.toString()); return true; },
+              textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+            ),
           ),
         ],),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
-          HomeFavoritesInstructionsMessageCard()
-        ),
-        Container(height: 1, color: Styles().colors.disabledTextColor),
-      ],),
+      )
     )
   );
 

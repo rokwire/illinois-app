@@ -47,32 +47,34 @@ class HomeFavoritesInstructionsMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     HomeMessageHtmlCard(
-      message: Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_customizeFavsLocalUrlMacro'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
-        .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
-        .replaceAll(_customizeFavsLocalUrlMacro, '$_localScheme://$_customizeFavsLocalUrl')
-        .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
-        .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl'),
+      message: messageHtml,
       margin: EdgeInsets.only(bottom: 16),
-      onTapLink : (url) => _onTapLink(context, url),
+      onTapLink : (url) => handleLinkTap(context, url, analyticsSource: runtimeType.toString()),
     );
 
-  void _onTapLink(BuildContext context, String? url) {
+  static get messageHtml => Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_customizeFavsLocalUrlMacro'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
+    .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
+    .replaceAll(_customizeFavsLocalUrlMacro, '$_localScheme://$_customizeFavsLocalUrl')
+    .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
+    .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl');
+
+  static void handleLinkTap(BuildContext context, String? url, {String? analyticsSource}) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if (uri?.scheme == _localScheme) {
       if (uri?.host == _browseLocalUrl) {
-        Analytics().logSelect(target: 'Sections', source: runtimeType.toString());
+        Analytics().logSelect(target: 'Sections', source: analyticsSource);
         NotificationService().notify(BrowsePanel.notifySelect);
       }
       if (uri?.host == _customizeFavsLocalUrl) {
-        Analytics().logSelect(target: 'Customize', source: runtimeType.toString());
+        Analytics().logSelect(target: 'Customize', source: analyticsSource);
         HomeCustomizeFavoritesPanel.present(context);
       }
       else if (uri?.host == _signInLocalUrl) {
-        Analytics().logSelect(target: 'Sign In', source: runtimeType.toString());
+        Analytics().logSelect(target: 'Sign In', source: analyticsSource);
         ProfileHomePanel.present(context, contentType: ProfileContentType.login);
       }
       else if (uri?.host == _privacySettingsLocalUrl) {
-        Analytics().logSelect(target: 'Privacy Settings', source: runtimeType.toString());
+        Analytics().logSelect(target: 'Privacy Settings', source: analyticsSource);
         SettingsHomePanel.present(context, content: SettingsContentType.privacy);
       }
     }

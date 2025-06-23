@@ -576,7 +576,7 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: HomeMessageCard.decoration,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
@@ -614,6 +614,8 @@ class HomeMessageCard extends StatelessWidget {
   final String? message;
   final EdgeInsetsGeometry margin;
 
+  static BoxDecoration get decoration => BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] );
+
   HomeMessageCard({Key? key,
     this.title,
     this.message,
@@ -624,7 +626,7 @@ class HomeMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Semantics(child:Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: decoration,
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -667,7 +669,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: HomeMessageCard.decoration,
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
