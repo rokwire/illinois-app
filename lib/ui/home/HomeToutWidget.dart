@@ -75,7 +75,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
-        Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors.white, child:
+        Container(padding: EdgeInsets.only(bottom: 8,), color: Styles().colors.white, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
@@ -102,7 +102,6 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
                   Padding(padding: EdgeInsets.only(right: 4), child:
                     Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
                   ),
-
                   Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
                     style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
                 ],),
