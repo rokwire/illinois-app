@@ -6,9 +6,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/home/HomeEmptyFavoritesWidget.dart';
+import 'package:illinois/ui/BrowsePanel.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -27,6 +30,20 @@ class HomeWelcomeMessageWidget extends StatefulWidget {
 }
 
 class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> with NotificationsListener {
+
+  static const String _localScheme = 'local';
+
+  static const String _browseLocalUrlMacro          = '{{browse_local_url}}';
+  static const String _browseLocalUrl               = 'browse';
+
+  static const String _customizeFavsLocalUrlMacro   = '{{customize_favorites_local_url}}';
+  static const String _customizeFavsLocalUrl        = 'customize_favorites';
+
+  static const String _signInLocalUrlMacro          = '{{sign_in_local_url}}';
+  static const String _signInLocalUrl               = 'sign_in';
+
+  static const String _privacySettingsLocalUrlMacro = '{{privacy_settings_local_url}}';
+  static const String _privacySettingsLocalUrl      = 'privacy_settings';
 
   late bool _isUserVisible;
   late bool _isFavoritesEmpty;
@@ -95,8 +112,8 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
           ],),
 
           Padding(padding: EdgeInsets.only(right: 12), child:
-            HtmlWidget(HomeFavoritesInstructionsMessageCard.messageHtml,
-              onTapUrl : (url) { HomeFavoritesInstructionsMessageCard.handleLinkTap(context, url, analyticsSource: widget.runtimeType.toString()); return true; },
+            HtmlWidget(_messageHtml,
+              onTapUrl : (url) { _handleLinkTap(context, url, analyticsSource: widget.runtimeType.toString()); return true; },
               textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
               customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
             ),
@@ -139,4 +156,33 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
       Storage().homeWelcomeMessageVisible = _isUserVisible = false;
     });
   }
+
+  String get _messageHtml => Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_customizeFavsLocalUrlMacro'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
+    .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
+    .replaceAll(_customizeFavsLocalUrlMacro, '$_localScheme://$_customizeFavsLocalUrl')
+    .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
+    .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl');
+
+  void _handleLinkTap(BuildContext context, String? url, {String? analyticsSource}) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri?.scheme == _localScheme) {
+      if (uri?.host == _browseLocalUrl) {
+        Analytics().logSelect(target: 'Sections', source: analyticsSource);
+        NotificationService().notify(BrowsePanel.notifySelect);
+      }
+      if (uri?.host == _customizeFavsLocalUrl) {
+        Analytics().logSelect(target: 'Customize', source: analyticsSource);
+        HomeCustomizeFavoritesPanel.present(context);
+      }
+      else if (uri?.host == _signInLocalUrl) {
+        Analytics().logSelect(target: 'Sign In', source: analyticsSource);
+        ProfileHomePanel.present(context, contentType: ProfileContentType.login);
+      }
+      else if (uri?.host == _privacySettingsLocalUrl) {
+        Analytics().logSelect(target: 'Privacy Settings', source: analyticsSource);
+        SettingsHomePanel.present(context, content: SettingsContentType.privacy);
+      }
+    }
+  }
+
 }
