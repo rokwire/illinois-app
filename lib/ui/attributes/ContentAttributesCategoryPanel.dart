@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/ContentAttributes.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -21,13 +22,10 @@ class ContentAttributesCategoryPanel extends StatefulWidget with AnalyticsInfo {
   final List<ContentAttributeValue>? attributeValues;
   final LinkedHashSet<dynamic>? selection;
   final bool filtersMode;
-  final Future<bool?> Function({
-    required BuildContext context,
-    required ContentAttribute attribute,
-    required ContentAttributeValue value
-  })? handleAttributeValue;
+  final AttributeValueCallback? handleAttributeValue;
+  final AttributeCountsCallback? countAttributeValues;
 
-  ContentAttributesCategoryPanel({required this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false, this.handleAttributeValue });
+  ContentAttributesCategoryPanel({required this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false, this.handleAttributeValue, this.countAttributeValues });
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
@@ -42,6 +40,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
+  Map<dynamic, int?>? _attributeValuesCounts;
+  bool _countingAttributeValues = false;
+
 
   int get _requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
   bool get _hasAnyRequirements => widget.attribute.hasAnyRequirements(_requirementsFunctionalScope);
@@ -50,6 +51,17 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   bool get _isMultipleSelection => widget.attribute.isMultipleSelection(_requirementsFunctionalScope);
   bool _isGroupMultipleSelection({String? group}) => widget.attribute.isGroupMultipleSelection(_requirementsFunctionalScope, group: group);
   bool _canDeselect(dynamic attributeRawValue) => widget.attribute.canDeselect(_requirementsFunctionalScope, _selection, attributeRawValue);
+  int? _attributeValueCount(dynamic value) => _attributeValuesCounts?[value];
+
+  String? _attributeValueCountText(dynamic value) {
+    if (_countingAttributeValues) {
+      return " (...)";
+    }
+    else {
+      int? count = _attributeValueCount(value);
+      return (count != null) ? " ($count)" : null;
+    }
+  }
 
   @override
   void initState() {
@@ -96,6 +108,17 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         // spacing
         _contentList.add(_ContentItem.spacing);
       });
+
+      if (widget.filtersMode) {
+        _countingAttributeValues = true;
+        _evalAttributeValuesCounts().then((Map<dynamic, int?>? attributeValuesCounts) {
+          setStateIfMounted(() {
+            _countingAttributeValues = false;
+            _attributeValuesCounts = attributeValuesCounts;
+          });
+        });
+
+      }
     }
   }
 
@@ -124,12 +147,24 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     )
   );
 
-  List<Widget>? get _headerBarActions => (_canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(_selection, widget.emptySelection)) ? <Widget>[
-    HeaderBarActionTextButton(
-      title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-      onTap: _onTapClearAttributes,
-    ),
-  ] : null;
+  List<Widget>? get _headerBarActions {
+    List<Widget>? result;
+    bool canClear = _canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(_selection, widget.emptySelection);
+    if (_countingAttributeValues) {
+      result ??= <Widget>[];
+      result.add(HeaderBarActionProgress(
+        padding: EdgeInsets.symmetric(horizontal: canClear ? 0 : 16, vertical: 12),
+      ),);
+    }
+    if (canClear) {
+      result ??= <Widget>[];
+      result.add(HeaderBarActionTextButton(
+        title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+        onTap: _onTapClearAttributes,
+      ),);
+    }
+    return result;
+  }
 
   Widget _buildListItem(BuildContext context, int index) {
     dynamic sourceData = ((0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
@@ -184,14 +219,21 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? title = StringUtils.isNotEmpty(attributeValue.selectLabel) ?
       widget.attribute.displayString(attributeValue.selectLabel) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
-    
+
+    TextStyle? titleStyle = (attributeValue.value != null) ?
+      Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
+      Styles().textStyles.getTextStyle("widget.label.regular.thin");
+
+    String? count = (title != null) ?
+      _attributeValueCountText(attributeValue.value) : null;
+
+    TextStyle? countStyle = (attributeValue.value != null) ?
+      Styles().textStyles.getTextStyle("widget.detail.light.regular") :
+      Styles().textStyles.getTextStyle("widget.label.regular.thin");
+
     String? info = StringUtils.isNotEmpty(attributeValue.info) ?
       widget.attribute.displayString(attributeValue.info) : null;
 
-    TextStyle? textStyle = (attributeValue.value != null) ?
-      Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
-      Styles().textStyles.getTextStyle("widget.label.regular.thin");
-    
     bool multipleSelection = _isGroupMultipleSelection(group: attributeValue.group);
     String? imageAsset = (attributeValue.value != null) ?
       (multipleSelection ?
@@ -202,22 +244,24 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? semanticsValue = isSelected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
 
     return Semantics(button: true, inMutuallyExclusiveGroup: !multipleSelection, value: semanticsValue,  child:
-        InkWell(onTap: (){
-            _onTapAttributeValue(attributeValue);
-            AppSemantics.announceCheckBoxStateChange(context, !isSelected, title);
-          }, child:
+        InkWell(onTap: () => _onTapAttributeValue(attributeValue, isSelected: isSelected, title: title), child:
           Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
               Flexible(child:
                 Padding(padding: const EdgeInsets.only(right: 8), child:
-                  Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                  RichText(text:
+                    TextSpan(text: title ?? '', style: titleStyle, children: <InlineSpan>[
+                      if (count != null)
+                        TextSpan(text: count, style: countStyle,),
+                    ]),
+                  )
                 )
               ),
 
               Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Visibility(visible: StringUtils.isNotEmpty(info), child:
                   Padding(padding: const EdgeInsets.only(right: 8), child:
-                    Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                    Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: titleStyle,),
                   )
                 ),
 
@@ -228,8 +272,10 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     ));
   }
 
-  void _onTapAttributeValue(ContentAttributeValue attributeValue) {
+  void _onTapAttributeValue(ContentAttributeValue attributeValue, { bool? isSelected, String? title }) {
     Analytics().logSelect(target: attributeValue.selectLabel, source: widget.attribute.title);
+
+    AppSemantics.announceCheckBoxStateChange(context, isSelected != true, title);
 
     if (widget.handleAttributeValue != null) {
       widget.handleAttributeValue!(
@@ -277,6 +323,12 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     else {
       Navigator.of(context).pop(_selection);
     }
+  }
+
+  Future<Map<dynamic, int?>?> _evalAttributeValuesCounts() async {
+    final List<ContentAttributeValue>? attributeValues = widget.attributeValues;
+    final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
+    return ((attributeValues != null) && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
   }
 
   void _onHeaderBack() {

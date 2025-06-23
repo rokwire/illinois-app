@@ -10,6 +10,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
 - Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
 
+## [7.1.20] - 2025-06-23
+### Changed
+- Updated event filter texts [#5241](https://github.com/rokwire/illinois-app/issues/5241).
+
+## [7.1.19] - 2025-06-18
+### Changed
+- Control "Buy Illini Cash" section availability in Illini Cash page from FlexUI [#5239](https://github.com/rokwire/illinois-app/issues/5239).
+
+## [7.1.18] - 2025-06-16
+### Fixed
+- Fixed dining content update on food filters changes [#5233](https://github.com/rokwire/illinois-app/issues/5233).
+- Fixed public profile fields in Profile / Share [#5234](https://github.com/rokwire/illinois-app/issues/5234).
+
+## [7.1.17] - 2025-06-13
+### Changed
+- Additional updates in Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
+- Analytics for the Events Assistant Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
+### Fixed
+- Do not count groups if they are hidden for search and the user is not an admin [#5207](https://github.com/rokwire/illinois-app/issues/5207).
+- UI tweak for the Assistant Events prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
+
+## [7.1.16] - 2025-06-12
+### Added
+- Assistant Events Prompt [#5220](https://github.com/rokwire/illinois-app/issues/5220).
+- Added VideoTutorialThumbButton to Onboarding2GetStartedPanel [#4863](https://github.com/rokwire/illinois-app/issues/4863).
+### Fixed
+- Do not include "rejected" groups in user groups' count [#5207](https://github.com/rokwire/illinois-app/issues/5207).
+- Fixed address field in Digital Business Card generation [#5203](https://github.com/rokwire/illinois-app/issues/5203).
+### Changed
+- Share My Info moved to Profile Info page [#5201](https://github.com/rokwire/illinois-app/issues/5201).
+- Updated privacy icons in profile edit page [#5200](https://github.com/rokwire/illinois-app/issues/5200).
+- Updated Food Filters icon [#5206](https://github.com/rokwire/illinois-app/issues/5206).
+
+## [7.1.15] - 2025-06-11
+### Added
+- Added event filters counts [#4890](https://github.com/rokwire/illinois-app/issues/4890).
+- Allow managing events by group members [#4696](https://github.com/rokwire/illinois-app/issues/4696).
+### Fixed
+- Fixed Food Filters [#5206](https://github.com/rokwire/illinois-app/issues/5206).
+- Fixed missing approve all button [#5199](https://github.com/rokwire/illinois-app/issues/5199).
+- Change group label from "Update Questions" to "Save Questions" [#360](https://github.com/rokwire/illinois-app/issues/360).
+### Changed
+- Improve Business Card Sharing Text [#5202](https://github.com/rokwire/illinois-app/issues/5202).
+
+## [7.1.14] - 2025-06-09
+### Changed
+- Text updates [#5193](https://github.com/rokwire/illinois-app/issues/5193).
+
 ## [7.1.13] - 2025-06-02
 ### Fixed
 - Fix loading of group polls in GroupPollListPanel [#5190](https://github.com/rokwire/illinois-app/issues/5190).

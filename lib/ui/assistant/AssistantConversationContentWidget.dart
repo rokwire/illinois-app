@@ -53,8 +53,9 @@ import 'package:universal_html/html.dart' as html;
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
   final AssistantProvider? provider;
+  final String? initialQuestion;
 
-  AssistantConversationContentWidget({required this.shouldClearAllMessages, this.provider});
+  AssistantConversationContentWidget({required this.shouldClearAllMessages, this.provider, this.initialQuestion});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
@@ -113,7 +114,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
 
     _loadLocationStatus();
-    _onPullToRefresh();
+    _onPullToRefresh().then((_) {
+      _askInitialQuestionIfAllowed();
+    });
 
     _userContext = _getUserContext();
 
@@ -1177,6 +1180,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _scrollListener() {
     _scrollPosition = _scrollController.position.pixels;
+  }
+
+  void _askInitialQuestionIfAllowed() {
+    if ((widget.initialQuestion != null) && (widget.initialQuestion?.isNotEmpty == true) && (_provider != null) && ((_availableQueryLimit ?? 0) > 0)) {
+      _submitMessage(message: widget.initialQuestion ?? '', provider: _provider!);
+    }
   }
 
   void _loadLocationStatus() {

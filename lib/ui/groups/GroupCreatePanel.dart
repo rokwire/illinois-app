@@ -202,6 +202,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         
         _buildPrivacyDropDown(),
         _buildHiddenForSearch(),
+        _buildAdministrative(),
       ]);
 
       if (_isManagedGroupAdmin) {
@@ -752,6 +753,18 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Widget _buildAdministrative() {
+    return Padding(padding: EdgeInsets.all(16), child: Container(child:
+      _buildSwitch(title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
+          value: _group?.administrative, onTap: _onTapAdministrative)));
+  }
+
+  void _onTapAdministrative() {
+    setStateIfMounted(() {
+      _group?.administrative = (_group?.administrative != true);
+    });
   }
 
   // Membership Questions
