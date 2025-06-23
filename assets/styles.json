@@ -549,7 +549,9 @@
     "widget.checklist.content.tab.title.current_tab.completed": {"font_family": "extra_bold", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
     "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
 
-    "widget.home_tout.button.underline.title": {"font_family": "semi_bold", "size": 14.0, "color": "textColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textColorPrimary"},
+    "widget.home_tout.text.greeting": {"font_family": "semi_bold", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.home_tout.text.title": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.home_tout.button.link": {"extends": "widget.home_tout.text.greeting", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.home.link_button.regular.accent.underline": {"font_family": "regular", "size": 16.0, "color": "accentColor3", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "accentColor3"},
 
     "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
@@ -986,6 +988,7 @@
     "clock-white": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
     "person-circle-dark-blue": {"src": "images/person-white.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
     "messages-group-dark-blue": {"src": "0xf0c0", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 16},
+    "edit-dark-blue": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 20, "todo": "remove if not neefed"},
 
     "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
     "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
