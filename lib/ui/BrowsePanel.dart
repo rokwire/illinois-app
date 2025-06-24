@@ -44,7 +44,6 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -627,15 +626,9 @@ class _BrowseEntry extends StatelessWidget {
       case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
 
-      case "wallet.illini_cash_card":        _onTapIlliniCash(context); break;
-      case "wallet.add_illini_cash":         _onTapAddIlliniCash(context); break;
-      case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
-      case "wallet.bus_pass_card":           _onTapBusPass(context); break;
-      case "wallet.illini_id_card":          _onTapIlliniId(context); break;
-
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
-      case "wellness.wellness_recreation":   _onTapWellnessRecreation(context); break;
+      case "wellness.wellness_recreation":      _onTapWellnessRecreation(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
       case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
@@ -932,31 +925,6 @@ class _BrowseEntry extends StatelessWidget {
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safety_resources.not_available.text", "Safety Resources are not currently available."));
     }
-  }
-
-  static void _onTapIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Illini Cash");
-    WalletHomePanel.present(context, contentType: WalletContentType.illiniCash);
-  }
-
-  static void _onTapAddIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Add Illini Cash");
-    WalletHomePanel.present(context, contentType: WalletContentType.addIlliniCash);
-  }
-
-  static void _onTapMealPlan(BuildContext context) {
-    Analytics().logSelect(target: "Meal Plan");
-    WalletHomePanel.present(context, contentType: WalletContentType.mealPlan);
-  }
-
-  static void _onTapBusPass(BuildContext context) {
-    Analytics().logSelect(target: "Bus Pass");
-    WalletHomePanel.present(context, contentType: WalletContentType.busPass);
-  }
-
-  static void _onTapIlliniId(BuildContext context) {
-    Analytics().logSelect(target: "Illini ID");
-    WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
   }
 
   static void _onTapWellnessRings(BuildContext context) {
