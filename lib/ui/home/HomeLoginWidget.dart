@@ -14,7 +14,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
 
@@ -29,7 +28,7 @@ class HomeLoginWidget extends StatefulWidget {
 
 class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsListener {
 
-  bool? _visible;
+  late bool _visible;
 
   @override
   void initState() {
@@ -37,7 +36,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsLis
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
     ]);
-    _visible = Storage().homeLoginVisible;
+    _visible = Storage().homeLoginVisible != false;
     super.initState();
   }
 
@@ -55,56 +54,66 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsLis
   }
 
   @override
-  Widget build(BuildContext context) {
-    return _buildConnectPrimarySection();
-  }
+  Widget build(BuildContext context) =>
+    _visible ? _buildContentWidget(_contentWidgets) : Container();
 
-  Widget _buildConnectPrimarySection() {
+  Widget _buildContentWidget(List<Widget> contentWidgets) =>
+    contentWidgets.isNotEmpty ? _buildContentCard(contentWidgets) : Container();
 
-    if (_visible != false) {
-      List<Widget> contentList = [];
+  Widget _buildContentCard(List<Widget> contentWidgets) =>
+    Padding(padding: EdgeInsets.all(16), child:
+      Container(decoration: HomeMessageCard.decoration, child:
+        Column(children: [
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.all(12), child:
+                Text(Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
+                  style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+                ),
+              ),
+            ),
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+              InkWell(onTap : _onClose, child:
+                Padding(padding: EdgeInsets.all(12), child:
+                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                ),
+              ),
+            ),
+          ],),
+          //Padding(padding: EdgeInsets.only(bottom: 16), child:
+          //  Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+          //),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
+            Column(children:contentWidgets),
+          )
+        ]),
+      )
+    );
 
-      List<dynamic> codes = FlexUI()['home.connect'] ?? [];
-      for (String code in codes) {
-        if (code == 'netid') {
-          contentList.add(_HomeLoginNetIdWidget());
-        } else if (code == 'phone_or_email') {
-          contentList.add(_HomeLoginPhoneOrEmailWidget());
-        }
-      }
+  List<Widget> get _contentWidgets {
+    List<Widget> contentList = <Widget>[];
 
-      if (CollectionUtils.isNotEmpty(contentList)) {
-
-        List<Widget> content = <Widget>[];
-        for (Widget entry in contentList) {
-          if (content.isNotEmpty) {
-            content.add(Container(height: 10,),);
-          }
-          content.add(entry);
-        }
-
-        if (content.isNotEmpty) {
-          content.add(Container(height: 20,),);
-        }
-
-        return HomeSlantWidget(favoriteId: null /*widget.favoriteId*/, actions: [_closeButton],
-            title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-            titleIconKey: 'person-circle',
-            childPadding: HomeSlantWidget.defaultChildPadding,
-            child: Column(children: content,),
-        );
+    List<dynamic> codes = FlexUI()['home.connect'] ?? [];
+    for (String code in codes) {
+      if (code == 'netid') {
+        _addContentWidget(contentList, _HomeLoginNetIdWidget());
+      } else if (code == 'phone_or_email') {
+        _addContentWidget(contentList, _HomeLoginPhoneOrEmailWidget());
       }
     }
-    return Container();
+    return contentList;
   }
-  
-  Widget get _closeButton => Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-    InkWell(onTap: _onClose, child:
-      Padding(padding: const EdgeInsets.all(16), child:
-        Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
-      ),
-    ),
-  );
+
+  void _addContentWidget(List<Widget> contentList, Widget contentWidget) {
+    if (contentList.isNotEmpty) {
+      contentList.add(
+        Padding(padding: EdgeInsets.only(bottom: 16), child:
+          Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+        )
+      );
+    }
+    contentList.add(contentWidget);
+  }
   
   void _onClose() {
     Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
@@ -127,40 +136,31 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
   bool _authLoading = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Semantics(container: true, child: Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Padding(padding: EdgeInsets.zero, child:
-          RichText(textScaler: MediaQuery.of(context).textScaler, text:
-          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID to access features connected to your university account.")),
-          ],),
-          )),
-          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Semantics(explicitChildNodes: true, child: RoundedButton(
+  Widget build(BuildContext context) =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      //Container(margin: EdgeInsets.only(bottom: 12), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+      RichText(textScaler: MediaQuery.of(context).textScaler, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
+          TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
+          TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
+          TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
+          TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
+          TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID to access features connected to your university account.")),
+        ],),
+      ),
+      Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16), child:
+        Semantics(explicitChildNodes: true, child:
+          RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
-            hint: '',
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
-          )),
-          ),
-        ]),
+          )
         ),
-      ],),
-    ));
-  }
+      ),
+    ]);
 
 
   void _onTapConnectNetIdClicked(BuildContext context) {
@@ -187,39 +187,30 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
 
 class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   @override
-  Widget build(BuildContext context) {
-    return Semantics(container: true, child: Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(padding: EdgeInsets.zero, child:
-            RichText(textScaler: MediaQuery.of(context).textScaler, text:
-            TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-              TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
-            ],),
-            )),
+  Widget build(BuildContext context) =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Padding(padding: EdgeInsets.zero, child:
+        RichText(textScaler: MediaQuery.of(context).textScaler, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
+          TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
+          TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
+        ],),
+      )),
 
-            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
-
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
-            Semantics(explicitChildNodes: true, child: RoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
-              hint: '',
-              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              borderColor: Styles().colors.fillColorSecondary,
-              backgroundColor: Styles().colors.surface,
-              onTap: ()=> _onTapPhoneOrEmailClicked(context),
-            )),
-            ),
-
-          ]),
+      Padding(padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16), child:
+        Semantics(explicitChildNodes: true, child:
+          RoundedButton(
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
+            hint: '',
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: Styles().colors.surface,
+            onTap: ()=> _onTapPhoneOrEmailClicked(context),
+          ),
         ),
-      ],),
-    ));
-  }
+      ),
+
+    ]);
 
   void _onTapPhoneOrEmailClicked(BuildContext context) {
     Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
