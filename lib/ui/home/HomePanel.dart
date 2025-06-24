@@ -43,7 +43,6 @@ import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
-import 'package:illinois/ui/home/HomePublicSurveysWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
@@ -184,15 +183,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRecentItemsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeRecentItemsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'public_surveys') {
-      if (title) {
-        return HomePublicSurveysWidget.title;
-      } else if (handle) {
-        return HomePublicSurveysWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomePublicSurveysWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'campus_highlights') {

@@ -44,7 +44,6 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -628,8 +627,6 @@ class _BrowseEntry extends StatelessWidget {
       case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
 
-      case "surveys.public_surveys":         _onTapPublicSurveys(context); break;
-
       case "wallet.illini_cash_card":        _onTapIlliniCash(context); break;
       case "wallet.add_illini_cash":         _onTapAddIlliniCash(context); break;
       case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
@@ -935,11 +932,6 @@ class _BrowseEntry extends StatelessWidget {
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safety_resources.not_available.text", "Safety Resources are not currently available."));
     }
-  }
-
-  static void _onTapPublicSurveys(BuildContext context) {
-    Analytics().logSelect(target: "Public Surveys");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
   }
 
   static void _onTapIlliniCash(BuildContext context) {

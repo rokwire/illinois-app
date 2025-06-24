@@ -14,7 +14,7 @@
 				"gies_checklist", "new_student_checklist", "student_courses", "canvas_courses",
 				"campus_highlights",
 				"safewalk_request", "saferides", "safety_resources",
-				"recent_items", "public_surveys", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
+				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
@@ -38,7 +38,6 @@
 			"browse.music_and_news": ["will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio", "daily_illini"],
 			"browse.recent": ["recent_items"],
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
-			"browse.surveys": ["public_surveys"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
 
@@ -221,7 +220,6 @@
 			"enable" : {
 				"emergency"                               : false,
 				"explore.map.laundry"                     : false,
-				"public_surveys"                          : false,
 				"home.wallet"                             : false,
 				"browse.wallet"                           : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
