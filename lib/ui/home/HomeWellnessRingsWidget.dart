@@ -50,10 +50,9 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessRingsWidget.title,
-      titleIconKey: 'wellness',
-      childPadding: HomeSlantWidget.defaultChildPadding,
+      childPadding: HomeFavoriteWidget.defaultChildPadding,
       child: _buildContent(),
     );
   }

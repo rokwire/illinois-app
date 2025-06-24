@@ -101,10 +101,9 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessTipsWidget.title,
-      titleIconKey: 'wellness',
-      childPadding: HomeSlantWidget.defaultChildPadding,
+      childPadding: HomeFavoriteWidget.defaultChildPadding,
       child: _buildContent(),
     );
   }
@@ -150,7 +149,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
             HtmlWidget(
                 Wellness().dailyTip ?? '',
                 onTapUrl : (url) {_launchUrl(url); return true;},
-                textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular.fat"),
+                textStyle:  Styles().textStyles.getTextStyle("widget.detail.small.semi_fat"),
             )
           ),
         ]),

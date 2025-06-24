@@ -109,9 +109,8 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessMentalHealthWidget.title,
-      titleIconKey: 'wellness',
       child: _buildContent(),
     );
   }
@@ -132,7 +131,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
         child: HtmlWidget(
             message,
             onTapUrl : (url) {_handleLocalUrl(url); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+            textStyle:  Styles().textStyles.getTextStyle("widget.item.small.semi_fat"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
         )
       ),
