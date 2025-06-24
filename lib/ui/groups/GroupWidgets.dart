@@ -820,10 +820,17 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
+          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups ? 2 : 10, style: _titleTextStyle)
         )
       )
     ]);
+  }
+
+  TextStyle? get _titleTextStyle {
+    switch (widget.displayType) {
+      case GroupCardDisplayType.homeGroups: return Styles().textStyles.getTextStyle('widget.title.medium.extra_fat');
+      default: return Styles().textStyles.getTextStyle('widget.title.large.extra_fat');
+    }
   }
 
   Widget _buildCategories() {
@@ -916,7 +923,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+          style: _detailTextStyle
     ));
   }
 
@@ -951,10 +958,15 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       membersLabel = "";
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
-      Text(membersLabel, style:
-        Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
-      ),
+      Text(membersLabel, style: _detailTextStyle),
     );
+  }
+
+  TextStyle? get _detailTextStyle {
+    switch (widget.displayType) {
+      case GroupCardDisplayType.homeGroups: return Styles().textStyles.getTextStyle('widget.card.detail.small.semi_fat');
+      default: return Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
+    }
   }
 
    void _loadGroupStats() {

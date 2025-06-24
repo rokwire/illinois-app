@@ -123,9 +123,8 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: HomeLaundryWidget.title,
-        titleIconKey: 'laundry',
         child: _buildContent(),
     );
   }

@@ -131,9 +131,8 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIconKey: 'research',
       child: _buildContent(),
     );
   }

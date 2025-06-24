@@ -129,7 +129,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_reminderItems![index]);
         pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
-          GuideEntryCard(reminderItem)
+          GuideEntryCard(reminderItem, displayMode: GuideEntryCardDisplayMode.home,)
         ));
       }
 
@@ -152,7 +152,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GuideEntryCard(_reminderItems?.first)
+        GuideEntryCard(_reminderItems?.first, displayMode: GuideEntryCardDisplayMode.home)
       );
     }
     return Column(children: <Widget>[

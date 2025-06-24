@@ -215,6 +215,7 @@
     "widget.title.regular.underline": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.underline": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style": "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.title.small.medium_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.semi_fat.spaced": {"extends": "widget.title.small.semi_fat", "letter_spacing": 1.0},
     "widget.title.small.semi_fat.light": {"extends": "widget.title.small.semi_fat", "color": "mediumGray"},
