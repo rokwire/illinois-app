@@ -7,7 +7,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -163,7 +162,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
               title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
               hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
           onTap: _onViewAll,

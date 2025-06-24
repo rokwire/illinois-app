@@ -23,7 +23,6 @@ import 'package:illinois/model/DailyIllini.dart';
 import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -168,7 +167,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
       return Column(
         children: [
           contentWidget,
-          LinkButton(
+          HomeBrowseLinkButton(
               title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'More Stories'),
               hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to go to the Daily Illini home page'),
               onTap: _onViewAll

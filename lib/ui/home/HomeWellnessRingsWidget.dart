@@ -9,7 +9,6 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -94,10 +93,9 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
                           ],)
                           ),
                         ]),
-                        LinkButton(
+                        HomeBrowseLinkButton(
                           title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ],

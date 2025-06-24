@@ -207,7 +207,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.recent_items.button.view_all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.recent_items.button.view_all.hint', 'Tap to view all items'),
           onTap: _onSeeAll,
@@ -388,7 +388,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with Notifi
   Widget get _clearAllButton => LinkButton(
     title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
     hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
-    textStyle: Styles().textStyles.getTextStyle('widget.heading.small.semi_fat.underline'),
+    textStyle: Styles().textStyles.getTextStyle('widget.home_tout.button.link'),
     padding: const EdgeInsets.all(16),
     onTap: _onClearAll,
   );

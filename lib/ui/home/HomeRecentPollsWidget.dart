@@ -10,7 +10,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -217,7 +216,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
           onTap: _onTapSeeAll,

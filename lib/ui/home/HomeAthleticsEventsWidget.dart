@@ -14,7 +14,6 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -188,7 +187,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
           onTap: _onTapSeeAll,

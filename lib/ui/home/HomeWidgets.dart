@@ -14,6 +14,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -1045,4 +1046,24 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       _pageController?.jumpToPage(0);
     }
   }
+}
+
+////////////////////////////
+// HomeBrowseLinkButton
+
+class HomeBrowseLinkButton extends LinkButton {
+  HomeBrowseLinkButton({super.key,
+    super.title,
+    super.hint,
+    super.onTap,
+    super.padding = const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    TextStyle? textStyle,
+    super.textWidget,
+  }) : super(
+    textStyle: textStyle ?? Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline'),
+    textAlign: TextAlign.center,
+    textDecoration: TextDecoration.underline,
+    textDecorationStyle: TextDecorationStyle.solid,
+    textDecorationThickness: 1,
+  );
 }

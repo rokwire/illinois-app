@@ -11,7 +11,6 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -229,7 +228,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     return Column(children: [
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),
           onTap: _onViewAll,

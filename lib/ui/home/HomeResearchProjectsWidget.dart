@@ -14,7 +14,6 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -199,7 +198,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
     return (contentWidget != null) ? Column(children: [
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+      HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.research_projects.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.research_projects.button.all.hint', 'Tap to view all research projects'),
           onTap: _onSeeAll,

@@ -35,7 +35,6 @@ import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -269,7 +268,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
         contentWidget,
       ),
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+       HomeBrowseLinkButton(
           title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
           hint: _viewAllHint,
           onTap: _onTapViewAll,
