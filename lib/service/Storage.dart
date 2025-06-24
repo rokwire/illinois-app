@@ -128,11 +128,6 @@ class Storage extends rokwire.Storage {
   String? get illiniStudentClassification => getEncryptedStringWithName(illiniStudentClassificationKey);
   set illiniStudentClassification(String? value) =>  setEncryptedStringWithName(illiniStudentClassificationKey, value);
 
-  // Twitter
-  static const String selectedTwitterAccountKey  = 'selected_twitter_account';
-  String? get selectedTwitterAccount => getStringWithName(selectedTwitterAccountKey);
-  set selectedTwitterAccount(String? value) => setStringWithName(selectedTwitterAccountKey, value);
-
   // Date offset
   static const String offsetDateKey  = 'settings_offset_date';
 

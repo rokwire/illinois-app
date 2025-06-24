@@ -7,7 +7,7 @@
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
 				"daily_illini", "will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio",
-				"twitter", "all_groups", "my_groups",
+				"all_groups", "my_groups",
 				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 
 				"event_feed", "my_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders",
@@ -21,8 +21,6 @@
 			"home.dinings": ["dinings_all", "dinings_open"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card"],
 
-			"home.twitter.account": ["gies", "", "news", "canvas"],
-			
 			"browse": ["academics", "appointments", "athletics", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "surveys", "research_projects", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
@@ -32,7 +30,6 @@
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["event_feed", "my_events"],
-			"browse.feeds": ["twitter"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
 			"browse.messages": ["messages"],
@@ -119,7 +116,6 @@
 				"features.student"                         : ["student"]
 			},
 			"groups": {
-				"home.twitter.account.canvas"             : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],
 				"gies"                                    : ["${config.settings.groups.gies}"],
 				"gies_checklist"                          : ["${config.settings.groups.gies}"],
 				"_new_student"                            : ["${config.settings.groups.new_student}"],
@@ -225,7 +221,6 @@
 			"enable" : {
 				"emergency"                               : false,
 				"explore.map.laundry"                     : false,
-				"twitter"                                 : false,
 				"public_surveys"                          : false,
 				"home.wallet"                             : false,
 				"browse.wallet"                           : false,

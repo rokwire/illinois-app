@@ -36,7 +36,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -608,8 +607,6 @@ class _BrowseEntry extends StatelessWidget {
       case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
-      case "feeds.twitter":                  _onTapTwitter(context); break;
-
       case "music_and_news.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
       case "music_and_news.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
       case "music_and_news.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
@@ -786,11 +783,6 @@ class _BrowseEntry extends StatelessWidget {
       types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
       analyticsFeature: AnalyticsFeature.EventsMy,
     );
-  }
-
-  static void _onTapTwitter(BuildContext context) {
-    Analytics().logSelect(target: "Twitter");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return TwitterPanel(); } ));
   }
 
   static void _onTapDailyIllini(BuildContext context) {
