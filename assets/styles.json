@@ -474,6 +474,7 @@
     "widget.card.title.medium": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.card.title.medium.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.card.title.medium.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.card.title.regular": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.regular.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.regular.extra_fat": { "font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.small": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
