@@ -108,9 +108,8 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
-      titleIconKey: 'reminder',
       child: _buildContent()
     );
   }

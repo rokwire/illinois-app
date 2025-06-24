@@ -110,9 +110,8 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
-      titleIconKey: 'news',
       child: _buildContent(),
     );
   }
@@ -138,7 +137,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
       Widget contentWidget;
       if (widgetsList.length >= 3) {
         contentWidget = Padding(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
                 color: Styles().colors.white,
@@ -246,12 +245,12 @@ class _MainStoryWidget extends _StoryWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
                   child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                      style: Styles().textStyles.getTextStyle('widget.title.extra_large.extra_fat')),
+                      style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat')),
                 ),
                 Padding(
                     padding: EdgeInsets.only(bottom: 6, left: 20),
                     child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat"))
+                        style: Styles().textStyles.getTextStyle("widget.info.small.semi_fat"))
                 ),
               ],
             ),
@@ -302,7 +301,7 @@ class _MinorStoryWidget extends _StoryWidget {
                 Padding(
                     padding: EdgeInsets.only(bottom: 6, left: 20),
                     child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat"))
+                        style: Styles().textStyles.getTextStyle("widget.info.small.semi_fat"))
                 ),
               ],
             ),

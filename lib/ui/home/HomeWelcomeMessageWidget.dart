@@ -90,7 +90,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   @override
   Widget build(BuildContext context) => Visibility(visible: _isWidgetVisible, child:
     Padding(padding: EdgeInsets.all(16), child:
-      Container(padding: EdgeInsets.only(left: 12, bottom: 12), decoration: HomeMessageCard.decoration, child:
+      Container(padding: EdgeInsets.only(left: 12, bottom: 12), decoration: HomeMessageCard.defaultDecoration, child:
         Column(children: [
           Row(children: [
             Expanded(child:

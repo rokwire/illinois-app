@@ -154,13 +154,9 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeRecentItemsWidget.title,
-      titleIconKey: 'history',
-      actions: [
-        if (_recentItems?.isNotEmpty == true)
-          _clearAllButton
-      ],
+      actions: (_recentItems?.isNotEmpty == true) ? [_clearAllButton] : null,
       child: _buildContent(),
     );
   }
@@ -228,8 +224,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
   Widget get _clearAllButton => LinkButton(
     title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
     hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
-    textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline.highlight'),
-    padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
+    textStyle: Styles().textStyles.getTextStyle('widget.home_tout.button.link'), // 'widget.button.title.small.semi_fat.underline'
+    padding: const EdgeInsets.symmetric(vertical: 12),
     onTap: _onClearAll,
   );
 

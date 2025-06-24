@@ -207,9 +207,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: headingTitle,
-      titleIconKey: headingIconKey,
       child: _buildContent()
     );
   }
@@ -317,7 +316,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat")),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
@@ -343,10 +342,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")?.copyWith(color: cardDetailTextColor)),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")?.copyWith(color: cardDetailTextColor)),
                   )),)
                 ]),
               ),
@@ -356,7 +355,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   }
 
   void _refreshFavorites({bool showProgress = true}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       // Games are loaded from Events2, so use events key.
       String? favoritesKey = (widget.favoriteKey == Game.favoriteKeyName) ? Event2.favoriteKeyName : widget.favoriteKey;
       LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(favoritesKey) ?? LinkedHashSet<String>();
@@ -539,7 +538,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
             onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
+            textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(widget.favoriteKey) ?? Colors.red)} : null
         )
       ),
@@ -549,21 +548,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
   String? get headingTitle => HomeFavoritesWidget.titleFromKey(favoriteKey: widget.favoriteKey);
 
-
-  String? get headingIconKey {
-    switch(widget.favoriteKey) {
-      case Event2.favoriteKeyName: return 'calendar';
-      case Dining.favoriteKeyName: return 'dining';
-      case Game.favoriteKeyName: return 'athletics';
-      case News.favoriteKeyName: return 'news';
-      case LaundryRoom.favoriteKeyName: return 'laundry';
-      case MTDStop.favoriteKeyName: return 'location';
-      case ExplorePOI.favoriteKeyName: return 'location';
-      case GuideFavorite.favoriteKeyName: return 'guide';
-      case Appointment.favoriteKeyName: return 'calendar';
-    }
-    return null;
-  }
 
   String? get _offlineMessage {
     switch(widget.favoriteKey) {

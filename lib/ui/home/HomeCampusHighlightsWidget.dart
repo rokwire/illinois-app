@@ -113,10 +113,9 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-      titleIconKey: 'guide',
-      child: _buildContent() 
+      child: _buildContent()
     );
   }
 

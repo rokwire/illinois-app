@@ -163,9 +163,9 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(
+      favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIconKey: 'groups',
       child: _buildContent(),
     );
   }

@@ -62,7 +62,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsLis
 
   Widget _buildContentCard(List<Widget> contentWidgets) =>
     Padding(padding: EdgeInsets.all(16), child:
-      Container(decoration: HomeMessageCard.decoration, child:
+      Container(decoration: HomeMessageCard.defaultDecoration, child:
         Column(children: [
           Row(children: [
             Expanded(child:

@@ -120,9 +120,8 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Big 10 News'),
-        titleIconKey: 'news',
         child: _buildContent(),
     );
   }

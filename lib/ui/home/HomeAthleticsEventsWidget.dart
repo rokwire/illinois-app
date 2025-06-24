@@ -123,9 +123,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Big 10 Events'),
-      titleIconKey: 'calendar',
       child: _buildContent(),
     );
   }

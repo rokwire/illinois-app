@@ -83,9 +83,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   @override
   Widget build(BuildContext context) {
 
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget.isGies ? HomeCanvasCoursesWidget.giesTitle : HomeCanvasCoursesWidget.canvasTitle,
-      titleIconKey: 'courses',
       child: _buildContent(),
     );
   }
