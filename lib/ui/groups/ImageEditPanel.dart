@@ -272,11 +272,14 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     if (initialImage == null) {
       return null;
     }
-    CroppedFile? croppedImage = await ImageCropper().cropImage(
-        sourcePath: initialImage.path,
-        compressFormat: ImageCompressFormat.jpg,
-        compressQuality: 100,
-        uiSettings: [WebUiSettings(context: this.context, presentStyle: WebPresentStyle.dialog)]);
+    CroppedFile? croppedImage = await ImageCropper().cropImage(sourcePath: initialImage.path, compressFormat: ImageCompressFormat.jpg, compressQuality: 100, uiSettings: [
+      WebUiSettings(
+          context: this.context,
+          presentStyle: WebPresentStyle.page,
+          customRouteBuilder: (cropper, initCropper, crop, rotate, scale) {
+            return _ImageCropPageRoute(cropper: cropper, initCropper: initCropper, crop: crop, rotate: rotate, scale: scale);
+          })
+    ]);
     return croppedImage;
   }
 
@@ -394,5 +397,111 @@ class AppDialogButtonState extends State<AppDialogButton> {
         style: Styles().textStyles.getTextStyle("widget.button.title.regular.thin")
       ),
     );
+  }
+}
+
+class _ImageCropPageRoute extends PageRoute<String> {
+  final Widget cropper;
+  final void Function() initCropper;
+  final Future<String?> Function() crop;
+  final void Function(RotationAngle angle) rotate;
+  final void Function(double) scale;
+
+  _ImageCropPageRoute({required this.cropper, required this.initCropper, required this.crop, required this.rotate, required this.scale});
+
+  @override
+  Color? get barrierColor => Colors.black54;
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  String get barrierLabel => 'Image Crop';
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 200);
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    return Semantics(scopesRoute: true, explicitChildNodes: true, child:
+      _ImageCropPage(cropper: cropper, initCropper: initCropper, crop: crop, rotate: rotate, scale: scale)
+    );
+  }
+}
+
+class _ImageCropPage extends StatefulWidget {
+  final Widget cropper;
+  final void Function() initCropper;
+  final Future<String?> Function() crop;
+  final void Function(RotationAngle angle) rotate;
+  final void Function(double) scale;
+
+  const _ImageCropPage({required this.cropper, required this.initCropper, required this.crop, required this.rotate, required this.scale});
+
+  @override
+  State<_ImageCropPage> createState() => _ImageCropPageState();
+}
+
+class _ImageCropPageState extends State<_ImageCropPage> {
+  double _scaleValue = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.initCropper();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(backgroundColor: Styles().colors.fillColorPrimaryVariant,
+        appBar: AppBar(backgroundColor: Styles().colors.fillColorPrimaryVariant, foregroundColor: Styles().colors.white,
+          leading: IconButton(icon: const Icon(Icons.close), onPressed: () => _onBack(context)),
+          actions: [IconButton(icon: Icon(Icons.done), onPressed: () => _onDone(context))]),
+        body: Column(
+          children: [
+            Expanded(child: Center(child: widget.cropper)),
+            SizedBox(height: 16),
+            _buildTools(),
+            SizedBox(height: 24)
+          ]
+        ));
+  }
+
+  Widget _buildTools() {
+    return Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        IconButton(icon: const Icon(Icons.rotate_left, color: Colors.white), onPressed: () => _onRotate(RotationAngle.counterClockwise90)),
+        Slider(
+            value: _scaleValue,
+            onChanged: (value) {
+              setState(() => _scaleValue = value);
+              widget.scale(value);
+            },
+            min: 1.0,
+            max: 3.0,
+            divisions: 20,
+            activeColor: Styles().colors.fillColorSecondary),
+        IconButton(icon: const Icon(Icons.rotate_right, color: Colors.white), onPressed: () => _onRotate(RotationAngle.clockwise90))
+      ])
+    ]);
+  }
+
+  void _onDone(BuildContext context) {
+    widget.crop().then((result) {
+      if (context.mounted) {
+        Navigator.of(context).pop(result);
+      }
+    });
+  }
+
+  void _onBack(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
+  void _onRotate(RotationAngle angle) {
+    widget.rotate(angle);
   }
 }
